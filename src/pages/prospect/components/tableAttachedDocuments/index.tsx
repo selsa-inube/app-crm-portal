@@ -26,7 +26,7 @@ import {
 import { get } from "@mocks/utils/dataMock.service";
 import { mockAttachedDocuments } from "@mocks/filing-application/attached-documents/attacheddocuments.mock";
 import { ListModal } from "@components/modals/ListModal";
-import { optionButtons } from "@pages/board/outlets/financialReporting/config";
+import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
 import { ICustomerData } from "@context/CustomerContext/types";
 
 import { headers, dataReport } from "./config";

@@ -18,7 +18,9 @@
       "@pages/*": ["src/pages/*"],
       "@assets/*": ["src/assets/*"],
       "@services/*": ["src/services/*"],
-      "@validations/*": ["src/validations/*"]
+      "@validations/*": ["src/validations/*"],
+      "@styles/*": ["src/styles/*"],
+      "@routes/*": ["src/routes/*"]
     },
 
     /* Bundler mode */

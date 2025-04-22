@@ -18,8 +18,8 @@ import {
   Divider,
 } from "@inubekit/inubekit";
 
-import { StyledItem } from "@pages/board/outlets/financialReporting/styles";
-import { optionFlags } from "@pages/board/outlets/financialReporting/config";
+import { StyledItem } from "@pages/prospect/outlets/financialReporting/styles";
+import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
 import { saveDocument } from "@services/saveDocument";
 import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";

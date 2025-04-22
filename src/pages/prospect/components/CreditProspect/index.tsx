@@ -27,12 +27,12 @@ import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
 import {
   incomeOptions,
   menuOptions,
-} from "@pages/board/outlets/financialReporting/CommercialManagement/config/config";
+} from "@pages/prospect/outlets/CommercialManagement/config/config";
 import {
   StyledContainerIcon,
   StyledVerticalDivider,
-} from "@pages/board/outlets/financialReporting/CommercialManagement/styles";
-import { CardCommercialManagement } from "@pages/board/outlets/financialReporting/CommercialManagement/CardCommercialManagement";
+} from "@pages/prospect/outlets/CommercialManagement/styles";
+import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 
 import { dataCreditProspect } from "./config";
 import { StyledPrint } from "./styles";
@@ -215,11 +215,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         </StyledPrint>
       )}
       <Stack direction="column">
-        <CardCommercialManagement
-          id={id!}
-          dataRef={dataCommercialManagementRef}
-          onClick={() => handleOpenModal("editProductModal")}
-        />
+        <LoadingAppUI />
       </Stack>
       {currentModal === "creditLimit" && (
         <CreditLimit
