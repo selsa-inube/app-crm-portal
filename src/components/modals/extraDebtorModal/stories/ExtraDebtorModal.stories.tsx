@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FormikValues } from "formik";
 import { MdAdd, MdCached } from "react-icons/md";
 import { Meta, StoryObj } from "@storybook/react";
-import { Button } from "@inubekit/button";
+import { Button } from "@inubekit/inubekit";
 import { action } from "@storybook/addon-actions";
 
 import { props, parameters } from "./props";

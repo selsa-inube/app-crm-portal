@@ -3,9 +3,7 @@ import { MdInfoOutline } from "react-icons/md";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Checkbox } from "@inubekit/checkbox";
-import { Icon } from "@inubekit/icon";
-import { Stack } from "@inubekit/stack";
-import { Text } from "@inubekit/text";
+import { Stack, Icon, Text } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 

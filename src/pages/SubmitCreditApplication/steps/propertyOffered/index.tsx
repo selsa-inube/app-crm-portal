@@ -1,9 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Grid } from "@inubekit/grid";
+import { Grid, Stack } from "@inubekit/inubekit";
 import { Select } from "@inubekit/select";
-import { Stack } from "@inubekit/stack";
 import { Textarea } from "@inubekit/textarea";
 import { Textfield } from "@inubekit/textfield";
 

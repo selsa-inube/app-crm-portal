@@ -6,9 +6,6 @@ import {
   MdOutlineRemoveRedEye,
 } from "react-icons/md";
 import { useAuth0 } from "@auth0/auth0-react";
-
-import { Blanket } from "@inubekit/blanket";
-import { Button } from "@inubekit/button";
 import {
   Stack,
   Icon,
@@ -16,6 +13,8 @@ import {
   useFlag,
   useMediaQuery,
   Divider,
+  Blanket,
+  Button,
 } from "@inubekit/inubekit";
 
 import { StyledItem } from "@pages/prospect/outlets/financialReporting/styles";

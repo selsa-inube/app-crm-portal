@@ -1,6 +1,4 @@
-import { SkeletonLine, useMediaQuery } from "@inubekit/inubekit";
-import { Stack } from "@inubekit/stack";
-import { Text } from "@inubekit/text";
+import { SkeletonLine, useMediaQuery, Stack, Text } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
 import { mockDeductibleExpenses } from "@mocks/add-prospect/deductible-expenses-modal/deductibleexpenses.mock";

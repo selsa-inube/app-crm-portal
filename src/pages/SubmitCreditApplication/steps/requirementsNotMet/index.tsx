@@ -1,4 +1,5 @@
-import { Stack } from "@inubekit/stack";
+import { Stack } from "@inubekit/inubekit";
+
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
 import { Fieldset } from "@components/data/Fieldset";
 

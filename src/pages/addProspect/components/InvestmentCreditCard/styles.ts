@@ -1,4 +1,4 @@
-import { inube } from "@inubekit/foundations";
+import { inube } from "@inubekit/inubekit";
 import styled from "styled-components";
 
 interface IStyledContainer {
