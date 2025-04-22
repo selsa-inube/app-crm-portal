@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Grid } from "@inubekit/grid";
-import { Input } from "@inubekit/inubekit";
+import { Input, Grid } from "@inubekit/inubekit";
 
 import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";

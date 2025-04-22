@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
-import { Stack, Text, useMediaQuery } from "@inubekit/inubekit";
-import { Button } from "@inubekit/button";
+import { Stack, Text, useMediaQuery, Button } from "@inubekit/inubekit";
+import {} from "@inubekit/button";
 
 import { StyledContainerFieldset, StyledPrint } from "./styles";
 

@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@inubekit/button";
-import { Assisted, Breadcrumbs, Icon, Text, Stack } from "@inubekit/inubekit";
+import {
+  Assisted,
+  Breadcrumbs,
+  Icon,
+  Text,
+  Stack,
+  Button,
+} from "@inubekit/inubekit";
 import { MdCheckCircle, MdOutlineShare } from "react-icons/md";
 
 import userImage from "@assets/images/userImage.jpeg";

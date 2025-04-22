@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { Button } from "@inubekit/button";
+import { Button } from "@inubekit/inubekit";
 
 import { ConsolidatedCredits } from "..";
 import { ConsolidatedCreditsProps } from "..";

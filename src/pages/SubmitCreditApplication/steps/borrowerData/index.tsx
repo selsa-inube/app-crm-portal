@@ -1,9 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { useFormik } from "formik";
-import { Grid } from "@inubekit/grid";
-import { Button } from "@inubekit/button";
-import { Stack } from "@inubekit/stack";
+import { Stack, Button, Grid } from "@inubekit/inubekit";
 
 import { CardBorrower } from "@components/cards/CardBorrower";
 import { NewCardBorrower } from "@components/cards/CardBorrower/newCard";

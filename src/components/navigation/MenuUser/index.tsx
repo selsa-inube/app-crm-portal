@@ -1,5 +1,4 @@
-import { Avatar } from "@inubekit/avatar";
-import { Stack, Text } from "@inubekit/inubekit";
+import { Stack, Text, Avatar } from "@inubekit/inubekit";
 
 interface MenuUserProps {
   userName: string;
