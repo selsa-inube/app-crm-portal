@@ -6,11 +6,11 @@ import { IAppContext } from "./types";
 
 const AppContext = createContext<IAppContext>({} as IAppContext);
 
-interface ICrediboardProviderProps {
+interface IProviderProps {
   children: React.ReactNode;
 }
 
-function AppContextProvider(props: ICrediboardProviderProps) {
+function AppContextProvider(props: IProviderProps) {
   const { children } = props;
   const appContext = useAppContext();
 

@@ -7,7 +7,7 @@ import {
   validateBusinessManagers,
   validateConsultation,
 } from "@context/AppContext/utils";
-import { ICrediboardData } from "@context/AppContext/types";
+import { ICRMPortalData } from "@context/AppContext/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 import { getStaff } from "@services/staffs";
 
@@ -96,7 +96,7 @@ function useAppContext() {
     }
   }, [user?.email]);
 
-  const [eventData, setEventData] = useState<ICrediboardData>({
+  const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
       abbreviatedName: "",
       staffPortalCatalogId: "",

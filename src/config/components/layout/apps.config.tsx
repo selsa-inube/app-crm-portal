@@ -3,7 +3,7 @@ import { MdVpnKey } from "react-icons/md";
 const appsConfig = [
   {
     id: 1,
-    label: "Board",
+    label: "Credit",
     description: "Gestiona los creditos",
     icon: <MdVpnKey />,
     crumbs: [
@@ -14,13 +14,13 @@ const appsConfig = [
         isActive: false,
       },
       {
-        path: "/board",
-        label: "Crediboard",
-        id: "/board",
+        path: "/credit",
+        label: "Crédito",
+        id: "/credit",
         isActive: true,
       },
     ],
-    url: "/board",
+    url: "/credit",
   },
 ];
 
@@ -30,10 +30,10 @@ const navigationConfig = {
     administrate: {
       links: {
         board: {
-          id: "board",
-          label: "Crediboard",
+          id: "credit",
+          label: "Crédito",
           icon: <MdVpnKey />,
-          path: "/board",
+          path: "/credit",
         },
       },
     },

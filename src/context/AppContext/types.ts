@@ -54,7 +54,7 @@ interface IBusinessUnit {
   descriptionUse?: string;
   firstMonthOfFiscalYear?: string;
 }
-interface ICrediboardData {
+interface ICRMPortalData {
   portal: IPortal;
   businessManager: IBusinessManager;
   businessUnit: IBusinessUnit;
@@ -62,14 +62,14 @@ interface ICrediboardData {
 }
 
 interface IAppContext {
-  eventData: ICrediboardData;
+  eventData: ICRMPortalData;
   businessUnitSigla: string;
   businessUnitsToTheStaff: IBusinessUnitsPortalStaff[];
-  setEventData: React.Dispatch<React.SetStateAction<ICrediboardData>>;
+  setEventData: React.Dispatch<React.SetStateAction<ICRMPortalData>>;
   setBusinessUnitSigla: React.Dispatch<React.SetStateAction<string>>;
   setBusinessUnitsToTheStaff: React.Dispatch<
     React.SetStateAction<IBusinessUnitsPortalStaff[]>
   >;
 }
 
-export type { ICrediboardData, IAppContext, IBusinessUnit, IPreferences };
+export type { ICRMPortalData, IAppContext, IBusinessUnit, IPreferences };

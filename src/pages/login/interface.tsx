@@ -36,7 +36,7 @@ function LoginUI() {
               Bienvenido
             </Text>
             <Text as="h1" type="headline" size="large">
-              Crediboard Portal
+              Portal CRM
             </Text>
           </Stack>
           <StyledImage
