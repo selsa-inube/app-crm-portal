@@ -136,10 +136,6 @@ function useAppContext() {
         staffName: "",
         userAccount: "",
       },
-      preferences: {
-        boardOrientation: "vertical",
-        showPinnedOnly: false,
-      },
     },
   });
 

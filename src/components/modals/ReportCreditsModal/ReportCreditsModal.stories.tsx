@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@inubekit/button";
 
 import { ReportCreditsModal, ReportCreditsModalProps } from ".";
-import { incomeOptions } from "@pages/board/outlets/financialReporting/CommercialManagement/config/config";
+import { incomeOptions } from "@pages/prospect/outlets/CommercialManagement/config/config";
 
 const meta: Meta<typeof ReportCreditsModal> = {
   title: "components/modals/ReportCreditsModal",

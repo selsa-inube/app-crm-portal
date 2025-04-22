@@ -1,4 +1,3 @@
-import { SectionOrientation } from "@components/layout/BoardSection/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 
 interface IPortal {
@@ -13,11 +12,6 @@ interface IBusinessManager {
   urlBrand: string;
   urlLogo: string;
 }
-interface IPreferences {
-  boardOrientation: SectionOrientation;
-  showPinnedOnly: boolean;
-}
-
 interface IStaffByBusinessUnitAndRole {
   businessUnitCode: string;
   roleName: string;
@@ -43,7 +37,6 @@ interface IUser {
   userAccount: string;
   userName: string;
   staff: IStaff;
-  preferences: IPreferences;
 }
 
 interface IBusinessUnit {
@@ -72,4 +65,4 @@ interface IAppContext {
   >;
 }
 
-export type { ICRMPortalData, IAppContext, IBusinessUnit, IPreferences };
+export type { ICRMPortalData, IAppContext, IBusinessUnit };
