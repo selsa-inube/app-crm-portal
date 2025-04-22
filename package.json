@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
-    "@inube/design-system": "^5.15.0",
     "@inubekit/assisted": "^7.10.1",
     "@inubekit/checkbox": "^0.2.2",
     "@inubekit/datefield": "^2.39.0",
