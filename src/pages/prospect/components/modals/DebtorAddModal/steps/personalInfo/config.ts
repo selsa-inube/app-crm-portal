@@ -1,0 +1,18 @@
+export const dataAddModal = {
+  labelTypeDocument: "Tipo de documento",
+  labelNumberDocument: "Numero de documento",
+  labelName: "Nombres",
+  labelLastName: "Apellidos",
+  labelEmail: "Correo electronico",
+  labelNumber: "Numero de telefono",
+  labelSex: "Sexo biológico",
+  labelAge: "Edad",
+  labelRelation: "Parentesco",
+  placeHolderSelect: "Seleccione una opción",
+  placeNumberDocument: "Ej: 1010477949",
+  placeHolderName: "Ej: Daniel Rodrigo",
+  placeHolderLastName: "Ej: Rodriguez Velandia",
+  placeHolderEmail: "Ej: micorreo@mail.com",
+  placeHolderNumber: "Ej: 3102330109",
+  placeHolderAge: "Ej: 22",
+};
