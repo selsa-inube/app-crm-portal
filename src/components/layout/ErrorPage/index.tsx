@@ -6,7 +6,6 @@ import {
   Tag,
   Button,
 } from "@inubekit/inubekit";
-import {} from "@inubekit/button";
 
 import { environment } from "@config/environment";
 import { errorCodes } from "@config/errorCodes";
