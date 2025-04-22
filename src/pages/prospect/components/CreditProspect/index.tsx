@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
@@ -67,7 +67,6 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const [prospectProducts, setProspectProducts] =
     useState<ICreditProductProspect>();
-  const dataCommercialManagementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (id) {
