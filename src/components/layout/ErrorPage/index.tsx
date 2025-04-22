@@ -1,5 +1,11 @@
-import { Stack, Text, Divider, useMediaQueries, Tag } from "@inubekit/inubekit";
-import { Button } from "@inubekit/button";
+import {
+  Stack,
+  Text,
+  Divider,
+  useMediaQueries,
+  Tag,
+  Button,
+} from "@inubekit/inubekit";
 
 import { environment } from "@config/environment";
 import { errorCodes } from "@config/errorCodes";

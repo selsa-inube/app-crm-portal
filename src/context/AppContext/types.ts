@@ -1,4 +1,3 @@
-import { SectionOrientation } from "@components/layout/BoardSection/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 
 interface IPortal {
@@ -13,11 +12,6 @@ interface IBusinessManager {
   urlBrand: string;
   urlLogo: string;
 }
-interface IPreferences {
-  boardOrientation: SectionOrientation;
-  showPinnedOnly: boolean;
-}
-
 interface IStaffByBusinessUnitAndRole {
   businessUnitCode: string;
   roleName: string;
@@ -43,7 +37,6 @@ interface IUser {
   userAccount: string;
   userName: string;
   staff: IStaff;
-  preferences: IPreferences;
 }
 
 interface IBusinessUnit {
@@ -54,7 +47,7 @@ interface IBusinessUnit {
   descriptionUse?: string;
   firstMonthOfFiscalYear?: string;
 }
-interface ICrediboardData {
+interface ICRMPortalData {
   portal: IPortal;
   businessManager: IBusinessManager;
   businessUnit: IBusinessUnit;
@@ -62,14 +55,14 @@ interface ICrediboardData {
 }
 
 interface IAppContext {
-  eventData: ICrediboardData;
+  eventData: ICRMPortalData;
   businessUnitSigla: string;
   businessUnitsToTheStaff: IBusinessUnitsPortalStaff[];
-  setEventData: React.Dispatch<React.SetStateAction<ICrediboardData>>;
+  setEventData: React.Dispatch<React.SetStateAction<ICRMPortalData>>;
   setBusinessUnitSigla: React.Dispatch<React.SetStateAction<string>>;
   setBusinessUnitsToTheStaff: React.Dispatch<
     React.SetStateAction<IBusinessUnitsPortalStaff[]>
   >;
 }
 
-export type { ICrediboardData, IAppContext, IBusinessUnit, IPreferences };
+export type { ICRMPortalData, IAppContext, IBusinessUnit };

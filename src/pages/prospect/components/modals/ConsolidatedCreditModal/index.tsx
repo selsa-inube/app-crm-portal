@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { Button } from "@inubekit/button";
-import { Text, Stack, Grid, Divider, useMediaQuery } from "@inubekit/inubekit";
+import {
+  Text,
+  Stack,
+  Grid,
+  Divider,
+  useMediaQuery,
+  Button,
+} from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
 import { InvestmentCreditCard } from "@pages/addProspect/components/InvestmentCreditCard";

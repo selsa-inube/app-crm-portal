@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { StoryFn, Meta } from "@storybook/react";
-import { Button } from "@inubekit/button";
+import { Button } from "@inubekit/inubekit";
 import { PromissoryNotesModal, PromissoryNotesModalProps } from "../index";
 import { props } from "./props";
 

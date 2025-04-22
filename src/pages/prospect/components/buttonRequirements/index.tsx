@@ -1,5 +1,5 @@
 import { MdCheckCircleOutline } from "react-icons/md";
-import { Button } from "@inubekit/button";
+import { Button } from "@inubekit/inubekit";
 
 import { mockRequirementsNotMet } from "@mocks/requirements-not-met/requirementsnotmet.mock";
 

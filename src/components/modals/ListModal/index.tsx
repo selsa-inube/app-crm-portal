@@ -1,9 +1,6 @@
 import { useRef, useState, useContext } from "react";
 import { createPortal } from "react-dom";
 import { MdClear, MdOutlineCloudUpload } from "react-icons/md";
-
-import { Blanket } from "@inubekit/blanket";
-import { Button } from "@inubekit/button";
 import {
   Stack,
   Icon,
@@ -11,6 +8,8 @@ import {
   useFlag,
   useMediaQuery,
   Divider,
+  Blanket,
+  Button,
 } from "@inubekit/inubekit";
 
 import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";

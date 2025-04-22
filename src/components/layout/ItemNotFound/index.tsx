@@ -1,5 +1,4 @@
-import { Stack, Text, useMediaQuery } from "@inubekit/inubekit";
-import { Button } from "@inubekit/button";
+import { Stack, Text, useMediaQuery, Button } from "@inubekit/inubekit";
 
 import { StyledImage } from "./styles";
 

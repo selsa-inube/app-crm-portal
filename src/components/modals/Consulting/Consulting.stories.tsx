@@ -1,7 +1,7 @@
 import { Meta } from "@storybook/react";
 import { Consulting } from ".";
 import { useState } from "react";
-import { Button } from "@inubekit/button";
+import { Button } from "@inubekit/inubekit";
 
 const meta: Meta<typeof Consulting> = {
   component: Consulting,

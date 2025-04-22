@@ -8,7 +8,6 @@ import {
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
-import { TableBoard } from "@components/data/TableBoard";
 import { Schedule } from "@services/enums";
 import { IOptions } from "@components/navigation/MenuProspect/types";
 
@@ -127,99 +126,6 @@ export const entriesCreditsCollected = [
     ),
     "Compra primera Vivienda": "$49.500.000",
     "Libre Inversion": "$5.200.000",
-  },
-];
-
-export const dataAccordeon = [
-  {
-    name: "Pagos Extra Pactados",
-    title: (
-      <Stack width="100%">
-        <div style={{ flex: "1" }}>
-          <Text type="label">Pagos Extra Pactados</Text>
-        </div>
-        <div style={{ flex: "1 1 3.5%" }}>
-          <Text size="medium">$10.000.000</Text>
-        </div>
-        <div style={{ flex: "1 1 2.5%" }}>
-          <Text size="medium">$0</Text>
-        </div>
-      </Stack>
-    ),
-    content: (
-      <TableBoard
-        id="dataAcordeon"
-        titles={titlesCommercialManagementAccordion}
-        entries={entriesCommercialManagementAccordeon}
-        appearanceTable={{
-          title: "dark",
-          efectzebra: false,
-          borderTable: true,
-          background: true,
-          widthTd: "190px",
-        }}
-      />
-    ),
-  },
-  {
-    name: "Descuentos Aplicados",
-    title: (
-      <Stack width="100%">
-        <div style={{ flex: "1" }}>
-          <Text type="label">Descuentos Aplicados</Text>
-        </div>
-        <div style={{ flex: "1 1 3.5%" }}>
-          <Text size="medium">$49.500.000</Text>
-        </div>
-        <div style={{ flex: "1 1 2.5%" }}>
-          <Text size="medium">$50.000</Text>
-        </div>
-      </Stack>
-    ),
-    content: (
-      <TableBoard
-        id="Descuentos"
-        titles={titlesCommercialManagementAccordion}
-        entries={entriesAppliedDiscounts}
-        appearanceTable={{
-          title: "dark",
-          efectzebra: false,
-          borderTable: true,
-          background: true,
-          widthTd: "190px",
-        }}
-      />
-    ),
-  },
-  {
-    name: "Creditos Recogidos",
-    title: (
-      <Stack width="100%">
-        <div style={{ flex: "1" }}>
-          <Text type="label">Créditos Recogidos</Text>
-        </div>
-        <div style={{ flex: "1 1 3.5%" }}>
-          <Text size="medium">$49.500.000</Text>
-        </div>
-        <div style={{ flex: "1 1 2.5%" }}>
-          <Text size="medium">$50.000</Text>
-        </div>
-      </Stack>
-    ),
-    content: (
-      <TableBoard
-        id="dataAcordeon"
-        titles={titlesCommercialManagementAccordion}
-        entries={entriesCreditsCollected}
-        appearanceTable={{
-          title: "dark",
-          efectzebra: false,
-          borderTable: false,
-          background: false,
-          widthTd: "190px",
-        }}
-      />
-    ),
   },
 ];
 
