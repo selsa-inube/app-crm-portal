@@ -6,7 +6,7 @@ const requestNotFoundConfig = {
   description:
     "La solicitud de crédito que estás buscando no se encuentra disponible en estos momentos.",
   buttonDescription: "Volver",
-  route: "/board",
+  route: "/credit",
 };
 
 export { requestNotFoundConfig };

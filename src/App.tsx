@@ -32,7 +32,7 @@ function LogOut() {
 function FirstPage() {
   const { businessUnitSigla } = useContext(AppContext);
   initializeDataDB(businessUnitSigla);
-  return businessUnitSigla.length === 0 ? <Login /> : <LoadingAppUI />;
+  return businessUnitSigla.length === 0 ? <Login /> : <AppPage />;
 }
 
 const router = createBrowserRouter(
