@@ -44,10 +44,10 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage errorCode={400} />}
       />
       <Route path="login/*" element={<LoginRoutes />} />
-      <Route path="add-prospect/*" element={<AddProspectRoutes />} />
-      <Route path="edit-prospect/*" element={<EditProspectRoutes />} />
+      <Route path="credit/add-prospect/*" element={<AddProspectRoutes />} />
+      <Route path="credit/edit-prospect/*" element={<EditProspectRoutes />} />
       <Route
-        path="submit-credit-application/*"
+        path="credit/submit-credit-application/*"
         element={<SubmitCreditApplicationRoutes />}
       />
       <Route path="logout" element={<LogOut />} />

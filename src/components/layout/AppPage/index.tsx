@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import { MdLogout, MdOutlineChevronRight } from "react-icons/md";
-import { Icon, Grid, useFlag, useMediaQuery } from "@inubekit/inubekit";
+import { Nav, Icon, Grid, useFlag, useMediaQuery } from "@inubekit/inubekit";
 import { Header } from "@inubekit/header";
 
 import { AppContext } from "@context/AppContext";
@@ -11,6 +11,7 @@ import { LogoutModal } from "@components/feedback/LogoutModal";
 import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
+import { useNavConfig, actions } from "@config/nav.config";
 
 import {
   StyledAppPage,
@@ -65,6 +66,7 @@ function AppPage() {
   };
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
+  const navConfig = useNavConfig();
   const [selectedClient, setSelectedClient] = useState<string>(
     eventData.businessUnit.abbreviatedName,
   );
@@ -178,9 +180,18 @@ function AppPage() {
               handleShowBlanket={handleToggleLogoutModal}
             />
           )}
-          <StyledMain>
-            <Outlet />
-          </StyledMain>
+          <Grid
+            templateColumns={!isTablet ? "auto 1fr" : "1fr"}
+            alignContent="unset"
+            height="95vh"
+          >
+            {!isTablet && (
+              <Nav navigation={navConfig} actions={actions} collapse={true} />
+            )}
+            <StyledMain>
+              <Outlet />
+            </StyledMain>
+          </Grid>
           <StyledFooter>
             {renderLogo(eventData.businessManager.urlBrand)}
           </StyledFooter>
