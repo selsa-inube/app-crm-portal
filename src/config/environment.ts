@@ -5,7 +5,9 @@ const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 const environment = {
   CLIENT_ID: import.meta.env.VITE_AUTH0_CLIENT_ID,
   CLIENT_SECRET: import.meta.env.VITE_AUTH0_CLIENT_SECRET,
-  REDIRECT_URI: "https://app-crm-portal.vercel.app",
+  REDIRECT_URI: !IS_PRODUCTION
+    ? window.location.origin
+    : "https://app-crm-portal.vercel.app",
   GOOGLE_REDIRECT_URI: !IS_PRODUCTION
     ? window.location.origin
     : GOOGLE_REDIRECT_URI,
