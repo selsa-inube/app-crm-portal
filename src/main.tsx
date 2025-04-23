@@ -18,6 +18,7 @@ root.render(
         redirect_uri,
       }}
     >
+      <>{console.log(redirect_uri)}</>
       <App />
     </Auth0Provider>
   </React.StrictMode>,

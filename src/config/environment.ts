@@ -5,12 +5,12 @@ const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 const environment = {
   CLIENT_ID: import.meta.env.VITE_AUTH0_CLIENT_ID,
   CLIENT_SECRET: import.meta.env.VITE_AUTH0_CLIENT_SECRET,
-  REDIRECT_URI: !IS_PRODUCTION ? window.location.origin : AUTH_REDIRECT_URI,
+  REDIRECT_URI: "https://app-crm-portal.vercel.app",
   GOOGLE_REDIRECT_URI: !IS_PRODUCTION
     ? window.location.origin
     : GOOGLE_REDIRECT_URI,
   AUTH0_DOMAIN: import.meta.env.VITE_AUTH0_DOMAIN,
-  TEMP_BUSINESS_UNIT: "public",
+  TEMP_BUSINESS_UNIT: "test",
 
   ICOREBANKING_API_URL_QUERY: import.meta.env.VITE_ICOREBANKING_API_URL_QUERY,
   ICOREBANKING_API_URL_PERSISTENCE: import.meta.env
