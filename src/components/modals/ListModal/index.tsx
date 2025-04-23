@@ -96,6 +96,10 @@ export const ListModal = (props: IListModalProps) => {
   const { businessUnitSigla } = useContext(AppContext);
 
   const [isDragging, setIsDragging] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<
+    { id: string; name: string; file: File }[]
+  >([]);
+
   const dragCounter = useRef(0);
   const MAX_FILE_SIZE = 2.5 * 1024 * 1024;
 
@@ -104,29 +108,15 @@ export const ListModal = (props: IListModalProps) => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (!setUploadedFiles) return;
-    if (files && files.length > 0 && onlyDocumentReceived) {
-      const newFiles = Array.from(files).map((file) => ({
-        id: crypto.randomUUID(),
-        name: file.name,
-        file: file,
-      }));
-      setUploadedFiles(newFiles);
-    } else if (files) {
-      const newFiles = Array.from(files).map((file) => ({
-        id: crypto.randomUUID(),
-        name: file.name,
-        file: file,
-      }));
-      setUploadedFiles(
-        (prev: { id: string; name: string; file: File }[] | null) => [
-          ...(prev || []),
-          ...newFiles,
-        ],
-      );
-    } else {
-      setUploadedFiles([]);
-    }
+    if (!files) return;
+
+    const newFiles = Array.from(files).map((file) => ({
+      id: crypto.randomUUID(),
+      name: file.name,
+      file,
+    }));
+
+    setPendingFiles(newFiles);
   };
 
   type FlagAppearance =
@@ -152,14 +142,17 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const handleUpload = async () => {
+    if (!setUploadedFiles) return;
+
     if (uploadMode === "local") {
       console.log("Archivos guardados en estado:", uploadedFiles);
+      setUploadedFiles(pendingFiles);
       handleClose();
       return;
     }
     try {
-      if (uploadedFiles) {
-        for (const fileData of uploadedFiles) {
+      if (pendingFiles.length > 0) {
+        for (const fileData of pendingFiles) {
           await saveDocument(
             businessUnitPublicCode,
             id,
@@ -169,7 +162,8 @@ export const ListModal = (props: IListModalProps) => {
         }
       }
 
-      setUploadedFiles?.([]);
+      setUploadedFiles([]);
+      setPendingFiles([]);
       handleClose();
       handleFlag(
         optionFlags.title,
@@ -187,9 +181,14 @@ export const ListModal = (props: IListModalProps) => {
 
   const isDisabled = () => {
     if (onlyDocumentReceived) {
-      return uploadedFiles?.length !== 1;
+      const totalFiles = pendingFiles.length + (uploadedFiles?.length || 0);
+      return totalFiles < 1;
     }
-    return !uploadedFiles?.length || uploadedFiles.length < 1;
+
+    return (
+      pendingFiles.length === 0 &&
+      (!uploadedFiles || uploadedFiles.length === 0)
+    );
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -209,16 +208,10 @@ export const ListModal = (props: IListModalProps) => {
             name: file.name,
             file,
           };
-
           if (onlyDocumentReceived) {
-            setUploadedFiles([newFile]);
+            setPendingFiles([newFile]);
           } else {
-            setUploadedFiles(
-              (prev: { id: string; name: string; file: File }[] | null) => [
-                ...(prev || []),
-                newFile,
-              ],
-            );
+            setPendingFiles((prev) => [...prev, newFile]);
           }
         } else {
           alert(listModalData.exceedSize);
@@ -316,7 +309,7 @@ export const ListModal = (props: IListModalProps) => {
             <Text size="medium" appearance="gray">
               {listModalData.maximum}
             </Text>
-            {Array.isArray(uploadedFiles) && uploadedFiles.length > 0 && (
+            {Array.isArray(pendingFiles) && pendingFiles.length > 0 ? (
               <>
                 <Divider dashed />
                 <Stack direction="column" gap="24px">
@@ -328,13 +321,13 @@ export const ListModal = (props: IListModalProps) => {
                   >
                     {listModalData.attachments}
                   </Text>
-                  {uploadedFiles.map((file) => (
+                  {pendingFiles.map((file) => (
                     <File
                       key={file.id}
                       name={file.name}
                       size={formatFileSize(file.file.size)}
                       onDelete={() => {
-                        setUploadedFiles?.([]);
+                        setPendingFiles([]);
                         if (fileInputRef.current) {
                           fileInputRef.current.value = "";
                         }
@@ -343,6 +336,35 @@ export const ListModal = (props: IListModalProps) => {
                   ))}
                 </Stack>
               </>
+            ) : (
+              Array.isArray(uploadedFiles) &&
+              uploadedFiles.length > 0 && (
+                <>
+                  <Divider dashed />
+                  <Stack direction="column" gap="24px">
+                    <Text
+                      type="title"
+                      size="medium"
+                      weight="bold"
+                      appearance="gray"
+                    >
+                      {listModalData.attachments}
+                    </Text>
+                    {uploadedFiles.map((file) => (
+                      <File
+                        key={file.id}
+                        name={file.name}
+                        size={
+                          file.file?.size ? formatFileSize(file.file.size) : "-"
+                        }
+                        onDelete={() => {
+                          setUploadedFiles?.([]);
+                        }}
+                      />
+                    ))}
+                  </Stack>
+                </>
+              )
             )}
             <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
               <Button onClick={handleUpload} disabled={isDisabled()}>
