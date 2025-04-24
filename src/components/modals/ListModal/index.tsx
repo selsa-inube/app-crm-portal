@@ -1,11 +1,6 @@
 import { useRef, useState, useContext } from "react";
 import { createPortal } from "react-dom";
-import {
-  MdClear,
-  MdDeleteOutline,
-  MdOutlineRemoveRedEye,
-} from "react-icons/md";
-import { useAuth0 } from "@auth0/auth0-react";
+import { MdClear, MdOutlineCloudUpload } from "react-icons/md";
 import {
   Stack,
   Icon,
@@ -17,20 +12,20 @@ import {
   Button,
 } from "@inubekit/inubekit";
 
-import { StyledItem } from "@pages/prospect/outlets/financialReporting/styles";
 import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
 import { saveDocument } from "@services/saveDocument";
 import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";
-import { getSearchDocumentById } from "@services/documents/SearchDocumentById";
 import { IDocumentUpload } from "@pages/SubmitCreditApplication/types";
+import { File } from "@components/inputs/File";
+import { formatFileSize } from "@utils/size";
 
 import {
+  StyledAttachContainer,
   StyledContainerClose,
   StyledContainerContent,
   StyledModal,
 } from "./styles";
-import { DocumentViewer } from "../DocumentViewer";
 import { listModalData } from "./config";
 
 export interface IOptionButtons {
@@ -80,8 +75,6 @@ export const ListModal = (props: IListModalProps) => {
     appearanceCancel = "primary",
     buttonLabel,
     uploadMode,
-    dataDocument,
-    isViewing,
     uploadedFiles,
     onlyDocumentReceived,
     handleClose,
@@ -102,97 +95,28 @@ export const ListModal = (props: IListModalProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { businessUnitSigla } = useContext(AppContext);
 
-  const { user } = useAuth0();
+  const [isDragging, setIsDragging] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<
+    { id: string; name: string; file: File }[]
+  >([]);
+
+  const dragCounter = useRef(0);
+  const MAX_FILE_SIZE = 2.5 * 1024 * 1024;
+
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
-
-  interface IListdataProps {
-    data: { id: string; name: string }[] | null | undefined;
-    onDelete?: (id: string) => void;
-    icon?: React.ReactNode;
-    onPreview?: (id: string, name: string) => void;
-  }
-
-  const Listdata = (props: IListdataProps) => {
-    const { data, icon, onDelete, onPreview } = props;
-
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      return <Text>{listModalData.noDocuments}</Text>;
-    }
-
-    return (
-      <ul
-        style={{
-          paddingInlineStart: "2px",
-          marginBlock: "8px",
-        }}
-      >
-        {data.map((element) => (
-          <StyledItem key={element.id}>
-            <Text>{element.name}</Text>
-            <Icon
-              icon={icon}
-              appearance="dark"
-              spacing="narrow"
-              size="24px"
-              cursorHover
-              onClick={() => {
-                if (onDelete) {
-                  onDelete(element.id);
-                } else if (onPreview) {
-                  onPreview(element.id, element.name);
-                }
-              }}
-            />
-          </StyledItem>
-        ))}
-      </ul>
-    );
-  };
-
-  const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (!setUploadedFiles) return;
-    if (files && files.length > 0 && onlyDocumentReceived) {
-      const newFiles = Array.from(files).map((file) => ({
-        id: crypto.randomUUID(),
-        name: file.name,
-        file: file,
-      }));
-      setUploadedFiles(newFiles);
-    } else if (files) {
-      const newFiles = Array.from(files).map((file) => ({
-        id: crypto.randomUUID(),
-        name: file.name,
-        file: file,
-      }));
-      setUploadedFiles(
-        (prev: { id: string; name: string; file: File }[] | null) => [
-          ...(prev || []),
-          ...newFiles,
-        ],
-      );
-    } else {
-      setUploadedFiles([]);
-    }
-  };
+    if (!files) return;
 
-  const handleDeleteFile = (id: string) => {
-    if (!setUploadedFiles) return;
-    setUploadedFiles(
-      (prev: { id: string; name: string; file: File }[] | null) =>
-        (prev || []).filter((file) => file.id !== id),
-    );
+    const newFiles = Array.from(files).map((file) => ({
+      id: crypto.randomUUID(),
+      name: file.name,
+      file,
+    }));
+
+    setPendingFiles(newFiles);
   };
 
   type FlagAppearance =
@@ -218,14 +142,17 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const handleUpload = async () => {
+    if (!setUploadedFiles) return;
+
     if (uploadMode === "local") {
       console.log("Archivos guardados en estado:", uploadedFiles);
+      setUploadedFiles(pendingFiles);
       handleClose();
       return;
     }
     try {
-      if (uploadedFiles) {
-        for (const fileData of uploadedFiles) {
+      if (pendingFiles.length > 0) {
+        for (const fileData of pendingFiles) {
           await saveDocument(
             businessUnitPublicCode,
             id,
@@ -235,7 +162,8 @@ export const ListModal = (props: IListModalProps) => {
         }
       }
 
-      setUploadedFiles?.([]);
+      setUploadedFiles([]);
+      setPendingFiles([]);
       handleClose();
       handleFlag(
         optionFlags.title,
@@ -251,27 +179,75 @@ export const ListModal = (props: IListModalProps) => {
     }
   };
 
-  const handlePreview = async (id: string, name: string) => {
-    try {
-      const documentData = await getSearchDocumentById(
-        id,
-        user?.email ?? "",
-        businessUnitPublicCode,
-      );
-      const fileUrl = URL.createObjectURL(documentData);
-      setSelectedFile(fileUrl);
-      setFileName(name);
-      setOpen(true);
-    } catch (error) {
-      console.error("Error obteniendo el documento:", error);
+  const isDisabled = () => {
+    if (onlyDocumentReceived) {
+      const totalFiles = pendingFiles.length + (uploadedFiles?.length || 0);
+      return totalFiles < 1;
+    }
+
+    return (
+      pendingFiles.length === 0 &&
+      (!uploadedFiles || uploadedFiles.length === 0)
+    );
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
+
+    if (!setUploadedFiles) return;
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+
+      if (file.type === "application/pdf") {
+        if (file.size <= MAX_FILE_SIZE) {
+          const newFile = {
+            id: crypto.randomUUID(),
+            name: file.name,
+            file,
+          };
+          if (onlyDocumentReceived) {
+            setPendingFiles([newFile]);
+          } else {
+            setPendingFiles((prev) => [...prev, newFile]);
+          }
+        } else {
+          alert(listModalData.exceedSize);
+        }
+      } else {
+        alert(listModalData.onlypdf);
+      }
+
+      e.dataTransfer.clearData();
     }
   };
 
-  const isDisabled = () => {
-    if (onlyDocumentReceived) {
-      return uploadedFiles?.length !== 1;
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    dragCounter.current++;
+    if (dragCounter.current === 1) {
+      setIsDragging(true);
     }
-    return !uploadedFiles?.length || uploadedFiles.length < 1;
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return createPortal(
@@ -283,7 +259,7 @@ export const ListModal = (props: IListModalProps) => {
           </Text>
           <StyledContainerClose onClick={handleClose}>
             <Stack alignItems="center" gap="8px">
-              <Text>Cerrar</Text>
+              <Text>{listModalData.close}</Text>
               <Icon
                 icon={<MdClear />}
                 size="24px"
@@ -295,43 +271,101 @@ export const ListModal = (props: IListModalProps) => {
         </Stack>
         <Divider />
         <StyledContainerContent $smallScreen={isMobile}>
-          {typeof content === "string" ? (
+          {typeof content === "string" && (
             <Stack>
               <Text>{content}</Text>
             </Stack>
-          ) : (
-            <StyledContainerContent $smallScreen={isMobile}>
-              <Listdata
-                data={isViewing ? (dataDocument ?? []) : uploadedFiles}
-                icon={
-                  isViewing ? <MdOutlineRemoveRedEye /> : <MdDeleteOutline />
-                }
-                onDelete={!isViewing ? handleDeleteFile : undefined}
-                onPreview={isViewing ? handlePreview : undefined}
-              />
-            </StyledContainerContent>
           )}
         </StyledContainerContent>
         {optionButtons ? (
           <>
-            <Button
-              spacing="compact"
-              iconBefore={optionButtons?.icon}
-              variant={optionButtons?.variant}
-              onClick={handleButtonClick}
-              fullwidth={optionButtons?.fullwidth}
-              cursorHover
+            <StyledAttachContainer
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              $isDragging={isDragging}
             >
-              {optionButtons?.label}
-            </Button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-              accept=".pdf,.jpg,.png"
-              multiple={uploadMode === "local" ? false : true}
-            />
+              <Icon
+                icon={<MdOutlineCloudUpload />}
+                appearance="gray"
+                size="32px"
+              />
+              <Stack direction="column" alignItems="center">
+                <Text>{listModalData.drag}</Text>
+                <Text>{listModalData.or}</Text>
+              </Stack>
+              <Button spacing="compact" onClick={handleBrowseClick}>
+                {listModalData.search}
+              </Button>
+              <input
+                type="file"
+                accept="application/pdf"
+                style={{ display: "none" }}
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+            </StyledAttachContainer>
+            <Text size="medium" appearance="gray">
+              {listModalData.maximum}
+            </Text>
+            {Array.isArray(pendingFiles) && pendingFiles.length > 0 ? (
+              <>
+                <Divider dashed />
+                <Stack direction="column" gap="24px">
+                  <Text
+                    type="title"
+                    size="medium"
+                    weight="bold"
+                    appearance="gray"
+                  >
+                    {listModalData.attachments}
+                  </Text>
+                  {pendingFiles.map((file) => (
+                    <File
+                      key={file.id}
+                      name={file.name}
+                      size={formatFileSize(file.file.size)}
+                      onDelete={() => {
+                        setPendingFiles([]);
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = "";
+                        }
+                      }}
+                    />
+                  ))}
+                </Stack>
+              </>
+            ) : (
+              Array.isArray(uploadedFiles) &&
+              uploadedFiles.length > 0 && (
+                <>
+                  <Divider dashed />
+                  <Stack direction="column" gap="24px">
+                    <Text
+                      type="title"
+                      size="medium"
+                      weight="bold"
+                      appearance="gray"
+                    >
+                      {listModalData.attachments}
+                    </Text>
+                    {uploadedFiles.map((file) => (
+                      <File
+                        key={file.id}
+                        name={file.name}
+                        size={
+                          file.file?.size ? formatFileSize(file.file.size) : "-"
+                        }
+                        onDelete={() => {
+                          setUploadedFiles?.([]);
+                        }}
+                      />
+                    ))}
+                  </Stack>
+                </>
+              )
+            )}
             <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
               <Button onClick={handleUpload} disabled={isDisabled()}>
                 {buttonLabel}
@@ -355,13 +389,6 @@ export const ListModal = (props: IListModalProps) => {
             </Button>
             <Button onClick={onSubmit ?? handleClose}>{buttonLabel}</Button>
           </Stack>
-        )}
-        {selectedFile && open && (
-          <DocumentViewer
-            selectedFile={selectedFile}
-            handleClose={() => setOpen(false)}
-            title={fileName || ""}
-          />
         )}
       </StyledModal>
     </Blanket>,
