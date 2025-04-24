@@ -105,34 +105,36 @@ export function CardBorrower(props: ICardBorrowerProps) {
             </Stack>
           </Stack>
         </Stack>
-        {showIcons && (
-          <Stack direction="column" gap="12px">
-            <Divider dashed />
-            <Stack gap="10px" justifyContent="flex-end">
-              <Icon
-                icon={<MdOutlineRemoveRedEye />}
-                appearance={"primary"}
-                size="20px"
-                onClick={handleView}
-                cursorHover
-              />
-              <Icon
-                icon={<MdOutlineEdit />}
-                appearance={"primary"}
-                size="20px"
-                onClick={handleEdit}
-                cursorHover
-              />
-              <Icon
-                icon={<MdOutlineDelete />}
-                appearance={"primary"}
-                size="20px"
-                onClick={handleDelete}
-                cursorHover
-              />
-            </Stack>
+        <Stack direction="column" gap="12px">
+          <Divider dashed />
+          <Stack gap="10px" justifyContent="flex-end">
+            <Icon
+              icon={<MdOutlineRemoveRedEye />}
+              appearance={"primary"}
+              size="20px"
+              onClick={handleView}
+              cursorHover
+            />
+            {showIcons && (
+              <>
+                <Icon
+                  icon={<MdOutlineEdit />}
+                  appearance={"primary"}
+                  size="20px"
+                  onClick={handleEdit}
+                  cursorHover
+                />
+                <Icon
+                  icon={<MdOutlineDelete />}
+                  appearance={"primary"}
+                  size="20px"
+                  onClick={handleDelete}
+                  cursorHover
+                />
+              </>
+            )}
           </Stack>
-        )}
+        </Stack>
       </Stack>
     </StyledContainer>
   );
