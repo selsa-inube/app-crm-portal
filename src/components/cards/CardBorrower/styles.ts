@@ -10,7 +10,7 @@ interface IStyledContainer {
 
 export const StyledContainer = styled.div<IStyledContainer>`
   width: ${({ $isMobile }) => ($isMobile ? "285px" : "315px")};
-  height: ${({ $showIcons }) => ($showIcons ? "368px" : "322px")};
+  height: 368px;
   display: flex;
   flex-direction: column;
   border-radius: 8px;

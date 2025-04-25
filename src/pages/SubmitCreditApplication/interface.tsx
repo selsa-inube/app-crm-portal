@@ -47,6 +47,7 @@ interface SubmitCreditApplicationUIProps {
   approvedRequestModal: boolean;
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
+  getRuleByName: (name: string) => string[];
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
   setApprovedRequestModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormChange: (updatedValues: Partial<FormData>) => void;
@@ -61,7 +62,6 @@ interface SubmitCreditApplicationUIProps {
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
-  rule?: string[];
 }
 
 export function SubmitCreditApplicationUI(
@@ -78,6 +78,7 @@ export function SubmitCreditApplicationUI(
     prospectCode,
     sentModal,
     approvedRequestModal,
+    getRuleByName,
     setSentModal,
     setApprovedRequestModal,
     handleFormChange,
@@ -90,7 +91,6 @@ export function SubmitCreditApplicationUI(
     customerData,
     codeError,
     addToFix,
-    rule,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -213,6 +213,7 @@ export function SubmitCreditApplicationUI(
                       handleFormChange({ borrowerData: values })
                     }
                     data={data}
+                    valueRule={getRuleByName("ValidationCoBorrower")}
                   />
                 )}
               {currentStepsNumber &&
@@ -277,7 +278,7 @@ export function SubmitCreditApplicationUI(
                     handleTabChange={handleTabChange}
                     data={data}
                     identificationNumber={customerData?.publicCode || ""}
-                    rule={rule}
+                    rule={getRuleByName("ModeOfDisbursementType")}
                   />
                 )}
               <Stack justifyContent="end" gap="20px" margin="auto 0 0 0">

@@ -14,6 +14,7 @@ import { SubmitCreditApplicationUI } from "./interface";
 import { FormData } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
+import { dataSubmitApplication } from "./config/config";
 
 export function SubmitCreditApplication() {
   const { customerPublicCode, prospectCode } = useParams();
@@ -29,15 +30,6 @@ export function SubmitCreditApplication() {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-
-  // const updatedSteps = {
-  //   ...stepsFilingApplication,
-  //   BorrowerData: {
-  //     ...stepsFilingApplication.BorrowerData,
-  //     name: data.stepName,
-  //     description: data.stepDescription,
-  //   },
-  // };
 
   const dataHeader = {
     name: customerData?.fullName ?? "",
@@ -184,30 +176,47 @@ export function SubmitCreditApplication() {
 
   const hasBorrowers = Object.keys(formData.borrowerData.borrowers).length;
   const bondValue = prospectData.bond_value;
-
-  const rule = useMemo(() => {
-    const raw = valueRule?.["ModeOfDisbursementType"] || [];
-    return (
-      raw
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((v: any) => (typeof v === "string" ? v : v?.value))
-        .filter(Boolean)
-    );
-  }, [valueRule]);
+  const getRuleByName = useCallback(
+    (ruleName: string) => {
+      const raw = valueRule?.[ruleName] || [];
+      return (
+        raw
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .map((v: any) => (typeof v === "string" ? v : v?.value))
+          .filter(Boolean)
+      );
+    },
+    [valueRule],
+  );
 
   const steps = useMemo(() => {
     if (!valueRule) return Object.values(stepsFilingApplication);
+
     const hideMortgage = valueRule["ValidationGuarantee"]?.includes("Hipoteca");
     const hidePledge = valueRule["ValidationGuarantee"]?.includes("Prenda");
+    const hasCoBorrower =
+      valueRule["ValidationCoBorrower"]?.includes("Codeudor");
 
-    return Object.values(stepsFilingApplication).filter((step) => {
-      if (step.id === 4 && hideMortgage) return false;
-      if (step.id === 5 && hidePledge) return false;
-      if (step.id === 6 && (hasBorrowers >= 1 || bondValue === 0)) {
-        return false;
-      }
-      return true;
-    });
+    return Object.values(stepsFilingApplication)
+      .map((step) => {
+        if (step.id === 3 && hasBorrowers === 1 && hasCoBorrower === true) {
+          return {
+            ...step,
+            name: dataSubmitApplication.coBorrowers.stepName,
+            description: dataSubmitApplication.coBorrowers.stepDescription,
+          };
+        }
+
+        return step;
+      })
+      .filter((step) => {
+        if (step.id === 4 && hideMortgage) return false;
+        if (step.id === 5 && hidePledge) return false;
+        if (step.id === 6 && (hasBorrowers >= 1 || bondValue === 0)) {
+          return false;
+        }
+        return true;
+      });
   }, [valueRule, hasBorrowers, bondValue]);
 
   const [currentStep, setCurrentStep] = useState<number>(steps[0]?.id || 1);
@@ -398,24 +407,25 @@ export function SubmitCreditApplication() {
       }),
     );
 
-    if (notDefinedRules.length) {
+    if (notDefinedRules.length >= 1) {
       setCodeError(1013);
       setAddToFix(notDefinedRules);
     }
   }, [businessUnitPublicCode]);
 
   useEffect(() => {
-    fetchProspectData();
-    fetchValidationRules();
+    if (customerData && prospectData) {
+      fetchProspectData();
+      fetchValidationRules();
+    }
   }, [fetchProspectData, fetchValidationRules]);
 
   const fetchValidationRulesData = useCallback(async () => {
-    setCodeError(null);
-    setAddToFix([]);
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     const creditProducts = prospectData?.credit_products;
 
-    if (!clientInfo || !creditProducts?.length) return;
+    if (!clientInfo.associateType || !creditProducts?.length || !prospectData)
+      return;
 
     const dataRulesBase = {
       ClientType: clientInfo.associateType?.substring(0, 1) || "",
@@ -561,7 +571,7 @@ export function SubmitCreditApplication() {
         customerData={customerData}
         codeError={codeError}
         addToFix={addToFix}
-        rule={rule}
+        getRuleByName={getRuleByName}
       />
     </>
   );

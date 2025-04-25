@@ -11,11 +11,7 @@ import { DebtorAddModal } from "@pages/prospect/components/modals/DebtorAddModal
 import { DebtorDetailsModal } from "@pages/prospect/components/modals/DebtorDetailsModal";
 import { DebtorEditModal } from "@pages/prospect/components/modals/DebtorEditModal";
 import { dataSubmitApplication } from "@pages/SubmitCreditApplication/config/config";
-import { currencyFormat, getMonthsElapsed } from "@utils/formatData/currency";
-import { ruleConfig } from "@pages/SubmitCreditApplication/config/configRules";
-import { evaluateRule } from "@pages/SubmitCreditApplication/evaluateRule";
-import { postBusinessUnitRules } from "@services/businessUnitRules";
-import { CustomerContext } from "@context/CustomerContext";
+import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
 
 import { getPropertyValue, getTotalFinancialObligations } from "../../util";
@@ -32,6 +28,7 @@ interface borrowersProps {
   data: IProspect;
   initialValues: IBorrowerData;
   isMobile: boolean;
+  valueRule: string[];
 }
 
 interface Borrower {
@@ -44,7 +41,7 @@ interface Borrower {
   };
 }
 export function Borrowers(props: borrowersProps) {
-  const { handleOnChange, initialValues, isMobile, data } = props;
+  const { handleOnChange, initialValues, isMobile, data, valueRule } = props;
   const dataDebtorDetail = Array.isArray(data.borrowers)
     ? [...data.borrowers].sort((a, b) => {
         if (a.borrower_type === "main_borrower") return -1;
@@ -52,9 +49,7 @@ export function Borrowers(props: borrowersProps) {
         return 0;
       })
     : [];
-  const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla } = useContext(AppContext);
-  const [valueRule, setValueRule] = useState<string[] | null>(null);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -70,46 +65,6 @@ export function Borrowers(props: borrowersProps) {
   useEffect(() => {
     handleOnChange(formik.values);
   }, [formik.values, handleOnChange]);
-
-  useEffect(() => {
-    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    const creditProduct = data?.credit_product?.[0];
-
-    if (!clientInfo || !creditProduct) return;
-
-    const dataRules = {
-      LineOfCredit: creditProduct.line_of_credit_abbreviated_name,
-      ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      LoanAmount: data.requested_amount,
-      PrimaryIncomeType: "",
-      AffiliateSeniority: getMonthsElapsed(
-        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-        0,
-      ),
-    };
-
-    const rule = ruleConfig["ValidationCoBorrowwe"]?.(dataRules);
-
-    if (!rule) return;
-
-    (async () => {
-      const values = await evaluateRule(
-        rule,
-        (businessUnitPublicCode, data) =>
-          postBusinessUnitRules(businessUnitPublicCode, data),
-        "value",
-        businessUnitPublicCode,
-      );
-
-      const extractedValues = Array.isArray(values)
-        ? values
-            .map((v) => (typeof v === "string" ? v : v?.value))
-            .filter((val): val is string => typeof val === "string")
-        : [];
-
-      setValueRule(extractedValues);
-    })();
-  }, [customerData, data, businessUnitPublicCode]);
 
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
@@ -186,6 +141,7 @@ export function Borrowers(props: borrowersProps) {
                   setIsModalEdit(true);
                 }}
                 handleDelete={() => setIsModalDelete(true)}
+                showIcons={valueRule?.includes("Codeudor")}
               />
             ))}
             <NewCardBorrower
