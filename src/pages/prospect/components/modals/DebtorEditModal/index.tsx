@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Stack, Tabs } from "@inubekit/inubekit";
+import { Stack, Tabs, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
@@ -11,7 +11,7 @@ import {
 } from "@services/incomeSources/types";
 import { getPropertyValue } from "@pages/SubmitCreditApplication/util";
 
-import { dataEditDebtor, dataTabs } from "./config";
+import { dataEditDebtor, dataTabs, dataReport } from "./config";
 import { DataDebtor } from "./dataDebtor";
 
 interface IDebtorEditModalProps {
@@ -31,6 +31,17 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   const [editedIncomeData, setEditedIncomeData] =
     useState<IIncomeSources | null>(null);
   const [isModified, setIsModified] = useState(false);
+
+  const { addFlag } = useFlag();
+
+  const handleFlag = () => {
+    addFlag({
+      title: `${dataReport.titleAdd}`,
+      description: `${dataReport.descriptionFlagAdd}`,
+      appearance: "success",
+      duration: 5000,
+    });
+  };
 
   useEffect(() => {
     if (initialValues) {
@@ -138,6 +149,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     };
 
     onUpdate?.(updatedBorrower);
+    handleFlag();
     handleClose();
   };
 

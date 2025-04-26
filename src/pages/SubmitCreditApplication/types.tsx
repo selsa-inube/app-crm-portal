@@ -74,7 +74,7 @@ export interface IDebtorDetail {
   relation: string;
 }
 
-export interface FormData {
+export interface IFormData {
   contactInformation: IContactInformation;
   propertyOffered: IPropertyOffered;
   vehicleOffered: IVehicleOffered;
@@ -93,7 +93,7 @@ export interface IDisbursementGeneral {
     amount: string;
     check: boolean;
     toggle: boolean;
-    account: string;
+    accountNumber: string;
     description: string;
     name: string;
     lastName: string;

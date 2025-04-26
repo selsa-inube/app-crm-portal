@@ -107,7 +107,6 @@ export function DisbursementWithExternalAccount(
     if (currentAmount + totalAmount - currentAmount !== initialValues.amount) {
       formik.setFieldValue(`${optionNameForm}.check`, false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values[optionNameForm]?.amount]);
 
   useEffect(() => {

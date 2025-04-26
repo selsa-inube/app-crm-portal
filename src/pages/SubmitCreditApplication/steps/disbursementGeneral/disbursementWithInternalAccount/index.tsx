@@ -111,23 +111,72 @@ export function DisbursementWithInternalAccount(
     }
   };
 
+  const restoreCustomerDataFields = () => {
+    const person = customerData?.generalAttributeClientNaturalPersons?.[0];
+
+    formik.setFieldValue(
+      `${optionNameForm}.documentType`,
+      person?.typeIdentification || "",
+    );
+    formik.setFieldValue(
+      `${optionNameForm}.identification`,
+      customerData?.publicCode || "",
+    );
+    formik.setFieldValue(`${optionNameForm}.name`, person?.firstNames || "");
+    formik.setFieldValue(`${optionNameForm}.lastName`, person?.lastNames || "");
+    formik.setFieldValue(`${optionNameForm}.sex`, person?.gender || "");
+    formik.setFieldValue(
+      `${optionNameForm}.birthdate`,
+      person?.dateBirth || "",
+    );
+    formik.setFieldValue(
+      `${optionNameForm}.phone`,
+      person?.cellPhoneContact || "",
+    );
+    formik.setFieldValue(`${optionNameForm}.mail`, person?.emailContact || "");
+    formik.setFieldValue(
+      `${optionNameForm}.city`,
+      person?.zone?.split("-")[1] || "",
+    );
+    setCurrentIdentification(customerData?.publicCode || "");
+  };
+
+  const clearFields = () => {
+    const fields = [
+      "documentType",
+      "name",
+      "lastName",
+      "sex",
+      "birthdate",
+      "phone",
+      "mail",
+      "city",
+      "identification",
+      "accountNumber",
+    ];
+
+    fields.forEach((field) => {
+      formik.setFieldValue(`${optionNameForm}.${field}`, "");
+    });
+  };
+
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
     formik.setFieldValue(`${optionNameForm}.toggle`, isChecked);
 
     if (isChecked) {
-      formik.setFieldValue(`${optionNameForm}.documentType`, "");
-      formik.setFieldValue(`${optionNameForm}.name`, "");
-      formik.setFieldValue(`${optionNameForm}.lastName`, "");
-      formik.setFieldValue(`${optionNameForm}.sex`, "");
-      formik.setFieldValue(`${optionNameForm}.birthdate`, "");
-      formik.setFieldValue(`${optionNameForm}.phone`, "");
-      formik.setFieldValue(`${optionNameForm}.mail`, "");
-      formik.setFieldValue(`${optionNameForm}.city`, "");
-      formik.setFieldValue(`${optionNameForm}.identification`, "");
-      setCurrentIdentification(identificationNumber);
+      restoreCustomerDataFields();
+    } else {
+      clearFields();
     }
   };
+
+  useEffect(() => {
+    const initialToggle = formik.values[optionNameForm]?.toggle;
+    if (initialToggle) {
+      restoreCustomerDataFields();
+    }
+  }, []);
 
   const identificationValue = formik.values[optionNameForm]?.identification;
 
@@ -143,7 +192,6 @@ export function DisbursementWithInternalAccount(
       formik.setFieldValue(`${optionNameForm}.city`, "");
       setIsAutoCompleted(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identificationValue, currentIdentification, isAutoCompleted]);
 
   useEffect(() => {
@@ -153,7 +201,6 @@ export function DisbursementWithInternalAccount(
     if (currentAmount + totalAmount - currentAmount !== initialValues.amount) {
       formik.setFieldValue(`${optionNameForm}.check`, false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values[optionNameForm]?.amount]);
 
   useEffect(() => {
@@ -175,6 +222,10 @@ export function DisbursementWithInternalAccount(
 
         if (hasData && customer.publicCode !== customerData?.publicCode) {
           setCurrentIdentification(identification);
+          formik.setFieldValue(
+            `${optionNameForm}.documentType`,
+            data.typeIdentification || "",
+          );
           formik.setFieldValue(`${optionNameForm}.name`, data.firstNames || "");
           formik.setFieldValue(
             `${optionNameForm}.lastName`,
@@ -209,7 +260,6 @@ export function DisbursementWithInternalAccount(
     };
 
     fetchCustomer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values[optionNameForm]?.identification]);
 
   useEffect(() => {
@@ -231,7 +281,7 @@ export function DisbursementWithInternalAccount(
             uniqueMap.set(key, {
               id: account.savingProductCode,
               label: `${account.productDescription} - ${account.savingProductCode}`,
-              value: `${account.productDescription} - ${account.savingProductCode}`,
+              value: `${account.savingProductCode}`,
             });
           }
         });
@@ -240,11 +290,11 @@ export function DisbursementWithInternalAccount(
       } catch (error) {
         handleFlag(error);
         console.error("Error fetching internal accounts:", error);
+        setAccountOptions([]);
       }
     }
 
     fetchAccounts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIdentification, businessUnitPublicCode]);
 
   const previousIdentificationRef = useRef<string>();
@@ -257,13 +307,12 @@ export function DisbursementWithInternalAccount(
       }
 
       if (previousIdentificationRef.current !== currentIdentification) {
-        formik.setFieldValue(`${optionNameForm}.account`, "");
+        formik.setFieldValue(`${optionNameForm}.accountNumber`, "");
         previousIdentificationRef.current = currentIdentification;
       }
     }, 500);
 
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIdentification]);
 
   return (
@@ -352,17 +401,17 @@ export function DisbursementWithInternalAccount(
         </>
       )}
       <Select
-        id={`${optionNameForm}.account`}
-        name={`${optionNameForm}.account`}
+        id={`${optionNameForm}.accountNumber`}
+        name={`${optionNameForm}.accountNumber`}
         label={disbursemenOptionAccount.labelAccount}
         placeholder={disbursemenOptionAccount.placeOption}
         size="compact"
         options={accountOptions}
         onBlur={formik.handleBlur}
         onChange={(_, value) =>
-          formik.setFieldValue(`${optionNameForm}.account`, value)
+          formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
         }
-        value={formik.values[optionNameForm]?.account || ""}
+        value={formik.values[optionNameForm]?.accountNumber || ""}
         fullwidth
       />
       <Textarea

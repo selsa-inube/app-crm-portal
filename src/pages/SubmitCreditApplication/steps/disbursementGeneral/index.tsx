@@ -4,6 +4,7 @@ import { Stack, Tabs } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { AppContext } from "@context/AppContext";
+import { ICustomerData } from "@context/CustomerContext/types";
 
 import { DisbursementWithInternalAccount } from "./disbursementWithInternalAccount/index";
 import { DisbursementWithExternalAccount } from "./disbursementWithExternalAccount";
@@ -25,6 +26,7 @@ interface IDisbursementGeneralProps {
   handleOnChange: (values: any) => void;
   handleTabChange: (id: string) => void;
   rule?: string[];
+  customerData?: ICustomerData;
 }
 
 interface Tab {
@@ -43,6 +45,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     handleOnChange,
     handleTabChange,
     rule,
+    customerData,
   } = props;
 
   const [tabChanged, setTabChanged] = useState(false);
@@ -110,6 +113,25 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
 
     setValidTabs(availableTabs);
 
+    if (availableTabs.length === 1) {
+      const tabId = availableTabs[0].id;
+      if (tabId === disbursemenTabs.internal.id) {
+        formik.setFieldValue("Internal.amount", initialValues.amount);
+      }
+      if (tabId === disbursemenTabs.external.id) {
+        formik.setFieldValue("External.amount", initialValues.amount);
+      }
+      if (tabId === disbursemenTabs.check.id) {
+        formik.setFieldValue("CheckEntity.amount", initialValues.amount);
+      }
+      if (tabId === disbursemenTabs.management.id) {
+        formik.setFieldValue("CheckManagement.amount", initialValues.amount);
+      }
+      if (tabId === disbursemenTabs.cash.id) {
+        formik.setFieldValue("Cash.amount", initialValues.amount);
+      }
+    }
+
     if (availableTabs.length > 0 && !userHasChangedTab.current) {
       handleTabChange(availableTabs[0].id);
     }
@@ -117,14 +139,13 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
 
   useEffect(() => {
     fetchTabs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleManualTabChange = (tabId: string) => {
     userHasChangedTab.current = true;
     handleTabChange(tabId);
   };
-  console.log("rule", rule);
+
   return (
     <Fieldset>
       <Stack
@@ -150,6 +171,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
               getTotalAmount={getTotalAmount}
               businessUnitPublicCode={businessUnitPublicCode}
               identificationNumber={identificationNumber}
+              customerData={customerData}
             />
           )}
           {isSelected === disbursemenTabs.external.id && (

@@ -5,7 +5,7 @@ import { ISubmitCredit } from "./types";
 const postSubmitCredit = async (
   businessUnitPublicCode: string,
   userAccount: string,
-  submitData: ISubmitCredit,
+  submitData: FormData,
 ): Promise<ISubmitCredit | undefined> => {
   const requestUrl = `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-requests`;
 
@@ -16,9 +16,8 @@ const postSubmitCredit = async (
         "X-Action": "SubmitCreditApplication",
         "X-Business-Unit": businessUnitPublicCode,
         "X-User-Name": userAccount,
-        "Content-type": "application/json; charset=UTF-8",
       },
-      body: JSON.stringify(submitData),
+      body: submitData,
     };
 
     const res = await fetch(requestUrl, options);

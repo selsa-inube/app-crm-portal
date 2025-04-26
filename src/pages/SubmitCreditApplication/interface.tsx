@@ -17,7 +17,7 @@ import { disbursemenTabs } from "@pages/SubmitCreditApplication/steps/disburseme
 import { GeneralHeader } from "@pages/addProspect/components/GeneralHeader/";
 import { ICustomerData } from "@context/CustomerContext/types";
 
-import { FormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
+import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { stepsFilingApplication } from "./config/filingApplication.config";
@@ -40,7 +40,7 @@ interface SubmitCreditApplicationUIProps {
   currentStepsNumber: StepDetails;
   steps: IStep[];
   isCurrentFormValid: boolean;
-  formData: FormData;
+  formData: IFormData;
   isMobile: boolean;
   prospectCode: string;
   sentModal: boolean;
@@ -50,7 +50,7 @@ interface SubmitCreditApplicationUIProps {
   getRuleByName: (name: string) => string[];
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
   setApprovedRequestModal: React.Dispatch<React.SetStateAction<boolean>>;
-  handleFormChange: (updatedValues: Partial<FormData>) => void;
+  handleFormChange: (updatedValues: Partial<IFormData>) => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   handleNextStep: () => void;
   handlePreviousStep: () => void;
@@ -58,7 +58,7 @@ interface SubmitCreditApplicationUIProps {
   handleSubmit: () => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any;
+  prospectData: any;
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
@@ -87,7 +87,7 @@ export function SubmitCreditApplicationUI(
     handleSubmitClick,
     handleSubmit,
     setIsCurrentFormValid,
-    data,
+    prospectData,
     customerData,
     codeError,
     addToFix,
@@ -146,13 +146,13 @@ export function SubmitCreditApplicationUI(
                     />
                     <Text type="title" size="large">
                       {`${submitCreditApplicationConfig.title}
-                  ${data?.prospect_code}`}
+                  ${prospectData?.prospect_code}`}
                     </Text>
                   </Stack>
                 </StyledArrowBack>
                 <Text type="body" size="medium" appearance="gray">
                   {`${dataSubmitApplication.cards.destination}
-              ${data.money_destination_abbreviated_name}`}
+              ${prospectData.money_destination_abbreviated_name}`}
                 </Text>
               </Stack>
               <Stack direction="column" gap="6px">
@@ -212,7 +212,7 @@ export function SubmitCreditApplicationUI(
                     handleOnChange={(values) =>
                       handleFormChange({ borrowerData: values })
                     }
-                    data={data}
+                    data={prospectData}
                     valueRule={getRuleByName("ValidationCoBorrower")}
                   />
                 )}
@@ -248,7 +248,7 @@ export function SubmitCreditApplicationUI(
                     handleOnChange={(values) =>
                       handleFormChange({ bail: values })
                     }
-                    data={data}
+                    data={prospectData}
                   />
                 )}
               {currentStepsNumber &&
@@ -266,7 +266,8 @@ export function SubmitCreditApplicationUI(
                 )}
               {currentStepsNumber &&
                 currentStepsNumber.id ===
-                  stepsFilingApplication.disbursement.id && (
+                  stepsFilingApplication.disbursement.id &&
+                customerData && (
                   <DisbursementGeneral
                     isMobile={isMobile}
                     onFormValid={setIsCurrentFormValid}
@@ -276,7 +277,8 @@ export function SubmitCreditApplicationUI(
                     }
                     isSelected={isSelected || disbursemenTabs.internal.id}
                     handleTabChange={handleTabChange}
-                    data={data}
+                    data={prospectData}
+                    customerData={customerData}
                     identificationNumber={customerData?.publicCode || ""}
                     rule={getRuleByName("ModeOfDisbursementType")}
                   />
@@ -309,7 +311,7 @@ export function SubmitCreditApplicationUI(
                 <Text type="body" size="large">
                   {dataSubmitApplication.modals.fileDescription.replace(
                     "{numberProspectCode}",
-                    `${data?.prospect_code}` || "",
+                    `${prospectData?.prospect_code}` || "",
                   )}
                 </Text>
               </BaseModal>
@@ -342,8 +344,7 @@ export function SubmitCreditApplicationUI(
                       {dataSubmitApplication.modals.filed}
                     </Text>
                     <Text type="body" size="large" weight="bold">
-                      {`${data?.prospect_code?.slice(0, 2)}-${data?.prospect_code?.slice(2)}` ||
-                        ""}
+                      ${prospectData?.prospect_code}`
                     </Text>
                   </Stack>
                   <Text type="body" size="medium" appearance="gray">

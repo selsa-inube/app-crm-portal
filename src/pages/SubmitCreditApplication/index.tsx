@@ -11,7 +11,7 @@ import { getMonthsElapsed } from "@utils/formatData/currency";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { SubmitCreditApplicationUI } from "./interface";
-import { FormData } from "./types";
+import { IFormData } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
 import { dataSubmitApplication } from "./config/config";
@@ -46,7 +46,7 @@ export function SubmitCreditApplication() {
     {},
   );
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<IFormData>({
     contactInformation: {
       document: "",
       documentNumber: "",
@@ -93,7 +93,7 @@ export function SubmitCreditApplication() {
       amount: 10000000,
       Internal: {
         amount: "",
-        account: "",
+        accountNumber: "",
         description: "",
         name: "",
         lastName: "",
@@ -191,11 +191,10 @@ export function SubmitCreditApplication() {
 
   const steps = useMemo(() => {
     if (!valueRule) return Object.values(stepsFilingApplication);
-
-    const hideMortgage = valueRule["ValidationGuarantee"]?.includes("Hipoteca");
-    const hidePledge = valueRule["ValidationGuarantee"]?.includes("Prenda");
+    const hideMortgage = valueRule["ValidationGuarantee"]?.includes("Mortgage");
+    const hidePledge = valueRule["ValidationGuarantee"]?.includes("Pledge");
     const hasCoBorrower =
-      valueRule["ValidationCoBorrower"]?.includes("Codeudor");
+      valueRule["ValidationCoBorrower"]?.includes("CoBorrower") ?? false;
 
     return Object.values(stepsFilingApplication)
       .map((step) => {
@@ -226,85 +225,107 @@ export function SubmitCreditApplication() {
     propertyOffered,
     vehicleOffered,
     disbursementGeneral,
-    //attachedDocuments,
+    attachedDocuments,
   } = formData;
 
-  const submitData = {
-    clientEmail: contactInformation.email,
-    clientId: "33333",
-    clientIdentificationNumber: contactInformation.documentNumber,
-    clientIdentificationType: contactInformation.document,
-    clientName: `${contactInformation.name} ${contactInformation.lastName}`,
-    clientPhoneNumber: contactInformation.phone.toString(),
-    clientType: "333333",
-    justification: "",
-    loanAmount: 155555,
-    moneyDestinationAbreviatedName: "Vehiculo",
-    moneyDestinationId: "13698",
-    prospectCode: prospectData.prospect_code || "",
-    prospectId: prospectData.prospect_id, //crypto.randomUUID().toString(),
-    /*documents: Object.entries(attachedDocuments || {}).flatMap(
-      ([, docsArray]) =>
-        docsArray.map((doc) => ({
-          id: doc.id,
-          name: doc.name,
-        }))
-    ),*/
-    guarantees: [
-      {
-        guaranteeType: `mortgage${crypto.randomUUID().toString()}`,
+  const submitData = new FormData();
+  submitData.append("clientEmail", contactInformation.email);
+  submitData.append("clientId", "33333");
+  submitData.append(
+    "clientIdentificationNumber",
+    contactInformation.documentNumber,
+  );
+  submitData.append("clientIdentificationType", contactInformation.document);
+  submitData.append(
+    "clientName",
+    `${contactInformation.name} ${contactInformation.lastName}`,
+  );
+  submitData.append("clientPhoneNumber", contactInformation.phone.toString());
+  submitData.append(
+    "clientType",
+    customerData?.generalAttributeClientNaturalPersons?.[0].associateType,
+  );
+  submitData.append("justification", "Radicación con éxito");
+  submitData.append("loanAmount", "2000000");
+  submitData.append(
+    "moneyDestinationAbreviatedName",
+    prospectData.money_destination_abbreviated_name,
+  );
+  submitData.append("moneyDestinationId", "13698");
+  submitData.append("prospectCode", prospectData.prospect_code);
+  submitData.append("prospectId", prospectData.prospect_id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const metadataArray: any[] = [];
+  Object.entries(attachedDocuments || {}).forEach(([, docsArray]) => {
+    docsArray.forEach((doc) => {
+      submitData.append("file", doc.file);
+      metadataArray.push({
+        abbreviatedName: doc.name.split(".").slice(0, -1).join("."),
         transactionOperation: "Insert",
-        mortgages: [
-          {
-            descriptionUse: propertyOffered.description || "none",
-            propertyAge: propertyOffered.antique || 1,
-            propertyPrice: propertyOffered.estimated || 1,
-            propertyType: propertyOffered.state || "none",
-            transactionOperation: "Insert",
-          },
-        ],
-      },
-      {
-        guaranteeType: `pledge${crypto.randomUUID().toString()}`,
-        transactionOperation: "Insert",
-        pledges: [
-          {
-            descriptionUse: vehicleOffered.description || "none",
-            transactionOperation: "Insert",
-            vehiculeAge: vehicleOffered.model || new Date().getFullYear(),
-            vehiculePrice: vehicleOffered.value || 1,
-          },
-        ],
-      },
-    ],
-    modesOfDisbursement: Object.entries(disbursementGeneral)
-      .filter(([, value]) => {
-        return value.amount && value.amount !== "";
-      })
-      .map(([key, value]) => ({
-        accountBankCode: "100",
-        accountBankName: value.accountType || "none",
-        accountNumber: value.accountNumber || "none",
-        accountType: value.account?.split("- ")[1]?.trim() || "none",
-        disbursementAmount: value.amount || 1,
-        disbursementDate: "01/01/2025",
-        isInTheNameOfBorrower: value.check ? "Y" : "N",
-        modeOfDisbursementCode: "<string>",
-        modeOfDisbursementType: key,
-        observation: value.description || "none",
-        payeeBiologicalSex: value.sex === "man" ? "M" : "F",
-        payeeBirthday: value.birthdate || "01/01/2000",
-        payeeCityOfResidence: value.city || "none",
-        payeeEmail: value.mail || "none",
-        payeeIdentificationNumber: value.identification || "none",
-        payeeIdentificationType: value.documentType || "none",
-        payeeName: value.name || "none",
-        payeePersonType: "N",
-        payeePhoneNumber: value.phone || "none",
-        payeeSurname: value.lastName || "none",
-        transactionOperation: "Insert",
-      })),
-  };
+      });
+    });
+  });
+  submitData.append("documents", JSON.stringify(metadataArray));
+
+  const guarantees = [];
+
+  if (getRuleByName("ValidationGuarantee")?.includes("Mortgage")) {
+    guarantees.push({
+      guaranteeType: "mortgage",
+      transactionOperation: "Insert",
+      mortgages: [
+        {
+          descriptionUse: propertyOffered.description || "none",
+          propertyAge: propertyOffered.antique || 1,
+          propertyPrice: propertyOffered.estimated || 1,
+          propertyType: propertyOffered.state || "none",
+          transactionOperation: "Insert",
+        },
+      ],
+    });
+  }
+  if (getRuleByName("ValidationGuarantee")?.includes("Pledge")) {
+    guarantees.push({
+      guaranteeType: "pledge",
+      transactionOperation: "Insert",
+      pledges: [
+        {
+          descriptionUse: vehicleOffered.description || "none",
+          vehiculeAge: Number(vehicleOffered.model || new Date().getFullYear()),
+          vehiculePrice: vehicleOffered.value || 1,
+          transactionOperation: "Insert",
+        },
+      ],
+    });
+  }
+  submitData.append("guarantees", JSON.stringify(guarantees));
+
+  const disbursements = Object.entries(disbursementGeneral)
+    .filter(([, value]) => value.amount && value.amount !== "")
+    .map(([key, value]) => ({
+      accountBankCode: "100",
+      accountBankName: value.bank,
+      accountNumber: value.accountNumber,
+      accountType: value.accountType,
+      disbursementAmount: value.amount,
+      disbursementDate: new Date().toISOString().split("T")[0],
+      isInTheNameOfBorrower: value.toggle ? "Y" : "N",
+      modeOfDisbursementCode: "<>",
+      modeOfDisbursementType: key,
+      observation: value.description || "",
+      payeeBiologicalSex: value.sex === "man" ? "M" : "F",
+      payeeBirthday: value.birthdate,
+      payeeCityOfResidence: value.city,
+      payeeEmail: value.mail,
+      payeeIdentificationNumber: value.identification,
+      payeeIdentificationType: value.documentType,
+      payeeName: value.name,
+      payeePersonType: "N",
+      payeePhoneNumber: value.phone || "none",
+      payeeSurname: value.lastName || "none",
+      transactionOperation: "Insert",
+    }));
+  submitData.append("modesOfDisbursement", JSON.stringify(disbursements));
 
   const handleSubmit = async () => {
     try {
@@ -341,6 +362,7 @@ export function SubmitCreditApplication() {
         businessUnitPublicCode,
         prospectCode || "",
       );
+
       if (prospect && typeof prospect === "object") {
         if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
           setProspectData(prospect);
@@ -414,12 +436,14 @@ export function SubmitCreditApplication() {
   }, [businessUnitPublicCode]);
 
   useEffect(() => {
-    if (customerData && prospectData) {
-      fetchProspectData();
-      fetchValidationRules();
-    }
-  }, [fetchProspectData, fetchValidationRules]);
+    if (!customerData) return;
+    fetchProspectData();
+  }, [customerData, fetchProspectData]);
 
+  useEffect(() => {
+    if (!customerData || !prospectData) return;
+    fetchValidationRules();
+  }, [customerData, prospectData, fetchValidationRules]);
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     const creditProducts = prospectData?.credit_products;
@@ -474,7 +498,7 @@ export function SubmitCreditApplication() {
               extractedValues.length === 0
             ) {
               setCodeError(1014);
-              setAddToFix(["ModeOfDisbursementType"]);
+              setAddToFix([ruleName]);
               return;
             }
 
@@ -503,7 +527,7 @@ export function SubmitCreditApplication() {
     }
   }, [customerData, prospectData, fetchValidationRulesData]);
 
-  const handleFormChange = (updatedValues: Partial<FormData>) => {
+  const handleFormChange = (updatedValues: Partial<IFormData>) => {
     setFormData((prev) => {
       if (
         JSON.stringify(prev) !== JSON.stringify({ ...prev, ...updatedValues })
@@ -567,7 +591,7 @@ export function SubmitCreditApplication() {
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         isMobile={isMobile}
-        data={prospectData}
+        prospectData={prospectData}
         customerData={customerData}
         codeError={codeError}
         addToFix={addToFix}
