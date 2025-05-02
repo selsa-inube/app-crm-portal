@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Checkbox } from "@inubekit/checkbox";
 import { Stack, Text, Divider, Toggle } from "@inubekit/inubekit";
 import { Textarea } from "@inubekit/textarea";
@@ -15,6 +15,8 @@ import {
 } from "@pages/SubmitCreditApplication/steps/disbursementGeneral/config";
 import { GeneralInformationForm } from "@pages/SubmitCreditApplication/components/GeneralInformationForm";
 import { IDisbursementGeneral } from "@pages/SubmitCreditApplication/types";
+import { ICustomerData } from "@src/context/CustomerContext/types";
+import { getSearchCustomerByCode } from "@src/services/customers/AllCustomers";
 
 interface IDisbursementWithCashProps {
   isMobile: boolean;
@@ -22,6 +24,9 @@ interface IDisbursementWithCashProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formik: any;
   optionNameForm: string;
+  identificationNumber: string;
+  businessUnitPublicCode: string;
+  customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
   getTotalAmount: () => number;
@@ -33,12 +38,19 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
     initialValues,
     formik,
     optionNameForm,
+    identificationNumber,
+    businessUnitPublicCode,
+    customerData,
     onFormValid,
     handleOnChange,
     getTotalAmount,
   } = props;
 
   const prevValues = useRef(formik.values[optionNameForm]);
+
+  const [isAutoCompleted, setIsAutoCompleted] = useState(false);
+  const [currentIdentification, setCurrentIdentification] =
+    useState(identificationNumber);
 
   useEffect(() => {
     onFormValid(formik.isValid);
@@ -82,9 +94,161 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
     }
   };
 
-  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue(`${optionNameForm}.toggle`, event.target.checked);
+  const restoreCustomerDataFields = () => {
+    const person = customerData?.generalAttributeClientNaturalPersons?.[0];
+
+    formik.setFieldValue(
+      `${optionNameForm}.documentType`,
+      person?.typeIdentification || "",
+    );
+    formik.setFieldValue(
+      `${optionNameForm}.identification`,
+      customerData?.publicCode || "",
+    );
+    formik.setFieldValue(`${optionNameForm}.name`, person?.firstNames || "");
+    formik.setFieldValue(`${optionNameForm}.lastName`, person?.lastNames || "");
+    formik.setFieldValue(`${optionNameForm}.sex`, person?.gender || "");
+    formik.setFieldValue(
+      `${optionNameForm}.birthdate`,
+      person?.dateBirth || "",
+    );
+    formik.setFieldValue(
+      `${optionNameForm}.phone`,
+      person?.cellPhoneContact || "",
+    );
+    formik.setFieldValue(`${optionNameForm}.mail`, person?.emailContact || "");
+    formik.setFieldValue(
+      `${optionNameForm}.city`,
+      person?.zone?.split("-")[1] || "",
+    );
+    setCurrentIdentification(customerData?.publicCode || "");
   };
+
+  const clearFields = () => {
+    const fields = [
+      "documentType",
+      "name",
+      "lastName",
+      "sex",
+      "birthdate",
+      "phone",
+      "mail",
+      "city",
+      "identification",
+      "accountNumber",
+    ];
+
+    fields.forEach((field) => {
+      formik.setFieldValue(`${optionNameForm}.${field}`, "");
+    });
+  };
+
+  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    formik.setFieldValue(`${optionNameForm}.toggle`, isChecked);
+
+    if (isChecked) {
+      restoreCustomerDataFields();
+    } else {
+      clearFields();
+    }
+  };
+
+  useEffect(() => {
+    const initialToggle = formik.values[optionNameForm]?.toggle;
+    if (initialToggle && Number(initialValues.Cash.amount) > 0) {
+      restoreCustomerDataFields();
+    } else if (
+      Number(initialValues.Cash.amount) === 0 &&
+      initialValues.Cash.toggle === true
+    ) {
+      clearFields();
+    }
+  }, [initialValues.Cash.amount]);
+
+  const identificationValue = formik.values[optionNameForm]?.identification;
+
+  useEffect(() => {
+    if (isAutoCompleted && identificationValue !== currentIdentification) {
+      formik.setFieldValue(`${optionNameForm}.documentType`, "");
+      formik.setFieldValue(`${optionNameForm}.name`, "");
+      formik.setFieldValue(`${optionNameForm}.lastName`, "");
+      formik.setFieldValue(`${optionNameForm}.sex`, "");
+      formik.setFieldValue(`${optionNameForm}.birthdate`, "");
+      formik.setFieldValue(`${optionNameForm}.phone`, "");
+      formik.setFieldValue(`${optionNameForm}.mail`, "");
+      formik.setFieldValue(`${optionNameForm}.city`, "");
+      setIsAutoCompleted(false);
+    }
+  }, [identificationValue, currentIdentification, isAutoCompleted]);
+
+  useEffect(() => {
+    const currentAmount = Number(formik.values[optionNameForm]?.amount || 0);
+    const totalAmount = props.getTotalAmount();
+
+    if (currentAmount + totalAmount - currentAmount !== initialValues.amount) {
+      formik.setFieldValue(`${optionNameForm}.check`, false);
+    }
+  }, [formik.values[optionNameForm]?.amount]);
+
+  useEffect(() => {
+    const identification = formik.values[optionNameForm]?.identification;
+
+    const fetchCustomer = async () => {
+      if (!identification) return;
+
+      try {
+        const customer = await getSearchCustomerByCode(
+          identification,
+          businessUnitPublicCode,
+          true,
+        );
+
+        const data = customer?.generalAttributeClientNaturalPersons?.[0];
+
+        const hasData = customer?.publicCode && data;
+
+        if (hasData && customer.publicCode !== customerData?.publicCode) {
+          setCurrentIdentification(identification);
+          formik.setFieldValue(
+            `${optionNameForm}.documentType`,
+            data.typeIdentification || "",
+          );
+          formik.setFieldValue(`${optionNameForm}.name`, data.firstNames || "");
+          formik.setFieldValue(
+            `${optionNameForm}.lastName`,
+            data.lastNames || "",
+          );
+          formik.setFieldValue(`${optionNameForm}.sex`, data.gender || "");
+          formik.setFieldValue(
+            `${optionNameForm}.birthdate`,
+            data.dateBirth || "",
+          );
+          formik.setFieldValue(
+            `${optionNameForm}.phone`,
+            data.cellPhoneContact || "",
+          );
+          formik.setFieldValue(
+            `${optionNameForm}.mail`,
+            data.emailContact || "",
+          );
+          formik.setFieldValue(
+            `${optionNameForm}.city`,
+            data.zone?.split("-")[1] || "",
+          );
+
+          setIsAutoCompleted(true);
+        } else {
+          setIsAutoCompleted(false);
+          setCurrentIdentification(identificationNumber);
+        }
+      } catch (error) {
+        setIsAutoCompleted(false);
+      }
+    };
+
+    fetchCustomer();
+  }, [formik.values[optionNameForm]?.identification]);
 
   useEffect(() => {
     const currentAmount = Number(formik.values[optionNameForm]?.amount || 0);

@@ -70,10 +70,10 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
 
   const getTotalAmount = useCallback(() => {
     const disbursementForms = [
-      "Internal",
-      "External",
-      "CheckEntity",
-      "CheckManagement",
+      "Internal_account_payment",
+      "External_account_payment",
+      "Certified_check",
+      "Business_check",
       "Cash",
     ];
 
@@ -91,7 +91,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     const totalAmount = getTotalAmount();
     onFormValid(
       totalAmount === initialValues.amount &&
-        initialValues.Internal.account !== "",
+        initialValues.Internal_account_payment.account !== "",
     );
   }, [
     formik.values,
@@ -99,7 +99,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     tabChanged,
     getTotalAmount,
     initialValues.amount,
-    initialValues.Internal.account,
+    initialValues.Internal_account_payment.account,
   ]);
 
   const fetchTabs = useCallback(() => {
@@ -116,16 +116,22 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     if (availableTabs.length === 1) {
       const tabId = availableTabs[0].id;
       if (tabId === disbursemenTabs.internal.id) {
-        formik.setFieldValue("Internal.amount", initialValues.amount);
+        formik.setFieldValue(
+          "Internal_account_payment.amount",
+          initialValues.amount,
+        );
       }
       if (tabId === disbursemenTabs.external.id) {
-        formik.setFieldValue("External.amount", initialValues.amount);
+        formik.setFieldValue(
+          "External_account_payment.amount",
+          initialValues.amount,
+        );
       }
       if (tabId === disbursemenTabs.check.id) {
-        formik.setFieldValue("CheckEntity.amount", initialValues.amount);
+        formik.setFieldValue("Certified_check.amount", initialValues.amount);
       }
       if (tabId === disbursemenTabs.management.id) {
-        formik.setFieldValue("CheckManagement.amount", initialValues.amount);
+        formik.setFieldValue("Business_check.amount", initialValues.amount);
       }
       if (tabId === disbursemenTabs.cash.id) {
         formik.setFieldValue("Cash.amount", initialValues.amount);
@@ -160,64 +166,81 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
             onChange={handleManualTabChange}
             scroll={isMobile}
           />
-          {isSelected === disbursemenTabs.internal.id && (
-            <DisbursementWithInternalAccount
-              isMobile={isMobile}
-              onFormValid={onFormValid}
-              initialValues={initialValues}
-              handleOnChange={handleOnChange}
-              formik={formik}
-              optionNameForm="Internal"
-              getTotalAmount={getTotalAmount}
-              businessUnitPublicCode={businessUnitPublicCode}
-              identificationNumber={identificationNumber}
-              customerData={customerData}
-            />
-          )}
-          {isSelected === disbursemenTabs.external.id && (
-            <DisbursementWithExternalAccount
-              isMobile={isMobile}
-              onFormValid={onFormValid}
-              initialValues={initialValues}
-              handleOnChange={handleOnChange}
-              formik={formik}
-              optionNameForm="External"
-              getTotalAmount={getTotalAmount}
-            />
-          )}
-          {isSelected === disbursemenTabs.check.id && (
-            <DisbursementWithCheckEntity
-              isMobile={isMobile}
-              onFormValid={onFormValid}
-              initialValues={initialValues}
-              handleOnChange={handleOnChange}
-              formik={formik}
-              optionNameForm="CheckEntity"
-              getTotalAmount={getTotalAmount}
-            />
-          )}
-          {isSelected === disbursemenTabs.management.id && (
-            <DisbursementWithCheckManagement
-              isMobile={isMobile}
-              onFormValid={onFormValid}
-              initialValues={initialValues}
-              handleOnChange={handleOnChange}
-              formik={formik}
-              optionNameForm="CheckManagement"
-              getTotalAmount={getTotalAmount}
-            />
-          )}
-          {isSelected === disbursemenTabs.cash.id && (
-            <DisbursementWithCash
-              isMobile={isMobile}
-              onFormValid={onFormValid}
-              initialValues={initialValues}
-              handleOnChange={handleOnChange}
-              formik={formik}
-              optionNameForm="Cash"
-              getTotalAmount={getTotalAmount}
-            />
-          )}
+          {validTabs.some((tab) => tab.id === disbursemenTabs.internal.id) &&
+            isSelected === disbursemenTabs.internal.id && (
+              <DisbursementWithInternalAccount
+                isMobile={isMobile}
+                onFormValid={onFormValid}
+                initialValues={initialValues}
+                handleOnChange={handleOnChange}
+                formik={formik}
+                optionNameForm="Internal_account_payment"
+                getTotalAmount={getTotalAmount}
+                businessUnitPublicCode={businessUnitPublicCode}
+                identificationNumber={identificationNumber}
+                customerData={customerData}
+              />
+            )}
+          {validTabs.some((tab) => tab.id === disbursemenTabs.external.id) &&
+            isSelected === disbursemenTabs.external.id && (
+              <DisbursementWithExternalAccount
+                isMobile={isMobile}
+                onFormValid={onFormValid}
+                initialValues={initialValues}
+                handleOnChange={handleOnChange}
+                formik={formik}
+                optionNameForm="External_account_payment"
+                getTotalAmount={getTotalAmount}
+                businessUnitPublicCode={businessUnitPublicCode}
+                identificationNumber={identificationNumber}
+                customerData={customerData}
+              />
+            )}
+          {validTabs.some((tab) => tab.id === disbursemenTabs.check.id) &&
+            isSelected === disbursemenTabs.check.id && (
+              <DisbursementWithCheckEntity
+                isMobile={isMobile}
+                onFormValid={onFormValid}
+                initialValues={initialValues}
+                handleOnChange={handleOnChange}
+                formik={formik}
+                optionNameForm="Certified_check"
+                getTotalAmount={getTotalAmount}
+                businessUnitPublicCode={businessUnitPublicCode}
+                identificationNumber={identificationNumber}
+                customerData={customerData}
+              />
+            )}
+          {validTabs.some((tab) => tab.id === disbursemenTabs.management.id) &&
+            isSelected === disbursemenTabs.management.id && (
+              <DisbursementWithCheckManagement
+                isMobile={isMobile}
+                onFormValid={onFormValid}
+                initialValues={initialValues}
+                handleOnChange={handleOnChange}
+                formik={formik}
+                optionNameForm="Business_check"
+                getTotalAmount={getTotalAmount}
+                businessUnitPublicCode={businessUnitPublicCode}
+                identificationNumber={identificationNumber}
+                customerData={customerData}
+              />
+            )}
+          {validTabs.some((tab) => tab.id === disbursemenTabs.cash.id) &&
+            isSelected === disbursemenTabs.cash.id && (
+              <DisbursementWithCash
+                isMobile={isMobile}
+                onFormValid={onFormValid}
+                initialValues={initialValues}
+                handleOnChange={handleOnChange}
+                formik={formik}
+                optionNameForm="Cash"
+                getTotalAmount={getTotalAmount}
+                businessUnitPublicCode={businessUnitPublicCode}
+                identificationNumber={identificationNumber}
+                customerData={customerData}
+              />
+            )}
         </Stack>
       </Stack>
     </Fieldset>

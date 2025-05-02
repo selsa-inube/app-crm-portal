@@ -344,7 +344,7 @@ export function SubmitCreditApplicationUI(
                       {dataSubmitApplication.modals.filed}
                     </Text>
                     <Text type="body" size="large" weight="bold">
-                      ${prospectData?.prospect_code}`
+                      {prospectData?.prospect_code}
                     </Text>
                   </Stack>
                   <Text type="body" size="medium" appearance="gray">

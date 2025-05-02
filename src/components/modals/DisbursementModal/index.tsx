@@ -35,13 +35,13 @@ export function DisbursementModal(
       tabData && Object.values(tabData).some((value) => value !== "");
 
     switch (tab.id) {
-      case "Internal":
+      case "Internal_account_payment":
         return hasValidData(data.internal);
-      case "External":
+      case "External_account_payment":
         return hasValidData(data.external);
-      case "CheckEntity":
+      case "Certified_check":
         return hasValidData(data.CheckEntity);
-      case "CheckManagement":
+      case "Business_check":
         return hasValidData(data.checkManagementData);
       case "Cash":
         return hasValidData(data.cash);
