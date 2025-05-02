@@ -300,7 +300,7 @@ export const ListModal = (props: IListModalProps) => {
               </Button>
               <input
                 type="file"
-                accept="application/pdf"
+                accept="application/pdf,.jpg,.jpeg,.png"
                 style={{ display: "none" }}
                 ref={fileInputRef}
                 onChange={handleFileChange}

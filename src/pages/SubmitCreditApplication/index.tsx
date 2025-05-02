@@ -91,7 +91,7 @@ export function SubmitCreditApplication() {
     },
     disbursementGeneral: {
       amount: 10000000,
-      Internal: {
+      Internal_account_payment: {
         amount: "",
         accountNumber: "",
         description: "",
@@ -107,7 +107,7 @@ export function SubmitCreditApplication() {
         toggle: true,
         documentType: "",
       },
-      External: {
+      External_account_payment: {
         amount: "",
         check: false,
         toggle: true,
@@ -125,7 +125,7 @@ export function SubmitCreditApplication() {
         accountNumber: "",
         documentType: "",
       },
-      CheckEntity: {
+      Certified_check: {
         amount: "",
         check: false,
         toggle: true,
@@ -140,7 +140,7 @@ export function SubmitCreditApplication() {
         mail: "",
         city: "",
       },
-      CheckManagement: {
+      Business_check: {
         amount: "",
         check: false,
         toggle: true,

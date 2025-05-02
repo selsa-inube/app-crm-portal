@@ -173,10 +173,18 @@ export function DisbursementWithInternalAccount(
 
   useEffect(() => {
     const initialToggle = formik.values[optionNameForm]?.toggle;
-    if (initialToggle) {
+    if (
+      initialToggle &&
+      Number(initialValues.Internal_account_payment.amount) > 0
+    ) {
       restoreCustomerDataFields();
+    } else if (
+      Number(initialValues.Internal_account_payment.amount) === 0 &&
+      initialValues.Internal_account_payment.toggle === true
+    ) {
+      clearFields();
     }
-  }, []);
+  }, [initialValues.Internal_account_payment.amount]);
 
   const identificationValue = formik.values[optionNameForm]?.identification;
 
