@@ -3,9 +3,12 @@ import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/ty
 
 const validateBusinessUnits = async (
   publicCode: string,
-  userAccount: string,
+  identificationDocumentNumber: string,
 ): Promise<IBusinessUnitsPortalStaff[]> => {
-  const newData = await getBusinessUnitsPortalStaff(publicCode, userAccount);
+  const newData = await getBusinessUnitsPortalStaff(
+    publicCode,
+    identificationDocumentNumber,
+  );
 
   return newData;
 };

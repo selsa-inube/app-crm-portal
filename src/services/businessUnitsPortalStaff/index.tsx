@@ -5,9 +5,9 @@ import { mapBusinessUnitsPortalStaffToEntity } from "./mappers";
 
 const getBusinessUnitsPortalStaff = async (
   publicCode: string,
-  userAccount: string,
+  identificationDocumentNumber: string,
 ): Promise<IBusinessUnitsPortalStaff[]> => {
-  const requestUrl = `${environment.IVITE_IPORTAL_STAFF_QUERY_PROCESS_SERVICE}/business-units-portal-staff/${userAccount}/${publicCode}`;
+  const requestUrl = `${environment.IVITE_IPORTAL_STAFF_QUERY_PROCESS_SERVICE}/business-units-portal-staff/${identificationDocumentNumber}/${publicCode}`;
 
   try {
     const options: RequestInit = {
