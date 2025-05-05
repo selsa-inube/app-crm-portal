@@ -15,7 +15,7 @@ const useLogin = () => {
     if (eventData.portal.publicCode) {
       validateBusinessUnits(
         eventData.portal.publicCode,
-        eventData.user.userAccount,
+        eventData.user.userAccount.substring(0, 20),
       ).then((data) => {
         setBusinessUnitsToTheStaff(data);
         if (!setBusinessUnitsToTheStaff) {

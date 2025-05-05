@@ -58,7 +58,9 @@ function useAppContext() {
         if (!staffData.length) return;
 
         const matchedStaff = staffData.find(
-          (staff) => staff.userAccount === user?.email,
+          (staff) =>
+            staff.identificationDocumentNumber ===
+            user?.email?.substring(0, 20),
         );
 
         if (matchedStaff) {
