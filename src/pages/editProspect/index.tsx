@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdOutlineBeachAccess, MdOutlineShare } from "react-icons/md";
 import {
   Stack,
@@ -25,15 +25,25 @@ export function EditProspect() {
   const [showShareModal, setShowShareModal] = useState(false);
 
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { prospectCode } = useParams();
+  const { customerPublicCode, prospectCode } = useParams();
 
   const data = mockEditProspect[0];
 
   const { customerData } = useContext(CustomerContext);
+  const navigate = useNavigate();
+
   const dataHeader = {
     name: customerData.fullName,
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
+  };
+
+  const handleSubmitClick = () => {
+    setTimeout(() => {
+      navigate(
+        `/credit/submit-credit-application/${customerPublicCode}/67eb62079cdd4c16064c45be`,
+      );
+    }, 1000);
   };
 
   return (
@@ -157,7 +167,9 @@ export function EditProspect() {
                 <Button appearance="danger" variant="outlined">
                   {dataEditProspect.delete}
                 </Button>
-                <Button>{dataEditProspect.confirm}</Button>
+                <Button onClick={handleSubmitClick}>
+                  {dataEditProspect.confirm}
+                </Button>
               </Stack>
             </StyledPrint>
           </Stack>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MdArrowBack } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Assisted,
   Breadcrumbs,
@@ -42,7 +42,6 @@ interface SubmitCreditApplicationUIProps {
   isCurrentFormValid: boolean;
   formData: IFormData;
   isMobile: boolean;
-  prospectCode: string;
   sentModal: boolean;
   approvedRequestModal: boolean;
   numberProspectCode: string;
@@ -75,7 +74,6 @@ export function SubmitCreditApplicationUI(
     formData,
     isMobile,
     dataHeader,
-    prospectCode,
     sentModal,
     approvedRequestModal,
     getRuleByName,
@@ -94,6 +92,7 @@ export function SubmitCreditApplicationUI(
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
+  const { customerPublicCode, prospectCode } = useParams();
 
   const handleTabChange = (tabId: string) => {
     setIsSelected(tabId);
@@ -102,12 +101,7 @@ export function SubmitCreditApplicationUI(
   const navigate = useNavigate();
 
   const handleHome = () => {
-    navigate(
-      submitCreditApplicationConfig.route.replace(
-        ":prospectCode",
-        prospectCode,
-      ),
-    );
+    navigate(`/credit/edit-prospect/${customerPublicCode}/${prospectCode}`);
   };
 
   return (

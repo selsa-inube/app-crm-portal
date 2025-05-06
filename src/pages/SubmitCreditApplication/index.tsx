@@ -577,7 +577,6 @@ export function SubmitCreditApplication() {
         setIsCurrentFormValid={setIsCurrentFormValid}
         formData={formData}
         dataHeader={dataHeader}
-        prospectCode={prospectCode || ""}
         sentModal={sentModal}
         approvedRequestModal={approvedRequestModal}
         numberProspectCode={prospectCode || ""}
