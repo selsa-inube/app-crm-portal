@@ -193,12 +193,12 @@ export function SubmitCreditApplication() {
     if (!valueRule) return Object.values(stepsFilingApplication);
     const hideMortgage = valueRule["ValidationGuarantee"]?.includes("Mortgage");
     const hidePledge = valueRule["ValidationGuarantee"]?.includes("Pledge");
-    const hasCoBorrower =
-      valueRule["ValidationCoBorrower"]?.includes("CoBorrower") ?? false;
+    const hasCoborrower =
+      valueRule["ValidationCoborrower"]?.includes("Coborrower") ?? false;
 
     return Object.values(stepsFilingApplication)
       .map((step) => {
-        if (step.id === 3 && hasBorrowers === 1 && hasCoBorrower === true) {
+        if (step.id === 3 && hasBorrowers === 1 && hasCoborrower === true) {
           return {
             ...step,
             name: dataSubmitApplication.coBorrowers.stepName,
@@ -329,7 +329,6 @@ export function SubmitCreditApplication() {
 
   const handleSubmit = async () => {
     try {
-      console.log("Enviando datos:", submitData);
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         userAccount,
@@ -369,7 +368,7 @@ export function SubmitCreditApplication() {
         }
       }
       const mainBorrower = prospect.borrowers.find(
-        (borrower) => borrower.borrower_type === "main_borrower",
+        (borrower) => borrower.borrower_type === "MainBorrower",
       );
 
       if (mainBorrower?.borrower_identification_number !== customerPublicCode) {
