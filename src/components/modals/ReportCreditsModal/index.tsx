@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
-import { Button } from "@inubekit/button";
-import { Stack, SkeletonLine, useMediaQuery } from "@inubekit/inubekit";
-import { Select } from "@inubekit/select";
+
+import {
+  Stack,
+  SkeletonLine,
+  useMediaQuery,
+  Button,
+  Select,
+} from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";

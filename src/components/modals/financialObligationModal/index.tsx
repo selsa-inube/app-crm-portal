@@ -2,9 +2,14 @@ import { Formik, FormikValues } from "formik";
 import localforage from "localforage";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney, MdOutlineTag } from "react-icons/md";
-import { Textfield } from "@inubekit/textfield";
-import { Select } from "@inubekit/select";
-import { Icon, Grid, useMediaQuery } from "@inubekit/inubekit";
+
+import {
+  Icon,
+  Grid,
+  useMediaQuery,
+  Textfield,
+  Select,
+} from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { ITableFinancialObligationsProps } from "@pages/prospect/components/TableObligationsFinancial";
@@ -77,10 +82,7 @@ function FinancialObligationModal(props: FinancialObligationModalProps) {
       );
       await localforage.setItem("financial_obligation", updatedData);
     } else {
-      const newItem = {
-        ...updatedValues,
-        id: Date.now(),
-      };
+      const newItem = { ...updatedValues, id: Date.now() };
       await localforage.setItem("financial_obligation", [
         ...storedData,
         newItem,
