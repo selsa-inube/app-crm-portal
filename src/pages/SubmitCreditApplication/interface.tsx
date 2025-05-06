@@ -30,7 +30,7 @@ import { AttachedDocuments } from "./steps/attachedDocuments";
 import { DisbursementGeneral } from "./steps/disbursementGeneral";
 import { submitCreditApplicationConfig } from "./config/submitCreditApplication.config";
 import { dataSubmitApplication } from "./config/config";
-import { SummaryProspectCredit } from "@pages/prospect/outlets/CommercialManagement/config/config";
+import { SummaryProspectCredit } from "@src/pages/prospect/outlets/CardCommercialManagement/config/config";
 import { CardValues } from "@components/cards/cardValues";
 import { mockCommercialManagement } from "@mocks/financialReporting/commercialmanagement.mock";
 import { ErrorPage } from "@components/layout/ErrorPage";

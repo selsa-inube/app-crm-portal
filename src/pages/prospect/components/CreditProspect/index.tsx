@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
@@ -26,12 +26,12 @@ import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
 import {
   incomeOptions,
   menuOptions,
-} from "@pages/prospect/outlets/CommercialManagement/config/config";
+} from "@src/pages/prospect/outlets/CardCommercialManagement/config/config";
 import {
   StyledContainerIcon,
   StyledVerticalDivider,
-} from "@pages/prospect/outlets/CommercialManagement/styles";
-import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
+} from "@src/pages/prospect/outlets/CardCommercialManagement/styles";
+import { CardCommercialManagement } from "@src/pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
 
 import { dataCreditProspect } from "./config";
 import { StyledPrint } from "./styles";
@@ -67,6 +67,7 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const [prospectProducts, setProspectProducts] =
     useState<ICreditProductProspect>();
+  const dataCommercialManagementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (id) {
@@ -213,7 +214,11 @@ export function CreditProspect(props: ICreditProspectProps) {
         </StyledPrint>
       )}
       <Stack direction="column">
-        <LoadingAppUI />
+        <CardCommercialManagement
+          id={id!}
+          dataRef={dataCommercialManagementRef}
+          onClick={() => handleOpenModal("editProductModal")}
+        />
       </Stack>
       {currentModal === "creditLimit" && (
         <CreditLimit

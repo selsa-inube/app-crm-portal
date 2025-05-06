@@ -25,7 +25,7 @@ export function EditProspect() {
   const [showShareModal, setShowShareModal] = useState(false);
 
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { id } = useParams();
+  const { prospectCode } = useParams();
 
   const data = mockEditProspect[0];
 
@@ -73,7 +73,7 @@ export function EditProspect() {
                       size="large"
                       appearance="gray"
                     >
-                      #{id}
+                      #{prospectCode}
                     </Text>
                   </Stack>
                   <StyledPrint>

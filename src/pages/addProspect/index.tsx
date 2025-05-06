@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
@@ -25,6 +25,8 @@ export function AddProspect() {
   const navigate = useNavigate();
 
   const { customerData } = useContext(CustomerContext);
+  const { customerPublicCode } = useParams();
+
   const dataHeader = {
     name: customerData.fullName,
     status:
@@ -190,7 +192,7 @@ export function AddProspect() {
 
   const handleSubmitClick = () => {
     setTimeout(() => {
-      navigate(`/edit-prospect/${id.prospect}`);
+      navigate(`/credit/edit-prospect/${customerPublicCode}/${id.prospect}`);
     }, 1000);
   };
 

@@ -15,7 +15,7 @@ const useNavConfig = () => {
             id: "credit",
             label: "Crédito",
             icon: <MdOutlineCreditCard />,
-            path: "/credito",
+            path: "/credit/add-prospect/16378491",
             isActive: location.pathname.startsWith("/credit"),
           },
         },
