@@ -18,6 +18,7 @@ import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
+import { userMenu } from "@src/config/menuMainConfiguration";
 
 import {
   StyledAppPage,
@@ -32,7 +33,8 @@ import {
   StyledFooter,
   StyledPrint,
 } from "./styles";
-import { userMenu } from "@src/config/menuMainConfiguration";
+
+import { useNavigationConfig } from "./config/apps.config";
 
 const renderLogo = (imgUrl: string) => {
   return (
@@ -129,6 +131,7 @@ function AppPage() {
           <StyledHeaderContainer>
             <Header
               logoURL={renderLogo(eventData.businessUnit.urlLogo)}
+              navigation={useNavigationConfig()}
               user={{
                 username: eventData.user.userName,
                 breakpoint: "848px",
