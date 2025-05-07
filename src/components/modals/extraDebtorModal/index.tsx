@@ -1,7 +1,6 @@
 import { Formik, FormikValues } from "formik";
 import * as Yup from "yup";
 import localforage from "localforage";
-
 import { Select, Stack, Textfield, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
