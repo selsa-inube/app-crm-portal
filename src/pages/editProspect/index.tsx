@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdOutlineBeachAccess, MdOutlineShare } from "react-icons/md";
 import {
@@ -16,6 +16,9 @@ import { CreditProspect } from "@pages/prospect/components/CreditProspect";
 import { mockEditProspect } from "@mocks/add-prospect/edit-prospect/editprospect.mock";
 import { GeneralHeader } from "@pages/addProspect/components/GeneralHeader";
 import { CustomerContext } from "@context/CustomerContext";
+import { getSearchProspectById } from "@services/prospects";
+import { IProspect } from "@services/prospects/types";
+import { AppContext } from "@context/AppContext";
 
 import { StyledMarginPrint, StyledPrint } from "./styles";
 import { dataEditProspect } from "./config";
@@ -23,9 +26,14 @@ import { dataEditProspect } from "./config";
 export function EditProspect() {
   const [showMenu, setShowMenu] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [dataProspect, setDataProspect] = useState<IProspect>();
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { customerPublicCode, prospectCode } = useParams();
+
+  const { businessUnitSigla } = useContext(AppContext);
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const data = mockEditProspect[0];
 
@@ -45,6 +53,22 @@ export function EditProspect() {
       );
     }, 1000);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getSearchProspectById(
+          businessUnitPublicCode,
+          "67eb62079cdd4c16064c45be", //ojo
+        );
+        setDataProspect(Array.isArray(result) ? result[0] : result);
+      } catch (error) {
+        console.error("Error al obtener los prospectos:", error);
+      }
+    };
+
+    fetchData();
+  }, [businessUnitPublicCode]);
 
   return (
     <>
@@ -160,6 +184,7 @@ export function EditProspect() {
                 showMenu={() => setShowMenu(false)}
                 showPrint={true}
                 isPrint={true}
+                prospectData={dataProspect!}
               />
             </Fieldset>
             <StyledPrint>
