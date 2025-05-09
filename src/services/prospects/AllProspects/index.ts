@@ -4,11 +4,10 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 import { IProspect } from "./types";
-
 const getAllProspects = async (
   businessUnitPublicCode: string,
   prospectCode: string,
-): Promise<IProspect> => {
+): Promise<IProspect | IProspect[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -16,33 +15,27 @@ const getAllProspects = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-      // const queryParams = new URLSearchParams({
-      //   prospectCode: prospectCode,
-      // });
-
+      const queryParams = new URLSearchParams({
+        prospectCode: prospectCode,
+      });
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "SearchByIdProspect",
+          "X-Action": "SearchAllProspects",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
       };
-
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
+        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects?${queryParams.toString()}`,
         options,
       );
-
       clearTimeout(timeoutId);
-
       if (res.status === 204) {
         throw new Error("No hay tarea disponible.");
       }
-
       const data = await res.json();
-
       if (!res.ok) {
         throw {
           message: "Error al obtener la tarea.",
@@ -51,8 +44,9 @@ const getAllProspects = async (
         };
       }
 
-      if (Array.isArray(data) && data.length > 0) {
-        return data[0];
+      if (Array.isArray(data)) {
+        return data;
+        return data as IProspect[];
       }
 
       return data;
@@ -65,8 +59,6 @@ const getAllProspects = async (
       }
     }
   }
-
   throw new Error("No se pudo obtener la tarea después de varios intentos.");
 };
-
 export { getAllProspects };

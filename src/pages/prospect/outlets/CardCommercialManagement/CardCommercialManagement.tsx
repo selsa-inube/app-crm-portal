@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Stack, Divider, useMediaQuery } from "@inubekit/inubekit";
 
 import { CreditProductCard } from "@components/cards/CreditProductCard";
@@ -6,11 +6,11 @@ import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCar
 import { CardValues } from "@components/cards/cardValues";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ConsolidatedCredits } from "@pages/prospect/components/modals/ConsolidatedCreditModal";
-import { ICreditProductProspect } from "@services/types";
 import { SummaryProspectCredit } from "./config/config";
 import { deleteCreditProductMock } from "@mocks/utils/deleteCreditProductMock.service";
-import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
 import { mockCommercialManagement } from "@mocks/financialReporting/commercialmanagement.mock";
+import { IProspect, ICreditProduct } from "@services/prospects/types";
+import { Schedule } from "@services/enums";
 
 import { StyledCardsCredit, StyledPrint } from "./styles";
 
@@ -18,32 +18,27 @@ interface CardCommercialManagementProps {
   id: string;
   dataRef: React.RefObject<HTMLDivElement>;
   onClick: () => void;
+  prospectData?: IProspect;
   refreshProducts?: () => void;
 }
 
 export const CardCommercialManagement = (
   props: CardCommercialManagementProps,
 ) => {
-  const { dataRef, id, onClick } = props;
-  const [prospectProducts, setProspectProducts] = useState<
-    ICreditProductProspect[]
-  >([]);
+  const { dataRef, id, onClick, prospectData } = props;
+  const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
+    [],
+  );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
 
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
-  const loadProspectProducts = useCallback(() => {
-    const foundProspect = mockProspectCredit.find(
-      (prospect) => prospect.public_code === id,
-    );
-    if (foundProspect) {
-      setProspectProducts(foundProspect.credit_product);
-    }
-  }, [id]);
 
   useEffect(() => {
-    loadProspectProducts();
-  }, [loadProspectProducts]);
+    if (prospectData?.credit_products) {
+      setProspectProducts(prospectData?.credit_products);
+    }
+  }, [prospectData]);
 
   const isMobile = useMediaQuery("(max-width: 800px)");
 
@@ -76,16 +71,17 @@ export const CardCommercialManagement = (
               key={`${entry.credit_product_code}-${index}`}
               lineOfCredit={entry.line_of_credit_abbreviated_name}
               paymentMethod={
-                entry.ordinary_installment_for_principal
-                  ?.payment_channel_code || ""
+                entry.ordinary_installments_for_principal?.[0]
+                  ?.payment_channel_abbreviated
               }
               loanAmount={entry.loan_amount}
               interestRate={entry.interest_rate}
               termMonths={entry.loan_term}
               periodicFee={
-                entry.ordinary_installment_for_principal?.gradient_value || 0
+                entry.ordinary_installments_for_principal?.[0]
+                  ?.installment_amount
               }
-              schedule={entry.schedule}
+              schedule={entry.schedule as Schedule}
               onEdit={() => {}}
               onDelete={() => handleDeleteClick(entry.credit_product_code)}
             />

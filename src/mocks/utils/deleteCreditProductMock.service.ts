@@ -1,13 +1,11 @@
 import { updateActive } from "@mocks/utils/dataMock.service";
-import { ICreditProductProspect } from "@services/types";
+import { ICreditProduct } from "@services/prospects/types";
 
 export async function deleteCreditProductMock(
   id: string,
   selectedProductId: string | null,
-  prospectProducts: ICreditProductProspect[],
-  setProspectProducts: React.Dispatch<
-    React.SetStateAction<ICreditProductProspect[]>
-  >,
+  prospectProducts: ICreditProduct[],
+  setProspectProducts: React.Dispatch<React.SetStateAction<ICreditProduct[]>>,
 ) {
   if (!selectedProductId) return;
 
