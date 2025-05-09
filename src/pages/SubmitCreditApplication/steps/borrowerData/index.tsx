@@ -13,8 +13,9 @@ import { DebtorEditModal } from "@pages/prospect/components/modals/DebtorEditMod
 import { dataSubmitApplication } from "@pages/SubmitCreditApplication/config/config";
 import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
+import { getPropertyValue } from "@utils/mappingData/mappings";
 
-import { getPropertyValue, getTotalFinancialObligations } from "../../util";
+import { getTotalFinancialObligations } from "../../util";
 import { BorrowerProperty } from "@services/incomeSources/types";
 import { IBorrowerData } from "@pages/SubmitCreditApplication/types";
 import { IProspect } from "@services/types";
