@@ -22,6 +22,7 @@ interface IFieldsetProps {
   isMobile?: boolean;
   isClickable?: boolean;
   selectedState?: boolean;
+  width?: string;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -37,6 +38,7 @@ export const Fieldset = (props: IFieldsetProps) => {
     hasOverflow = false,
     isClickable = false,
     selectedState = false,
+    width = "-webkit-fill-available",
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -56,8 +58,9 @@ export const Fieldset = (props: IFieldsetProps) => {
     <Stack
       direction="column"
       gap="8px"
-      width="-webkit-fill-available"
+      width={width}
       height={!isMobile ? heightFieldset : "auto"}
+      padding="0 0 16px 0"
     >
       <Stack justifyContent={activeButton && "space-between"}>
         <Stack gap={isMobile ? "12px" : "8px"}>
