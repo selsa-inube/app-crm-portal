@@ -1,13 +1,4 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getPropertyValue = (properties: any[], propertyName: string) => {
-  return (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    properties.find((prop: any) => prop.property_name === propertyName)
-      ?.property_value || ""
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getTotalFinancialObligations = (properties: any[]) => {
   return properties
     .filter((prop) => prop.property_name === "FinancialObligation")

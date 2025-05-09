@@ -1,7 +1,7 @@
 import { Stack, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
-import { getPropertyValue } from "@pages/SubmitCreditApplication/util";
+import { getPropertyValue } from "@utils/mappingData/mappings";
 
 import { DataEditBorrower } from "./config";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

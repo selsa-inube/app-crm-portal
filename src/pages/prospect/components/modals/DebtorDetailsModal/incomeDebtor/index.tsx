@@ -2,7 +2,7 @@ import { Stack } from "@inubekit/inubekit";
 
 import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
-import { getPropertyValue } from "@pages/SubmitCreditApplication/util";
+import { getPropertyValue } from "@utils/mappingData/mappings";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { dataIncomeDebtor } from "./config";

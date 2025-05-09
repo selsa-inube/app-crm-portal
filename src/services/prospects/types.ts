@@ -30,7 +30,7 @@ export interface IOrdinaryInstallmentsForPrincipal {
   gradient_value: number;
   gradient_schedule: string;
   first_gradient_date: Date;
-  payment_channel_abbreviated_name: string;
+  payment_channel_abbreviated: string;
 }
 
 export interface IInstallmentsForInterest {
