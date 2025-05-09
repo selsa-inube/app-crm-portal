@@ -314,6 +314,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         <ExtraordinaryPaymentModal
           dataTable={extraordinaryInstallmentMock}
           handleClose={handleCloseModal}
+          prospectData={prospectData}
         />
       )}
       {showShareModal && (

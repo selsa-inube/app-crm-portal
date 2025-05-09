@@ -65,7 +65,9 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
               name="datePayment"
               id="datePayment"
               label={dataEditSeriesModal.labelDate}
-              value={formik.values.datePayment}
+              value={
+                formik.values.datePayment.toString("yyyy-MM-dd").split("T")[0]
+              }
               onChange={(e) =>
                 formik.setFieldValue("datePayment", e.target.value)
               }
