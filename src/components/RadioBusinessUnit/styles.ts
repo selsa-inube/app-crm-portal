@@ -7,10 +7,10 @@ export const StyledRadioBusinessUnit = styled.label`
     min-height: 58px;
     box-shadow: 1px 2px 2px 1px
       ${({ theme }) =>
-        theme?.color?.surface?.gray?.regular || inube.palette.neutral.N30};
+        theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
     border: 1px solid
       ${({ theme }) =>
-        theme?.color?.surface?.gray?.regular || inube.palette.neutral.N30};
+        theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
     cursor: pointer;
   }
 `;

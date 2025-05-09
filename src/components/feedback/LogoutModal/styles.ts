@@ -15,7 +15,7 @@ export const StyledBackdropBlanket = styled.div`
 
 export const StyledModal = styled.div<IStyledModal>`
   background-color: ${({ theme }) =>
-    theme?.color?.surface?.light?.clear || inube.palette.neutral.N0};
+    theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
   height: 100%;
   max-height: 180px;
   width: ${({ $isSmallScreen }) => ($isSmallScreen ? "312px" : "400px")};

@@ -1,5 +1,4 @@
-import { Stack } from "@inubekit/inubekit";
-import { Textfield } from "@inubekit/textfield";
+import { Stack, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { getPropertyValue } from "@pages/SubmitCreditApplication/util";

@@ -1,8 +1,7 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { MdInfoOutline } from "react-icons/md";
-import { Text, Stack, Icon } from "@inubekit/inubekit";
-import { Textfield } from "@inubekit/textfield";
+import { Text, Stack, Icon, Textfield } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 

@@ -5,7 +5,7 @@ export const StyledMenu = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) =>
-    theme?.color?.surface?.light?.clear || inube.palette.neutral.N0};
+    theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
   position: fixed;
   top: 56px;
   right: 0;
