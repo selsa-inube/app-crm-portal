@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import localforage from "localforage";
-import { Text, SkeletonLine, useMediaQuery } from "@inubekit/inubekit";
 import {
+  Text,
+  SkeletonLine,
+  useMediaQuery,
   Pagination,
   Table,
   Tbody,
@@ -10,7 +12,7 @@ import {
   Th,
   Thead,
   Tr,
-} from "@inubekit/table";
+} from "@inubekit/inubekit";
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { ListModal } from "@components/modals/ListModal";

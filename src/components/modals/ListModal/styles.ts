@@ -15,7 +15,7 @@ export const StyledModal = styled.div<IStyledModal>`
   flex-direction: column;
   width: ${({ $smallScreen }) => ($smallScreen ? "290px" : "510px")};
   background-color: ${({ theme }) =>
-    theme.color?.surface?.light?.clear || inube.palette.neutral.N0};
+    theme.palette?.neutral?.N0 || inube.palette.neutral.N0};
   padding: ${({ $smallScreen }) => ($smallScreen ? "16px" : "24px")};
   gap: ${({ $smallScreen }) => ($smallScreen ? "16px" : "24px")};
   border-radius: 8px;

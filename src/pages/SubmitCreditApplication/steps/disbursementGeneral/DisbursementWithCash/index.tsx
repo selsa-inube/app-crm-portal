@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Checkbox } from "@inubekit/checkbox";
-import { Stack, Text, Divider, Toggle } from "@inubekit/inubekit";
-import { Textarea } from "@inubekit/textarea";
-import { Textfield } from "@inubekit/textfield";
+import {
+  Stack,
+  Text,
+  Divider,
+  Toggle,
+  Textfield,
+  Textarea,
+  Checkbox,
+} from "@inubekit/inubekit";
 
 import {
   currencyFormat,

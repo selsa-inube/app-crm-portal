@@ -2,8 +2,7 @@ import { Formik, FormikValues } from "formik";
 import localforage from "localforage";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
-import { Textfield } from "@inubekit/textfield";
-import { Icon, Grid, useMediaQuery } from "@inubekit/inubekit";
+import { Icon, Grid, useMediaQuery, Textfield } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { ITableFinancialObligationsProps } from "@pages/prospect/components/TableObligationsFinancial";
@@ -56,10 +55,7 @@ function EditFinancialObligationModal(
       );
       await localforage.setItem("financial_obligation", updatedData);
     } else {
-      const newItem = {
-        ...values,
-        id: Date.now(),
-      };
+      const newItem = { ...values, id: Date.now() };
       await localforage.setItem("financial_obligation", [
         ...storedData,
         newItem,

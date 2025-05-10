@@ -1,9 +1,7 @@
 import { Formik, FormikValues } from "formik";
 import * as Yup from "yup";
 import localforage from "localforage";
-import { Textfield } from "@inubekit/textfield";
-import { Select } from "@inubekit/select";
-import { Stack, useMediaQuery } from "@inubekit/inubekit";
+import { Select, Stack, Textfield, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { ExtraDebtor } from "@pages/prospect/components/TableExtraDebtors";
@@ -61,10 +59,7 @@ function ExtraDebtorModal(props: ExtraDebtorModalProps) {
         );
         await localforage.setItem("extra_debtors", updatedData);
       } else {
-        await addItem("extra_debtors", {
-          id: crypto.randomUUID(),
-          ...values,
-        });
+        await addItem("extra_debtors", { id: crypto.randomUUID(), ...values });
       }
 
       onCloseModal();

@@ -1,6 +1,5 @@
 import { MdOutlineEmail, MdOutlinePhone } from "react-icons/md";
-import { Stack, inube, useMediaQuery } from "@inubekit/inubekit";
-import { Textfield } from "@inubekit/textfield";
+import { Stack, inube, useMediaQuery, Textfield } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 

@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Checkbox } from "@inubekit/checkbox";
-import { Select } from "@inubekit/select";
-import { Textarea } from "@inubekit/textarea";
-import { Textfield } from "@inubekit/textfield";
-import { Input } from "@inubekit/input";
-import { useFlag, Stack, Text, Divider, Toggle } from "@inubekit/inubekit";
+import {
+  useFlag,
+  Stack,
+  Text,
+  Divider,
+  Toggle,
+  Select,
+  Textfield,
+  Textarea,
+  Input,
+  Checkbox,
+} from "@inubekit/inubekit";
 
 import { typeAccount } from "@mocks/filing-application/disbursement-general/disbursementgeneral.mock";
 import {

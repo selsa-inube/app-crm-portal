@@ -10,8 +10,6 @@ import {
   Th,
   Thead,
   Tr,
-} from "@inubekit/table";
-import {
   Stack,
   Icon,
   Text,

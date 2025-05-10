@@ -7,8 +7,7 @@ export const StyledItem = styled.li`
   align-items: center;
   padding: 8px;
   border-bottom: 1px solid
-    ${({ theme }) =>
-      theme.color?.stroke?.divider?.regular || inube.palette.neutral.N40};
+    ${({ theme }) => theme.palette?.neutral?.N40 || inube.palette.neutral.N40};
 `;
 export const StyledMessageContainer = styled.div`
   position: fixed;
@@ -89,7 +88,7 @@ export const StyledHorizontalDivider = styled.hr<IStyledHorizontalDivider>`
   width: 2px;
   border: none;
   background-color: ${({ theme }) =>
-    theme?.color?.stroke?.divider?.regular || inube.palette.neutral.N40};
+    theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
   display: ${({ $isMobile }) => ($isMobile ? "none" : "block")};
 `;
 

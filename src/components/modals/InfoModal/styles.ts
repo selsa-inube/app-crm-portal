@@ -3,8 +3,7 @@ import { inube } from "@inubekit/inubekit";
 
 export const StyledContainer = styled.div`
   box-shadow: 8px 2px 8px
-    ${({ theme }) =>
-      theme?.color?.stroke?.divider?.regular || inube.palette.neutral.N40};
+    ${({ theme }) => theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
   background-color: white;
   border-radius: 4px;
   position: absolute;
