@@ -13,6 +13,7 @@ import { IProspect, ICreditProduct } from "@services/prospects/types";
 import { Schedule } from "@services/enums";
 
 import { StyledCardsCredit, StyledPrint } from "./styles";
+import { DeductibleExpensesModal } from "../../components/modals/DeductibleExpensesModal";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -33,7 +34,8 @@ export const CardCommercialManagement = (
   const [selectedProductId, setSelectedProductId] = useState("");
 
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
-
+  const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
+    useState(false);
   useEffect(() => {
     if (prospectData?.credit_products) {
       setProspectProducts(prospectData?.credit_products);
@@ -107,8 +109,8 @@ export const CardCommercialManagement = (
             }))}
             showIcon={entry.iconEdit}
             isMobile={isMobile}
-            handleEdit={() => true}
-            handleView={() => setShowConsolidatedModal(true)}
+            handleEdit={() => setShowConsolidatedModal(true)}
+            handleView={() => setDeductibleExpensesModal(true)}
           />
         ))}
       </Stack>
@@ -121,6 +123,12 @@ export const CardCommercialManagement = (
       {showConsolidatedModal && (
         <ConsolidatedCredits
           handleClose={() => setShowConsolidatedModal(false)}
+          prospectData={prospectData}
+        />
+      )}
+      {showDeductibleExpensesModal && (
+        <DeductibleExpensesModal
+          handleClose={() => setDeductibleExpensesModal(false)}
         />
       )}
     </div>
