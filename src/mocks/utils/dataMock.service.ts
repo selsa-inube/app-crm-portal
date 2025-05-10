@@ -1,5 +1,5 @@
 import localforage from "localforage";
-import { ICreditProductProspect } from "@services/types";
+import { ICreditProduct } from "@services/prospects/types";
 
 export async function intializedData<T>(option: string, data: T[]) {
   try {
@@ -62,7 +62,7 @@ interface functionActiveById {
   key: string;
   nameDB: string;
   identifier: number | string;
-  editData: { [key: string]: string | ICreditProductProspect[] };
+  editData: { [key: string]: string | ICreditProduct[] };
 }
 
 export async function updateActive(props: functionActiveById) {
