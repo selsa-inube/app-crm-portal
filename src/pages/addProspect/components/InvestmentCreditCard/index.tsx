@@ -3,10 +3,10 @@ import { Divider, Text, Stack } from "@inubekit/inubekit";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { StyledContainer, StyledInput } from "./styles";
+import { ModalConfig } from "@src/pages/prospect/components/modals/ConsolidatedCreditModal/config";
 
 interface InvestmentCreditCardProps {
   title: string;
-  code: string;
   codeValue: string;
   expired: string;
   expiredValue: number;
@@ -15,7 +15,6 @@ interface InvestmentCreditCardProps {
 
 export function InvestmentCreditCard({
   title,
-  code,
   codeValue,
   expired,
   expiredValue,
@@ -37,7 +36,7 @@ export function InvestmentCreditCard({
           <StyledInput>
             <Stack alignItems="center" justifyContent="space-between">
               <Text type="label" size="medium" weight="bold">
-                {code}
+                {ModalConfig.code}
               </Text>
               <Text type="body" size="small" appearance="gray">
                 {codeValue}

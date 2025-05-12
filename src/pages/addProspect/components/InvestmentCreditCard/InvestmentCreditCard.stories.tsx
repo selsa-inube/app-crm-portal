@@ -9,10 +9,6 @@ const meta: Meta<typeof InvestmentCreditCard> = {
       control: "text",
       description: "Título del card.",
     },
-    code: {
-      control: "text",
-      description: "Código que se muestra en el card.",
-    },
     codeValue: {
       control: "text",
       description: "Valor asociado al código.",
@@ -35,7 +31,6 @@ type Story = StoryObj<typeof InvestmentCreditCard>;
 export const Default: Story = {
   args: {
     title: "Crédito libre inversión",
-    code: "Código",
     codeValue: "10-12345",
     expired: "Valor vencido",
     expiredValue: 120000,
