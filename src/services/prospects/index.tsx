@@ -16,10 +16,6 @@ const getSearchProspectById = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-      // const queryParams = new URLSearchParams({
-      //   prospectCode: prospectCode,
-      // });
-
       const options: RequestInit = {
         method: "GET",
         headers: {

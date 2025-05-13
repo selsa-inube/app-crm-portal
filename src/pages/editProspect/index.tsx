@@ -16,7 +16,7 @@ import { CreditProspect } from "@pages/prospect/components/CreditProspect";
 import { mockEditProspect } from "@mocks/add-prospect/edit-prospect/editprospect.mock";
 import { GeneralHeader } from "@pages/addProspect/components/GeneralHeader";
 import { CustomerContext } from "@context/CustomerContext";
-import { getSearchProspectById } from "@services/prospects";
+import { getSearchProspectByCode } from "@services/prospects/AllProspects";
 import { IProspect } from "@services/prospects/types";
 import { AppContext } from "@context/AppContext";
 
@@ -57,9 +57,9 @@ export function EditProspect() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getSearchProspectById(
+        const result = await getSearchProspectByCode(
           businessUnitPublicCode,
-          "67eb62079cdd4c16064c45be", //ojo
+          prospectCode!,
         );
         setDataProspect(Array.isArray(result) ? result[0] : result);
       } catch (error) {
