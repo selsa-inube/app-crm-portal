@@ -10,7 +10,7 @@ export const StyledModal = styled.div<IStyledModal>`
   height: ${({ $smallScreen }) => ($smallScreen ? "176px" : "850px")};
   width: ${({ $smallScreen }) => ($smallScreen ? "335px" : "1312px")};
   background-color: ${({ theme }) =>
-    theme.color?.surface?.light?.clear || inube.palette.neutral.N0};
+    theme.palette?.neutral?.N0 || inube.palette.neutral.N0};
   padding: ${({ $smallScreen }) => ($smallScreen ? "16px" : "24px")};
   gap: ${({ $smallScreen }) => ($smallScreen ? "16px" : "24px")};
   border-radius: 8px;

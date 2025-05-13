@@ -1,3 +1,1 @@
-export const dataButtonRequirements = {
-  requirements: "Requisitos",
-};
+export const dataButtonRequirements = { requirements: "Requisitos" };
