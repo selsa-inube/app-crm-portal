@@ -8,6 +8,7 @@ import { patchValidateRequirements } from "@services/validateRequirements";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospects/types";
 import { IValidateRequirement } from "@services/validateRequirements/types";
+
 import { dataError } from "./config";
 
 interface IRequirementsNotMetProps {
@@ -84,7 +85,6 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             direction="column"
             alignItems="center"
           >
-            {" "}
             <Icon
               icon={<MdCheckCircleOutline />}
               appearance={"success"}
