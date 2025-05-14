@@ -112,32 +112,6 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
         </Stack>
       </Stack>
       <Stack gap="15px" justifyContent="center">
-        <Stack direction="column" alignItems="center" gap="8px">
-          <Text
-            size={isMobile ? "medium" : "small"}
-            type={isMobile ? "title" : "headline"}
-            weight={isMobile ? "bold" : "normal"}
-            appearance="gray"
-          >
-            {dataReport.totalBalance}
-          </Text>
-          <Text size="small" type="body" appearance="gray">
-            {dataReport.descriptionTotalBalance}
-          </Text>
-        </Stack>
-        <Stack direction="column" alignItems="center" gap="8px">
-          <Text
-            size={isMobile ? "medium" : "small"}
-            type={isMobile ? "title" : "headline"}
-            weight={isMobile ? "bold" : "normal"}
-            appearance="gray"
-          >
-            {dataReport.totalFee}
-          </Text>
-          <Text size="small" type="body" appearance="gray">
-            {dataReport.descriptionTotalFee}
-          </Text>
-        </Stack>
         {isOpenModal && (
           <ListModal
             title={dataReport.restore}
