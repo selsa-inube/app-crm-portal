@@ -37,10 +37,7 @@ export function AddProspect() {
     selectedDestination: "",
     selectedProducts: [],
     loanConditionState: {
-      toggles: {
-        quotaCapToggle: true,
-        maximumTermToggle: false,
-      },
+      toggles: { quotaCapToggle: true, maximumTermToggle: false },
       quotaCapValue: "",
       maximumTermValue: "",
     },
@@ -70,10 +67,7 @@ export function AddProspect() {
       periodicity: "",
       payAmount: "",
     },
-    consolidatedCreditSelections: {
-      totalCollected: 0,
-      selectedValues: {},
-    },
+    consolidatedCreditSelections: { totalCollected: 0, selectedValues: {} },
   });
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
@@ -83,10 +77,7 @@ export function AddProspect() {
     field: string,
     newValue: string | number | boolean,
   ) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [field]: newValue,
-    }));
+    setFormData((prevState) => ({ ...prevState, [field]: newValue }));
   };
 
   const handleConsolidatedCreditChange = (
@@ -192,7 +183,7 @@ export function AddProspect() {
 
   const handleSubmitClick = () => {
     setTimeout(() => {
-      navigate(`/credit/edit-prospect/${customerPublicCode}/${id.prospect}`);
+      navigate(`/credit/edit-prospect/${customerPublicCode}/SC-122254646`);
     }, 1000);
   };
 

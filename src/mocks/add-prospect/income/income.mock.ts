@@ -1,16 +1,16 @@
 import { IIncomeSources } from "@services/incomeSources/types";
 
 export const income: IIncomeSources = {
-  Dividends: 1500000,
+  Dividends: 850000,
   FinancialIncome: 0,
-  identificationNumber: "100222365",
+  identificationNumber: "16378491",
   identificationType: "Cedula",
-  Leases: 6000000,
-  name: "Maria",
+  Leases: 1400000,
+  name: "Andres Mauricio",
   OtherNonSalaryEmoluments: 0,
   PensionAllowances: 0,
-  PeriodicSalary: 1800000,
+  PeriodicSalary: 7500000,
   PersonalBusinessUtilities: 0,
-  ProfessionalFees: 2300000,
-  surname: "Lopez",
+  ProfessionalFees: 1500000,
+  surname: "Lenis Poveda",
 };
