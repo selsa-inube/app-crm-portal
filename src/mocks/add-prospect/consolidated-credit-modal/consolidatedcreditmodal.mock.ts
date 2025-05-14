@@ -1,6 +1,6 @@
 export const mockConsolidatedCreditModal = [
   {
-    collectedValue: 360000,
+    collectedValue: 1250000,
     dataNew_card: [
       {
         consolidated_credit_title: "Crédito vacaciones",

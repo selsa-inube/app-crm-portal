@@ -1,7 +1,7 @@
 export const ModalConfig = {
   closeButton: "Cerrar",
-  code: "Código",
-  terminated: "Vencimiento",
+  code: "Número de obligación",
+  terminated: "Próximo vencimiento",
   selectedText: "Obligaciones seleccionadas:",
   newObligations: "Nuevas obligaciones encontradas:",
   creditInvestment: "Crédito libre inversión",
