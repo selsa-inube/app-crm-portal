@@ -28,8 +28,8 @@ import {
   IOptionsSelect,
 } from "@pages/SubmitCreditApplication/types";
 import { getAllBancks } from "@services/banckAccount";
-import { ICustomerData } from "@src/context/CustomerContext/types";
-import { getSearchCustomerByCode } from "@src/services/customers/AllCustomers";
+import { ICustomerData } from "@context/CustomerContext/types";
+import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;

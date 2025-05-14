@@ -345,7 +345,6 @@ export function CreditProspect(props: ICreditProspectProps) {
         }));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBorrower]);
 
   return (

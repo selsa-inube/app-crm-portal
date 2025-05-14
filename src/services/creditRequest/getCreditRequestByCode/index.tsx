@@ -3,61 +3,67 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IProspect } from "./types";
-const getSearchProspectByCode = async (
+import { ICreditRequest } from "@services/types";
+
+import { mapCreditRequestToEntities } from "./mapper";
+
+export const getCreditRequestByCode = async (
   businessUnitPublicCode: string,
-  prospectCode: string,
-): Promise<IProspect> => {
+  creditRequestCode: string,
+): Promise<ICreditRequest[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const queryParams = new URLSearchParams({
-        prospectCode: prospectCode,
+        creditRequestCode: creditRequestCode,
       });
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "SearchAllProspects",
+          "X-Action": "SearchAllCreditRequestsInProgress",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
       };
+
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects?${queryParams.toString()}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests?${queryParams.toString()}`,
         options,
       );
+
       clearTimeout(timeoutId);
+
       if (res.status === 204) {
-        throw new Error("No hay tarea disponible.");
+        return [];
       }
+
       const data = await res.json();
+
       if (!res.ok) {
         throw {
-          message: "Error al obtener la tarea.",
+          message: "Error al obtener los ",
           status: res.status,
           data,
         };
       }
 
-      if (Array.isArray(data)) {
-        return data[0] as IProspect;
-      }
+      const normalizedCredit = Array.isArray(data)
+        ? mapCreditRequestToEntities(data)
+        : [];
 
-      return data;
+      return normalizedCredit;
     } catch (error) {
-      console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener la tarea.",
+          "Todos los intentos fallaron. No se pudieron obtener los procesos de consulta.",
         );
       }
     }
   }
-  throw new Error("No se pudo obtener la tarea después de varios intentos.");
+
+  return [];
 };
-export { getSearchProspectByCode };

@@ -20,8 +20,8 @@ import {
 } from "@pages/SubmitCreditApplication/steps/disbursementGeneral/config";
 import { GeneralInformationForm } from "@pages/SubmitCreditApplication/components/GeneralInformationForm";
 import { IDisbursementGeneral } from "@pages/SubmitCreditApplication/types";
-import { ICustomerData } from "@src/context/CustomerContext/types";
-import { getSearchCustomerByCode } from "@src/services/customers/AllCustomers";
+import { ICustomerData } from "@context/CustomerContext/types";
+import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 
 interface IDisbursementWithCheckEntityProps {
   isMobile: boolean;

@@ -16,6 +16,10 @@ import { BaseModal } from "@components/modals/baseModal";
 import { disbursemenTabs } from "@pages/SubmitCreditApplication/steps/disbursementGeneral/config";
 import { GeneralHeader } from "@pages/addProspect/components/GeneralHeader/";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { SummaryProspectCredit } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
+import { CardValues } from "@components/cards/cardValues";
+import { mockCommercialManagement } from "@mocks/financialReporting/commercialmanagement.mock";
+import { ErrorPage } from "@components/layout/ErrorPage";
 
 import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
@@ -30,10 +34,6 @@ import { AttachedDocuments } from "./steps/attachedDocuments";
 import { DisbursementGeneral } from "./steps/disbursementGeneral";
 import { submitCreditApplicationConfig } from "./config/submitCreditApplication.config";
 import { dataSubmitApplication } from "./config/config";
-import { SummaryProspectCredit } from "@src/pages/prospect/outlets/CardCommercialManagement/config/config";
-import { CardValues } from "@components/cards/cardValues";
-import { mockCommercialManagement } from "@mocks/financialReporting/commercialmanagement.mock";
-import { ErrorPage } from "@components/layout/ErrorPage";
 
 interface SubmitCreditApplicationUIProps {
   currentStep: number;
