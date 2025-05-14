@@ -1,5 +1,4 @@
-import { Assisted } from "@inubekit/assisted";
-import { Stack, Button } from "@inubekit/inubekit";
+import { Stack, Button, Assisted } from "@inubekit/inubekit";
 
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";

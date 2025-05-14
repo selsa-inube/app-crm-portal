@@ -1,10 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Select } from "@inubekit/select";
-import { Stack, Grid } from "@inubekit/inubekit";
-import { Textarea } from "@inubekit/textarea";
-import { Textfield } from "@inubekit/textfield";
+import { Stack, Grid, Select, Textarea, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { optionsOfferedstate } from "@mocks/filing-application/property-offered/propertyoffered.mock";

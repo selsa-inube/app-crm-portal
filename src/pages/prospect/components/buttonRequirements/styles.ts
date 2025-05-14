@@ -26,5 +26,6 @@ export const StyledButton = styled.div<IStyledButton>`
       theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
     font-size: 14px;
     font-family: Roboto;
+    z-index: 1;
   }
 `;

@@ -1,7 +1,7 @@
 import { Stack } from "@inubekit/inubekit";
 
 import { CardGray } from "@components/cards/CardGray";
-import { getPropertyValue } from "@pages/SubmitCreditApplication/util";
+import { getPropertyValue } from "@utils/mappingData/mappings";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 
 import { dataDebtor } from "./config";

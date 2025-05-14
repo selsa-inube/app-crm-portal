@@ -13,8 +13,6 @@ import {
   Th,
   Thead,
   Tr,
-} from "@inubekit/table";
-import {
   Icon,
   Text,
   SkeletonLine,

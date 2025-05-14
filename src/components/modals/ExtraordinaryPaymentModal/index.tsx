@@ -5,12 +5,14 @@ import { Stack, Icon, useMediaQuery, Button } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment";
 import { IExtraordinaryPayment } from "@services/types";
+import { IProspect } from "@services/prospects/types";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 
 import { TextLabels } from "./config";
 
 export interface ExtraordinaryPaymentModalProps {
   dataTable: IExtraordinaryPayment[];
+  prospectData?: IProspect;
   handleClose: () => void;
   onClickDetails?: (id: string) => void;
   onClickEdit?: (id: string) => void;
@@ -20,7 +22,7 @@ export interface ExtraordinaryPaymentModalProps {
 export const ExtraordinaryPaymentModal = (
   props: ExtraordinaryPaymentModalProps,
 ) => {
-  const { handleClose } = props;
+  const { handleClose, prospectData } = props;
 
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -71,7 +73,7 @@ export const ExtraordinaryPaymentModal = (
           </Button>
         </Stack>
         <Stack>
-          <TableExtraordinaryInstallment />
+          <TableExtraordinaryInstallment prospectData={prospectData} />
         </Stack>
         {isAddSeriesModalOpen && (
           <AddSeriesModal

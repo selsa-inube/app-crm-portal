@@ -1,9 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { Button } from "@inubekit/button";
+import { Button } from "@inubekit/inubekit";
 
 import { ReciprocityModal, ReciprocityModalProps } from ".";
-
 const meta: Meta<typeof ReciprocityModal> = {
   title: "components/modals/ReciprocityModal",
   component: ReciprocityModal,

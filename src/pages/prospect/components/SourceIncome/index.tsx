@@ -259,6 +259,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
         <IncomeModal
           handleClose={() => setIsOpenEditModal(false)}
           disabled={false}
+          onSubmit={() => {}}
         />
       )}
     </StyledContainer>
