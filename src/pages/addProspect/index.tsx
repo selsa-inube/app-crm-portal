@@ -71,8 +71,6 @@ export function AddProspect() {
   });
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
-  const id = prospectId[0];
-
   const handleFormDataChange = (
     field: string,
     newValue: string | number | boolean,
