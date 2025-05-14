@@ -4,10 +4,10 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 import { IProspect } from "./types";
-const getAllProspects = async (
+const getSearchProspectByCode = async (
   businessUnitPublicCode: string,
   prospectCode: string,
-): Promise<IProspect | IProspect[]> => {
+): Promise<IProspect> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -45,8 +45,7 @@ const getAllProspects = async (
       }
 
       if (Array.isArray(data)) {
-        return data;
-        return data as IProspect[];
+        return data[0] as IProspect;
       }
 
       return data;
@@ -61,4 +60,4 @@ const getAllProspects = async (
   }
   throw new Error("No se pudo obtener la tarea después de varios intentos.");
 };
-export { getAllProspects };
+export { getSearchProspectByCode };
