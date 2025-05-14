@@ -83,12 +83,14 @@ export const TableExtraordinaryInstallment = (
     if (prospectData?.credit_products) {
       const extraordinaryInstallments = prospectData.credit_products.flatMap(
         (product) =>
-          product.extraordinary_installments.map((installment) => ({
-            id: `${product.credit_product_code}-${installment.installment_date}`,
-            datePayment: installment.installment_date,
-            value: installment.installment_amount,
-            paymentMethod: installment.payment_channel_abbreviated_name,
-          })),
+          Array.isArray(product.extraordinary_installments)
+            ? product.extraordinary_installments.map((installment) => ({
+                id: `${product.credit_product_code}-${installment.installment_date}`,
+                datePayment: installment.installment_date,
+                value: installment.installment_amount,
+                paymentMethod: installment.payment_channel_abbreviated_name,
+              }))
+            : [],
       );
 
       setExtraordinaryInstallments(extraordinaryInstallments);
