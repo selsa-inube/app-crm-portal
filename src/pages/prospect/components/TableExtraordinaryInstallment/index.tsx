@@ -81,8 +81,8 @@ export const TableExtraordinaryInstallment = (
 
   useEffect(() => {
     if (prospectData?.credit_products) {
-      const extraordinaryInstallments = prospectData.credit_products.flatMap(
-        (product) =>
+      const extraordinaryInstallmentsUpdate =
+        prospectData.credit_products.flatMap((product) =>
           Array.isArray(product.extraordinary_installments)
             ? product.extraordinary_installments.map((installment) => ({
                 id: `${product.credit_product_code}-${installment.installment_date}`,
@@ -91,9 +91,8 @@ export const TableExtraordinaryInstallment = (
                 paymentMethod: installment.payment_channel_abbreviated_name,
               }))
             : [],
-      );
-
-      setExtraordinaryInstallments(extraordinaryInstallments);
+        );
+      setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
     setLoading(false);
   }, [prospectData, refreshKey]);

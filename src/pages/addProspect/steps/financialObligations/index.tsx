@@ -103,11 +103,13 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
         <Stack
           width="auto"
           justifyContent="center"
+          direction="column"
           margin={isMobile ? "none" : "16px"}
         >
           <TableFinancialObligations
             refreshKey={refreshKey}
             showActions={true}
+            showButtons={false}
           />
         </Stack>
       </Stack>
