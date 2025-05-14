@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
-import { prospectId } from "@mocks/add-prospect/edit-prospect/prospectid.mock";
 import { CustomerContext } from "@context/CustomerContext";
 
 import { stepsAddProspect } from "./config/addProspect.config";
