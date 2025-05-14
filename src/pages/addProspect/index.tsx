@@ -7,7 +7,6 @@ import { prospectId } from "@mocks/add-prospect/edit-prospect/prospectid.mock";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
-import { getSearchProspectById } from "@services/prospects";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 
 import { stepsAddProspect } from "./config/addProspect.config";
@@ -90,9 +89,6 @@ export function AddProspect() {
     {},
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [prospectData, setProspectData] = useState<Record<string, any>>({}); //quitarlo
-
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
@@ -113,36 +109,6 @@ export function AddProspect() {
     },
     [valueRule],
   );
-
-  const fetchProspectData = useCallback(async () => {
-    //quitar
-    try {
-      const prospect = await getSearchProspectById(
-        businessUnitPublicCode,
-        "67eb62079cdd4c16064c45b",
-      );
-
-      if (prospect && typeof prospect === "object") {
-        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
-          setProspectData(prospect);
-        }
-      }
-      const mainBorrower = prospect.borrowers.find(
-        (borrower) => borrower.borrower_type === "MainBorrower",
-      );
-
-      if (mainBorrower?.borrower_identification_number !== customerPublicCode) {
-        return;
-      }
-
-      if (prospect.state !== "Created") {
-        console.log("error");
-        return;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [businessUnitPublicCode, customerPublicCode, prospectData]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanConditions = (rule: any) => {
@@ -199,12 +165,11 @@ export function AddProspect() {
 
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    const creditProducts = prospectData?.credit_products;
 
-    if (!clientInfo.associateType) return;
+    if (!clientInfo?.associateType) return;
 
     const dataRulesBase = {
-      MoneyDestination: "New_homes",
+      MoneyDestination: formData.selectedDestination,
       ClientType: clientInfo.associateType?.substring(0, 1) || "",
       EmploymentContractTermType:
         clientInfo.employmentType?.substring(0, 2) || "",
@@ -220,29 +185,14 @@ export function AddProspect() {
       "PercentagePayableViaExtraInstallments",
     ];
 
-    for (const product of creditProducts) {
-      if (!product || typeof product !== "object") continue;
+    const products = [{}];
 
-      const dataRules = {
-        ...dataRulesBase,
-      };
+    for (const product of products) {
+      const dataRules = { ...dataRulesBase };
       await Promise.all(
         rulesValidate.map(async (ruleName) => {
           const rule = ruleConfig[ruleName]?.(dataRules);
           if (!rule) return;
-
-          console.log(
-            "Regla ModeOfDisbursementType",
-            ruleConfig["ModeOfDisbursementType"]?.(dataRules),
-          );
-          console.log(
-            "Regla lineOfCredit",
-            ruleConfig["LineOfCredit"]?.(dataRules),
-          );
-          console.log(
-            "Regla PercentagePayableViaExtraInstallments",
-            ruleConfig["PercentagePayableViaExtraInstallments"]?.(dataRules),
-          );
 
           try {
             const values = await evaluateRule(
@@ -271,24 +221,13 @@ export function AddProspect() {
         }),
       );
     }
-  }, [customerData, businessUnitPublicCode]);
-
-  // console.log(getRuleByName("LineOfCredit"), "lineOfCredit");
-  // console.log(
-  //   getRuleByName("PercentagePayableViaExtraInstallments"),
-  //   "PercentagePayableViaExtraInstallments",
-  // );
+  }, [customerData, businessUnitPublicCode, formData.selectedDestination]);
 
   useEffect(() => {
-    if (!customerData) return;
-    fetchProspectData();
-  }, [customerData, fetchProspectData]);
-
-  useEffect(() => {
-    if (customerData && prospectData) {
+    if (customerData) {
       fetchValidationRulesData();
     }
-  }, [customerData, prospectData, fetchValidationRulesData]);
+  }, [customerData, fetchValidationRulesData]);
 
   const id = prospectId[0];
 
