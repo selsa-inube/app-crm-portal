@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
-import { prospectId } from "@mocks/add-prospect/edit-prospect/prospectid.mock";
 import { CustomerContext } from "@context/CustomerContext";
 
 import { stepsAddProspect } from "./config/addProspect.config";
@@ -37,10 +36,7 @@ export function AddProspect() {
     selectedDestination: "",
     selectedProducts: [],
     loanConditionState: {
-      toggles: {
-        quotaCapToggle: true,
-        maximumTermToggle: false,
-      },
+      toggles: { quotaCapToggle: true, maximumTermToggle: false },
       quotaCapValue: "",
       maximumTermValue: "",
     },
@@ -70,23 +66,15 @@ export function AddProspect() {
       periodicity: "",
       payAmount: "",
     },
-    consolidatedCreditSelections: {
-      totalCollected: 0,
-      selectedValues: {},
-    },
+    consolidatedCreditSelections: { totalCollected: 0, selectedValues: {} },
   });
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-
-  const id = prospectId[0];
 
   const handleFormDataChange = (
     field: string,
     newValue: string | number | boolean,
   ) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [field]: newValue,
-    }));
+    setFormData((prevState) => ({ ...prevState, [field]: newValue }));
   };
 
   const handleConsolidatedCreditChange = (
@@ -192,7 +180,7 @@ export function AddProspect() {
 
   const handleSubmitClick = () => {
     setTimeout(() => {
-      navigate(`/credit/edit-prospect/${customerPublicCode}/${id.prospect}`);
+      navigate(`/credit/edit-prospect/${customerPublicCode}/SC-122254646`);
     }, 1000);
   };
 

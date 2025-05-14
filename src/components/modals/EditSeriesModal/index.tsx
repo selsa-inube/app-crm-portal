@@ -1,14 +1,17 @@
 import * as Yup from "yup";
-import localforage from "localforage";
 import { Formik, FormikValues } from "formik";
 import { MdOutlineAttachMoney } from "react-icons/md";
-import { Textfield } from "@inubekit/textfield";
-import { Select } from "@inubekit/select";
-import { Stack, inube, useMediaQuery } from "@inubekit/inubekit";
-import { Datefield } from "@inubekit/datefield";
+import {
+  Select,
+  Stack,
+  Textfield,
+  inube,
+  useMediaQuery,
+  Date,
+} from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { TableExtraordinaryInstallmentProps } from "@pages/prospect/components/TableExtraordinaryInstallment";
+import { handleFormSubmit } from "@src/utils/handleFormSubmit";
 import {
   handleChangeWithCurrency,
   validateCurrencyField,
@@ -35,40 +38,12 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
     datePayment: Yup.date().required(""),
   });
 
-  const handleFormSubmit = async (values: FormikValues) => {
-    const storedData =
-      (await localforage.getItem<TableExtraordinaryInstallmentProps[]>(
-        "extraordinary_installments",
-      )) || [];
-
-    const updatedValues = {
-      ...values,
-    };
-
-    if (values.id) {
-      const updatedData = storedData.map((item) =>
-        item.id === values.id ? { ...item, ...updatedValues } : item,
-      );
-      await localforage.setItem("extraordinary_installments", updatedData);
-    } else {
-      const newItem = {
-        ...updatedValues,
-        id: Date.now(),
-      };
-      await localforage.setItem("extraordinary_installments", [
-        ...storedData,
-        newItem,
-      ]);
-    }
-    onConfirm(updatedValues);
-  };
-
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (values, formikHelpers) => {
-        await handleFormSubmit(values);
+        await handleFormSubmit(values, onConfirm);
         formikHelpers.setSubmitting(false);
         handleClose();
       }}
@@ -86,11 +61,13 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
           width={isMobile ? "280px" : "425px"}
         >
           <Stack gap="24px" direction="column">
-            <Datefield
+            <Date
               name="datePayment"
               id="datePayment"
               label={dataEditSeriesModal.labelDate}
-              value={formik.values.datePayment}
+              value={
+                formik.values.datePayment.toString("yyyy-MM-dd").split("T")[0]
+              }
               onChange={(e) =>
                 formik.setFieldValue("datePayment", e.target.value)
               }

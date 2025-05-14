@@ -90,11 +90,7 @@ export const mockProspectCredit: IProspect[] = [
       },
     ],
     outlay: [
-      {
-        date: "2024-01-15T23:59:59Z",
-        amount: 150,
-        abreviated_name: "prueba",
-      },
+      { date: "2024-01-15T23:59:59Z", amount: 150, abreviated_name: "prueba" },
     ],
   },
   {
@@ -195,7 +191,7 @@ export const mockProspectCredit: IProspect[] = [
     grace_period_type: GracePeriodType.InterestForgiveness,
     borrower: [
       {
-        borrower_name: "Maria Lopez",
+        borrower_name: "Andres Mauricio Lenis Poveda",
         borrower_type: "Principal",
         borrower_identification_type: "CC",
         borrower_identification_number: "987654321",

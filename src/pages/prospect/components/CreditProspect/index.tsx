@@ -7,7 +7,7 @@ import {
   MdOutlinePictureAsPdf,
   MdOutlineShare,
 } from "react-icons/md";
-import { Stack, Icon, Button } from "@inubekit/inubekit";
+import { Stack, Icon, Button, Select } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
 import { PaymentCapacity } from "@components/modals/PaymentCapacityModal";
@@ -16,6 +16,7 @@ import { ScoreModal } from "@components/modals/FrcModal";
 import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
+import { BaseModal } from "@components/modals/baseModal";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CreditLimit } from "@components/modals/CreditLimit";
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
@@ -26,29 +27,47 @@ import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
 import {
   incomeOptions,
   menuOptions,
-} from "@src/pages/prospect/outlets/CardCommercialManagement/config/config";
+} from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 import {
   StyledContainerIcon,
   StyledVerticalDivider,
-} from "@src/pages/prospect/outlets/CardCommercialManagement/styles";
-import { CardCommercialManagement } from "@src/pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
+} from "@pages/prospect/outlets/CardCommercialManagement/styles";
+import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
+import { IProspect } from "@services/prospects/types";
+import { getPropertyValue } from "@utils/mappingData/mappings";
 
+import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
 import { StyledPrint } from "./styles";
+import { IIncomeSources } from "./types";
 
 interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
+  prospectData?: IProspect;
   isPrint?: boolean;
   showPrint?: boolean;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
-  const { showMenu, isMobile, isPrint = false, showPrint = true } = props;
+  const {
+    prospectData,
+    showMenu,
+    isMobile,
+    isPrint = false,
+    showPrint = true,
+  } = props;
 
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const [openModal, setOpenModal] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [dataProspect, setDataProspect] = useState<IProspect[]>([]);
+  const [incomeData, setIncomeData] = useState<Record<string, IIncomeSources>>(
+    {},
+  );
+  const [prospectProducts, setProspectProducts] =
+    useState<ICreditProductProspect>();
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const handleOpenModal = (modalName: string) => {
     setModalHistory((prevHistory) => [...prevHistory, modalName]);
@@ -64,9 +83,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   };
 
   const { id } = useParams();
-
-  const [prospectProducts, setProspectProducts] =
-    useState<ICreditProductProspect>();
   const dataCommercialManagementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -138,6 +154,200 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   };
 
+  const borrowersProspect =
+    dataProspect.length > 0 ? dataProspect[0] : undefined;
+
+  const borrowerOptions =
+    borrowersProspect?.borrowers?.map((borrower) => ({
+      id: crypto.randomUUID(),
+      label: borrower.borrower_name,
+      value: borrower.borrower_name,
+    })) ?? [];
+
+  const handleChange = (_name: string, value: string) => {
+    const index = borrowersProspect?.borrowers?.findIndex(
+      (borrower) => borrower.borrower_name === value,
+    );
+    setSelectedIndex(index ?? 0);
+  };
+
+  const selectedBorrower = borrowersProspect?.borrowers?.[selectedIndex];
+
+  const handleIncomeSubmit = (updatedData: IIncomeSources) => {
+    if (selectedBorrower) {
+      const borrowerName = selectedBorrower.borrower_name;
+
+      setIncomeData((prev) => ({
+        ...prev,
+        [borrowerName]: {
+          ...updatedData,
+          edited: true,
+        },
+      }));
+
+      setDataProspect((prev) => {
+        return prev.map((prospect) => {
+          const updatedBorrowers = prospect.borrowers.map((borrower) => {
+            if (borrower.borrower_name === borrowerName) {
+              const updatedProperties = [
+                ...borrower.borrower_properties.filter(
+                  (prop) =>
+                    ![
+                      "PeriodicSalary",
+                      "OtherNonSalaryEmoluments",
+                      "PensionAllowances",
+                      "PersonalBusinessUtilities",
+                      "ProfessionalFees",
+                      "Leases",
+                      "Dividends",
+                      "FinancialIncome",
+                      "name",
+                      "surname",
+                    ].includes(prop.property_name),
+                ),
+                {
+                  property_name: "PeriodicSalary",
+                  property_value: updatedData.PeriodicSalary?.toString() || "0",
+                },
+                {
+                  property_name: "OtherNonSalaryEmoluments",
+                  property_value:
+                    updatedData.OtherNonSalaryEmoluments?.toString() || "0",
+                },
+                {
+                  property_name: "PensionAllowances",
+                  property_value:
+                    updatedData.PensionAllowances?.toString() || "0",
+                },
+                {
+                  property_name: "PersonalBusinessUtilities",
+                  property_value:
+                    updatedData.PersonalBusinessUtilities?.toString() || "0",
+                },
+                {
+                  property_name: "ProfessionalFees",
+                  property_value:
+                    updatedData.ProfessionalFees?.toString() || "0",
+                },
+                {
+                  property_name: "Leases",
+                  property_value: updatedData.Leases?.toString() || "0",
+                },
+                {
+                  property_name: "Dividends",
+                  property_value: updatedData.Dividends?.toString() || "0",
+                },
+                {
+                  property_name: "FinancialIncome",
+                  property_value:
+                    updatedData.FinancialIncome?.toString() || "0",
+                },
+                {
+                  property_name: "name",
+                  property_value: updatedData.name || "",
+                },
+                {
+                  property_name: "surname",
+                  property_value: updatedData.surname || "",
+                },
+              ];
+
+              return {
+                ...borrower,
+                borrower_properties: updatedProperties,
+              };
+            }
+            return borrower;
+          });
+
+          return {
+            ...prospect,
+            borrowers: updatedBorrowers,
+          };
+        });
+      });
+      setOpenModal(null);
+    }
+  };
+
+  useEffect(() => {
+    setDataProspect(prospectData ? [prospectData] : []);
+  }, [prospectData]);
+
+  useEffect(() => {
+    if (selectedBorrower) {
+      const borrowerName = selectedBorrower.borrower_name;
+      if (!incomeData[borrowerName]?.edited) {
+        setIncomeData((prev) => ({
+          ...prev,
+          [borrowerName]: {
+            identificationNumber:
+              selectedBorrower.borrower_identification_number,
+            identificationType: selectedBorrower.borrower_identification_type,
+            name:
+              getPropertyValue(selectedBorrower.borrower_properties, "name") ||
+              "",
+            surname:
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "surname",
+              ) || "",
+            Leases: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "Leases",
+              ) || "0",
+            ),
+            Dividends: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "Dividends",
+              ) || "0",
+            ),
+            FinancialIncome: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "FinancialIncome",
+              ) || "0",
+            ),
+            PeriodicSalary: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "PeriodicSalary",
+              ) || "0",
+            ),
+            OtherNonSalaryEmoluments: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "OtherNonSalaryEmoluments",
+              ) || "0",
+            ),
+            PensionAllowances: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "PensionAllowances",
+              ) || "0",
+            ),
+            PersonalBusinessUtilities: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "PersonalBusinessUtilities",
+              ) || "0",
+            ),
+            ProfessionalFees: parseFloat(
+              getPropertyValue(
+                selectedBorrower.borrower_properties,
+                "ProfessionalFees",
+              ) || "0",
+            ),
+            edited: false,
+          },
+        }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBorrower]);
+
   return (
     <Stack direction="column" gap="24px">
       {!isMobile && (
@@ -160,7 +370,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               {dataCreditProspect.addProduct}
             </Button>
 
-            {prospectProducts?.ordinary_installment_for_principal && (
+            {prospectData?.credit_products && (
               <Button
                 type="button"
                 appearance="primary"
@@ -218,6 +428,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           id={id!}
           dataRef={dataCommercialManagementRef}
           onClick={() => handleOpenModal("editProductModal")}
+          prospectData={prospectData || undefined}
         />
       </Stack>
       {currentModal === "creditLimit" && (
@@ -282,14 +493,55 @@ export function CreditProspect(props: ICreditProspectProps) {
         />
       )}
       {currentModal === "IncomeModal" && (
-        <IncomeModal
+        <BaseModal
+          title={dataCreditProspect.incomeSources}
+          nextButton={dataCreditProspect.close}
+          handleNext={handleCloseModal}
           handleClose={handleCloseModal}
-          disabled={true}
-          openModal={() => setOpenModal("IncomeModalEdit")}
-        />
+        >
+          <Stack
+            justifyContent="space-between"
+            alignItems="end"
+            width="400px"
+            gap="16px"
+          >
+            <Select
+              label="Deudor"
+              id="borrower"
+              name="borrower"
+              options={borrowerOptions}
+              value={borrowerOptions[selectedIndex]?.value}
+              onChange={handleChange}
+              size="compact"
+            />
+            <Button
+              onClick={() => {
+                handleCloseModal();
+                setOpenModal("IncomeModalEdit");
+              }}
+            >
+              {dataCreditProspect.edit}
+            </Button>
+          </Stack>
+          <IncomeDebtor
+            initialValues={
+              dataProspect[0]?.borrowers?.find(
+                (b) =>
+                  b.borrower_name === borrowerOptions[selectedIndex]?.value,
+              ) || selectedBorrower
+            }
+          />
+        </BaseModal>
       )}
       {openModal === "IncomeModalEdit" && (
-        <IncomeModal handleClose={() => setOpenModal(null)} />
+        <IncomeModal
+          handleClose={() => setOpenModal(null)}
+          initialValues={
+            (selectedBorrower && incomeData[selectedBorrower.borrower_name]) ||
+            {}
+          }
+          onSubmit={handleIncomeSubmit}
+        />
       )}
       {currentModal === "reportCreditsModal" && (
         <ReportCreditsModal
@@ -305,6 +557,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         <ExtraordinaryPaymentModal
           dataTable={extraordinaryInstallmentMock}
           handleClose={handleCloseModal}
+          prospectData={prospectData}
         />
       )}
       {showShareModal && (

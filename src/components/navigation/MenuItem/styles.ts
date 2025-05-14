@@ -19,12 +19,12 @@ export const StyledMenuItemLink = styled(Link)<IStyledMenuItemLink>`
     props.$spacing === "wide" ? `${"8px"} ${"16px"}` : `${"4px"} ${"16px"}`};
   background-color: ${(props) =>
     props.$disabled
-      ? props.theme.color?.surface?.gray?.disabled || inube.palette.neutral.N20
-      : props.theme.color?.surface?.light?.clear || inube.palette.neutral.N0};
+      ? props.theme.palette?.neutral?.N20 || inube.palette.neutral.N20
+      : props.theme.palette?.neutral?.N0 || inube.palette.neutral.N0};
 
   &:hover {
     cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
     background-color: ${({ theme }) =>
-      theme.color?.surface?.gray?.hover || inube.palette.neutral.N20};
+      theme.palette?.neutral?.N20 || inube.palette.neutral.N20};
   }
 `;

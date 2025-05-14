@@ -9,7 +9,7 @@ import {
   IBorrower,
   IIncomeSources,
 } from "@services/incomeSources/types";
-import { getPropertyValue } from "@pages/SubmitCreditApplication/util";
+import { getPropertyValue } from "@utils/mappingData/mappings";
 
 import { dataEditDebtor, dataTabs, dataReport } from "./config";
 import { DataDebtor } from "./dataDebtor";
