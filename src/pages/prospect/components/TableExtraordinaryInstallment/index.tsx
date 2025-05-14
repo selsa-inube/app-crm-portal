@@ -82,20 +82,17 @@ export const TableExtraordinaryInstallment = (
   useEffect(() => {
     if (prospectData?.credit_products) {
       const extraordinaryInstallmentsUpdate =
-        prospectData.credit_products.flatMap((product) => {
-          if (product.extraordinary_installments) {
-            return product.extraordinary_installments.map((installment) => ({
-              id: `${product.credit_product_code}-${installment.installment_date}`,
-              datePayment: installment.installment_date,
-              value: installment.installment_amount,
-              paymentMethod: installment.payment_channel_abbreviated_name,
-            }));
-          }
-        });
-
-      setExtraordinaryInstallments(
-        extraordinaryInstallmentsUpdate as TableExtraordinaryInstallmentProps[],
-      );
+        prospectData.credit_products.flatMap((product) =>
+          Array.isArray(product.extraordinary_installments)
+            ? product.extraordinary_installments.map((installment) => ({
+                id: `${product.credit_product_code}-${installment.installment_date}`,
+                datePayment: installment.installment_date,
+                value: installment.installment_amount,
+                paymentMethod: installment.payment_channel_abbreviated_name,
+              }))
+            : [],
+        );
+      setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
     setLoading(false);
   }, [prospectData, refreshKey]);
