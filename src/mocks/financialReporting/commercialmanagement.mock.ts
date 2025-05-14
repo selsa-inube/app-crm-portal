@@ -3,5 +3,5 @@ export const mockCommercialManagement = [
   { amount: "1250000" },
   { amount: "325315" },
   { amount: "8424685" },
-  { amount: "4005621" },
+  { amount: "400562" },
 ];
