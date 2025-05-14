@@ -1,14 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
 import { prospectId } from "@mocks/add-prospect/edit-prospect/prospectid.mock";
 import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
+import { getMonthsElapsed } from "@utils/formatData/currency";
+import { getSearchProspectById } from "@services/prospects";
+import { postBusinessUnitRules } from "@services/businessUnitRules";
 
 import { stepsAddProspect } from "./config/addProspect.config";
-import { FormData } from "./types";
+import { IFormData } from "./types";
 import { AddProspectUI } from "./interface";
+import { ruleConfig } from "./config/configRules";
+import { evaluateRule } from "./evaluateRule";
 
 export function AddProspect() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -25,7 +31,11 @@ export function AddProspect() {
   const navigate = useNavigate();
 
   const { customerData } = useContext(CustomerContext);
+  const { businessUnitSigla } = useContext(AppContext);
   const { customerPublicCode } = useParams();
+
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const dataHeader = {
     name: customerData.fullName,
@@ -33,7 +43,7 @@ export function AddProspect() {
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<IFormData>({
     selectedDestination: "",
     selectedProducts: [],
     loanConditionState: {
@@ -76,6 +86,209 @@ export function AddProspect() {
     },
   });
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
+    {},
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [prospectData, setProspectData] = useState<Record<string, any>>({}); //quitarlo
+
+  const getRuleByName = useCallback(
+    (ruleName: string) => {
+      const raw = valueRule?.[ruleName] || [];
+      return (
+        raw
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .map((v: any) => (typeof v === "string" ? v : v?.value))
+          .filter(Boolean)
+      );
+    },
+    [valueRule],
+  );
+
+  const getAllDataRuleByName = useCallback(
+    (ruleName: string) => {
+      const raw = valueRule?.[ruleName] || [];
+      return raw;
+    },
+    [valueRule],
+  );
+
+  const fetchProspectData = useCallback(async () => {
+    //quitar
+    try {
+      const prospect = await getSearchProspectById(
+        businessUnitPublicCode,
+        "67eb62079cdd4c16064c45b",
+      );
+
+      if (prospect && typeof prospect === "object") {
+        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
+          setProspectData(prospect);
+        }
+      }
+      const mainBorrower = prospect.borrowers.find(
+        (borrower) => borrower.borrower_type === "MainBorrower",
+      );
+
+      if (mainBorrower?.borrower_identification_number !== customerPublicCode) {
+        return;
+      }
+
+      if (prospect.state !== "Created") {
+        console.log("error");
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [businessUnitPublicCode, customerPublicCode, prospectData]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cleanConditions = (rule: any) => {
+    if (!rule) return rule;
+
+    const cleaned = { ...rule };
+
+    if (Array.isArray(cleaned.conditions)) {
+      const hasValidCondition = cleaned.conditions.some(
+        (c: { value: unknown }) =>
+          c.value !== undefined && c.value !== null && c.value !== "",
+      );
+      if (!hasValidCondition) {
+        delete cleaned.conditions;
+      }
+    }
+    return cleaned;
+  };
+
+  const fetchValidationRules = useCallback(async () => {
+    const rulesToCheck = [
+      "LineOfCredit",
+      "PercentagePayableViaExtraInstallments",
+    ];
+    const notDefinedRules: string[] = [];
+    await Promise.all(
+      rulesToCheck.map(async (ruleName) => {
+        try {
+          const rule = cleanConditions(ruleConfig[ruleName]?.({}));
+          if (!rule) return notDefinedRules.push(ruleName);
+          await evaluateRule(
+            rule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          if (error?.response?.status === 400) notDefinedRules.push(ruleName);
+        }
+      }),
+    );
+
+    if (notDefinedRules.length >= 1) {
+      console.log("a");
+    }
+  }, [businessUnitPublicCode]);
+
+  useEffect(() => {
+    if (!customerData) return;
+    fetchValidationRules();
+  }, [customerData, fetchValidationRules]);
+
+  const fetchValidationRulesData = useCallback(async () => {
+    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
+    const creditProducts = prospectData?.credit_products;
+
+    if (!clientInfo.associateType) return;
+
+    const dataRulesBase = {
+      MoneyDestination: "New_homes",
+      ClientType: clientInfo.associateType?.substring(0, 1) || "",
+      EmploymentContractTermType:
+        clientInfo.employmentType?.substring(0, 2) || "",
+      AffiliateSeniority: getMonthsElapsed(
+        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
+        0,
+      ),
+      LineOfCredit: "Educación",
+    };
+
+    const rulesValidate = [
+      "LineOfCredit",
+      "PercentagePayableViaExtraInstallments",
+    ];
+
+    for (const product of creditProducts) {
+      if (!product || typeof product !== "object") continue;
+
+      const dataRules = {
+        ...dataRulesBase,
+      };
+      await Promise.all(
+        rulesValidate.map(async (ruleName) => {
+          const rule = ruleConfig[ruleName]?.(dataRules);
+          if (!rule) return;
+
+          console.log(
+            "Regla ModeOfDisbursementType",
+            ruleConfig["ModeOfDisbursementType"]?.(dataRules),
+          );
+          console.log(
+            "Regla lineOfCredit",
+            ruleConfig["LineOfCredit"]?.(dataRules),
+          );
+          console.log(
+            "Regla PercentagePayableViaExtraInstallments",
+            ruleConfig["PercentagePayableViaExtraInstallments"]?.(dataRules),
+          );
+
+          try {
+            const values = await evaluateRule(
+              rule,
+              postBusinessUnitRules,
+              "value",
+              businessUnitPublicCode,
+              true,
+            );
+
+            if (Array.isArray(values)) {
+              const uniqueObjects = values;
+              setValueRule((prev) => ({
+                ...prev,
+                [ruleName]: uniqueObjects,
+              }));
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            console.error(
+              `Error evaluando ${ruleName} para producto`,
+              product,
+              error,
+            );
+          }
+        }),
+      );
+    }
+  }, [customerData, businessUnitPublicCode]);
+
+  // console.log(getRuleByName("LineOfCredit"), "lineOfCredit");
+  // console.log(
+  //   getRuleByName("PercentagePayableViaExtraInstallments"),
+  //   "PercentagePayableViaExtraInstallments",
+  // );
+
+  useEffect(() => {
+    if (!customerData) return;
+    fetchProspectData();
+  }, [customerData, fetchProspectData]);
+
+  useEffect(() => {
+    if (customerData && prospectData) {
+      fetchValidationRulesData();
+    }
+  }, [customerData, prospectData, fetchValidationRulesData]);
 
   const id = prospectId[0];
 
@@ -214,6 +427,8 @@ export function AddProspect() {
         setIsCurrentFormValid={setIsCurrentFormValid}
         handleNextStep={handleNextStep}
         handlePreviousStep={handlePreviousStep}
+        getAllDataRuleByName={getAllDataRuleByName}
+        getRuleByName={getRuleByName}
         setCurrentStep={setCurrentStep}
         currentStepsNumber={currentStepsNumber}
         dataHeader={dataHeader}
