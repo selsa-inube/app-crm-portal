@@ -25,32 +25,34 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
 
   const { addFlag } = useFlag();
 
-  const payload = {
-    clientIdentificationNumber: customerData?.customerId ?? "",
-    prospect: {
-      ...prospectData,
-    },
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const data = await patchValidateRequirements(payload);
-      if (data) {
-        setValidateRequirements(data);
-      }
-    } catch (error) {
-      addFlag({
-        title: dataError.titleError,
-        description: dataError.descriptionError,
-        appearance: "danger",
-        duration: 5000,
-      });
-    }
-  };
-
   useEffect(() => {
+    if (!customerData?.customerId || !prospectData) return;
+
+    const payload = {
+      clientIdentificationNumber: customerData.customerId,
+      prospect: {
+        ...prospectData,
+      },
+    };
+
+    const handleSubmit = async () => {
+      try {
+        const data = await patchValidateRequirements(payload);
+        if (data) {
+          setValidateRequirements(data);
+        }
+      } catch (error) {
+        addFlag({
+          title: dataError.titleError,
+          description: dataError.descriptionError,
+          appearance: "danger",
+          duration: 5000,
+        });
+      }
+    };
+
     handleSubmit();
-  }, [customerData]);
+  }, [customerData, prospectData]);
 
   return (
     <>
