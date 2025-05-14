@@ -1,6 +1,6 @@
 export const credit_behavior = [
   {
-    credit_request_id: "999990",
+    credit_request_id: "SC-122254646",
     credit_behavior: {
       core_risk_score: 450,
       central_risk_score_date: "2023-08-31",
