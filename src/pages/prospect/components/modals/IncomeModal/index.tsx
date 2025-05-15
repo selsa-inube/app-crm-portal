@@ -1,25 +1,37 @@
+import { useState } from "react";
 import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
-import { income } from "@mocks/add-prospect/income/income.mock";
 
 import { dataIncomeModal } from "./config";
 
 interface IncomeModalProps {
   handleClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSubmit: (data: any) => void;
   openModal?: (state: boolean) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialValues?: any;
   disabled?: boolean;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
-  const { handleClose, openModal, disabled } = props;
+  const { handleClose, openModal, disabled, initialValues, onSubmit } = props;
+
+  const [formData, setFormData] = useState(initialValues);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDataChange = (newData: any) => {
+    setFormData(newData);
+  };
 
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const { addFlag } = useFlag();
 
   const handleSubmit = () => {
+    onSubmit(formData);
     handleClose();
     addFlag({
       title: `${dataIncomeModal.flagTittle}`,
@@ -43,7 +55,9 @@ export function IncomeModal(props: IncomeModalProps) {
         ShowSupport={false}
         disabled={disabled}
         openModal={openModal}
-        data={income}
+        data={initialValues}
+        showEdit={false}
+        onDataChange={handleDataChange}
       />
     </BaseModal>
   );

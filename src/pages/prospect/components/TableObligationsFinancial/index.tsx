@@ -15,8 +15,6 @@ import {
   Th,
   Thead,
   Tr,
-} from "@inubekit/table";
-import {
   Stack,
   Icon,
   Text,
@@ -28,11 +26,12 @@ import {
 
 import { EditFinancialObligationModal } from "@components/modals/editFinancialObligationModal";
 import { ListModal } from "@components/modals/ListModal";
+import { NewPrice } from "@components/modals/ReportCreditsModal/components/newPrice";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { headers, dataReport } from "./config";
 import { usePagination } from "./utils";
-import { NewPrice } from "@components/modals/ReportCreditsModal/components/newPrice";
+import { IDataInformationItem } from "./types";
 
 export interface ITableFinancialObligationsProps {
   type?: string;
@@ -48,13 +47,8 @@ export interface ITableFinancialObligationsProps {
 export function TableFinancialObligations(
   props: ITableFinancialObligationsProps,
 ) {
-  const {
-    refreshKey,
-    showActions,
-    showOnlyEdit,
-    initialValues,
-    showButtons = true,
-  } = props;
+  const { refreshKey, showActions, showOnlyEdit, initialValues, showButtons } =
+    props;
   const [loading, setLoading] = useState(true);
   const [extraDebtors, setExtraDebtors] = useState<
     ITableFinancialObligationsProps[]
@@ -141,11 +135,34 @@ export function TableFinancialObligations(
       )
     : extraDebtors;
 
-  let totalFee = 0;
-  let totalBalance = 0;
+  const totalBalance = dataInformation.reduce(
+    (sum: number, item: IDataInformationItem) => {
+      const balance =
+        typeof item.balance === "number"
+          ? item.balance
+          : typeof item.property_value === "string"
+            ? parseFloat(item.property_value.split(",")[1]) || 0
+            : 0;
+      return sum + balance;
+    },
+    0,
+  );
+
+  const totalFee = dataInformation.reduce(
+    (sum: number, item: IDataInformationItem) => {
+      const fee =
+        typeof item.fee === "number"
+          ? item.fee
+          : typeof item.property_value === "string"
+            ? parseFloat(item.property_value.split(",")[2]) || 0
+            : 0;
+      return sum + fee;
+    },
+    0,
+  );
 
   return (
-    <>
+    <Stack direction="column" width="100%" gap="16px">
       {showButtons && (
         <Stack gap="16px" justifyContent="end">
           <Button iconAfter={<MdCached />} variant="outlined">
@@ -215,12 +232,6 @@ export function TableFinancialObligations(
                     .split(",")
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     .map((val: any) => val.trim());
-
-                  const balance = Number(values[1]) || 0;
-                  totalBalance += balance;
-
-                  const fee = Number(values[2]) || 0;
-                  totalFee += fee;
                 } else if (Array.isArray(prop.property_value)) {
                   values = prop.property_value.map(String);
                 } else {
@@ -356,6 +367,6 @@ export function TableFinancialObligations(
           <NewPrice value={totalFee} label={dataReport.descriptionTotalFee} />
         )}
       </Stack>
-    </>
+    </Stack>
   );
 }

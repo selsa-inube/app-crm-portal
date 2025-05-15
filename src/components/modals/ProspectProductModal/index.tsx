@@ -1,9 +1,13 @@
 import { Formik, FormikValues, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { MdAttachMoney, MdPercent } from "react-icons/md";
-import { Textfield } from "@inubekit/textfield";
-import { Select } from "@inubekit/select";
-import { Stack, Icon, useMediaQuery } from "@inubekit/inubekit";
+import {
+  Stack,
+  Icon,
+  useMediaQuery,
+  Select,
+  Textfield,
+} from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
