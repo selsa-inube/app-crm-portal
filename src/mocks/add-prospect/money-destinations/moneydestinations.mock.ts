@@ -31,11 +31,4 @@ const mockMoneyDestinations: IMoneyDestination[] = [
   },
 ];
 
-const mockGetMoneyDestinations = [
-  { id: "Education", question: [1, 2, 3] },
-  { id: "vehicle", question: [1] },
-  { id: "house", question: [2] },
-  { id: "New_homes", question: [1, 3] },
-];
-
-export { mockMoneyDestinations, mockGetMoneyDestinations };
+export { mockMoneyDestinations };

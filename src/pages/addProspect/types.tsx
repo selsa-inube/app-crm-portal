@@ -84,7 +84,7 @@ export interface IBorrowerData {
   };
 }
 
-export interface FormData {
+export interface IFormData {
   selectedDestination: string;
   selectedProducts: string[];
   loanConditionState: {
@@ -111,3 +111,19 @@ export interface FormData {
     selectedValues: Record<string, any>;
   };
 }
+
+export interface ICondition {
+  condition: string;
+  value: string | number;
+}
+
+export interface Irule {
+  ruleName: string;
+  conditions: ICondition[];
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ContextData = Record<string, any>;
+
+export type Rule = Irule;
+
+export type RuleBuilder = (contextData: ContextData) => Rule;
