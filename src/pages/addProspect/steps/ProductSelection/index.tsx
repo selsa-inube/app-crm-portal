@@ -21,6 +21,7 @@ interface IProductSelectionProps {
     onToggleChange: (index: number) => void;
   };
   onFormValid: (isValid: boolean) => void;
+  handleFormDataChange: (key: string, value: unknown) => void;
   isMobile: boolean;
   choiceMoneyDestination: string;
   allRules: {
@@ -40,6 +41,7 @@ export function ProductSelection(props: IProductSelectionProps) {
       onToggleChange,
     },
     onFormValid,
+    handleFormDataChange,
     isMobile,
     allRules,
   } = props;
@@ -134,18 +136,19 @@ export function ProductSelection(props: IProductSelectionProps) {
                         description={item.value}
                         disabled={generalToggleChecked}
                         isSelected={values.selectedProducts.includes(
-                          index.toString(),
+                          item.value,
                         )}
                         onSelect={() => {
                           const newSelected = values.selectedProducts.includes(
-                            index.toString(),
+                            item.value,
                           )
                             ? values.selectedProducts.filter(
-                                (id) => id !== index.toString(),
+                                (id) => id !== item.value,
                               )
-                            : [...values.selectedProducts, index.toString()];
+                            : [...values.selectedProducts, item.value];
                           setFieldValue("selectedProducts", newSelected);
                           setSelectedProducts(newSelected);
+                          handleFormDataChange("selectedProducts", newSelected);
                         }}
                       />
                     </Stack>

@@ -177,7 +177,7 @@ export function AddProspect() {
         customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
         0,
       ),
-      LineOfCredit: "Educación",
+      LineOfCredit: formData.selectedProducts[0] || "",
     };
 
     const rulesValidate = [
@@ -221,7 +221,12 @@ export function AddProspect() {
         }),
       );
     }
-  }, [customerData, businessUnitPublicCode, formData.selectedDestination]);
+  }, [
+    customerData,
+    businessUnitPublicCode,
+    formData.selectedDestination,
+    formData.selectedProducts,
+  ]);
 
   useEffect(() => {
     if (customerData) {
@@ -271,8 +276,6 @@ export function AddProspect() {
     if (currentStep === stepsAddProspect.productSelection.id) {
       setFormData((prevState) => ({
         ...prevState,
-        selectedProducts: [],
-        generalToggleChecked: true,
         togglesState: [false, false, false],
       }));
     }

@@ -137,6 +137,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     generalToggleChecked: formData.generalToggleChecked,
                     togglesState: formData.togglesState,
                   }}
+                  handleFormDataChange={handleFormDataChange}
                   handleOnChange={{
                     setSelectedProducts,
                     onGeneralToggleChange: () =>
