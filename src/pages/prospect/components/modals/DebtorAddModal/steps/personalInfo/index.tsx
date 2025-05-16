@@ -26,13 +26,14 @@ import { dataAddModal } from "./config";
 export interface IAddBorrowedProps {
   title: string;
   initialValues: IAddBorrowed;
+  AutoCompleted: boolean;
   portalId?: string;
   handleClose?: () => void;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IAddBorrowed) => void;
 }
 export const AddBorrower = (props: IAddBorrowedProps) => {
-  const { initialValues, onFormValid, handleOnChange } = props;
+  const { initialValues, AutoCompleted, onFormValid, handleOnChange } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
 
@@ -96,6 +97,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.tipeOfDocument}
           size="compact"
+          readonly={!AutoCompleted}
           fullwidth
         />
         <Input
@@ -120,6 +122,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.firstName}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
         <Input
@@ -132,6 +135,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.lastName}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
         <Input
@@ -144,6 +148,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.email}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
         <Phonefield
@@ -155,6 +160,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.phone}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
         <Select
@@ -167,6 +173,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.sex}
           size="compact"
+          readonly={!AutoCompleted}
           fullwidth
         />
         <Input
@@ -179,6 +186,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.age}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
         <Select
