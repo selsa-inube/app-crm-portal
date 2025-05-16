@@ -120,6 +120,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
         <Phonefield
           id={"phone"}
           name={`${optionNameForm}.phone`}
+          type="number"
           label={disbursemenOptionAccount.labelphone}
           placeholder={disbursemenOptionAccount.placephone}
           value={formik.values[optionNameForm]?.phone || ""}

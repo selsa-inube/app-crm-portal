@@ -98,6 +98,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   }, [
     formik.values,
     onFormValid,
+    handleOnChange,
     tabChanged,
     getTotalAmount,
     initialValues.amount,

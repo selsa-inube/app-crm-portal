@@ -140,6 +140,7 @@ export function ContactInformation(props: IContactInformationProps) {
         <Phonefield
           name="phone"
           id="phone"
+          type="number"
           placeholder={dataContactInformation.placePhone}
           label={dataContactInformation.cardPhone}
           size="compact"

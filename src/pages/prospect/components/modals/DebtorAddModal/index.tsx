@@ -99,21 +99,34 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
             ...prev,
             personalInfo: {
               ...prev.personalInfo,
-              tipeOfDocument:
-                data?.typeIdentification || prev.personalInfo.tipeOfDocument,
+              tipeOfDocument: data?.typeIdentification || "",
               documentNumber: prev.personalInfo.documentNumber,
-              firstName: data?.firstNames || prev.personalInfo.firstName,
-              lastName: data?.lastNames || prev.personalInfo.lastName,
-              email: data?.emailContact || prev.personalInfo.email,
-              phone: data?.cellPhoneContact || prev.personalInfo.phone,
-              sex: data?.gender || prev.personalInfo.sex,
-              age:
-                getAge(data?.dateBirth || "").toString() ||
-                prev.personalInfo.age,
+              firstName: data?.firstNames || "",
+              lastName: data?.lastNames || "",
+              email: data?.emailContact || "",
+              phone: data?.cellPhoneContact || "",
+              sex: data?.gender || "",
+              age: getAge(data?.dateBirth || "").toString(),
               relation: prev.personalInfo.relation,
             },
           }));
           setIsAutoCompleted(true);
+        } else if (isAutoCompleted) {
+          setFormData((prev) => ({
+            ...prev,
+            personalInfo: {
+              ...prev.personalInfo,
+              tipeOfDocument: "",
+              firstName: "",
+              lastName: "",
+              email: "",
+              phone: "",
+              sex: "",
+              age: "",
+              relation: prev.personalInfo.relation,
+            },
+          }));
+          setIsAutoCompleted(false);
         }
       } catch (error) {
         handleFlag(error);
@@ -122,6 +135,21 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
 
     fetchIncomeData();
   }, [borrowerId]);
+
+  useEffect(() => {
+    if (!isAutoCompleted) {
+      setIncomeData(
+        (prev) =>
+          ({
+            ...prev,
+            name: formData.personalInfo.firstName,
+            surname: formData.personalInfo.lastName,
+            identificationNumber: formData.personalInfo.documentNumber,
+            identificationType: formData.personalInfo.tipeOfDocument,
+          }) as IIncomeSources,
+      );
+    }
+  }, [formData.personalInfo]);
 
   const isMobile = useMediaQuery("(max-width:880px)");
 
