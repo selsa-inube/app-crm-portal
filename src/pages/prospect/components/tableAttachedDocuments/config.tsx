@@ -24,4 +24,7 @@ export const dataReport = {
   noData: "No existen documentos adjuntos",
   titleFlagDelete: "Eliminar",
   descriptionFlagDelete: "Se ha eliminado el archivo",
+  delete: "Eliminar",
+  close: "Cerrar",
+  deleteText: "¿Estás seguro de Eliminar este documento?",
 };

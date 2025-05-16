@@ -1,11 +1,11 @@
 export const disbursemenTabs = {
   internal: {
-    id: "Internal_account",
+    id: "Internal_account_payment",
     disabled: false,
     label: "Cuenta interna",
   },
   external: {
-    id: "External_account",
+    id: "External_account_Internal_account_payment",
     disabled: false,
     label: "Cuenta externa",
   },

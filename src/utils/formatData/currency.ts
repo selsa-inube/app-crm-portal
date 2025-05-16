@@ -81,6 +81,20 @@ const getMonthsElapsed = (dateString: string, decimal: number): number => {
   return parseFloat((years + months).toFixed(decimal));
 };
 
+function getAge(dateBirth: string) {
+  const today = new Date();
+  const birth = new Date(dateBirth);
+
+  let age = today.getFullYear() - birth.getFullYear();
+  const mounth = today.getMonth() - birth.getMonth();
+
+  if (mounth < 0 || (mounth === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+}
+
 export {
   currencyFormat,
   parseCunstomFormat,
@@ -88,4 +102,5 @@ export {
   parseCurrencyString,
   validateCurrencyField,
   getMonthsElapsed,
+  getAge,
 };

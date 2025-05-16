@@ -1,4 +1,10 @@
-import { Date as DateInube, Input, Select, Grid } from "@inubekit/inubekit";
+import {
+  Date as DateInube,
+  Input,
+  Select,
+  Grid,
+  Phonefield,
+} from "@inubekit/inubekit";
 
 import { disbursemenOptionAccount } from "@pages/SubmitCreditApplication/steps/disbursementGeneral/config";
 import {
@@ -45,6 +51,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           fullwidth={true}
+          type="number"
           size="compact"
           status={
             formik.values[optionNameForm]?.identification ===
@@ -110,9 +117,10 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
             );
           }}
         />
-        <Input
+        <Phonefield
           id={"phone"}
           name={`${optionNameForm}.phone`}
+          type="number"
           label={disbursemenOptionAccount.labelphone}
           placeholder={disbursemenOptionAccount.placephone}
           value={formik.values[optionNameForm]?.phone || ""}
@@ -133,6 +141,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           fullwidth={true}
           size="compact"
           readOnly={isReadOnly}
+          type="email"
         />
         <Select
           id={"city"}

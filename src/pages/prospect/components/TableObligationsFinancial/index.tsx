@@ -25,8 +25,8 @@ import {
 } from "@inubekit/inubekit";
 
 import { EditFinancialObligationModal } from "@components/modals/editFinancialObligationModal";
-import { ListModal } from "@components/modals/ListModal";
 import { NewPrice } from "@components/modals/ReportCreditsModal/components/newPrice";
+import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { headers, dataReport } from "./config";
@@ -332,20 +332,22 @@ export function TableFinancialObligations(
           />
         )}
         {isDeleteModal && (
-          <ListModal
+          <BaseModal
             title={dataReport.deletion}
-            handleClose={() => setIsDeleteModal(false)}
-            handleSubmit={() => setIsDeleteModal(false)}
-            onSubmit={() => {
+            nextButton={dataReport.delete}
+            backButton={dataReport.cancel}
+            handleNext={() => {
               if (selectedDebtor) {
                 handleDelete(selectedDebtor.id as string);
                 setIsDeleteModal(false);
               }
             }}
-            buttonLabel={dataReport.delete}
-            content={dataReport.content}
-            cancelButton={dataReport.cancel}
-          />
+            handleClose={() => setIsDeleteModal(false)}
+          >
+            <Stack width="400px">
+              <Text>{dataReport.content}</Text>
+            </Stack>
+          </BaseModal>
         )}
       </Table>
       <Stack
