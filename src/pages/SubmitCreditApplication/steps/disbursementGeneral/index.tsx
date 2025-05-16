@@ -90,8 +90,10 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   useEffect(() => {
     const totalAmount = getTotalAmount();
     onFormValid(
-      totalAmount === initialValues.amount &&
-        initialValues.Internal_account_payment.account !== "",
+      formik.values.Internal_account_payment?.amount
+        ? totalAmount === initialValues.amount &&
+            initialValues.Internal_account_payment.accountNumber !== ""
+        : totalAmount === initialValues.amount,
     );
   }, [
     formik.values,
@@ -99,7 +101,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     tabChanged,
     getTotalAmount,
     initialValues.amount,
-    initialValues.Internal_account_payment.account,
+    initialValues.Internal_account_payment.accountNumber,
   ]);
 
   const fetchTabs = useCallback(() => {

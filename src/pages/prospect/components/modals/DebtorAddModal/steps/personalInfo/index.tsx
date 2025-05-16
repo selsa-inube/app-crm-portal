@@ -5,8 +5,9 @@ import {
   Stack,
   Grid,
   useMediaQuery,
-  Textfield,
   Select,
+  Input,
+  Phonefield,
 } from "@inubekit/inubekit";
 
 import {
@@ -97,7 +98,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
-        <Textfield
+        <Input
           name="documentNumber"
           id="documentNumber"
           type="text"
@@ -109,7 +110,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
-        <Textfield
+        <Input
           name="firstName"
           id="firstName"
           type="text"
@@ -121,7 +122,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
-        <Textfield
+        <Input
           name="lastName"
           id="lastName"
           type="text"
@@ -133,7 +134,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
-        <Textfield
+        <Input
           name="email"
           id="email"
           type="email"
@@ -145,10 +146,9 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
-        <Textfield
+        <Phonefield
           name="phone"
           id="phone"
-          type="number"
           label={dataAddModal.labelNumber}
           placeholder={dataAddModal.placeHolderNumber}
           onChange={formik.handleChange}
@@ -169,7 +169,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
-        <Textfield
+        <Input
           name="age"
           id="age"
           type="number"

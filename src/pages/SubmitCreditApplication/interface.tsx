@@ -121,7 +121,7 @@ export function SubmitCreditApplicationUI(
             alignItems={isMobile ? "normal" : "center"}
             margin="20px 0px"
             padding="24px"
-            height={isMobile ? "auto" : "100vh"}
+            height={isMobile ? "auto" : "2000px"}
           >
             <Stack
               gap="24px"

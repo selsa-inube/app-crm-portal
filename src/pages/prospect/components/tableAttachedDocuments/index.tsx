@@ -24,6 +24,7 @@ import {
 import { get } from "@mocks/utils/dataMock.service";
 import { mockAttachedDocuments } from "@mocks/filing-application/attached-documents/attacheddocuments.mock";
 import { ListModal } from "@components/modals/ListModal";
+import { BaseModal } from "@components/modals/baseModal";
 import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
 import { ICustomerData } from "@context/CustomerContext/types";
 
@@ -46,6 +47,21 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
 
   const [loading, setLoading] = useState(true);
   const [showAttachment, setShowAttachments] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [rowIdToDelete, setRowIdToDelete] = useState<string | null>(null);
+
+  const handleOpenDeleteModal = (rowId: string) => {
+    setRowIdToDelete(rowId);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (rowIdToDelete) {
+      handleRemoveAllFiles(rowIdToDelete);
+      setShowDeleteModal(false);
+      setRowIdToDelete(null);
+    }
+  };
 
   const {
     totalRecords,
@@ -252,7 +268,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                             uploadedFilesByRow[rowIndex.toString()].length === 0
                           }
                           onClick={() =>
-                            handleRemoveAllFiles(rowIndex.toString())
+                            handleOpenDeleteModal(rowIndex.toString())
                           }
                         />
                       )}
@@ -294,6 +310,17 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           setUploadedFiles={handleSetUploadedFiles}
           onlyDocumentReceived={true}
         />
+      )}
+      {showDeleteModal && (
+        <BaseModal
+          title={dataReport.delete}
+          nextButton={dataReport.delete}
+          backButton={dataReport.close}
+          handleBack={() => setShowDeleteModal(false)}
+          handleNext={handleConfirmDelete}
+        >
+          <Text>{dataReport.deleteText}</Text>
+        </BaseModal>
       )}
     </Table>
   );

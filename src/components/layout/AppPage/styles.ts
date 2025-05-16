@@ -73,7 +73,6 @@ export const StyledCollapse = styled.div`
   top: 48px;
 `;
 export const StyledFooter = styled.footer`
-  margin-top: auto;
   display: flex;
   justify-content: center;
   padding: 16px 24px;
