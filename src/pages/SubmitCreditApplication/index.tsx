@@ -500,15 +500,18 @@ export function SubmitCreditApplication() {
               setAddToFix([ruleName]);
               return;
             }
-
             setValueRule((prev) => {
               const current = prev[ruleName] || [];
               const merged = [...current, ...extractedValues];
               const unique = Array.from(new Set(merged));
               return { ...prev, [ruleName]: unique };
             });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } catch (error: any) {
+          } catch (error: unknown) {
+            if (ruleName === "ModeOfDisbursementType") {
+              setCodeError(1014);
+              setAddToFix([ruleName]);
+              return;
+            }
             console.error(
               `Error evaluando ${ruleName} para producto`,
               product,
