@@ -155,6 +155,8 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     handleTabChange(tabId);
   };
 
+  const isAmountReadOnly = validTabs.length === 1;
+
   return (
     <Fieldset>
       <Stack
@@ -182,6 +184,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.external.id) &&
@@ -197,6 +200,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.check.id) &&
@@ -212,6 +216,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.management.id) &&
@@ -227,6 +232,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.cash.id) &&
@@ -242,6 +248,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
         </Stack>

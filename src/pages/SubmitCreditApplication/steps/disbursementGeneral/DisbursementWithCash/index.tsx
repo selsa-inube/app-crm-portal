@@ -31,6 +31,7 @@ interface IDisbursementWithCashProps {
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;
+  isAmountReadOnly: boolean;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -45,6 +46,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
     optionNameForm,
     identificationNumber,
     businessUnitPublicCode,
+    isAmountReadOnly,
     customerData,
     onFormValid,
     handleOnChange,
@@ -292,6 +294,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
               ? "invalid"
               : undefined
           }
+          readOnly={isAmountReadOnly}
           message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
           fullwidth
         />
@@ -299,7 +302,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
           <Checkbox
             id={"featureCheckbox"}
             name={"featureCheckbox"}
-            checked={formik.values[optionNameForm]?.check}
+            checked={isDisabled || formik.values[optionNameForm]?.check}
             indeterminate={false}
             onChange={handleCheckboxChange}
             value={"featureCheckbox"}
@@ -343,7 +346,10 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
         <>
           <GeneralInformationForm
             formik={formik}
+            isMobile={isMobile}
             optionNameForm={optionNameForm}
+            isReadOnly={isAutoCompleted}
+            customerData={customerData}
           />
           <Divider dashed />
         </>

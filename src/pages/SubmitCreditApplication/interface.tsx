@@ -289,7 +289,7 @@ export function SubmitCreditApplicationUI(
               <Stack
                 justifyContent="end"
                 gap="20px"
-                margin={isMobile ? "0px 0px 20px 0px" : "auto 0 0 0"}
+                margin={isMobile ? "0px" : "auto 0 0 0"}
               >
                 <Button
                   variant="outlined"

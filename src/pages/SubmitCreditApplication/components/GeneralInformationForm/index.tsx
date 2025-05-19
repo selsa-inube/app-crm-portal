@@ -17,17 +17,22 @@ import { ICustomerData } from "@context/CustomerContext/types";
 interface IGeneralInformationFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formik: any;
+  isMobile: boolean;
   optionNameForm: string;
   isReadOnly?: boolean;
   customerData?: ICustomerData;
 }
 
 export function GeneralInformationForm(props: IGeneralInformationFormProps) {
-  const { formik, optionNameForm, isReadOnly, customerData } = props;
+  const { formik, isMobile, optionNameForm, isReadOnly, customerData } = props;
 
   return (
     <>
-      <Grid templateColumns="repeat(3, 1fr)" gap="16px" autoRows="auto">
+      <Grid
+        templateColumns={isMobile ? "1fr" : "repeat(3, 1fr)"}
+        gap="16px"
+        autoRows="auto"
+      >
         <Select
           id={"documentType"}
           name={`${optionNameForm}.documentType`}

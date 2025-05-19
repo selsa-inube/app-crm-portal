@@ -39,6 +39,7 @@ interface IDisbursementWithExternalAccountProps {
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;
+  isAmountReadOnly: boolean;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -55,6 +56,7 @@ export function DisbursementWithExternalAccount(
     optionNameForm,
     identificationNumber,
     businessUnitPublicCode,
+    isAmountReadOnly,
     customerData,
     onFormValid,
     handleOnChange,
@@ -336,6 +338,7 @@ export function DisbursementWithExternalAccount(
               ? "invalid"
               : undefined
           }
+          readOnly={isAmountReadOnly}
           message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
           fullwidth
         />
@@ -387,7 +390,10 @@ export function DisbursementWithExternalAccount(
         <>
           <GeneralInformationForm
             formik={formik}
+            isMobile={isMobile}
             optionNameForm={optionNameForm}
+            isReadOnly={isAutoCompleted}
+            customerData={customerData}
           />
           <Divider dashed />
         </>
