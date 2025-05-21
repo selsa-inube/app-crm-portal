@@ -7,7 +7,7 @@ import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInsta
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
 import { stepsAddProspect } from "./config/addProspect.config";
-import { FormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
+import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
 import { StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
@@ -29,6 +29,8 @@ interface AddPositionUIProps {
   setSelectedProducts: React.Dispatch<React.SetStateAction<string[]>>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleFormDataChange: (field: string, newValue: any) => void;
+  getRuleByName: (name: string) => string[];
+  getAllDataRuleByName: (name: string) => string[];
   handleConsolidatedCreditChange: (
     creditId: string,
     oldValue: number,
@@ -39,7 +41,7 @@ interface AddPositionUIProps {
   steps: IStep[];
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
-  formData: FormData;
+  formData: IFormData;
   selectedProducts: string[];
   isMobile: boolean;
   isTablet: boolean;
@@ -55,6 +57,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
     handleSubmitClick,
     handleFormDataChange,
     setSelectedProducts,
+    getRuleByName,
+    getAllDataRuleByName,
     handleConsolidatedCreditChange,
     currentStepsNumber,
     dataHeader,
@@ -132,6 +136,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     generalToggleChecked: formData.generalToggleChecked,
                     togglesState: formData.togglesState,
                   }}
+                  handleFormDataChange={handleFormDataChange}
                   handleOnChange={{
                     setSelectedProducts,
                     onGeneralToggleChange: () =>
@@ -148,6 +153,12 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   onFormValid={setIsCurrentFormValid}
                   isMobile={isMobile}
                   choiceMoneyDestination={formData.selectedDestination}
+                  allRules={{
+                    lineOfCredit: getAllDataRuleByName("LineOfCredit"),
+                    PercentagePayableViaExtraInstallments: getRuleByName(
+                      "PercentagePayableViaExtraInstallments",
+                    ),
+                  }}
                 />
               )}
             {currentStepsNumber &&
