@@ -177,18 +177,15 @@ export function DisbursementWithExternalAccount(
 
   useEffect(() => {
     const initialToggle = formik.values[optionNameForm]?.toggle;
-    if (
-      initialToggle &&
-      Number(initialValues.External_account_payment.amount) > 0
-    ) {
+    if (initialToggle && Number(initialValues.External_account.amount) > 0) {
       restoreCustomerDataFields();
     } else if (
-      Number(initialValues.External_account_payment.amount) === 0 &&
-      initialValues.External_account_payment.toggle === true
+      Number(initialValues.External_account.amount) === 0 &&
+      initialValues.External_account.toggle === true
     ) {
       clearFields();
     }
-  }, [initialValues.External_account_payment.amount]);
+  }, [initialValues.External_account.amount]);
 
   const identificationValue = formik.values[optionNameForm]?.identification;
 

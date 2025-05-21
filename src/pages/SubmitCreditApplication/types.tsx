@@ -89,7 +89,7 @@ export interface IFormData {
 export interface IDisbursementGeneral {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
-  Internal_account_payment: {
+  Internal_account: {
     amount: string;
     check: boolean;
     toggle: boolean;
@@ -105,7 +105,7 @@ export interface IDisbursementGeneral {
     mail: string;
     city: string;
   };
-  External_account_payment: {
+  External_account: {
     amount: string;
     check: boolean;
     toggle: boolean;

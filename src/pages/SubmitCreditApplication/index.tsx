@@ -91,7 +91,7 @@ export function SubmitCreditApplication() {
     },
     disbursementGeneral: {
       amount: 10000000,
-      Internal_account_payment: {
+      Internal_account: {
         amount: "",
         accountNumber: "",
         description: "",
@@ -107,7 +107,7 @@ export function SubmitCreditApplication() {
         toggle: true,
         documentType: "",
       },
-      External_account_payment: {
+      External_account: {
         amount: "",
         check: false,
         toggle: true,
