@@ -5,8 +5,9 @@ import {
   Stack,
   Grid,
   useMediaQuery,
-  Textfield,
   Select,
+  Input,
+  Phonefield,
 } from "@inubekit/inubekit";
 
 import {
@@ -25,13 +26,14 @@ import { dataAddModal } from "./config";
 export interface IAddBorrowedProps {
   title: string;
   initialValues: IAddBorrowed;
+  AutoCompleted: boolean;
   portalId?: string;
   handleClose?: () => void;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IAddBorrowed) => void;
 }
 export const AddBorrower = (props: IAddBorrowedProps) => {
-  const { initialValues, onFormValid, handleOnChange } = props;
+  const { initialValues, AutoCompleted, onFormValid, handleOnChange } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
 
@@ -95,9 +97,10 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.tipeOfDocument}
           size="compact"
+          readonly={!AutoCompleted}
           fullwidth
         />
-        <Textfield
+        <Input
           name="documentNumber"
           id="documentNumber"
           type="text"
@@ -109,7 +112,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
-        <Textfield
+        <Input
           name="firstName"
           id="firstName"
           type="text"
@@ -119,9 +122,10 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.firstName}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
-        <Textfield
+        <Input
           name="lastName"
           id="lastName"
           type="text"
@@ -131,9 +135,10 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.lastName}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
-        <Textfield
+        <Input
           name="email"
           id="email"
           type="email"
@@ -143,9 +148,10 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.email}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
-        <Textfield
+        <Phonefield
           name="phone"
           id="phone"
           type="number"
@@ -155,6 +161,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.phone}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
         <Select
@@ -167,9 +174,10 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.sex}
           size="compact"
+          readonly={!AutoCompleted}
           fullwidth
         />
-        <Textfield
+        <Input
           name="age"
           id="age"
           type="number"
@@ -179,6 +187,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.age}
           size="compact"
+          readOnly={AutoCompleted}
           fullwidth
         />
         <Select

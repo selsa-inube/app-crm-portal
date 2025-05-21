@@ -196,7 +196,7 @@ function AppPage() {
           <Grid
             templateColumns={!isTablet ? "auto 1fr" : "1fr"}
             alignContent="unset"
-            height="95vh"
+            height={isTablet ? "81vh" : "86vh"}
           >
             {!isTablet && (
               <Nav navigation={navConfig} actions={actions} collapse={true} />

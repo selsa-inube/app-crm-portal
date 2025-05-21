@@ -18,6 +18,7 @@ interface DebtorAddModalUIProps {
   title: string;
   isMobile: boolean;
   incomeData: IIncomeSources | undefined;
+  AutoCompleted: boolean;
   handleFormChange: (updatedValues: Partial<FormData>) => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   handleNextStep: () => void;
@@ -36,6 +37,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     title,
     isMobile,
     incomeData,
+    AutoCompleted,
     handleFormChange,
     handleNextStep,
     handlePreviousStep,
@@ -84,6 +86,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               handleOnChange={(values) =>
                 handleFormChange({ personalInfo: values })
               }
+              AutoCompleted={AutoCompleted}
             />
           )}
         {currentStepsNumber &&
