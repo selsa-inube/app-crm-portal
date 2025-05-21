@@ -3,6 +3,8 @@ import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
 import { getIncomeSourcesById } from "@services/incomeSources";
 import { IIncomeSources } from "@services/incomeSources/types";
+import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
+import { getAge } from "@utils/formatData/currency";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { DebtorAddModalUI } from "./interface";
@@ -37,6 +39,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
   const [incomeData, setIncomeData] = useState<IIncomeSources | undefined>(
     undefined,
   );
+  const [isAutoCompleted, setIsAutoCompleted] = useState(false);
 
   const { addFlag } = useFlag();
 
@@ -77,39 +80,76 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           borrowerId,
           businessUnitPublicCode || "",
         );
+        const customer = await getSearchCustomerByCode(
+          borrowerId,
+          businessUnitPublicCode || "",
+          true,
+        );
+
         const formattedData = capitalizeKeysExceptSome<IIncomeSources>(
           response as unknown as Record<string, unknown>,
           ["name", "surname", "identificationNumber", "identificationType"],
         );
         setIncomeData(formattedData);
 
-        setFormData((prev) => ({
-          ...prev,
-          personalInfo: {
-            ...prev.personalInfo,
-            tipeOfDocument:
-              formattedData?.identificationType ||
-              prev.personalInfo.tipeOfDocument,
-            documentNumber:
-              formattedData?.identificationNumber ||
-              prev.personalInfo.documentNumber,
-            firstName: formattedData?.name || prev.personalInfo.firstName,
-            lastName: formattedData?.surname || prev.personalInfo.lastName,
-            email: prev.personalInfo.email,
-            phone: prev.personalInfo.phone,
-            sex: prev.personalInfo.sex,
-            age: prev.personalInfo.age,
-            relation: prev.personalInfo.relation,
-          },
-        }));
+        const data = customer?.generalAttributeClientNaturalPersons?.[0];
+
+        if (data) {
+          setFormData((prev) => ({
+            ...prev,
+            personalInfo: {
+              ...prev.personalInfo,
+              tipeOfDocument: data?.typeIdentification || "",
+              documentNumber: prev.personalInfo.documentNumber,
+              firstName: data?.firstNames || "",
+              lastName: data?.lastNames || "",
+              email: data?.emailContact || "",
+              phone: data?.cellPhoneContact || "",
+              sex: data?.gender || "",
+              age: getAge(data?.dateBirth || "").toString(),
+              relation: prev.personalInfo.relation,
+            },
+          }));
+          setIsAutoCompleted(true);
+        } else if (isAutoCompleted) {
+          setFormData((prev) => ({
+            ...prev,
+            personalInfo: {
+              ...prev.personalInfo,
+              tipeOfDocument: "",
+              firstName: "",
+              lastName: "",
+              email: "",
+              phone: "",
+              sex: "",
+              age: "",
+              relation: prev.personalInfo.relation,
+            },
+          }));
+          setIsAutoCompleted(false);
+        }
       } catch (error) {
         handleFlag(error);
       }
     };
 
     fetchIncomeData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [borrowerId]);
+
+  useEffect(() => {
+    if (!isAutoCompleted) {
+      setIncomeData(
+        (prev) =>
+          ({
+            ...prev,
+            name: formData.personalInfo.firstName,
+            surname: formData.personalInfo.lastName,
+            identificationNumber: formData.personalInfo.documentNumber,
+            identificationType: formData.personalInfo.tipeOfDocument,
+          }) as IIncomeSources,
+      );
+    }
+  }, [formData.personalInfo]);
 
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -151,6 +191,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       setIsCurrentFormValid={setIsCurrentFormValid}
       formData={formData}
       incomeData={incomeData}
+      AutoCompleted={isAutoCompleted}
       handleFormChange={handleFormChange}
       handleNextStep={handleNextStep}
       handlePreviousStep={handlePreviousStep}

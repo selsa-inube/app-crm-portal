@@ -31,6 +31,7 @@ interface IDisbursementWithCheckManagementProps {
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;
+  isAmountReadOnly: boolean;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -47,6 +48,7 @@ export function DisbursementWithCheckManagement(
     optionNameForm,
     identificationNumber,
     businessUnitPublicCode,
+    isAmountReadOnly,
     customerData,
     onFormValid,
     handleOnChange,
@@ -263,7 +265,6 @@ export function DisbursementWithCheckManagement(
     if (currentAmount + totalAmount - currentAmount !== initialValues.amount) {
       formik.setFieldValue(`${optionNameForm}.check`, false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values[optionNameForm]?.amount]);
 
   return (
@@ -293,6 +294,7 @@ export function DisbursementWithCheckManagement(
               ? "invalid"
               : undefined
           }
+          readOnly={isAmountReadOnly}
           message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
           fullwidth
         />
@@ -300,7 +302,7 @@ export function DisbursementWithCheckManagement(
           <Checkbox
             id={"featureCheckbox"}
             name={"featureCheckbox"}
-            checked={formik.values[optionNameForm]?.check}
+            checked={isDisabled || formik.values[optionNameForm]?.check}
             indeterminate={false}
             onChange={handleCheckboxChange}
             value={"featureCheckbox"}
@@ -344,7 +346,10 @@ export function DisbursementWithCheckManagement(
         <>
           <GeneralInformationForm
             formik={formik}
+            isMobile={isMobile}
             optionNameForm={optionNameForm}
+            isReadOnly={isAutoCompleted}
+            customerData={customerData}
           />
           <Divider dashed />
         </>

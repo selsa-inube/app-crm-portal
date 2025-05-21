@@ -13,6 +13,7 @@ import { InvestmentCreditCard } from "@pages/addProspect/components/InvestmentCr
 import { BaseModal } from "@components/modals/baseModal";
 import { CardConsolidatedCredit } from "@pages/addProspect/components/CardConsolidatedCredit";
 import { mockConsolidatedCreditModal } from "@mocks/add-prospect/consolidated-credit-modal/consolidatedcreditmodal.mock";
+import { IProspect } from "@src/services/prospects/types";
 
 import { ScrollableContainer } from "./styles";
 import { ModalConfig } from "./config";
@@ -20,14 +21,15 @@ import { ModalConfig } from "./config";
 export interface ConsolidatedCreditsProps {
   handleClose: () => void;
   loading?: boolean;
+  prospectData?: IProspect;
 }
 
 export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
-  const { loading, handleClose } = props;
+  const { loading, handleClose, prospectData } = props;
   const isMobile = useMediaQuery("(max-width:880px)");
   const debtorData = mockConsolidatedCreditModal[0];
   const [editOpen, setEditOpen] = useState(true);
-
+  const consolidatedCredits = prospectData?.consolidated_credits || [];
   return (
     <BaseModal
       title={ModalConfig.title}
@@ -93,13 +95,12 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                   gap="16px"
                   width="0%"
                 >
-                  {debtorData.investments.map((item) => (
+                  {consolidatedCredits.map((item) => (
                     <InvestmentCreditCard
-                      code={item.code}
-                      codeValue={item.codeValue}
-                      expired={item.expired}
-                      expiredValue={item.expiredValue}
-                      title={ModalConfig.creditInvestment}
+                      codeValue={item.credit_product_code}
+                      expired={ModalConfig.terminated}
+                      expiredValue={item.consolidated_amount}
+                      title={item.line_of_credit_description}
                     />
                   ))}
                 </Grid>
@@ -136,15 +137,12 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                   gap="16px"
                   width="0%"
                 >
-                  {debtorData.data_card.map((item) => (
-                    <CardConsolidatedCredit
-                      code={item.consolidated_credit_code}
-                      date={new Date(item.date)}
-                      expiredValue={item.expired_value}
-                      fullPayment={item.full_payment}
-                      nextDueDate={item.next_due_date}
-                      onUpdateTotal={() => {}}
-                      title={item.consolidated_credit_title}
+                  {consolidatedCredits.map((item) => (
+                    <InvestmentCreditCard
+                      codeValue={item.credit_product_code}
+                      expired={ModalConfig.terminated}
+                      expiredValue={item.consolidated_amount}
+                      title={item.line_of_credit_description}
                     />
                   ))}
                 </Grid>

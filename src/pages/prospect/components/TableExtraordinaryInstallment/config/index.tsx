@@ -3,18 +3,10 @@ import { IHeaders } from "@components/modals/ExtraordinaryPaymentModal/types";
 
 export const rowsVisbleMobile = ["datePayment", "value", "actions"];
 
-export const rowsActions = [
-  {
-    label: "Acciones",
-    key: "actions",
-  },
-];
+export const rowsActions = [{ label: "Acciones", key: "actions" }];
 
 export const headersTableExtraordinaryInstallment: IHeaders[] = [
-  {
-    label: "Fecha",
-    key: "datePayment",
-  },
+  { label: "Fecha", key: "datePayment" },
   {
     label: "Valor",
     key: "value",
@@ -22,14 +14,11 @@ export const headersTableExtraordinaryInstallment: IHeaders[] = [
       return currencyFormat(value as number);
     },
   },
-  {
-    label: "Medio de pago",
-    key: "paymentMethod",
-  },
+  { label: "Medio de pago", key: "paymentMethod" },
 ];
 
 export const dataTableExtraordinaryInstallment = {
-  noData: "¡Ups! No se encontraron registros.",
+  noData: "No se han configurado cuotas extraordinarias.",
   deletion: "Eliminación",
   delete: "Eliminar",
   content: "¿Realmente desea eliminar este pago extra?",

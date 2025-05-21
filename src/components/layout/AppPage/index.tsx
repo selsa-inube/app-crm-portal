@@ -121,7 +121,6 @@ function AppPage() {
     if (!businessUnitsToTheStaff || businessUnitsToTheStaff.length === 0) {
       handleFlag();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitsToTheStaff]);
 
   return (
@@ -196,7 +195,7 @@ function AppPage() {
           <Grid
             templateColumns={!isTablet ? "auto 1fr" : "1fr"}
             alignContent="unset"
-            height="95vh"
+            height={isTablet ? "81vh" : "86vh"}
           >
             {!isTablet && (
               <Nav navigation={navConfig} actions={actions} collapse={true} />

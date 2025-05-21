@@ -3,12 +3,13 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IProspect } from "./types";
 
-const getSearchProspectById = async (
-  businessUnitPublicCode: string,
-  prospectCode: string,
-): Promise<IProspect> => {
+import { IValidateRequirement } from "./types";
+
+export const patchValidateRequirements = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  validataRequirements: any | null,
+): Promise<IValidateRequirement[] | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -16,52 +17,46 @@ const getSearchProspectById = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+
       const options: RequestInit = {
-        method: "GET",
+        method: "PATCH",
         headers: {
-          "X-Action": "SearchByIdProspect",
-          "X-Business-Unit": businessUnitPublicCode,
+          "X-Action": "ValidateRequirements",
+          "X-Business-Unit": "fondecom",
           "Content-type": "application/json; charset=UTF-8",
         },
+        body: JSON.stringify(validataRequirements),
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-requests`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay tarea disponible.");
+        return;
       }
 
       const data = await res.json();
+
       if (!res.ok) {
         throw {
-          message: "Error al obtener la tarea.",
+          message: "Error al actualizar la solicitud de crédito",
           status: res.status,
           data,
         };
       }
 
-      if (Array.isArray(data) && data.length > 0) {
-        return data[0];
-      }
-
       return data;
     } catch (error) {
-      console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener la tarea.",
+          "Todos los intentos fallaron. No se pudo registrar la novedad en la solicitud de crédito.",
         );
       }
     }
   }
-
-  throw new Error("No se pudo obtener la tarea después de varios intentos.");
 };
-
-export { getSearchProspectById };

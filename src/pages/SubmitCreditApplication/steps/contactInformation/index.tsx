@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Input, Grid } from "@inubekit/inubekit";
+import { Input, Grid, Phonefield } from "@inubekit/inubekit";
 
 import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
@@ -27,7 +27,7 @@ export function ContactInformation(props: IContactInformationProps) {
       .matches(/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/)
       .required(),
     phone: Yup.string()
-      .matches(/^(\+\d{1,3})?\d{7,14}$/)
+      .matches(/^(\+\d{1,3})?\d{10,14}$/)
       .required(""),
   });
 
@@ -90,7 +90,6 @@ export function ContactInformation(props: IContactInformationProps) {
 
   useEffect(() => {
     handleOnChange(formik.values);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -127,11 +126,17 @@ export function ContactInformation(props: IContactInformationProps) {
           value={formik.values.email}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          status={!formik.values.email ? "invalid" : undefined}
+          status={
+            formik.touched.email &&
+            formik.values.email !== "" &&
+            formik.errors.email
+              ? "invalid"
+              : undefined
+          }
           message={dataContactInformation.failedEmail}
           fullwidth
         />
-        <Input
+        <Phonefield
           name="phone"
           id="phone"
           type="number"
@@ -141,7 +146,13 @@ export function ContactInformation(props: IContactInformationProps) {
           value={formik.values.phone}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          status={!formik.values.phone ? "invalid" : undefined}
+          status={
+            formik.touched.phone &&
+            formik.values.phone !== "" &&
+            formik.errors.phone
+              ? "invalid"
+              : undefined
+          }
           message={dataContactInformation.failedPhone}
           fullwidth
         />

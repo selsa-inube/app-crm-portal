@@ -49,7 +49,7 @@ export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
 
     &::-webkit-scrollbar-thumb {
       background-color: ${
-        theme?.palette?.neutral?.N30 || inube.palette.neutral.N30
+        theme?.palette?.neutral?.N50 || inube.palette.neutral.N50
       };
       border-radius: 8px;
     }

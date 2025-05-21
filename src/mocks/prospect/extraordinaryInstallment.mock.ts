@@ -29,20 +29,18 @@ export const extraordinaryInstallmentMock: IExtraordinaryPayment[] = [
 
 export const paymentMethodOptionsMock = [
   {
-    id: "bank_transfer",
-    label: "Transferencia Bancaria",
-    value: "Transferencia Bancaria",
+    id: "selsa_payroll_jun",
+    label: "Prima Junio Selsa",
+    value: "Prima Junio Selsa",
   },
   {
-    id: "credit_card",
-    label: "Tarjeta de Crédito",
-    value: "Tarjeta de Crédito",
+    id: "selsa_payroll_dec",
+    label: "Prima Diciembre Selsa",
+    value: "Prima Diciembre Selsa",
   },
-  { id: "cash", label: "Efectivo", value: "Efectivo" },
 ];
 
 export const frequencyOptionsMock = [
-  { id: "monthly", label: "Mensual", value: "Mensual" },
-  { id: "quarterly", label: "Trimestral", value: "Trimestral" },
+  { id: "semiannually", label: "Semestral", value: "Semestral" },
   { id: "annually", label: "Anual", value: "Anual" },
 ];

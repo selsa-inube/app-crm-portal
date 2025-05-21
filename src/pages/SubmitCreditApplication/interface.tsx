@@ -121,7 +121,7 @@ export function SubmitCreditApplicationUI(
             alignItems={isMobile ? "normal" : "center"}
             margin="20px 0px"
             padding="24px"
-            height="100vh"
+            height={isMobile ? "auto" : "2000px"}
           >
             <Stack
               gap="24px"
@@ -138,13 +138,17 @@ export function SubmitCreditApplicationUI(
                       appearance="dark"
                       size="20px"
                     />
-                    <Text type="title" size="large">
+                    <Text type="title" size={isMobile ? "small" : "large"}>
                       {`${submitCreditApplicationConfig.title}
                   ${prospectData?.prospect_code}`}
                     </Text>
                   </Stack>
                 </StyledArrowBack>
-                <Text type="body" size="medium" appearance="gray">
+                <Text
+                  type="body"
+                  size={isMobile ? "small" : "medium"}
+                  appearance="gray"
+                >
                   {`${dataSubmitApplication.cards.destination}
               ${prospectData.money_destination_abbreviated_name}`}
                 </Text>
@@ -179,8 +183,13 @@ export function SubmitCreditApplicationUI(
               </StyledContainerAssisted>
               {currentStepsNumber &&
                 currentStepsNumber.id ===
-                  stepsFilingApplication.generalInformation.id && (
-                  <RequirementsNotMet isMobile={isMobile} />
+                  stepsFilingApplication.generalInformation.id &&
+                customerData && (
+                  <RequirementsNotMet
+                    isMobile={isMobile}
+                    customerData={customerData}
+                    prospectData={prospectData}
+                  />
                 )}
               {currentStepsNumber &&
                 currentStepsNumber.id ===
@@ -277,7 +286,11 @@ export function SubmitCreditApplicationUI(
                     rule={getRuleByName("ModeOfDisbursementType")}
                   />
                 )}
-              <Stack justifyContent="end" gap="20px" margin="auto 0 0 0">
+              <Stack
+                justifyContent="end"
+                gap="20px"
+                margin={isMobile ? "0px" : "auto 0 0 0"}
+              >
                 <Button
                   variant="outlined"
                   appearance="gray"

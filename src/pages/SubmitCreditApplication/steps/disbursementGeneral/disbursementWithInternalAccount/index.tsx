@@ -34,6 +34,7 @@ interface IDisbursementWithInternalAccountProps {
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;
+  isAmountReadOnly: boolean;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -50,6 +51,7 @@ export function DisbursementWithInternalAccount(
     optionNameForm,
     identificationNumber,
     businessUnitPublicCode,
+    isAmountReadOnly,
     customerData,
     getTotalAmount,
     onFormValid,
@@ -180,18 +182,15 @@ export function DisbursementWithInternalAccount(
 
   useEffect(() => {
     const initialToggle = formik.values[optionNameForm]?.toggle;
-    if (
-      initialToggle &&
-      Number(initialValues.Internal_account_payment.amount) > 0
-    ) {
+    if (initialToggle && Number(initialValues.Internal_account.amount) > 0) {
       restoreCustomerDataFields();
     } else if (
-      Number(initialValues.Internal_account_payment.amount) === 0 &&
-      initialValues.Internal_account_payment.toggle === true
+      Number(initialValues.Internal_account.amount) === 0 &&
+      initialValues.Internal_account.toggle === true
     ) {
       clearFields();
     }
-  }, [initialValues.Internal_account_payment.amount]);
+  }, [initialValues.Internal_account.amount]);
 
   const identificationValue = formik.values[optionNameForm]?.identification;
 
@@ -330,6 +329,13 @@ export function DisbursementWithInternalAccount(
     return () => clearTimeout(timer);
   }, [currentIdentification]);
 
+  useEffect(() => {
+    if (isAmountReadOnly && accountOptions.length === 1) {
+      const onlyOption = accountOptions[0];
+      formik.setFieldValue(`${optionNameForm}.accountNumber`, onlyOption.value);
+    }
+  }, [accountOptions]);
+
   return (
     <Stack
       direction="column"
@@ -357,6 +363,7 @@ export function DisbursementWithInternalAccount(
               ? "invalid"
               : undefined
           }
+          readOnly={isAmountReadOnly}
           message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
           fullwidth
         />
@@ -364,7 +371,7 @@ export function DisbursementWithInternalAccount(
           <Checkbox
             id="featureCheckbox"
             name="featureCheckbox"
-            checked={formik.values[optionNameForm]?.check}
+            checked={isDisabled || formik.values[optionNameForm]?.check}
             indeterminate={false}
             onChange={handleCheckboxChange}
             value="featureCheckbox"
@@ -408,6 +415,7 @@ export function DisbursementWithInternalAccount(
         <>
           <GeneralInformationForm
             formik={formik}
+            isMobile={isMobile}
             optionNameForm={optionNameForm}
             isReadOnly={isAutoCompleted}
             customerData={customerData}

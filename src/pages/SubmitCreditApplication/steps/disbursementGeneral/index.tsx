@@ -70,8 +70,8 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
 
   const getTotalAmount = useCallback(() => {
     const disbursementForms = [
-      "Internal_account_payment",
-      "External_account_payment",
+      "Internal_account",
+      "External_account",
       "Certified_check",
       "Business_check",
       "Cash",
@@ -90,16 +90,19 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   useEffect(() => {
     const totalAmount = getTotalAmount();
     onFormValid(
-      totalAmount === initialValues.amount &&
-        initialValues.Internal_account_payment.account !== "",
+      formik.values.Internal_account?.amount
+        ? totalAmount === initialValues.amount &&
+            initialValues.Internal_account.accountNumber !== ""
+        : totalAmount === initialValues.amount,
     );
   }, [
     formik.values,
     onFormValid,
+    handleOnChange,
     tabChanged,
     getTotalAmount,
     initialValues.amount,
-    initialValues.Internal_account_payment.account,
+    initialValues.Internal_account.accountNumber,
   ]);
 
   const fetchTabs = useCallback(() => {
@@ -116,16 +119,10 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     if (availableTabs.length === 1) {
       const tabId = availableTabs[0].id;
       if (tabId === disbursemenTabs.internal.id) {
-        formik.setFieldValue(
-          "Internal_account_payment.amount",
-          initialValues.amount,
-        );
+        formik.setFieldValue("Internal_account.amount", initialValues.amount);
       }
       if (tabId === disbursemenTabs.external.id) {
-        formik.setFieldValue(
-          "External_account_payment.amount",
-          initialValues.amount,
-        );
+        formik.setFieldValue("External_account.amount", initialValues.amount);
       }
       if (tabId === disbursemenTabs.check.id) {
         formik.setFieldValue("Certified_check.amount", initialValues.amount);
@@ -152,6 +149,8 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     handleTabChange(tabId);
   };
 
+  const isAmountReadOnly = validTabs.length === 1;
+
   return (
     <Fieldset>
       <Stack
@@ -174,11 +173,12 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 initialValues={initialValues}
                 handleOnChange={handleOnChange}
                 formik={formik}
-                optionNameForm="Internal_account_payment"
+                optionNameForm="Internal_account"
                 getTotalAmount={getTotalAmount}
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.external.id) &&
@@ -189,11 +189,12 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 initialValues={initialValues}
                 handleOnChange={handleOnChange}
                 formik={formik}
-                optionNameForm="External_account_payment"
+                optionNameForm="External_account"
                 getTotalAmount={getTotalAmount}
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.check.id) &&
@@ -209,6 +210,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.management.id) &&
@@ -224,6 +226,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.cash.id) &&
@@ -239,6 +242,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
+                isAmountReadOnly={isAmountReadOnly}
               />
             )}
         </Stack>
