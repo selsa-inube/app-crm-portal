@@ -2,8 +2,9 @@ import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Button } from "@inubekit/inubekit";
 
-import { ReportCreditsModal, ReportCreditsModalProps } from ".";
 import { incomeOptions } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
+
+import { ReportCreditsModal, ReportCreditsModalProps } from ".";
 
 const meta: Meta<typeof ReportCreditsModal> = {
   title: "components/modals/ReportCreditsModal",
