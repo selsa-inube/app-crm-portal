@@ -90,7 +90,6 @@ export function ContactInformation(props: IContactInformationProps) {
 
   useEffect(() => {
     handleOnChange(formik.values);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

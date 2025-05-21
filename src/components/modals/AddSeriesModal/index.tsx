@@ -19,7 +19,7 @@ import {
   frequencyOptionsMock,
   paymentMethodOptionsMock,
 } from "@mocks/prospect/extraordinaryInstallment.mock";
-import { handleFormSubmit } from "@src/utils/handleFormSubmit";
+import { handleFormSubmit } from "@utils/handleFormSubmit";
 
 import { dataAddSeriesModal } from "./config";
 

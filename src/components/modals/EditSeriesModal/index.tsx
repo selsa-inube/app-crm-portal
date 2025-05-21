@@ -11,7 +11,7 @@ import {
 } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { handleFormSubmit } from "@src/utils/handleFormSubmit";
+import { handleFormSubmit } from "@utils/handleFormSubmit";
 import {
   handleChangeWithCurrency,
   validateCurrencyField,

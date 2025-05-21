@@ -5,9 +5,9 @@ import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { postSubmitCredit } from "@services/submitCredit";
-import { getSearchProspectById } from "@services/prospects";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { getMonthsElapsed } from "@utils/formatData/currency";
+import { getSearchProspectByCode } from "@services/prospects/AllProspects";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { SubmitCreditApplicationUI } from "./interface";
@@ -357,7 +357,7 @@ export function SubmitCreditApplication() {
 
   const fetchProspectData = useCallback(async () => {
     try {
-      const prospect = await getSearchProspectById(
+      const prospect = await getSearchProspectByCode(
         businessUnitPublicCode,
         prospectCode || "",
       );
@@ -443,6 +443,7 @@ export function SubmitCreditApplication() {
     if (!customerData || !prospectData) return;
     fetchValidationRules();
   }, [customerData, prospectData, fetchValidationRules]);
+
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     const creditProducts = prospectData?.credit_products;

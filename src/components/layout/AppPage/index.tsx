@@ -18,7 +18,7 @@ import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
-import { userMenu } from "@src/config/menuMainConfiguration";
+import { userMenu } from "@config/menuMainConfiguration";
 
 import {
   StyledAppPage,
@@ -121,7 +121,6 @@ function AppPage() {
     if (!businessUnitsToTheStaff || businessUnitsToTheStaff.length === 0) {
       handleFlag();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitsToTheStaff]);
 
   return (
