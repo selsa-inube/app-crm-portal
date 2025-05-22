@@ -80,15 +80,15 @@ export const TableExtraordinaryInstallment = (
     : rowsActions;
 
   useEffect(() => {
-    if (prospectData?.credit_products) {
+    if (prospectData?.creditProducts) {
       const extraordinaryInstallmentsUpdate =
-        prospectData.credit_products.flatMap((product) =>
-          Array.isArray(product.extraordinary_installments)
-            ? product.extraordinary_installments.map((installment) => ({
-                id: `${product.credit_product_code}-${installment.installment_date}`,
-                datePayment: installment.installment_date,
-                value: installment.installment_amount,
-                paymentMethod: installment.payment_channel_abbreviated_name,
+        prospectData.creditProducts.flatMap((product) =>
+          Array.isArray(product.extraordinaryInstallments)
+            ? product.extraordinaryInstallments.map((installment) => ({
+                id: `${product.creditProductCode}-${installment.installmentDate}`,
+                datePayment: installment.installmentDate,
+                value: installment.installmentAmount,
+                paymentMethod: installment.paymentChannelAbbreviatedName,
               }))
             : [],
         );

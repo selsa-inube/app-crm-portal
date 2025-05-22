@@ -160,13 +160,13 @@ export function CreditProspect(props: ICreditProspectProps) {
   const borrowerOptions =
     borrowersProspect?.borrowers?.map((borrower) => ({
       id: crypto.randomUUID(),
-      label: borrower.borrower_name,
-      value: borrower.borrower_name,
+      label: borrower.borrowerName,
+      value: borrower.borrowerName,
     })) ?? [];
 
   const handleChange = (_name: string, value: string) => {
     const index = borrowersProspect?.borrowers?.findIndex(
-      (borrower) => borrower.borrower_name === value,
+      (borrower) => borrower.borrowerName === value,
     );
     setSelectedIndex(index ?? 0);
   };
@@ -175,7 +175,7 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const handleIncomeSubmit = (updatedData: IIncomeSources) => {
     if (selectedBorrower) {
-      const borrowerName = selectedBorrower.borrower_name;
+      const borrowerName = selectedBorrower.borrowerName;
 
       setIncomeData((prev) => ({
         ...prev,
@@ -188,9 +188,9 @@ export function CreditProspect(props: ICreditProspectProps) {
       setDataProspect((prev) => {
         return prev.map((prospect) => {
           const updatedBorrowers = prospect.borrowers.map((borrower) => {
-            if (borrower.borrower_name === borrowerName) {
+            if (borrower.borrowerName === borrowerName) {
               const updatedProperties = [
-                ...borrower.borrower_properties.filter(
+                ...borrower.borrowerProperties.filter(
                   (prop) =>
                     ![
                       "PeriodicSalary",
@@ -203,58 +203,57 @@ export function CreditProspect(props: ICreditProspectProps) {
                       "FinancialIncome",
                       "name",
                       "surname",
-                    ].includes(prop.property_name),
+                    ].includes(prop.propertyName),
                 ),
                 {
-                  property_name: "PeriodicSalary",
-                  property_value: updatedData.PeriodicSalary?.toString() || "0",
+                  propertyName: "PeriodicSalary",
+                  propertyValue: updatedData.PeriodicSalary?.toString() || "0",
                 },
                 {
-                  property_name: "OtherNonSalaryEmoluments",
-                  property_value:
+                  propertyName: "OtherNonSalaryEmoluments",
+                  propertyValue:
                     updatedData.OtherNonSalaryEmoluments?.toString() || "0",
                 },
                 {
-                  property_name: "PensionAllowances",
-                  property_value:
+                  propertyName: "PensionAllowances",
+                  propertyValue:
                     updatedData.PensionAllowances?.toString() || "0",
                 },
                 {
-                  property_name: "PersonalBusinessUtilities",
-                  property_value:
+                  propertyName: "PersonalBusinessUtilities",
+                  propertyValue:
                     updatedData.PersonalBusinessUtilities?.toString() || "0",
                 },
                 {
-                  property_name: "ProfessionalFees",
-                  property_value:
+                  propertyName: "ProfessionalFees",
+                  propertyValue:
                     updatedData.ProfessionalFees?.toString() || "0",
                 },
                 {
-                  property_name: "Leases",
-                  property_value: updatedData.Leases?.toString() || "0",
+                  propertyName: "Leases",
+                  propertyValue: updatedData.Leases?.toString() || "0",
                 },
                 {
-                  property_name: "Dividends",
-                  property_value: updatedData.Dividends?.toString() || "0",
+                  propertyName: "Dividends",
+                  propertyValue: updatedData.Dividends?.toString() || "0",
                 },
                 {
-                  property_name: "FinancialIncome",
-                  property_value:
-                    updatedData.FinancialIncome?.toString() || "0",
+                  propertyName: "FinancialIncome",
+                  propertyValue: updatedData.FinancialIncome?.toString() || "0",
                 },
                 {
-                  property_name: "name",
-                  property_value: updatedData.name || "",
+                  propertyName: "name",
+                  propertyValue: updatedData.name || "",
                 },
                 {
-                  property_name: "surname",
-                  property_value: updatedData.surname || "",
+                  propertyName: "surname",
+                  propertyValue: updatedData.surname || "",
                 },
               ];
 
               return {
                 ...borrower,
-                borrower_properties: updatedProperties,
+                borrowerProperties: updatedProperties,
               };
             }
             return borrower;
@@ -276,67 +275,64 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   useEffect(() => {
     if (selectedBorrower) {
-      const borrowerName = selectedBorrower.borrower_name;
+      const borrowerName = selectedBorrower.borrowerName;
       if (!incomeData[borrowerName]?.edited) {
         setIncomeData((prev) => ({
           ...prev,
           [borrowerName]: {
-            identificationNumber:
-              selectedBorrower.borrower_identification_number,
-            identificationType: selectedBorrower.borrower_identification_type,
+            identificationNumber: selectedBorrower.borrowerIdentificationNumber,
+            identificationType: selectedBorrower.borrowerIdentificationType,
             name:
-              getPropertyValue(selectedBorrower.borrower_properties, "name") ||
+              getPropertyValue(selectedBorrower.borrowerProperties, "name") ||
               "",
             surname:
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "surname",
               ) || "",
             Leases: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrower_properties,
-                "Leases",
-              ) || "0",
+              getPropertyValue(selectedBorrower.borrowerProperties, "Leases") ||
+                "0",
             ),
             Dividends: parseFloat(
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "Dividends",
               ) || "0",
             ),
             FinancialIncome: parseFloat(
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "FinancialIncome",
               ) || "0",
             ),
             PeriodicSalary: parseFloat(
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "PeriodicSalary",
               ) || "0",
             ),
             OtherNonSalaryEmoluments: parseFloat(
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "OtherNonSalaryEmoluments",
               ) || "0",
             ),
             PensionAllowances: parseFloat(
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "PensionAllowances",
               ) || "0",
             ),
             PersonalBusinessUtilities: parseFloat(
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "PersonalBusinessUtilities",
               ) || "0",
             ),
             ProfessionalFees: parseFloat(
               getPropertyValue(
-                selectedBorrower.borrower_properties,
+                selectedBorrower.borrowerProperties,
                 "ProfessionalFees",
               ) || "0",
             ),
@@ -369,7 +365,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               {dataCreditProspect.addProduct}
             </Button>
 
-            {prospectData?.credit_products && (
+            {prospectData?.creditProducts && (
               <Button
                 type="button"
                 appearance="primary"
@@ -525,8 +521,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           <IncomeDebtor
             initialValues={
               dataProspect[0]?.borrowers?.find(
-                (b) =>
-                  b.borrower_name === borrowerOptions[selectedIndex]?.value,
+                (b) => b.borrowerName === borrowerOptions[selectedIndex]?.value,
               ) || selectedBorrower
             }
           />
@@ -536,7 +531,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         <IncomeModal
           handleClose={() => setOpenModal(null)}
           initialValues={
-            (selectedBorrower && incomeData[selectedBorrower.borrower_name]) ||
+            (selectedBorrower && incomeData[selectedBorrower.borrowerName]) ||
             {}
           }
           onSubmit={handleIncomeSubmit}

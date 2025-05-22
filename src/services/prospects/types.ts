@@ -1,92 +1,91 @@
 export interface IBorrowerProperty {
-  property_name: string;
-  property_value: string;
+  propertyName: string;
+  propertyValue: string;
 }
 
 export interface IBorrower {
-  borrower_name: string;
-  borrower_type: string;
-  borrower_identification_type: string;
-  borrower_identification_number: string;
-  borrower_properties: IBorrowerProperty[];
+  borrowerName: string;
+  borrowerType: string;
+  borrowerIdentificationType: string;
+  borrowerIdentificationNumber: string;
+  borrowerProperties: IBorrowerProperty[];
 }
 
 export interface IConsolidatedCredit {
-  credit_product_code: string;
-  consolidated_amount: number;
-  consolidated_amount_type: string;
-  estimated_date_of_consolidation: Date;
-  line_of_credit_description: string;
-  borrower_identification_type: string;
-  borrower_identification_number: string;
+  creditProductCode: string;
+  consolidatedAmount: number;
+  consolidatedAmountType: string;
+  estimatedDateOfConsolidation: Date;
+  lineOfCreditDescription: string;
+  borrowerIdentificationType: string;
+  borrowerIdentificationNumber: string;
 }
 
 export interface IOrdinaryInstallmentsForPrincipal {
-  number_of_installments: number;
+  numberOfInstallments: number;
   schedule: string;
-  installment_amount_for_capital: number;
-  installment_amount: number;
-  gradient_rate: number;
-  gradient_value: number;
-  gradient_schedule: string;
-  first_gradient_date: Date;
-  payment_channel_abbreviated: string;
+  installmentAmountForCapital: number;
+  installmentAmount: number;
+  gradientRate: number;
+  gradientValue: number;
+  gradientSchedule: string;
+  firstGradientDate: Date;
+  paymentChannelAbbreviatedName: string;
 }
 
 export interface IInstallmentsForInterest {
   schedule: string;
-  payment_channel_abbreviated_name: string;
+  paymentChannelAbbreviatedName: string;
 }
 
 export interface IExtraordinaryInstallment {
-  installment_date: Date;
-  installment_amount: number;
-  payment_channel_abbreviated_name: string;
+  installmentDate: Date;
+  installmentAmount: number;
+  paymentChannelAbbreviatedName: string;
 }
 
 export interface IAcquiredCashFlow {
   amount: string;
   date: Date;
-  payment_channel_abbreviated_name: string;
-  flow_number: number;
+  paymentChannelAbbreviatedName: string;
+  flowNumber: number;
 }
 
 export interface ICreditProduct {
-  credit_product_code: string;
-  loan_amount: number;
-  line_of_credit_abbreviated_name: string;
-  interest_rate: number;
-  fixed_points: number;
-  loan_term: number;
+  creditProductCode: string;
+  loanAmount: number;
+  lineOfCreditAbbreviatedName: string;
+  interestRate: number;
+  fixedPoints: number;
+  loanTerm: number;
   schedule: string;
-  ordinary_installments_for_principal: IOrdinaryInstallmentsForPrincipal[];
-  installments_for_interest: IInstallmentsForInterest[];
-  extraordinary_installments: IExtraordinaryInstallment[];
-  acquired_cash_flows: IAcquiredCashFlow[];
+  ordinaryInstallmentsForPrincipal: IOrdinaryInstallmentsForPrincipal[];
+  installmentsForInterest: IInstallmentsForInterest[];
+  extraordinaryInstallments: IExtraordinaryInstallment[];
+  acquiredCashFlows: IAcquiredCashFlow[];
 }
 
 export interface IOutlay {
   date: Date;
   amount: number;
 }
-
 export interface IProspect {
-  prospect_id: string;
-  prospect_code: string;
+  prospectId: string;
+  prospectCode: string;
   state: string;
-  requested_amount: number;
-  installment_limit: number;
-  term_limit: number;
-  time_of_creation: Date;
-  selected_regular_payment_schedule: string;
-  selected_rate_type: string;
-  preferred_payment_channel_abbreviated_name: string;
-  grace_period: number;
-  grace_period_type: string;
-  money_destination_abbreviated_name: string;
-  bond_value: number;
+  requestedAmount: number;
+  installmentLimit: number;
+  termLimit: number;
+  timeOfCreation: Date;
+  selectedRegularPaymentSchedule: string;
+  selectedRateType: string;
+  preferredPaymentChannelAbbreviatedName: string;
+  gracePeriod: number;
+  gracePeriodType: string;
+  moneyDestinationAbbreviatedName: string;
+  bondValue: number;
   borrowers: IBorrower[];
-  consolidated_credits: IConsolidatedCredit[];
-  credit_products: ICreditProduct[];
+  consolidatedCredits: IConsolidatedCredit[];
+  creditProducts: ICreditProduct[];
   outlays: IOutlay[];
 }
