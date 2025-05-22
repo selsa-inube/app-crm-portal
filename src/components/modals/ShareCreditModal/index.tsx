@@ -6,6 +6,7 @@ import { Text, Stack, Icon, Textfield } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 
 import { dataShareModal } from "./config";
+import { patchshareCreditProspect } from "@services/iProspect/shareCreditProspect";
 
 export interface IShareCreditModalProps {
   handleClose: () => void;
@@ -29,11 +30,43 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     share: Yup.boolean(),
   });
 
+  const urlToFile = async (
+    url: string,
+    filename: string,
+    mimeType: string,
+  ): Promise<File> => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: mimeType });
+  };
+
+  const handleSubmit = async (values: typeof initialValues) => {
+    const file = await urlToFile(
+      "../../../assets/images/linpar.png",
+      "jh-image.jpg",
+      "image/jpeg",
+    );
+    const payload = {
+      clientName: values.name,
+      email: values.email,
+      optionalEmail: values.aditionalEmail,
+      prospectId: "67ec4f9115ddc25b00d3df14",
+      file: file,
+    };
+
+    try {
+      await patchshareCreditProspect("text", payload);
+      handleClose();
+    } catch (error) {
+      console.error("Error sharing credit prospect:", error);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
     >
       {(formik) => (
         <BaseModal
