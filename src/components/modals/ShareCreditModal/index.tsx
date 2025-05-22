@@ -1,7 +1,7 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { MdInfoOutline } from "react-icons/md";
-import { Text, Stack, Icon, Textfield } from "@inubekit/inubekit";
+import { Text, Stack, Icon, Textfield, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 
@@ -11,10 +11,11 @@ import { patchshareCreditProspect } from "@services/iProspect/shareCreditProspec
 export interface IShareCreditModalProps {
   handleClose: () => void;
   isMobile: boolean;
+  prospectId: string;
 }
 
 export function ShareCreditModal(props: IShareCreditModalProps) {
-  const { handleClose, isMobile } = props;
+  const { handleClose, isMobile, prospectId } = props;
 
   const initialValues = {
     name: "",
@@ -29,6 +30,26 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     aditionalEmail: Yup.string().email(),
     share: Yup.boolean(),
   });
+
+  const { addFlag } = useFlag();
+
+  const handleFlag = (error: boolean, typeError?: unknown) => {
+    if (!error) {
+      addFlag({
+        title: `${dataShareModal.share}`,
+        description: `${dataShareModal.shareCompleted}`,
+        appearance: "success",
+        duration: 5000,
+      });
+    } else {
+      addFlag({
+        title: `${dataShareModal.share}`,
+        description: `${typeError}`,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
 
   const urlToFile = async (
     url: string,
@@ -50,15 +71,17 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
       clientName: values.name,
       email: values.email,
       optionalEmail: values.aditionalEmail,
-      prospectId: "67ec4f9115ddc25b00d3df14",
+      prospectId: prospectId,
       file: file,
     };
 
     try {
       await patchshareCreditProspect("text", payload);
       handleClose();
+      handleFlag(false);
     } catch (error) {
       console.error("Error sharing credit prospect:", error);
+      handleFlag(true);
     }
   };
 

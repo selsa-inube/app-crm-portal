@@ -563,6 +563,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         <ShareCreditModal
           handleClose={() => setShowShareModal(false)}
           isMobile={isMobile}
+          prospectId={prospectData?.prospect_id || ""}
         />
       )}
     </Stack>
