@@ -1,33 +1,38 @@
 import { useState, useEffect } from "react";
-import { MdAdd } from "react-icons/md";
-import {
-  Stack,
-  SkeletonLine,
-  useMediaQuery,
-  Button,
-  Select,
-} from "@inubekit/inubekit";
+import { MdAdd, MdCached } from "react-icons/md";
+import { Stack, useMediaQuery, Button, Select } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { dataReport } from "@pages/prospect/components/TableObligationsFinancial/config";
-
-import { NewPrice } from "./components/newPrice";
-
+import { IProspect } from "@services/prospects/types";
+import { ListModal } from "../ListModal";
+import { FinancialObligationModal } from "../financialObligationModal";
+import { FormikValues } from "formik";
 export interface ReportCreditsModalProps {
   handleClose: () => void;
   onChange: (name: string, newValue: string) => void;
   options: { id: string; label: string; value: string }[];
-  totalBalance: number;
-  totalFee: number;
   debtor: string;
+  prospectData?: IProspect[];
 }
 
 export function ReportCreditsModal(props: ReportCreditsModalProps) {
-  const { handleClose, onChange, options, totalBalance, totalFee, debtor } =
-    props;
+  const { handleClose, onChange, options, debtor, prospectData } = props;
 
   const [loading, setLoading] = useState(true);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+
+  const initialValues: FormikValues = {
+    type: "",
+    entity: "",
+    fee: "",
+    balance: "",
+    payment: "",
+    feePaid: "",
+    term: "",
+  };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -38,6 +43,10 @@ export function ReportCreditsModal(props: ReportCreditsModalProps) {
   }, []);
 
   const isMobile = useMediaQuery("(max-width:880px)");
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   return (
     <BaseModal
@@ -66,28 +75,54 @@ export function ReportCreditsModal(props: ReportCreditsModalProps) {
               onChange={(name, value) => onChange(name, value)}
               size="compact"
             />
-            <Stack alignItems="end">
-              <Button
-                children={dataReport.addObligations}
-                iconBefore={<MdAdd />}
-                fullwidth={isMobile}
-              />
+            <Stack alignItems="center" gap="16px">
+              <Stack>
+                <Button
+                  children="Restablecer"
+                  iconBefore={<MdCached />}
+                  fullwidth={isMobile}
+                  variant="outlined"
+                  spacing="wide"
+                  onClick={() => setIsOpenModal(true)}
+                />
+              </Stack>
+              <Stack gap="16px">
+                <Button
+                  children={dataReport.addObligations}
+                  iconBefore={<MdAdd />}
+                  fullwidth={isMobile}
+                  onClick={() => setOpenModal(true)}
+                />
+              </Stack>
             </Stack>
           </Stack>
         )}
-        <TableFinancialObligations showActions={true} />
-        <Stack gap="15px" direction={!isMobile ? "row" : "column"}>
-          {loading ? (
-            <SkeletonLine />
-          ) : (
-            <NewPrice value={totalFee} label={dataReport.totalFee} />
+        <Stack gap="16px" justifyContent="center">
+          {isOpenModal && (
+            <ListModal
+              title={dataReport.restore}
+              handleClose={() => setIsOpenModal(false)}
+              handleSubmit={() => setIsOpenModal(false)}
+              cancelButton="Cancelar"
+              appearanceCancel="gray"
+              buttonLabel={dataReport.restore}
+              content={dataReport.descriptionModal}
+            />
           )}
-          {loading ? (
-            <SkeletonLine />
-          ) : (
-            <NewPrice value={totalBalance} label={dataReport.totalBalance} />
+          {openModal && (
+            <FinancialObligationModal
+              title="Agregar obligaciones"
+              onCloseModal={handleCloseModal}
+              onConfirm={() => console.log("ok")}
+              initialValues={initialValues}
+              confirmButtonText="Agregar"
+            />
           )}
         </Stack>
+        <TableFinancialObligations
+          showActions={true}
+          initialValues={prospectData}
+        />
       </Stack>
     </BaseModal>
   );

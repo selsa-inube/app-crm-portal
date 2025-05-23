@@ -14,14 +14,14 @@ export interface IIncomeSources {
 }
 
 export interface BorrowerProperty {
-  property_name: string;
-  property_value: string;
+  propertyName: string;
+  propertyValue: string;
 }
 
 export interface IBorrower {
-  borrower_identification_number: string;
-  borrower_identification_type: string;
-  borrower_name: string;
-  borrower_properties: BorrowerProperty[];
-  borrower_type: string;
+  borrowerIdentificationNumber: string;
+  borrowerIdentificationType: string;
+  borrowerName: string;
+  borrowerProperties: BorrowerProperty[];
+  borrowerType: string;
 }

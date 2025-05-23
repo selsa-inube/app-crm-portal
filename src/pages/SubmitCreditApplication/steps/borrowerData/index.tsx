@@ -33,11 +33,11 @@ interface borrowersProps {
 }
 
 interface Borrower {
-  borrower_identification_number: string;
-  borrower_identification_type: string;
-  borrower_name: string;
-  borrower_type: string;
-  borrower_properties: {
+  borrowerIdentificationNumber: string;
+  borrowerIdentificationType: string;
+  borrowerName: string;
+  borrowerType: string;
+  borrowerProperties: {
     [key: string]: BorrowerProperty;
   };
 }
@@ -45,8 +45,8 @@ export function Borrowers(props: borrowersProps) {
   const { handleOnChange, initialValues, isMobile, data, valueRule } = props;
   const dataDebtorDetail = Array.isArray(data.borrowers)
     ? [...data.borrowers].sort((a, b) => {
-        if (a.borrower_type === "main_borrower") return -1;
-        if (b.borrower_type === "main_borrower") return 1;
+        if (a.borrower_type === "MainBorrower") return -1;
+        if (b.borrower_type === "MainBorrower") return 1;
         return 0;
       })
     : [];
@@ -101,34 +101,32 @@ export function Borrowers(props: borrowersProps) {
                   dataSubmitApplication.borrowers.borrowerLabel +
                   ` ${index + 1}`
                 }
-                name={getPropertyValue(item.borrower_properties, "name")}
-                lastName={getPropertyValue(item.borrower_properties, "surname")}
-                email={
-                  getPropertyValue(item.borrower_properties, "email") || ""
-                }
+                name={getPropertyValue(item.borrowerProperties, "name")}
+                lastName={getPropertyValue(item.borrowerProperties, "surname")}
+                email={getPropertyValue(item.borrowerProperties, "email") || ""}
                 income={currencyFormat(
                   Number(
                     getPropertyValue(
-                      item.borrower_properties,
+                      item.borrowerProperties,
                       "PeriodicSalary",
                     ) || 0,
                   ) +
                     Number(
                       getPropertyValue(
-                        item.borrower_properties,
+                        item.borrowerProperties,
                         "OtherNonSalaryEmoluments",
                       ) || 0,
                     ) +
                     Number(
                       getPropertyValue(
-                        item.borrower_properties,
+                        item.borrowerProperties,
                         "PensionAllowances",
                       ) || 0,
                     ),
                   false,
                 )}
                 obligations={currencyFormat(
-                  getTotalFinancialObligations(item.borrower_properties),
+                  getTotalFinancialObligations(item.borrowerProperties),
                   false,
                 )}
                 handleView={() => {
@@ -188,8 +186,8 @@ export function Borrowers(props: borrowersProps) {
                 isMobile={isMobile}
                 initialValues={{
                   ...formik.values.borrowers[editIndex],
-                  borrower_properties: Object.values(
-                    formik.values.borrowers[editIndex].borrower_properties,
+                  borrowerProperties: Object.values(
+                    formik.values.borrowers[editIndex].borrowerProperties,
                   ),
                 }}
                 onUpdate={(updatedBorrower: Borrower) => {

@@ -46,51 +46,51 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   useEffect(() => {
     if (initialValues) {
       setIncomeData({
-        identificationNumber: initialValues.borrower_identification_number,
-        identificationType: initialValues.borrower_identification_type,
-        name: getPropertyValue(initialValues.borrower_properties, "name") || "",
+        identificationNumber: initialValues.borrowerIdentificationNumber,
+        identificationType: initialValues.borrowerIdentificationType,
+        name: getPropertyValue(initialValues.borrowerProperties, "name") || "",
         surname:
-          getPropertyValue(initialValues.borrower_properties, "surname") || "",
+          getPropertyValue(initialValues.borrowerProperties, "surname") || "",
         Leases: parseFloat(
-          getPropertyValue(initialValues.borrower_properties, "Leases") || "0",
+          getPropertyValue(initialValues.borrowerProperties, "Leases") || "0",
         ),
         Dividends: parseFloat(
-          getPropertyValue(initialValues.borrower_properties, "Dividends") ||
+          getPropertyValue(initialValues.borrowerProperties, "Dividends") ||
             "0",
         ),
         FinancialIncome: parseFloat(
           getPropertyValue(
-            initialValues.borrower_properties,
+            initialValues.borrowerProperties,
             "FinancialIncome",
           ) || "0",
         ),
         PeriodicSalary: parseFloat(
           getPropertyValue(
-            initialValues.borrower_properties,
+            initialValues.borrowerProperties,
             "PeriodicSalary",
           ) || "0",
         ),
         OtherNonSalaryEmoluments: parseFloat(
           getPropertyValue(
-            initialValues.borrower_properties,
+            initialValues.borrowerProperties,
             "OtherNonSalaryEmoluments",
           ) || "0",
         ),
         PensionAllowances: parseFloat(
           getPropertyValue(
-            initialValues.borrower_properties,
+            initialValues.borrowerProperties,
             "PensionAllowances",
           ) || "0",
         ),
         PersonalBusinessUtilities: parseFloat(
           getPropertyValue(
-            initialValues.borrower_properties,
+            initialValues.borrowerProperties,
             "PersonalBusinessUtilities",
           ) || "0",
         ),
         ProfessionalFees: parseFloat(
           getPropertyValue(
-            initialValues.borrower_properties,
+            initialValues.borrowerProperties,
             "ProfessionalFees",
           ) || "0",
         ),
@@ -102,8 +102,8 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     income: IIncomeSources,
   ): BorrowerProperty[] => {
     return Object.entries(income).map(([key, value]) => ({
-      property_name: key,
-      property_value: String(value),
+      propertyName: key,
+      propertyValue: String(value),
     }));
   };
 
@@ -117,18 +117,18 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     const seen = new Map<string, BorrowerProperty>();
 
     original.forEach((prop) => {
-      if (duplicates.includes(prop.property_name)) {
+      if (duplicates.includes(prop.propertyName)) {
         result.push(prop);
       } else {
-        seen.set(prop.property_name, prop);
+        seen.set(prop.propertyName, prop);
       }
     });
 
     updates.forEach((prop) => {
-      if (duplicates.includes(prop.property_name)) {
+      if (duplicates.includes(prop.propertyName)) {
         result.push(prop);
       } else {
-        seen.set(prop.property_name, prop);
+        seen.set(prop.propertyName, prop);
       }
     });
 
@@ -142,8 +142,8 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
 
     const updatedBorrower: IBorrower = {
       ...initialValues,
-      borrower_properties: mergeProperties(
-        initialValues.borrower_properties,
+      borrowerProperties: mergeProperties(
+        initialValues.borrowerProperties,
         updatedProps,
       ),
     };

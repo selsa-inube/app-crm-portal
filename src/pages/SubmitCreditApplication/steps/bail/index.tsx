@@ -49,7 +49,7 @@ export function Bail(props: IBailProps) {
       <Stack direction="column" alignItems="center" padding="12px" gap="20px">
         <Stack direction="column" gap="8px" alignItems="center">
           <Text type="headline" weight="bold" size="large" appearance="primary">
-            {currencyFormat(data.bond_value)}
+            {currencyFormat(data.bondValue)}
           </Text>
           <Text type="body" size="small" appearance="gray">
             {dataBail.bail}

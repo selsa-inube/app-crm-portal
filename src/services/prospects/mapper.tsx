@@ -10,26 +10,26 @@ const mapProspectEntity = (
   data: Record<string, string | number | object>,
 ): IProspect => {
   const buildResend: IProspect = {
-    prospect_id: data.prospect_id as string,
-    prospect_code: data.prospect_code as string,
+    prospectId: data.prospectId as string,
+    prospectCode: data.prospectCode as string,
     state: data.state as string,
-    requested_amount: data.requested_amount as number,
-    installment_limit: data.installment_limit as number,
-    term_limit: data.term_limit as number,
-    time_of_creation: data.time_of_creation as Date,
-    selected_regular_payment_schedule:
-      data.selected_regular_payment_schedule as string,
-    selected_rate_type: data.selected_rate_type as string,
-    preferred_payment_channel_abbreviated_name:
-      data.preferred_payment_channel_abbreviated_name as string,
-    grace_period: data.grace_period as number,
-    grace_period_type: data.grace_period_type as string,
-    money_destination_abbreviated_name:
-      data.money_destination_abbreviated_name as string,
-    bond_value: data.bond_value as number,
+    requestedAmount: data.requestedAmount as number,
+    installmentLimit: data.installmentLimit as number,
+    termLimit: data.termLimit as number,
+    timeOfCreation: data.timeOfCreation as Date,
+    selectedRegularPaymentSchedule:
+      data.selectedRegularPaymentSchedule as string,
+    selectedRateType: data.selectedRateType as string,
+    preferredPaymentChannelAbbreviatedName:
+      data.preferredPaymentChannelAbbreviatedName as string,
+    gracePeriod: data.gracePeriod as number,
+    gracePeriodType: data.gracePeriodType as string,
+    moneyDestinationAbbreviatedName:
+      data.moneyDestinationAbbreviatedName as string,
+    bondValue: data.bondValue as number,
     borrowers: data.borrowers as IBorrower[],
-    consolidated_credits: data.consolidated_credits as IConsolidatedCredit[],
-    credit_products: data.credit_products as ICreditProduct[],
+    consolidatedCredits: data.consolidatedCredits as IConsolidatedCredit[],
+    creditProducts: data.creditProducts as ICreditProduct[],
     outlays: data.outlays as IOutlay[],
   };
   return buildResend;
