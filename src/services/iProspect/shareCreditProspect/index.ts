@@ -23,7 +23,9 @@ export const patchshareCreditProspect = async (
       formData.append("email", payload.email);
       formData.append("optionalEmail", payload.optionalEmail);
       formData.append("prospectId", payload.prospectId);
-      formData.append("file", payload.file);
+      if (payload.file) {
+        formData.append("file", payload.file);
+      }
 
       const options: RequestInit = {
         method: "PATCH",
