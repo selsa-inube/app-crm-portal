@@ -368,10 +368,10 @@ export function SubmitCreditApplication() {
         }
       }
       const mainBorrower = prospect.borrowers.find(
-        (borrower) => borrower.borrower_type === "MainBorrower",
+        (borrower) => borrower.borrowerType === "MainBorrower",
       );
 
-      if (mainBorrower?.borrower_identification_number !== customerPublicCode) {
+      if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
         setCodeError(1011);
         return;
       }

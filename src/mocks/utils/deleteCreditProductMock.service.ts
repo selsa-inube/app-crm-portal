@@ -10,7 +10,7 @@ export async function deleteCreditProductMock(
   if (!selectedProductId) return;
 
   const updatedProducts = prospectProducts.filter(
-    (product) => product.credit_product_code !== selectedProductId,
+    (product) => product.creditProductCode !== selectedProductId,
   );
   setProspectProducts(updatedProducts);
 

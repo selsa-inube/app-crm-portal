@@ -36,7 +36,7 @@ export function IncomeDebtor(props: IIncomeDebtor) {
         {incomeFields.map((field, index) => {
           const sum = field.keys.reduce((acc, key) => {
             const val = Number(
-              getPropertyValue(initialValues.borrower_properties, key) ?? 0,
+              getPropertyValue(initialValues.borrowerProperties, key) ?? 0,
             );
             return acc + (isNaN(val) ? 0 : val);
           }, 0);

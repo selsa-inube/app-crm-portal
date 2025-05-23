@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
-import { Stack, Divider, useMediaQuery } from "@inubekit/inubekit";
+import { useContext, useEffect, useState } from "react";
+import { Stack, Divider, useMediaQuery, useFlag } from "@inubekit/inubekit";
 
 import { CreditProductCard } from "@components/cards/CreditProductCard";
 import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCard";
 import { CardValues } from "@components/cards/cardValues";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ConsolidatedCredits } from "@pages/prospect/components/modals/ConsolidatedCreditModal";
-import { SummaryProspectCredit } from "./config/config";
+import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { deleteCreditProductMock } from "@mocks/utils/deleteCreditProductMock.service";
-import { mockCommercialManagement } from "@mocks/financialReporting/commercialmanagement.mock";
 import { IProspect, ICreditProduct } from "@services/prospects/types";
+import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
+import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
+import { AppContext } from "@context/AppContext";
 import { Schedule } from "@services/enums";
 
 import { StyledCardsCredit, StyledPrint } from "./styles";
@@ -30,15 +32,20 @@ export const CardCommercialManagement = (
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
+  const { addFlag } = useFlag();
+  const { businessUnitSigla } = useContext(AppContext);
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
-
+  const [prospectSummaryData, setProspectSummaryData] =
+    useState<IProspectSummaryById>();
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
   const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
     useState(false);
   useEffect(() => {
-    if (prospectData?.credit_products) {
-      setProspectProducts(prospectData?.credit_products);
+    if (prospectData?.creditProducts) {
+      setProspectProducts(prospectData?.creditProducts);
     }
   }, [prospectData]);
 
@@ -58,7 +65,29 @@ export const CardCommercialManagement = (
     setSelectedProductId(creditProductId);
     setShowDeleteModal(true);
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getSearchProspectSummaryById(
+          businessUnitPublicCode,
+          id!,
+        );
+        if (result) {
+          setProspectSummaryData(result);
+        }
+      } catch (error) {
+        addFlag({
+          title: tittleOptions.titleError,
+          description: tittleOptions.descriptionError,
+          appearance: "danger",
+          duration: 5000,
+        });
+      }
+    };
 
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessUnitPublicCode, id]);
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>
@@ -70,22 +99,21 @@ export const CardCommercialManagement = (
         >
           {prospectProducts.map((entry, index) => (
             <CreditProductCard
-              key={`${entry.credit_product_code}-${index}`}
-              lineOfCredit={entry.line_of_credit_abbreviated_name}
+              key={`${entry.creditProductCode}-${index}`}
+              lineOfCredit={entry.lineOfCreditAbbreviatedName}
               paymentMethod={
-                entry.ordinary_installments_for_principal?.[0]
-                  ?.payment_channel_abbreviated
+                entry.ordinaryInstallmentsForPrincipal?.[0]
+                  ?.paymentChannelAbbreviatedName
               }
-              loanAmount={entry.loan_amount}
-              interestRate={entry.interest_rate}
-              termMonths={entry.loan_term}
+              loanAmount={entry.loanAmount}
+              interestRate={entry.interestRate}
+              termMonths={entry.loanTerm}
               periodicFee={
-                entry.ordinary_installments_for_principal?.[0]
-                  ?.installment_amount
+                entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
               }
               schedule={entry.schedule as Schedule}
               onEdit={() => {}}
-              onDelete={() => handleDeleteClick(entry.credit_product_code)}
+              onDelete={() => handleDeleteClick(entry.creditProductCode)}
             />
           ))}
           <StyledPrint>
@@ -103,9 +131,9 @@ export const CardCommercialManagement = (
         {SummaryProspectCredit.map((entry, index) => (
           <CardValues
             key={index}
-            items={entry.item.map((item, index) => ({
+            items={entry.item.map((item) => ({
               ...item,
-              amount: mockCommercialManagement[index]?.amount,
+              amount: String(prospectSummaryData?.[item.id] ?? 0),
             }))}
             showIcon={entry.iconEdit}
             isMobile={isMobile}
