@@ -462,7 +462,7 @@ export function SubmitCreditApplication() {
     };
 
     const rulesValidate = [
-      "ModeOfDisbursementType1",
+      "ModeOfDisbursementType",
       "ValidationGuarantee",
       "ValidationCoBorrower",
     ];
