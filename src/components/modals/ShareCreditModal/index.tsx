@@ -4,18 +4,19 @@ import { MdInfoOutline } from "react-icons/md";
 import { Text, Stack, Icon, Textfield, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
+import { patchshareCreditProspect } from "@services/iProspect/shareCreditProspect";
 
 import { dataShareModal } from "./config";
-import { patchshareCreditProspect } from "@services/iProspect/shareCreditProspect";
 
 export interface IShareCreditModalProps {
   handleClose: () => void;
   isMobile: boolean;
   prospectId: string;
+  pdf: string | null;
 }
 
 export function ShareCreditModal(props: IShareCreditModalProps) {
-  const { handleClose, isMobile, prospectId } = props;
+  const { handleClose, isMobile, prospectId, pdf } = props;
 
   const initialValues = {
     name: "",
@@ -51,22 +52,21 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     }
   };
 
-  const urlToFile = async (
-    url: string,
-    filename: string,
-    mimeType: string,
-  ): Promise<File> => {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    return new File([blob], filename, { type: mimeType });
-  };
+  function base64ToFile(base64: string, filename: string): File {
+    const arr = base64.split(",");
+    const mimeMatch = /:(.*?);/.exec(arr[0]);
+    const mime = mimeMatch ? mimeMatch[1] : "application/pdf";
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
 
   const handleSubmit = async (values: typeof initialValues) => {
-    const file = await urlToFile(
-      "../../../assets/images/linpar.png",
-      "jh-image.jpg",
-      "image/jpeg",
-    );
+    const file = pdf ? base64ToFile(pdf, "prospect.pdf") : null;
     const payload = {
       clientName: values.name,
       email: values.email,

@@ -3,7 +3,7 @@ export interface IShareCreditProspect {
   email: string;
   prospectId: string;
   optionalEmail: string;
-  file: File;
+  file: File | null;
 }
 export interface IShareCreditProspectResponse {
   codeNotification: string;

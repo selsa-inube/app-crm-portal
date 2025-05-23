@@ -11,6 +11,7 @@ import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest } from "@services/types";
+import { generatePDF } from "@utils/pdf/generetePDF";
 
 import { ruleConfig } from "../SubmitCreditApplication/config/configRules";
 import { evaluateRule } from "../SubmitCreditApplication/evaluateRule";
@@ -25,12 +26,14 @@ export function EditProspect() {
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showCreditRequest, setShowCreditRequest] = useState(false);
+  const [pdfProspect, setPdfProspect] = useState<string | null>(null);
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { customerPublicCode, prospectCode } = useParams();
 
   const dataCreditRef = useRef<ICreditRequest>();
   const valueRuleRef = useRef<{ [ruleName: string]: string[] }>({});
+  const dataPrint = useRef<HTMLDivElement>(null);
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -112,6 +115,16 @@ export function EditProspect() {
 
     fetchData();
   }, [businessUnitPublicCode]);
+
+  useEffect(() => {
+    const fetchPDF = async () => {
+      const pdfData = await generatePDF(dataPrint, "");
+      if (pdfData) {
+        setPdfProspect(pdfData);
+      }
+    };
+    fetchPDF();
+  }, []);
 
   const fetchValidationRules = useCallback(async () => {
     const rulesToCheck = [
@@ -244,6 +257,8 @@ export function EditProspect() {
       hasPermitSubmit={hasPermitSubmit}
       isModalOpen={isModalOpen}
       showCreditRequest={showCreditRequest}
+      dataPrint={dataPrint}
+      pdfProspect={pdfProspect}
       setShowShareModal={setShowShareModal}
       setShowMenu={setShowMenu}
       handleSubmitClick={handleSubmitClick}

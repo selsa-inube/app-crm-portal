@@ -30,6 +30,8 @@ interface IEditProspectUIProps {
   hasPermitSubmit: boolean;
   isModalOpen: boolean;
   showCreditRequest: boolean;
+  dataPrint: React.RefObject<HTMLDivElement>;
+  pdfProspect: string | null;
   setShowShareModal: (value: boolean) => void;
   setShowMenu: (value: boolean) => void;
   handleSubmitClick: () => void;
@@ -52,6 +54,8 @@ export function EditProspectUI(props: IEditProspectUIProps) {
     hasPermitSubmit,
     isModalOpen,
     showCreditRequest,
+    dataPrint,
+    pdfProspect,
     setShowShareModal,
     setShowMenu,
     handleSubmitClick,
@@ -61,7 +65,7 @@ export function EditProspectUI(props: IEditProspectUIProps) {
   } = props;
 
   return (
-    <>
+    <div ref={dataPrint}>
       {codeError ? (
         <ErrorPage errorCode={codeError} addToFix={addToFix || []} />
       ) : (
@@ -221,7 +225,8 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                 <ShareCreditModal
                   isMobile={isMobile}
                   handleClose={() => setShowShareModal(false)}
-                  prospectId={dataProspect?.prospect_id || ""}
+                  prospectId={dataProspect?.prospectId || ""}
+                  pdf={pdfProspect}
                 />
               )}
             </Stack>
@@ -274,6 +279,6 @@ export function EditProspectUI(props: IEditProspectUIProps) {
           )}
         </>
       )}
-    </>
+    </div>
   );
 }
