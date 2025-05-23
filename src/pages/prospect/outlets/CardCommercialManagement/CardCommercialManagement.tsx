@@ -37,8 +37,8 @@ export const CardCommercialManagement = (
   const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
     useState(false);
   useEffect(() => {
-    if (prospectData?.credit_products) {
-      setProspectProducts(prospectData?.credit_products);
+    if (prospectData?.creditProducts) {
+      setProspectProducts(prospectData?.creditProducts);
     }
   }, [prospectData]);
 
@@ -70,22 +70,21 @@ export const CardCommercialManagement = (
         >
           {prospectProducts.map((entry, index) => (
             <CreditProductCard
-              key={`${entry.credit_product_code}-${index}`}
-              lineOfCredit={entry.line_of_credit_abbreviated_name}
+              key={`${entry.creditProductCode}-${index}`}
+              lineOfCredit={entry.lineOfCreditAbbreviatedName}
               paymentMethod={
-                entry.ordinary_installments_for_principal?.[0]
-                  ?.payment_channel_abbreviated
+                entry.ordinaryInstallmentsForPrincipal?.[0]
+                  ?.paymentChannelAbbreviatedName
               }
-              loanAmount={entry.loan_amount}
-              interestRate={entry.interest_rate}
-              termMonths={entry.loan_term}
+              loanAmount={entry.loanAmount}
+              interestRate={entry.interestRate}
+              termMonths={entry.loanTerm}
               periodicFee={
-                entry.ordinary_installments_for_principal?.[0]
-                  ?.installment_amount
+                entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
               }
               schedule={entry.schedule as Schedule}
               onEdit={() => {}}
-              onDelete={() => handleDeleteClick(entry.credit_product_code)}
+              onDelete={() => handleDeleteClick(entry.creditProductCode)}
             />
           ))}
           <StyledPrint>

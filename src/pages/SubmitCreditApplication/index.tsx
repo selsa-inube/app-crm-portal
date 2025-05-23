@@ -175,7 +175,7 @@ export function SubmitCreditApplication() {
   });
 
   const hasBorrowers = Object.keys(formData.borrowerData.borrowers).length;
-  const bondValue = prospectData.bond_value;
+  const bondValue = prospectData.bondValue;
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
@@ -368,10 +368,10 @@ export function SubmitCreditApplication() {
         }
       }
       const mainBorrower = prospect.borrowers.find(
-        (borrower) => borrower.borrower_type === "MainBorrower",
+        (borrower) => borrower.borrowerType === "MainBorrower",
       );
 
-      if (mainBorrower?.borrower_identification_number !== customerPublicCode) {
+      if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
         setCodeError(1011);
         return;
       }
@@ -446,7 +446,7 @@ export function SubmitCreditApplication() {
 
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    const creditProducts = prospectData?.credit_products;
+    const creditProducts = prospectData?.creditProducts;
 
     if (!clientInfo.associateType || !creditProducts?.length || !prospectData)
       return;
@@ -472,7 +472,7 @@ export function SubmitCreditApplication() {
 
       const dataRules = {
         ...dataRulesBase,
-        LineOfCredit: product.line_of_credit_abbreviated_name,
+        LineOfCredit: product.lineOfCreditAbbreviatedName,
       };
       await Promise.all(
         rulesValidate.map(async (ruleName) => {

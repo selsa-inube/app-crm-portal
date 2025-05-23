@@ -27,8 +27,6 @@ const Default: Story = (args: ReportCreditsModalProps) => {
 };
 
 Default.args = {
-  totalFee: 3300000,
-  totalBalance: 87000000,
   onChange: () => {},
   options: incomeOptions,
   debtor: "John Doe",
