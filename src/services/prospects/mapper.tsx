@@ -10,7 +10,7 @@ const mapProspectEntity = (
   data: Record<string, string | number | object>,
 ): IProspect => {
   const buildResend: IProspect = {
-    prospect_id: data.prospect_id as string,
+    prospectId: data.prospect_id as string,
     prospect_code: data.prospect_code as string,
     state: data.state as string,
     requested_amount: data.requested_amount as number,

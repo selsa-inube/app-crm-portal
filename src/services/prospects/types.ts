@@ -71,7 +71,7 @@ export interface IOutlay {
 }
 
 export interface IProspect {
-  prospect_id: string;
+  prospectId: string;
   prospect_code: string;
   state: string;
   requested_amount: number;

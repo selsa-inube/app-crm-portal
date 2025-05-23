@@ -1,19 +1,22 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { MdInfoOutline } from "react-icons/md";
-import { Text, Stack, Icon, Textfield } from "@inubekit/inubekit";
+import { Text, Stack, Icon, Textfield, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
+import { patchshareCreditProspect } from "@services/iProspect/shareCreditProspect";
 
 import { dataShareModal } from "./config";
 
 export interface IShareCreditModalProps {
   handleClose: () => void;
   isMobile: boolean;
+  prospectId: string;
+  pdf: string | null;
 }
 
 export function ShareCreditModal(props: IShareCreditModalProps) {
-  const { handleClose, isMobile } = props;
+  const { handleClose, isMobile, prospectId, pdf } = props;
 
   const initialValues = {
     name: "",
@@ -29,11 +32,64 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     share: Yup.boolean(),
   });
 
+  const { addFlag } = useFlag();
+
+  const handleFlag = (error: boolean, typeError?: unknown) => {
+    if (!error) {
+      addFlag({
+        title: `${dataShareModal.share}`,
+        description: `${dataShareModal.shareCompleted}`,
+        appearance: "success",
+        duration: 5000,
+      });
+    } else {
+      addFlag({
+        title: `${dataShareModal.share}`,
+        description: `${typeError}`,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
+  function base64ToFile(base64: string, filename: string): File {
+    const arr = base64.split(",");
+    const mimeMatch = /:(.*?);/.exec(arr[0]);
+    const mime = mimeMatch ? mimeMatch[1] : "application/pdf";
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
+
+  const handleSubmit = async (values: typeof initialValues) => {
+    const file = pdf ? base64ToFile(pdf, "prospect.pdf") : null;
+    const payload = {
+      clientName: values.name,
+      email: values.email,
+      optionalEmail: values.aditionalEmail,
+      prospectId: prospectId,
+      file: file,
+    };
+
+    try {
+      await patchshareCreditProspect("text", payload);
+      handleClose();
+      handleFlag(false);
+    } catch (error) {
+      console.error("Error sharing credit prospect:", error);
+      handleFlag(true);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
     >
       {(formik) => (
         <BaseModal
