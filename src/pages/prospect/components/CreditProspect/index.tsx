@@ -94,14 +94,14 @@ export function CreditProspect(props: ICreditProspectProps) {
         const mockCredit = foundProspect.consolidated_credit[0];
         setForm({
           borrower: foundProspect.borrower[0].borrower_name,
-          monthly_salary: mockCredit.monthly_salary ?? 0,
-          other_monthly_payments: mockCredit.other_monthly_payments ?? 0,
-          pension_allowances: mockCredit.pension_allowances ?? 0,
+          monthlySalary: mockCredit.monthly_salary ?? 0,
+          otherMonthlyPayments: mockCredit.other_monthly_payments ?? 0,
+          pensionAllowances: mockCredit.pension_allowances ?? 0,
           leases: mockCredit.leases ?? 0,
-          dividends_or_shares: mockCredit.dividends_or_shares ?? 0,
-          financial_returns: mockCredit.financial_returns ?? 0,
-          average_monthly_profit: mockCredit.average_monthly_profit ?? 0,
-          monthly_fees: mockCredit.monthly_fees ?? 0,
+          dividendsOrShares: mockCredit.dividends_or_shares ?? 0,
+          financialReturns: mockCredit.financial_returns ?? 0,
+          averageMonthlyProfit: mockCredit.average_monthly_profit ?? 0,
+          monthlyFees: mockCredit.monthly_fees ?? 0,
           total: undefined,
         });
       }
@@ -110,14 +110,14 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const [form, setForm] = useState({
     borrower: "",
-    monthly_salary: 0,
-    other_monthly_payments: 0,
-    pension_allowances: 0,
+    monthlySalary: 0,
+    otherMonthlyPayments: 0,
+    pensionAllowances: 0,
     leases: 0,
-    dividends_or_shares: 0,
-    financial_returns: 0,
-    average_monthly_profit: 0,
-    monthly_fees: 0,
+    dividendsOrShares: 0,
+    financialReturns: 0,
+    averageMonthlyProfit: 0,
+    monthlyFees: 0,
     total: undefined,
   });
 

@@ -41,8 +41,8 @@ export const getScheduleInSpanish = (schedule: Schedule): string => {
 export const getPropertyValue = (properties: any[], propertyName: string) => {
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    properties.find((prop: any) => prop.property_name === propertyName)
-      ?.property_value || ""
+    properties.find((prop: any) => prop.propertyName === propertyName)
+      ?.propertyValue || ""
   );
 };
 
