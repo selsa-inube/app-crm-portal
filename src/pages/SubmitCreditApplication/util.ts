@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getTotalFinancialObligations = (properties: any[]) => {
   return properties
-    .filter((prop) => prop.property_name === "FinancialObligation")
+    .filter((prop) => prop.propertyName === "FinancialObligation")
     .reduce((total, prop) => {
-      const values = Array.isArray(prop.property_value)
-        ? prop.property_value
-        : prop.property_value.split(",").map((v: string) => v.trim());
+      const values = Array.isArray(prop.propertyValue)
+        ? prop.propertyValue
+        : prop.propertyValue.split(",").map((v: string) => v.trim());
 
       const amount = Number(values[2] || 0);
 
