@@ -453,7 +453,7 @@ export function SubmitCreditApplication() {
 
     const dataRulesBase = {
       ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      LoanAmount: prospectData.requested_amount,
+      LoanAmount: prospectData.requestedAmount,
       PrimaryIncomeType: "",
       AffiliateSeniority: getMonthsElapsed(
         customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
