@@ -13,15 +13,15 @@ export interface IIncomeSources {
   surname: string;
 }
 
-export interface BorrowerProperty {
+export interface IBorrowerProperty {
   propertyName: string;
   propertyValue: string;
 }
 
 export interface IBorrower {
-  borrowerIdentificationNumber: string;
-  borrowerIdentificationType: string;
   borrowerName: string;
-  borrowerProperties: BorrowerProperty[];
   borrowerType: string;
+  borrowerIdentificationType: string;
+  borrowerIdentificationNumber: string;
+  borrowerProperties: IBorrowerProperty[];
 }
