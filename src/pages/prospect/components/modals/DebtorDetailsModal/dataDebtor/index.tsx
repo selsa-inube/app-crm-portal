@@ -17,50 +17,50 @@ export function DataDebtor(props: IDataDebtor) {
     <Stack direction="column" gap="12px">
       <CardGray
         label={dataDebtor.labelTypeDocument}
-        data={initialValues.borrower_identification_type}
+        data={initialValues.borrowerIdentificationType}
       />
       <CardGray
         label={dataDebtor.labelNumberDocument}
-        data={initialValues.borrower_identification_number}
+        data={initialValues.borrowerIdentificationNumber}
       />
       <CardGray
         label={dataDebtor.labelName}
-        data={getPropertyValue(initialValues.borrower_properties, "name")}
+        data={getPropertyValue(initialValues.borrowerProperties, "name")}
       />
       <CardGray
         label={dataDebtor.labelLastName}
-        data={getPropertyValue(initialValues.borrower_properties, "surname")}
+        data={getPropertyValue(initialValues.borrowerProperties, "surname")}
       />
       <CardGray
         label={dataDebtor.labelEmail}
-        data={getPropertyValue(initialValues.borrower_properties, "email")}
+        data={getPropertyValue(initialValues.borrowerProperties, "email")}
         apparencePlaceHolder="gray"
       />
       <CardGray
         label={dataDebtor.labelNumber}
         data={getPropertyValue(
-          initialValues.borrower_properties,
+          initialValues.borrowerProperties,
           "phone_number",
         )}
       />
       <CardGray
         label={dataDebtor.labelSex}
         data={getPropertyValue(
-          initialValues.borrower_properties,
+          initialValues.borrowerProperties,
           "biological_sex",
         )}
       />
       <CardGray
         label={dataDebtor.labelAge}
         data={getMonthsElapsed(
-          getPropertyValue(initialValues.borrower_properties, "birth_date"),
+          getPropertyValue(initialValues.borrowerProperties, "birth_date"),
           0,
         )}
       />
       <CardGray
         label={dataDebtor.labelRelation}
         data={getPropertyValue(
-          initialValues.borrower_properties,
+          initialValues.borrowerProperties,
           "relationship",
         )}
       />

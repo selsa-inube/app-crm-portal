@@ -15,7 +15,7 @@ export function DataDebtor(initialValues: any) {
           name="email"
           id="email"
           label={DataEditBorrower.email}
-          value={getPropertyValue(data.borrower_properties, "email")}
+          value={getPropertyValue(data.borrowerProperties, "email")}
           size="compact"
           fullwidth
         />
@@ -23,7 +23,7 @@ export function DataDebtor(initialValues: any) {
           name="phone"
           id="phone"
           label={DataEditBorrower.phone}
-          value={getPropertyValue(data.borrower_properties, "phone_number")}
+          value={getPropertyValue(data.borrowerProperties, "phone_number")}
           size="compact"
           fullwidth
         />
@@ -31,7 +31,7 @@ export function DataDebtor(initialValues: any) {
           name="relation"
           id="relation"
           label={DataEditBorrower.relation}
-          value={getPropertyValue(data.borrower_properties, "relationship")}
+          value={getPropertyValue(data.borrowerProperties, "relationship")}
           size="compact"
           fullwidth
         />

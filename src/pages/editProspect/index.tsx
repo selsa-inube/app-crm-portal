@@ -159,14 +159,14 @@ export function EditProspect() {
 
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    const creditProducts = dataProspect?.credit_products;
+    const creditProducts = dataProspect?.creditProducts;
 
     if (!clientInfo.associateType || !creditProducts?.length || !dataProspect)
       return;
 
     const dataRulesBase = {
       ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      LoanAmount: dataProspect.requested_amount,
+      LoanAmount: dataProspect.requestedAmount,
       PrimaryIncomeType: "",
       AffiliateSeniority: getMonthsElapsed(
         customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
@@ -185,7 +185,7 @@ export function EditProspect() {
 
       const dataRules = {
         ...dataRulesBase,
-        LineOfCredit: product.line_of_credit_abbreviated_name,
+        LineOfCredit: product.lineOfCreditAbbreviatedName,
       };
       await Promise.all(
         rulesValidate.map(async (ruleName) => {
