@@ -4,7 +4,8 @@ import { MdInfoOutline } from "react-icons/md";
 import { Text, Stack, Icon, Textfield, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { patchshareCreditProspect } from "@services/iProspect/shareCreditProspect";
+import { patchShareCreditProspect } from "@services/iProspect/shareCreditProspect";
+import { pdfConverter } from "@utils/encrypt/encrypt";
 
 import { dataShareModal } from "./config";
 
@@ -38,7 +39,7 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     if (!error) {
       addFlag({
         title: `${dataShareModal.share}`,
-        description: `${dataShareModal.shareCompleted}`,
+        description: `${dataShareModal.sharingCompleted}`,
         appearance: "success",
         duration: 5000,
       });
@@ -52,21 +53,8 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     }
   };
 
-  function base64ToFile(base64: string, filename: string): File {
-    const arr = base64.split(",");
-    const mimeMatch = /:(.*?);/.exec(arr[0]);
-    const mime = mimeMatch ? mimeMatch[1] : "application/pdf";
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  }
-
   const handleSubmit = async (values: typeof initialValues) => {
-    const file = pdf ? base64ToFile(pdf, "prospect.pdf") : null;
+    const file = pdf ? pdfConverter(pdf, "prospect.pdf") : null;
     const payload = {
       clientName: values.name,
       email: values.email,
@@ -76,7 +64,7 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     };
 
     try {
-      await patchshareCreditProspect("text", payload);
+      await patchShareCreditProspect("text", payload);
       handleClose();
       handleFlag(false);
     } catch (error) {

@@ -6,7 +6,7 @@ import {
 
 import { IShareCreditProspect, IShareCreditProspectResponse } from "./types";
 
-export const patchshareCreditProspect = async (
+export const patchShareCreditProspect = async (
   businessUnitPublicCode: string,
   payload: IShareCreditProspect,
 ): Promise<IShareCreditProspectResponse | undefined> => {
@@ -38,7 +38,7 @@ export const patchshareCreditProspect = async (
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PERSISTENCE_SERVICE}/prospects`,
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
         options,
       );
 
@@ -52,7 +52,7 @@ export const patchshareCreditProspect = async (
 
       if (!res.ok) {
         throw {
-          message: "Error al traer al compartir el archivo..",
+          message: "Error al compartir el archivo.",
           status: res.status,
           data,
         };
