@@ -57,21 +57,6 @@ export function SubmitCreditApplication() {
     },
     borrowerData: {
       borrowers: {},
-      initialBorrowers: {
-        id: "",
-        name: "",
-        debtorDetail: {
-          document: "",
-          documentNumber: "",
-          name: "",
-          lastName: "",
-          email: "",
-          number: "",
-          sex: "",
-          age: "",
-          relation: "",
-        },
-      },
     },
     propertyOffered: {
       antique: "",

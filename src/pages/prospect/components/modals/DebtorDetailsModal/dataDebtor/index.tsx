@@ -17,11 +17,11 @@ export function DataDebtor(props: IDataDebtor) {
     <Stack direction="column" gap="12px">
       <CardGray
         label={dataDebtor.labelTypeDocument}
-        data={initialValues.borrower_identification_type}
+        data={initialValues.borrowerIdentificationType}
       />
       <CardGray
         label={dataDebtor.labelNumberDocument}
-        data={initialValues.borrower_identification_number}
+        data={initialValues.borrowerIdentificationNumber}
       />
       <CardGray
         label={dataDebtor.labelName}
