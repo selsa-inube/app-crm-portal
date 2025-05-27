@@ -1,14 +1,24 @@
-import { Stack, Button, Assisted } from "@inubekit/inubekit";
+import { MdArrowBack, MdOutlinePriceChange } from "react-icons/md";
+import { IoMdWallet } from "react-icons/io";
+import {
+  Stack,
+  Button,
+  Assisted,
+  Breadcrumbs,
+  Text,
+  Icon,
+} from "@inubekit/inubekit";
 
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
+import { IPaymentChannel } from "@services/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
-import { StyledContainerAssisted } from "./styles";
+import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
 import { ConsolidatedCredit } from "./steps/consolidatedCredit";
@@ -18,10 +28,17 @@ import { MoneyDestination } from "./steps/MoneyDestination";
 import { ObligationsFinancial } from "./steps/financialObligations";
 import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
+import { addConfig, textAddCongfig } from "./config/addConfig";
+import { CouponsModal } from "../prospect/components/modals/CouponsModal";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalOpenCoupons: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
+  setRequestValue: React.Dispatch<
+    React.SetStateAction<IPaymentChannel[] | undefined>
+  >;
+  requestValue: IPaymentChannel[] | undefined;
   handleNextStep: () => void;
   handlePreviousStep: () => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
@@ -41,6 +58,7 @@ interface AddPositionUIProps {
   steps: IStep[];
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
+  isModalOpenCoupons: boolean;
   formData: IFormData;
   selectedProducts: string[];
   isMobile: boolean;
@@ -51,7 +69,10 @@ interface AddPositionUIProps {
 export function AddProspectUI(props: AddPositionUIProps) {
   const {
     setIsModalOpenRequirements,
+    setIsModalOpenCoupons,
     setIsCurrentFormValid,
+    setRequestValue,
+    requestValue,
     handleNextStep,
     handlePreviousStep,
     handleSubmitClick,
@@ -65,6 +86,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     steps,
     isCurrentFormValid,
     isModalOpenRequirements,
+    isModalOpenCoupons,
     formData,
     selectedProducts,
     isMobile,
@@ -73,12 +95,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
 
   return (
     <>
-      <GeneralHeader
-        buttonText="Agregar vinculación"
-        descriptionStatus={dataHeader.status}
-        name={dataHeader.name}
-        profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
-      />
       <Stack
         direction="column"
         alignItems={isMobile ? "normal" : "center"}
@@ -92,6 +108,49 @@ export function AddProspectUI(props: AddPositionUIProps) {
           height="100%"
           width={isMobile ? "-webkit-fill-available" : "min(100%,1440px)"}
         >
+          <GeneralHeader
+            buttonText="Agregar vinculación"
+            descriptionStatus={dataHeader.status}
+            name={dataHeader.name}
+            profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
+          />
+          <Breadcrumbs crumbs={addConfig.crumbs} />
+          <Stack justifyContent="space-between" alignItems="center">
+            <StyledArrowBack>
+              <Stack gap="8px" alignItems="center" width="100%">
+                <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
+                <Text type="title" size={isMobile ? "small" : "large"}>
+                  {addConfig.title}
+                </Text>
+              </Stack>
+            </StyledArrowBack>
+            {currentStepsNumber?.id === 9 ? (
+              <Stack gap="8px">
+                <Button
+                  iconBefore={<MdOutlinePriceChange />}
+                  children={textAddCongfig.buttonQuotas}
+                  appearance="gray"
+                  spacing="compact"
+                  variant="outlined"
+                  onClick={() => setIsModalOpenCoupons(true)}
+                />
+                <Button
+                  spacing="compact"
+                  appearance="gray"
+                  iconBefore={<IoMdWallet />}
+                  children={textAddCongfig.buttonPaymentCapacity}
+                  variant="outlined"
+                />
+                <ButtonRequirements
+                  onClick={() => setIsModalOpenRequirements(true)}
+                />
+              </Stack>
+            ) : (
+              <ButtonRequirements
+                onClick={() => setIsModalOpenRequirements(true)}
+              />
+            )}
+          </Stack>
           <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>
             <Assisted
               step={currentStepsNumber!}
@@ -106,11 +165,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
             />
           </StyledContainerAssisted>
           <Stack direction="column">
-            <Stack justifyContent="end">
-              <ButtonRequirements
-                onClick={() => setIsModalOpenRequirements(true)}
-              />
-            </Stack>
+            <Stack justifyContent="end"></Stack>
             {currentStepsNumber &&
               currentStepsNumber.id ===
                 stepsAddProspect.generalInformation.id && (
@@ -219,6 +274,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   }
                   onFormValid={setIsCurrentFormValid}
                   isMobile={isMobile}
+                  requestValue={requestValue}
                 />
               )}
             {currentStepsNumber &&
@@ -250,6 +306,13 @@ export function AddProspectUI(props: AddPositionUIProps) {
             <RequirementsModal
               handleClose={() => setIsModalOpenRequirements(false)}
               isMobile={isMobile}
+            />
+          )}
+          {isModalOpenCoupons && (
+            <CouponsModal
+              handleClose={() => setIsModalOpenCoupons(false)}
+              isMobile={isMobile}
+              setRequestValue={setRequestValue}
             />
           )}
         </Stack>

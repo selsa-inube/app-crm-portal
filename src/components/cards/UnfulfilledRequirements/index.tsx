@@ -17,11 +17,7 @@ export const UnfulfilledRequirements = (
 ) => {
   const { title, requirement, causeNonCompliance, isMobile } = props;
   return (
-    <Fieldset
-      title={title}
-      isMobile={isMobile}
-      width={isMobile ? "100%" : "49%"}
-    >
+    <Fieldset title={title} isMobile={isMobile} width={"100%"}>
       <Stack direction="column" gap="16px" padding="0 16px">
         <Stack direction="column" gap="4px">
           <Stack justifyContent="space-between" alignItems="center">

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Formik, Field, Form } from "formik";
 import { useParams } from "react-router-dom";
 import * as Yup from "yup";
@@ -14,35 +13,27 @@ import {
 } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
-import { CreditLimitCard } from "@pages/addProspect/components/CreditLimitCard";
 import { currencyFormat } from "@utils/formatData/currency";
-import { get } from "@mocks/utils/dataMock.service";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
-import {
-  mockPayAmount,
-  mockPeriodicity,
-} from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
-import { mockCreditLimit } from "@mocks/add-prospect/modals-amount/modalsAmount.mock";
 import { IPaymentChannel } from "@services/types";
 
 import { dataAmount } from "./config";
-import { ScrollableContainer } from "./styles";
 
 export interface ILoanAmountProps {
   initialValues: {
     inputValue: string;
     toggleChecked: boolean;
     paymentPlan: string;
-    periodicity: string;
-    payAmount: string;
   };
   isMobile: boolean;
+  requestValue: IPaymentChannel[] | undefined;
   handleOnChange: (newData: Partial<ILoanAmountProps["initialValues"]>) => void;
   onFormValid: (isValid: boolean) => void;
 }
 
 export function LoanAmount(props: ILoanAmountProps) {
-  const { initialValues, isMobile, handleOnChange, onFormValid } = props;
+  const { initialValues, isMobile, handleOnChange, onFormValid, requestValue } =
+    props;
   const { id } = useParams();
   const loanId = parseInt(id || "0", 10);
   const loanText =
@@ -51,25 +42,10 @@ export function LoanAmount(props: ILoanAmountProps) {
     dataAmount[
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
-  const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
-  const creditCardsData = mockCreditLimit;
-  useEffect(() => {
-    get("mockRequest_value")
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setRequestValue(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching money destinations data:", error.message);
-      });
-  }, []);
 
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
     paymentPlan: Yup.string().required(""),
-    periodicity: Yup.string().required(""),
-    payAmount: Yup.string().required(""),
   });
 
   return (
@@ -81,11 +57,7 @@ export function LoanAmount(props: ILoanAmountProps) {
         validate={(values) => {
           const numericValue =
             parseFloat(values.inputValue.replace(/[^0-9]/g, "")) || 0;
-          const isValid =
-            numericValue > 0 &&
-            values.paymentPlan.trim() !== "" &&
-            values.periodicity.trim() !== "" &&
-            values.payAmount.trim() !== "";
+          const isValid = numericValue > 0 && values.paymentPlan.trim() !== "";
           onFormValid(isValid);
         }}
         validateOnMount={true}
@@ -97,39 +69,13 @@ export function LoanAmount(props: ILoanAmountProps) {
               gap="16px"
               padding={isMobile ? "10px" : "0px 10px"}
             >
-              <Stack direction="column" alignItems="center" gap="8px">
+              <Stack direction="column" gap="4px">
                 <Text
-                  appearance="dark"
                   type="label"
-                  size={isMobile ? "medium" : "large"}
+                  size="medium"
                   weight="bold"
+                  padding="0px 0px 0px 16px"
                 >
-                  {dataAmount.creditText}
-                </Text>
-                <ScrollableContainer>
-                  <Stack
-                    direction="row"
-                    gap="24px"
-                    margin="0 auto"
-                    padding=" 0px 5px"
-                  >
-                    {creditCardsData.map((item, index) => (
-                      <CreditLimitCard
-                        key={index}
-                        creditLineTxt={item.creditLineTxt}
-                        creditLine={item.creditLine}
-                        creditLimitData={item.CreditLimitdata}
-                        paymentCapacityData={item.paymentCapacityData}
-                        reciprocityData={item.reciprocityData}
-                        scoreData={item.scoreData}
-                      />
-                    ))}
-                  </Stack>
-                </ScrollableContainer>
-              </Stack>
-              <Divider dashed />
-              <Stack direction="column">
-                <Text type="label" size="medium" weight="bold">
                   {data}
                 </Text>
                 <Field name="inputValue">
@@ -143,8 +89,8 @@ export function LoanAmount(props: ILoanAmountProps) {
                         />
                       }
                       type="text"
-                      fullwidth={true}
                       value={values.inputValue}
+                      placeholder={dataAmount.placeholderValue}
                       onChange={(e) => {
                         const rawValue =
                           parseFloat(e.target.value.replace(/[^0-9]/g, "")) ||
@@ -183,8 +129,13 @@ export function LoanAmount(props: ILoanAmountProps) {
               </Stack>
               <Divider dashed />
               <Stack direction={isMobile ? "column" : "row"} gap="16px">
-                <Stack direction="column" width="100%">
-                  <Text type="label" size="medium" weight="bold">
+                <Stack direction="column" width="100%" gap="4px">
+                  <Text
+                    type="label"
+                    size="medium"
+                    weight="bold"
+                    padding="0px 0px 0px 16px"
+                  >
                     {dataAmount.ordinaryPayment}
                   </Text>
                   <Field name="paymentPlan">
@@ -199,55 +150,6 @@ export function LoanAmount(props: ILoanAmountProps) {
                           handleOnChange({ paymentPlan: newValue });
                         }}
                         value={values.paymentPlan}
-                        size="compact"
-                        fullwidth={true}
-                      />
-                    )}
-                  </Field>
-                </Stack>
-                <Stack direction="column" width="100%">
-                  <Stack gap="4px">
-                    <Text type="label" size="medium" weight="bold">
-                      {dataAmount.Periodicity}
-                    </Text>
-                    <Text type="label" size="small" appearance="danger">
-                      {dataAmount.Requested}
-                    </Text>
-                  </Stack>
-                  <Field name="periodicity">
-                    {() => (
-                      <Select
-                        id="periodicity"
-                        options={mockPeriodicity}
-                        placeholder={dataAmount.selectOption}
-                        name="periodicity"
-                        onChange={(_, newValue: string) => {
-                          setFieldValue("periodicity", newValue);
-                          handleOnChange({ periodicity: newValue });
-                        }}
-                        value={values.periodicity}
-                        size="compact"
-                        fullwidth={true}
-                      />
-                    )}
-                  </Field>
-                </Stack>
-                <Stack direction="column" width="100%">
-                  <Text type="label" size="medium" weight="bold">
-                    {dataAmount.paymentDate}
-                  </Text>
-                  <Field name="payAmount">
-                    {() => (
-                      <Select
-                        id="payAmount"
-                        options={mockPayAmount}
-                        placeholder={dataAmount.selectOption}
-                        name="payAmount"
-                        onChange={(_, newValue: string) => {
-                          setFieldValue("payAmount", newValue);
-                          handleOnChange({ payAmount: newValue });
-                        }}
-                        value={values.payAmount}
                         size="compact"
                         fullwidth={true}
                       />

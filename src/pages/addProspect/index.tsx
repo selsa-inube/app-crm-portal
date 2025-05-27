@@ -7,6 +7,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
+import { IPaymentChannel } from "@services/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData } from "./types";
@@ -21,7 +22,8 @@ export function AddProspect() {
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
-
+  const [isModalOpenCoupons, setIsModalOpenCoupons] = useState(false);
+  const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
@@ -353,6 +355,10 @@ export function AddProspect() {
         currentStep={currentStep}
         isCurrentFormValid={isCurrentFormValid}
         isModalOpenRequirements={isModalOpenRequirements}
+        isModalOpenCoupons={isModalOpenCoupons}
+        requestValue={requestValue}
+        setRequestValue={setRequestValue}
+        setIsModalOpenCoupons={setIsModalOpenCoupons}
         setIsModalOpenRequirements={setIsModalOpenRequirements}
         setIsCurrentFormValid={setIsCurrentFormValid}
         handleNextStep={handleNextStep}
