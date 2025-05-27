@@ -11,4 +11,6 @@ export const dataShareModal = {
   placeHolderAditionalEmail: "Correo electrónico adicional",
   required: "(Requerido)",
   optional: "(Opcional) Puede compartir el prospecto a un correo adicional.",
+  sharingCompleted:
+    "Se ha compartido correctamente una copia de la simulación de crédito.",
 };
