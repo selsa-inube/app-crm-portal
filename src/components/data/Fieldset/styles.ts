@@ -9,6 +9,7 @@ interface IStyledContainerFieldset {
   $isClickable?: boolean;
   $hasTable: boolean;
   $height?: string;
+  $borderColor?: string;
 }
 
 export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
@@ -28,10 +29,20 @@ export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
     !$isSelected
       ? theme?.palette?.neutral?.N0 || inube.palette.neutral.N0
       : theme?.palette?.blue?.B50 || inube.palette.blue.B50};
-  border-color: ${({ theme, $isSelected }) =>
-    !$isSelected
-      ? theme?.palette?.neutral?.N300 || inube.palette.neutral.N300
-      : theme?.palette?.blue?.B300 || inube.palette.blue.B300};
+  border-color: ${({ theme, $borderColor, $isSelected }) => {
+    if ($isSelected) {
+      return theme?.palette?.blue?.B300 || inube.palette.blue.B300;
+    }
+    switch ($borderColor) {
+      case "blue":
+        return theme?.palette?.blue?.B300 || inube.palette.blue.B300;
+      case "gray":
+        return theme?.palette?.neutral?.N300 || inube.palette.neutral.N300;
+      case "normal":
+      default:
+        return theme?.palette?.neutral?.N40 || inube.palette.neutral.N40;
+    }
+  }};
   box-shadow: ${({ theme, $isSelected }) =>
     $isSelected &&
     `-12px 0px 0px ${theme?.palette?.blue?.B400 || inube.palette.blue.B400}`};
