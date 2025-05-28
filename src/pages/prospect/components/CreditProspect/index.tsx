@@ -35,6 +35,7 @@ import {
 import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
 import { IProspect } from "@services/prospects/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
+import { generatePDF } from "@utils/pdf/generetePDF";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
@@ -68,6 +69,9 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [prospectProducts, setProspectProducts] =
     useState<ICreditProductProspect>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [pdfProspect, setPdfProspect] = useState<string | null>(null);
+
+  const dataPrint = useRef<HTMLDivElement>(null);
 
   const handleOpenModal = (modalName: string) => {
     setModalHistory((prevHistory) => [...prevHistory, modalName]);
@@ -94,14 +98,14 @@ export function CreditProspect(props: ICreditProspectProps) {
         const mockCredit = foundProspect.consolidated_credit[0];
         setForm({
           borrower: foundProspect.borrower[0].borrower_name,
-          monthly_salary: mockCredit.monthly_salary ?? 0,
-          other_monthly_payments: mockCredit.other_monthly_payments ?? 0,
-          pension_allowances: mockCredit.pension_allowances ?? 0,
+          monthlySalary: mockCredit.monthly_salary ?? 0,
+          otherMonthlyPayments: mockCredit.other_monthly_payments ?? 0,
+          pensionAllowances: mockCredit.pension_allowances ?? 0,
           leases: mockCredit.leases ?? 0,
-          dividends_or_shares: mockCredit.dividends_or_shares ?? 0,
-          financial_returns: mockCredit.financial_returns ?? 0,
-          average_monthly_profit: mockCredit.average_monthly_profit ?? 0,
-          monthly_fees: mockCredit.monthly_fees ?? 0,
+          dividendsOrShares: mockCredit.dividends_or_shares ?? 0,
+          financialReturns: mockCredit.financial_returns ?? 0,
+          averageMonthlyProfit: mockCredit.average_monthly_profit ?? 0,
+          monthlyFees: mockCredit.monthly_fees ?? 0,
           total: undefined,
         });
       }
@@ -110,14 +114,14 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const [form, setForm] = useState({
     borrower: "",
-    monthly_salary: 0,
-    other_monthly_payments: 0,
-    pension_allowances: 0,
+    monthlySalary: 0,
+    otherMonthlyPayments: 0,
+    pensionAllowances: 0,
     leases: 0,
-    dividends_or_shares: 0,
-    financial_returns: 0,
-    average_monthly_profit: 0,
-    monthly_fees: 0,
+    dividendsOrShares: 0,
+    financialReturns: 0,
+    averageMonthlyProfit: 0,
+    monthlyFees: 0,
     total: undefined,
   });
 
@@ -345,222 +349,236 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [selectedBorrower]);
 
-  return (
-    <Stack direction="column" gap="24px">
-      {!isMobile && (
-        <StyledPrint>
-          <Stack gap="16px" justifyContent="end" alignItems="center">
-            <Button
-              type="button"
-              appearance="primary"
-              spacing="compact"
-              iconBefore={
-                <Icon
-                  icon={<MdOutlineAdd />}
-                  appearance="light"
-                  size="18px"
-                  spacing="narrow"
-                />
-              }
-              onClick={() => handleOpenModal("editProductModal")}
-            >
-              {dataCreditProspect.addProduct}
-            </Button>
+  useEffect(() => {
+    const fetchPDF = async () => {
+      const pdfData = await generatePDF(dataPrint, "");
+      if (pdfData) {
+        setPdfProspect(pdfData);
+      }
+    };
+    fetchPDF();
+  }, []);
 
-            {prospectData?.creditProducts && (
+  return (
+    <div ref={dataPrint}>
+      <Stack direction="column" gap="24px">
+        {!isMobile && (
+          <StyledPrint>
+            <Stack gap="16px" justifyContent="end" alignItems="center">
               <Button
                 type="button"
                 appearance="primary"
                 spacing="compact"
-                variant="outlined"
                 iconBefore={
                   <Icon
-                    icon={<MdOutlinePayments />}
-                    appearance="primary"
+                    icon={<MdOutlineAdd />}
+                    appearance="light"
                     size="18px"
                     spacing="narrow"
                   />
                 }
-                onClick={() => handleOpenModal("extraPayments")}
+                onClick={() => handleOpenModal("editProductModal")}
               >
-                {dataCreditProspect.extraPayment}
+                {dataCreditProspect.addProduct}
               </Button>
-            )}
-            <StyledVerticalDivider />
-            <StyledContainerIcon>
-              {showPrint && (
-                <Stack gap="8px">
-                  <Icon
-                    icon={<MdOutlinePictureAsPdf />}
-                    appearance="primary"
-                    size="24px"
-                    disabled={!isPrint}
-                    cursorHover
-                    onClick={print}
-                  />
-                  <Icon
-                    icon={<MdOutlineShare />}
-                    appearance="primary"
-                    size="24px"
-                    onClick={() => setShowShareModal(true)}
-                    cursorHover
-                  />
-                  <StyledVerticalDivider />
-                </Stack>
+              {prospectData?.creditProducts && (
+                <Button
+                  type="button"
+                  appearance="primary"
+                  spacing="compact"
+                  variant="outlined"
+                  iconBefore={
+                    <Icon
+                      icon={<MdOutlinePayments />}
+                      appearance="primary"
+                      size="18px"
+                      spacing="narrow"
+                    />
+                  }
+                  onClick={() => handleOpenModal("extraPayments")}
+                >
+                  {dataCreditProspect.extraPayment}
+                </Button>
               )}
-              <MenuProspect
-                only
-                options={menuOptions(
-                  handleOpenModal,
-                  !prospectProducts?.ordinary_installment_for_principal,
+              <StyledVerticalDivider />
+              <StyledContainerIcon>
+                {showPrint && (
+                  <Stack gap="8px">
+                    <Icon
+                      icon={<MdOutlinePictureAsPdf />}
+                      appearance="primary"
+                      size="24px"
+                      disabled={!isPrint}
+                      cursorHover
+                      onClick={print}
+                    />
+                    <Icon
+                      icon={<MdOutlineShare />}
+                      appearance="primary"
+                      size="24px"
+                      onClick={() => setShowShareModal(true)}
+                      cursorHover
+                    />
+                    <StyledVerticalDivider />
+                  </Stack>
                 )}
-                onMouseLeave={showMenu}
-              />
-            </StyledContainerIcon>
-          </Stack>
-        </StyledPrint>
-      )}
-      <Stack direction="column">
-        <CardCommercialManagement
-          id={id!}
-          dataRef={dataCommercialManagementRef}
-          onClick={() => handleOpenModal("editProductModal")}
-          prospectData={prospectData || undefined}
-        />
-      </Stack>
-      {currentModal === "creditLimit" && (
-        <CreditLimit
-          handleClose={handleCloseModal}
-          title="Origen de cupo"
-          onOpenPaymentCapacityModal={() => setOpenModal("paymentCapacity")}
-          onOpenReciprocityModal={() => setOpenModal("reciprocityModal")}
-          onOpenFrcModal={() => setOpenModal("scoreModal")}
-          maxPaymentCapacity={50000000}
-          maxReciprocity={40000000}
-          maxDebtFRC={45000000}
-          assignedLimit={0}
-          currentPortfolio={10000000}
-          maxUsableLimit={20000000}
-          availableLimitWithoutGuarantee={15000000}
-        />
-      )}
-      {openModal === "paymentCapacity" && (
-        <PaymentCapacity
-          title="Cupo máx. capacidad de pago"
-          handleClose={() => setOpenModal(null)}
-          reportedIncomeSources={2000000}
-          reportedFinancialObligations={6789000}
-          subsistenceReserve={2000000}
-          availableForNewCommitments={5000000}
-          maxVacationTerm={12}
-          maxAmount={1000000}
-        />
-      )}
-      {openModal === "reciprocityModal" && (
-        <ReciprocityModal
-          handleClose={() => setOpenModal(null)}
-          balanceOfContributions={4000000}
-          accordingToRegulation={2}
-          assignedQuota={1000000}
-        />
-      )}
-      {openModal === "scoreModal" && (
-        <ScoreModal
-          title="Score Details"
-          handleClose={() => setOpenModal(null)}
-          subTitle="Your Financial Score"
-          totalScore={150}
-          seniority={150}
-          centralRisk={50}
-          employmentStability={230}
-          maritalStatus={30}
-          economicActivity={118}
-          monthlyIncome={3000000}
-          maxIndebtedness={50000000}
-        />
-      )}
-      {currentModal === "editProductModal" && (
-        <EditProductModal
-          title="Agregar productos"
-          confirmButtonText="Guardar"
-          initialValues={initialValues}
-          iconBefore={<MdOutlineAdd />}
-          onCloseModal={handleCloseModal}
-          onConfirm={handleConfirm}
-        />
-      )}
-      {currentModal === "IncomeModal" && (
-        <BaseModal
-          title={dataCreditProspect.incomeSources}
-          nextButton={dataCreditProspect.close}
-          handleNext={handleCloseModal}
-          handleClose={handleCloseModal}
-        >
-          <Stack
-            justifyContent="space-between"
-            alignItems="end"
-            width="400px"
-            gap="16px"
-          >
-            <Select
-              label="Deudor"
-              id="borrower"
-              name="borrower"
-              options={borrowerOptions}
-              value={borrowerOptions[selectedIndex]?.value}
-              onChange={handleChange}
-              size="compact"
-            />
-            <Button
-              onClick={() => {
-                handleCloseModal();
-                setOpenModal("IncomeModalEdit");
-              }}
-            >
-              {dataCreditProspect.edit}
-            </Button>
-          </Stack>
-          <IncomeDebtor
-            initialValues={
-              dataProspect[0]?.borrowers?.find(
-                (b) => b.borrowerName === borrowerOptions[selectedIndex]?.value,
-              ) || selectedBorrower
-            }
+                <MenuProspect
+                  only
+                  options={menuOptions(
+                    handleOpenModal,
+                    !prospectProducts?.ordinary_installment_for_principal,
+                  )}
+                  onMouseLeave={showMenu}
+                />
+              </StyledContainerIcon>
+            </Stack>
+          </StyledPrint>
+        )}
+        <Stack direction="column">
+          <CardCommercialManagement
+            id={id!}
+            dataRef={dataCommercialManagementRef}
+            onClick={() => handleOpenModal("editProductModal")}
+            prospectData={prospectData || undefined}
           />
-        </BaseModal>
-      )}
-      {openModal === "IncomeModalEdit" && (
-        <IncomeModal
-          handleClose={() => setOpenModal(null)}
-          initialValues={
-            (selectedBorrower && incomeData[selectedBorrower.borrowerName]) ||
-            {}
-          }
-          onSubmit={handleIncomeSubmit}
-        />
-      )}
-      {currentModal === "reportCreditsModal" && (
-        <ReportCreditsModal
-          handleClose={handleCloseModal}
-          options={incomeOptions}
-          onChange={onChanges}
-          debtor={form.borrower}
-          prospectData={prospectData ? [prospectData] : undefined}
-        />
-      )}
-      {currentModal === "extraPayments" && (
-        <ExtraordinaryPaymentModal
-          dataTable={extraordinaryInstallmentMock}
-          handleClose={handleCloseModal}
-          prospectData={prospectData}
-        />
-      )}
-      {showShareModal && (
-        <ShareCreditModal
-          handleClose={() => setShowShareModal(false)}
-          isMobile={isMobile}
-        />
-      )}
-    </Stack>
+        </Stack>
+        {currentModal === "creditLimit" && (
+          <CreditLimit
+            handleClose={handleCloseModal}
+            title="Origen de cupo"
+            onOpenPaymentCapacityModal={() => setOpenModal("paymentCapacity")}
+            onOpenReciprocityModal={() => setOpenModal("reciprocityModal")}
+            onOpenFrcModal={() => setOpenModal("scoreModal")}
+            maxPaymentCapacity={50000000}
+            maxReciprocity={40000000}
+            maxDebtFRC={45000000}
+            assignedLimit={0}
+            currentPortfolio={10000000}
+            maxUsableLimit={20000000}
+            availableLimitWithoutGuarantee={15000000}
+          />
+        )}
+        {openModal === "paymentCapacity" && (
+          <PaymentCapacity
+            title="Cupo máx. capacidad de pago"
+            handleClose={() => setOpenModal(null)}
+            reportedIncomeSources={2000000}
+            reportedFinancialObligations={6789000}
+            subsistenceReserve={2000000}
+            availableForNewCommitments={5000000}
+            maxVacationTerm={12}
+            maxAmount={1000000}
+          />
+        )}
+        {openModal === "reciprocityModal" && (
+          <ReciprocityModal
+            handleClose={() => setOpenModal(null)}
+            balanceOfContributions={4000000}
+            accordingToRegulation={2}
+            assignedQuota={1000000}
+          />
+        )}
+        {openModal === "scoreModal" && (
+          <ScoreModal
+            title="Score Details"
+            handleClose={() => setOpenModal(null)}
+            subTitle="Your Financial Score"
+            totalScore={150}
+            seniority={150}
+            centralRisk={50}
+            employmentStability={230}
+            maritalStatus={30}
+            economicActivity={118}
+            monthlyIncome={3000000}
+            maxIndebtedness={50000000}
+          />
+        )}
+        {currentModal === "editProductModal" && (
+          <EditProductModal
+            title="Agregar productos"
+            confirmButtonText="Guardar"
+            initialValues={initialValues}
+            iconBefore={<MdOutlineAdd />}
+            onCloseModal={handleCloseModal}
+            onConfirm={handleConfirm}
+          />
+        )}
+        {currentModal === "IncomeModal" && (
+          <BaseModal
+            title={dataCreditProspect.incomeSources}
+            nextButton={dataCreditProspect.close}
+            handleNext={handleCloseModal}
+            handleClose={handleCloseModal}
+          >
+            <Stack
+              justifyContent="space-between"
+              alignItems="end"
+              width="400px"
+              gap="16px"
+            >
+              <Select
+                label="Deudor"
+                id="borrower"
+                name="borrower"
+                options={borrowerOptions}
+                value={borrowerOptions[selectedIndex]?.value}
+                onChange={handleChange}
+                size="compact"
+              />
+              <Button
+                onClick={() => {
+                  handleCloseModal();
+                  setOpenModal("IncomeModalEdit");
+                }}
+              >
+                {dataCreditProspect.edit}
+              </Button>
+            </Stack>
+            <IncomeDebtor
+              initialValues={
+                dataProspect[0]?.borrowers?.find(
+                  (b) =>
+                    b.borrowerName === borrowerOptions[selectedIndex]?.value,
+                ) || selectedBorrower
+              }
+            />
+          </BaseModal>
+        )}
+        {openModal === "IncomeModalEdit" && (
+          <IncomeModal
+            handleClose={() => setOpenModal(null)}
+            initialValues={
+              (selectedBorrower && incomeData[selectedBorrower.borrowerName]) ||
+              {}
+            }
+            onSubmit={handleIncomeSubmit}
+          />
+        )}
+        {currentModal === "reportCreditsModal" && (
+          <ReportCreditsModal
+            handleClose={handleCloseModal}
+            options={incomeOptions}
+            onChange={onChanges}
+            debtor={form.borrower}
+            prospectData={prospectData ? [prospectData] : undefined}
+          />
+        )}
+        {currentModal === "extraPayments" && (
+          <ExtraordinaryPaymentModal
+            dataTable={extraordinaryInstallmentMock}
+            handleClose={handleCloseModal}
+            prospectData={prospectData}
+          />
+        )}
+        {showShareModal && (
+          <ShareCreditModal
+            handleClose={() => setShowShareModal(false)}
+            isMobile={isMobile}
+            prospectId={prospectData?.prospectId || ""}
+            pdf={pdfProspect}
+          />
+        )}
+      </Stack>
+    </div>
   );
 }

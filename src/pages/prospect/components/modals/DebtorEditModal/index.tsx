@@ -5,8 +5,8 @@ import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import {
-  BorrowerProperty,
   IBorrower,
+  IBorrowerProperty,
   IIncomeSources,
 } from "@services/incomeSources/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
@@ -100,7 +100,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
 
   const convertToPropertyArray = (
     income: IIncomeSources,
-  ): BorrowerProperty[] => {
+  ): IBorrowerProperty[] => {
     return Object.entries(income).map(([key, value]) => ({
       propertyName: key,
       propertyValue: String(value),
@@ -108,13 +108,13 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   };
 
   const mergeProperties = (
-    original: BorrowerProperty[],
-    updates: BorrowerProperty[],
-  ): BorrowerProperty[] => {
-    const result: BorrowerProperty[] = [];
+    original: IBorrowerProperty[],
+    updates: IBorrowerProperty[],
+  ): IBorrowerProperty[] => {
+    const result: IBorrowerProperty[] = [];
 
     const duplicates = ["FinancialObligation"];
-    const seen = new Map<string, BorrowerProperty>();
+    const seen = new Map<string, IBorrowerProperty>();
 
     original.forEach((prop) => {
       if (duplicates.includes(prop.propertyName)) {

@@ -14,11 +14,11 @@ import { dataSubmitApplication } from "@pages/SubmitCreditApplication/config/con
 import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-
-import { getTotalFinancialObligations } from "../../util";
-import { BorrowerProperty } from "@services/incomeSources/types";
+import { IBorrowerProperty } from "@src/services/incomeSources/types";
 import { IBorrowerData } from "@pages/SubmitCreditApplication/types";
 import { IProspect } from "@services/types";
+
+import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
 
 interface borrowersProps {
@@ -38,7 +38,7 @@ interface Borrower {
   borrowerName: string;
   borrowerType: string;
   borrowerProperties: {
-    [key: string]: BorrowerProperty;
+    [key: string]: IBorrowerProperty;
   };
 }
 
