@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   Stack,
   Text,
@@ -7,6 +8,7 @@ import {
   Textfield,
   Textarea,
   Checkbox,
+  inube,
 } from "@inubekit/inubekit";
 
 import {
@@ -22,7 +24,6 @@ import { GeneralInformationForm } from "@pages/SubmitCreditApplication/component
 import { IDisbursementGeneral } from "@pages/SubmitCreditApplication/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
-
 interface IDisbursementWithCashProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;
@@ -274,29 +275,39 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Textfield
-          id="amount"
-          name="amount"
-          label={disbursementGeneral.label}
-          placeholder={disbursementGeneral.place}
-          size="compact"
-          value={validateCurrencyField("amount", formik, true, optionNameForm)}
-          onChange={(e) => {
-            handleChangeWithCurrency(formik, e, optionNameForm);
-          }}
-          onBlur={() => {
-            formik.setFieldTouched(`${optionNameForm}.amount`, true);
-            formik.handleBlur(`amount`);
-          }}
-          status={
-            formik.touched[optionNameForm]?.amount && !isDisabled
-              ? "invalid"
-              : undefined
-          }
-          readOnly={isAmountReadOnly}
-          message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
-          fullwidth
-        />
+        <Stack width="498px">
+          <Textfield
+            id="amount"
+            name="amount"
+            label={disbursementGeneral.label}
+            placeholder={disbursementGeneral.place}
+            size="compact"
+            value={validateCurrencyField(
+              "amount",
+              formik,
+              true,
+              optionNameForm,
+            )}
+            onChange={(e) => {
+              handleChangeWithCurrency(formik, e, optionNameForm);
+            }}
+            onBlur={() => {
+              formik.setFieldTouched(`${optionNameForm}.amount`, true);
+              formik.handleBlur(`amount`);
+            }}
+            iconBefore={
+              <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
+            }
+            status={
+              formik.touched[optionNameForm]?.amount && !isDisabled
+                ? "invalid"
+                : undefined
+            }
+            readOnly={isAmountReadOnly}
+            message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
+            fullwidth
+          />
+        </Stack>
         <Stack gap="10px" direction="row" alignItems="center">
           <Checkbox
             id={"featureCheckbox"}
