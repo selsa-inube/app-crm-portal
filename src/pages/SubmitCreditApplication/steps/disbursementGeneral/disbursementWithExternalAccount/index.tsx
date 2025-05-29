@@ -314,7 +314,7 @@ export function DisbursementWithExternalAccount(
     <Stack
       direction="column"
       padding={isMobile ? "4px 10px" : "10px 16px"}
-      gap="10px"
+      gap="16px"
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
