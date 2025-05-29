@@ -31,6 +31,7 @@ import {
   StyledCollapseIcon,
   StyledCollapse,
   StyledPrint,
+  StyledFooter,
 } from "./styles";
 
 import { useNavigationConfig } from "./config/apps.config";
@@ -191,6 +192,7 @@ function AppPage() {
               handleShowBlanket={handleToggleLogoutModal}
             />
           )}
+
           <Grid
             templateColumns={!isTablet ? "auto 1fr" : "1fr"}
             alignContent="unset"
@@ -208,6 +210,11 @@ function AppPage() {
               <Outlet />
             </StyledMain>
           </Grid>
+          {isTablet && (
+            <StyledFooter>
+              {renderLogo(eventData.businessManager.urlBrand)}
+            </StyledFooter>
+          )}
         </StyledContainer>
       </Grid>
     </StyledAppPage>
