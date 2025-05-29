@@ -7,9 +7,9 @@ import { IPaymentChannel } from "@services/types";
 import { mockCreditLimit } from "@mocks/add-prospect/modals-amount/modalsAmount.mock";
 import { get } from "@mocks/utils/dataMock.service";
 
-import { dataCouponsModal } from "./config";
+import { dataCreditLimitModal } from "./config";
 
-export interface ICouponsModalProps {
+export interface ICreditLimitModalProps {
   handleClose: () => void;
   isMobile: boolean;
   setRequestValue: React.Dispatch<
@@ -17,7 +17,7 @@ export interface ICouponsModalProps {
   >;
 }
 
-export function CouponsModal(props: ICouponsModalProps) {
+export function CreditLimitModal(props: ICreditLimitModalProps) {
   const { isMobile, handleClose, setRequestValue } = props;
 
   const creditCardsData = mockCreditLimit;
@@ -34,8 +34,8 @@ export function CouponsModal(props: ICouponsModalProps) {
   }, []);
   return (
     <BaseModal
-      title={dataCouponsModal.title}
-      nextButton={dataCouponsModal.close}
+      title={dataCreditLimitModal.title}
+      nextButton={dataCreditLimitModal.close}
       handleNext={handleClose}
       handleClose={handleClose}
       width={isMobile ? "300px " : "450px"}
@@ -44,7 +44,7 @@ export function CouponsModal(props: ICouponsModalProps) {
     >
       <Stack direction="column" gap="26px">
         <Text appearance="gray" type="body" size="medium" weight="normal">
-          {dataCouponsModal.creditText}
+          {dataCreditLimitModal.creditText}
         </Text>
 
         <Stack direction="row" gap="24px" margin="0 auto" padding=" 0px 5px">
@@ -69,9 +69,9 @@ export function CouponsModal(props: ICouponsModalProps) {
             size="medium"
             weight="bold"
           >
-            {dataCouponsModal.import}
+            {dataCreditLimitModal.import}
           </Text>
-          {dataCouponsModal.textImport}
+          {dataCreditLimitModal.textImport}
         </Text>
       </Stack>
     </BaseModal>

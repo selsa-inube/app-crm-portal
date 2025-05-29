@@ -29,7 +29,7 @@ import { ObligationsFinancial } from "./steps/financialObligations";
 import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
-import { CouponsModal } from "../prospect/components/modals/CouponsModal";
+import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -310,7 +310,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
             />
           )}
           {isCreditLimitModalOpen && (
-            <CouponsModal
+            <CreditLimitModal
               handleClose={() => setIsCreditLimitModalOpen(false)}
               isMobile={isMobile}
               setRequestValue={setRequestValue}

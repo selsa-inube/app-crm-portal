@@ -49,7 +49,6 @@ export const CardCommercialManagement = (
       setProspectProducts(prospectData?.creditProducts);
     }
   }, [prospectData]);
-  console.log(prospectData);
   const isMobile = useMediaQuery("(max-width: 800px)");
 
   const handleDelete = async () => {
@@ -84,8 +83,9 @@ export const CardCommercialManagement = (
         });
       }
     };
-
-    fetchData();
+    if (prospectData) {
+      fetchData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitPublicCode, prospectData?.prospectId]);
   return (

@@ -1,4 +1,4 @@
-export const dataCouponsModal = {
+export const dataCreditLimitModal = {
   title: "Cupo por línea de crédito",
   creditText:
     "A continuación encontrará el cupo disponible por línea de crédito.",
