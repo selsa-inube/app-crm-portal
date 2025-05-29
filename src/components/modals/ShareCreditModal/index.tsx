@@ -1,19 +1,23 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { MdInfoOutline } from "react-icons/md";
-import { Text, Stack, Icon, Textfield } from "@inubekit/inubekit";
+import { Text, Stack, Icon, Textfield, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
+import { patchShareCreditProspect } from "@services/iProspect/shareCreditProspect";
+import { pdfConverter } from "@utils/encrypt/encrypt";
 
 import { dataShareModal } from "./config";
 
 export interface IShareCreditModalProps {
   handleClose: () => void;
   isMobile: boolean;
+  prospectId: string;
+  pdf: string | null;
 }
 
 export function ShareCreditModal(props: IShareCreditModalProps) {
-  const { handleClose, isMobile } = props;
+  const { handleClose, isMobile, prospectId, pdf } = props;
 
   const initialValues = {
     name: "",
@@ -29,11 +33,51 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     share: Yup.boolean(),
   });
 
+  const { addFlag } = useFlag();
+
+  const handleFlag = (error: boolean, typeError?: unknown) => {
+    if (!error) {
+      addFlag({
+        title: `${dataShareModal.share}`,
+        description: `${dataShareModal.sharingCompleted}`,
+        appearance: "success",
+        duration: 5000,
+      });
+    } else {
+      addFlag({
+        title: `${dataShareModal.share}`,
+        description: `${typeError}`,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
+  const handleSubmit = async (values: typeof initialValues) => {
+    const file = pdf ? pdfConverter(pdf, "prospect.pdf") : null;
+    const payload = {
+      clientName: values.name,
+      email: values.email,
+      optionalEmail: values.aditionalEmail,
+      prospectId: prospectId,
+      file: file,
+    };
+
+    try {
+      await patchShareCreditProspect("text", payload);
+      handleClose();
+      handleFlag(false);
+    } catch (error) {
+      console.error("Error sharing credit prospect:", error);
+      handleFlag(true);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
     >
       {(formik) => (
         <BaseModal

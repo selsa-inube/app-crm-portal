@@ -3,7 +3,7 @@ import { Divider, Text, Stack } from "@inubekit/inubekit";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { StyledContainer, StyledInput } from "./styles";
-import { ModalConfig } from "@src/pages/prospect/components/modals/ConsolidatedCreditModal/config";
+import { ModalConfig } from "@pages/prospect/components/modals/ConsolidatedCreditModal/config";
 
 interface InvestmentCreditCardProps {
   title: string;

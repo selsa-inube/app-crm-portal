@@ -150,7 +150,7 @@ export function SubmitCreditApplicationUI(
                   appearance="gray"
                 >
                   {`${dataSubmitApplication.cards.destination}
-              ${prospectData.money_destination_abbreviated_name}`}
+              ${prospectData.moneyDestinationAbbreviatedName}`}
                 </Text>
               </Stack>
               <Stack direction="column" gap="6px">
