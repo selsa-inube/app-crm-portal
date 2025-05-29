@@ -1,4 +1,5 @@
 import { Formik, Field, Form } from "formik";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
@@ -15,6 +16,7 @@ import {
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
+import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/types";
 
 import { dataAmount } from "./config";
@@ -27,13 +29,22 @@ export interface ILoanAmountProps {
   };
   isMobile: boolean;
   requestValue: IPaymentChannel[] | undefined;
+  setRequestValue: React.Dispatch<
+    React.SetStateAction<IPaymentChannel[] | undefined>
+  >;
   handleOnChange: (newData: Partial<ILoanAmountProps["initialValues"]>) => void;
   onFormValid: (isValid: boolean) => void;
 }
 
 export function LoanAmount(props: ILoanAmountProps) {
-  const { initialValues, isMobile, handleOnChange, onFormValid, requestValue } =
-    props;
+  const {
+    initialValues,
+    isMobile,
+    handleOnChange,
+    onFormValid,
+    requestValue,
+    setRequestValue,
+  } = props;
   const { id } = useParams();
   const loanId = parseInt(id || "0", 10);
   const loanText =
@@ -43,6 +54,17 @@ export function LoanAmount(props: ILoanAmountProps) {
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
 
+  useEffect(() => {
+    get("mockRequest_value")
+      .then((data) => {
+        if (data && Array.isArray(data)) {
+          setRequestValue(data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching money destinations data:", error.message);
+      });
+  }, []);
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
     paymentPlan: Yup.string().required(""),
@@ -151,7 +173,6 @@ export function LoanAmount(props: ILoanAmountProps) {
                         }}
                         value={values.paymentPlan}
                         size="compact"
-                        fullwidth={true}
                       />
                     )}
                   </Field>

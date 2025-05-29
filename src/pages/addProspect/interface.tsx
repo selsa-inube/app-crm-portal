@@ -33,7 +33,7 @@ import { CouponsModal } from "../prospect/components/modals/CouponsModal";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsModalOpenCoupons: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCreditLimitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
@@ -58,7 +58,7 @@ interface AddPositionUIProps {
   steps: IStep[];
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
-  isModalOpenCoupons: boolean;
+  isCreditLimitModalOpen: boolean;
   formData: IFormData;
   selectedProducts: string[];
   isMobile: boolean;
@@ -69,7 +69,7 @@ interface AddPositionUIProps {
 export function AddProspectUI(props: AddPositionUIProps) {
   const {
     setIsModalOpenRequirements,
-    setIsModalOpenCoupons,
+    setIsCreditLimitModalOpen,
     setIsCurrentFormValid,
     setRequestValue,
     requestValue,
@@ -86,7 +86,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     steps,
     isCurrentFormValid,
     isModalOpenRequirements,
-    isModalOpenCoupons,
+    isCreditLimitModalOpen,
     formData,
     selectedProducts,
     isMobile,
@@ -132,7 +132,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   appearance="gray"
                   spacing="compact"
                   variant="outlined"
-                  onClick={() => setIsModalOpenCoupons(true)}
+                  onClick={() => setIsCreditLimitModalOpen(true)}
                 />
                 <Button
                   spacing="compact"
@@ -275,6 +275,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   onFormValid={setIsCurrentFormValid}
                   isMobile={isMobile}
                   requestValue={requestValue}
+                  setRequestValue={setRequestValue}
                 />
               )}
             {currentStepsNumber &&
@@ -308,9 +309,9 @@ export function AddProspectUI(props: AddPositionUIProps) {
               isMobile={isMobile}
             />
           )}
-          {isModalOpenCoupons && (
+          {isCreditLimitModalOpen && (
             <CouponsModal
-              handleClose={() => setIsModalOpenCoupons(false)}
+              handleClose={() => setIsCreditLimitModalOpen(false)}
               isMobile={isMobile}
               setRequestValue={setRequestValue}
             />

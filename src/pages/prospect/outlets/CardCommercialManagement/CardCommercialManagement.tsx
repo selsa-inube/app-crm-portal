@@ -16,6 +16,7 @@ import { Schedule } from "@services/enums";
 
 import { StyledCardsCredit, StyledPrint } from "./styles";
 import { DeductibleExpensesModal } from "../../components/modals/DeductibleExpensesModal";
+import { useParams } from "react-router-dom";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -32,6 +33,7 @@ export const CardCommercialManagement = (
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
+  const { prospectCode } = useParams();
   const { addFlag } = useFlag();
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -70,7 +72,7 @@ export const CardCommercialManagement = (
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
-          id!,
+          prospectCode!,
         );
         if (result) {
           setProspectSummaryData(result);
@@ -87,7 +89,7 @@ export const CardCommercialManagement = (
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessUnitPublicCode, id]);
+  }, [businessUnitPublicCode, prospectCode]);
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>

@@ -22,7 +22,7 @@ export function AddProspect() {
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
-  const [isModalOpenCoupons, setIsModalOpenCoupons] = useState(false);
+  const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
@@ -355,10 +355,10 @@ export function AddProspect() {
         currentStep={currentStep}
         isCurrentFormValid={isCurrentFormValid}
         isModalOpenRequirements={isModalOpenRequirements}
-        isModalOpenCoupons={isModalOpenCoupons}
+        isCreditLimitModalOpen={isCreditLimitModalOpen}
         requestValue={requestValue}
         setRequestValue={setRequestValue}
-        setIsModalOpenCoupons={setIsModalOpenCoupons}
+        setIsCreditLimitModalOpen={setIsCreditLimitModalOpen}
         setIsModalOpenRequirements={setIsModalOpenRequirements}
         setIsCurrentFormValid={setIsCurrentFormValid}
         handleNextStep={handleNextStep}
