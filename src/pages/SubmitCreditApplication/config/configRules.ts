@@ -29,4 +29,12 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       { condition: "AffiliateSeniority", value: data.AffiliateSeniority },
     ],
   }),
+  DocumentaryRequirement: (data) => ({
+    ruleName: "DocumentaryRequirement",
+    conditions: [
+      { condition: "LineOfCredit", value: data.LineOfCredit },
+      { condition: "ClientType", value: data.ClientType },
+      { condition: "LoanAmount", value: data.LoanAmount },
+    ],
+  }),
 };

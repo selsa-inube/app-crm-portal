@@ -453,7 +453,7 @@ export function SubmitCreditApplication() {
 
     const dataRulesBase = {
       ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      LoanAmount: prospectData.requestedAmount,
+
       PrimaryIncomeType: "",
       AffiliateSeniority: getMonthsElapsed(
         customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
@@ -473,6 +473,7 @@ export function SubmitCreditApplication() {
       const dataRules = {
         ...dataRulesBase,
         LineOfCredit: product.lineOfCreditAbbreviatedName,
+        LoanAmount: prospectData.requestedAmount,
       };
       await Promise.all(
         rulesValidate.map(async (ruleName) => {
@@ -486,7 +487,6 @@ export function SubmitCreditApplication() {
               "value",
               businessUnitPublicCode,
             );
-
             const extractedValues = Array.isArray(values)
               ? values
                   .map((v) => (typeof v === "string" ? v : (v?.value ?? "")))
