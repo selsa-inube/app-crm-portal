@@ -7,6 +7,7 @@ import { IMoneyDestination } from "@services/moneyDestination/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
+import { MoneyDestinationTranslations } from "@src/services/enum/moneyDestinationTranslations";
 
 interface IMoneyDestinationProps {
   initialValues: string;
@@ -30,7 +31,20 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     getMoneyDestinations(businessUnitPublicCode)
       .then((data) => {
         if (data && Array.isArray(data)) {
-          setMoneyDestinations(data);
+          const translatedData: IMoneyDestination[] = data.map(
+            (destination) => {
+              const translatedName =
+                MoneyDestinationTranslations[
+                  destination.abbreviatedName as keyof typeof MoneyDestinationTranslations
+                ];
+              return {
+                ...destination,
+                abbreviatedName: translatedName || destination.abbreviatedName,
+              };
+            },
+          );
+
+          setMoneyDestinations(translatedData);
         }
       })
       .catch((error) => {
