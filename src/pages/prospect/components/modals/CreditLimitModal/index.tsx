@@ -47,7 +47,12 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
           {dataCreditLimitModal.creditText}
         </Text>
 
-        <Stack direction="row" gap="24px" margin="0 auto" padding=" 0px 5px">
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          gap="24px"
+          margin="0 auto"
+          padding=" 0px 5px"
+        >
           {creditCardsData.map((item, index) => (
             <CreditLimitCard
               key={index}

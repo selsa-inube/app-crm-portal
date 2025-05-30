@@ -1,5 +1,9 @@
-import { MdArrowBack, MdOutlinePriceChange } from "react-icons/md";
-import { IoMdWallet } from "react-icons/io";
+import {
+  MdArrowBack,
+  MdOutlinePaid,
+  MdOutlinePriceChange,
+  MdOutlineRule,
+} from "react-icons/md";
 import {
   Stack,
   Button,
@@ -124,32 +128,57 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 </Text>
               </Stack>
             </StyledArrowBack>
-            {currentStepsNumber?.id === 9 ? (
-              <Stack gap="8px">
-                <Button
-                  iconBefore={<MdOutlinePriceChange />}
-                  children={textAddCongfig.buttonQuotas}
-                  appearance="gray"
-                  spacing="compact"
-                  variant="outlined"
-                  onClick={() => setIsCreditLimitModalOpen(true)}
-                />
-                <Button
-                  spacing="compact"
-                  appearance="gray"
-                  iconBefore={<IoMdWallet />}
-                  children={textAddCongfig.buttonPaymentCapacity}
-                  variant="outlined"
-                />
-                <ButtonRequirements
-                  onClick={() => setIsModalOpenRequirements(true)}
-                />
-              </Stack>
-            ) : (
-              <ButtonRequirements
-                onClick={() => setIsModalOpenRequirements(true)}
-              />
-            )}
+
+            <Stack gap="8px">
+              {isMobile ? (
+                <>
+                  <Icon
+                    icon={<MdOutlinePriceChange />}
+                    appearance="gray"
+                    size="28px"
+                    spacing="compact"
+                    variant="outlined"
+                    onClick={() => setIsCreditLimitModalOpen(true)}
+                  />
+                  <Icon
+                    icon={<MdOutlinePaid />}
+                    appearance="gray"
+                    size="28px"
+                    spacing="compact"
+                    variant="outlined"
+                  />
+                  <Icon
+                    icon={<MdOutlineRule />}
+                    appearance="gray"
+                    size="28px"
+                    spacing="compact"
+                    variant="outlined"
+                    onClick={() => setIsModalOpenRequirements(true)}
+                  />
+                </>
+              ) : (
+                <>
+                  <Button
+                    iconBefore={<MdOutlinePriceChange />}
+                    children={textAddCongfig.buttonQuotas}
+                    appearance="gray"
+                    spacing="compact"
+                    variant="outlined"
+                    onClick={() => setIsCreditLimitModalOpen(true)}
+                  />
+                  <Button
+                    spacing="compact"
+                    appearance="gray"
+                    iconBefore={<MdOutlinePaid />}
+                    children={textAddCongfig.buttonPaymentCapacity}
+                    variant="outlined"
+                  />
+                  <ButtonRequirements
+                    onClick={() => setIsModalOpenRequirements(true)}
+                  />
+                </>
+              )}
+            </Stack>
           </Stack>
           <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>
             <Assisted
