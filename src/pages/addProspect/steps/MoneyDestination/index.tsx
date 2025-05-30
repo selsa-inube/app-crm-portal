@@ -33,13 +33,15 @@ function MoneyDestination(props: IMoneyDestinationProps) {
         if (data && Array.isArray(data)) {
           const translatedData: IMoneyDestination[] = data.map(
             (destination) => {
-              const translatedName =
-                MoneyDestinationTranslations[
-                  destination.abbreviatedName as keyof typeof MoneyDestinationTranslations
-                ];
+              const translation = MoneyDestinationTranslations.find(
+                (item) => item.Code === destination.abbreviatedName,
+              );
+
               return {
                 ...destination,
-                abbreviatedName: translatedName || destination.abbreviatedName,
+                abbreviatedName: translation
+                  ? translation.Name
+                  : destination.abbreviatedName,
               };
             },
           );
