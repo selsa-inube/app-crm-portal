@@ -1,6 +1,6 @@
 export interface IAttachedDocuments {
   borrower: string;
-  document: string;
+  value: string;
   attached: string;
   attach: string;
   download: string;
@@ -12,8 +12,8 @@ export const headers: {
   key: keyof IAttachedDocuments;
   action?: boolean;
 }[] = [
-  { label: "Deudor", key: "borrower" },
-  { label: "Documento solicitado", key: "document" },
+  { label: "Deudor", key: "value" },
+  { label: "Documento solicitado", key: "borrower" },
   { label: "Adjunto", key: "attached" },
   { label: "Adjuntar", key: "attach", action: true },
   { label: "Descargar", key: "download", action: true },

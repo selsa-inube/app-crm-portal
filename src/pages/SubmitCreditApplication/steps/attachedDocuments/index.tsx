@@ -1,15 +1,16 @@
 import { Stack } from "@inubekit/inubekit";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { TableAttachedDocuments } from "@pages/prospect/components/tableAttachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { useCallback, useContext, useEffect } from "react";
-import { getMonthsElapsed } from "@src/utils/formatData/currency";
+import { AppContext } from "@context/AppContext";
+import { IProspect } from "@services/prospects/types";
+import { getMonthsElapsed } from "@utils/formatData/currency";
+import { postBusinessUnitRules } from "@services/businessUnitRules";
+
 import { ruleConfig } from "../../config/configRules";
 import { evaluateRule } from "../../evaluateRule";
-import { postBusinessUnitRules } from "@src/services/businessUnitRules";
-import { AppContext } from "@src/context/AppContext";
-import { IProspect } from "@src/services/prospects/types";
 
 interface IAttachedDocumentsProps {
   isMobile: boolean;
@@ -33,15 +34,15 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
   } = props;
 
   const { businessUnitSigla } = useContext(AppContext);
+  const [ruleValues, setRuleValues] = useState<any>([]);
 
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     const creditProducts = prospectData?.creditProducts;
-
     const businessUnitPublicCode: string =
       JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-    if (!clientInfo.associateType || !creditProducts?.length || !prospectData)
+    if (!clientInfo?.associateType || !creditProducts?.length || !prospectData)
       return;
 
     const dataRulesBase = {
@@ -67,20 +68,27 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
 
       if (rule) {
         try {
-          console.log(rule, "rule2");
           const values = await evaluateRule(
             rule,
             postBusinessUnitRules,
             "value",
             businessUnitPublicCode,
           );
-          console.log(values, "values2");
+          if (Array.isArray(values) && values.length > 0) {
+            const prueba = values.flatMap((val: string) =>
+              prospectData?.borrowers?.map((borrower) => ({
+                borrower: val,
+                value: borrower.borrowerName,
+              })),
+            );
+            setRuleValues(prueba);
+          }
         } catch (error) {
           console.error("Error al evaluar la regla:", error);
         }
       }
     }
-  }, [customerData, prospectData, postBusinessUnitRules, businessUnitSigla]);
+  }, [customerData, prospectData, businessUnitSigla]);
 
   useEffect(() => {
     if (customerData && prospectData) {
@@ -96,6 +104,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
           uploadedFilesByRow={initialValues}
           setUploadedFilesByRow={handleOnChange}
           customerData={customerData}
+          ruleValues={ruleValues}
         />
       </Stack>
     </Fieldset>

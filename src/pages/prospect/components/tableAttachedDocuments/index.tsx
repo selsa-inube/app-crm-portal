@@ -21,8 +21,6 @@ import {
   Tag,
 } from "@inubekit/inubekit";
 
-import { get } from "@mocks/utils/dataMock.service";
-import { mockAttachedDocuments } from "@mocks/filing-application/attached-documents/attacheddocuments.mock";
 import { ListModal } from "@components/modals/ListModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
@@ -31,6 +29,11 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { headers, dataReport } from "./config";
 import { usePagination } from "./utils";
 
+interface IFile {
+  id: string;
+  name: string;
+  file: File;
+}
 interface ITableAttachedDocumentsProps {
   isMobile: boolean;
   uploadedFilesByRow: {
@@ -40,10 +43,12 @@ interface ITableAttachedDocumentsProps {
   setUploadedFilesByRow: (files: {
     [key: string]: { id: string; name: string; file: File }[];
   }) => void;
+  ruleValues: IFile[];
 }
 
 export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
-  const { isMobile, uploadedFilesByRow, setUploadedFilesByRow } = props;
+  const { isMobile, uploadedFilesByRow, setUploadedFilesByRow, ruleValues } =
+    props;
 
   const [loading, setLoading] = useState(true);
   const [showAttachment, setShowAttachments] = useState(false);
@@ -71,24 +76,8 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     handleEndPage,
     firstEntryInPage,
     lastEntryInPage,
-  } = usePagination();
-
-  const [attachedDocuements, setAttachedDocuements] = useState(
-    mockAttachedDocuments,
-  );
+  } = usePagination(ruleValues);
   const [currentRowId, setCurrentRowId] = useState<string | null>(null);
-
-  useEffect(() => {
-    get("attached_documents")
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setAttachedDocuements(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching money destinations data:", error.message);
-      });
-  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -181,7 +170,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                 </Td>
               ))}
             </Tr>;
-          } else if (attachedDocuements.length === 0) {
+          } else if (ruleValues.length === 0) {
             <Tr>
               <Td colSpan={visibleHeaders.length} align="center" type="custom">
                 <Text
@@ -195,10 +184,11 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
               </Td>
             </Tr>;
           } else {
-            return attachedDocuements.map((row, rowIndex) => (
+            return ruleValues.map((row: any, rowIndex: number) => (
               <Tr key={rowIndex}>
                 {visibleHeaders.map((header, colIndex) => {
-                  const cellData = row[header.key];
+                  const cellData =
+                    row[header.key as keyof { borrower: string }];
                   const customColumn = [
                     "attach",
                     "download",
@@ -280,7 +270,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           }
         })()}
       </Tbody>
-      {!loading && attachedDocuements.length > 0 && (
+      {!loading && ruleValues.length > 0 && (
         <Tfoot>
           <Tr border="bottom">
             <Td colSpan={visibleHeaders.length} type="custom" align="center">
