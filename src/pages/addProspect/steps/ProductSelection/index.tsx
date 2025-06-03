@@ -27,8 +27,8 @@ interface IProductSelectionProps {
   allRules: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lineOfCredit: any[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    PercentagePayableViaExtraInstallments: any[];
+    PercentagePayableViaExtraInstallments: string[];
+    IncomeSourceUpdateAllowed: string[];
   };
 }
 
@@ -77,9 +77,24 @@ export function ProductSelection(props: IProductSelectionProps) {
     allRules.PercentagePayableViaExtraInstallments || []
   ).some((value) => Number(value) > 0);
 
-  const filteredQuestions = Object.entries(electionData.data).filter(
-    ([key]) => key !== "programing" || shouldShowPrograming,
-  );
+  const shouldShowIncomeUpdate = (
+    allRules.IncomeSourceUpdateAllowed || []
+  ).includes("Allow");
+
+  const filteredQuestions = Object.entries(electionData.questions)
+    .map(([key, question], index) => ({ key, question, index }))
+    .filter(({ key }) => {
+      if (key === "includeExtraordinaryInstallments") {
+        return shouldShowPrograming;
+      }
+      if (key === "updateIncomeSources") {
+        return shouldShowIncomeUpdate;
+      }
+      if (key === "updateFinancialObligations") {
+        return shouldShowIncomeUpdate;
+      }
+      return true;
+    });
 
   return (
     <Formik
@@ -161,55 +176,57 @@ export function ProductSelection(props: IProductSelectionProps) {
               </Stack>
             </Fieldset>
             <Fieldset>
-              {filteredQuestions.map(([key, question], index) => (
-                <Stack
-                  direction="column"
-                  key={key}
-                  gap="16px"
-                  padding="4px 10px"
-                >
-                  <Text type="body" size="medium">
-                    {question}
-                  </Text>
-                  <Stack gap="8px">
-                    <Field name={`togglesState[${index}]`}>
-                      {({
-                        field,
-                      }: {
-                        field: { value: boolean; name: string };
-                      }) => (
-                        <Toggle
-                          {...field}
-                          value={field.value.toString()}
-                          checked={field.value}
-                          onChange={() => {
-                            onToggleChange(index);
-                            setFieldValue(
-                              `togglesState[${index}]`,
-                              !field.value,
-                            );
-                          }}
-                        />
-                      )}
-                    </Field>
-                    <Text
-                      type="label"
-                      size="large"
-                      weight="bold"
-                      appearance={
-                        values.togglesState[index] ? "success" : "danger"
-                      }
-                    >
-                      {values.togglesState[index]
-                        ? electionData.yes
-                        : electionData.no}
+              {filteredQuestions.map(
+                ({ key, question, index }, filteredIndex) => (
+                  <Stack
+                    direction="column"
+                    key={key}
+                    gap="16px"
+                    padding="4px 10px"
+                  >
+                    <Text type="body" size="medium">
+                      {question}
                     </Text>
+                    <Stack gap="8px">
+                      <Field name={`togglesState[${index}]`}>
+                        {({
+                          field,
+                        }: {
+                          field: { value: boolean; name: string };
+                        }) => (
+                          <Toggle
+                            {...field}
+                            value={field.value.toString()}
+                            checked={field.value}
+                            onChange={() => {
+                              onToggleChange(index);
+                              setFieldValue(
+                                `togglesState[${index}]`,
+                                !field.value,
+                              );
+                            }}
+                          />
+                        )}
+                      </Field>
+                      <Text
+                        type="label"
+                        size="large"
+                        weight="bold"
+                        appearance={
+                          values.togglesState[index] ? "success" : "danger"
+                        }
+                      >
+                        {values.togglesState[index]
+                          ? electionData.yes
+                          : electionData.no}
+                      </Text>
+                    </Stack>
+                    {filteredIndex !== filteredQuestions.length - 1 && (
+                      <Divider dashed />
+                    )}
                   </Stack>
-                  {index !== Object.entries(filteredQuestions).length - 1 && (
-                    <Divider dashed />
-                  )}
-                </Stack>
-              ))}
+                ),
+              )}
             </Fieldset>
           </Stack>
         </Form>

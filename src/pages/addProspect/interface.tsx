@@ -158,6 +158,9 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     PercentagePayableViaExtraInstallments: getRuleByName(
                       "PercentagePayableViaExtraInstallments",
                     ),
+                    IncomeSourceUpdateAllowed: getRuleByName(
+                      "IncomeSourceUpdateAllowed",
+                    ),
                   }}
                 />
               )}

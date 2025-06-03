@@ -50,7 +50,7 @@ export function AddProspect() {
       maximumTermValue: "",
     },
     generalToggleChecked: true,
-    togglesState: [false, false, false],
+    togglesState: [false, false, false, false],
     borrowerData: {
       initialBorrowers: {
         id: "",
@@ -125,6 +125,7 @@ export function AddProspect() {
     const rulesToCheck = [
       "LineOfCredit",
       "PercentagePayableViaExtraInstallments",
+      "IncomeSourceUpdateAllowed",
     ];
     const notDefinedRules: string[] = [];
     await Promise.all(
@@ -170,18 +171,21 @@ export function AddProspect() {
         customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
         0,
       ),
-      LineOfCredit: formData.selectedProducts[0] || "",
     };
 
     const rulesValidate = [
       "LineOfCredit",
       "PercentagePayableViaExtraInstallments",
+      "IncomeSourceUpdateAllowed",
     ];
 
     const products = [{}];
 
     for (const product of products) {
-      const dataRules = { ...dataRulesBase };
+      const dataRules = {
+        ...dataRulesBase,
+        LineOfCredit: formData.selectedProducts[0] || "",
+      };
       await Promise.all(
         rulesValidate.map(async (ruleName) => {
           const rule = ruleConfig[ruleName]?.(dataRules);
@@ -264,7 +268,7 @@ export function AddProspect() {
     if (currentStep === stepsAddProspect.productSelection.id) {
       setFormData((prevState) => ({
         ...prevState,
-        togglesState: [false, false, false],
+        togglesState: [false, false, false, false],
       }));
     }
   }, [currentStep]);
@@ -280,8 +284,9 @@ export function AddProspect() {
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
+      togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
+      togglesState[2] ? stepsAddProspect.obligationsFinancial.id : undefined,
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
@@ -289,10 +294,6 @@ export function AddProspect() {
 
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
-    }
-    if (currentStep === stepsAddProspect.sourcesIncome.id) {
-      setCurrentStep(stepsAddProspect.obligationsFinancial.id);
-      return;
     }
     if (currentStep === stepsAddProspect.productSelection.id) {
       setCurrentStep(dynamicSteps[0]);
@@ -315,9 +316,9 @@ export function AddProspect() {
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
+      togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.obligationsFinancial.id : undefined,
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
