@@ -179,45 +179,67 @@ export function AddProspect() {
       "IncomeSourceUpdateAllowed",
     ];
 
-    const products = [{}];
+    const products =
+      formData.selectedProducts.length > 0 ? formData.selectedProducts : [""];
 
-    for (const product of products) {
-      const dataRules = {
-        ...dataRulesBase,
-        LineOfCredit: formData.selectedProducts[0] || "",
-      };
-      await Promise.all(
-        rulesValidate.map(async (ruleName) => {
-          const rule = ruleConfig[ruleName]?.(dataRules);
-          if (!rule) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ruleResults: { [ruleName: string]: any[] } = {};
 
-          try {
-            const values = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            );
+    await Promise.all(
+      products.map(async (product) => {
+        const dataRules = {
+          ...dataRulesBase,
+          LineOfCredit: product || "",
+        };
 
-            if (Array.isArray(values)) {
-              const uniqueObjects = values;
-              setValueRule((prev) => ({
-                ...prev,
-                [ruleName]: uniqueObjects,
-              }));
+        await Promise.all(
+          rulesValidate.map(async (ruleName) => {
+            const rule = ruleConfig[ruleName]?.(dataRules);
+            if (!rule) return;
+
+            try {
+              const values = await evaluateRule(
+                rule,
+                postBusinessUnitRules,
+                "value",
+                businessUnitPublicCode,
+                true,
+              );
+
+              if (!ruleResults[ruleName]) ruleResults[ruleName] = [];
+              if (Array.isArray(values)) {
+                ruleResults[ruleName].push(...values);
+              } else if (values !== undefined) {
+                ruleResults[ruleName].push(values);
+              }
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (error: any) {
+              console.error(
+                `Error evaluando ${ruleName} para producto`,
+                product,
+                error,
+              );
             }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } catch (error: any) {
-            console.error(
-              `Error evaluando ${ruleName} para producto`,
-              product,
-              error,
-            );
-          }
-        }),
-      );
-    }
+          }),
+        );
+      }),
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const uniqueRuleResults: { [ruleName: string]: any[] } = {};
+    Object.keys(ruleResults).forEach((ruleName) => {
+      const seen = new Set();
+      uniqueRuleResults[ruleName] = ruleResults[ruleName].filter((item) => {
+        const key = typeof item === "object" ? JSON.stringify(item) : item;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    });
+    setValueRule((prev) => ({
+      ...prev,
+      ...uniqueRuleResults,
+    }));
   }, [
     customerData,
     businessUnitPublicCode,

@@ -77,9 +77,9 @@ export function ProductSelection(props: IProductSelectionProps) {
     allRules.PercentagePayableViaExtraInstallments || []
   ).some((value) => Number(value) > 0);
 
-  const shouldShowIncomeUpdate = (
-    allRules.IncomeSourceUpdateAllowed || []
-  ).includes("Allow");
+  const shouldShowIncomeUpdate =
+    (allRules.IncomeSourceUpdateAllowed || []).length > 0 &&
+    allRules.IncomeSourceUpdateAllowed.every((value) => value === "Y");
 
   const filteredQuestions = Object.entries(electionData.questions)
     .map(([key, question], index) => ({ key, question, index }))
