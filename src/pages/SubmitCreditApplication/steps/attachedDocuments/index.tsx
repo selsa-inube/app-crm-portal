@@ -75,13 +75,13 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
             businessUnitPublicCode,
           );
           if (Array.isArray(values) && values.length > 0) {
-            const prueba = values.flatMap((val: string) =>
+            const borrowerDocumentRules = values.flatMap((val: string) =>
               prospectData?.borrowers?.map((borrower) => ({
                 borrower: val,
                 value: borrower.borrowerName,
               })),
             );
-            setRuleValues(prueba);
+            setRuleValues(borrowerDocumentRules);
           }
         } catch (error) {
           console.error("Error al evaluar la regla:", error);
