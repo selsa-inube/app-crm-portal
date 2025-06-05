@@ -54,7 +54,8 @@ export function SubmitCreditApplication() {
       lastName: "",
       email: "",
       phone: "",
-      toggleChecked: false,
+      whatsAppPhone: "",
+      toggleChecked: true,
     },
     borrowerData: {
       borrowers: {},

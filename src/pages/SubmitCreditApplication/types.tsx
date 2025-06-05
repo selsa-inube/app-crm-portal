@@ -21,6 +21,7 @@ export interface IStep {
 export interface IContactInformation {
   email: string;
   phone: string;
+  whatsAppPhone: string;
   document: string;
   documentNumber: string;
   name: string;

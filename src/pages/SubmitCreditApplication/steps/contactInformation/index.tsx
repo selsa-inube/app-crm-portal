@@ -3,7 +3,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
   Input,
-  Grid,
   Fieldset as FieldsetInube,
   Phonefield,
   Stack,
@@ -32,10 +31,18 @@ export function ContactInformation(props: IContactInformationProps) {
   const validationSchema = Yup.object({
     email: Yup.string()
       .matches(/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/)
-      .required(),
-    phone: Yup.string()
-      .matches(/^(\+\d{1,3})?\d{10,14}$/)
       .required(""),
+    phone: Yup.string()
+      .matches(/^(\+\d{1,3})?\d{10,14}$/, "")
+      .required(""),
+    toggleChecked: Yup.boolean(),
+    whatsAppPhone: Yup.string()
+      .matches(/^(\+\d{1,3})?\d{10,14}$/, "")
+      .when("toggleChecked", {
+        is: false,
+        then: (schema) => schema.required(""),
+        otherwise: (schema) => schema.notRequired(),
+      }),
   });
 
   const getInitialFormValues = () => ({
@@ -59,6 +66,7 @@ export function ContactInformation(props: IContactInformationProps) {
         : (customerData?.generalAttributeClientNaturalPersons?.[0]
             ?.cellPhoneContact ?? ""),
     toggleChecked: initialValues.toggleChecked,
+    whatsAppPhone: initialValues.whatsAppPhone,
   });
 
   const [formValues] = useState(getInitialFormValues);
@@ -80,6 +88,7 @@ export function ContactInformation(props: IContactInformationProps) {
     const hasChanged =
       prevValues.current.email !== formik.values.email ||
       prevValues.current.phone !== formik.values.phone ||
+      prevValues.current.whatsAppPhone !== formik.values.whatsAppPhone ||
       prevValues.current.toggleChecked !== formik.values.toggleChecked;
 
     if (hasChanged) {
@@ -91,6 +100,7 @@ export function ContactInformation(props: IContactInformationProps) {
         email: formik.values.email,
         phone: formik.values.phone,
         toggleChecked: formik.values.toggleChecked,
+        whatsAppPhone: formik.values.whatsAppPhone,
       };
 
       handleOnChange(updatedData);
@@ -126,59 +136,87 @@ export function ContactInformation(props: IContactInformationProps) {
           fullwidth
         />
         <FieldsetInube legend="Móvil" type="body" size="medium">
-          <Grid
-            templateColumns={isMobile ? "1fr" : "repeat(2, 1fr)"}
-            autoRows="auto"
-            gap="20px"
-            width={isMobile ? "100%" : "80%"}
-          >
-            <Phonefield
-              name="phone"
-              id="phone"
-              type="number"
-              placeholder={dataContactInformation.placePhone}
-              label={dataContactInformation.cardPhone}
-              size="compact"
-              value={formik.values.phone}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              status={
-                formik.touched.phone &&
-                formik.values.phone !== "" &&
-                formik.errors.phone
-                  ? "invalid"
-                  : undefined
-              }
-              message={dataContactInformation.failedPhone}
-              fullwidth
-            />
-            <Stack direction="column" gap="16px">
-              <Text>{dataContactInformation.whatsApp}</Text>
-              <Stack>
-                <Toggle
-                  checked={formik.values.toggleChecked}
-                  onChange={() =>
-                    formik.setFieldValue(
-                      "toggleChecked",
-                      !formik.values.toggleChecked,
-                    )
-                  }
-                />
-                <Text
-                  type="label"
-                  size="large"
-                  weight="bold"
-                  appearance={
-                    formik.values.toggleChecked ? "success" : "danger"
-                  }
-                >
-                  {formik.values.toggleChecked
-                    ? dataContactInformation.yes
-                    : dataContactInformation.no}
-                </Text>
-              </Stack>
+          <Stack wrap="wrap" width="100%" gap="16px">
+            <Stack width={isMobile ? "100%" : "25vw"}>
+              <Phonefield
+                name="phone"
+                id="phone"
+                type="number"
+                placeholder={dataContactInformation.placePhone}
+                label={dataContactInformation.cardPhone}
+                size="compact"
+                value={formik.values.phone}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                status={
+                  formik.touched.phone &&
+                  formik.values.phone !== "" &&
+                  formik.errors.phone
+                    ? "invalid"
+                    : undefined
+                }
+                message={dataContactInformation.failedPhone}
+                fullwidth={isMobile ? true : true}
+              />
             </Stack>
-          </Grid>
+            <Stack
+              direction={isMobile ? "column" : "initial"}
+              width={isMobile ? "50vw" : "auto"}
+              gap="16px"
+            >
+              <Stack direction="column" gap="16px">
+                <Text>{dataContactInformation.useWhatsApp}</Text>
+                <Stack>
+                  <Toggle
+                    checked={formik.values.toggleChecked}
+                    onChange={() => {
+                      const newValue = !formik.values.toggleChecked;
+                      formik.setFieldValue("toggleChecked", newValue);
+                      if (newValue) {
+                        formik.setFieldValue("whatsAppPhone", "");
+                      }
+                    }}
+                  />
+                  <Text
+                    type="label"
+                    size="large"
+                    weight="bold"
+                    appearance={
+                      formik.values.toggleChecked ? "success" : "danger"
+                    }
+                  >
+                    {formik.values.toggleChecked
+                      ? dataContactInformation.yes
+                      : dataContactInformation.no}
+                  </Text>
+                </Stack>
+              </Stack>
+              {!formik.values.toggleChecked && (
+                <Stack width={isMobile ? "80%" : "25vw"}>
+                  <Phonefield
+                    name="whatsAppPhone"
+                    id="whatsAppPhone"
+                    type="number"
+                    placeholder={dataContactInformation.placeWhatsApp}
+                    label={dataContactInformation.cardWhatsApp}
+                    size="compact"
+                    value={formik.values.whatsAppPhone}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    status={
+                      formik.touched.whatsAppPhone &&
+                      formik.values.whatsAppPhone !== "" &&
+                      formik.errors.whatsAppPhone
+                        ? "invalid"
+                        : undefined
+                    }
+                    message={dataContactInformation.failedPhone}
+                    fullwidth={isMobile ? false : true}
+                  />
+                </Stack>
+              )}
+            </Stack>
+          </Stack>
         </FieldsetInube>
       </Stack>
     </Fieldset>
