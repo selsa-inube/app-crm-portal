@@ -74,7 +74,8 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
 
   useEffect(() => {
     handleOnChange(formik.values);
-  }, [formik.values, handleOnChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values]);
 
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
