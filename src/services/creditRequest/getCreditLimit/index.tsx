@@ -3,12 +3,14 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { ICreditLimit } from "./types";
+import { IIncomeSources } from "@services/incomeSources/types";
+
+import { mapCreditLimitEntity } from "./mapper";
 
 const getCreditLimit = async (
   businessUnitPublicCode: string,
   clientIdentificationNumber: string,
-): Promise<ICreditLimit> => {
+): Promise<IIncomeSources> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -34,33 +36,31 @@ const getCreditLimit = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay resumen de montos disponibles.");
+        throw new Error("No hay credito disponible.");
       }
 
       const data = await res.json();
 
       if (!res.ok) {
         throw {
-          message: "Error al obtener el resumen de montos.",
+          message: "Error al obtener credito.",
           status: res.status,
           data,
         };
       }
 
-      return data as ICreditLimit;
+      return mapCreditLimitEntity(data);
     } catch (error) {
       console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo traer el resumen de montos",
+          "Todos los intentos fallaron. No se pudo traer el credito.",
         );
       }
     }
   }
 
-  throw new Error(
-    "No se pudo obtener el resumen de montos después de varios intentos.",
-  );
+  throw new Error("No se pudo obtener el credito después de varios intentos.");
 };
 
 export { getCreditLimit };
