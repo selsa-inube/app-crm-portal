@@ -1,7 +1,7 @@
 export const MoneyDestinationTranslations = [
   {
     Code: "New_homes",
-    Name: "Nuevos hogares",
+    Name: "Vivienda nueva",
     Value: "MdOutlineRealEstateAgent",
     Description: "Purchase of a home, lot or mortgage payment.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION",
@@ -66,7 +66,7 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Contingency_a_quota",
-    Name: "Contingencia a cuota",
+    Name: "Contingencia a una cuota",
     Value: "MdOutline1xMobiledata",
     Description: "One installment for unforeseen expenses.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_CONTINGENCY_A_QUOTA",
@@ -75,7 +75,7 @@ export const MoneyDestinationTranslations = [
 
   {
     Code: "Second_home",
-    Name: "Segundo hogar",
+    Name: "Segunda vivienda",
     Value: "MdOutlineAddHomeWork",
     Description: "Investing in a 2nd Immuble.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_SECOND_HOME",
@@ -91,7 +91,7 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Purchase_portfolio_outside_entities",
-    Name: "Compra de cartera fuera de entidades",
+    Name: "Compra de cartera a entidades externas",
     Value: "MdOutlineAssuredWorkload",
     Description: "To pay own credits in other financial entities.",
     I18nAttribute:
@@ -124,7 +124,7 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Free_investment",
-    Name: "Inversión libre",
+    Name: "Libre Inversión",
     Value: "MdOutlinePayments",
     Description: "Free investment credit.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_FREE_INVESTMENT",
