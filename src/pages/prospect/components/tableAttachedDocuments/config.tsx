@@ -12,8 +12,8 @@ export const headers: {
   key: keyof IAttachedDocuments;
   action?: boolean;
 }[] = [
-  { label: "Deudor", key: "value" },
-  { label: "Documento solicitado", key: "borrower" },
+  { label: "Deudor", key: "borrower" },
+  { label: "Documento solicitado", key: "value" },
   { label: "Adjunto", key: "attached" },
   { label: "Adjuntar", key: "attach", action: true },
   { label: "Descargar", key: "download", action: true },

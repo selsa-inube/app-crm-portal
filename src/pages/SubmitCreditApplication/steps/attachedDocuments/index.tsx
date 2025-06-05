@@ -12,6 +12,11 @@ import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { ruleConfig } from "../../config/configRules";
 import { evaluateRule } from "../../evaluateRule";
 
+export interface IBorrowerDocumentRule {
+  borrower: string;
+  value: string;
+}
+
 interface IAttachedDocumentsProps {
   isMobile: boolean;
   initialValues: {
@@ -34,11 +39,12 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
   } = props;
 
   const { businessUnitSigla } = useContext(AppContext);
-  const [ruleValues, setRuleValues] = useState<any>([]);
+  const [ruleValues, setRuleValues] = useState<IBorrowerDocumentRule[]>([]);
 
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     const creditProducts = prospectData?.creditProducts;
+    const borrowers = prospectData?.borrowers || [];
     const businessUnitPublicCode: string =
       JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
@@ -47,47 +53,50 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
 
     const dataRulesBase = {
       ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      PrimaryIncomeType: "",
       AffiliateSeniority: getMonthsElapsed(
         customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
         0,
       ),
     };
+    const borrowerDocumentRules: { borrower: string; value: string }[] = [];
+    for (const borrower of borrowers) {
+      for (const product of creditProducts) {
+        if (!product || typeof product !== "object") continue;
 
-    for (const product of creditProducts) {
-      if (!product || typeof product !== "object") continue;
+        const dataRules = {
+          ...dataRulesBase,
+          LineOfCredit: product.lineOfCreditAbbreviatedName,
+          LoanAmount: product.loanAmount,
+          PrimaryIncomeType: "PeriodicSalary",
+        };
 
-      const dataRules = {
-        ...dataRulesBase,
-        LineOfCredit: product.lineOfCreditAbbreviatedName,
-        LoanAmount: prospectData.requestedAmount,
-      };
+        const ruleName = "DocumentaryRequirement";
+        const rule = ruleConfig[ruleName]?.(dataRules);
 
-      const ruleName = "DocumentaryRequirement";
-      const rule = ruleConfig[ruleName]?.(dataRules);
-
-      if (rule) {
-        try {
-          const values = await evaluateRule(
-            rule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-          );
-          if (Array.isArray(values) && values.length > 0) {
-            const borrowerDocumentRules = values.flatMap((val: string) =>
-              prospectData?.borrowers?.map((borrower) => ({
-                borrower: val,
-                value: borrower.borrowerName,
-              })),
+        if (rule) {
+          try {
+            const values = await evaluateRule(
+              rule,
+              postBusinessUnitRules,
+              "value",
+              businessUnitPublicCode,
             );
-            setRuleValues(borrowerDocumentRules);
+            if (Array.isArray(values) && values.length > 0) {
+              for (const value of values) {
+                borrowerDocumentRules.push({
+                  borrower: borrower.borrowerName,
+                  value: value,
+                });
+              }
+            }
+          } catch (error) {
+            console.error("Error al evaluar la regla:", error);
           }
-        } catch (error) {
-          console.error("Error al evaluar la regla:", error);
         }
       }
     }
+
+    setRuleValues(borrowerDocumentRules);
   }, [customerData, prospectData, businessUnitSigla]);
 
   useEffect(() => {

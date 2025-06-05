@@ -24,16 +24,12 @@ import {
 import { ListModal } from "@components/modals/ListModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
+import { IBorrowerDocumentRule } from "@pages/SubmitCreditApplication/steps/attachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
 
 import { headers, dataReport } from "./config";
 import { usePagination } from "./utils";
 
-interface IFile {
-  id: string;
-  name: string;
-  file: File;
-}
 interface ITableAttachedDocumentsProps {
   isMobile: boolean;
   uploadedFilesByRow: {
@@ -43,7 +39,7 @@ interface ITableAttachedDocumentsProps {
   setUploadedFilesByRow: (files: {
     [key: string]: { id: string; name: string; file: File }[];
   }) => void;
-  ruleValues: IFile[];
+  ruleValues: IBorrowerDocumentRule[];
 }
 
 export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
@@ -184,89 +180,99 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
               </Td>
             </Tr>;
           } else {
-            return ruleValues.map((row: any, rowIndex: number) => (
-              <Tr key={rowIndex}>
-                {visibleHeaders.map((header, colIndex) => {
-                  const cellData =
-                    row[header.key as keyof { borrower: string }];
-                  const customColumn = [
-                    "attach",
-                    "download",
-                    "remove",
-                    "attached",
-                  ].includes(header.key);
-                  return (
-                    <Td
-                      key={colIndex}
-                      width={customColumn ? "70px" : "auto"}
-                      appearance={rowIndex % 2 === 0 ? "light" : "dark"}
-                      type={customColumn ? "custom" : "text"}
-                      align={
-                        typeof header.action ||
-                        (typeof cellData === "string" && cellData.includes("$"))
-                          ? "center"
-                          : "left"
-                      }
-                    >
-                      {(() => {
-                        if (header.key === "attach") {
-                          return (
-                            <Icon
-                              icon={<MdAttachFile />}
-                              appearance="dark"
-                              size="16px"
-                              cursorHover
-                              onClick={() =>
-                                handleOpenAttachment(rowIndex.toString())
-                              }
-                            />
-                          );
+            return ruleValues.map(
+              (row: IBorrowerDocumentRule, rowIndex: number) => (
+                <Tr key={rowIndex}>
+                  {visibleHeaders.map((header, colIndex) => {
+                    const cellData =
+                      row[header.key as keyof { borrower: string }];
+                    const customColumn = [
+                      "attach",
+                      "download",
+                      "remove",
+                      "attached",
+                    ].includes(header.key);
+                    return (
+                      <Td
+                        key={colIndex}
+                        width={customColumn ? "70px" : "auto"}
+                        appearance={rowIndex % 2 === 0 ? "light" : "dark"}
+                        type={customColumn ? "custom" : "text"}
+                        align={
+                          typeof header.action ||
+                          (typeof cellData === "string" &&
+                            cellData.includes("$"))
+                            ? "center"
+                            : "left"
                         }
-                        if (header.key === "attached") {
-                          if (
-                            uploadedFilesByRow[rowIndex.toString()]?.length > 0
-                          ) {
-                            return <Tag label="Adjunto" appearance="success" />;
+                      >
+                        {(() => {
+                          if (header.key === "attach") {
+                            return (
+                              <Icon
+                                icon={<MdAttachFile />}
+                                appearance="dark"
+                                size="16px"
+                                cursorHover
+                                onClick={() =>
+                                  handleOpenAttachment(rowIndex.toString())
+                                }
+                              />
+                            );
                           }
-                          return <Tag label="No adjunto" appearance="danger" />;
-                        }
-                        return cellData;
-                      })()}
-                      {header.key === "download" && (
-                        <Icon
-                          icon={<MdOutlineFileDownload />}
-                          appearance="dark"
-                          size="16px"
-                          cursorHover
-                          disabled={
-                            !uploadedFilesByRow[rowIndex.toString()] ||
-                            uploadedFilesByRow[rowIndex.toString()].length === 0
+                          if (header.key === "attached") {
+                            if (
+                              uploadedFilesByRow[rowIndex.toString()]?.length >
+                              0
+                            ) {
+                              return (
+                                <Tag label="Adjunto" appearance="success" />
+                              );
+                            }
+                            return (
+                              <Tag label="No adjunto" appearance="danger" />
+                            );
                           }
-                          onClick={() =>
-                            handleDownloadFile(rowIndex.toString())
-                          }
-                        />
-                      )}
-                      {header.key === "remove" && (
-                        <Icon
-                          icon={<MdOutlineHighlightOff />}
-                          appearance="danger"
-                          size="16px"
-                          cursorHover
-                          disabled={
-                            !uploadedFilesByRow[rowIndex.toString()] ||
-                            uploadedFilesByRow[rowIndex.toString()].length === 0
-                          }
-                          onClick={() =>
-                            handleOpenDeleteModal(rowIndex.toString())
-                          }
-                        />
-                      )}
-                    </Td>
-                  );
-                })}
-              </Tr>
-            ));
+                          return cellData;
+                        })()}
+                        {header.key === "download" && (
+                          <Icon
+                            icon={<MdOutlineFileDownload />}
+                            appearance="dark"
+                            size="16px"
+                            cursorHover
+                            disabled={
+                              !uploadedFilesByRow[rowIndex.toString()] ||
+                              uploadedFilesByRow[rowIndex.toString()].length ===
+                                0
+                            }
+                            onClick={() =>
+                              handleDownloadFile(rowIndex.toString())
+                            }
+                          />
+                        )}
+                        {header.key === "remove" && (
+                          <Icon
+                            icon={<MdOutlineHighlightOff />}
+                            appearance="danger"
+                            size="16px"
+                            cursorHover
+                            disabled={
+                              !uploadedFilesByRow[rowIndex.toString()] ||
+                              uploadedFilesByRow[rowIndex.toString()].length ===
+                                0
+                            }
+                            onClick={() =>
+                              handleOpenDeleteModal(rowIndex.toString())
+                            }
+                          />
+                        )}
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              ),
+            );
           }
         })()}
       </Tbody>

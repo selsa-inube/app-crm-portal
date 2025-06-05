@@ -35,6 +35,7 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       { condition: "LineOfCredit", value: data.LineOfCredit },
       // { condition: "ClientType", value: data.ClientType },
       // { condition: "LoanAmount", value: data.LoanAmount },
+      // { condition: "AffiliateSeniority", value: data.AffiliateSeniority },
     ],
   }),
 };

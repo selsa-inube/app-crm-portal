@@ -473,7 +473,7 @@ export function SubmitCreditApplication() {
       const dataRules = {
         ...dataRulesBase,
         LineOfCredit: product.lineOfCreditAbbreviatedName,
-        LoanAmount: prospectData.requestedAmount,
+        LoanAmount: product.loanAmount,
       };
       await Promise.all(
         rulesValidate.map(async (ruleName) => {
