@@ -27,6 +27,12 @@ interface IExtraDebtorsProps {
 export function ExtraDebtors(props: IExtraDebtorsProps) {
   const { handleOnChange, initialValues, isMobile } = props;
 
+  const sortedBorrowers = [...mockGuaranteeBorrower].sort((a, b) => {
+    if (a.borrowerType === "MainBorrower") return -1;
+    if (b.borrowerType === "MainBorrower") return 1;
+    return 0;
+  });
+
   const dataDebtorDetail = MockDataDebtor[0];
   const initialBorrowers = mockGuaranteeBorrower.reduce(
     (acc, item, index) => {
@@ -103,7 +109,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
           autoRows="auto"
           gap="20px"
         >
-          {mockGuaranteeBorrower.map((item, index) => (
+          {sortedBorrowers.map((item, index) => (
             <CardBorrower
               key={index}
               title={data.borrowerLabel + ` ${index + 1}`}
