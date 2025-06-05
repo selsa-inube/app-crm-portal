@@ -1,14 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Input, Grid, Phonefield } from "@inubekit/inubekit";
+import {
+  Input,
+  Grid,
+  Fieldset as FieldsetInube,
+  Phonefield,
+  Stack,
+  Toggle,
+  Text,
+} from "@inubekit/inubekit";
 
-import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
 import { IContactInformation } from "@pages/SubmitCreditApplication/types";
+import { ICustomerData } from "@context/CustomerContext/types";
 
 import { dataContactInformation } from "./config";
-import { ICustomerData } from "@context/CustomerContext/types";
 
 interface IContactInformationProps {
   onFormValid: (isValid: boolean) => void;
@@ -51,6 +58,7 @@ export function ContactInformation(props: IContactInformationProps) {
         ? `${initialValues.phone}`
         : (customerData?.generalAttributeClientNaturalPersons?.[0]
             ?.cellPhoneContact ?? ""),
+    toggleChecked: initialValues.toggleChecked,
   });
 
   const [formValues] = useState(getInitialFormValues);
@@ -71,7 +79,8 @@ export function ContactInformation(props: IContactInformationProps) {
   useEffect(() => {
     const hasChanged =
       prevValues.current.email !== formik.values.email ||
-      prevValues.current.phone !== formik.values.phone;
+      prevValues.current.phone !== formik.values.phone ||
+      prevValues.current.toggleChecked !== formik.values.toggleChecked;
 
     if (hasChanged) {
       const updatedData = {
@@ -81,6 +90,7 @@ export function ContactInformation(props: IContactInformationProps) {
         lastName: formik.values.lastName,
         email: formik.values.email,
         phone: formik.values.phone,
+        toggleChecked: formik.values.toggleChecked,
       };
 
       handleOnChange(updatedData);
@@ -94,28 +104,7 @@ export function ContactInformation(props: IContactInformationProps) {
 
   return (
     <Fieldset>
-      <Grid
-        templateColumns={isMobile ? "1fr" : "repeat(2, 1fr)"}
-        autoRows="auto"
-        padding={isMobile ? "4px 10px" : "10px 16px"}
-        gap="20px"
-      >
-        <CardGray
-          label={dataContactInformation.cardDocument}
-          placeHolder={formik.values.document}
-        />
-        <CardGray
-          label={dataContactInformation.cardDocumentNumber}
-          placeHolder={formik.values.documentNumber}
-        />
-        <CardGray
-          label={dataContactInformation.cardName}
-          placeHolder={formik.values.name}
-        />
-        <CardGray
-          label={dataContactInformation.cardLastName}
-          placeHolder={formik.values.lastName}
-        />
+      <Stack direction="column" padding="24px">
         <Input
           name="email"
           id="email"
@@ -136,27 +125,62 @@ export function ContactInformation(props: IContactInformationProps) {
           message={dataContactInformation.failedEmail}
           fullwidth
         />
-        <Phonefield
-          name="phone"
-          id="phone"
-          type="number"
-          placeholder={dataContactInformation.placePhone}
-          label={dataContactInformation.cardPhone}
-          size="compact"
-          value={formik.values.phone}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          status={
-            formik.touched.phone &&
-            formik.values.phone !== "" &&
-            formik.errors.phone
-              ? "invalid"
-              : undefined
-          }
-          message={dataContactInformation.failedPhone}
-          fullwidth
-        />
-      </Grid>
+        <FieldsetInube legend="Móvil" type="body" size="medium">
+          <Grid
+            templateColumns={isMobile ? "1fr" : "repeat(2, 1fr)"}
+            autoRows="auto"
+            gap="20px"
+            width={isMobile ? "100%" : "80%"}
+          >
+            <Phonefield
+              name="phone"
+              id="phone"
+              type="number"
+              placeholder={dataContactInformation.placePhone}
+              label={dataContactInformation.cardPhone}
+              size="compact"
+              value={formik.values.phone}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              status={
+                formik.touched.phone &&
+                formik.values.phone !== "" &&
+                formik.errors.phone
+                  ? "invalid"
+                  : undefined
+              }
+              message={dataContactInformation.failedPhone}
+              fullwidth
+            />
+            <Stack direction="column" gap="16px">
+              <Text>{dataContactInformation.whatsApp}</Text>
+              <Stack>
+                <Toggle
+                  checked={formik.values.toggleChecked}
+                  onChange={() =>
+                    formik.setFieldValue(
+                      "toggleChecked",
+                      !formik.values.toggleChecked,
+                    )
+                  }
+                />
+                <Text
+                  type="label"
+                  size="large"
+                  weight="bold"
+                  appearance={
+                    formik.values.toggleChecked ? "success" : "danger"
+                  }
+                >
+                  {formik.values.toggleChecked
+                    ? dataContactInformation.yes
+                    : dataContactInformation.no}
+                </Text>
+              </Stack>
+            </Stack>
+          </Grid>
+        </FieldsetInube>
+      </Stack>
     </Fieldset>
   );
 }

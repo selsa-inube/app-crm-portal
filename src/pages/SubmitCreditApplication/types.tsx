@@ -25,6 +25,7 @@ export interface IContactInformation {
   documentNumber: string;
   name: string;
   lastName: string;
+  toggleChecked: boolean;
 }
 
 export interface IVehicleOffered {
