@@ -7,7 +7,6 @@ import { IMoneyDestination } from "@services/moneyDestination/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
-import { MoneyDestinationTranslations } from "@src/services/enum/moneyDestinationTranslations";
 
 interface IMoneyDestinationProps {
   initialValues: string;
@@ -31,22 +30,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     getMoneyDestinations(businessUnitPublicCode)
       .then((data) => {
         if (data && Array.isArray(data)) {
-          const translatedData: IMoneyDestination[] = data.map(
-            (destination) => {
-              const translation = MoneyDestinationTranslations.find(
-                (item) => item.Code === destination.abbreviatedName,
-              );
-
-              return {
-                ...destination,
-                abbreviatedName: translation
-                  ? translation.Name
-                  : destination.abbreviatedName,
-              };
-            },
-          );
-
-          setMoneyDestinations(translatedData);
+          setMoneyDestinations(data);
         }
       })
       .catch((error) => {
