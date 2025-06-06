@@ -109,7 +109,11 @@ export function SubmitCreditApplicationUI(
       {codeError ? (
         <ErrorPage errorCode={codeError} addToFix={addToFix || []} />
       ) : (
-        <>
+        <Stack
+          direction="column"
+          width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
+          margin="0 auto"
+        >
           <GeneralHeader
             buttonText="Agregar vinculación"
             descriptionStatus={dataHeader.status}
@@ -121,14 +125,8 @@ export function SubmitCreditApplicationUI(
             alignItems={isMobile ? "normal" : "center"}
             margin="20px 0px"
             padding="24px"
-            height={isMobile ? "auto" : "2000px"}
           >
-            <Stack
-              gap="24px"
-              direction="column"
-              height="100%"
-              width={isMobile ? "-webkit-fill-available" : "min(100%,1440px)"}
-            >
+            <Stack gap="24px" direction="column" height="100%" width="100%">
               <Breadcrumbs crumbs={submitCreditApplicationConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
                 <StyledArrowBack onClick={handleHome}>
@@ -361,7 +359,7 @@ export function SubmitCreditApplicationUI(
               </BaseModal>
             )}
           </Stack>
-        </>
+        </Stack>
       )}
     </>
   );

@@ -112,6 +112,10 @@ export function ContactInformation(props: IContactInformationProps) {
     handleOnChange(formik.values);
   }, []);
 
+  useEffect(() => {
+    formik.validateForm();
+  }, [formik.values.toggleChecked]);
+
   return (
     <Fieldset>
       <Stack direction="column" padding="24px">
@@ -137,7 +141,7 @@ export function ContactInformation(props: IContactInformationProps) {
         />
         <FieldsetInube legend="Móvil" type="body" size="medium">
           <Stack wrap="wrap" width="100%" gap="16px">
-            <Stack width={isMobile ? "100%" : "25vw"}>
+            <Stack width={isMobile ? "100%" : "40%"}>
               <Phonefield
                 name="phone"
                 id="phone"
@@ -192,7 +196,7 @@ export function ContactInformation(props: IContactInformationProps) {
                 </Stack>
               </Stack>
               {!formik.values.toggleChecked && (
-                <Stack width={isMobile ? "80%" : "25vw"}>
+                <Stack width={isMobile ? "80%" : "320px"}>
                   <Phonefield
                     name="whatsAppPhone"
                     id="whatsAppPhone"
