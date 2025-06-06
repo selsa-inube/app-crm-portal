@@ -22,7 +22,7 @@ export const addConfig = {
       isActive: false,
     },
     {
-      path: `/credit/add-prospect:prospectCode`,
+      path: `/credit/add-prospect/:customerPublicCode`,
       label: "Simular crédito",
       id: "/credit/add-prospect",
       isActive: true,
