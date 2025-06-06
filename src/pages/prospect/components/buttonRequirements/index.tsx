@@ -1,4 +1,4 @@
-import { MdCheckCircleOutline } from "react-icons/md";
+import { MdOutlineRule } from "react-icons/md";
 import { Button } from "@inubekit/inubekit";
 
 import { mockRequirementsNotMet } from "@mocks/requirements-not-met/requirementsnotmet.mock";
@@ -18,7 +18,7 @@ export function ButtonRequirements(props: IButtonRequirementsProps) {
   return (
     <StyledButton onClick={onClick} $data={dataCount}>
       <Button
-        iconBefore={<MdCheckCircleOutline />}
+        iconBefore={<MdOutlineRule />}
         appearance="gray"
         variant="outlined"
         spacing="compact"
