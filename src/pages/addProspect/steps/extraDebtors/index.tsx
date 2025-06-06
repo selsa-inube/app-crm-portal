@@ -134,6 +134,8 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               onSubmit={() => setIsModalAdd(false)}
               handleClose={() => setIsModalAdd(false)}
               title={data.addButton}
+              onAddBorrower={() => {}}
+              prospectData={{}}
             />
           )}
           {isModalView && (

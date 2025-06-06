@@ -4,6 +4,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { IIncomeSources } from "@services/incomeSources/types";
+import { IProspect } from "@services/types";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";
@@ -19,7 +20,9 @@ interface DebtorAddModalUIProps {
   isMobile: boolean;
   incomeData: IIncomeSources | undefined;
   AutoCompleted: boolean;
+  prospectData: IProspect;
   handleFormChange: (updatedValues: Partial<FormData>) => void;
+  handleIncomeChange: (updatedValues: Partial<IIncomeSources>) => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   handleNextStep: () => void;
   handlePreviousStep: () => void;
@@ -38,7 +41,9 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     isMobile,
     incomeData,
     AutoCompleted,
+    prospectData,
     handleFormChange,
+    handleIncomeChange,
     handleNextStep,
     handlePreviousStep,
     handleSubmitClick,
@@ -55,7 +60,9 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
           : titleButtonTextAssited.goNextText
       }
       backButton={titleButtonTextAssited.goBackText}
-      handleNext={handleNextStep}
+      handleNext={
+        currentStepsNumber === steps[2] ? handleSubmitClick : handleNextStep
+      }
       handleBack={handlePreviousStep}
       handleClose={handleClose}
       disabledNext={!isCurrentFormValid}
@@ -91,11 +98,18 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
           )}
         {currentStepsNumber &&
           currentStepsNumber.id === stepsAddBorrower.contactInformation.id && (
-            <SourceIncome data={incomeData} showEdit={false} />
+            <SourceIncome
+              data={incomeData}
+              showEdit={false}
+              onDataChange={handleIncomeChange}
+            />
           )}
         {currentStepsNumber &&
           currentStepsNumber.id === stepsAddBorrower.BorrowerData.id && (
-            <TableFinancialObligations showActions={true} />
+            <TableFinancialObligations
+              showActions={true}
+              initialValues={prospectData}
+            />
           )}
       </Stack>
     </BaseModal>
