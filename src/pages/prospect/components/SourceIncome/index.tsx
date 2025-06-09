@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdCached, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Grid, useMediaQuery, Button } from "@inubekit/inubekit";
 
@@ -12,6 +12,7 @@ import {
 import { IIncome } from "@services/types";
 import { IIncomeSources } from "@services/incomeSources/types";
 import { BaseModal } from "@components/modals/baseModal";
+import { ICustomerData } from "@context/CustomerContext/types";
 
 import { IncomeEmployment, IncomeCapital, MicroBusinesses } from "./config";
 import { StyledContainer } from "./styles";
@@ -23,6 +24,7 @@ interface ISourceIncomeProps {
   ShowSupport?: boolean;
   disabled?: boolean;
   data?: IIncomeSources;
+  customerData?: ICustomerData;
   showEdit?: boolean;
 }
 
@@ -34,21 +36,22 @@ export function SourceIncome(props: ISourceIncomeProps) {
     disabled,
     showEdit = true,
     data,
+    customerData,
   } = props;
-
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
-
+  const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
   const isMobile = useMediaQuery("(max-width:880px)");
-
-  const dataValues = data
-    ? {
-        borrower_id: data.identificationNumber,
-        borrower: `${data.name} ${data.surname}`,
+  const [dataValues, setDataValues] = useState<IIncome | null>(null);
+  useEffect(() => {
+    if (data) {
+      const values: IIncome = {
+        borrower_id: customerData?.publicCode ?? "",
+        borrower: customerData?.fullName ?? "",
         capital: [
-          (data.Leases || 0).toString(),
-          (data.Dividends ?? 0).toString(),
           (data.FinancialIncome ?? 0).toString(),
+          (data.Dividends ?? 0).toString(),
+          (data.Leases ?? 0).toString(),
         ],
         employment: [
           (data.PeriodicSalary ?? 0).toString(),
@@ -59,12 +62,13 @@ export function SourceIncome(props: ISourceIncomeProps) {
           (data.ProfessionalFees ?? 0).toString(),
           (data.PersonalBusinessUtilities ?? 0).toString(),
         ],
-      }
-    : null;
+      };
+      setDataValues(values);
+      setBorrowerIncome(values);
+      initialValuesRef.current = values;
+    }
+  }, [data]);
 
-  const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>(
-    dataValues,
-  );
   const initialValuesRef = useRef<IIncome | null>(dataValues);
 
   const totalSum = () => {
@@ -161,7 +165,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                   {incomeCardData.borrower}
                 </Text>
                 <Text type="title" size="medium">
-                  {borrowerIncome?.borrower}
+                  {customerData?.fullName}
                 </Text>
               </Stack>
             )}
@@ -260,6 +264,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
           handleClose={() => setIsOpenEditModal(false)}
           disabled={false}
           onSubmit={() => {}}
+          initialValues={data}
         />
       )}
     </StyledContainer>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
@@ -36,6 +36,8 @@ import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercial
 import { IProspect } from "@services/prospects/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
+import { AppContext } from "@context/AppContext";
+import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
@@ -59,6 +61,13 @@ export function CreditProspect(props: ICreditProspectProps) {
     showPrint = true,
   } = props;
 
+  const { businessUnitSigla } = useContext(AppContext);
+
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
+  const { customerPublicCode } = useParams();
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const [openModal, setOpenModal] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -359,6 +368,22 @@ export function CreditProspect(props: ICreditProspectProps) {
     fetchPDF();
   }, []);
 
+  useEffect(() => {
+    const fetchCreditLimit = async () => {
+      try {
+        const result = await getCreditLimit(
+          businessUnitPublicCode,
+          customerPublicCode!,
+        );
+
+        setCreditLimitData(result);
+      } catch (error) {
+        console.error("Error al obtener las solicitudes de crédito:", error);
+        return null;
+      }
+    };
+    fetchCreditLimit();
+  }, []);
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -547,10 +572,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         {openModal === "IncomeModalEdit" && (
           <IncomeModal
             handleClose={() => setOpenModal(null)}
-            initialValues={
-              (selectedBorrower && incomeData[selectedBorrower.borrowerName]) ||
-              {}
-            }
+            initialValues={creditLimitData}
             onSubmit={handleIncomeSubmit}
           />
         )}
