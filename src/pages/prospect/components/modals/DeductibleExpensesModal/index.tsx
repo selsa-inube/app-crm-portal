@@ -1,27 +1,33 @@
-import { SkeletonLine, useMediaQuery, Stack, Text } from "@inubekit/inubekit";
+import { SkeletonLine, Stack, Text, Divider } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
-import { mockDeductibleExpenses } from "@mocks/add-prospect/deductible-expenses-modal/deductibleexpenses.mock";
-
-import { ScrollableContainer } from "./styles";
-import { deductibleexpenses } from "./config";
 import { BaseModal } from "@components/modals/baseModal";
+import { Fieldset } from "@components/data/Fieldset";
+
+import { deductibleexpenses } from "./config";
+import { StyledContainer } from "./styles";
 
 export interface DeductibleExpensesModalProps {
+  initialValues: { expenseName: string; expenseValue: number }[];
+  loading: boolean;
+  isMobile: boolean;
   handleClose: () => void;
-  loading?: boolean;
 }
 
 export function DeductibleExpensesModal(props: DeductibleExpensesModalProps) {
-  const { handleClose, loading = false } = props;
+  const { handleClose, initialValues, isMobile, loading } = props;
 
   const calculateTotalExpenses = () => {
-    return mockDeductibleExpenses.reduce((acc, item) => acc + item.value, 0);
+    return initialValues.reduce((acc, item) => acc + item.expenseValue, 0);
   };
 
-  const isMobile = useMediaQuery("(max-width:880px)");
+  const lenght = initialValues.length < 5;
 
-  const lenght = mockDeductibleExpenses.length < 5;
+  const expenseTranslations: Record<string, string> = {
+    "Bond value": deductibleexpenses.BondValue,
+    "Interest for cycle adjustment in disbursement":
+      deductibleexpenses.Interest,
+  };
 
   return (
     <BaseModal
@@ -32,45 +38,53 @@ export function DeductibleExpensesModal(props: DeductibleExpensesModalProps) {
       width={!isMobile ? "540px" : "290px"}
       finalDivider={true}
     >
-      <Stack direction="column" gap={lenght ? "10px" : "24px"} height="186px">
-        <ScrollableContainer $length={lenght}>
-          <Stack direction="column" padding={lenght ? "0px" : "8px"} gap="10px">
-            {mockDeductibleExpenses.map((item, index) => (
-              <Stack key={index} justifyContent="space-between">
-                {loading ? (
-                  <SkeletonLine width="50%" animated={true} />
-                ) : (
-                  <Text type="label" weight="bold" size="large">
-                    {item.type}
-                  </Text>
-                )}
-                {loading ? (
-                  <SkeletonLine width="30%" animated={true} />
-                ) : (
-                  <Stack alignItems="center">
-                    <Text
-                      type="body"
-                      weight="bold"
-                      size="small"
-                      appearance="success"
-                    >
-                      $
+      <Stack direction="column" gap={lenght ? "10px" : "24px"} height="165px">
+        <Fieldset>
+          <StyledContainer>
+            <Stack
+              direction="column"
+              padding={lenght ? "0px" : "8px"}
+              gap="10px"
+            >
+              {initialValues.map((item, index) => (
+                <Stack key={index} justifyContent="space-between">
+                  {loading ? (
+                    <SkeletonLine width="50%" animated={true} />
+                  ) : (
+                    <Text type="label" size="medium" appearance="gray">
+                      {expenseTranslations[item.expenseName] ||
+                        item.expenseName}
                     </Text>
-                    <Text type="body" size="medium">
-                      {currencyFormat(item.value, false)}
-                    </Text>
-                  </Stack>
-                )}
-              </Stack>
-            ))}
-          </Stack>
-        </ScrollableContainer>
+                  )}
+                  {loading ? (
+                    <SkeletonLine width="30%" animated={true} />
+                  ) : (
+                    <Stack alignItems="center">
+                      <Text
+                        type="body"
+                        weight="bold"
+                        size="small"
+                        appearance="success"
+                      >
+                        $
+                      </Text>
+                      <Text type="label" size="medium">
+                        {currencyFormat(item.expenseValue, false)}
+                      </Text>
+                    </Stack>
+                  )}
+                </Stack>
+              ))}
+            </Stack>
+          </StyledContainer>
+        </Fieldset>
+        <Divider dashed />
         <Stack direction="column" justifyContent="space-between" gap="12px">
           <Stack justifyContent="space-between">
-            <Text type="label" weight="bold" size="large">
+            <Text type="body" weight="bold" size="medium">
               {deductibleexpenses.totalExpenses}
             </Text>
-            <Stack>
+            <Stack alignItems="center">
               <Text type="body" weight="bold" size="small" appearance="success">
                 $
               </Text>
