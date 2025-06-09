@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   useFlag,
   Stack,
@@ -10,6 +11,7 @@ import {
   Textarea,
   Input,
   Checkbox,
+  inube,
 } from "@inubekit/inubekit";
 
 import { typeAccount } from "@mocks/filing-application/disbursement-general/disbursementgeneral.mock";
@@ -312,7 +314,7 @@ export function DisbursementWithExternalAccount(
     <Stack
       direction="column"
       padding={isMobile ? "4px 10px" : "10px 16px"}
-      gap="10px"
+      gap="16px"
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
@@ -321,6 +323,9 @@ export function DisbursementWithExternalAccount(
           name="amount"
           label={disbursementGeneral.label}
           placeholder={disbursementGeneral.place}
+          iconBefore={
+            <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
+          }
           size="compact"
           value={validateCurrencyField("amount", formik, true, optionNameForm)}
           onChange={(e) => {
