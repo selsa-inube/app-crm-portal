@@ -8,7 +8,7 @@ export const stepsFilingApplication = {
   contactInformation: {
     id: 2,
     number: 2,
-    name: "Datos de contacto",
+    name: "Datos de contacto del deudor principal",
     description:
       "Registre la información de contacto con la cual se realizará seguimiento a esta solicitud.",
   },
