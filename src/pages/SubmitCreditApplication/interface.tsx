@@ -215,7 +215,7 @@ export function SubmitCreditApplicationUI(
                     handleOnChange={(values) =>
                       handleFormChange({ borrowerData: values })
                     }
-                    data={prospectData}
+                    prospectData={prospectData}
                     valueRule={getRuleByName("ValidationCoBorrower")}
                   />
                 )}
@@ -265,6 +265,7 @@ export function SubmitCreditApplicationUI(
                       handleFormChange({ attachedDocuments: newDocs })
                     }
                     customerData={customerData}
+                    prospectData={prospectData}
                   />
                 )}
               {currentStepsNumber &&

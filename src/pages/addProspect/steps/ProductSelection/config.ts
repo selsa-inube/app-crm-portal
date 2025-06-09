@@ -3,11 +3,13 @@ export const electionData = {
   yes: "SI",
   no: "NO",
   load: "Cargando datos...",
-  data: {
-    programing:
+  questions: {
+    includeExtraordinaryInstallments:
       "¿Quiere programar abonos especiales a capital para disminuir su pago ordinario o recortar plazo?",
-    update:
-      "¿Quiere actualizar su información sobre Fuentes de Ingreso que hoy es un total de $9.000.000 para soportar capacidad de pago?",
-    register: "¿Quiere registrar deudores adicionales?",
+    updateIncomeSources:
+      "¿Desea actualizar la información del cliente sobre sus fuentes de ingreso para respaldar su capacidad de pago? Actualmente, estas suman un total de $9.000.000.",
+    updateFinancialObligations:
+      "¿Quiere actualizar la información relacionada con las obligaciones financieras del cliente?",
+    includeAditionalBorrowers: "¿Quiere registrar deudores adicionales?",
   },
 };
