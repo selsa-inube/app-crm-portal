@@ -10,18 +10,15 @@ interface IUnfulfilledRequirementsProps {
   causeNonCompliance: string;
   title?: string;
   isMobile?: boolean;
+  width?: string;
 }
 
 export const UnfulfilledRequirements = (
   props: IUnfulfilledRequirementsProps,
 ) => {
-  const { title, requirement, causeNonCompliance, isMobile } = props;
+  const { title, requirement, causeNonCompliance, isMobile, width } = props;
   return (
-    <Fieldset
-      title={title}
-      isMobile={isMobile}
-      width={isMobile ? "100%" : "49%"}
-    >
+    <Fieldset title={title} isMobile={isMobile} width={width}>
       <Stack direction="column" gap="16px" padding="0 16px">
         <Stack direction="column" gap="4px">
           <Stack justifyContent="space-between" alignItems="center">

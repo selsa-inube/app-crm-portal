@@ -10,3 +10,7 @@ export const StyledContainerAssisted = styled.div<IStyledContainerAssisted>`
       $cursorDisabled ? "not-allowed" : "pointer"};
   }
 `;
+export const StyledArrowBack = styled.div`
+  cursor: pointer;
+  width: 500px;
+`;
