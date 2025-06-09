@@ -42,21 +42,6 @@ export interface IPropertyOffered {
 }
 export interface IBorrowerData {
   borrowers: Record<string, never>;
-  initialBorrowers: {
-    id: string;
-    name: string;
-    debtorDetail: {
-      age: string;
-      document: string;
-      documentNumber: string;
-      email: string;
-      lastName: string;
-      name: string;
-      number: string;
-      relation: string;
-      sex: string;
-    };
-  };
 }
 export interface IBail {
   client: boolean;

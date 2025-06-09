@@ -38,7 +38,7 @@ export const disbursemenOptionAccount = {
   labelDocumentType: "Tipo de documento",
   labelDocumentNumber: "Número de documento",
   placeDocumentNumber: "Ej: 1015744898",
-  labelBirthdate: "fecha de nacimiento",
+  labelBirthdate: "Fecha de nacimiento",
   labelphone: "Teléfono de contacto",
   placephone: "Ej: 3103217765",
   labelMail: "Correo electrónico",

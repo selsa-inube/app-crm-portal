@@ -3,6 +3,7 @@ import { Stack } from "@inubekit/inubekit";
 import { IMoneyDestination } from "@services/moneyDestination/types";
 import { MoneyDestinationCard } from "@components/cards/MoneyDestinationCard";
 import { Fieldset } from "@components/data/Fieldset";
+import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
 
 interface MoneyDestinationUIProps {
   destinations: IMoneyDestination[] | undefined;
@@ -13,7 +14,6 @@ interface MoneyDestinationUIProps {
 
 function MoneyDestinationUI(props: MoneyDestinationUIProps) {
   const { destinations, isTablet, handleChange, selectedDestination } = props;
-
   return (
     <Fieldset>
       <Stack
@@ -24,18 +24,24 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
         padding={isTablet ? "0px 4px" : "10px 16px"}
       >
         {destinations &&
-          destinations.map((destination) => (
-            <MoneyDestinationCard
-              key={destination.moneyDestinationId}
-              id={destination.moneyDestinationId}
-              name={destination.abbreviatedName}
-              value={destination.descriptionUse}
-              label={destination.abbreviatedName}
-              icon={destination.iconReference}
-              handleChange={() => handleChange(destination.abbreviatedName)}
-              isSelected={selectedDestination === destination.abbreviatedName}
-            />
-          ))}
+          destinations.map((destination) => {
+            const translation = MoneyDestinationTranslations.find(
+              (item) => item.Code === destination.abbreviatedName,
+            );
+
+            return (
+              <MoneyDestinationCard
+                key={destination.moneyDestinationId}
+                id={destination.moneyDestinationId}
+                name={translation?.Name ?? destination.abbreviatedName}
+                value={translation?.Description ?? destination.descriptionUse}
+                label={translation?.Name ?? destination.abbreviatedName}
+                icon={translation?.Value ?? destination.iconReference}
+                handleChange={() => handleChange(destination.abbreviatedName)}
+                isSelected={selectedDestination === destination.abbreviatedName}
+              />
+            );
+          })}
       </Stack>
     </Fieldset>
   );

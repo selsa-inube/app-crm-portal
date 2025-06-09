@@ -32,6 +32,7 @@ export const CardCommercialManagement = (
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
+
   const { addFlag } = useFlag();
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -48,7 +49,6 @@ export const CardCommercialManagement = (
       setProspectProducts(prospectData?.creditProducts);
     }
   }, [prospectData]);
-
   const isMobile = useMediaQuery("(max-width: 800px)");
 
   const handleDelete = async () => {
@@ -60,7 +60,6 @@ export const CardCommercialManagement = (
     );
     setShowDeleteModal(false);
   };
-
   const handleDeleteClick = (creditProductId: string) => {
     setSelectedProductId(creditProductId);
     setShowDeleteModal(true);
@@ -70,7 +69,7 @@ export const CardCommercialManagement = (
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
-          id!,
+          prospectData?.prospectId || "",
         );
         if (result) {
           setProspectSummaryData(result);
@@ -84,10 +83,11 @@ export const CardCommercialManagement = (
         });
       }
     };
-
-    fetchData();
+    if (prospectData) {
+      fetchData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessUnitPublicCode, id]);
+  }, [businessUnitPublicCode, prospectData?.prospectId]);
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>

@@ -23,4 +23,11 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       },
     ],
   }),
+  IncomeSourceUpdateAllowed: (data) => ({
+    ruleName: "IncomeSourceUpdateAllowed",
+    conditions: [
+      { condition: "LineOfCredit", value: data.LineOfCredit },
+      { condition: "ClientType", value: data.ClientType },
+    ],
+  }),
 };
