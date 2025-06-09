@@ -6,6 +6,7 @@ export const mockGuaranteeBorrower = [
     email: "daniel.rodriguez98@hotmail.com",
     income: "4.500.000",
     obligations: "1.950.000",
+    borrowerType: "Borrower",
   },
   {
     id: "52369453",
@@ -14,6 +15,7 @@ export const mockGuaranteeBorrower = [
     email: "Albaorjuela@hotmail.com",
     income: "2.500.000",
     obligations: "1.000.000",
+    borrowerType: "MainBorrower",
   },
 ];
 

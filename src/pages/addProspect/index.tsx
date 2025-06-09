@@ -52,7 +52,7 @@ export function AddProspect() {
       maximumTermValue: "",
     },
     generalToggleChecked: true,
-    togglesState: [false, false, false],
+    togglesState: [false, false, false, false],
     borrowerData: {
       initialBorrowers: {
         id: "",
@@ -127,6 +127,7 @@ export function AddProspect() {
     const rulesToCheck = [
       "LineOfCredit",
       "PercentagePayableViaExtraInstallments",
+      "IncomeSourceUpdateAllowed",
     ];
     const notDefinedRules: string[] = [];
     await Promise.all(
@@ -172,50 +173,75 @@ export function AddProspect() {
         customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
         0,
       ),
-      LineOfCredit: formData.selectedProducts[0] || "",
     };
 
     const rulesValidate = [
       "LineOfCredit",
       "PercentagePayableViaExtraInstallments",
+      "IncomeSourceUpdateAllowed",
     ];
 
-    const products = [{}];
+    const products =
+      formData.selectedProducts.length > 0 ? formData.selectedProducts : [""];
 
-    for (const product of products) {
-      const dataRules = { ...dataRulesBase };
-      await Promise.all(
-        rulesValidate.map(async (ruleName) => {
-          const rule = ruleConfig[ruleName]?.(dataRules);
-          if (!rule) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ruleResults: { [ruleName: string]: any[] } = {};
 
-          try {
-            const values = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            );
+    await Promise.all(
+      products.map(async (product) => {
+        const dataRules = {
+          ...dataRulesBase,
+          LineOfCredit: product || "",
+        };
 
-            if (Array.isArray(values)) {
-              const uniqueObjects = values;
-              setValueRule((prev) => ({
-                ...prev,
-                [ruleName]: uniqueObjects,
-              }));
+        await Promise.all(
+          rulesValidate.map(async (ruleName) => {
+            const rule = ruleConfig[ruleName]?.(dataRules);
+            if (!rule) return;
+
+            try {
+              const values = await evaluateRule(
+                rule,
+                postBusinessUnitRules,
+                "value",
+                businessUnitPublicCode,
+                true,
+              );
+
+              if (!ruleResults[ruleName]) ruleResults[ruleName] = [];
+              if (Array.isArray(values)) {
+                ruleResults[ruleName].push(...values);
+              } else if (values !== undefined) {
+                ruleResults[ruleName].push(values);
+              }
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (error: any) {
+              console.error(
+                `Error evaluando ${ruleName} para producto`,
+                product,
+                error,
+              );
             }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } catch (error: any) {
-            console.error(
-              `Error evaluando ${ruleName} para producto`,
-              product,
-              error,
-            );
-          }
-        }),
-      );
-    }
+          }),
+        );
+      }),
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const uniqueRuleResults: { [ruleName: string]: any[] } = {};
+    Object.keys(ruleResults).forEach((ruleName) => {
+      const seen = new Set();
+      uniqueRuleResults[ruleName] = ruleResults[ruleName].filter((item) => {
+        const key = typeof item === "object" ? JSON.stringify(item) : item;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    });
+    setValueRule((prev) => ({
+      ...prev,
+      ...uniqueRuleResults,
+    }));
   }, [
     customerData,
     businessUnitPublicCode,
@@ -266,7 +292,7 @@ export function AddProspect() {
     if (currentStep === stepsAddProspect.productSelection.id) {
       setFormData((prevState) => ({
         ...prevState,
-        togglesState: [false, false, false],
+        togglesState: [false, false, false, false],
       }));
     }
   }, [currentStep]);
@@ -282,8 +308,9 @@ export function AddProspect() {
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
+      togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
+      togglesState[2] ? stepsAddProspect.obligationsFinancial.id : undefined,
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
@@ -291,10 +318,6 @@ export function AddProspect() {
 
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
-    }
-    if (currentStep === stepsAddProspect.sourcesIncome.id) {
-      setCurrentStep(stepsAddProspect.obligationsFinancial.id);
-      return;
     }
     if (currentStep === stepsAddProspect.productSelection.id) {
       setCurrentStep(dynamicSteps[0]);
@@ -317,9 +340,9 @@ export function AddProspect() {
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
+      togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.obligationsFinancial.id : undefined,
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
