@@ -265,6 +265,7 @@ export function SubmitCreditApplicationUI(
                       handleFormChange({ attachedDocuments: newDocs })
                     }
                     customerData={customerData}
+                    prospectData={prospectData}
                   />
                 )}
               {currentStepsNumber &&
