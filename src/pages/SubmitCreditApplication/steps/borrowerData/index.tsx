@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { useFormik } from "formik";
-import { Stack, Button, Grid } from "@inubekit/inubekit";
+import { Stack, Button } from "@inubekit/inubekit";
 
 import { CardBorrower } from "@components/cards/CardBorrower";
 import { NewCardBorrower } from "@components/cards/CardBorrower/newCard";
@@ -26,7 +26,7 @@ interface borrowersProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleOnChange: (values: any) => void;
   onUpdate?: (updatedBorrower: Borrower) => void;
-  data: IProspect;
+  prospectData: IProspect;
   initialValues: IBorrowerData;
   isMobile: boolean;
   valueRule: string[];
@@ -41,31 +41,10 @@ interface Borrower {
     [key: string]: IBorrowerProperty;
   };
 }
+
 export function Borrowers(props: borrowersProps) {
-  const { handleOnChange, initialValues, isMobile, data, valueRule } = props;
-  const dataDebtorDetail = Array.isArray(data.borrowers)
-    ? [...data.borrowers].sort((a, b) => {
-        if (a.borrower_type === "MainBorrower") return -1;
-        if (b.borrower_type === "MainBorrower") return 1;
-        return 0;
-      })
-    : [];
-  const { businessUnitSigla } = useContext(AppContext);
-
-  const businessUnitPublicCode: string =
-    JSON.parse(businessUnitSigla).businessUnitPublicCode;
-
-  const formik = useFormik<{
-    borrowers: Borrower[];
-  }>({
-    initialValues: { ...initialValues, borrowers: dataDebtorDetail },
-    validateOnMount: true,
-    onSubmit: () => {},
-  });
-
-  useEffect(() => {
-    handleOnChange(formik.values);
-  }, [formik.values, handleOnChange]);
+  const { handleOnChange, initialValues, isMobile, prospectData, valueRule } =
+    props;
 
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
@@ -74,6 +53,36 @@ export function Borrowers(props: borrowersProps) {
   const [isModalDelete, setIsModalDelete] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedBorrower, setSelectedBorrower] = useState<any>(null);
+
+  const { businessUnitSigla } = useContext(AppContext);
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const dataDebtorDetail = Array.isArray(prospectData.borrowers)
+    ? [...prospectData.borrowers].sort((a, b) => {
+        if (a.borrower_type === "MainBorrower") return -1;
+        if (b.borrower_type === "MainBorrower") return 1;
+        return 0;
+      })
+    : [];
+
+  const formik = useFormik<{
+    borrowers: Borrower[];
+  }>({
+    initialValues: {
+      ...initialValues,
+      borrowers: Array.isArray(initialValues?.borrowers)
+        ? initialValues.borrowers
+        : dataDebtorDetail,
+    },
+    enableReinitialize: true,
+    validateOnMount: true,
+    onSubmit: () => {},
+  });
+
+  useEffect(() => {
+    handleOnChange(formik.values);
+  }, [formik.values, handleOnChange]);
 
   return (
     <Fieldset>
@@ -86,13 +95,7 @@ export function Borrowers(props: borrowersProps) {
           </Button>
         </Stack>
         <StyledContainer>
-          <Grid
-            templateColumns={
-              isMobile ? "1fr" : `repeat(${dataDebtorDetail.length + 1}, 317px)`
-            }
-            autoRows="auto"
-            gap="20px"
-          >
+          <Stack wrap="wrap" gap="16px">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {formik.values.borrowers.map((item: any, index: number) => (
               <CardBorrower
@@ -162,6 +165,14 @@ export function Borrowers(props: borrowersProps) {
                     : dataSubmitApplication.borrowers.borrowerLabel
                 }
                 businessUnitPublicCode={businessUnitPublicCode}
+                prospectData={prospectData}
+                onAddBorrower={(newBorrower) => {
+                  const updatedBorrowers = [
+                    ...formik.values.borrowers,
+                    ...newBorrower,
+                  ];
+                  formik.setFieldValue("borrowers", updatedBorrowers);
+                }}
               />
             )}
             {isModalView && selectedBorrower && (
@@ -199,7 +210,7 @@ export function Borrowers(props: borrowersProps) {
                 }}
               />
             )}
-          </Grid>
+          </Stack>
         </StyledContainer>
       </Stack>
     </Fieldset>

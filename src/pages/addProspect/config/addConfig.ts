@@ -1,7 +1,7 @@
-export const submitCreditApplicationConfig = {
+export const addConfig = {
   id: 1,
-  title: "Solicitar crédito",
-  route: "/edit-prospect/:prospectCode",
+  title: "Simular crédito",
+  route: "/credit",
   crumbs: [
     {
       path: "/",
@@ -22,10 +22,14 @@ export const submitCreditApplicationConfig = {
       isActive: false,
     },
     {
-      path: `/submit-credit-application/:customerPublicCode/:prospectCode`,
-      label: "Solicitar crédito",
-      id: "/submit-credit-application/",
+      path: `/credit/add-prospect/:customerPublicCode`,
+      label: "Simular crédito",
+      id: "/credit/add-prospect",
       isActive: true,
     },
   ],
+};
+export const textAddCongfig = {
+  buttonQuotas: "Cupos",
+  buttonPaymentCapacity: "Cap. de pago",
 };

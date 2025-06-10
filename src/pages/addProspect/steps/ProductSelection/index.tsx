@@ -27,8 +27,8 @@ interface IProductSelectionProps {
   allRules: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lineOfCredit: any[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    PercentagePayableViaExtraInstallments: any[];
+    PercentagePayableViaExtraInstallments: string[];
+    IncomeSourceUpdateAllowed: string[];
   };
 }
 
@@ -77,8 +77,22 @@ export function ProductSelection(props: IProductSelectionProps) {
     allRules.PercentagePayableViaExtraInstallments || []
   ).some((value) => Number(value) > 0);
 
-  const filteredQuestions = Object.entries(electionData.data).filter(
-    ([key]) => key !== "programing" || shouldShowPrograming,
+  const shouldShowIncomeUpdate =
+    (allRules.IncomeSourceUpdateAllowed || []).length > 0 &&
+    allRules.IncomeSourceUpdateAllowed.every((value) => value === "Y");
+
+  const isQuestionDisabled = (key: string) => {
+    if (key === "includeExtraordinaryInstallments") {
+      return !shouldShowPrograming;
+    }
+    if (key === "updateIncomeSources" || key === "updateFinancialObligations") {
+      return !shouldShowIncomeUpdate;
+    }
+    return false;
+  };
+
+  const allQuestions = Object.entries(electionData.questions).map(
+    ([key, question], index) => ({ key, question, index }),
   );
 
   return (
@@ -161,14 +175,18 @@ export function ProductSelection(props: IProductSelectionProps) {
               </Stack>
             </Fieldset>
             <Fieldset>
-              {filteredQuestions.map(([key, question], index) => (
+              {allQuestions.map(({ key, question, index }, filteredIndex) => (
                 <Stack
                   direction="column"
                   key={key}
                   gap="16px"
                   padding="4px 10px"
                 >
-                  <Text type="body" size="medium">
+                  <Text
+                    type="body"
+                    size="medium"
+                    appearance={isQuestionDisabled(key) ? "gray" : "dark"}
+                  >
                     {question}
                   </Text>
                   <Stack gap="8px">
@@ -182,6 +200,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                           {...field}
                           value={field.value.toString()}
                           checked={field.value}
+                          disabled={isQuestionDisabled(key)}
                           onChange={() => {
                             onToggleChange(index);
                             setFieldValue(
@@ -205,7 +224,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                         : electionData.no}
                     </Text>
                   </Stack>
-                  {index !== Object.entries(filteredQuestions).length - 1 && (
+                  {filteredIndex !== allQuestions.length - 1 && (
                     <Divider dashed />
                   )}
                 </Stack>

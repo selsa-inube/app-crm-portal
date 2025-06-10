@@ -50,6 +50,16 @@ export const getPropertyValue = (
   );
 };
 
+export const getAllPropertyValues = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  properties: any[],
+  propertyName: string,
+) => {
+  return properties
+    .filter((prop) => prop.propertyName === propertyName)
+    .map((prop) => prop.propertyValue);
+};
+
 export const removeDuplicates = <T, K extends keyof T>(
   array: T[],
   key: K,

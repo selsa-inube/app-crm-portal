@@ -23,6 +23,7 @@ interface IFieldsetProps {
   isClickable?: boolean;
   selectedState?: boolean;
   width?: string;
+  borderColor?: string;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -39,6 +40,7 @@ export const Fieldset = (props: IFieldsetProps) => {
     isClickable = false,
     selectedState = false,
     width = "-webkit-fill-available",
+    borderColor = "normal",
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -100,6 +102,7 @@ export const Fieldset = (props: IFieldsetProps) => {
         $isSelected={selectedState ?? isSelected}
         $height={isMobile ? "auto" : heightFieldset}
         $isClickable={isClickable}
+        $borderColor={borderColor}
       >
         {children}
       </StyledContainerFieldset>

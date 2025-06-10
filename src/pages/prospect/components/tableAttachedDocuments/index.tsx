@@ -21,11 +21,10 @@ import {
   Tag,
 } from "@inubekit/inubekit";
 
-import { get } from "@mocks/utils/dataMock.service";
-import { mockAttachedDocuments } from "@mocks/filing-application/attached-documents/attacheddocuments.mock";
 import { ListModal } from "@components/modals/ListModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
+import { IBorrowerDocumentRule } from "@pages/SubmitCreditApplication/steps/attachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
 
 import { headers, dataReport } from "./config";
@@ -40,10 +39,12 @@ interface ITableAttachedDocumentsProps {
   setUploadedFilesByRow: (files: {
     [key: string]: { id: string; name: string; file: File }[];
   }) => void;
+  ruleValues: IBorrowerDocumentRule[];
 }
 
 export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
-  const { isMobile, uploadedFilesByRow, setUploadedFilesByRow } = props;
+  const { isMobile, uploadedFilesByRow, setUploadedFilesByRow, ruleValues } =
+    props;
 
   const [loading, setLoading] = useState(true);
   const [showAttachment, setShowAttachments] = useState(false);
@@ -71,24 +72,8 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     handleEndPage,
     firstEntryInPage,
     lastEntryInPage,
-  } = usePagination();
-
-  const [attachedDocuements, setAttachedDocuements] = useState(
-    mockAttachedDocuments,
-  );
+  } = usePagination(ruleValues);
   const [currentRowId, setCurrentRowId] = useState<string | null>(null);
-
-  useEffect(() => {
-    get("attached_documents")
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setAttachedDocuements(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching money destinations data:", error.message);
-      });
-  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -181,7 +166,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                 </Td>
               ))}
             </Tr>;
-          } else if (attachedDocuements.length === 0) {
+          } else if (ruleValues.length === 0) {
             <Tr>
               <Td colSpan={visibleHeaders.length} align="center" type="custom">
                 <Text
@@ -195,92 +180,103 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
               </Td>
             </Tr>;
           } else {
-            return attachedDocuements.map((row, rowIndex) => (
-              <Tr key={rowIndex}>
-                {visibleHeaders.map((header, colIndex) => {
-                  const cellData = row[header.key];
-                  const customColumn = [
-                    "attach",
-                    "download",
-                    "remove",
-                    "attached",
-                  ].includes(header.key);
-                  return (
-                    <Td
-                      key={colIndex}
-                      width={customColumn ? "70px" : "auto"}
-                      appearance={rowIndex % 2 === 0 ? "light" : "dark"}
-                      type={customColumn ? "custom" : "text"}
-                      align={
-                        typeof header.action ||
-                        (typeof cellData === "string" && cellData.includes("$"))
-                          ? "center"
-                          : "left"
-                      }
-                    >
-                      {(() => {
-                        if (header.key === "attach") {
-                          return (
-                            <Icon
-                              icon={<MdAttachFile />}
-                              appearance="dark"
-                              size="16px"
-                              cursorHover
-                              onClick={() =>
-                                handleOpenAttachment(rowIndex.toString())
-                              }
-                            />
-                          );
+            return ruleValues.map(
+              (row: IBorrowerDocumentRule, rowIndex: number) => (
+                <Tr key={rowIndex}>
+                  {visibleHeaders.map((header, colIndex) => {
+                    const cellData =
+                      row[header.key as keyof { borrower: string }];
+                    const customColumn = [
+                      "attach",
+                      "download",
+                      "remove",
+                      "attached",
+                    ].includes(header.key);
+                    return (
+                      <Td
+                        key={colIndex}
+                        width={customColumn ? "70px" : "auto"}
+                        appearance={rowIndex % 2 === 0 ? "light" : "dark"}
+                        type={customColumn ? "custom" : "text"}
+                        align={
+                          typeof header.action ||
+                          (typeof cellData === "string" &&
+                            cellData.includes("$"))
+                            ? "center"
+                            : "left"
                         }
-                        if (header.key === "attached") {
-                          if (
-                            uploadedFilesByRow[rowIndex.toString()]?.length > 0
-                          ) {
-                            return <Tag label="Adjunto" appearance="success" />;
+                      >
+                        {(() => {
+                          if (header.key === "attach") {
+                            return (
+                              <Icon
+                                icon={<MdAttachFile />}
+                                appearance="dark"
+                                size="16px"
+                                cursorHover
+                                onClick={() =>
+                                  handleOpenAttachment(rowIndex.toString())
+                                }
+                              />
+                            );
                           }
-                          return <Tag label="No adjunto" appearance="danger" />;
-                        }
-                        return cellData;
-                      })()}
-                      {header.key === "download" && (
-                        <Icon
-                          icon={<MdOutlineFileDownload />}
-                          appearance="dark"
-                          size="16px"
-                          cursorHover
-                          disabled={
-                            !uploadedFilesByRow[rowIndex.toString()] ||
-                            uploadedFilesByRow[rowIndex.toString()].length === 0
+                          if (header.key === "attached") {
+                            if (
+                              uploadedFilesByRow[rowIndex.toString()]?.length >
+                              0
+                            ) {
+                              return (
+                                <Tag label="Adjunto" appearance="success" />
+                              );
+                            }
+                            return (
+                              <Tag label="No adjunto" appearance="danger" />
+                            );
                           }
-                          onClick={() =>
-                            handleDownloadFile(rowIndex.toString())
-                          }
-                        />
-                      )}
-                      {header.key === "remove" && (
-                        <Icon
-                          icon={<MdOutlineHighlightOff />}
-                          appearance="danger"
-                          size="16px"
-                          cursorHover
-                          disabled={
-                            !uploadedFilesByRow[rowIndex.toString()] ||
-                            uploadedFilesByRow[rowIndex.toString()].length === 0
-                          }
-                          onClick={() =>
-                            handleOpenDeleteModal(rowIndex.toString())
-                          }
-                        />
-                      )}
-                    </Td>
-                  );
-                })}
-              </Tr>
-            ));
+                          return cellData;
+                        })()}
+                        {header.key === "download" && (
+                          <Icon
+                            icon={<MdOutlineFileDownload />}
+                            appearance="dark"
+                            size="16px"
+                            cursorHover
+                            disabled={
+                              !uploadedFilesByRow[rowIndex.toString()] ||
+                              uploadedFilesByRow[rowIndex.toString()].length ===
+                                0
+                            }
+                            onClick={() =>
+                              handleDownloadFile(rowIndex.toString())
+                            }
+                          />
+                        )}
+                        {header.key === "remove" && (
+                          <Icon
+                            icon={<MdOutlineHighlightOff />}
+                            appearance="danger"
+                            size="16px"
+                            cursorHover
+                            disabled={
+                              !uploadedFilesByRow[rowIndex.toString()] ||
+                              uploadedFilesByRow[rowIndex.toString()].length ===
+                                0
+                            }
+                            onClick={() =>
+                              handleOpenDeleteModal(rowIndex.toString())
+                            }
+                          />
+                        )}
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              ),
+            );
           }
         })()}
       </Tbody>
-      {!loading && attachedDocuements.length > 0 && (
+      {!loading && ruleValues.length > 0 && (
         <Tfoot>
           <Tr border="bottom">
             <Td colSpan={visibleHeaders.length} type="custom" align="center">
