@@ -23,6 +23,7 @@ export function AddProspect() {
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
+  const [isCapacityAnalysisModal, setIsCapacityAnalysisModal] = useState(false);
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
@@ -397,6 +398,8 @@ export function AddProspect() {
         formData={formData}
         selectedProducts={selectedProducts}
         setSelectedProducts={setSelectedProducts}
+        setIsCapacityAnalysisModal={setIsCapacityAnalysisModal}
+        isCapacityAnalysisModal={isCapacityAnalysisModal}
         handleFormDataChange={handleFormDataChange}
         handleConsolidatedCreditChange={handleConsolidatedCreditChange}
         isMobile={isMobile}

@@ -35,11 +35,13 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
+import { PaymentCapacityAnalysis } from "@src/components/modals/PaymentCapacityAnalysis";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCreditLimitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCapacityAnalysisModal: React.Dispatch<React.SetStateAction<boolean>>;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -65,6 +67,7 @@ interface AddPositionUIProps {
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
   isCreditLimitModalOpen: boolean;
+  isCapacityAnalysisModal: boolean;
   formData: IFormData;
   selectedProducts: string[];
   isMobile: boolean;
@@ -77,6 +80,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     setIsModalOpenRequirements,
     setIsCreditLimitModalOpen,
     setIsCurrentFormValid,
+    setIsCapacityAnalysisModal,
     setRequestValue,
     requestValue,
     handleNextStep,
@@ -94,6 +98,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     isCurrentFormValid,
     isModalOpenRequirements,
     isCreditLimitModalOpen,
+    isCapacityAnalysisModal,
     formData,
     selectedProducts,
     isMobile,
@@ -147,6 +152,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     size="28px"
                     spacing="compact"
                     variant="outlined"
+                    onClick={() => setIsCapacityAnalysisModal(true)}
                   />
                   <Icon
                     icon={<MdOutlineRule />}
@@ -172,6 +178,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     appearance="gray"
                     iconBefore={<MdOutlinePaid />}
                     children={textAddCongfig.buttonPaymentCapacity}
+                    onClick={() => setIsCapacityAnalysisModal(true)}
                     variant="outlined"
                   />
                   <ButtonRequirements
@@ -350,6 +357,12 @@ export function AddProspectUI(props: AddPositionUIProps) {
               handleClose={() => setIsCreditLimitModalOpen(false)}
               isMobile={isMobile}
               setRequestValue={setRequestValue}
+            />
+          )}
+          {isCapacityAnalysisModal && (
+            <PaymentCapacityAnalysis
+              isMobile={isMobile}
+              handleClose={() => setIsCapacityAnalysisModal(false)}
             />
           )}
         </Stack>
