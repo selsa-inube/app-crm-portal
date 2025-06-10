@@ -125,9 +125,8 @@ export function SubmitCreditApplicationUI(
             alignItems={isMobile ? "normal" : "center"}
             margin="20px 0px"
             padding="24px"
-            height="100%"
           >
-            <Stack gap="24px" direction="column" height="100%">
+            <Stack gap="24px" direction="column" height="100%" width="100%">
               <Breadcrumbs crumbs={submitCreditApplicationConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
                 <StyledArrowBack onClick={handleHome}>

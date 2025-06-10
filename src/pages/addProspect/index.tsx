@@ -377,6 +377,7 @@ export function AddProspect() {
       <AddProspectUI
         steps={steps}
         currentStep={currentStep}
+        customerData={customerData}
         isCurrentFormValid={isCurrentFormValid}
         isModalOpenRequirements={isModalOpenRequirements}
         isCreditLimitModalOpen={isCreditLimitModalOpen}

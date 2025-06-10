@@ -16,6 +16,7 @@ import {
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
+import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
@@ -58,6 +59,7 @@ interface AddPositionUIProps {
     newValue: number,
   ) => void;
   currentStep: number;
+  customerData: ICustomerData;
   dataHeader: { name: string; status: string };
   steps: IStep[];
   isCurrentFormValid: boolean;
@@ -86,6 +88,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     getAllDataRuleByName,
     handleConsolidatedCreditChange,
     currentStepsNumber,
+    customerData,
     dataHeader,
     steps,
     isCurrentFormValid,
@@ -267,7 +270,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
               )}
             {currentStepsNumber &&
               currentStepsNumber.id === stepsAddProspect.sourcesIncome.id && (
-                <SourcesOfIncome isMobile={isMobile} />
+                <SourcesOfIncome
+                  isMobile={isMobile}
+                  customerData={customerData}
+                />
               )}
             {currentStepsNumber &&
               currentStepsNumber.id ===
