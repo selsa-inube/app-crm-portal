@@ -105,60 +105,6 @@ export function AddProspect() {
     [valueRule],
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cleanConditions = (rule: any) => {
-    if (!rule) return rule;
-
-    const cleaned = { ...rule };
-
-    if (Array.isArray(cleaned.conditions)) {
-      const hasValidCondition = cleaned.conditions.some(
-        (c: { value: unknown }) =>
-          c.value !== undefined && c.value !== null && c.value !== "",
-      );
-      if (!hasValidCondition) {
-        delete cleaned.conditions;
-      }
-    }
-    return cleaned;
-  };
-
-  const fetchValidationRules = useCallback(async () => {
-    const rulesToCheck = [
-      "LineOfCredit",
-      "PercentagePayableViaExtraInstallments",
-      "IncomeSourceUpdateAllowed",
-    ];
-    const notDefinedRules: string[] = [];
-    await Promise.all(
-      rulesToCheck.map(async (ruleName) => {
-        try {
-          const rule = cleanConditions(ruleConfig[ruleName]?.({}));
-          if (!rule) return notDefinedRules.push(ruleName);
-          await evaluateRule(
-            rule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            true,
-          );
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          if (error?.response?.status === 400) notDefinedRules.push(ruleName);
-        }
-      }),
-    );
-
-    if (notDefinedRules.length >= 1) {
-      console.log("a");
-    }
-  }, [businessUnitPublicCode]);
-
-  useEffect(() => {
-    if (!customerData) return;
-    fetchValidationRules();
-  }, [customerData, fetchValidationRules]);
-
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
 
@@ -181,8 +127,38 @@ export function AddProspect() {
       "IncomeSourceUpdateAllowed",
     ];
 
-    const products =
-      formData.selectedProducts.length > 0 ? formData.selectedProducts : [""];
+    let products = formData.selectedProducts;
+    if (!products || products.length === 0) {
+      const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
+        ...dataRulesBase,
+        LineOfCredit: "",
+      });
+      if (lineOfCreditRule) {
+        const lineOfCreditValues = await evaluateRule(
+          lineOfCreditRule,
+          postBusinessUnitRules,
+          "value",
+          businessUnitPublicCode,
+          true,
+        );
+        if (Array.isArray(lineOfCreditValues)) {
+          products = lineOfCreditValues
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .map((v: any) =>
+              typeof v === "string"
+                ? v
+                : v && typeof v === "object" && "value" in v
+                  ? v.value
+                  : "",
+            )
+            .filter(Boolean);
+        } else {
+          products = [""];
+        }
+      } else {
+        products = [""];
+      }
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ruleResults: { [ruleName: string]: any[] } = {};
@@ -255,6 +231,13 @@ export function AddProspect() {
     }
   }, [customerData, fetchValidationRulesData]);
 
+  useEffect(() => {
+    if (formData.generalToggleChecked) {
+      setSelectedProducts([]);
+      setFormData((prev) => ({ ...prev, selectedProducts: [] }));
+    }
+  }, [formData.generalToggleChecked]);
+
   const handleFormDataChange = (
     field: string,
     newValue: string | number | boolean,
@@ -304,13 +287,22 @@ export function AddProspect() {
   const handleNextStep = () => {
     const { togglesState } = formData;
 
+    const isInExtraBorrowersStep =
+      currentStep === stepsAddProspect.extraBorrowers.id;
+
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-      togglesState[2] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      ...(isInExtraBorrowersStep
+        ? []
+        : [
+            togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
+            togglesState[2]
+              ? stepsAddProspect.obligationsFinancial.id
+              : undefined,
+          ]),
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
@@ -336,13 +328,22 @@ export function AddProspect() {
   const handlePreviousStep = () => {
     const { togglesState } = formData;
 
+    const nextStepWouldBeExtraBorrowers =
+      currentStep === stepsAddProspect.loanConditions.id && togglesState[3];
+
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-      togglesState[2] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      ...(nextStepWouldBeExtraBorrowers
+        ? []
+        : [
+            togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
+            togglesState[2]
+              ? stepsAddProspect.obligationsFinancial.id
+              : undefined,
+          ]),
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 

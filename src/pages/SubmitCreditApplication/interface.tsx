@@ -137,8 +137,7 @@ export function SubmitCreditApplicationUI(
                       size="20px"
                     />
                     <Text type="title" size={isMobile ? "small" : "large"}>
-                      {`${submitCreditApplicationConfig.title}
-                  ${prospectData?.prospectCode}`}
+                      {`${submitCreditApplicationConfig.title}`}
                     </Text>
                   </Stack>
                 </StyledArrowBack>

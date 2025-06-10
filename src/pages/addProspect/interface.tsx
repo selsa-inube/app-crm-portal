@@ -101,20 +101,18 @@ export function AddProspectUI(props: AddPositionUIProps) {
   } = props;
 
   return (
-    <>
+    <Stack
+      direction="column"
+      width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
+      margin="0 auto"
+    >
       <Stack
         direction="column"
         alignItems={isMobile ? "normal" : "center"}
         margin="20px 0px"
         padding="24px"
-        height={isMobile ? "auto" : "2000px"}
       >
-        <Stack
-          gap="24px"
-          direction="column"
-          height="100%"
-          width={isMobile ? "-webkit-fill-available" : "min(100%,1440px)"}
-        >
+        <Stack gap="24px" direction="column" height="100%" width="100%">
           <GeneralHeader
             buttonText="Agregar vinculación"
             descriptionStatus={dataHeader.status}
@@ -356,6 +354,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
           )}
         </Stack>
       </Stack>
-    </>
+    </Stack>
   );
 }
