@@ -97,22 +97,28 @@ export const CardCommercialManagement = (
   }, [businessUnitPublicCode, prospectData?.prospectId]);
 
   useEffect(() => {
+    if (!businessUnitPublicCode || !prospectData?.prospectId) return;
+
     const fetchExpenses = async () => {
       try {
         const data = await getAllDeductibleExpensesById(
           businessUnitPublicCode,
-          prospectData?.prospectId || "",
+          prospectData.prospectId,
         );
         setDeductibleExpenses(data);
-      } catch (err) {
-        console.error("Error fetching deductible expenses", err);
+      } catch (error) {
+        addFlag({
+          title: tittleOptions.deductibleExpensesErrorTitle,
+          description: `${error}`,
+          appearance: "danger",
+          duration: 5000,
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchExpenses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitPublicCode, prospectData?.prospectId]);
 
   return (
