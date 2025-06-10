@@ -4,7 +4,7 @@ import { useMediaQuery } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
 
-import { headers } from "./config";
+import { convertObligationsToProperties, headers } from "./config";
 import { TableFinancialObligationsUI } from "./interface";
 export interface ITableFinancialObligationsProps {
   type?: string;
@@ -73,13 +73,21 @@ export const TableFinancialObligations = (
         ? data[0]?.borrowers
         : data;
 
-      const dataFromInitialValues =
+      const financialObligationsFromProps =
         borrowerList?.[0]?.borrowerProperties?.filter(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (prop: any) => prop.propertyName === "FinancialObligation",
         ) || [];
 
-      setExtraDebtors(dataFromInitialValues);
+      const obligations = data?.[0]?.obligations || [];
+      const obligationsConverted = Array.isArray(obligations)
+        ? convertObligationsToProperties(obligations)
+        : [];
+
+      setExtraDebtors([
+        ...financialObligationsFromProps,
+        ...obligationsConverted,
+      ]);
     } else {
       setExtraDebtors([]);
     }

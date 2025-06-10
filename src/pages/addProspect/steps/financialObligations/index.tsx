@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import { MdAdd, MdCached } from "react-icons/md";
 import { Stack, Text, Divider, Button } from "@inubekit/inubekit";
@@ -9,6 +10,8 @@ import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { dataReport } from "@pages/prospect/components/TableObligationsFinancial/config";
+import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
+import { AppContext } from "@context/AppContext";
 
 interface IObligationsFinancialProps {
   isMobile: boolean;
@@ -21,6 +24,15 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
 
   const [openModal, setOpenModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [clientPortfolio, setClientPortfolio] = useState<any>(null);
+
+  const { businessUnitSigla } = useContext(AppContext);
+
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const { customerPublicCode } = useParams();
 
   const initialValues: FormikValues = {
     type: "",
@@ -37,6 +49,27 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
+  const fetchDataClientPortfolio = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    try {
+      const data = await getClientPortfolioObligationsById(
+        businessUnitPublicCode,
+        customerPublicCode,
+      );
+      setClientPortfolio(data);
+    } catch (err) {
+      console.error("Error fetching client portfolio obligations:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (customerPublicCode) {
+      fetchDataClientPortfolio();
+    }
+  }, [customerPublicCode, businessUnitPublicCode]);
+  console.log("clientPortfolio", clientPortfolio);
   return (
     <Fieldset>
       <Stack
@@ -110,6 +143,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
             refreshKey={refreshKey}
             showActions={true}
             showButtons={false}
+            initialValues={clientPortfolio}
           />
         </Stack>
       </Stack>

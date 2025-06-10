@@ -45,3 +45,22 @@ export const dataReport = {
   content: "¿Realmente desea eliminar esta obligación?",
   cancel: "Cancelar",
 };
+
+export function convertObligationsToProperties(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  obligations: any[],
+): { propertyName: string; propertyValue: string }[] {
+  return obligations.map((ob) => ({
+    propertyName: "FinancialObligation",
+    propertyValue: [
+      ob.productName ?? "",
+      ob.balanceObligationTotal ?? 0,
+      ob.nextPaymentValueTotal ?? 0,
+      ob.entity ?? "",
+      ob.paymentMethodName ?? "",
+      ob.obligationNumber ?? "",
+      ob.duesPaid ?? 0,
+      ob.outstandingDues ?? 0,
+    ].join(", "),
+  }));
+}
