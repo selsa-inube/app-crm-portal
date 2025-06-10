@@ -164,7 +164,6 @@ export const PaymentCapacityAnalysis = (
     >
       <Stack direction="column">
         <Tabs selectedTab={currentTab} tabs={dataTabs} onChange={onChange} />
-
         {currentTab === "general" && (
           <Stack direction="column">
             {generalFieldsets.map((fieldset, index) => (
@@ -183,7 +182,6 @@ export const PaymentCapacityAnalysis = (
             />
           </Stack>
         )}
-
         {currentTab === "roster" && (
           <Stack direction="column">
             {rosterFieldsets.map((fieldset, index) => (
@@ -202,7 +200,6 @@ export const PaymentCapacityAnalysis = (
             />
           </Stack>
         )}
-
         {showModal && (
           <PaymentCapacityAnalysisDetails
             isMobile={isMobile}
