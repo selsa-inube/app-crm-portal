@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MdArrowBack } from "react-icons/md";
+import { MdCheckCircle, MdOutlineShare, MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Assisted,
@@ -9,20 +9,22 @@ import {
   Stack,
   Button,
 } from "@inubekit/inubekit";
-import { MdCheckCircle, MdOutlineShare } from "react-icons/md";
 
 import userImage from "@assets/images/userImage.jpeg";
 import { BaseModal } from "@components/modals/baseModal";
 import { disbursemenTabs } from "@pages/SubmitCreditApplication/steps/disbursementGeneral/config";
 import { GeneralHeader } from "@pages/addProspect/components/GeneralHeader/";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { SummaryProspectCredit } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
-import { CardValues } from "@components/cards/cardValues";
-import { mockCommercialManagement } from "@mocks/financialReporting/commercialmanagement.mock";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
+import { currencyFormat } from "@utils/formatData/currency";
 
 import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
-import { StyledArrowBack, StyledContainerAssisted } from "./styles";
+import {
+  StyledArrowBack,
+  StyledContainerAssisted,
+  StyledSeparatorLine,
+} from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ContactInformation } from "./steps/contactInformation";
@@ -47,6 +49,7 @@ interface SubmitCreditApplicationUIProps {
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
   getRuleByName: (name: string) => string[];
+  prospectSummaryData?: IProspectSummaryById;
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
   setApprovedRequestModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormChange: (updatedValues: Partial<IFormData>) => void;
@@ -84,6 +87,7 @@ export function SubmitCreditApplicationUI(
     handlePreviousStep,
     handleSubmitClick,
     handleSubmit,
+    prospectSummaryData,
     setIsCurrentFormValid,
     prospectData,
     customerData,
@@ -141,28 +145,6 @@ export function SubmitCreditApplicationUI(
                     </Text>
                   </Stack>
                 </StyledArrowBack>
-                <Text
-                  type="body"
-                  size={isMobile ? "small" : "medium"}
-                  appearance="gray"
-                >
-                  {`${dataSubmitApplication.cards.destination}
-              ${prospectData.moneyDestinationAbbreviatedName}`}
-                </Text>
-              </Stack>
-              <Stack direction="column" gap="6px">
-                {SummaryProspectCredit.map((entry, index) => (
-                  <CardValues
-                    key={index}
-                    items={entry.item.map((item, index) => ({
-                      ...item,
-                      amount: mockCommercialManagement[index]?.amount,
-                    }))}
-                    showIcon={false}
-                    isMobile={isMobile}
-                    showMiniIcons={false}
-                  />
-                ))}
               </Stack>
               <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>
                 <Assisted
@@ -178,6 +160,42 @@ export function SubmitCreditApplicationUI(
                   size={isMobile ? "small" : "large"}
                 />
               </StyledContainerAssisted>
+              <Stack gap="16px" width="100%" justifyContent="space-between">
+                <Text
+                  type="body"
+                  size={isMobile ? "small" : "medium"}
+                  weight="bold"
+                  appearance="dark"
+                >
+                  {`Prospecto
+              ${prospectData.prospectCode}`}
+                </Text>
+                <StyledSeparatorLine />
+                <Text
+                  type="body"
+                  size={isMobile ? "small" : "medium"}
+                  appearance="gray"
+                >
+                  {`${dataSubmitApplication.cards.destination}
+              ${prospectData.moneyDestinationAbbreviatedName}`}
+                </Text>
+                <StyledSeparatorLine />
+                <Text
+                  type="body"
+                  size={isMobile ? "small" : "medium"}
+                  appearance="gray"
+                >
+                  {`Neto a girar: ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                </Text>
+                <StyledSeparatorLine />
+                <Text
+                  type="body"
+                  size={isMobile ? "small" : "medium"}
+                  appearance="gray"
+                >
+                  {`Monto: ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                </Text>
+              </Stack>
               {currentStepsNumber &&
                 currentStepsNumber.id ===
                   stepsFilingApplication.generalInformation.id &&

@@ -27,3 +27,8 @@ export const dataSubmitApplication = {
     destination: "Destino: ",
   },
 };
+
+export const tittleOptions = {
+  titleError: "¡Uy, algo ha salido mal!",
+  descriptionError: "No se han podido guardar los cambios.",
+};

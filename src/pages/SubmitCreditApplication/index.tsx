@@ -14,7 +14,9 @@ import { SubmitCreditApplicationUI } from "./interface";
 import { IFormData } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
-import { dataSubmitApplication } from "./config/config";
+import { dataSubmitApplication, tittleOptions } from "./config/config";
+import { getSearchProspectSummaryById } from "@src/services/prospects/ProspectSummaryById";
+import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
 
 export function SubmitCreditApplication() {
   const { customerPublicCode, prospectCode } = useParams();
@@ -24,7 +26,8 @@ export function SubmitCreditApplication() {
   const [approvedRequestModal, setApprovedRequestModal] = useState(false);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
-
+  const [prospectSummaryData, setProspectSummaryData] =
+    useState<IProspectSummaryById>();
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -558,6 +561,36 @@ export function SubmitCreditApplication() {
     number: currentStepIndex + 1,
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getSearchProspectSummaryById(
+          businessUnitPublicCode,
+          prospectData?.prospectId || "",
+        );
+
+        if (result && Object.keys(result).length > 0) {
+          setProspectSummaryData(result);
+        } else {
+          addFlag({
+            title: tittleOptions.titleError,
+            description: tittleOptions.descriptionError,
+            appearance: "danger",
+            duration: 5000,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (prospectData) {
+      fetchData();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessUnitPublicCode, prospectData?.prospectId]);
+
   return (
     <>
       <SubmitCreditApplicationUI
@@ -585,6 +618,7 @@ export function SubmitCreditApplication() {
         codeError={codeError}
         addToFix={addToFix}
         getRuleByName={getRuleByName}
+        prospectSummaryData={prospectSummaryData}
       />
     </>
   );
