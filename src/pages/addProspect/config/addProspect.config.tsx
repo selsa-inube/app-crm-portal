@@ -46,8 +46,9 @@ export const stepsAddProspect = {
   loanConditions: {
     id: 8,
     number: 8,
-    name: "Valor de la solicitud",
-    description: "Detalles del valor de la solicitud",
+    name: "Restricciones de la solicitud",
+    description:
+      "Registre si el cliente tiene restricciones en el valor de la cuota ordinaria o en el plazo para el pago.",
   },
   loanAmount: {
     id: 9,

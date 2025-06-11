@@ -67,21 +67,7 @@ export interface LoanAmountState {
 }
 
 export interface IBorrowerData {
-  initialBorrowers: {
-    id: string;
-    name: string;
-    debtorDetail: {
-      age: string;
-      document: string;
-      documentNumber: string;
-      email: string;
-      lastName: string;
-      name: string;
-      number: string;
-      relation: string;
-      sex: string;
-    };
-  };
+  borrowers: Record<string, never>;
 }
 
 export interface IFormData {

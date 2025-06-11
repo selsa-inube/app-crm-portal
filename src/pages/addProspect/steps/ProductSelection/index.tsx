@@ -133,47 +133,51 @@ export function ProductSelection(props: IProductSelectionProps) {
                 </Text>
               </Stack>
             </Stack>
-            <Fieldset>
-              <Stack
-                gap="16px"
-                padding={isMobile ? "0px 6px" : "0px 12px"}
-                wrap="wrap"
-              >
-                {uniqueServerResponse.length > 0 ? (
-                  uniqueServerResponse.map((item, index) => (
-                    <Stack key={index} direction="column">
-                      <CardProductSelection
-                        key={index}
-                        amount={item.loan_amount_limit}
-                        rate={item.interest_rate}
-                        term={item.loan_term_limit}
-                        description={item.value}
-                        disabled={generalToggleChecked}
-                        isSelected={values.selectedProducts.includes(
-                          item.value,
-                        )}
-                        onSelect={() => {
-                          const newSelected = values.selectedProducts.includes(
+            {!initialValues.generalToggleChecked && (
+              <Fieldset>
+                <Stack
+                  gap="16px"
+                  padding={isMobile ? "0px 6px" : "0px 12px"}
+                  wrap="wrap"
+                >
+                  {uniqueServerResponse.length > 0 ? (
+                    uniqueServerResponse.map((item, index) => (
+                      <Stack key={index} direction="column">
+                        <CardProductSelection
+                          key={index}
+                          amount={item.loan_amount_limit}
+                          rate={item.interest_rate}
+                          term={item.loan_term_limit}
+                          description={item.value}
+                          disabled={generalToggleChecked}
+                          isSelected={values.selectedProducts.includes(
                             item.value,
-                          )
-                            ? values.selectedProducts.filter(
-                                (id) => id !== item.value,
-                              )
-                            : [...values.selectedProducts, item.value];
-                          setFieldValue("selectedProducts", newSelected);
-                          setSelectedProducts(newSelected);
-                          handleFormDataChange("selectedProducts", newSelected);
-                        }}
-                      />
-                    </Stack>
-                  ))
-                ) : (
-                  <Text type="body" size="medium">
-                    {electionData.load}
-                  </Text>
-                )}
-              </Stack>
-            </Fieldset>
+                          )}
+                          onSelect={() => {
+                            const newSelected =
+                              values.selectedProducts.includes(item.value)
+                                ? values.selectedProducts.filter(
+                                    (id) => id !== item.value,
+                                  )
+                                : [...values.selectedProducts, item.value];
+                            setFieldValue("selectedProducts", newSelected);
+                            setSelectedProducts(newSelected);
+                            handleFormDataChange(
+                              "selectedProducts",
+                              newSelected,
+                            );
+                          }}
+                        />
+                      </Stack>
+                    ))
+                  ) : (
+                    <Text type="body" size="medium">
+                      {electionData.load}
+                    </Text>
+                  )}
+                </Stack>
+              </Fieldset>
+            )}
             <Fieldset>
               {allQuestions.map(({ key, question, index }, filteredIndex) => (
                 <Stack

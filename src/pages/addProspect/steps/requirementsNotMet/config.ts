@@ -10,3 +10,9 @@ export const dataNotMet = [
     causeNonCompliance: "El cliente tiene solo 60 días de afiliación.",
   },
 ];
+
+export const dataError = {
+  titleError: "Algo salió mal",
+  descriptionError: "No se pudo obtener los requistos de la solicitud.",
+  noData: "El cliente no presenta restricción por requisitos en este momento.",
+};

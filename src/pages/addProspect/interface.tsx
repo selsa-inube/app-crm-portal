@@ -73,6 +73,8 @@ interface AddPositionUIProps {
   isMobile: boolean;
   isTablet: boolean;
   currentStepsNumber?: StepDetails;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prospectData: any;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -103,6 +105,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     selectedProducts,
     isMobile,
     isTablet,
+    prospectData,
   } = props;
 
   return (
@@ -198,6 +201,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
               onSubmitClick={handleSubmitClick}
               disableNext={!isCurrentFormValid}
               disableSubmit={!isCurrentFormValid}
+              showCurrentStepNumber={false}
               size={isMobile ? "small" : "large"}
             />
           </StyledContainerAssisted>
@@ -206,7 +210,11 @@ export function AddProspectUI(props: AddPositionUIProps) {
             {currentStepsNumber &&
               currentStepsNumber.id ===
                 stepsAddProspect.generalInformation.id && (
-                <RequirementsNotMet isMobile={isMobile} />
+                <RequirementsNotMet
+                  isMobile={isMobile}
+                  prospectData={prospectData}
+                  customerData={customerData}
+                />
               )}
             {currentStepsNumber &&
               currentStepsNumber.id === stepsAddProspect.destination.id && (
