@@ -4,7 +4,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { BaseModal } from "@components/modals/baseModal";
 import { Fieldset } from "@components/data/Fieldset";
 
-import { deductibleexpenses } from "./config";
+import { deductibleExpenses } from "./config";
 import { StyledContainer } from "./styles";
 
 export interface DeductibleExpensesModalProps {
@@ -21,31 +21,35 @@ export function DeductibleExpensesModal(props: DeductibleExpensesModalProps) {
     return initialValues.reduce((acc, item) => acc + item.expenseValue, 0);
   };
 
-  const lenght = initialValues.length < 5;
+  const deductibleExpensedAmount = initialValues.length < 5;
 
   const expenseTranslations: Record<string, string> = {
-    "Bond value": deductibleexpenses.BondValue,
+    "Bond value": deductibleExpenses.BondValue,
     "Interest for cycle adjustment in disbursement":
-      deductibleexpenses.Interest,
+      deductibleExpenses.Interest,
   };
 
   return (
     <BaseModal
-      title={deductibleexpenses.deductibleExpenses}
-      nextButton={deductibleexpenses.close}
+      title={deductibleExpenses.deductibleExpenses}
+      nextButton={deductibleExpenses.close}
       handleNext={handleClose}
       handleClose={handleClose}
       width={!isMobile ? "540px" : "290px"}
       finalDivider={true}
     >
-      <Stack direction="column" gap={lenght ? "10px" : "24px"} height="165px">
+      <Stack
+        direction="column"
+        gap={deductibleExpensedAmount ? "10px" : "24px"}
+        height="165px"
+      >
         {initialValues.length > 0 ? (
           <>
             <Fieldset>
               <StyledContainer>
                 <Stack
                   direction="column"
-                  padding={lenght ? "0px" : "8px"}
+                  padding={deductibleExpensedAmount ? "0px" : "8px"}
                   gap="10px"
                 >
                   {initialValues.map((item, index) => (
@@ -84,7 +88,7 @@ export function DeductibleExpensesModal(props: DeductibleExpensesModalProps) {
             <Stack direction="column" justifyContent="space-between" gap="12px">
               <Stack justifyContent="space-between">
                 <Text type="body" weight="bold" size="medium">
-                  {deductibleexpenses.totalExpenses}
+                  {deductibleExpenses.totalExpenses}
                 </Text>
                 <Stack alignItems="center">
                   <Text
@@ -108,7 +112,7 @@ export function DeductibleExpensesModal(props: DeductibleExpensesModalProps) {
           </>
         ) : (
           <Stack margin="auto">
-            <Text>{deductibleexpenses.noData}</Text>
+            <Text>{deductibleExpenses.noData}</Text>
           </Stack>
         )}
       </Stack>

@@ -14,7 +14,7 @@ import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/ty
 import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
 import { AppContext } from "@context/AppContext";
 import { Schedule } from "@services/enums";
-import { getAllDeductibleExpensesById } from "@services/iProspect/deductibleExpenses";
+import { getAllDeductibleExpensesById } from "@src/services/prospects/deductibleExpenses";
 
 import { StyledCardsCredit, StyledPrint } from "./styles";
 

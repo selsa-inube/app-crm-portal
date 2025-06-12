@@ -1,4 +1,4 @@
-export const deductibleexpenses = {
+export const deductibleExpenses = {
   deductibleExpenses: "Gastos descontables",
   close: "Cerrar",
   loading: "Cargando...",
