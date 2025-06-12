@@ -29,6 +29,8 @@ export const dataSubmitApplication = {
 };
 
 export const tittleOptions = {
+  title: "Información",
+  textButtonNext: "Entendido",
   titleError: "¡Uy, algo ha salido mal!",
   descriptionError: "No se han podido guardar los cambios.",
 };

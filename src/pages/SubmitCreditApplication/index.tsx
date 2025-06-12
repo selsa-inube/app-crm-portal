@@ -163,7 +163,7 @@ export function SubmitCreditApplication() {
     },
     attachedDocuments: {},
   });
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const hasBorrowers = Object.keys(formData.borrowerData.borrowers).length;
   const bondValue = prospectData.bondValue;
   const getRuleByName = useCallback(
@@ -619,6 +619,8 @@ export function SubmitCreditApplication() {
         addToFix={addToFix}
         getRuleByName={getRuleByName}
         prospectSummaryData={prospectSummaryData}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
       />
     </>
   );

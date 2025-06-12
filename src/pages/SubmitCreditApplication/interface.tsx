@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { MdCheckCircle, MdOutlineShare, MdArrowBack } from "react-icons/md";
+import {
+  MdCheckCircle,
+  MdOutlineShare,
+  MdArrowBack,
+  MdOutlineInfo,
+} from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Assisted,
@@ -36,6 +41,7 @@ import { AttachedDocuments } from "./steps/attachedDocuments";
 import { DisbursementGeneral } from "./steps/disbursementGeneral";
 import { submitCreditApplicationConfig } from "./config/submitCreditApplication.config";
 import { dataSubmitApplication } from "./config/config";
+import { titlesModal } from "../editProspect/config";
 
 interface SubmitCreditApplicationUIProps {
   currentStep: number;
@@ -46,6 +52,8 @@ interface SubmitCreditApplicationUIProps {
   isMobile: boolean;
   sentModal: boolean;
   approvedRequestModal: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isModalOpen: boolean;
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
   getRuleByName: (name: string) => string[];
@@ -76,6 +84,8 @@ export function SubmitCreditApplicationUI(
     isCurrentFormValid,
     formData,
     isMobile,
+    isModalOpen,
+    setIsModalOpen,
     dataHeader,
     sentModal,
     approvedRequestModal,
@@ -103,7 +113,9 @@ export function SubmitCreditApplicationUI(
   };
 
   const navigate = useNavigate();
-
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
   const handleHome = () => {
     navigate(`/credit/edit-prospect/${customerPublicCode}/${prospectCode}`);
   };
@@ -160,42 +172,50 @@ export function SubmitCreditApplicationUI(
                   size={isMobile ? "small" : "large"}
                 />
               </StyledContainerAssisted>
-              <Stack gap="16px" width="100%" justifyContent="space-between">
-                <Text
-                  type="body"
-                  size={isMobile ? "small" : "medium"}
-                  weight="bold"
-                  appearance="dark"
-                >
-                  {`Prospecto
-              ${prospectData.prospectCode}`}
-                </Text>
-                <StyledSeparatorLine />
-                <Text
-                  type="body"
-                  size={isMobile ? "small" : "medium"}
-                  appearance="gray"
-                >
-                  {`${dataSubmitApplication.cards.destination}
-              ${prospectData.moneyDestinationAbbreviatedName}`}
-                </Text>
-                <StyledSeparatorLine />
-                <Text
-                  type="body"
-                  size={isMobile ? "small" : "medium"}
-                  appearance="gray"
-                >
-                  {`Neto a girar: ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
-                </Text>
-                <StyledSeparatorLine />
-                <Text
-                  type="body"
-                  size={isMobile ? "small" : "medium"}
-                  appearance="gray"
-                >
-                  {`Monto: ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
-                </Text>
-              </Stack>
+              {isMobile ? (
+                <Stack gap="2px">
+                  <Text
+                    type="body"
+                    size="small"
+                    weight="bold"
+                    appearance="dark"
+                  >
+                    {`Prospecto ${prospectData.prospectCode}`}
+                  </Text>
+                  <Icon
+                    icon={<MdOutlineInfo />}
+                    appearance="primary"
+                    size="16px"
+                    cursorHover
+                    onClick={handleInfo}
+                  />
+                </Stack>
+              ) : (
+                <Stack gap="16px" width="100%" justifyContent="space-between">
+                  <Text
+                    type="body"
+                    size="medium"
+                    weight="bold"
+                    appearance="dark"
+                  >
+                    {`Prospecto ${prospectData.prospectCode}`}
+                  </Text>
+                  <StyledSeparatorLine />
+                  <Text type="body" size="medium" appearance="gray">
+                    {`${dataSubmitApplication.cards.destination}
+        ${prospectData.moneyDestinationAbbreviatedName}`}
+                  </Text>
+                  <StyledSeparatorLine />
+                  <Text type="body" size="medium" appearance="gray">
+                    {`Neto a girar: ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                  </Text>
+                  <StyledSeparatorLine />
+                  <Text type="body" size="medium" appearance="gray">
+                    {`Monto: ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                  </Text>
+                </Stack>
+              )}
+
               {currentStepsNumber &&
                 currentStepsNumber.id ===
                   stepsFilingApplication.generalInformation.id &&
@@ -322,6 +342,30 @@ export function SubmitCreditApplicationUI(
                 </Button>
               </Stack>
             </Stack>
+            {isModalOpen && (
+              <>
+                <BaseModal
+                  title={titlesModal.title}
+                  nextButton={titlesModal.textButtonNext}
+                  handleNext={() => setIsModalOpen(false)}
+                  handleClose={() => setIsModalOpen(false)}
+                  width={isMobile ? "290px" : "400px"}
+                >
+                  <Stack gap="16px" direction="column">
+                    <Text type="body" size="medium" appearance="gray">
+                      {`${dataSubmitApplication.cards.destination}
+        ${prospectData.moneyDestinationAbbreviatedName}`}
+                    </Text>
+                    <Text type="body" size="medium" appearance="gray">
+                      {`Neto a girar: ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                    </Text>
+                    <Text type="body" size="medium" appearance="gray">
+                      {`Monto: ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                    </Text>
+                  </Stack>
+                </BaseModal>
+              </>
+            )}
             {sentModal && (
               <BaseModal
                 title={dataSubmitApplication.modals.file}
