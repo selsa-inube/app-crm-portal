@@ -70,6 +70,13 @@ export interface IBorrowerData {
   borrowers: Record<string, never>;
 }
 
+export interface IConsolidatedCreditItem {
+  title: string;
+  code: string;
+  label: string;
+  value: number;
+}
+
 export interface IFormData {
   selectedDestination: string;
   selectedProducts: string[];
@@ -91,11 +98,9 @@ export interface IFormData {
     periodicity: string;
     payAmount: string;
   };
-  consolidatedCreditSelections: {
-    totalCollected: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    selectedValues: Record<string, any>;
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  consolidatedCreditSelections: any;
+  consolidatedCreditArray?: IConsolidatedCreditItem[];
 }
 
 export interface ICondition {

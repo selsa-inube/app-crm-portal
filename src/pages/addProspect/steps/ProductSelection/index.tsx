@@ -67,9 +67,14 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   useEffect(() => {
     if (generalToggleChecked) {
+      const allProductValues = uniqueServerResponse.map((item) => item.value);
+      setSelectedProducts(allProductValues);
+      handleFormDataChange("selectedProducts", allProductValues);
+    } else {
       setSelectedProducts([]);
+      handleFormDataChange("selectedProducts", []);
     }
-  }, [generalToggleChecked, setSelectedProducts]);
+  }, [generalToggleChecked]);
 
   const uniqueServerResponse = removeDuplicates(allRules.lineOfCredit, "value");
 

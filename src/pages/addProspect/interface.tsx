@@ -55,11 +55,6 @@ interface AddPositionUIProps {
   handleFormDataChange: (field: string, newValue: any) => void;
   getRuleByName: (name: string) => string[];
   getAllDataRuleByName: (name: string) => string[];
-  handleConsolidatedCreditChange: (
-    creditId: string,
-    oldValue: number,
-    newValue: number,
-  ) => void;
   currentStep: number;
   customerData: ICustomerData;
   dataHeader: { name: string; status: string };
@@ -92,7 +87,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
     setSelectedProducts,
     getRuleByName,
     getAllDataRuleByName,
-    handleConsolidatedCreditChange,
     currentStepsNumber,
     customerData,
     dataHeader,
@@ -137,7 +131,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 </Text>
               </Stack>
             </StyledArrowBack>
-
             <Stack gap="8px">
               {isMobile ? (
                 <>
@@ -175,6 +168,9 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     spacing="compact"
                     variant="outlined"
                     onClick={() => setIsCreditLimitModalOpen(true)}
+                    disabled={
+                      Object.keys(formData.selectedProducts).length === 0
+                    }
                   />
                   <Button
                     spacing="compact"
@@ -331,11 +327,13 @@ export function AddProspectUI(props: AddPositionUIProps) {
               )}
             {currentStepsNumber &&
               currentStepsNumber.id ===
-                stepsAddProspect.obligationsCollected.id && (
+                stepsAddProspect.generalInformation.id && (
                 <ConsolidatedCredit
                   initialValues={formData.consolidatedCreditSelections}
-                  handleOnChange={handleConsolidatedCreditChange}
                   isMobile={isMobile}
+                  onChange={(items) =>
+                    handleFormDataChange("consolidatedCreditArray", items)
+                  }
                 />
               )}
           </Stack>

@@ -9,7 +9,7 @@ import { StyledContainer, StyledInput } from "./styles";
 import { dataConsolidatedCredit } from "./config";
 
 export interface ICardConsolidatedCreditProps {
-  onUpdateTotal: (oldValue: number, newValue: number) => void;
+  onUpdateTotal: (oldValue: number, newValue: number, label?: string) => void;
   title: string;
   code: string;
   expiredValue: number;
@@ -60,9 +60,9 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
     },
   ];
 
-  const handleSelectionChange = (value: number) => {
+  const handleSelectionChange = (value: number, label: string) => {
     if (selectedValue !== value) {
-      onUpdateTotal(selectedValue || 0, value);
+      onUpdateTotal(selectedValue || 0, value, label);
       setSelectedValue(value);
     }
     setIsRadioSelected(true);
@@ -112,7 +112,10 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
           {paymentOptions.map((option, index) => (
             <StyledInput
               key={index}
-              onClick={() => radioRefs.current[index]?.click()}
+              onClick={() => {
+                radioRefs.current[index]?.click();
+                handleSelectionChange(option.value, option.label);
+              }}
             >
               <Stack alignItems="center" justifyContent="space-between">
                 <Stack>
@@ -120,7 +123,9 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
                     type="radio"
                     name={`paymentOption-${code}`}
                     ref={(el) => (radioRefs.current[index] = el!)}
-                    onChange={() => handleSelectionChange(option.value)}
+                    onChange={() =>
+                      handleSelectionChange(option.value, option.label)
+                    }
                   />
                   <Stack direction="column">
                     <Text type="label" size="medium" weight="bold">

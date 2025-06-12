@@ -65,7 +65,14 @@ export function AddProspect() {
       periodicity: "",
       payAmount: "",
     },
-    consolidatedCreditSelections: { totalCollected: 0, selectedValues: {} },
+    consolidatedCreditSelections: {
+      title: "",
+      code: "",
+      label: "",
+      value: 0,
+      totalCollected: 0,
+      selectedValues: {},
+    },
   });
 
   const prospectData = {
@@ -194,33 +201,44 @@ export function AddProspect() {
     borrowerIdentificationNumber: customerData.publicCode,
   };
 
-  console.log("formData", formData);
-
   const simulateData = {
     borrowers:
       Object.keys(formData.borrowerData.borrowers).length === 0
         ? onlyBorrowerData
         : formData.borrowerData.borrowers,
-    consolidatedCredits: [
-      // paso 10
-      {
-        borrowerIdentificationNumber: "string", //customer
-        borrowerIdentificationType: "string", // customer
-        consolidatedAmount: 0, // valor
-        consolidatedAmountType: "string", //label
-        creditProductCode: "string", //code
-        lineOfCreditDescription: "string", //title
-      },
-    ],
+    consolidatedCredits:
+      Array.isArray(formData.consolidatedCreditArray) &&
+      formData.consolidatedCreditArray.length > 0
+        ? formData.consolidatedCreditArray.map((item) => ({
+            borrowerIdentificationNumber:
+              onlyBorrowerData.borrowerIdentificationNumber,
+            borrowerIdentificationType:
+              onlyBorrowerData.borrowerIdentificationType,
+            consolidatedAmount: item.value,
+            consolidatedAmountType: item.label,
+            creditProductCode: item.code,
+            lineOfCreditDescription: item.title,
+          }))
+        : [
+            {
+              borrowerIdentificationNumber:
+                onlyBorrowerData.borrowerIdentificationNumber,
+              borrowerIdentificationType:
+                onlyBorrowerData.borrowerIdentificationType,
+              consolidatedAmount: 0,
+              consolidatedAmountType: "",
+              creditProductCode: "",
+              lineOfCreditDescription: "",
+            },
+          ],
     linesOfCredit: formData.selectedProducts.map((product) => ({
       lineOfCreditAbbreviatedName: product,
     })),
     extraordinaryInstallments: [
-      // paso 4 - abonos especiales
       {
         installmentAmount: 0,
-        installmentDate: "string",
-        paymentChannelAbbreviatedName: "string",
+        installmentDate: "",
+        paymentChannelAbbreviatedName: "",
       },
     ],
     installmentLimit: formData.loanConditionState.quotaCapValue,
@@ -232,7 +250,6 @@ export function AddProspect() {
     termLimit: formData.loanConditionState.maximumTermValue,
   };
 
-  console.log("creditData", simulateData);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
     {},
@@ -394,35 +411,10 @@ export function AddProspect() {
 
   const handleFormDataChange = (
     field: string,
-    newValue: string | number | boolean,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newValue: string | number | boolean | any[],
   ) => {
     setFormData((prevState) => ({ ...prevState, [field]: newValue }));
-  };
-
-  const handleConsolidatedCreditChange = (
-    creditId: string,
-    oldValue: number,
-    newValue: number,
-  ) => {
-    setFormData((prevState) => {
-      const updatedSelections = {
-        ...prevState.consolidatedCreditSelections.selectedValues,
-        [creditId]: newValue,
-      };
-
-      const newTotalCollected =
-        prevState.consolidatedCreditSelections.totalCollected -
-        oldValue +
-        newValue;
-
-      return {
-        ...prevState,
-        consolidatedCreditSelections: {
-          totalCollected: newTotalCollected,
-          selectedValues: updatedSelections,
-        },
-      };
-    });
   };
 
   useEffect(() => {
@@ -563,7 +555,6 @@ export function AddProspect() {
         setIsCapacityAnalysisModal={setIsCapacityAnalysisModal}
         isCapacityAnalysisModal={isCapacityAnalysisModal}
         handleFormDataChange={handleFormDataChange}
-        handleConsolidatedCreditChange={handleConsolidatedCreditChange}
         isMobile={isMobile}
         isTablet={isTablet}
       />
