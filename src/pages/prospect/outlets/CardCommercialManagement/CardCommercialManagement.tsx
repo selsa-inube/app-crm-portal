@@ -6,6 +6,7 @@ import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCar
 import { CardValues } from "@components/cards/cardValues";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ConsolidatedCredits } from "@pages/prospect/components/modals/ConsolidatedCreditModal";
+import { DeductibleExpensesModal } from "@pages/prospect/components/modals/DeductibleExpensesModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { deleteCreditProductMock } from "@mocks/utils/deleteCreditProductMock.service";
 import { IProspect, ICreditProduct } from "@services/prospects/types";
@@ -13,9 +14,9 @@ import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/ty
 import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
 import { AppContext } from "@context/AppContext";
 import { Schedule } from "@services/enums";
+import { getAllDeductibleExpensesById } from "@src/services/prospects/deductibleExpenses";
 
 import { StyledCardsCredit, StyledPrint } from "./styles";
-import { DeductibleExpensesModal } from "../../components/modals/DeductibleExpensesModal";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -37,6 +38,7 @@ export const CardCommercialManagement = (
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [prospectSummaryData, setProspectSummaryData] =
@@ -44,6 +46,11 @@ export const CardCommercialManagement = (
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
   const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
     useState(false);
+  const [deductibleExpenses, setDeductibleExpenses] = useState<
+    { expenseName: string; expenseValue: number }[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     if (prospectData?.creditProducts) {
       setProspectProducts(prospectData?.creditProducts);
@@ -88,6 +95,32 @@ export const CardCommercialManagement = (
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitPublicCode, prospectData?.prospectId]);
+
+  useEffect(() => {
+    if (!businessUnitPublicCode || !prospectData?.prospectId) return;
+
+    const fetchExpenses = async () => {
+      try {
+        const data = await getAllDeductibleExpensesById(
+          businessUnitPublicCode,
+          prospectData.prospectId,
+        );
+        setDeductibleExpenses(data);
+      } catch (error) {
+        addFlag({
+          title: tittleOptions.deductibleExpensesErrorTitle,
+          description: `${error}`,
+          appearance: "danger",
+          duration: 5000,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExpenses();
+  }, [businessUnitPublicCode, prospectData?.prospectId]);
+
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>
@@ -157,6 +190,9 @@ export const CardCommercialManagement = (
       {showDeductibleExpensesModal && (
         <DeductibleExpensesModal
           handleClose={() => setDeductibleExpensesModal(false)}
+          initialValues={deductibleExpenses}
+          loading={isLoading}
+          isMobile={isMobile}
         />
       )}
     </div>
