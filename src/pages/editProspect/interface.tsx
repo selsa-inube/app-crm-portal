@@ -206,16 +206,16 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                       >
                         {dataEditProspect.confirm}
                       </Button>
-                      {!hasPermitSubmit ||
-                        (dataProspect?.state === "Submitted" && (
-                          <Icon
-                            icon={<MdOutlineInfo />}
-                            appearance="primary"
-                            size="16px"
-                            cursorHover
-                            onClick={handleInfo}
-                          />
-                        ))}
+                      {(dataProspect?.state === "Submitted" ||
+                        !hasPermitSubmit) && (
+                        <Icon
+                          icon={<MdOutlineInfo />}
+                          appearance="primary"
+                          size="16px"
+                          cursorHover
+                          onClick={handleInfo}
+                        />
+                      )}
                     </Stack>
                   </Stack>
                 </StyledPrint>
