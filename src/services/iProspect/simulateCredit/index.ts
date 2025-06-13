@@ -6,7 +6,7 @@ const postSimulateCredit = async (
   simulateData: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any | undefined> => {
-  const requestUrl = `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospect`;
+  const requestUrl = `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`;
 
   try {
     const options: RequestInit = {
@@ -14,8 +14,9 @@ const postSimulateCredit = async (
       headers: {
         "X-Action": "SimulateCredit",
         "X-Business-Unit": businessUnitPublicCode,
+        "Content-type": "application/json; charset=UTF-8",
       },
-      body: simulateData,
+      body: JSON.stringify(simulateData),
     };
 
     const res = await fetch(requestUrl, options);

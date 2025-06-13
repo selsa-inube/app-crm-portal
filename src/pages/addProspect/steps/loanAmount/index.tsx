@@ -23,7 +23,7 @@ import { dataAmount } from "./config";
 
 export interface ILoanAmountProps {
   initialValues: {
-    inputValue: string;
+    inputValue: number | string;
     toggleChecked: boolean;
     paymentPlan: string;
   };
@@ -78,7 +78,7 @@ export function LoanAmount(props: ILoanAmountProps) {
         onSubmit={() => {}}
         validate={(values) => {
           const numericValue =
-            parseFloat(values.inputValue.replace(/[^0-9]/g, "")) || 0;
+            parseFloat(String(values.inputValue).replace(/[^0-9]/g, "")) || 0;
           const isValid = numericValue > 0 && values.paymentPlan.trim() !== "";
           onFormValid(isValid);
         }}
@@ -119,7 +119,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                           0;
                         const formattedValue = currencyFormat(rawValue, false);
                         setFieldValue("inputValue", formattedValue);
-                        handleOnChange({ inputValue: formattedValue });
+                        handleOnChange({ inputValue: rawValue });
                       }}
                     />
                   )}

@@ -18,8 +18,8 @@ interface LoanConditionState {
     quotaCapToggle: boolean;
     maximumTermToggle: boolean;
   };
-  quotaCapValue: string;
-  maximumTermValue: string;
+  quotaCapValue: number | string;
+  maximumTermValue: number | string;
 }
 
 export type { IFormsInvitation, IAssignmentFormEntry, LoanConditionState };

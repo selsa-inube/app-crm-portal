@@ -32,4 +32,5 @@ export const addConfig = {
 export const textAddCongfig = {
   buttonQuotas: "Cupos",
   buttonPaymentCapacity: "Cap. de pago",
+  errorPost: "Error al crear la solicitud de crédito",
 };

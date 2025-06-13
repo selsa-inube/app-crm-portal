@@ -327,7 +327,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
               )}
             {currentStepsNumber &&
               currentStepsNumber.id ===
-                stepsAddProspect.generalInformation.id && (
+                stepsAddProspect.obligationsCollected.id && (
                 <ConsolidatedCredit
                   initialValues={formData.consolidatedCreditSelections}
                   isMobile={isMobile}
@@ -356,6 +356,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
             <RequirementsModal
               handleClose={() => setIsModalOpenRequirements(false)}
               isMobile={isMobile}
+              prospectData={prospectData}
+              customerData={customerData}
             />
           )}
           {isCreditLimitModalOpen && (

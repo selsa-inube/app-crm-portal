@@ -85,14 +85,14 @@ export interface IFormData {
       quotaCapToggle: boolean;
       maximumTermToggle: boolean;
     };
-    quotaCapValue: string;
-    maximumTermValue: string;
+    quotaCapValue: string | number;
+    maximumTermValue: string | number;
   };
   borrowerData: IBorrowerData;
   generalToggleChecked: boolean;
   togglesState: boolean[];
   loanAmountState: {
-    inputValue: string;
+    inputValue: number | string;
     toggleChecked: boolean;
     paymentPlan: string;
     periodicity: string;

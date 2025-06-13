@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMediaQuery } from "@inubekit/inubekit";
+import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
@@ -15,6 +15,7 @@ import { IFormData } from "./types";
 import { AddProspectUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
+import { textAddCongfig } from "./config/addConfig";
 
 export function AddProspect() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -75,137 +76,35 @@ export function AddProspect() {
     },
   });
 
-  const prospectData = {
-    prospectId: "",
-    prospectCode: "",
-    state: "Created",
-    requestedAmount: 0,
-    installmentLimit: 0,
-    termLimit: 0,
-    timeOfCreation: "2025-03-31T15:04:05Z",
-    selectedRegularPaymentSchedule: "monthly",
-    selectedRateType: "fixed",
-    preferredPaymentChannelAbbreviatedName: "Nómina mensual presente",
-    gracePeriod: 0,
-    gracePeriodType: "principal_grace",
-    moneyDestinationAbbreviatedName: formData.selectedDestination,
-    bondValue: 0,
-    borrowers: [
-      {
-        borrowerName: "Andres Giraldo Hurtado",
-        borrowerType: "MainBorrower",
-        borrowerIdentificationType: "CitizenshipID",
-        borrowerIdentificationNumber: "16378491",
-        borrowerProperties: [
-          {
-            propertyName: "PeriodicSalary",
-            propertyValue: "4500000",
-          },
-          {
-            propertyName: "PersonalBusinessUtilities",
-            propertyValue: "1000000",
-          },
-          {
-            propertyName: "FinancialObligation",
-            propertyValue:
-              "consumo, 10000000, 600000, Bancolombia, Caja, 12546, 5, 60",
-          },
-          {
-            propertyName: "FinancialObligation",
-            propertyValue:
-              "tarjeta, 2000000, 300000, Falabella, Caja, 3524, 10, 40",
-          },
-          {
-            propertyName: "FinancialObligation",
-            propertyValue:
-              "vivienda, 105000000, 1450000, Davivienda, Caja, 4721, 12, 60",
-          },
-          {
-            propertyName: "name",
-            propertyValue: "Andrés",
-          },
-          {
-            propertyName: "surname",
-            propertyValue: "Giraldo Hurtado",
-          },
-          {
-            propertyName: "email",
-            propertyValue: "andres.giraldo@gmail.com",
-          },
-          {
-            propertyName: "biological_sex",
-            propertyValue: "male",
-          },
-          {
-            propertyName: "phone_number",
-            propertyValue: "3102330109",
-          },
-          {
-            propertyName: "birth_date",
-            propertyValue: "1987-01-02T15:04:05Z",
-          },
-          {
-            propertyName: "relationship",
-            propertyValue: "brother",
-          },
-        ],
-      },
-    ],
-    consolidatedCredits: [
-      {
-        creditProductCode: "12554",
-        consolidatedAmount: 0,
-        consolidatedAmountType: "installment",
-        estimatedDateOfConsolidation: "2025-04-15T15:04:05Z",
-        lineOfCreditDescription: "Crédito libre inversión",
-        borrowerIdentificationType: "CitizenshipID",
-        borrowerIdentificationNumber: "1019542336",
-      },
-    ],
-    creditProducts: [
-      {
-        creditProductCode: "SC-122254646-2",
-        loanAmount: 0,
-        lineOfCreditAbbreviatedName: "Crédito educativo",
-        interestRate: 0,
-        loanTerm: 0,
-        schedule: "monthly",
-        ordinaryInstallmentsForPrincipal: [
-          {
-            numberOfInstallments: 0,
-            schedule: "monthly",
-            installmentAmount: 0,
-            paymentChannelAbbreviatedName: "Nómina mensual presente",
-          },
-        ],
-        extraordinaryInstallments: [
-          {
-            installmentDate: "2025-06-30T15:04:05Z",
-            installmentAmount: 0,
-            paymentChannelAbbreviatedName: "Nómina regular selsa",
-          },
-        ],
-      },
-    ],
-    outlays: [
-      {
-        date: "2025-04-15T15:04:05Z",
-        amount: formData.loanAmountState.inputValue || 0,
-      },
-    ],
-  };
-
   const onlyBorrowerData = {
     borrowerIdentificationType:
       customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
     borrowerIdentificationNumber: customerData.publicCode,
+    borrowerType: "MainBorrower",
+    borrowerName: "Lenis Poveda", // borrar en un futuro
+    borrowerProperties: [
+      {
+        propertyName: "PeriodicSalary",
+        propertyValue: "4500000",
+      },
+    ],
   };
 
   const simulateData = {
-    borrowers:
+    acquiredCashFlow: [
+      // borrar en un futuro
+      {
+        amount: "string",
+        date: "2025-06-12T15:04:05Z",
+        flowNumber: 1,
+        paymentChannelAbbreviatedName: "string",
+      },
+    ],
+    borrowers: [
       Object.keys(formData.borrowerData.borrowers).length === 0
         ? onlyBorrowerData
         : formData.borrowerData.borrowers,
+    ],
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
@@ -217,6 +116,7 @@ export function AddProspect() {
             consolidatedAmount: item.value,
             consolidatedAmountType: item.label,
             creditProductCode: item.code,
+            estimatedDateOfConsolidation: "2025-06-12T15:04:05Z", // borrar en un futuro
             lineOfCreditDescription: item.title,
           }))
         : [
@@ -225,29 +125,34 @@ export function AddProspect() {
                 onlyBorrowerData.borrowerIdentificationNumber,
               borrowerIdentificationType:
                 onlyBorrowerData.borrowerIdentificationType,
-              consolidatedAmount: 0,
-              consolidatedAmountType: "",
-              creditProductCode: "",
-              lineOfCreditDescription: "",
+              consolidatedAmount: 1,
+              consolidatedAmountType: "none",
+              creditProductCode: "none",
+              estimatedDateOfConsolidation: "2025-06-12T15:04:05Z", // borrar en un futuro
+              lineOfCreditDescription: "none",
             },
           ],
     linesOfCredit: formData.selectedProducts.map((product) => ({
       lineOfCreditAbbreviatedName: product,
     })),
+    firstPaymentCycleDate: "2025-06-15T15:04:05Z",
+    gracePeriodType: "string", // borrar en un futuro
+    selectedRateType: "string", // borrar en un futuro
     extraordinaryInstallments: [
       {
-        installmentAmount: 0,
-        installmentDate: "",
-        paymentChannelAbbreviatedName: "",
+        installmentAmount: 1,
+        installmentDate: "2025-06-12T15:04:05Z",
+        paymentChannelAbbreviatedName: "none",
       },
     ],
-    installmentLimit: formData.loanConditionState.quotaCapValue,
+    installmentLimit: formData.loanConditionState.quotaCapValue || 1,
     moneyDestinationAbbreviatedName: formData.selectedDestination,
     preferredPaymentChannelAbbreviatedName:
-      formData.loanAmountState.paymentPlan,
-    selectedRegularPaymentSchedule: formData.loanAmountState.payAmount,
-    requestedAmount: formData.loanAmountState.inputValue,
-    termLimit: formData.loanConditionState.maximumTermValue,
+      formData.loanAmountState.paymentPlan || "none",
+    selectedRegularPaymentSchedule:
+      formData.loanAmountState.payAmount || "none",
+    requestedAmount: formData.loanAmountState.inputValue || 1,
+    termLimit: formData.loanConditionState.maximumTermValue || 1,
   };
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -505,10 +410,26 @@ export function AddProspect() {
     setIsCurrentFormValid(true);
   };
 
-  const handleSubmitClick = () => {
-    setTimeout(() => {
-      navigate(`/credit/edit-prospect/${customerPublicCode}/SC-122254646`);
-    }, 1000);
+  const { addFlag } = useFlag();
+
+  const handleFlag = (error: unknown) => {
+    addFlag({
+      title: textAddCongfig.errorPost,
+      description: `${error}`,
+      appearance: "danger",
+      duration: 5000,
+    });
+  };
+
+  const handleSubmitClick = async () => {
+    try {
+      await postSimulateCredit(businessUnitPublicCode, simulateData);
+      setTimeout(() => {
+        navigate(`/credit/edit-prospect/${customerPublicCode}/SC-122254646`);
+      }, 1000);
+    } catch (error) {
+      handleFlag(error);
+    }
   };
 
   const showConsultingForFiveSeconds = () => {
@@ -516,14 +437,6 @@ export function AddProspect() {
     setTimeout(() => {
       setShowConsultingModal(false);
     }, 2000);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await postSimulateCredit(businessUnitPublicCode, simulateData);
-    } catch (error) {
-      console.error("Error al enviar la solicitud:", error);
-    }
   };
 
   return (
@@ -550,7 +463,7 @@ export function AddProspect() {
         handleSubmitClick={handleSubmitClick}
         formData={formData}
         selectedProducts={selectedProducts}
-        prospectData={prospectData}
+        prospectData={simulateData}
         setSelectedProducts={setSelectedProducts}
         setIsCapacityAnalysisModal={setIsCapacityAnalysisModal}
         isCapacityAnalysisModal={isCapacityAnalysisModal}
