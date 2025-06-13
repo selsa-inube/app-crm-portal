@@ -84,7 +84,7 @@ export const Edit: Story = (args: EditProductModalProps) => {
 
   return (
     <>
-      <Button onClick={() => setShowModal(true)}>Abrir Modalaaa</Button>
+      <Button onClick={() => setShowModal(true)}>Abrir Modal</Button>
       {showModal && (
         <EditProductModal
           {...args}
