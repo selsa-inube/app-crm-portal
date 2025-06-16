@@ -11,7 +11,7 @@ export const electionData = {
     includeExtraordinaryInstallments:
       "¿Quiere programar abonos especiales a capital para disminuir su pago ordinario o recortar plazo?",
     updateIncomeSources:
-      "¿Desea actualizar la información del cliente sobre sus fuentes de ingreso para respaldar su capacidad de pago? Actualmente, estas suman un total de $9.000.000.",
+      "¿Desea actualizar la información del cliente sobre sus fuentes de ingreso para respaldar su capacidad de pago? Actualmente, estas suman un total de $valor.",
     updateFinancialObligations:
       "¿Quiere actualizar la información relacionada con las obligaciones financieras del cliente?",
     includeAditionalBorrowers: "¿Quiere registrar deudores adicionales?",

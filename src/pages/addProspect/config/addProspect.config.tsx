@@ -15,7 +15,7 @@ export const stepsAddProspect = {
     id: 3,
     number: 3,
     name: "Elección del producto",
-    description: "Seleccione el destino del dinero.",
+    description: "Seleccione los productos de crédito.",
   },
   extraordinaryInstallments: {
     id: 4,

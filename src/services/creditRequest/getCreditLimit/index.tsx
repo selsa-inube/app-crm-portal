@@ -22,12 +22,13 @@ const getCreditLimit = async (
         method: "GET",
         headers: {
           "X-Action": "SearchClientIncomeSourcesById",
-          "X-Business-Unit": businessUnitPublicCode,
+          "X-Business-Unit": "fondecom",
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
       };
 
+      console.log(businessUnitPublicCode);
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/credit-limit/client-income-sources/${clientIdentificationNumber}`,
         options,

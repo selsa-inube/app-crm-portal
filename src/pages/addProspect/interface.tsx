@@ -36,6 +36,7 @@ import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
 import { PaymentCapacityAnalysis } from "@src/components/modals/PaymentCapacityAnalysis";
+import { IIncomeSources } from "@services/incomeSources/types";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -70,6 +71,7 @@ interface AddPositionUIProps {
   currentStepsNumber?: StepDetails;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   prospectData: any;
+  creditLimitData?: IIncomeSources;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -100,6 +102,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     isMobile,
     isTablet,
     prospectData,
+    creditLimitData,
   } = props;
 
   return (
@@ -255,6 +258,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                       "IncomeSourceUpdateAllowed",
                     ),
                   }}
+                  creditLimitData={creditLimitData}
                 />
               )}
             {currentStepsNumber &&
@@ -281,6 +285,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 <SourcesOfIncome
                   isMobile={isMobile}
                   customerData={customerData}
+                  creditLimitData={creditLimitData}
                 />
               )}
             {currentStepsNumber &&

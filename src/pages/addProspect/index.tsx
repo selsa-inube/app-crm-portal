@@ -9,6 +9,8 @@ import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { postSimulateCredit } from "@services/iProspect/simulateCredit";
 import { IPaymentChannel } from "@services/types";
+import { IIncomeSources } from "@services/incomeSources/types";
+import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData } from "./types";
@@ -26,6 +28,7 @@ export function AddProspect() {
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
   const [isCapacityAnalysisModal, setIsCapacityAnalysisModal] = useState(false);
+  const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
@@ -432,6 +435,23 @@ export function AddProspect() {
     }, 2000);
   };
 
+  useEffect(() => {
+    if (currentStep === stepsAddProspect.productSelection.id) {
+      const fetchCreditLimit = async () => {
+        try {
+          const result = await getCreditLimit(
+            businessUnitPublicCode,
+            customerPublicCode!,
+          );
+          setCreditLimitData(result);
+        } catch (error) {
+          handleFlag(error);
+        }
+      };
+      fetchCreditLimit();
+    }
+  }, [currentStep]);
+
   return (
     <>
       <AddProspectUI
@@ -463,6 +483,7 @@ export function AddProspect() {
         handleFormDataChange={handleFormDataChange}
         isMobile={isMobile}
         isTablet={isTablet}
+        creditLimitData={creditLimitData}
       />
       {showConsultingModal && <Consulting />}
     </>

@@ -7,6 +7,8 @@ import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
 import { CardProductSelection } from "@pages/addProspect/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
+import { IIncomeSources } from "@services/incomeSources/types";
+import { currencyFormat } from "@utils/formatData/currency";
 
 import { removeDuplicates } from "@utils/mappingData/mappings";
 
@@ -33,6 +35,7 @@ interface IProductSelectionProps {
     PercentagePayableViaExtraInstallments: string[];
     IncomeSourceUpdateAllowed: string[];
   };
+  creditLimitData?: IIncomeSources;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -47,6 +50,8 @@ export function ProductSelection(props: IProductSelectionProps) {
     handleFormDataChange,
     isMobile,
     allRules,
+    choiceMoneyDestination,
+    creditLimitData,
   } = props;
 
   const validationSchema = Yup.object().shape({
@@ -105,10 +110,16 @@ export function ProductSelection(props: IProductSelectionProps) {
     ([key, question], index) => ({ key, question, index }),
   );
 
+  const [fullRules, setFullRules] = useState(allRules);
+
+  useEffect(() => {
+    setFullRules(allRules);
+  }, [choiceMoneyDestination]);
+
   const filteredQuestions = allQuestions.filter(({ key }) => {
     if (
       key === "includeExtraordinaryInstallments" &&
-      allRules.PercentagePayableViaExtraInstallments.every(
+      fullRules.PercentagePayableViaExtraInstallments.every(
         (value) => Number(value) <= 0,
       )
     ) {
@@ -116,12 +127,22 @@ export function ProductSelection(props: IProductSelectionProps) {
     }
     if (
       (key === "updateIncomeSources" || key === "updateFinancialObligations") &&
-      allRules.IncomeSourceUpdateAllowed.every((value) => value !== "Y")
+      fullRules.IncomeSourceUpdateAllowed.every((value) => value !== "Y")
     ) {
       return false;
     }
     return true;
   });
+
+  const totalIncome =
+    (creditLimitData?.Dividends ?? 0) +
+    (creditLimitData?.FinancialIncome ?? 0) +
+    (creditLimitData?.Leases ?? 0) +
+    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
+    (creditLimitData?.PensionAllowances ?? 0) +
+    (creditLimitData?.PeriodicSalary ?? 0) +
+    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
+    (creditLimitData?.ProfessionalFees ?? 0);
 
   return (
     <Formik
@@ -220,7 +241,12 @@ export function ProductSelection(props: IProductSelectionProps) {
                       size="medium"
                       appearance={isQuestionDisabled(key) ? "gray" : "dark"}
                     >
-                      {question}
+                      {key === "updateIncomeSources"
+                        ? question.replace(
+                            "$valor",
+                            `${currencyFormat(totalIncome)}`,
+                          )
+                        : question}
                     </Text>
                     <Stack gap="8px">
                       <Stack>
