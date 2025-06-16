@@ -16,19 +16,18 @@ const getSearchProspectSummaryById = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-      const options: RequestInit = {
-        method: "GET",
-        headers: {
-          "X-Action": "GetProspectSummaryById",
-          "X-Business-Unit": businessUnitPublicCode,
-          "Content-type": "application/json; charset=UTF-8",
-        },
-        signal: controller.signal,
-      };
 
       const res = await fetch(
         `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
-        options,
+        {
+          method: "GET",
+          headers: {
+            "X-Action": "GetProspectSummaryById",
+            "X-Business-Unit": businessUnitPublicCode,
+            "Content-type": "application/json; charset=UTF-8",
+          },
+          signal: controller.signal,
+        },
       );
 
       clearTimeout(timeoutId);
@@ -40,23 +39,26 @@ const getSearchProspectSummaryById = async (
       const data = await res.json();
 
       if (!res.ok) {
-        throw {
-          message: "Error al obtener el resumen de montos.",
-          status: res.status,
-          data,
-        };
+        const backendMessage =
+          typeof data === "object" && data !== null && "message" in data
+            ? String(data.message)
+            : "Error al obtener el resumen de montos.";
+        throw new Error(backendMessage);
       }
 
-      if (Array.isArray(data)) {
-        return data[0] as IProspectSummaryById;
-      }
-
-      return data;
+      return Array.isArray(data)
+        ? (data[0] as IProspectSummaryById)
+        : (data as IProspectSummaryById);
     } catch (error) {
       console.error(`Intento ${attempt} fallido:`, error);
+
       if (attempt === maxRetries) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
         throw new Error(
-          "Todos los intentos fallaron. No se pudo traer el resumen de montos",
+          "Todos los intentos fallaron. No se pudo traer el resumen de montos.",
         );
       }
     }

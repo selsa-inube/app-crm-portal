@@ -560,35 +560,38 @@ export function SubmitCreditApplication() {
     ...steps[currentStepIndex],
     number: currentStepIndex + 1,
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
-          prospectData?.prospectId || "",
+          prospectData?.prospectId,
         );
-
-        if (result && Object.keys(result).length > 0) {
+        if (result) {
           setProspectSummaryData(result);
-        } else {
-          addFlag({
-            title: tittleOptions.titleError,
-            description: tittleOptions.descriptionError,
-            appearance: "danger",
-            duration: 5000,
-          });
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      } catch (error: unknown) {
+        const message = (() => {
+          if (error instanceof Error) return error.message;
+          try {
+            return JSON.stringify(error);
+          } catch {
+            return String(error);
+          }
+        })();
+
+        addFlag({
+          title: tittleOptions.titleError,
+          description: message,
+          appearance: "danger",
+          duration: 6000,
+        });
       }
     };
 
-    if (prospectData) {
+    if (prospectData?.prospectId) {
       fetchData();
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitPublicCode, prospectData?.prospectId]);
 
   return (
