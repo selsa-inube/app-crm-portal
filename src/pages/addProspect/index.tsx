@@ -197,10 +197,13 @@ export function AddProspect() {
             true,
           )
         : null;
-
       const amountValue = Number(getRuleValue(loanAmount) ?? 0);
 
-      const termRule = ruleConfig["LoanTermLimit"]?.(ruleData);
+      const termRuleInput = {
+        ...ruleData,
+        LoanAmount: amountValue,
+      };
+      const termRule = ruleConfig["LoanTermLimit"]?.(termRuleInput);
       const termValueRaw = termRule
         ? await evaluateRule(
             termRule,
@@ -210,10 +213,14 @@ export function AddProspect() {
             true,
           )
         : null;
-
       const termValue = Number(getRuleValue(termValueRaw) ?? 0);
 
-      const interestRule = ruleConfig["RiskFreeInterestRate"]?.(ruleData);
+      const interestInput = {
+        ...ruleData,
+        LoanAmount: amountValue,
+        LoanTerm: termValue,
+      };
+      const interestRule = ruleConfig["RiskFreeInterestRate"]?.(interestInput);
       const rateValueRaw = interestRule
         ? await evaluateRule(
             interestRule,
@@ -231,6 +238,7 @@ export function AddProspect() {
         RiskFreeInterestRate: interestRate,
       };
     }
+
     setCreditLineTerms(result);
   }, [
     customerData,
