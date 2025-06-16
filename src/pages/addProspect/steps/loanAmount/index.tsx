@@ -16,6 +16,10 @@ import {
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
+import {
+  mockPayAmount,
+  mockPeriodicity,
+} from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
 import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/types";
 
@@ -26,6 +30,8 @@ export interface ILoanAmountProps {
     inputValue: number | string;
     toggleChecked: boolean;
     paymentPlan: string;
+    periodicity: string;
+    payAmount: string;
   };
   isMobile: boolean;
   requestValue: IPaymentChannel[] | undefined;
@@ -65,9 +71,12 @@ export function LoanAmount(props: ILoanAmountProps) {
         console.error("Error fetching money destinations data:", error.message);
       });
   }, []);
+
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
     paymentPlan: Yup.string().required(""),
+    periodicity: Yup.string(),
+    payAmount: Yup.string(),
   });
 
   return (
@@ -151,7 +160,7 @@ export function LoanAmount(props: ILoanAmountProps) {
               </Stack>
               <Divider dashed />
               <Stack direction={isMobile ? "column" : "row"} gap="16px">
-                <Stack direction="column" width="100%" gap="4px">
+                <Stack direction="column" width="100%">
                   <Text
                     type="label"
                     size="medium"
@@ -173,10 +182,61 @@ export function LoanAmount(props: ILoanAmountProps) {
                         }}
                         value={values.paymentPlan}
                         size="compact"
+                        fullwidth={values.paymentPlan ? true : false}
                       />
                     )}
                   </Field>
                 </Stack>
+                {values.paymentPlan && (
+                  <>
+                    <Stack direction="column" width="100%">
+                      <Stack gap="4px">
+                        <Text type="label" size="medium" weight="bold">
+                          {dataAmount.Periodicity}
+                        </Text>
+                      </Stack>
+                      <Field name="periodicity">
+                        {() => (
+                          <Select
+                            id="periodicity"
+                            options={mockPeriodicity}
+                            placeholder={dataAmount.selectOption}
+                            name="periodicity"
+                            onChange={(_, newValue: string) => {
+                              setFieldValue("periodicity", newValue);
+                              handleOnChange({ periodicity: newValue });
+                            }}
+                            value={values.periodicity}
+                            size="compact"
+                            fullwidth={true}
+                          />
+                        )}
+                      </Field>
+                    </Stack>
+                    <Stack direction="column" width="100%">
+                      <Text type="label" size="medium" weight="bold">
+                        {dataAmount.paymentDate}
+                      </Text>
+                      <Field name="payAmount">
+                        {() => (
+                          <Select
+                            id="payAmount"
+                            options={mockPayAmount}
+                            placeholder={dataAmount.selectOption}
+                            name="payAmount"
+                            onChange={(_, newValue: string) => {
+                              setFieldValue("payAmount", newValue);
+                              handleOnChange({ payAmount: newValue });
+                            }}
+                            value={values.payAmount}
+                            size="compact"
+                            fullwidth={true}
+                          />
+                        )}
+                      </Field>
+                    </Stack>
+                  </>
+                )}
               </Stack>
             </Stack>
           </Form>
