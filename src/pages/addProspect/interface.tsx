@@ -168,9 +168,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     spacing="compact"
                     variant="outlined"
                     onClick={() => setIsCreditLimitModalOpen(true)}
-                    disabled={
-                      Object.keys(formData.selectedProducts).length === 0
-                    }
                   />
                   <Button
                     spacing="compact"

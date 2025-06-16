@@ -91,15 +91,6 @@ export function AddProspect() {
   };
 
   const simulateData = {
-    acquiredCashFlow: [
-      // borrar en un futuro
-      {
-        amount: "string",
-        date: "2025-06-12T15:04:05Z",
-        flowNumber: 1,
-        paymentChannelAbbreviatedName: "string",
-      },
-    ],
     borrowers: [
       Object.keys(formData.borrowerData.borrowers).length === 0
         ? onlyBorrowerData
@@ -136,23 +127,20 @@ export function AddProspect() {
       lineOfCreditAbbreviatedName: product,
     })),
     firstPaymentCycleDate: "2025-06-15T15:04:05Z",
-    gracePeriodType: "string", // borrar en un futuro
-    selectedRateType: "string", // borrar en un futuro
     extraordinaryInstallments: [
       {
         installmentAmount: 1,
         installmentDate: "2025-06-12T15:04:05Z",
-        paymentChannelAbbreviatedName: "none",
+        paymentChannelAbbreviatedName: "",
       },
     ],
-    installmentLimit: formData.loanConditionState.quotaCapValue || 1,
+    installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
     moneyDestinationAbbreviatedName: formData.selectedDestination,
     preferredPaymentChannelAbbreviatedName:
-      formData.loanAmountState.paymentPlan || "none",
-    selectedRegularPaymentSchedule:
-      formData.loanAmountState.payAmount || "none",
-    requestedAmount: formData.loanAmountState.inputValue || 1,
-    termLimit: formData.loanConditionState.maximumTermValue || 1,
+      formData.loanAmountState.paymentPlan || "",
+    selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
+    requestedAmount: formData.loanAmountState.inputValue,
+    termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
   };
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -423,9 +411,14 @@ export function AddProspect() {
 
   const handleSubmitClick = async () => {
     try {
-      await postSimulateCredit(businessUnitPublicCode, simulateData);
+      const response = await postSimulateCredit(
+        businessUnitPublicCode,
+        simulateData,
+      );
+      const prospectCode = response.prospectCode;
+
       setTimeout(() => {
-        navigate(`/credit/edit-prospect/${customerPublicCode}/SC-122254646`);
+        navigate(`/credit/edit-prospect/${customerPublicCode}/${prospectCode}`);
       }, 1000);
     } catch (error) {
       handleFlag(error);

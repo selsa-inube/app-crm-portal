@@ -127,11 +127,7 @@ export function EditProspect() {
   }, []);
 
   const fetchValidationRules = useCallback(async () => {
-    const rulesToCheck = [
-      "ModeOfDisbursementType",
-      "ValidationGuarantee",
-      "ValidationCoBorrower",
-    ];
+    const rulesToCheck = ["ValidationGuarantee", "ValidationCoBorrower"];
     const notDefinedRules: string[] = [];
     await Promise.all(
       rulesToCheck.map(async (ruleName) => {
@@ -174,11 +170,7 @@ export function EditProspect() {
       ),
     };
 
-    const rulesValidate = [
-      "ModeOfDisbursementType",
-      "ValidationGuarantee",
-      "ValidationCoBorrower",
-    ];
+    const rulesValidate = ["ValidationGuarantee", "ValidationCoBorrower"];
 
     for (const product of creditProducts) {
       if (!product || typeof product !== "object") continue;

@@ -89,10 +89,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
 
   return (
     <Fieldset heightFieldset="100%">
-      <Stack direction="column" gap="24px">
-        <Text type="body" size="medium">
-          {dataConsolidated.select}
-        </Text>
+      <Stack direction="column" gap="24px" padding="16px">
         <Stack
           justifyContent="space-between"
           alignItems={isMobile ? "initial" : "end"}

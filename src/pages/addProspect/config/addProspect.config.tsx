@@ -54,12 +54,12 @@ export const stepsAddProspect = {
     id: 9,
     number: 9,
     name: "Valor de la solicitud",
-    description: "Detalles del valor de la solicitud",
+    description: "Registre el valor de la solicitud y el medio de pago.",
   },
   obligationsCollected: {
     id: 10,
     number: 10,
     name: "Obligaciones recogidas",
-    description: "Agrupe las obligaciones financieras.",
+    description: "Seleccione las obligaciones financieras que serán recogidas.",
   },
 };

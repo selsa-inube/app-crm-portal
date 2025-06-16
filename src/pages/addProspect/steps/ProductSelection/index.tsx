@@ -1,10 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { MdInfoOutline } from "react-icons/md";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
-import { Stack, Text, Toggle, Divider } from "@inubekit/inubekit";
+import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
 
 import { CardProductSelection } from "@pages/addProspect/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
+import { BaseModal } from "@components/modals/baseModal";
+
 import { removeDuplicates } from "@utils/mappingData/mappings";
 
 import { electionData } from "./config";
@@ -59,6 +62,8 @@ export function ProductSelection(props: IProductSelectionProps) {
     generalToggleChecked,
     togglesState,
   };
+
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
     const isValid = generalToggleChecked || selectedProducts.length > 0;
@@ -218,27 +223,40 @@ export function ProductSelection(props: IProductSelectionProps) {
                       {question}
                     </Text>
                     <Stack gap="8px">
-                      <Field name={`togglesState[${index}]`}>
-                        {({
-                          field,
-                        }: {
-                          field: { value: boolean; name: string };
-                        }) => (
-                          <Toggle
-                            {...field}
-                            value={field.value.toString()}
-                            checked={field.value}
-                            disabled={isQuestionDisabled(key)}
-                            onChange={() => {
-                              onToggleChange(index);
-                              setFieldValue(
-                                `togglesState[${index}]`,
-                                !field.value,
-                              );
-                            }}
-                          />
+                      <Stack>
+                        <Field name={`togglesState[${index}]`}>
+                          {({
+                            field,
+                          }: {
+                            field: { value: boolean; name: string };
+                          }) => (
+                            <Toggle
+                              {...field}
+                              value={field.value.toString()}
+                              checked={field.value}
+                              disabled={isQuestionDisabled(key)}
+                              onChange={() => {
+                                onToggleChange(index);
+                                setFieldValue(
+                                  `togglesState[${index}]`,
+                                  !field.value,
+                                );
+                              }}
+                            />
+                          )}
+                        </Field>
+                        {isQuestionDisabled(key) && (
+                          <Stack margin="2px 0">
+                            <Icon
+                              icon={<MdInfoOutline />}
+                              appearance="primary"
+                              size="16px"
+                              onClick={() => setShowInfoModal(true)}
+                              cursorHover
+                            />
+                          </Stack>
                         )}
-                      </Field>
+                      </Stack>
                       <Text
                         type="label"
                         size="large"
@@ -260,6 +278,18 @@ export function ProductSelection(props: IProductSelectionProps) {
               )}
             </Fieldset>
           </Stack>
+          {showInfoModal && (
+            <BaseModal
+              title={electionData.information}
+              nextButton={electionData.understood}
+              handleNext={() => setShowInfoModal(false)}
+              handleClose={() => setShowInfoModal(false)}
+            >
+              <Stack width={isMobile ? "290px" : "400px"}>
+                <Text>{electionData.informationDescription}</Text>
+              </Stack>
+            </BaseModal>
+          )}
         </Form>
       )}
     </Formik>

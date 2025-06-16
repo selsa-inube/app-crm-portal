@@ -1,5 +1,9 @@
 export const electionData = {
   title: "¿Prefiere que el sistema sugiera el producto?",
+  information: "Información",
+  understood: "Entendido",
+  informationDescription:
+    "No se pueden seleccionar los cupos porque no se han seleccionado las líneas de crédito.",
   yes: "SI",
   no: "NO",
   load: "Cargando datos...",
