@@ -18,11 +18,18 @@ import { RequirementsModal } from "@pages/prospect/components/modals/Requirement
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
+import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
+import {
+  IFormData,
+  IStep,
+  StepDetails,
+  titleButtonTextAssited,
+  ICreditLineTerms,
+} from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
@@ -35,7 +42,6 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
-import { PaymentCapacityAnalysis } from "@src/components/modals/PaymentCapacityAnalysis";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -73,6 +79,7 @@ interface AddPositionUIProps {
   isMobile: boolean;
   isTablet: boolean;
   currentStepsNumber?: StepDetails;
+  creditLineTerms?: ICreditLineTerms;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -89,7 +96,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
     handleFormDataChange,
     setSelectedProducts,
     getRuleByName,
-    getAllDataRuleByName,
     handleConsolidatedCreditChange,
     currentStepsNumber,
     customerData,
@@ -103,6 +109,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     selectedProducts,
     isMobile,
     isTablet,
+    creditLineTerms,
   } = props;
 
   return (
@@ -246,7 +253,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   isMobile={isMobile}
                   choiceMoneyDestination={formData.selectedDestination}
                   allRules={{
-                    lineOfCredit: getAllDataRuleByName("LineOfCredit"),
                     PercentagePayableViaExtraInstallments: getRuleByName(
                       "PercentagePayableViaExtraInstallments",
                     ),
@@ -254,6 +260,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                       "IncomeSourceUpdateAllowed",
                     ),
                   }}
+                  creditLineTerms={creditLineTerms!}
                 />
               )}
             {currentStepsNumber &&

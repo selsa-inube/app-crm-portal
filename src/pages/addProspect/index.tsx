@@ -81,16 +81,25 @@ export function AddProspect() {
     consolidatedCreditSelections: { totalCollected: 0, selectedValues: {} },
   });
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+
   const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
     {},
   );
+
+  const [creditLineTerms, setCreditLineTerms] = useState<{
+    [lineName: string]: {
+      LoanAmountLimit: number;
+      LoanTermLimit: number;
+      RiskFreeInterestRate: number;
+    };
+  }>({});
 
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
       return (
         raw
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          //eslint-disable-next-line @typescript-eslint/no-explicit-any
           .map((v: any) => (typeof v === "string" ? v : v?.value))
           .filter(Boolean)
       );
@@ -106,12 +115,34 @@ export function AddProspect() {
     [valueRule],
   );
 
-  const fetchValidationRulesData = useCallback(async () => {
-    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
+  type RuleEvaluationResult = {
+    value: number | string;
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+  };
 
+  const getRuleValue = (input: unknown): number | string | null => {
+    if (Array.isArray(input)) {
+      const first = input[0];
+      return first && typeof first === "object" && "value" in first
+        ? (first as RuleEvaluationResult).value
+        : (first ?? null);
+    }
+
+    if (input !== null && typeof input === "object" && "value" in input) {
+      return (input as RuleEvaluationResult).value;
+    }
+
+    return typeof input === "string" || typeof input === "number"
+      ? input
+      : null;
+  };
+
+  const fetchCreditLineTerms = useCallback(async () => {
+    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     if (!clientInfo?.associateType) return;
 
-    const dataRulesBase = {
+    const baseDataRules = {
       MoneyDestination: formData.selectedDestination,
       ClientType: clientInfo.associateType?.substring(0, 1) || "",
       EmploymentContractTermType:
@@ -122,103 +153,93 @@ export function AddProspect() {
       ),
     };
 
-    const rulesValidate = [
-      "LineOfCredit",
-      "PercentagePayableViaExtraInstallments",
-      "IncomeSourceUpdateAllowed",
-    ];
+    const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
+      ...baseDataRules,
+      LineOfCredit: "",
+    });
 
-    let products = formData.selectedProducts;
-    if (!products || products.length === 0) {
-      const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
-        ...dataRulesBase,
-        LineOfCredit: "",
-      });
-      if (lineOfCreditRule) {
-        const lineOfCreditValues = await evaluateRule(
-          lineOfCreditRule,
-          postBusinessUnitRules,
-          "value",
-          businessUnitPublicCode,
-          true,
-        );
-        if (Array.isArray(lineOfCreditValues)) {
-          products = lineOfCreditValues
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .map((v: any) =>
-              typeof v === "string"
-                ? v
-                : v && typeof v === "object" && "value" in v
-                  ? v.value
-                  : "",
-            )
-            .filter(Boolean);
-        } else {
-          products = [""];
-        }
-      } else {
-        products = [""];
-      }
-    }
+    if (!lineOfCreditRule) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ruleResults: { [ruleName: string]: any[] } = {};
-
-    await Promise.all(
-      products.map(async (product) => {
-        const dataRules = {
-          ...dataRulesBase,
-          LineOfCredit: product || "",
-        };
-
-        await Promise.all(
-          rulesValidate.map(async (ruleName) => {
-            const rule = ruleConfig[ruleName]?.(dataRules);
-            if (!rule) return;
-
-            try {
-              const values = await evaluateRule(
-                rule,
-                postBusinessUnitRules,
-                "value",
-                businessUnitPublicCode,
-                true,
-              );
-
-              if (!ruleResults[ruleName]) ruleResults[ruleName] = [];
-              if (Array.isArray(values)) {
-                ruleResults[ruleName].push(...values);
-              } else if (values !== undefined) {
-                ruleResults[ruleName].push(values);
-              }
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (error: any) {
-              console.error(
-                `Error evaluando ${ruleName} para producto`,
-                product,
-                error,
-              );
-            }
-          }),
-        );
-      }),
+    const lineOfCreditValues = await evaluateRule(
+      lineOfCreditRule,
+      postBusinessUnitRules,
+      "value",
+      businessUnitPublicCode,
+      true,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const uniqueRuleResults: { [ruleName: string]: any[] } = {};
-    Object.keys(ruleResults).forEach((ruleName) => {
-      const seen = new Set();
-      uniqueRuleResults[ruleName] = ruleResults[ruleName].filter((item) => {
-        const key = typeof item === "object" ? JSON.stringify(item) : item;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-    });
-    setValueRule((prev) => ({
-      ...prev,
-      ...uniqueRuleResults,
-    }));
+    const lineNames = Array.isArray(lineOfCreditValues)
+      ? lineOfCreditValues
+          //eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .map((v: any) => (typeof v === "string" ? v : v?.value || ""))
+          .filter(Boolean)
+      : [];
+
+    const result: Record<
+      string,
+      {
+        LoanAmountLimit: number;
+        LoanTermLimit: number;
+        RiskFreeInterestRate: number;
+      }
+    > = {};
+
+    for (const line of lineNames) {
+      const ruleData = { ...baseDataRules, LineOfCredit: line };
+
+      const loanAmountRule = ruleConfig["LoanAmountLimit"]?.(ruleData);
+      const loanAmount = loanAmountRule
+        ? await evaluateRule(
+            loanAmountRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
+        : null;
+      const amountValue = Number(getRuleValue(loanAmount) ?? 0);
+
+      const termRuleInput = {
+        ...ruleData,
+        LoanAmount: amountValue,
+      };
+      const termRule = ruleConfig["LoanTermLimit"]?.(termRuleInput);
+      const termValueRaw = termRule
+        ? await evaluateRule(
+            termRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
+        : null;
+      const termValue = Number(getRuleValue(termValueRaw) ?? 0);
+
+      const interestInput = {
+        ...ruleData,
+        LoanAmount: amountValue,
+        LoanTerm: termValue,
+      };
+      const interestRule = ruleConfig["RiskFreeInterestRate"]?.(interestInput);
+      const rateValueRaw = interestRule
+        ? await evaluateRule(
+            interestRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
+        : null;
+      const interestRate = Number(getRuleValue(rateValueRaw) ?? 0);
+
+      result[line] = {
+        LoanAmountLimit: amountValue,
+        LoanTermLimit: termValue,
+        RiskFreeInterestRate: interestRate,
+      };
+    }
+
+    setCreditLineTerms(result);
   }, [
     customerData,
     businessUnitPublicCode,
@@ -226,11 +247,96 @@ export function AddProspect() {
     formData.selectedProducts,
   ]);
 
+  const fetchCreditLinePermissions = useCallback(async () => {
+    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
+    if (!clientInfo?.associateType) return;
+
+    const baseDataRules = {
+      MoneyDestination: formData.selectedDestination,
+      ClientType: clientInfo.associateType?.substring(0, 1) || "",
+      EmploymentContractTermType:
+        clientInfo.employmentType?.substring(0, 2) || "",
+      AffiliateSeniority: getMonthsElapsed(
+        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
+        0,
+      ),
+    };
+
+    const products =
+      formData.selectedProducts?.length > 0
+        ? formData.selectedProducts
+        : Object.keys(valueRule || {});
+
+    const rulesToValidate = [
+      "PercentagePayableViaExtraInstallments",
+      "IncomeSourceUpdateAllowed",
+    ];
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const groupedResults: Record<string, Record<string, any[]>> = {};
+
+    await Promise.all(
+      products.map(async (product) => {
+        const productData = { ...baseDataRules, LineOfCredit: product };
+
+        groupedResults[product] = {};
+
+        await Promise.all(
+          rulesToValidate.map(async (ruleName) => {
+            const rule = ruleConfig[ruleName]?.(productData);
+            if (!rule) return;
+
+            const result = await evaluateRule(
+              rule,
+              postBusinessUnitRules,
+              "value",
+              businessUnitPublicCode,
+              true,
+            );
+
+            groupedResults[product][ruleName] = Array.isArray(result)
+              ? result
+              : [result];
+          }),
+        );
+      }),
+    );
+
+    setValueRule(() => {
+      const flattened: { [ruleName: string]: string[] } = {};
+
+      Object.values(groupedResults).forEach((rules) => {
+        Object.entries(rules).forEach(([ruleName, arr]) => {
+          //eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const cleanedValues = arr.map((v: any) =>
+            typeof v === "string" ? v : (v?.value ?? ""),
+          );
+
+          if (!flattened[ruleName]) {
+            flattened[ruleName] = cleanedValues;
+          } else {
+            flattened[ruleName] = Array.from(
+              new Set([...flattened[ruleName], ...cleanedValues]),
+            );
+          }
+        });
+      });
+
+      return flattened;
+    });
+  }, [
+    customerData,
+    businessUnitPublicCode,
+    formData.selectedDestination,
+    formData.selectedProducts,
+    valueRule,
+  ]);
+
   useEffect(() => {
     if (customerData) {
-      fetchValidationRulesData();
+      fetchCreditLineTerms();
+      fetchCreditLinePermissions();
     }
-  }, [customerData, fetchValidationRulesData]);
+  }, [customerData, fetchCreditLineTerms]);
 
   useEffect(() => {
     if (formData.generalToggleChecked) {
@@ -404,6 +510,7 @@ export function AddProspect() {
         handleConsolidatedCreditChange={handleConsolidatedCreditChange}
         isMobile={isMobile}
         isTablet={isTablet}
+        creditLineTerms={creditLineTerms}
       />
       {showConsultingModal && <Consulting />}
     </>
