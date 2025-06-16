@@ -16,6 +16,7 @@ import { CreditProspect } from "../prospect/components/CreditProspect";
 import { StyledMarginPrint, StyledPrint } from "./styles";
 import { dataEditProspect, titlesModal } from "./config";
 import { IDataHeader, IDataProspect } from "./types";
+import { IPaymentChannel } from "@src/services/types";
 
 interface IEditProspectUIProps {
   dataHeader: IDataHeader;
@@ -38,6 +39,10 @@ interface IEditProspectUIProps {
   handleInfo: () => void;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setShowCreditRequest: React.Dispatch<React.SetStateAction<boolean>>;
+  setRequestValue: React.Dispatch<
+    React.SetStateAction<IPaymentChannel[] | undefined>
+  >;
+  requestValue?: IPaymentChannel[];
 }
 
 export function EditProspectUI(props: IEditProspectUIProps) {
@@ -58,6 +63,7 @@ export function EditProspectUI(props: IEditProspectUIProps) {
     pdfProspect,
     setShowShareModal,
     setShowMenu,
+    setRequestValue,
     handleSubmitClick,
     handleInfo,
     setIsModalOpen,
@@ -187,6 +193,7 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                     showPrint={true}
                     isPrint={true}
                     prospectData={dataProspect!}
+                    setRequestValue={setRequestValue}
                   />
                 </Fieldset>
                 <StyledPrint>
