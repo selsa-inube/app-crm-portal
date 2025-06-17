@@ -35,14 +35,17 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
-import { PaymentCapacityAnalysis } from "@src/components/modals/PaymentCapacityAnalysis";
+import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
 import { IIncomeSources } from "@services/incomeSources/types";
+import { BaseModal } from "@components/modals/baseModal";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCreditLimitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCreditLimitWarning: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCapacityAnalysisModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCapacityAnalysisWarning: React.Dispatch<React.SetStateAction<boolean>>;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -63,7 +66,9 @@ interface AddPositionUIProps {
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
   isCreditLimitModalOpen: boolean;
+  isCreditLimitWarning: boolean;
   isCapacityAnalysisModal: boolean;
+  isCapacityAnalysisWarning: boolean;
   formData: IFormData;
   selectedProducts: string[];
   isMobile: boolean;
@@ -72,14 +77,17 @@ interface AddPositionUIProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   prospectData: any;
   creditLimitData?: IIncomeSources;
+  totalIncome: number;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
   const {
     setIsModalOpenRequirements,
     setIsCreditLimitModalOpen,
+    setIsCreditLimitWarning,
     setIsCurrentFormValid,
     setIsCapacityAnalysisModal,
+    setIsCapacityAnalysisWarning,
     setRequestValue,
     requestValue,
     handleNextStep,
@@ -96,13 +104,16 @@ export function AddProspectUI(props: AddPositionUIProps) {
     isCurrentFormValid,
     isModalOpenRequirements,
     isCreditLimitModalOpen,
+    isCreditLimitWarning,
     isCapacityAnalysisModal,
+    isCapacityAnalysisWarning,
     formData,
     selectedProducts,
     isMobile,
     isTablet,
     prospectData,
     creditLimitData,
+    totalIncome,
   } = props;
 
   return (
@@ -143,7 +154,13 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     size="28px"
                     spacing="compact"
                     variant="outlined"
-                    onClick={() => setIsCreditLimitModalOpen(true)}
+                    onClick={() => {
+                      if ((currentStepsNumber?.id ?? 0) >= 4) {
+                        setIsCreditLimitModalOpen(true);
+                      } else {
+                        setIsCreditLimitWarning(true);
+                      }
+                    }}
                   />
                   <Icon
                     icon={<MdOutlinePaid />}
@@ -151,7 +168,13 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     size="28px"
                     spacing="compact"
                     variant="outlined"
-                    onClick={() => setIsCapacityAnalysisModal(true)}
+                    onClick={() => {
+                      if (totalIncome === 0) {
+                        setIsCapacityAnalysisWarning(true);
+                      } else {
+                        setIsCapacityAnalysisModal(true);
+                      }
+                    }}
                   />
                   <Icon
                     icon={<MdOutlineRule />}
@@ -170,14 +193,26 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     appearance="gray"
                     spacing="compact"
                     variant="outlined"
-                    onClick={() => setIsCreditLimitModalOpen(true)}
+                    onClick={() => {
+                      if ((currentStepsNumber?.id ?? 0) >= 4) {
+                        setIsCreditLimitModalOpen(true);
+                      } else {
+                        setIsCreditLimitWarning(true);
+                      }
+                    }}
                   />
                   <Button
                     spacing="compact"
                     appearance="gray"
                     iconBefore={<MdOutlinePaid />}
                     children={textAddCongfig.buttonPaymentCapacity}
-                    onClick={() => setIsCapacityAnalysisModal(true)}
+                    onClick={() => {
+                      if (totalIncome === 0) {
+                        setIsCapacityAnalysisWarning(true);
+                      } else {
+                        setIsCapacityAnalysisModal(true);
+                      }
+                    }}
                     variant="outlined"
                   />
                   <ButtonRequirements
@@ -369,11 +404,37 @@ export function AddProspectUI(props: AddPositionUIProps) {
               setRequestValue={setRequestValue}
             />
           )}
+          {isCreditLimitWarning && (
+            <BaseModal
+              title={textAddCongfig.titleQuotas}
+              nextButton={textAddCongfig.close}
+              handleNext={() => setIsCreditLimitWarning(false)}
+              handleClose={() => setIsCreditLimitWarning(false)}
+              width={isMobile ? "280px" : "400px"}
+            >
+              <Stack>
+                <Text>{textAddCongfig.descriptionQuotas}</Text>
+              </Stack>
+            </BaseModal>
+          )}
           {isCapacityAnalysisModal && (
             <PaymentCapacityAnalysis
               isMobile={isMobile}
               handleClose={() => setIsCapacityAnalysisModal(false)}
             />
+          )}
+          {isCapacityAnalysisWarning && (
+            <BaseModal
+              title={textAddCongfig.titlePaymentCapacity}
+              nextButton={textAddCongfig.close}
+              handleNext={() => setIsCapacityAnalysisWarning(false)}
+              handleClose={() => setIsCapacityAnalysisWarning(false)}
+              width={isMobile ? "280px" : "400px"}
+            >
+              <Stack>
+                <Text>{textAddCongfig.descriptionPaymentCapacity}</Text>
+              </Stack>
+            </BaseModal>
           )}
         </Stack>
       </Stack>

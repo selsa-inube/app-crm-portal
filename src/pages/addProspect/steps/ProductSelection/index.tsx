@@ -310,8 +310,9 @@ export function ProductSelection(props: IProductSelectionProps) {
               nextButton={electionData.understood}
               handleNext={() => setShowInfoModal(false)}
               handleClose={() => setShowInfoModal(false)}
+              width={isMobile ? "280px" : "400px"}
             >
-              <Stack width={isMobile ? "290px" : "400px"}>
+              <Stack>
                 <Text>{electionData.informationDescription}</Text>
               </Stack>
             </BaseModal>

@@ -27,7 +27,10 @@ export function AddProspect() {
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
+  const [isCreditLimitWarning, setIsCreditLimitWarning] = useState(false);
   const [isCapacityAnalysisModal, setIsCapacityAnalysisModal] = useState(false);
+  const [isCapacityAnalysisWarning, setIsCapacityAnalysisWarning] =
+    useState(false);
   const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -113,19 +116,7 @@ export function AddProspect() {
             estimatedDateOfConsolidation: "2025-06-12T15:04:05Z", // borrar en un futuro
             lineOfCreditDescription: item.title,
           }))
-        : [
-            {
-              borrowerIdentificationNumber:
-                onlyBorrowerData.borrowerIdentificationNumber,
-              borrowerIdentificationType:
-                onlyBorrowerData.borrowerIdentificationType,
-              consolidatedAmount: 1,
-              consolidatedAmountType: "none",
-              creditProductCode: "none",
-              estimatedDateOfConsolidation: "2025-06-12T15:04:05Z", // borrar en un futuro
-              lineOfCreditDescription: "none",
-            },
-          ],
+        : [],
     linesOfCredit: formData.selectedProducts.map((product) => ({
       lineOfCreditAbbreviatedName: product,
     })),
@@ -313,6 +304,21 @@ export function AddProspect() {
     setFormData((prevState) => ({ ...prevState, [field]: newValue }));
   };
 
+  const totalIncome =
+    (creditLimitData?.Dividends ?? 0) +
+    (creditLimitData?.FinancialIncome ?? 0) +
+    (creditLimitData?.Leases ?? 0) +
+    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
+    (creditLimitData?.PensionAllowances ?? 0) +
+    (creditLimitData?.PeriodicSalary ?? 0) +
+    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
+    (creditLimitData?.ProfessionalFees ?? 0);
+
+  const totalObligations = // modificar cuando se integre obligations
+    (creditLimitData?.PeriodicSalary ?? 0) +
+    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
+    (creditLimitData?.ProfessionalFees ?? 0);
+
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
       setFormData((prevState) => ({
@@ -332,19 +338,22 @@ export function AddProspect() {
     const isInExtraBorrowersStep =
       currentStep === stepsAddProspect.extraBorrowers.id;
 
+    const showSourcesIncome = togglesState[1] || totalIncome === 0;
+    const showObligations = togglesState[2] || totalObligations === 0;
+
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...(isInExtraBorrowersStep
-        ? []
-        : [
-            togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-            togglesState[2]
-              ? stepsAddProspect.obligationsFinancial.id
-              : undefined,
-          ]),
+      ...[
+        !(isInExtraBorrowersStep && totalIncome !== 0) && showSourcesIncome
+          ? stepsAddProspect.sourcesIncome.id
+          : undefined,
+        !(isInExtraBorrowersStep && totalObligations !== 0) && showObligations
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
+      ],
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
@@ -373,19 +382,24 @@ export function AddProspect() {
     const nextStepWouldBeExtraBorrowers =
       currentStep === stepsAddProspect.loanConditions.id && togglesState[3];
 
+    const showSourcesIncome = togglesState[1] || totalIncome === 0;
+    const showObligations = togglesState[2] || totalObligations === 0;
+
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...(nextStepWouldBeExtraBorrowers
-        ? []
-        : [
-            togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-            togglesState[2]
-              ? stepsAddProspect.obligationsFinancial.id
-              : undefined,
-          ]),
+      ...[
+        !(nextStepWouldBeExtraBorrowers && totalIncome !== 0) &&
+        showSourcesIncome
+          ? stepsAddProspect.sourcesIncome.id
+          : undefined,
+        !(nextStepWouldBeExtraBorrowers && totalObligations !== 0) &&
+        showObligations
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
+      ],
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
@@ -435,19 +449,20 @@ export function AddProspect() {
     }, 2000);
   };
 
+  const fetchCreditLimit = async () => {
+    try {
+      const result = await getCreditLimit(
+        businessUnitPublicCode,
+        customerPublicCode!,
+      );
+      setCreditLimitData(result);
+    } catch (error) {
+      handleFlag(error);
+    }
+  };
+
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
-      const fetchCreditLimit = async () => {
-        try {
-          const result = await getCreditLimit(
-            businessUnitPublicCode,
-            customerPublicCode!,
-          );
-          setCreditLimitData(result);
-        } catch (error) {
-          handleFlag(error);
-        }
-      };
       fetchCreditLimit();
     }
   }, [currentStep]);
@@ -471,6 +486,8 @@ export function AddProspect() {
         getAllDataRuleByName={getAllDataRuleByName}
         getRuleByName={getRuleByName}
         setCurrentStep={setCurrentStep}
+        setIsCreditLimitWarning={setIsCreditLimitWarning}
+        isCreditLimitWarning={isCreditLimitWarning}
         currentStepsNumber={currentStepsNumber}
         dataHeader={dataHeader}
         handleSubmitClick={handleSubmitClick}
@@ -484,6 +501,9 @@ export function AddProspect() {
         isMobile={isMobile}
         isTablet={isTablet}
         creditLimitData={creditLimitData}
+        totalIncome={totalIncome}
+        isCapacityAnalysisWarning={isCapacityAnalysisWarning}
+        setIsCapacityAnalysisWarning={setIsCapacityAnalysisWarning}
       />
       {showConsultingModal && <Consulting />}
     </>

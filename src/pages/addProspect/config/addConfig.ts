@@ -22,15 +22,22 @@ export const addConfig = {
       isActive: false,
     },
     {
-      path: `/credit/add-prospect/:customerPublicCode`,
+      path: `/credit/simulate-credit/:customerPublicCode`,
       label: "Simular crédito",
-      id: "/credit/add-prospect",
+      id: "/credit/simulate-credit",
       isActive: true,
     },
   ],
 };
 export const textAddCongfig = {
   buttonQuotas: "Cupos",
+  titleQuotas: "Cupo por línea de crédito",
+  descriptionQuotas:
+    "No se pueden seleccionar los cupos porque no se han seleccionado las líneas de crédito.",
+  close: "Cerrar",
   buttonPaymentCapacity: "Cap. de pago",
+  titlePaymentCapacity: "Análisis de capacidad de pago",
+  descriptionPaymentCapacity:
+    "El sistema no cuenta con información financiera del cliente",
   errorPost: "Error al crear la solicitud de crédito",
 };
