@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMediaQuery } from "@inubekit/inubekit";
+import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
@@ -8,12 +8,15 @@ import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { IPaymentChannel } from "@services/types";
+import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData } from "./types";
 import { AddProspectUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
+import { tittleOptions } from "./steps/financialObligations/config/config";
 
 export function AddProspect() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -25,8 +28,12 @@ export function AddProspect() {
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
   const [isCapacityAnalysisModal, setIsCapacityAnalysisModal] = useState(false);
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
+  const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
+    null,
+  );
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
+  const { addFlag } = useFlag();
 
   const steps = Object.values(stepsAddProspect);
   const navigate = useNavigate();
@@ -338,6 +345,40 @@ export function AddProspect() {
     }
   }, [customerData, fetchCreditLineTerms]);
 
+  const fetchDataClientPortfolio = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    try {
+      const data = await getClientPortfolioObligationsById(
+        businessUnitPublicCode,
+        customerPublicCode,
+      );
+      setClientPortfolio(data);
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (customerData) {
+      fetchCreditLineTerms();
+      fetchCreditLinePermissions();
+    }
+  }, [customerData, fetchCreditLineTerms]);
+
   useEffect(() => {
     if (formData.generalToggleChecked) {
       setSelectedProducts([]);
@@ -418,6 +459,10 @@ export function AddProspect() {
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
     }
+    if (currentStep === stepsAddProspect.sourcesIncome.id) {
+      setCurrentStep(stepsAddProspect.obligationsFinancial.id);
+      return;
+    }
     if (currentStep === stepsAddProspect.productSelection.id) {
       setCurrentStep(dynamicSteps[0]);
     } else if (
@@ -479,6 +524,12 @@ export function AddProspect() {
     }, 2000);
   };
 
+  useEffect(() => {
+    if (currentStep === stepsAddProspect.productSelection.id) {
+      fetchDataClientPortfolio();
+    }
+  }, [currentStep]);
+
   return (
     <>
       <AddProspectUI
@@ -511,6 +562,7 @@ export function AddProspect() {
         isMobile={isMobile}
         isTablet={isTablet}
         creditLineTerms={creditLineTerms}
+        clientPortfolio={clientPortfolio as IObligations}
       />
       {showConsultingModal && <Consulting />}
     </>

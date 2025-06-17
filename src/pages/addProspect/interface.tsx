@@ -19,6 +19,7 @@ import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInsta
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
 import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -80,6 +81,7 @@ interface AddPositionUIProps {
   isTablet: boolean;
   currentStepsNumber?: StepDetails;
   creditLineTerms?: ICreditLineTerms;
+  clientPortfolio: IObligations;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -110,6 +112,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     isMobile,
     isTablet,
     creditLineTerms,
+    clientPortfolio,
   } = props;
 
   return (
@@ -292,7 +295,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
             {currentStepsNumber &&
               currentStepsNumber.id ===
                 stepsAddProspect.obligationsFinancial.id && (
-                <ObligationsFinancial isMobile={isMobile} />
+                <ObligationsFinancial
+                  isMobile={isMobile}
+                  clientPortfolio={clientPortfolio}
+                />
               )}
             {currentStepsNumber &&
               currentStepsNumber.id === stepsAddProspect.loanConditions.id && (

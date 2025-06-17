@@ -26,7 +26,7 @@ export const headers: {
 ];
 
 export const dataReport = {
-  title: "Obligaciones financieras",
+  title: "Deudor",
   description: "Camilo Alberto Rincon Jaramillo",
   addObligations: "Agregar obligaciones",
   noData: "No existen obligaciones financieras",
@@ -45,3 +45,30 @@ export const dataReport = {
   content: "¿Realmente desea eliminar esta obligación?",
   cancel: "Cancelar",
 };
+
+export function convertObligationsToProperties(
+  obligations: {
+    balanceObligationTotal: number;
+    duesPaid: number;
+    entity: string;
+    nextPaymentValueTotal: number;
+    obligationNumber: string;
+    outstandingDues: number;
+    paymentMethodName: string;
+    productName: string;
+  }[],
+): { propertyName: string; propertyValue: string }[] {
+  return obligations.map((obligation) => ({
+    propertyName: "FinancialObligation",
+    propertyValue: [
+      obligation.productName ?? "",
+      obligation.balanceObligationTotal ?? 0,
+      obligation.nextPaymentValueTotal ?? 0,
+      obligation.entity ?? "",
+      obligation.paymentMethodName ?? "",
+      obligation.obligationNumber ?? "",
+      obligation.duesPaid ?? 0,
+      obligation.outstandingDues ?? 0,
+    ].join(", "),
+  }));
+}
