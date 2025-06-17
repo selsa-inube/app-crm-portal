@@ -26,7 +26,6 @@ import {
   mockRangeRequeredByTheBusinessUnit,
   mockRiskScoring,
 } from "@mocks/credit-profile/risk-scoring/riskScoring.mock";
-import { mockAttachedDocuments } from "@mocks/filing-application/attached-documents/attacheddocuments.mock";
 import { IRiskScoring } from "@services/types";
 
 import {
@@ -97,7 +96,7 @@ export function initializeDataDB(company: string) {
   intializedData("mockRequest_value", mockPaymentChannel);
   intializedData("financial_obligation", mockFinancialObligation);
   intializedData("extra_debtors", mockExtraDebtors);
-  intializedData("attached_documents", mockAttachedDocuments);
+
   intializedData("user_steps", userStepsMock);
   intializedData("extraordinary_installments", extraordinaryInstallmentMock);
 }

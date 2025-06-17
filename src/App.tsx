@@ -47,7 +47,7 @@ const router = createBrowserRouter(
       <Route path="credit/add-prospect/*" element={<AddProspectRoutes />} />
       <Route path="credit/edit-prospect/*" element={<EditProspectRoutes />} />
       <Route
-        path="credit/submit-credit-application/*"
+        path="credit/apply-for-credit/*"
         element={<SubmitCreditApplicationRoutes />}
       />
       <Route path="logout" element={<LogOut />} />

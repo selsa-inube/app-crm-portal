@@ -16,13 +16,21 @@ import {
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
+import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
+import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
+import {
+  IFormData,
+  IStep,
+  StepDetails,
+  titleButtonTextAssited,
+  ICreditLineTerms,
+} from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
@@ -40,6 +48,7 @@ interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCreditLimitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCapacityAnalysisModal: React.Dispatch<React.SetStateAction<boolean>>;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -59,16 +68,19 @@ interface AddPositionUIProps {
     newValue: number,
   ) => void;
   currentStep: number;
+  customerData: ICustomerData;
   dataHeader: { name: string; status: string };
   steps: IStep[];
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
   isCreditLimitModalOpen: boolean;
+  isCapacityAnalysisModal: boolean;
   formData: IFormData;
   selectedProducts: string[];
   isMobile: boolean;
   isTablet: boolean;
   currentStepsNumber?: StepDetails;
+  creditLineTerms?: ICreditLineTerms;
   clientPortfolio: IObligations;
 }
 
@@ -77,6 +89,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     setIsModalOpenRequirements,
     setIsCreditLimitModalOpen,
     setIsCurrentFormValid,
+    setIsCapacityAnalysisModal,
     setRequestValue,
     requestValue,
     handleNextStep,
@@ -85,23 +98,29 @@ export function AddProspectUI(props: AddPositionUIProps) {
     handleFormDataChange,
     setSelectedProducts,
     getRuleByName,
-    getAllDataRuleByName,
     handleConsolidatedCreditChange,
     currentStepsNumber,
+    customerData,
     dataHeader,
     steps,
     isCurrentFormValid,
     isModalOpenRequirements,
     isCreditLimitModalOpen,
+    isCapacityAnalysisModal,
     formData,
     selectedProducts,
     isMobile,
     isTablet,
+    creditLineTerms,
     clientPortfolio,
   } = props;
 
   return (
-    <>
+    <Stack
+      direction="column"
+      width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
+      margin="0 auto"
+    >
       <Stack
         direction="column"
         alignItems={isMobile ? "normal" : "center"}
@@ -149,6 +168,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     size="28px"
                     spacing="compact"
                     variant="outlined"
+                    onClick={() => setIsCapacityAnalysisModal(true)}
                   />
                   <Icon
                     icon={<MdOutlineRule />}
@@ -174,6 +194,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     appearance="gray"
                     iconBefore={<MdOutlinePaid />}
                     children={textAddCongfig.buttonPaymentCapacity}
+                    onClick={() => setIsCapacityAnalysisModal(true)}
                     variant="outlined"
                   />
                   <ButtonRequirements
@@ -241,11 +262,14 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   isMobile={isMobile}
                   choiceMoneyDestination={formData.selectedDestination}
                   allRules={{
-                    lineOfCredit: getAllDataRuleByName("LineOfCredit"),
                     PercentagePayableViaExtraInstallments: getRuleByName(
                       "PercentagePayableViaExtraInstallments",
                     ),
+                    IncomeSourceUpdateAllowed: getRuleByName(
+                      "IncomeSourceUpdateAllowed",
+                    ),
                   }}
+                  creditLineTerms={creditLineTerms!}
                 />
               )}
             {currentStepsNumber &&
@@ -269,7 +293,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
               )}
             {currentStepsNumber &&
               currentStepsNumber.id === stepsAddProspect.sourcesIncome.id && (
-                <SourcesOfIncome isMobile={isMobile} />
+                <SourcesOfIncome
+                  isMobile={isMobile}
+                  customerData={customerData}
+                />
               )}
             {currentStepsNumber &&
               currentStepsNumber.id ===
@@ -351,8 +378,14 @@ export function AddProspectUI(props: AddPositionUIProps) {
               setRequestValue={setRequestValue}
             />
           )}
+          {isCapacityAnalysisModal && (
+            <PaymentCapacityAnalysis
+              isMobile={isMobile}
+              handleClose={() => setIsCapacityAnalysisModal(false)}
+            />
+          )}
         </Stack>
       </Stack>
-    </>
+    </Stack>
   );
 }

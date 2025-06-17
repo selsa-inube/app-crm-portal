@@ -5,9 +5,9 @@ import { Stack, Text, Toggle, Divider } from "@inubekit/inubekit";
 
 import { CardProductSelection } from "@pages/addProspect/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
-import { removeDuplicates } from "@utils/mappingData/mappings";
 
 import { electionData } from "./config";
+import { ICreditLineTerms } from "../../types";
 
 interface IProductSelectionProps {
   initialValues: {
@@ -25,11 +25,10 @@ interface IProductSelectionProps {
   isMobile: boolean;
   choiceMoneyDestination: string;
   allRules: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    lineOfCredit: any[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    PercentagePayableViaExtraInstallments: any[];
+    PercentagePayableViaExtraInstallments: string[];
+    IncomeSourceUpdateAllowed: string[];
   };
+  creditLineTerms: ICreditLineTerms;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -44,6 +43,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     handleFormDataChange,
     isMobile,
     allRules,
+    creditLineTerms,
   } = props;
 
   const validationSchema = Yup.object().shape({
@@ -71,14 +71,26 @@ export function ProductSelection(props: IProductSelectionProps) {
     }
   }, [generalToggleChecked, setSelectedProducts]);
 
-  const uniqueServerResponse = removeDuplicates(allRules.lineOfCredit, "value");
-
   const shouldShowPrograming = (
     allRules.PercentagePayableViaExtraInstallments || []
   ).some((value) => Number(value) > 0);
 
-  const filteredQuestions = Object.entries(electionData.data).filter(
-    ([key]) => key !== "programing" || shouldShowPrograming,
+  const shouldShowIncomeUpdate =
+    (allRules.IncomeSourceUpdateAllowed || []).length > 0 &&
+    allRules.IncomeSourceUpdateAllowed.every((value) => value === "Y");
+
+  const isQuestionDisabled = (key: string) => {
+    if (key === "includeExtraordinaryInstallments") {
+      return !shouldShowPrograming;
+    }
+    if (key === "updateIncomeSources" || key === "updateFinancialObligations") {
+      return !shouldShowIncomeUpdate;
+    }
+    return false;
+  };
+
+  const allQuestions = Object.entries(electionData.questions).map(
+    ([key, question], index) => ({ key, question, index }),
   );
 
   return (
@@ -125,34 +137,39 @@ export function ProductSelection(props: IProductSelectionProps) {
                 padding={isMobile ? "0px 6px" : "0px 12px"}
                 wrap="wrap"
               >
-                {uniqueServerResponse.length > 0 ? (
-                  uniqueServerResponse.map((item, index) => (
-                    <Stack key={index} direction="column">
-                      <CardProductSelection
-                        key={index}
-                        amount={item.loan_amount_limit}
-                        rate={item.interest_rate}
-                        term={item.loan_term_limit}
-                        description={item.value}
-                        disabled={generalToggleChecked}
-                        isSelected={values.selectedProducts.includes(
-                          item.value,
-                        )}
-                        onSelect={() => {
-                          const newSelected = values.selectedProducts.includes(
-                            item.value,
-                          )
-                            ? values.selectedProducts.filter(
-                                (id) => id !== item.value,
-                              )
-                            : [...values.selectedProducts, item.value];
-                          setFieldValue("selectedProducts", newSelected);
-                          setSelectedProducts(newSelected);
-                          handleFormDataChange("selectedProducts", newSelected);
-                        }}
-                      />
-                    </Stack>
-                  ))
+                {Object.keys(creditLineTerms).length > 0 ? (
+                  Object.entries(creditLineTerms).map(
+                    ([lineName, terms], index) => (
+                      <Stack key={index} direction="column">
+                        <CardProductSelection
+                          key={lineName}
+                          amount={terms.LoanAmountLimit}
+                          rate={terms.RiskFreeInterestRate}
+                          term={terms.LoanTermLimit}
+                          description={lineName}
+                          disabled={generalToggleChecked}
+                          isSelected={values.selectedProducts.includes(
+                            lineName,
+                          )}
+                          onSelect={() => {
+                            const newSelected =
+                              values.selectedProducts.includes(lineName)
+                                ? values.selectedProducts.filter(
+                                    (id) => id !== lineName,
+                                  )
+                                : [...values.selectedProducts, lineName];
+
+                            setFieldValue("selectedProducts", newSelected);
+                            setSelectedProducts(newSelected);
+                            handleFormDataChange(
+                              "selectedProducts",
+                              newSelected,
+                            );
+                          }}
+                        />
+                      </Stack>
+                    ),
+                  )
                 ) : (
                   <Text type="body" size="medium">
                     {electionData.load}
@@ -161,14 +178,18 @@ export function ProductSelection(props: IProductSelectionProps) {
               </Stack>
             </Fieldset>
             <Fieldset>
-              {filteredQuestions.map(([key, question], index) => (
+              {allQuestions.map(({ key, question, index }, filteredIndex) => (
                 <Stack
                   direction="column"
                   key={key}
                   gap="16px"
                   padding="4px 10px"
                 >
-                  <Text type="body" size="medium">
+                  <Text
+                    type="body"
+                    size="medium"
+                    appearance={isQuestionDisabled(key) ? "gray" : "dark"}
+                  >
                     {question}
                   </Text>
                   <Stack gap="8px">
@@ -182,6 +203,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                           {...field}
                           value={field.value.toString()}
                           checked={field.value}
+                          disabled={isQuestionDisabled(key)}
                           onChange={() => {
                             onToggleChange(index);
                             setFieldValue(
@@ -205,7 +227,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                         : electionData.no}
                     </Text>
                   </Stack>
-                  {index !== Object.entries(filteredQuestions).length - 1 && (
+                  {filteredIndex !== allQuestions.length - 1 && (
                     <Divider dashed />
                   )}
                 </Stack>

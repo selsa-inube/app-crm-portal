@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
@@ -18,9 +18,8 @@ import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
-import { CreditLimit } from "@components/modals/CreditLimit";
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
-import { ICreditProductProspect } from "@services/types";
+import { ICreditProductProspect, IPaymentChannel } from "@services/types";
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { addCreditProduct } from "@mocks/utils/addCreditProductMock.service";
 import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
@@ -36,11 +35,14 @@ import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercial
 import { IProspect } from "@services/prospects/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
+import { AppContext } from "@context/AppContext";
+import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
+import { CreditLimitModal } from "../modals/CreditLimitModal";
 
 interface ICreditProspectProps {
   showMenu: () => void;
@@ -48,17 +50,28 @@ interface ICreditProspectProps {
   prospectData?: IProspect;
   isPrint?: boolean;
   showPrint?: boolean;
+  setRequestValue?: React.Dispatch<
+    React.SetStateAction<IPaymentChannel[] | undefined>
+  >;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
   const {
     prospectData,
     showMenu,
+    setRequestValue,
     isMobile,
     isPrint = false,
     showPrint = true,
   } = props;
 
+  const { businessUnitSigla } = useContext(AppContext);
+
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
+  const { customerPublicCode } = useParams();
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const [openModal, setOpenModal] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -359,6 +372,22 @@ export function CreditProspect(props: ICreditProspectProps) {
     fetchPDF();
   }, []);
 
+  useEffect(() => {
+    const fetchCreditLimit = async () => {
+      try {
+        const result = await getCreditLimit(
+          businessUnitPublicCode,
+          customerPublicCode!,
+        );
+
+        setCreditLimitData(result);
+      } catch (error) {
+        console.error("Error al obtener las solicitudes de crédito:", error);
+        return null;
+      }
+    };
+    fetchCreditLimit();
+  }, []);
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -443,19 +472,10 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         </Stack>
         {currentModal === "creditLimit" && (
-          <CreditLimit
+          <CreditLimitModal
             handleClose={handleCloseModal}
-            title="Origen de cupo"
-            onOpenPaymentCapacityModal={() => setOpenModal("paymentCapacity")}
-            onOpenReciprocityModal={() => setOpenModal("reciprocityModal")}
-            onOpenFrcModal={() => setOpenModal("scoreModal")}
-            maxPaymentCapacity={50000000}
-            maxReciprocity={40000000}
-            maxDebtFRC={45000000}
-            assignedLimit={0}
-            currentPortfolio={10000000}
-            maxUsableLimit={20000000}
-            availableLimitWithoutGuarantee={15000000}
+            isMobile={isMobile}
+            setRequestValue={setRequestValue || (() => {})}
           />
         )}
         {openModal === "paymentCapacity" && (
@@ -547,10 +567,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         {openModal === "IncomeModalEdit" && (
           <IncomeModal
             handleClose={() => setOpenModal(null)}
-            initialValues={
-              (selectedBorrower && incomeData[selectedBorrower.borrowerName]) ||
-              {}
-            }
+            initialValues={creditLimitData}
             onSubmit={handleIncomeSubmit}
           />
         )}

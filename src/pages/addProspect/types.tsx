@@ -127,3 +127,11 @@ export type ContextData = Record<string, any>;
 export type Rule = Irule;
 
 export type RuleBuilder = (contextData: ContextData) => Rule;
+
+export type ICreditLineTerms = {
+  [line: string]: {
+    LoanAmountLimit: number;
+    LoanTermLimit: number;
+    RiskFreeInterestRate: number;
+  };
+};

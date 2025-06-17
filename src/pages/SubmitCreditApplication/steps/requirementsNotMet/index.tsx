@@ -75,7 +75,6 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
                 causeNonCompliance={
                   requirementData.descriptionEvaluationRequirement
                 }
-                width={isMobile ? "100%" : "49%"}
               />
             ))}
           </Stack>

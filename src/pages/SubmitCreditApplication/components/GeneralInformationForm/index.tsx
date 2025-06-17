@@ -4,6 +4,7 @@ import {
   Select,
   Grid,
   Phonefield,
+  Stack,
 } from "@inubekit/inubekit";
 
 import { disbursemenOptionAccount } from "@pages/SubmitCreditApplication/steps/disbursementGeneral/config";
@@ -29,7 +30,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
   return (
     <>
       <Grid
-        templateColumns={isMobile ? "1fr" : "repeat(3, 1fr)"}
+        templateColumns={isMobile ? "1fr" : "repeat(4, 1fr)"}
         gap="16px"
         autoRows="auto"
       >
@@ -47,6 +48,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           value={formik.values[optionNameForm]?.documentType || ""}
           fullwidth
         />
+
         <Input
           id={"identification"}
           name={`${optionNameForm}.identification`}
@@ -90,21 +92,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           size="compact"
           readOnly={isReadOnly}
         />
-        <Select
-          id={"sex"}
-          name={`${optionNameForm}.sex`}
-          label={disbursemenOptionAccount.labelSex}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={Sex}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.sex`, value)
-          }
-          value={formik.values[optionNameForm]?.sex || ""}
-          fullwidth
-          readonly={!isReadOnly}
-        />
+
         <DateInube
           id="birthdate"
           name={`${optionNameForm}.birthdate`}
@@ -121,6 +109,21 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
                 : "",
             );
           }}
+        />
+        <Select
+          id={"sex"}
+          name={`${optionNameForm}.sex`}
+          label={disbursemenOptionAccount.labelSex}
+          placeholder={disbursemenOptionAccount.placeOption}
+          size="compact"
+          options={Sex}
+          onBlur={formik.handleBlur}
+          onChange={(_, value) =>
+            formik.setFieldValue(`${optionNameForm}.sex`, value)
+          }
+          value={formik.values[optionNameForm]?.sex || ""}
+          readonly={!isReadOnly}
+          fullwidth
         />
         <Phonefield
           id={"phone"}
@@ -148,6 +151,8 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           readOnly={isReadOnly}
           type="email"
         />
+      </Grid>
+      <Stack width="498px">
         <Select
           id={"city"}
           name={`${optionNameForm}.city`}
@@ -163,7 +168,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           fullwidth
           readonly={!isReadOnly}
         />
-      </Grid>
+      </Stack>
     </>
   );
 }

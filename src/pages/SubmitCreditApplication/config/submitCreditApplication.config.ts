@@ -1,6 +1,6 @@
 export const submitCreditApplicationConfig = {
   id: 1,
-  title: "Radicar solicitud de crédito",
+  title: "Solicitar crédito",
   route: "/edit-prospect/:prospectCode",
   crumbs: [
     {
@@ -22,9 +22,9 @@ export const submitCreditApplicationConfig = {
       isActive: false,
     },
     {
-      path: `/submit-credit-application/:customerPublicCode/:prospectCode`,
-      label: "Radicar solicitud de crédito",
-      id: "/submit-credit-application/",
+      path: `/apply-for-credit/:customerPublicCode/:prospectCode`,
+      label: "Solicitar crédito",
+      id: "/apply-for-credit/",
       isActive: true,
     },
   ],

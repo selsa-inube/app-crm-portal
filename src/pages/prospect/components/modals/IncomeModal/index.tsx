@@ -25,7 +25,6 @@ export function IncomeModal(props: IncomeModalProps) {
   const handleDataChange = (newData: any) => {
     setFormData(newData);
   };
-
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const { addFlag } = useFlag();
