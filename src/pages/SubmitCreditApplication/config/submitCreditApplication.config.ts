@@ -22,9 +22,9 @@ export const submitCreditApplicationConfig = {
       isActive: false,
     },
     {
-      path: `/submit-credit-application/:customerPublicCode/:prospectCode`,
+      path: `/apply-for-credit/:customerPublicCode/:prospectCode`,
       label: "Solicitar crédito",
-      id: "/submit-credit-application/",
+      id: "/apply-for-credit/",
       isActive: true,
     },
   ],

@@ -77,9 +77,7 @@ export function EditProspect() {
       return;
     }
 
-    navigate(
-      `/credit/submit-credit-application/${customerPublicCode}/${prospectCode}`,
-    );
+    navigate(`/credit/apply-for-credit/${customerPublicCode}/${prospectCode}`);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

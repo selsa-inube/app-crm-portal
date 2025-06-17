@@ -14,7 +14,9 @@ import { SubmitCreditApplicationUI } from "./interface";
 import { IFormData } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
-import { dataSubmitApplication } from "./config/config";
+import { dataSubmitApplication, tittleOptions } from "./config/config";
+import { getSearchProspectSummaryById } from "@src/services/prospects/ProspectSummaryById";
+import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
 
 export function SubmitCreditApplication() {
   const { customerPublicCode, prospectCode } = useParams();
@@ -24,7 +26,8 @@ export function SubmitCreditApplication() {
   const [approvedRequestModal, setApprovedRequestModal] = useState(false);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
-
+  const [prospectSummaryData, setProspectSummaryData] =
+    useState<IProspectSummaryById>();
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -160,7 +163,7 @@ export function SubmitCreditApplication() {
     },
     attachedDocuments: {},
   });
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const hasBorrowers = Object.keys(formData.borrowerData.borrowers).length;
   const bondValue = prospectData.bondValue;
   const getRuleByName = useCallback(
@@ -557,6 +560,30 @@ export function SubmitCreditApplication() {
     ...steps[currentStepIndex],
     number: currentStepIndex + 1,
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getSearchProspectSummaryById(
+          businessUnitPublicCode,
+          prospectData?.prospectId,
+        );
+        if (result) {
+          setProspectSummaryData(result);
+        }
+      } catch (error) {
+        addFlag({
+          title: tittleOptions.titleError,
+          description: JSON.stringify(error),
+          appearance: "danger",
+          duration: 6000,
+        });
+      }
+    };
+
+    if (prospectData?.prospectId) {
+      fetchData();
+    }
+  }, [businessUnitPublicCode, prospectData?.prospectId]);
 
   return (
     <>
@@ -585,6 +612,9 @@ export function SubmitCreditApplication() {
         codeError={codeError}
         addToFix={addToFix}
         getRuleByName={getRuleByName}
+        prospectSummaryData={prospectSummaryData}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
       />
     </>
   );
