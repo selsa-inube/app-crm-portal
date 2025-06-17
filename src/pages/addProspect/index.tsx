@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMediaQuery } from "@inubekit/inubekit";
+import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
@@ -8,12 +8,15 @@ import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { IPaymentChannel } from "@services/types";
+import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
+import { IObligations } from "@services/creditRequest/getClientPortfolioObligations/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData } from "./types";
 import { AddProspectUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
+import { tittleOptions } from "./steps/financialObligations/config/config";
 
 export function AddProspect() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -24,8 +27,12 @@ export function AddProspect() {
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
+  const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
+    null,
+  );
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
+  const { addFlag } = useFlag();
 
   const steps = Object.values(stepsAddProspect);
   const navigate = useNavigate();
@@ -223,6 +230,26 @@ export function AddProspect() {
     formData.selectedProducts,
   ]);
 
+  const fetchDataClientPortfolio = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    try {
+      const data = await getClientPortfolioObligationsById(
+        businessUnitPublicCode,
+        customerPublicCode,
+      );
+      setClientPortfolio(data);
+    } catch (err) {
+      addFlag({
+        title: tittleOptions.titleError,
+        description: tittleOptions.descriptionError,
+        appearance: "danger",
+        duration: 6000,
+      });
+    }
+  };
+
   useEffect(() => {
     if (customerData) {
       fetchValidationRulesData();
@@ -348,6 +375,12 @@ export function AddProspect() {
     }, 2000);
   };
 
+  useEffect(() => {
+    if (currentStep === stepsAddProspect.productSelection.id) {
+      fetchDataClientPortfolio();
+    }
+  }, [currentStep]);
+
   return (
     <>
       <AddProspectUI
@@ -376,6 +409,7 @@ export function AddProspect() {
         handleConsolidatedCreditChange={handleConsolidatedCreditChange}
         isMobile={isMobile}
         isTablet={isTablet}
+        clientPortfolio={clientPortfolio as IObligations}
       />
       {showConsultingModal && <Consulting />}
     </>

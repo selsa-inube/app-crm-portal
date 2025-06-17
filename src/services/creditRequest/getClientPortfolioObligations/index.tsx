@@ -3,12 +3,12 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { ICreditRequest } from "@services/types";
+import { IObligations } from "./types";
 
 export const getClientPortfolioObligationsById = async (
   businessUnitPublicCode: string,
   ClientIdentificationNumber: string,
-): Promise<ICreditRequest[]> => {
+): Promise<IObligations | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -33,7 +33,7 @@ export const getClientPortfolioObligationsById = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return [];
+        return null;
       }
 
       const data = await res.json();
@@ -56,5 +56,5 @@ export const getClientPortfolioObligationsById = async (
     }
   }
 
-  return [];
+  return null;
 };

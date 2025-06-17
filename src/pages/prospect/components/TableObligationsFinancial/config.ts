@@ -26,7 +26,7 @@ export const headers: {
 ];
 
 export const dataReport = {
-  title: "Obligaciones financieras",
+  title: "Deudor",
   description: "Camilo Alberto Rincon Jaramillo",
   addObligations: "Agregar obligaciones",
   noData: "No existen obligaciones financieras",
@@ -47,8 +47,16 @@ export const dataReport = {
 };
 
 export function convertObligationsToProperties(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  obligations: any[],
+  obligations: {
+    balanceObligationTotal: number;
+    duesPaid: number;
+    entity: string;
+    nextPaymentValueTotal: number;
+    obligationNumber: string;
+    outstandingDues: number;
+    paymentMethodName: string;
+    productName: string;
+  }[],
 ): { propertyName: string; propertyValue: string }[] {
   return obligations.map((ob) => ({
     propertyName: "FinancialObligation",

@@ -84,12 +84,15 @@ export const TableFinancialObligationsUI = ({
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
   const {
+    totalRecords,
     handleStartPage,
     handlePrevPage,
     handleNextPage,
     handleEndPage,
     firstEntryInPage,
-  } = usePagination();
+    lastEntryInPage,
+    paddedCurrentData,
+  } = usePagination(dataInformation);
 
   const getValueFromProperty = (
     value: string | number | string[] | undefined,
@@ -156,12 +159,24 @@ export const TableFinancialObligationsUI = ({
   );
 
   const renderDataRows = () =>
-    // eslint-disable-next-line
-    dataInformation.map((prop: any, rowIndex: number) => {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    paddedCurrentData.map((prop: any, rowIndex: number) => {
+      if (prop.__isPadding) {
+        return (
+          <Tr key={prop.id}>
+            {visibleHeaders.map((_, colIndex) => (
+              <Td key={colIndex} type="custom">
+                &nbsp;
+              </Td>
+            ))}
+          </Tr>
+        );
+      }
+
       let values: string[] = [];
 
       if (typeof prop.propertyValue === "string") {
-        // eslint-disable-next-line
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         values = prop.propertyValue.split(",").map((val: any) => val.trim());
       } else if (Array.isArray(prop.propertyValue)) {
         values = prop.propertyValue.map(String);
@@ -183,7 +198,7 @@ export const TableFinancialObligationsUI = ({
                 : currencyFormat(Number(cellData), false);
             }
 
-            const isFromInitialValues = Boolean(prop.property_name);
+            const isFromInitialValues = Boolean(prop.propertyName);
             if (isFromInitialValues && colIndex === values.length - 2) {
               cellData = `${values[colIndex]}/${values[colIndex + 1]}`.trim();
             }
@@ -193,7 +208,7 @@ export const TableFinancialObligationsUI = ({
                 key={colIndex}
                 appearance={rowIndex % 2 === 0 ? "light" : "dark"}
                 type={header.action ? "custom" : "text"}
-                align={isCurrency ? "right" : "center"}
+                align={isCurrency ? "right" : "left"}
               >
                 {header.action ? (
                   <Stack justifyContent="space-around">
@@ -248,8 +263,8 @@ export const TableFinancialObligationsUI = ({
               <Td colSpan={visibleHeaders.length} type="custom" align="center">
                 <Pagination
                   firstEntryInPage={firstEntryInPage}
-                  lastEntryInPage={dataInformation.length}
-                  totalRecords={dataInformation.length}
+                  lastEntryInPage={lastEntryInPage}
+                  totalRecords={totalRecords}
                   handleStartPage={handleStartPage}
                   handlePrevPage={handlePrevPage}
                   handleNextPage={handleNextPage}
