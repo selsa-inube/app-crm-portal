@@ -570,7 +570,7 @@ export function SubmitCreditApplication() {
         if (result) {
           setProspectSummaryData(result);
         }
-      } catch (error: unknown) {
+      } catch (error) {
         addFlag({
           title: tittleOptions.titleError,
           description: JSON.stringify(error),
