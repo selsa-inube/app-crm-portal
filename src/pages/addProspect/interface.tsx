@@ -17,7 +17,7 @@ import { ButtonRequirements } from "@pages/prospect/components/buttonRequirement
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { IPaymentChannel } from "@services/types";
-import { IObligations } from "@services/creditRequest/getClientPortfolioObligations/types";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";

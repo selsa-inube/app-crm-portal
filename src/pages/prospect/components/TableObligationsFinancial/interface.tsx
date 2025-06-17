@@ -165,7 +165,7 @@ export const TableFinancialObligationsUI = ({
         return (
           <Tr key={prop.id}>
             {visibleHeaders.map((_, colIndex) => (
-              <Td key={colIndex} type="custom">
+              <Td key={colIndex} type="text">
                 &nbsp;
               </Td>
             ))}

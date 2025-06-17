@@ -40,7 +40,7 @@ export const getClientPortfolioObligationsById = async (
 
       if (!res.ok) {
         throw {
-          message: "Error al obtener los ",
+          message: "Ha ocurrido un error: ",
           status: res.status,
           data,
         };
@@ -49,8 +49,14 @@ export const getClientPortfolioObligationsById = async (
       return data;
     } catch (error) {
       if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener el porfolio de obligaciones del cliente.",
+          "Todos los intentos fallaron. No se pudo obtener el portafolio de obligaciones.",
         );
       }
     }

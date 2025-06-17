@@ -9,7 +9,7 @@ import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { dataReport } from "@pages/prospect/components/TableObligationsFinancial/config";
-import { IObligations } from "@services/creditRequest/getClientPortfolioObligations/types";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 interface IObligationsFinancialProps {
   isMobile: boolean;
   clientPortfolio: IObligations;

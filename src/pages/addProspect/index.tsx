@@ -8,8 +8,8 @@ import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { IPaymentChannel } from "@services/types";
-import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
-import { IObligations } from "@services/creditRequest/getClientPortfolioObligations/types";
+import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData } from "./types";
@@ -240,12 +240,19 @@ export function AddProspect() {
         customerPublicCode,
       );
       setClientPortfolio(data);
-    } catch (err) {
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
       addFlag({
         title: tittleOptions.titleError,
-        description: tittleOptions.descriptionError,
+        description,
         appearance: "danger",
-        duration: 6000,
+        duration: 5000,
       });
     }
   };
