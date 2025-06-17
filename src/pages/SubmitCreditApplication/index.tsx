@@ -571,18 +571,9 @@ export function SubmitCreditApplication() {
           setProspectSummaryData(result);
         }
       } catch (error: unknown) {
-        const message = (() => {
-          if (error instanceof Error) return error.message;
-          try {
-            return JSON.stringify(error);
-          } catch {
-            return String(error);
-          }
-        })();
-
         addFlag({
           title: tittleOptions.titleError,
-          description: message,
+          description: JSON.stringify(error),
           appearance: "danger",
           duration: 6000,
         });
