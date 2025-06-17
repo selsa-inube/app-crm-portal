@@ -20,7 +20,7 @@ export const UnfulfilledRequirements = (
     <Fieldset
       title={title}
       isMobile={isMobile}
-      width={isMobile ? "100%" : "49%"}
+      width={isMobile ? "100%" : "100%"}
       borderColor="gray"
     >
       <Stack direction="column" gap="16px" padding="0 16px">
