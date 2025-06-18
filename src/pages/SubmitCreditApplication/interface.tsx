@@ -114,12 +114,6 @@ export function SubmitCreditApplicationUI(
           width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
           margin="0 auto"
         >
-          <GeneralHeader
-            buttonText="Agregar vinculación"
-            descriptionStatus={dataHeader.status}
-            name={dataHeader.name}
-            profileImageUrl={dataHeader.image || userImage}
-          />
           <Stack
             direction="column"
             alignItems={isMobile ? "normal" : "center"}
@@ -127,6 +121,12 @@ export function SubmitCreditApplicationUI(
             padding="24px"
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
+              <GeneralHeader
+                buttonText="Agregar vinculación"
+                descriptionStatus={dataHeader.status}
+                name={dataHeader.name}
+                profileImageUrl={dataHeader.image || userImage}
+              />
               <Breadcrumbs crumbs={submitCreditApplicationConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
                 <StyledArrowBack onClick={handleHome}>
