@@ -68,6 +68,7 @@ export function ProductSelection(props: IProductSelectionProps) {
   };
 
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [currentDisabledQuestion, setCurrentDisabledQuestion] = useState("");
 
   useEffect(() => {
     const isValid = generalToggleChecked || selectedProducts.length > 0;
@@ -277,7 +278,10 @@ export function ProductSelection(props: IProductSelectionProps) {
                               icon={<MdInfoOutline />}
                               appearance="primary"
                               size="16px"
-                              onClick={() => setShowInfoModal(true)}
+                              onClick={() => {
+                                setCurrentDisabledQuestion(key);
+                                setShowInfoModal(true);
+                              }}
                               cursorHover
                             />
                           </Stack>
@@ -313,7 +317,13 @@ export function ProductSelection(props: IProductSelectionProps) {
               width={isMobile ? "280px" : "400px"}
             >
               <Stack>
-                <Text>{electionData.informationDescription}</Text>
+                <Text>
+                  {
+                    electionData.informationDescription[
+                      currentDisabledQuestion as keyof typeof electionData.informationDescription
+                    ]
+                  }
+                </Text>
               </Stack>
             </BaseModal>
           )}
