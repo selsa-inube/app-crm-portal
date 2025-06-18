@@ -285,7 +285,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
             value={validateCurrencyField(
               "amount",
               formik,
-              true,
+              false,
               optionNameForm,
             )}
             onChange={(e) => {

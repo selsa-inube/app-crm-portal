@@ -320,6 +320,7 @@ export function SubmitCreditApplicationUI(
                     customerData={customerData}
                     identificationNumber={customerData?.publicCode || ""}
                     rule={getRuleByName("ModeOfDisbursementType")}
+                    prospectSummaryData={prospectSummaryData}
                   />
                 )}
               <Stack

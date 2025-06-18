@@ -27,6 +27,7 @@ import { GeneralInformationForm } from "@pages/SubmitCreditApplication/component
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 import { getAllInternalAccounts } from "@services/integrationInternalAccounts";
+import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
@@ -37,6 +38,7 @@ interface IDisbursementWithInternalAccountProps {
   identificationNumber: string;
   businessUnitPublicCode: string;
   isAmountReadOnly: boolean;
+  prospectSummaryData: IProspectSummaryById | undefined;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -58,6 +60,7 @@ export function DisbursementWithInternalAccount(
     getTotalAmount,
     onFormValid,
     handleOnChange,
+    prospectSummaryData,
   } = props;
 
   const prevValues = useRef(formik.values[optionNameForm]);
@@ -356,7 +359,7 @@ export function DisbursementWithInternalAccount(
             value={validateCurrencyField(
               "amount",
               formik,
-              true,
+              false,
               optionNameForm,
             )}
             onChange={(e) => {
@@ -375,7 +378,7 @@ export function DisbursementWithInternalAccount(
             iconBefore={
               <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
             }
-            message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
+            message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
             fullwidth
           />
         </Stack>

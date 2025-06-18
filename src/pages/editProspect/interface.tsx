@@ -15,14 +15,15 @@ import { GeneralHeader } from "../addProspect/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
 import { StyledMarginPrint, StyledPrint } from "./styles";
 import { dataEditProspect, titlesModal } from "./config";
-import { IDataHeader, IDataProspect } from "./types";
+import { IDataHeader } from "./types";
 import { IPaymentChannel } from "@src/services/types";
+import { currencyFormat } from "@src/utils/formatData/currency";
 
 interface IEditProspectUIProps {
   dataHeader: IDataHeader;
   isMobile: boolean;
   prospectCode: string;
-  data: IDataProspect;
+  data: IProspect | undefined;
   dataProspect: IProspect | undefined;
   showMenu: boolean;
   showShareModal: boolean;
@@ -69,6 +70,14 @@ export function EditProspectUI(props: IEditProspectUIProps) {
     setIsModalOpen,
     setShowCreditRequest,
   } = props;
+
+  const getTotalLoanAmount = (data: IProspect | undefined): number => {
+    if (!data || !data.creditProducts) return 0;
+
+    return data.creditProducts.reduce((sum, product) => {
+      return sum + (product.loanAmount || 0);
+    }, 0);
+  };
 
   return (
     <div ref={dataPrint}>
@@ -163,7 +172,10 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                                 gap="8px"
                               >
                                 <Text type="title" size="large">
-                                  {data.choiceDestination}
+                                  {data?.moneyDestinationAbbreviatedName ===
+                                  "Education"
+                                    ? "Educación"
+                                    : data?.moneyDestinationAbbreviatedName}
                                 </Text>
                               </Stack>
                             </Stack>
@@ -177,10 +189,14 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                             gap="8px"
                           >
                             <Text type="title" size="large" textAlign="center">
-                              {data.name}
+                              {
+                                data?.borrowers.find(
+                                  (b) => b.borrowerType === "MainBorrower",
+                                )?.borrowerName
+                              }
                             </Text>
                             <Text type="body" size="small" appearance="gray">
-                              {data.customer}
+                              Cliente
                             </Text>
                           </Stack>
                           <Stack
@@ -194,16 +210,16 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                                 weight="bold"
                                 size="large"
                                 appearance="primary"
-                              >
-                                $
-                              </Text>
+                              ></Text>
                               <Text
                                 type="headline"
                                 weight="bold"
                                 size="large"
                                 appearance="primary"
                               >
-                                {data.value}
+                                {currencyFormat(
+                                  getTotalLoanAmount(dataProspect),
+                                )}
                               </Text>
                             </Stack>
                             <Text type="body" size="small" appearance="gray">
