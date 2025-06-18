@@ -96,56 +96,68 @@ export function Borrowers(props: borrowersProps) {
         </Stack>
         <StyledContainer>
           <Stack wrap="wrap" gap="16px">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {formik.values.borrowers.map((item: any, index: number) => (
-              <CardBorrower
-                key={index}
-                title={
-                  dataSubmitApplication.borrowers.borrowerLabel +
-                  ` ${index + 1}`
-                }
-                name={getPropertyValue(item.borrowerProperties, "name")}
-                lastName={getPropertyValue(item.borrowerProperties, "surname")}
-                email={getPropertyValue(item.borrowerProperties, "email") || ""}
-                income={currencyFormat(
-                  Number(
-                    getPropertyValue(
-                      item.borrowerProperties,
-                      "PeriodicSalary",
-                    ) || 0,
-                  ) +
+            {formik.values.borrowers
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .filter((item: any) =>
+                valueRule.includes("Codeudor")
+                  ? item.borrowerType !== "MainBorrower"
+                  : true,
+              )
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .map((item: any, index: number) => (
+                <CardBorrower
+                  key={index}
+                  title={
+                    dataSubmitApplication.borrowers.borrowerLabel +
+                    ` ${index + 1}`
+                  }
+                  name={getPropertyValue(item.borrowerProperties, "name")}
+                  lastName={getPropertyValue(
+                    item.borrowerProperties,
+                    "surname",
+                  )}
+                  email={
+                    getPropertyValue(item.borrowerProperties, "email") || ""
+                  }
+                  income={currencyFormat(
                     Number(
                       getPropertyValue(
                         item.borrowerProperties,
-                        "OtherNonSalaryEmoluments",
+                        "PeriodicSalary",
                       ) || 0,
                     ) +
-                    Number(
-                      getPropertyValue(
-                        item.borrowerProperties,
-                        "PensionAllowances",
-                      ) || 0,
-                    ),
-                  false,
-                )}
-                obligations={currencyFormat(
-                  getTotalFinancialObligations(item.borrowerProperties),
-                  false,
-                )}
-                handleView={() => {
-                  setSelectedBorrower(item);
-                  setIsModalView(true);
-                  setIsModalView(true);
-                }}
-                isMobile={isMobile}
-                handleEdit={() => {
-                  setEditIndex(index);
-                  setIsModalEdit(true);
-                }}
-                handleDelete={() => setIsModalDelete(true)}
-                showIcons={valueRule?.includes("Codeudor")}
-              />
-            ))}
+                      Number(
+                        getPropertyValue(
+                          item.borrowerProperties,
+                          "OtherNonSalaryEmoluments",
+                        ) || 0,
+                      ) +
+                      Number(
+                        getPropertyValue(
+                          item.borrowerProperties,
+                          "PensionAllowances",
+                        ) || 0,
+                      ),
+                    false,
+                  )}
+                  obligations={currencyFormat(
+                    getTotalFinancialObligations(item.borrowerProperties),
+                    false,
+                  )}
+                  handleView={() => {
+                    setSelectedBorrower(item);
+                    setIsModalView(true);
+                    setIsModalView(true);
+                  }}
+                  isMobile={isMobile}
+                  handleEdit={() => {
+                    setEditIndex(index);
+                    setIsModalEdit(true);
+                  }}
+                  handleDelete={() => setIsModalDelete(true)}
+                  showIcons={valueRule?.includes("Codeudor")}
+                />
+              ))}
             <NewCardBorrower
               onClick={() => setIsModalAdd(true)}
               title={

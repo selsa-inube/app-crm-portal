@@ -15,7 +15,7 @@ import { getClientPortfolioObligationsById } from "@services/creditLimit/getClie
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData } from "./types";
+import { IFormData, RuleValue } from "./types";
 import { AddProspectUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
@@ -325,23 +325,52 @@ export function AddProspect() {
       ),
     };
 
-    const products =
-      formData.selectedProducts?.length > 0
-        ? formData.selectedProducts
-        : Object.keys(valueRule || {});
+    const normalizeValues = (values: RuleValue[] | RuleValue): string[] => {
+      if (Array.isArray(values)) {
+        return values
+          .map((v) => {
+            if (typeof v === "string") return v;
+            if (v && typeof v === "object" && "value" in v) return v.value;
+            return "";
+          })
+          .filter(Boolean);
+      }
+
+      if (typeof values === "string") return [values];
+      if (values && typeof values === "object" && "value" in values)
+        return [values.value];
+      return [];
+    };
+
+    let linesToProcess: string[] = [];
+
+    if (formData.selectedProducts && formData.selectedProducts.length > 0) {
+      linesToProcess = [...formData.selectedProducts];
+    } else {
+      const lineOfCreditRule = ruleConfig["LineOfCredit"]?.(baseDataRules);
+      const lineOfCreditValues: RuleValue[] | RuleValue = lineOfCreditRule
+        ? await evaluateRule(
+            lineOfCreditRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
+        : [];
+
+      linesToProcess = normalizeValues(lineOfCreditValues);
+    }
 
     const rulesToValidate = [
       "PercentagePayableViaExtraInstallments",
       "IncomeSourceUpdateAllowed",
     ];
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const groupedResults: Record<string, Record<string, any[]>> = {};
+
+    const ruleResults: { [ruleName: string]: string[] } = {};
 
     await Promise.all(
-      products.map(async (product) => {
-        const productData = { ...baseDataRules, LineOfCredit: product };
-
-        groupedResults[product] = {};
+      linesToProcess.map(async (lineOfCredit) => {
+        const productData = { ...baseDataRules, LineOfCredit: lineOfCredit };
 
         await Promise.all(
           rulesToValidate.map(async (ruleName) => {
@@ -356,42 +385,28 @@ export function AddProspect() {
               true,
             );
 
-            groupedResults[product][ruleName] = Array.isArray(result)
-              ? result
-              : [result];
+            const normalizedResult = normalizeValues(result);
+
+            normalizedResult.forEach((value) => {
+              if (value) {
+                if (!ruleResults[ruleName]) {
+                  ruleResults[ruleName] = [value];
+                } else if (!ruleResults[ruleName].includes(value)) {
+                  ruleResults[ruleName].push(value);
+                }
+              }
+            });
           }),
         );
       }),
     );
 
-    setValueRule(() => {
-      const flattened: { [ruleName: string]: string[] } = {};
-
-      Object.values(groupedResults).forEach((rules) => {
-        Object.entries(rules).forEach(([ruleName, arr]) => {
-          //eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const cleanedValues = arr.map((v: any) =>
-            typeof v === "string" ? v : (v?.value ?? ""),
-          );
-
-          if (!flattened[ruleName]) {
-            flattened[ruleName] = cleanedValues;
-          } else {
-            flattened[ruleName] = Array.from(
-              new Set([...flattened[ruleName], ...cleanedValues]),
-            );
-          }
-        });
-      });
-
-      return flattened;
-    });
+    setValueRule(ruleResults);
   }, [
     customerData,
     businessUnitPublicCode,
     formData.selectedDestination,
     formData.selectedProducts,
-    valueRule,
   ]);
 
   const fetchDataClientPortfolio = async () => {
@@ -463,6 +478,12 @@ export function AddProspect() {
       setFormData((prevState) => ({
         ...prevState,
         togglesState: [false, false, false, false],
+      }));
+    }
+    if (currentStep === stepsAddProspect.destination.id) {
+      setFormData((prevState) => ({
+        ...prevState,
+        selectedProducts: [],
       }));
     }
   }, [currentStep]);
@@ -608,7 +629,6 @@ export function AddProspect() {
       fetchDataClientPortfolio();
     }
   }, [currentStep]);
-  console.log("formData", formData);
   return (
     <>
       <AddProspectUI

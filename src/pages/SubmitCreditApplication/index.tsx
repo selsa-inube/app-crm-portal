@@ -164,7 +164,9 @@ export function SubmitCreditApplication() {
     attachedDocuments: {},
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const hasBorrowers = Object.keys(formData.borrowerData.borrowers).length;
+
+  const hasBorrowers = Object.keys(prospectData?.borrowers || {}).length;
+
   const bondValue = prospectData.bondValue;
   const getRuleByName = useCallback(
     (ruleName: string) => {
@@ -184,7 +186,7 @@ export function SubmitCreditApplication() {
     const hideMortgage = valueRule["ValidationGuarantee"]?.includes("Mortgage");
     const hidePledge = valueRule["ValidationGuarantee"]?.includes("Pledge");
     const hasCoborrower =
-      valueRule["ValidationCoborrower"]?.includes("Coborrower") ?? false;
+      valueRule["ValidationCoborrower"]?.includes("Codeudor") ?? false;
 
     return Object.values(stepsFilingApplication)
       .map((step) => {
@@ -199,6 +201,8 @@ export function SubmitCreditApplication() {
         return step;
       })
       .filter((step) => {
+        if (step.id === 3 && hasBorrowers === 1 && hasCoborrower === false)
+          return false;
         if (step.id === 4 && hideMortgage) return false;
         if (step.id === 5 && hidePledge) return false;
         if (step.id === 6 && (hasBorrowers >= 1 || bondValue === 0)) {

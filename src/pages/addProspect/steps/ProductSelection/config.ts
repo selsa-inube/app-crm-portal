@@ -2,8 +2,16 @@ export const electionData = {
   title: "¿Prefiere que el sistema sugiera el producto?",
   information: "Información",
   understood: "Entendido",
-  informationDescription:
-    "No se pueden seleccionar los cupos porque no se han seleccionado las líneas de crédito.",
+  informationDescription: {
+    includeExtraordinaryInstallments:
+      "El producto seleccionado no permite la modificación de abonos especiales.",
+    updateIncomeSources:
+      "El producto seleccionado no permite la modificación de ingresos.",
+    updateFinancialObligations:
+      "El producto seleccionado no permite la modificación de obligaciones financieras.",
+    includeAditionalBorrowers:
+      "El producto seleccionado no permite registrar deudores adicionales.",
+  },
   yes: "SI",
   no: "NO",
   load: "Cargando datos...",
