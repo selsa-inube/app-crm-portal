@@ -37,7 +37,7 @@ export function LoanCondition(props: ILoanCondition) {
       validationSchema={validationSchema}
       validate={(values) => {
         const quotaCapNumericValue =
-          parseFloat(values.quotaCapValue.replace(/[^0-9]/g, "")) || 0;
+          parseFloat(String(values.quotaCapValue).replace(/[^0-9]/g, "")) || 0;
         const maximumTermNumericValue =
           parseFloat(String(values.maximumTermValue).replace(/[^0-9]/g, "")) ||
           0;
@@ -70,14 +70,25 @@ export function LoanCondition(props: ILoanCondition) {
                       as={Toggle}
                       checked={values.toggles.quotaCapToggle}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const isChecked = e.target.checked;
                         handleChange(e);
-                        handleOnChange({
+                        const updatedState = {
                           ...values,
                           toggles: {
                             ...values.toggles,
-                            quotaCapToggle: e.target.checked,
+                            quotaCapToggle: isChecked,
                           },
-                        });
+                          quotaCapValue: isChecked ? values.quotaCapValue : "",
+                        };
+                        handleOnChange(updatedState);
+                        if (!isChecked) {
+                          handleChange({
+                            target: {
+                              name: "quotaCapValue",
+                              value: "",
+                            },
+                          });
+                        }
                       }}
                     />
                     <Text
@@ -116,7 +127,9 @@ export function LoanCondition(props: ILoanCondition) {
                         });
                         handleOnChange({
                           ...values,
-                          quotaCapValue: formattedValue,
+                          quotaCapValue: Number(
+                            e.target.value.replace(/[^0-9]/g, ""),
+                          ),
                         });
                       }}
                       onBlur={handleBlur}
@@ -141,14 +154,27 @@ export function LoanCondition(props: ILoanCondition) {
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>,
                           ) => {
+                            const isChecked = e.target.checked;
                             handleChange(e);
-                            handleOnChange({
+                            const updatedState = {
                               ...values,
                               toggles: {
                                 ...values.toggles,
-                                maximumTermToggle: e.target.checked,
+                                maximumTermToggle: isChecked,
                               },
-                            });
+                              maximumTermValue: isChecked
+                                ? values.maximumTermValue
+                                : "",
+                            };
+                            handleOnChange(updatedState);
+                            if (!isChecked) {
+                              handleChange({
+                                target: {
+                                  name: "maximumTermValue",
+                                  value: "",
+                                },
+                              });
+                            }
                           }}
                         />
                         <Text
@@ -183,7 +209,7 @@ export function LoanCondition(props: ILoanCondition) {
                             handleChange(e);
                             handleOnChange({
                               ...values,
-                              maximumTermValue: e.target.value,
+                              maximumTermValue: Number(e.target.value),
                             });
                           }}
                           onBlur={handleBlur}

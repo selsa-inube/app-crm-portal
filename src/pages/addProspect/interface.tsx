@@ -20,6 +20,8 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
 import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { IIncomeSources } from "@services/incomeSources/types";
+import { BaseModal } from "@components/modals/baseModal";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -47,8 +49,10 @@ import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCreditLimitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCreditLimitWarning: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCapacityAnalysisModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCapacityAnalysisWarning: React.Dispatch<React.SetStateAction<boolean>>;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -62,11 +66,6 @@ interface AddPositionUIProps {
   handleFormDataChange: (field: string, newValue: any) => void;
   getRuleByName: (name: string) => string[];
   getAllDataRuleByName: (name: string) => string[];
-  handleConsolidatedCreditChange: (
-    creditId: string,
-    oldValue: number,
-    newValue: number,
-  ) => void;
   currentStep: number;
   customerData: ICustomerData;
   dataHeader: { name: string; status: string };
@@ -74,12 +73,18 @@ interface AddPositionUIProps {
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
   isCreditLimitModalOpen: boolean;
+  isCreditLimitWarning: boolean;
   isCapacityAnalysisModal: boolean;
+  isCapacityAnalysisWarning: boolean;
   formData: IFormData;
   selectedProducts: string[];
   isMobile: boolean;
   isTablet: boolean;
   currentStepsNumber?: StepDetails;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prospectData: any;
+  creditLimitData?: IIncomeSources;
+  totalIncome: number;
   creditLineTerms?: ICreditLineTerms;
   clientPortfolio: IObligations;
 }
@@ -88,8 +93,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
   const {
     setIsModalOpenRequirements,
     setIsCreditLimitModalOpen,
+    setIsCreditLimitWarning,
     setIsCurrentFormValid,
     setIsCapacityAnalysisModal,
+    setIsCapacityAnalysisWarning,
     setRequestValue,
     requestValue,
     handleNextStep,
@@ -98,7 +105,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
     handleFormDataChange,
     setSelectedProducts,
     getRuleByName,
-    handleConsolidatedCreditChange,
     currentStepsNumber,
     customerData,
     dataHeader,
@@ -106,11 +112,16 @@ export function AddProspectUI(props: AddPositionUIProps) {
     isCurrentFormValid,
     isModalOpenRequirements,
     isCreditLimitModalOpen,
+    isCreditLimitWarning,
     isCapacityAnalysisModal,
+    isCapacityAnalysisWarning,
     formData,
     selectedProducts,
     isMobile,
     isTablet,
+    prospectData,
+    creditLimitData,
+    totalIncome,
     creditLineTerms,
     clientPortfolio,
   } = props;
@@ -144,7 +155,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 </Text>
               </Stack>
             </StyledArrowBack>
-
             <Stack gap="8px">
               {isMobile ? (
                 <>
@@ -154,7 +164,13 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     size="28px"
                     spacing="compact"
                     variant="outlined"
-                    onClick={() => setIsCreditLimitModalOpen(true)}
+                    onClick={() => {
+                      if ((currentStepsNumber?.id ?? 0) >= 4) {
+                        setIsCreditLimitModalOpen(true);
+                      } else {
+                        setIsCreditLimitWarning(true);
+                      }
+                    }}
                   />
                   <Icon
                     icon={<MdOutlinePaid />}
@@ -162,7 +178,13 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     size="28px"
                     spacing="compact"
                     variant="outlined"
-                    onClick={() => setIsCapacityAnalysisModal(true)}
+                    onClick={() => {
+                      if (totalIncome === 0) {
+                        setIsCapacityAnalysisWarning(true);
+                      } else {
+                        setIsCapacityAnalysisModal(true);
+                      }
+                    }}
                   />
                   <Icon
                     icon={<MdOutlineRule />}
@@ -181,14 +203,26 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     appearance="gray"
                     spacing="compact"
                     variant="outlined"
-                    onClick={() => setIsCreditLimitModalOpen(true)}
+                    onClick={() => {
+                      if ((currentStepsNumber?.id ?? 0) >= 4) {
+                        setIsCreditLimitModalOpen(true);
+                      } else {
+                        setIsCreditLimitWarning(true);
+                      }
+                    }}
                   />
                   <Button
                     spacing="compact"
                     appearance="gray"
                     iconBefore={<MdOutlinePaid />}
                     children={textAddCongfig.buttonPaymentCapacity}
-                    onClick={() => setIsCapacityAnalysisModal(true)}
+                    onClick={() => {
+                      if (totalIncome === 0) {
+                        setIsCapacityAnalysisWarning(true);
+                      } else {
+                        setIsCapacityAnalysisModal(true);
+                      }
+                    }}
                     variant="outlined"
                   />
                   <ButtonRequirements
@@ -208,6 +242,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
               onSubmitClick={handleSubmitClick}
               disableNext={!isCurrentFormValid}
               disableSubmit={!isCurrentFormValid}
+              showCurrentStepNumber={false}
               size={isMobile ? "small" : "large"}
             />
           </StyledContainerAssisted>
@@ -216,7 +251,11 @@ export function AddProspectUI(props: AddPositionUIProps) {
             {currentStepsNumber &&
               currentStepsNumber.id ===
                 stepsAddProspect.generalInformation.id && (
-                <RequirementsNotMet isMobile={isMobile} />
+                <RequirementsNotMet
+                  isMobile={isMobile}
+                  prospectData={prospectData}
+                  customerData={customerData}
+                />
               )}
             {currentStepsNumber &&
               currentStepsNumber.id === stepsAddProspect.destination.id && (
@@ -264,6 +303,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     ),
                   }}
                   creditLineTerms={creditLineTerms!}
+                  creditLimitData={creditLimitData!}
                 />
               )}
             {currentStepsNumber &&
@@ -290,6 +330,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 <SourcesOfIncome
                   isMobile={isMobile}
                   customerData={customerData}
+                  creditLimitData={creditLimitData}
                 />
               )}
             {currentStepsNumber &&
@@ -339,8 +380,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 stepsAddProspect.obligationsCollected.id && (
                 <ConsolidatedCredit
                   initialValues={formData.consolidatedCreditSelections}
-                  handleOnChange={handleConsolidatedCreditChange}
                   isMobile={isMobile}
+                  onChange={(items) =>
+                    handleFormDataChange("consolidatedCreditArray", items)
+                  }
                 />
               )}
           </Stack>
@@ -363,6 +406,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
             <RequirementsModal
               handleClose={() => setIsModalOpenRequirements(false)}
               isMobile={isMobile}
+              prospectData={prospectData}
+              customerData={customerData}
             />
           )}
           {isCreditLimitModalOpen && (
@@ -372,11 +417,37 @@ export function AddProspectUI(props: AddPositionUIProps) {
               setRequestValue={setRequestValue}
             />
           )}
+          {isCreditLimitWarning && (
+            <BaseModal
+              title={textAddCongfig.titleQuotas}
+              nextButton={textAddCongfig.close}
+              handleNext={() => setIsCreditLimitWarning(false)}
+              handleClose={() => setIsCreditLimitWarning(false)}
+              width={isMobile ? "280px" : "400px"}
+            >
+              <Stack>
+                <Text>{textAddCongfig.descriptionQuotas}</Text>
+              </Stack>
+            </BaseModal>
+          )}
           {isCapacityAnalysisModal && (
             <PaymentCapacityAnalysis
               isMobile={isMobile}
               handleClose={() => setIsCapacityAnalysisModal(false)}
             />
+          )}
+          {isCapacityAnalysisWarning && (
+            <BaseModal
+              title={textAddCongfig.titlePaymentCapacity}
+              nextButton={textAddCongfig.close}
+              handleNext={() => setIsCapacityAnalysisWarning(false)}
+              handleClose={() => setIsCapacityAnalysisWarning(false)}
+              width={isMobile ? "280px" : "400px"}
+            >
+              <Stack>
+                <Text>{textAddCongfig.descriptionPaymentCapacity}</Text>
+              </Stack>
+            </BaseModal>
           )}
         </Stack>
       </Stack>

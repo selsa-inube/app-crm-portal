@@ -7,7 +7,10 @@ import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
+import { postSimulateCredit } from "@services/iProspect/simulateCredit";
 import { IPaymentChannel } from "@services/types";
+import { IIncomeSources } from "@services/incomeSources/types";
+import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
@@ -16,6 +19,7 @@ import { IFormData } from "./types";
 import { AddProspectUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
+import { textAddCongfig } from "./config/addConfig";
 import { tittleOptions } from "./steps/financialObligations/config/config";
 
 export function AddProspect() {
@@ -26,7 +30,11 @@ export function AddProspect() {
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
+  const [isCreditLimitWarning, setIsCreditLimitWarning] = useState(false);
   const [isCapacityAnalysisModal, setIsCapacityAnalysisModal] = useState(false);
+  const [isCapacityAnalysisWarning, setIsCapacityAnalysisWarning] =
+    useState(false);
+  const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
     null,
@@ -62,21 +70,7 @@ export function AddProspect() {
     generalToggleChecked: true,
     togglesState: [false, false, false, false],
     borrowerData: {
-      initialBorrowers: {
-        id: "",
-        name: "",
-        debtorDetail: {
-          document: "",
-          documentNumber: "",
-          name: "",
-          lastName: "",
-          email: "",
-          number: "",
-          sex: "",
-          age: "",
-          relation: "",
-        },
-      },
+      borrowers: {},
     },
     loanAmountState: {
       inputValue: "",
@@ -85,10 +79,72 @@ export function AddProspect() {
       periodicity: "",
       payAmount: "",
     },
-    consolidatedCreditSelections: { totalCollected: 0, selectedValues: {} },
+    consolidatedCreditSelections: {
+      title: "",
+      code: "",
+      label: "",
+      value: 0,
+      totalCollected: 0,
+      selectedValues: {},
+    },
   });
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
+  const onlyBorrowerData = {
+    borrowerIdentificationType:
+      customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+    borrowerIdentificationNumber: customerData.publicCode,
+    borrowerType: "MainBorrower",
+    borrowerName: "Lenis Poveda", // borrar en un futuro
+    borrowerProperties: [
+      {
+        propertyName: "PeriodicSalary",
+        propertyValue: "4500000",
+      },
+    ],
+  };
+
+  const simulateData = {
+    borrowers: [
+      Object.keys(formData.borrowerData.borrowers).length === 0
+        ? onlyBorrowerData
+        : formData.borrowerData.borrowers,
+    ],
+    consolidatedCredits:
+      Array.isArray(formData.consolidatedCreditArray) &&
+      formData.consolidatedCreditArray.length > 0
+        ? formData.consolidatedCreditArray.map((item) => ({
+            borrowerIdentificationNumber:
+              onlyBorrowerData.borrowerIdentificationNumber,
+            borrowerIdentificationType:
+              onlyBorrowerData.borrowerIdentificationType,
+            consolidatedAmount: item.value,
+            consolidatedAmountType: item.label,
+            creditProductCode: item.code,
+            estimatedDateOfConsolidation: "2025-06-12T15:04:05Z", // borrar en un futuro
+            lineOfCreditDescription: item.title,
+          }))
+        : [],
+    linesOfCredit: formData.selectedProducts.map((product) => ({
+      lineOfCreditAbbreviatedName: product,
+    })),
+    firstPaymentCycleDate: "2025-06-15T15:04:05Z",
+    extraordinaryInstallments: [
+      {
+        installmentAmount: 1,
+        installmentDate: "2025-06-12T15:04:05Z",
+        paymentChannelAbbreviatedName: "",
+      },
+    ],
+    installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
+    moneyDestinationAbbreviatedName: formData.selectedDestination,
+    preferredPaymentChannelAbbreviatedName:
+      formData.loanAmountState.paymentPlan || "",
+    selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
+    requestedAmount: formData.loanAmountState.inputValue,
+    termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
+  };
+
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
     {},
   );
@@ -106,7 +162,7 @@ export function AddProspect() {
       const raw = valueRule?.[ruleName] || [];
       return (
         raw
-          //eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .map((v: any) => (typeof v === "string" ? v : v?.value))
           .filter(Boolean)
       );
@@ -338,13 +394,6 @@ export function AddProspect() {
     valueRule,
   ]);
 
-  useEffect(() => {
-    if (customerData) {
-      fetchCreditLineTerms();
-      fetchCreditLinePermissions();
-    }
-  }, [customerData, fetchCreditLineTerms]);
-
   const fetchDataClientPortfolio = async () => {
     if (!customerPublicCode) {
       return;
@@ -388,36 +437,26 @@ export function AddProspect() {
 
   const handleFormDataChange = (
     field: string,
-    newValue: string | number | boolean,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newValue: string | number | boolean | any[],
   ) => {
     setFormData((prevState) => ({ ...prevState, [field]: newValue }));
   };
 
-  const handleConsolidatedCreditChange = (
-    creditId: string,
-    oldValue: number,
-    newValue: number,
-  ) => {
-    setFormData((prevState) => {
-      const updatedSelections = {
-        ...prevState.consolidatedCreditSelections.selectedValues,
-        [creditId]: newValue,
-      };
+  const totalIncome =
+    (creditLimitData?.Dividends ?? 0) +
+    (creditLimitData?.FinancialIncome ?? 0) +
+    (creditLimitData?.Leases ?? 0) +
+    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
+    (creditLimitData?.PensionAllowances ?? 0) +
+    (creditLimitData?.PeriodicSalary ?? 0) +
+    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
+    (creditLimitData?.ProfessionalFees ?? 0);
 
-      const newTotalCollected =
-        prevState.consolidatedCreditSelections.totalCollected -
-        oldValue +
-        newValue;
-
-      return {
-        ...prevState,
-        consolidatedCreditSelections: {
-          totalCollected: newTotalCollected,
-          selectedValues: updatedSelections,
-        },
-      };
-    });
-  };
+  const totalObligations = // modificar cuando se integre obligations
+    (creditLimitData?.PeriodicSalary ?? 0) +
+    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
+    (creditLimitData?.ProfessionalFees ?? 0);
 
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -438,19 +477,22 @@ export function AddProspect() {
     const isInExtraBorrowersStep =
       currentStep === stepsAddProspect.extraBorrowers.id;
 
+    const showSourcesIncome = togglesState[1] || totalIncome === 0;
+    const showObligations = togglesState[2] || totalObligations === 0;
+
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...(isInExtraBorrowersStep
-        ? []
-        : [
-            togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-            togglesState[2]
-              ? stepsAddProspect.obligationsFinancial.id
-              : undefined,
-          ]),
+      ...[
+        !(isInExtraBorrowersStep && totalIncome !== 0) && showSourcesIncome
+          ? stepsAddProspect.sourcesIncome.id
+          : undefined,
+        !(isInExtraBorrowersStep && totalObligations !== 0) && showObligations
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
+      ],
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
@@ -483,19 +525,24 @@ export function AddProspect() {
     const nextStepWouldBeExtraBorrowers =
       currentStep === stepsAddProspect.loanConditions.id && togglesState[3];
 
+    const showSourcesIncome = togglesState[1] || totalIncome === 0;
+    const showObligations = togglesState[2] || totalObligations === 0;
+
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...(nextStepWouldBeExtraBorrowers
-        ? []
-        : [
-            togglesState[1] ? stepsAddProspect.sourcesIncome.id : undefined,
-            togglesState[2]
-              ? stepsAddProspect.obligationsFinancial.id
-              : undefined,
-          ]),
+      ...[
+        !(nextStepWouldBeExtraBorrowers && totalIncome !== 0) &&
+        showSourcesIncome
+          ? stepsAddProspect.sourcesIncome.id
+          : undefined,
+        !(nextStepWouldBeExtraBorrowers && totalObligations !== 0) &&
+        showObligations
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
+      ],
       stepsAddProspect.loanConditions.id,
     ].filter((step): step is number => step !== undefined);
 
@@ -511,10 +558,29 @@ export function AddProspect() {
     setIsCurrentFormValid(true);
   };
 
-  const handleSubmitClick = () => {
-    setTimeout(() => {
-      navigate(`/credit/edit-prospect/${customerPublicCode}/SC-122254646`);
-    }, 1000);
+  const handleFlag = (error: unknown) => {
+    addFlag({
+      title: textAddCongfig.errorPost,
+      description: `${error}`,
+      appearance: "danger",
+      duration: 5000,
+    });
+  };
+
+  const handleSubmitClick = async () => {
+    try {
+      const response = await postSimulateCredit(
+        businessUnitPublicCode,
+        simulateData,
+      );
+      const prospectCode = response.prospectCode;
+
+      setTimeout(() => {
+        navigate(`/credit/edit-prospect/${customerPublicCode}/${prospectCode}`);
+      }, 1000);
+    } catch (error) {
+      handleFlag(error);
+    }
   };
 
   const showConsultingForFiveSeconds = () => {
@@ -524,12 +590,25 @@ export function AddProspect() {
     }, 2000);
   };
 
+  const fetchCreditLimit = async () => {
+    try {
+      const result = await getCreditLimit(
+        businessUnitPublicCode,
+        customerPublicCode!,
+      );
+      setCreditLimitData(result);
+    } catch (error) {
+      handleFlag(error);
+    }
+  };
+
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
+      fetchCreditLimit();
       fetchDataClientPortfolio();
     }
   }, [currentStep]);
-
+  console.log("formData", formData);
   return (
     <>
       <AddProspectUI
@@ -549,18 +628,24 @@ export function AddProspect() {
         getAllDataRuleByName={getAllDataRuleByName}
         getRuleByName={getRuleByName}
         setCurrentStep={setCurrentStep}
+        setIsCreditLimitWarning={setIsCreditLimitWarning}
+        isCreditLimitWarning={isCreditLimitWarning}
         currentStepsNumber={currentStepsNumber}
         dataHeader={dataHeader}
         handleSubmitClick={handleSubmitClick}
         formData={formData}
         selectedProducts={selectedProducts}
+        prospectData={simulateData}
         setSelectedProducts={setSelectedProducts}
         setIsCapacityAnalysisModal={setIsCapacityAnalysisModal}
         isCapacityAnalysisModal={isCapacityAnalysisModal}
         handleFormDataChange={handleFormDataChange}
-        handleConsolidatedCreditChange={handleConsolidatedCreditChange}
         isMobile={isMobile}
         isTablet={isTablet}
+        creditLimitData={creditLimitData}
+        totalIncome={totalIncome}
+        isCapacityAnalysisWarning={isCapacityAnalysisWarning}
+        setIsCapacityAnalysisWarning={setIsCapacityAnalysisWarning}
         creditLineTerms={creditLineTerms}
         clientPortfolio={clientPortfolio as IObligations}
       />

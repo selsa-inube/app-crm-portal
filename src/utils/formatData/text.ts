@@ -1,4 +1,8 @@
-const truncateTextToMaxLength = (text: string, maxLength = 50) => {
+const truncateTextToMaxLength = (
+  text: string | undefined | null,
+  maxLength = 50,
+) => {
+  if (!text) return "";
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
 
