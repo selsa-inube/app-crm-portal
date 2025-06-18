@@ -74,7 +74,7 @@ export function AddProspect() {
     },
     loanAmountState: {
       inputValue: "",
-      toggleChecked: false,
+      toggleChecked: true,
       paymentPlan: "",
       periodicity: "",
       payAmount: "",
