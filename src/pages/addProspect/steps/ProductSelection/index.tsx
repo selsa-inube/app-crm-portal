@@ -1,13 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { MdInfoOutline } from "react-icons/md";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
-import { Stack, Text, Toggle, Divider } from "@inubekit/inubekit";
+import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
 
 import { CardProductSelection } from "@pages/addProspect/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
-import { removeDuplicates } from "@utils/mappingData/mappings";
+import { BaseModal } from "@components/modals/baseModal";
+import { IIncomeSources } from "@services/incomeSources/types";
+import { currencyFormat } from "@utils/formatData/currency";
 
 import { electionData } from "./config";
+import { ICreditLineTerms } from "../../types";
 
 interface IProductSelectionProps {
   initialValues: {
@@ -25,11 +29,11 @@ interface IProductSelectionProps {
   isMobile: boolean;
   choiceMoneyDestination: string;
   allRules: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    lineOfCredit: any[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    PercentagePayableViaExtraInstallments: any[];
+    PercentagePayableViaExtraInstallments: string[];
+    IncomeSourceUpdateAllowed: string[];
   };
+  creditLimitData?: IIncomeSources;
+  creditLineTerms: ICreditLineTerms;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -44,6 +48,9 @@ export function ProductSelection(props: IProductSelectionProps) {
     handleFormDataChange,
     isMobile,
     allRules,
+    choiceMoneyDestination,
+    creditLimitData,
+    creditLineTerms,
   } = props;
 
   const validationSchema = Yup.object().shape({
@@ -60,6 +67,9 @@ export function ProductSelection(props: IProductSelectionProps) {
     togglesState,
   };
 
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [currentDisabledQuestion, setCurrentDisabledQuestion] = useState("");
+
   useEffect(() => {
     const isValid = generalToggleChecked || selectedProducts.length > 0;
     onFormValid(isValid);
@@ -67,19 +77,70 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   useEffect(() => {
     if (generalToggleChecked) {
+      const allProductValues = Object.keys(creditLineTerms);
+      setSelectedProducts(allProductValues);
+      handleFormDataChange("selectedProducts", allProductValues);
+    } else {
       setSelectedProducts([]);
+      handleFormDataChange("selectedProducts", []);
     }
-  }, [generalToggleChecked, setSelectedProducts]);
-
-  const uniqueServerResponse = removeDuplicates(allRules.lineOfCredit, "value");
+  }, [generalToggleChecked]);
 
   const shouldShowPrograming = (
     allRules.PercentagePayableViaExtraInstallments || []
   ).some((value) => Number(value) > 0);
 
-  const filteredQuestions = Object.entries(electionData.data).filter(
-    ([key]) => key !== "programing" || shouldShowPrograming,
+  const shouldShowIncomeUpdate =
+    (allRules.IncomeSourceUpdateAllowed || []).length > 0 &&
+    allRules.IncomeSourceUpdateAllowed.every((value) => value === "Y");
+
+  const isQuestionDisabled = (key: string) => {
+    if (key === "includeExtraordinaryInstallments") {
+      return !shouldShowPrograming;
+    }
+    if (key === "updateIncomeSources" || key === "updateFinancialObligations") {
+      return !shouldShowIncomeUpdate;
+    }
+    return false;
+  };
+
+  const allQuestions = Object.entries(electionData.questions).map(
+    ([key, question], index) => ({ key, question, index }),
   );
+
+  const [fullRules, setFullRules] = useState(allRules);
+
+  useEffect(() => {
+    setFullRules(allRules);
+  }, [choiceMoneyDestination]);
+
+  const filteredQuestions = allQuestions.filter(({ key }) => {
+    if (
+      key === "includeExtraordinaryInstallments" &&
+      fullRules.PercentagePayableViaExtraInstallments.every(
+        (value) => Number(value) <= 0,
+      )
+    ) {
+      return false;
+    }
+    if (
+      (key === "updateIncomeSources" || key === "updateFinancialObligations") &&
+      fullRules.IncomeSourceUpdateAllowed.every((value) => value !== "Y")
+    ) {
+      return false;
+    }
+    return true;
+  });
+
+  const totalIncome =
+    (creditLimitData?.Dividends ?? 0) +
+    (creditLimitData?.FinancialIncome ?? 0) +
+    (creditLimitData?.Leases ?? 0) +
+    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
+    (creditLimitData?.PensionAllowances ?? 0) +
+    (creditLimitData?.PeriodicSalary ?? 0) +
+    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
+    (creditLimitData?.ProfessionalFees ?? 0);
 
   return (
     <Formik
@@ -119,99 +180,153 @@ export function ProductSelection(props: IProductSelectionProps) {
                 </Text>
               </Stack>
             </Stack>
-            <Fieldset>
-              <Stack
-                gap="16px"
-                padding={isMobile ? "0px 6px" : "0px 12px"}
-                wrap="wrap"
-              >
-                {uniqueServerResponse.length > 0 ? (
-                  uniqueServerResponse.map((item, index) => (
-                    <Stack key={index} direction="column">
-                      <CardProductSelection
-                        key={index}
-                        amount={item.loan_amount_limit}
-                        rate={item.interest_rate}
-                        term={item.loan_term_limit}
-                        description={item.value}
-                        disabled={generalToggleChecked}
-                        isSelected={values.selectedProducts.includes(
-                          item.value,
-                        )}
-                        onSelect={() => {
-                          const newSelected = values.selectedProducts.includes(
-                            item.value,
-                          )
-                            ? values.selectedProducts.filter(
-                                (id) => id !== item.value,
-                              )
-                            : [...values.selectedProducts, item.value];
-                          setFieldValue("selectedProducts", newSelected);
-                          setSelectedProducts(newSelected);
-                          handleFormDataChange("selectedProducts", newSelected);
-                        }}
-                      />
-                    </Stack>
-                  ))
-                ) : (
-                  <Text type="body" size="medium">
-                    {electionData.load}
-                  </Text>
-                )}
-              </Stack>
-            </Fieldset>
-            <Fieldset>
-              {filteredQuestions.map(([key, question], index) => (
+            {!initialValues.generalToggleChecked && (
+              <Fieldset>
                 <Stack
-                  direction="column"
-                  key={key}
                   gap="16px"
-                  padding="4px 10px"
+                  padding={isMobile ? "0px 6px" : "0px 12px"}
+                  wrap="wrap"
                 >
-                  <Text type="body" size="medium">
-                    {question}
-                  </Text>
-                  <Stack gap="8px">
-                    <Field name={`togglesState[${index}]`}>
-                      {({
-                        field,
-                      }: {
-                        field: { value: boolean; name: string };
-                      }) => (
-                        <Toggle
-                          {...field}
-                          value={field.value.toString()}
-                          checked={field.value}
-                          onChange={() => {
-                            onToggleChange(index);
-                            setFieldValue(
-                              `togglesState[${index}]`,
-                              !field.value,
-                            );
-                          }}
-                        />
-                      )}
-                    </Field>
-                    <Text
-                      type="label"
-                      size="large"
-                      weight="bold"
-                      appearance={
-                        values.togglesState[index] ? "success" : "danger"
-                      }
-                    >
-                      {values.togglesState[index]
-                        ? electionData.yes
-                        : electionData.no}
+                  {Object.keys(creditLineTerms).length > 0 ? (
+                    Object.entries(creditLineTerms).map(
+                      ([lineName, terms], index) => (
+                        <Stack key={index} direction="column">
+                          <CardProductSelection
+                            key={lineName}
+                            amount={terms.LoanAmountLimit}
+                            rate={terms.RiskFreeInterestRate}
+                            term={terms.LoanTermLimit}
+                            description={lineName}
+                            disabled={generalToggleChecked}
+                            isSelected={values.selectedProducts.includes(
+                              lineName,
+                            )}
+                            onSelect={() => {
+                              const newSelected =
+                                values.selectedProducts.includes(lineName)
+                                  ? values.selectedProducts.filter(
+                                      (id) => id !== lineName,
+                                    )
+                                  : [...values.selectedProducts, lineName];
+
+                              setFieldValue("selectedProducts", newSelected);
+                              setSelectedProducts(newSelected);
+                              handleFormDataChange(
+                                "selectedProducts",
+                                newSelected,
+                              );
+                            }}
+                          />
+                        </Stack>
+                      ),
+                    )
+                  ) : (
+                    <Text type="body" size="medium">
+                      {electionData.load}
                     </Text>
-                  </Stack>
-                  {index !== Object.entries(filteredQuestions).length - 1 && (
-                    <Divider dashed />
                   )}
                 </Stack>
-              ))}
+              </Fieldset>
+            )}
+            <Fieldset>
+              {filteredQuestions.map(
+                ({ key, question, index }, filteredIndex) => (
+                  <Stack
+                    direction="column"
+                    key={key}
+                    gap="16px"
+                    padding="4px 10px"
+                  >
+                    <Text
+                      type="body"
+                      size="medium"
+                      appearance={isQuestionDisabled(key) ? "gray" : "dark"}
+                    >
+                      {key === "updateIncomeSources"
+                        ? question.replace(
+                            "$valor",
+                            `${currencyFormat(totalIncome)}`,
+                          )
+                        : question}
+                    </Text>
+                    <Stack gap="8px">
+                      <Stack>
+                        <Field name={`togglesState[${index}]`}>
+                          {({
+                            field,
+                          }: {
+                            field: { value: boolean; name: string };
+                          }) => (
+                            <Toggle
+                              {...field}
+                              value={field.value.toString()}
+                              checked={field.value}
+                              disabled={isQuestionDisabled(key)}
+                              onChange={() => {
+                                onToggleChange(index);
+                                setFieldValue(
+                                  `togglesState[${index}]`,
+                                  !field.value,
+                                );
+                              }}
+                            />
+                          )}
+                        </Field>
+                        {isQuestionDisabled(key) && (
+                          <Stack margin="2px 0">
+                            <Icon
+                              icon={<MdInfoOutline />}
+                              appearance="primary"
+                              size="16px"
+                              onClick={() => {
+                                setCurrentDisabledQuestion(key);
+                                setShowInfoModal(true);
+                              }}
+                              cursorHover
+                            />
+                          </Stack>
+                        )}
+                      </Stack>
+                      <Text
+                        type="label"
+                        size="large"
+                        weight="bold"
+                        appearance={
+                          values.togglesState[index] ? "success" : "danger"
+                        }
+                      >
+                        {values.togglesState[index]
+                          ? electionData.yes
+                          : electionData.no}
+                      </Text>
+                    </Stack>
+                    {filteredIndex !== filteredQuestions.length - 1 && (
+                      <Divider dashed />
+                    )}
+                  </Stack>
+                ),
+              )}
             </Fieldset>
           </Stack>
+          {showInfoModal && (
+            <BaseModal
+              title={electionData.information}
+              nextButton={electionData.understood}
+              handleNext={() => setShowInfoModal(false)}
+              handleClose={() => setShowInfoModal(false)}
+              width={isMobile ? "280px" : "450px"}
+            >
+              <Stack>
+                <Text>
+                  {
+                    electionData.informationDescription[
+                      currentDisabledQuestion as keyof typeof electionData.informationDescription
+                    ]
+                  }
+                </Text>
+              </Stack>
+            </BaseModal>
+          )}
         </Form>
       )}
     </Formik>

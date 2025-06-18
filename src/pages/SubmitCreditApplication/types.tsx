@@ -21,10 +21,12 @@ export interface IStep {
 export interface IContactInformation {
   email: string;
   phone: string;
+  whatsAppPhone: string;
   document: string;
   documentNumber: string;
   name: string;
   lastName: string;
+  toggleChecked: boolean;
 }
 
 export interface IVehicleOffered {
@@ -42,21 +44,6 @@ export interface IPropertyOffered {
 }
 export interface IBorrowerData {
   borrowers: Record<string, never>;
-  initialBorrowers: {
-    id: string;
-    name: string;
-    debtorDetail: {
-      age: string;
-      document: string;
-      documentNumber: string;
-      email: string;
-      lastName: string;
-      name: string;
-      number: string;
-      relation: string;
-      sex: string;
-    };
-  };
 }
 export interface IBail {
   client: boolean;

@@ -7,7 +7,6 @@ import {
   Textfield,
   inube,
   useMediaQuery,
-  Date,
 } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
@@ -17,6 +16,7 @@ import {
 } from "@utils/formatData/currency";
 import {
   frequencyOptionsMock,
+  paymentDateOptionsMock,
   paymentMethodOptionsMock,
 } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { handleFormSubmit } from "@utils/handleFormSubmit";
@@ -116,15 +116,16 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
               size="wide"
               fullwidth
             />
-            <Date
+            <Select
               name="datePayment"
               id="datePayment"
               label={dataAddSeriesModal.labelDate}
+              placeholder={dataAddSeriesModal.placeHolderSelect}
+              options={paymentDateOptionsMock}
               value={formik.values.datePayment}
-              onChange={(e) =>
-                formik.setFieldValue("datePayment", e.target.value)
-              }
+              onChange={(name, value) => formik.setFieldValue(name, value)}
               onBlur={formik.handleBlur}
+              size="wide"
               fullwidth
             />
           </Stack>

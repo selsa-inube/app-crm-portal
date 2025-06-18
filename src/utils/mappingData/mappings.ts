@@ -37,13 +37,27 @@ export const getScheduleInSpanish = (schedule: Schedule): string => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getPropertyValue = (properties: any[], propertyName: string) => {
+export const getPropertyValue = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  properties: any[] | undefined,
+  propertyName: string,
+): string => {
+  if (!Array.isArray(properties)) return "";
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     properties.find((prop: any) => prop.propertyName === propertyName)
       ?.propertyValue || ""
   );
+};
+
+export const getAllPropertyValues = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  properties: any[],
+  propertyName: string,
+) => {
+  return properties
+    .filter((prop) => prop.propertyName === propertyName)
+    .map((prop) => prop.propertyValue);
 };
 
 export const removeDuplicates = <T, K extends keyof T>(

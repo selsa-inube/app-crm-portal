@@ -30,8 +30,8 @@ import {
   StyledHeaderContainer,
   StyledCollapseIcon,
   StyledCollapse,
-  StyledFooter,
   StyledPrint,
+  StyledFooter,
 } from "./styles";
 
 import { useNavigationConfig } from "./config/apps.config";
@@ -192,21 +192,29 @@ function AppPage() {
               handleShowBlanket={handleToggleLogoutModal}
             />
           )}
+
           <Grid
             templateColumns={!isTablet ? "auto 1fr" : "1fr"}
             alignContent="unset"
-            height={isTablet ? "81vh" : "86vh"}
+            height={isTablet ? "81vh" : "92vh"}
           >
             {!isTablet && (
-              <Nav navigation={navConfig} actions={actions} collapse={true} />
+              <Nav
+                navigation={navConfig}
+                actions={actions}
+                collapse={true}
+                footerLogo={eventData.businessManager.urlLogo}
+              />
             )}
             <StyledMain>
               <Outlet />
             </StyledMain>
           </Grid>
-          <StyledFooter>
-            {renderLogo(eventData.businessManager.urlBrand)}
-          </StyledFooter>
+          {isTablet && (
+            <StyledFooter>
+              {renderLogo(eventData.businessManager.urlBrand)}
+            </StyledFooter>
+          )}
         </StyledContainer>
       </Grid>
     </StyledAppPage>

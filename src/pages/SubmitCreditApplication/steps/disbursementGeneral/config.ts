@@ -38,7 +38,7 @@ export const disbursemenOptionAccount = {
   labelDocumentType: "Tipo de documento",
   labelDocumentNumber: "Número de documento",
   placeDocumentNumber: "Ej: 1015744898",
-  labelBirthdate: "fecha de nacimiento",
+  labelBirthdate: "Fecha de nacimiento",
   labelphone: "Teléfono de contacto",
   placephone: "Ej: 3103217765",
   labelMail: "Correo electrónico",
@@ -52,6 +52,6 @@ export const disbursemenOptionAccount = {
   placeObservation: "Cosas extra que deben tenerse en cuenta.",
   placeOption: "Seleccione una opción",
   valueTurnFail:
-    "El valor a girar con esta forma de desembolso es diferente de $",
+    "El valor a girar con esta forma de desembolso es diferente de ",
   errorFlagInternal: "Error al obtener cuentas internas",
 };

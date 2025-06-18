@@ -198,7 +198,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
             <SkeletonLine width="70px" animated={true} />
           ) : (
             <Text weight="bold" type="body" size="large">
-              5
+              4,67
             </Text>
           )}
         </Stack>

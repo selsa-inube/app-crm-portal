@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { mockFinancialObligation } from "@mocks/add-prospect/financial-obligation/financialobligation.mock";
+import { IDataInformationItem } from "./interface";
+//import { mockFinancialObligation } from "@mocks/add-prospect/financial-obligation/financialobligation.mock";
 
-export const usePagination = () => {
+export const usePagination = (data: IDataInformationItem[]) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const pageLength = 5;
-  const totalRecords = mockFinancialObligation.length;
+  const totalRecords = data.length;
   const totalPages = Math.ceil(totalRecords / pageLength);
 
   const handleStartPage = () => setCurrentPage(0);
@@ -17,10 +18,17 @@ export const usePagination = () => {
   const firstEntryInPage = currentPage * pageLength;
   const lastEntryInPage = Math.min(firstEntryInPage + pageLength, totalRecords);
 
-  const currentData = mockFinancialObligation.slice(
-    firstEntryInPage,
-    lastEntryInPage,
-  );
+  const currentData = data.slice(firstEntryInPage, lastEntryInPage);
+
+  const paddingCount = pageLength - currentData.length;
+  const paddingItems = Array.from({
+    length: paddingCount > 0 ? paddingCount : 0,
+  }).map((_, i) => ({
+    __isPadding: true,
+    id: `padding-${i}`,
+  }));
+
+  const paddedCurrentData = [...currentData, ...paddingItems];
 
   return {
     currentPage,
@@ -32,6 +40,6 @@ export const usePagination = () => {
     handleEndPage,
     firstEntryInPage,
     lastEntryInPage,
-    currentData,
+    paddedCurrentData,
   };
 };

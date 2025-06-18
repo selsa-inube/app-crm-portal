@@ -5,6 +5,7 @@ import { getIncomeSourcesById } from "@services/incomeSources";
 import { IIncomeSources } from "@services/incomeSources/types";
 import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 import { getAge } from "@utils/formatData/currency";
+import { getAllPropertyValues } from "@utils/mappingData/mappings";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { DebtorAddModalUI } from "./interface";
@@ -13,11 +14,27 @@ import { FormData } from "./types";
 interface DebtorAddModalProps {
   onSubmit: () => void;
   handleClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onAddBorrower: React.Dispatch<React.SetStateAction<any>>;
   title: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prospectData: any;
   businessUnitPublicCode?: string;
 }
 export function DebtorAddModal(props: DebtorAddModalProps) {
-  const { title, handleClose, businessUnitPublicCode } = props;
+  const {
+    title,
+    handleClose,
+    businessUnitPublicCode,
+    prospectData,
+    onAddBorrower,
+  } = props;
+
+  const financialObligations =
+    getAllPropertyValues(
+      prospectData.borrowers[0].borrowerProperties,
+      "FinancialObligation",
+    ) || [];
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddBorrower.generalInformation.id,
@@ -40,6 +57,85 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     undefined,
   );
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
+
+  const dataBorrower = [
+    {
+      borrowerName: formData.personalInfo.firstName,
+      borrowerType: "Borrower",
+      borrowerIdentificationType: formData.personalInfo.tipeOfDocument,
+      borrowerIdentificationNumber: formData.personalInfo.documentNumber,
+      borrowerProperties: [
+        {
+          propertyName: "PeriodicSalary",
+          propertyValue: incomeData?.PeriodicSalary?.toString() || "0",
+        },
+        {
+          propertyName: "PersonalBusinessUtilities",
+          propertyValue:
+            incomeData?.PersonalBusinessUtilities?.toString() || "0",
+        },
+        {
+          propertyName: "ProfessionalFees",
+          propertyValue: incomeData?.ProfessionalFees?.toString() || "0",
+        },
+        {
+          propertyName: "Dividends",
+          propertyValue: incomeData?.Dividends?.toString() || "0",
+        },
+        {
+          propertyName: "FinancialIncome",
+          propertyValue: incomeData?.FinancialIncome?.toString() || "0",
+        },
+        {
+          propertyName: "Leases",
+          propertyValue: incomeData?.Leases?.toString() || "0",
+        },
+        {
+          propertyName: "OtherNonSalaryEmoluments",
+          propertyValue:
+            incomeData?.OtherNonSalaryEmoluments?.toString() || "0",
+        },
+        {
+          propertyName: "PensionAllowances",
+          propertyValue: incomeData?.PensionAllowances?.toString() || "0",
+        },
+        ...(Array.isArray(financialObligations)
+          ? financialObligations.map((obligation) => ({
+              propertyName: "FinancialObligation",
+              propertyValue: obligation,
+            }))
+          : []),
+        {
+          propertyName: "name",
+          propertyValue: formData.personalInfo.firstName,
+        },
+        {
+          propertyName: "surname",
+          propertyValue: formData.personalInfo.lastName,
+        },
+        {
+          propertyName: "email",
+          propertyValue: formData.personalInfo.email,
+        },
+        {
+          propertyName: "biological_sex",
+          propertyValue: formData.personalInfo.sex,
+        },
+        {
+          propertyName: "phone_number",
+          propertyValue: formData.personalInfo.phone,
+        },
+        {
+          propertyName: "birth_date",
+          propertyValue: "1987-01-02T15:04:05Z",
+        },
+        {
+          propertyName: "relationship",
+          propertyValue: formData.personalInfo.relation,
+        },
+      ],
+    },
+  ];
 
   const { addFlag } = useFlag();
 
@@ -173,7 +269,8 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
   };
 
   function handleSubmitClick() {
-    console.log("Enviar paso: ", currentStep);
+    onAddBorrower(dataBorrower);
+    handleClose();
   }
 
   const handleFormChange = (updatedValues: Partial<FormData>) => {
@@ -181,6 +278,32 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       ...prev,
       ...updatedValues,
     }));
+  };
+
+  const handleIncomeChange = (updatedIncomeData: Partial<IIncomeSources>) => {
+    setIncomeData((prev) => {
+      if (!prev) {
+        return {
+          Dividends: 0,
+          FinancialIncome: 0,
+          identificationNumber: "",
+          identificationType: "",
+          Leases: 0,
+          OtherNonSalaryEmoluments: 0,
+          PensionAllowances: 0,
+          PeriodicSalary: 0,
+          PersonalBusinessUtilities: 0,
+          ProfessionalFees: 0,
+          name: "",
+          surname: "",
+          ...updatedIncomeData,
+        };
+      }
+      return {
+        ...prev,
+        ...updatedIncomeData,
+      };
+    });
   };
 
   return (
@@ -192,7 +315,9 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       formData={formData}
       incomeData={incomeData}
       AutoCompleted={isAutoCompleted}
+      prospectData={prospectData}
       handleFormChange={handleFormChange}
+      handleIncomeChange={handleIncomeChange}
       handleNextStep={handleNextStep}
       handlePreviousStep={handlePreviousStep}
       setCurrentStep={setCurrentStep}

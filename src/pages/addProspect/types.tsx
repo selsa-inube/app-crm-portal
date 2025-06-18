@@ -67,21 +67,14 @@ export interface LoanAmountState {
 }
 
 export interface IBorrowerData {
-  initialBorrowers: {
-    id: string;
-    name: string;
-    debtorDetail: {
-      age: string;
-      document: string;
-      documentNumber: string;
-      email: string;
-      lastName: string;
-      name: string;
-      number: string;
-      relation: string;
-      sex: string;
-    };
-  };
+  borrowers: Record<string, never>;
+}
+
+export interface IConsolidatedCreditItem {
+  title: string;
+  code: string;
+  label: string;
+  value: number;
 }
 
 export interface IFormData {
@@ -92,24 +85,22 @@ export interface IFormData {
       quotaCapToggle: boolean;
       maximumTermToggle: boolean;
     };
-    quotaCapValue: string;
-    maximumTermValue: string;
+    quotaCapValue: string | number;
+    maximumTermValue: string | number;
   };
   borrowerData: IBorrowerData;
   generalToggleChecked: boolean;
   togglesState: boolean[];
   loanAmountState: {
-    inputValue: string;
+    inputValue: number | string;
     toggleChecked: boolean;
     paymentPlan: string;
     periodicity: string;
     payAmount: string;
   };
-  consolidatedCreditSelections: {
-    totalCollected: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    selectedValues: Record<string, any>;
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  consolidatedCreditSelections: any;
+  consolidatedCreditArray?: IConsolidatedCreditItem[];
 }
 
 export interface ICondition {
@@ -127,3 +118,13 @@ export type ContextData = Record<string, any>;
 export type Rule = Irule;
 
 export type RuleBuilder = (contextData: ContextData) => Rule;
+
+export type ICreditLineTerms = {
+  [line: string]: {
+    LoanAmountLimit: number;
+    LoanTermLimit: number;
+    RiskFreeInterestRate: number;
+  };
+};
+
+export type RuleValue = string | { value: string } | undefined;

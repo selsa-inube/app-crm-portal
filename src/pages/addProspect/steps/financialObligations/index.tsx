@@ -9,13 +9,14 @@ import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { dataReport } from "@pages/prospect/components/TableObligationsFinancial/config";
-
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 interface IObligationsFinancialProps {
   isMobile: boolean;
+  clientPortfolio: IObligations;
 }
 
 export function ObligationsFinancial(props: IObligationsFinancialProps) {
-  const { isMobile } = props;
+  const { isMobile, clientPortfolio } = props;
 
   const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -60,14 +61,14 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
           >
             {!isMobile && (
               <Text size="medium" type="title" appearance="dark">
-                {dataReport.description}
+                {clientPortfolio?.customerName || ""}
               </Text>
             )}
             {isMobile && (
               <Stack padding="0px 0px 10px 0px">
                 <CardGray
                   label={dataReport.title}
-                  placeHolder={dataReport.description}
+                  placeHolder={clientPortfolio?.customerName || ""}
                   isMobile={true}
                 />
               </Stack>
@@ -110,6 +111,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
             refreshKey={refreshKey}
             showActions={true}
             showButtons={false}
+            initialValues={clientPortfolio}
           />
         </Stack>
       </Stack>

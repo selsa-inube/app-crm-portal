@@ -6,16 +6,18 @@ import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCar
 import { CardValues } from "@components/cards/cardValues";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ConsolidatedCredits } from "@pages/prospect/components/modals/ConsolidatedCreditModal";
-import { SummaryProspectCredit, tittleOptions } from "./config/config";
+import { DeductibleExpensesModal } from "@pages/prospect/components/modals/DeductibleExpensesModal";
 import { deleteCreditProductMock } from "@mocks/utils/deleteCreditProductMock.service";
 import { IProspect, ICreditProduct } from "@services/prospects/types";
 import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
 import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
 import { AppContext } from "@context/AppContext";
+import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { Schedule } from "@services/enums";
+import { getAllDeductibleExpensesById } from "@services/prospects/deductibleExpenses";
 
+import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";
-import { DeductibleExpensesModal } from "../../components/modals/DeductibleExpensesModal";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -32,23 +34,34 @@ export const CardCommercialManagement = (
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
+
   const { addFlag } = useFlag();
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+  const [modalHistory, setModalHistory] = useState<string[]>([]);
+  const currentModal = modalHistory[modalHistory.length - 1];
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ICreditProduct | null>(
+    null,
+  );
+
   const [selectedProductId, setSelectedProductId] = useState("");
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>();
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
   const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
     useState(false);
+  const [deductibleExpenses, setDeductibleExpenses] = useState<
+    { expenseName: string; expenseValue: number }[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     if (prospectData?.creditProducts) {
       setProspectProducts(prospectData?.creditProducts);
     }
   }, [prospectData]);
-
   const isMobile = useMediaQuery("(max-width: 800px)");
 
   const handleDelete = async () => {
@@ -60,7 +73,6 @@ export const CardCommercialManagement = (
     );
     setShowDeleteModal(false);
   };
-
   const handleDeleteClick = (creditProductId: string) => {
     setSelectedProductId(creditProductId);
     setShowDeleteModal(true);
@@ -70,7 +82,7 @@ export const CardCommercialManagement = (
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
-          id!,
+          prospectData?.prospectId || "",
         );
         if (result) {
           setProspectSummaryData(result);
@@ -84,10 +96,37 @@ export const CardCommercialManagement = (
         });
       }
     };
-
-    fetchData();
+    if (prospectData) {
+      fetchData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessUnitPublicCode, id]);
+  }, [businessUnitPublicCode, prospectData?.prospectId]);
+
+  useEffect(() => {
+    if (!businessUnitPublicCode || !prospectData?.prospectId) return;
+
+    const fetchExpenses = async () => {
+      try {
+        const data = await getAllDeductibleExpensesById(
+          businessUnitPublicCode,
+          prospectData.prospectId,
+        );
+        setDeductibleExpenses(data);
+      } catch (error) {
+        addFlag({
+          title: tittleOptions.deductibleExpensesErrorTitle,
+          description: `${error}`,
+          appearance: "danger",
+          duration: 5000,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExpenses();
+  }, [businessUnitPublicCode, prospectData?.prospectId]);
+
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>
@@ -112,7 +151,10 @@ export const CardCommercialManagement = (
                 entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
               }
               schedule={entry.schedule as Schedule}
-              onEdit={() => {}}
+              onEdit={() => {
+                setSelectedProduct(entry);
+                setModalHistory((prev) => [...prev, "editProductModal"]);
+              }}
               onDelete={() => handleDeleteClick(entry.creditProductCode)}
             />
           ))}
@@ -148,6 +190,28 @@ export const CardCommercialManagement = (
           handleDelete={handleDelete}
         />
       )}
+      {currentModal === "editProductModal" && selectedProduct && (
+        <EditProductModal
+          onCloseModal={() => setModalHistory((prev) => prev.slice(0, -1))}
+          onConfirm={() => setModalHistory((prev) => prev.slice(0, -1))}
+          title={`Editar producto`}
+          confirmButtonText="Guardar"
+          initialValues={{
+            creditLine: selectedProduct.lineOfCreditAbbreviatedName || "",
+            creditAmount: selectedProduct.loanAmount || 0,
+            paymentMethod:
+              selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
+                ?.paymentChannelAbbreviatedName || "",
+            paymentCycle: selectedProduct.schedule || "",
+            firstPaymentCycle: "",
+            termInMonths: selectedProduct.loanTerm || 0,
+            amortizationType: "",
+            interestRate: selectedProduct.interestRate || 0,
+            rateType: "",
+          }}
+        />
+      )}
+
       {showConsolidatedModal && (
         <ConsolidatedCredits
           handleClose={() => setShowConsolidatedModal(false)}
@@ -157,6 +221,9 @@ export const CardCommercialManagement = (
       {showDeductibleExpensesModal && (
         <DeductibleExpensesModal
           handleClose={() => setDeductibleExpensesModal(false)}
+          initialValues={deductibleExpenses}
+          loading={isLoading}
+          isMobile={isMobile}
         />
       )}
     </div>

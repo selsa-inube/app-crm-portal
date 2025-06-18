@@ -15,7 +15,7 @@ export const stepsAddProspect = {
     id: 3,
     number: 3,
     name: "Elección del producto",
-    description: "Seleccione el destino del dinero.",
+    description: "Seleccione los productos de crédito.",
   },
   extraordinaryInstallments: {
     id: 4,
@@ -46,19 +46,20 @@ export const stepsAddProspect = {
   loanConditions: {
     id: 8,
     number: 8,
-    name: "Valor de la solicitud",
-    description: "Detalles del valor de la solicitud",
+    name: "Restricciones de la solicitud",
+    description:
+      "Registre si el cliente tiene restricciones en el valor de la cuota ordinaria o en el plazo para el pago.",
   },
   loanAmount: {
     id: 9,
     number: 9,
     name: "Valor de la solicitud",
-    description: "Detalles del valor de la solicitud",
+    description: "Registre el valor de la solicitud y el medio de pago.",
   },
   obligationsCollected: {
     id: 10,
     number: 10,
     name: "Obligaciones recogidas",
-    description: "Agrupe las obligaciones financieras.",
+    description: "Seleccione las obligaciones financieras que serán recogidas.",
   },
 };
