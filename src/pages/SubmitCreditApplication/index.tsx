@@ -80,7 +80,7 @@ export function SubmitCreditApplication() {
       client: false,
     },
     disbursementGeneral: {
-      amount: 10000000,
+      amount: "",
       Internal_account: {
         amount: "",
         accountNumber: "",
@@ -588,6 +588,18 @@ export function SubmitCreditApplication() {
       fetchData();
     }
   }, [businessUnitPublicCode, prospectData?.prospectId]);
+
+  useEffect(() => {
+    if (prospectSummaryData?.netAmountToDisburse) {
+      setFormData((prev) => ({
+        ...prev,
+        disbursementGeneral: {
+          ...prev.disbursementGeneral,
+          amount: prospectSummaryData.netAmountToDisburse,
+        },
+      }));
+    }
+  }, [prospectSummaryData]);
 
   return (
     <>

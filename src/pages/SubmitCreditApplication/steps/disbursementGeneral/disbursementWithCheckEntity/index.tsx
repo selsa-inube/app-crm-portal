@@ -291,7 +291,7 @@ export function DisbursementWithCheckEntity(
             value={validateCurrencyField(
               "amount",
               formik,
-              true,
+              false,
               optionNameForm,
             )}
             onChange={(e) => {

@@ -2,7 +2,6 @@ import { useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
-import { mockEditProspect } from "@mocks/add-prospect/edit-prospect/editprospect.mock";
 import { CustomerContext } from "@context/CustomerContext";
 import { getSearchProspectByCode } from "@services/prospects/AllProspects";
 import { IProspect } from "@services/prospects/types";
@@ -39,7 +38,7 @@ export function EditProspect() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const data = mockEditProspect[0];
+  const data = dataProspect;
 
   const { customerData } = useContext(CustomerContext);
   const navigate = useNavigate();

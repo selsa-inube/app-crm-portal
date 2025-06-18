@@ -290,7 +290,7 @@ export function DisbursementWithCheckManagement(
             value={validateCurrencyField(
               "amount",
               formik,
-              true,
+              false,
               optionNameForm,
             )}
             onChange={(e) => {

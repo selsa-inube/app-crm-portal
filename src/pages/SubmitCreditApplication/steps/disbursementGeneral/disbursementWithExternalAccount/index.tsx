@@ -327,7 +327,7 @@ export function DisbursementWithExternalAccount(
             <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
           }
           size="compact"
-          value={validateCurrencyField("amount", formik, true, optionNameForm)}
+          value={validateCurrencyField("amount", formik, false, optionNameForm)}
           onChange={(e) => {
             handleChangeWithCurrency(formik, e, optionNameForm);
           }}
@@ -402,14 +402,16 @@ export function DisbursementWithExternalAccount(
       )}
       <Stack direction="row" gap="16px">
         <Select
-          id={"bank"}
+          id={`${optionNameForm}.bank`}
           name={`${optionNameForm}.bank`}
           label={disbursemenOptionAccount.labelBank}
           placeholder={disbursemenOptionAccount.placeOption}
           size="compact"
           options={banks}
           onBlur={formik.handleBlur}
-          onChange={(name, value) => formik.setFieldValue(name, value)}
+          onChange={(_, value) =>
+            formik.setFieldValue(`${optionNameForm}.bank`, value)
+          }
           value={formik.values[optionNameForm]?.bank || ""}
           fullwidth
         />

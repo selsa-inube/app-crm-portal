@@ -12,6 +12,7 @@ import { DisbursementWithCheckEntity } from "./disbursementWithCheckEntity";
 import { DisbursementWithCheckManagement } from "./DisbursementWithCheckManagement";
 import { DisbursementWithCash } from "./DisbursementWithCash";
 import { disbursemenTabs } from "./config";
+import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
 
 interface IDisbursementGeneralProps {
   isMobile: boolean;
@@ -27,6 +28,7 @@ interface IDisbursementGeneralProps {
   handleTabChange: (id: string) => void;
   rule?: string[];
   customerData?: ICustomerData;
+  prospectSummaryData: IProspectSummaryById | undefined;
 }
 
 interface Tab {
@@ -46,6 +48,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     handleTabChange,
     rule,
     customerData,
+    prospectSummaryData,
   } = props;
 
   const [tabChanged, setTabChanged] = useState(false);
@@ -89,12 +92,30 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
 
   useEffect(() => {
     const totalAmount = getTotalAmount();
-    onFormValid(
-      formik.values.Internal_account?.amount
-        ? totalAmount === initialValues.amount &&
-            initialValues.Internal_account.accountNumber !== ""
-        : totalAmount === initialValues.amount,
-    );
+
+    const isInternalValid = formik.values.Internal_account?.amount
+      ? formik.values.Internal_account.accountNumber !== ""
+      : true;
+
+    const isExternalValid = formik.values.External_account?.amount
+      ? formik.values.External_account.bank !== "" &&
+        formik.values.External_account.accountNumber !== "" &&
+        formik.values.External_account.accountType !== ""
+      : true;
+
+    const isBankValid = formik.values.Bank?.amount
+      ? formik.values.Bank.bank !== "" &&
+        formik.values.Bank.accountNumber !== "" &&
+        formik.values.Bank.accountType !== ""
+      : true;
+
+    const isValid =
+      totalAmount === initialValues.amount &&
+      isInternalValid &&
+      isExternalValid &&
+      isBankValid;
+
+    onFormValid(isValid);
   }, [
     formik.values,
     onFormValid,
@@ -102,7 +123,13 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     tabChanged,
     getTotalAmount,
     initialValues.amount,
-    initialValues.Internal_account.accountNumber,
+    formik.values.Internal_account?.accountNumber,
+    formik.values.External_account?.bank,
+    formik.values.External_account?.accountNumber,
+    formik.values.External_account?.accountType,
+    formik.values.Bank?.bank,
+    formik.values.Bank?.accountNumber,
+    formik.values.Bank?.accountType,
   ]);
 
   const fetchTabs = useCallback(() => {
@@ -179,6 +206,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 identificationNumber={identificationNumber}
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
+                prospectSummaryData={prospectSummaryData}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.external.id) &&

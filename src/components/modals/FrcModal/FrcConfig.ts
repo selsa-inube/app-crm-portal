@@ -2,7 +2,7 @@ export const frcConfig = {
   title: "Endeudamiento máximo x FRC",
   subTitle: "Score de riesgo",
   totalScoreLabel: "Puntaje total",
-  totalScoreMax: "/200",
+  totalScoreMax: "/1000",
   seniorityLabel: "Antigüedad de 10 años",
   seniorityMax: "/200",
   centralRiskLabel: "Central de riesgo de 250 P",
