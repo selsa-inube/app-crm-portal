@@ -31,17 +31,17 @@ export const PaymentCapacityAnalysis = (
       items: [
         {
           label: DataCapacityAnalysis.periodicSalary,
-          value: "2.000.000",
+          value: "1.250.000",
           showIcon: true,
         },
         {
           label: DataCapacityAnalysis.otherNonSalaryEmoluments,
-          value: "500.000",
+          value: "0",
           showIcon: true,
         },
         {
           label: DataCapacityAnalysis.pensionPayments,
-          value: "540.000",
+          value: "595.180",
           showIcon: true,
         },
       ],
@@ -51,7 +51,7 @@ export const PaymentCapacityAnalysis = (
       items: [
         {
           label: DataCapacityAnalysis.professionalFees,
-          value: "1.400.000",
+          value: "0",
           showIcon: true,
         },
       ],
@@ -61,17 +61,17 @@ export const PaymentCapacityAnalysis = (
       items: [
         {
           label: DataCapacityAnalysis.rentals,
-          value: "640.000",
+          value: "0",
           showIcon: true,
         },
         {
           label: DataCapacityAnalysis.dividends,
-          value: "40.000",
+          value: "0",
           showIcon: true,
         },
         {
           label: DataCapacityAnalysis.financialReturns,
-          value: "96.000",
+          value: "1.963.770",
           showIcon: true,
         },
       ],
@@ -81,7 +81,7 @@ export const PaymentCapacityAnalysis = (
       items: [
         {
           label: DataCapacityAnalysis.businessUtilities,
-          value: "0",
+          value: "1.882.640",
           showIcon: true,
         },
       ],
@@ -91,17 +91,17 @@ export const PaymentCapacityAnalysis = (
   const generalSummary: ISummaryItem[] = [
     {
       label: DataCapacityAnalysis.totalIncome,
-      value: "1.400.000",
+      value: "5.691.590",
       bold: true,
     },
     {
       label: DataCapacityAnalysis.minimumPaymentReserve,
-      value: "4.954.000",
+      value: "2.778.879",
       gray: true,
     },
     {
       label: DataCapacityAnalysis.paymentCapacity,
-      value: "5.216.000",
+      value: "2.902.711",
       bold: true,
     },
   ];
@@ -112,7 +112,7 @@ export const PaymentCapacityAnalysis = (
       items: [
         {
           label: DataCapacityAnalysis.periodicSalary,
-          value: "5.000.000",
+          value: "3.000.000",
         },
         {
           label: DataCapacityAnalysis.otherNonSalaryEmoluments,
@@ -129,7 +129,7 @@ export const PaymentCapacityAnalysis = (
   const rosterSummary: ISummaryItem[] = [
     {
       label: DataCapacityAnalysis.totalIncome,
-      value: "7.200.000",
+      value: "5.200.000",
       bold: true,
     },
     {
@@ -204,9 +204,9 @@ export const PaymentCapacityAnalysis = (
           <PaymentCapacityAnalysisDetails
             isMobile={isMobile}
             initialValues={{
-              income: "5.000.000",
-              reserve: "60%",
-              value: "2.000.000",
+              income: "5.691.590",
+              reserve: "49%",
+              value: "2.902.711",
             }}
             handleClose={() => setShowModal(false)}
           />
