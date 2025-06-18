@@ -3,7 +3,7 @@ export const electionData = {
   information: "Información",
   understood: "Entendido",
   informationDescription:
-    "No se pueden seleccionar los cupos porque no se han seleccionado las líneas de crédito.",
+    "El producto seleccionado no permite la habilitación de este paso. ",
   yes: "SI",
   no: "NO",
   load: "Cargando datos...",

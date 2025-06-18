@@ -126,3 +126,5 @@ export type ICreditLineTerms = {
     RiskFreeInterestRate: number;
   };
 };
+
+export type RuleValue = string | { value: string } | undefined;
