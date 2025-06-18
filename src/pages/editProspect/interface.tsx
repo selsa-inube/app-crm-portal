@@ -10,14 +10,15 @@ import { ShareCreditModal } from "@components/modals/ShareCreditModal";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { BaseModal } from "@components/modals/baseModal";
 import { IProspect } from "@services/prospects/types";
+import { IPaymentChannel } from "@services/types";
+import { currencyFormat } from "@utils/formatData/currency";
+import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
 
 import { GeneralHeader } from "../addProspect/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
 import { StyledMarginPrint, StyledPrint } from "./styles";
 import { dataEditProspect, titlesModal } from "./config";
 import { IDataHeader } from "./types";
-import { IPaymentChannel } from "@src/services/types";
-import { currencyFormat } from "@src/utils/formatData/currency";
 
 interface IEditProspectUIProps {
   dataHeader: IDataHeader;
@@ -77,6 +78,14 @@ export function EditProspectUI(props: IEditProspectUIProps) {
     return data.creditProducts.reduce((sum, product) => {
       return sum + (product.loanAmount || 0);
     }, 0);
+  };
+
+  const getDestinationName = (code?: string) => {
+    if (!code) return "";
+    const found = MoneyDestinationTranslations.find(
+      (item) => item.Code === code,
+    );
+    return found?.Name || code;
   };
 
   return (
@@ -171,12 +180,17 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                                 alignItems="center"
                                 gap="8px"
                               >
-                                <Text type="title" size="large">
-                                  {data?.moneyDestinationAbbreviatedName ===
-                                  "Education"
-                                    ? "Educación"
-                                    : data?.moneyDestinationAbbreviatedName}
-                                </Text>
+                                <Stack
+                                  direction="column"
+                                  alignItems="center"
+                                  gap="8px"
+                                >
+                                  <Text type="title" size="large">
+                                    {getDestinationName(
+                                      data?.moneyDestinationAbbreviatedName,
+                                    )}
+                                  </Text>
+                                </Stack>
                               </Stack>
                             </Stack>
                             <Text type="body" size="small" appearance="gray">
