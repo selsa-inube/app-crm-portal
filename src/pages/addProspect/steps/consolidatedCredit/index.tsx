@@ -37,6 +37,8 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     initialValues.totalCollected,
   );
 
+  console.log(totalCollected);
+
   const [selectedLabels, setSelectedLabels] = useState<Record<string, string>>(
     {},
   );
@@ -122,7 +124,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
               weight="bold"
               appearance="primary"
             >
-              {currencyFormat(totalCollected)}
+              {currencyFormat(totalCollected / 3)}
             </Text>
             <Text type="body" size="small" appearance="gray">
               {dataConsolidated.totalvalue}
