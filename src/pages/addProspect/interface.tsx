@@ -423,7 +423,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
               nextButton={textAddCongfig.close}
               handleNext={() => setIsCreditLimitWarning(false)}
               handleClose={() => setIsCreditLimitWarning(false)}
-              width={isMobile ? "280px" : "400px"}
+              width={isMobile ? "280px" : "450px"}
             >
               <Stack>
                 <Text>{textAddCongfig.descriptionQuotas}</Text>

@@ -4,13 +4,13 @@ export const electionData = {
   understood: "Entendido",
   informationDescription: {
     includeExtraordinaryInstallments:
-      "El producto seleccionado no permite la modificación de abonos especiales.",
+      "Ninguna de las líneas de crédito seleccionadas permite la programación de abonos especiales a capital.",
     updateIncomeSources:
-      "El producto seleccionado no permite la modificación de ingresos.",
+      "Ninguna de las líneas de crédito seleccionadas permite modificar la información de ingresos del cliente.",
     updateFinancialObligations:
-      "El producto seleccionado no permite la modificación de obligaciones financieras.",
+      "Ninguna de las líneas de crédito seleccionadas permite modificar la información de las obligaciones financieras del cliente.",
     includeAditionalBorrowers:
-      "El producto seleccionado no permite registrar deudores adicionales.",
+      "Ninguna de las líneas de crédito seleccionadas permite registrar deudores adicionales.",
   },
   yes: "SI",
   no: "NO",

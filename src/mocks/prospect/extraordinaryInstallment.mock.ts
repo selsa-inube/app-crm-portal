@@ -29,14 +29,27 @@ export const extraordinaryInstallmentMock: IExtraordinaryPayment[] = [
 
 export const paymentMethodOptionsMock = [
   {
-    id: "selsa_payroll_jun",
-    label: "Prima Junio Selsa",
-    value: "Prima Junio Selsa",
+    id: "comfandi_payroll_jun",
+    label: "Prima Junio comfandi",
+    value: "Prima Junio comfandi",
   },
   {
-    id: "selsa_payroll_dec",
-    label: "Prima Diciembre Selsa",
-    value: "Prima Diciembre Selsa",
+    id: "comfandi_payroll_dec",
+    label: "Prima Diciembre comfandi",
+    value: "Prima Diciembre comfandi",
+  },
+];
+
+export const paymentDateOptionsMock = [
+  {
+    id: "dic",
+    label: "15/Dic/2025",
+    value: "15/Dic/2025",
+  },
+  {
+    id: "Jun",
+    label: "30/Jun/2026",
+    value: "30/Jun/2026",
   },
 ];
 

@@ -33,7 +33,7 @@ export const textAddCongfig = {
   buttonQuotas: "Cupos",
   titleQuotas: "Cupo por línea de crédito",
   descriptionQuotas:
-    "No se pueden seleccionar los cupos porque no se han seleccionado las líneas de crédito.",
+    "No es posible consultar el cupo de crédito del cliente porque no se ha seleccionado una línea de crédito.",
   close: "Cerrar",
   buttonPaymentCapacity: "Cap. de pago",
   titlePaymentCapacity: "Análisis de capacidad de pago",
