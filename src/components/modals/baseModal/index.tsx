@@ -1,15 +1,14 @@
 import { createPortal } from "react-dom";
 import { MdClear } from "react-icons/md";
+
 import {
   Stack,
   Icon,
   Text,
   Divider,
-  Blanket,
   Button,
+  Blanket,
 } from "@inubekit/inubekit";
-
-import { validationMessages } from "@validations/validationMessages";
 
 import { StyledContainer, StyledContainerClose } from "./styles";
 import { dataBaseModal } from "./config";
@@ -57,10 +56,17 @@ export function BaseModal(props: IBaseModalProps) {
     portalId = "portal",
   } = props;
 
-  const node = document.getElementById(portalId ?? "portal");
-  if (!node) {
-    throw new Error(validationMessages.errorNodo);
+  function getOrCreatePortalNode(id: string): HTMLElement {
+    let node = document.getElementById(id);
+    if (!node) {
+      node = document.createElement("div");
+      node.id = id;
+      document.body.appendChild(node);
+    }
+    return node;
   }
+
+  const node = getOrCreatePortalNode(portalId ?? "portal");
 
   return createPortal(
     <Blanket>

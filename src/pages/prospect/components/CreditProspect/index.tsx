@@ -18,9 +18,8 @@ import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
-import { CreditLimit } from "@components/modals/CreditLimit";
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
-import { ICreditProductProspect } from "@services/types";
+import { ICreditProductProspect, IPaymentChannel } from "@services/types";
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { addCreditProduct } from "@mocks/utils/addCreditProductMock.service";
 import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
@@ -43,6 +42,7 @@ import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
+import { CreditLimitModal } from "../modals/CreditLimitModal";
 
 interface ICreditProspectProps {
   showMenu: () => void;
@@ -50,12 +50,16 @@ interface ICreditProspectProps {
   prospectData?: IProspect;
   isPrint?: boolean;
   showPrint?: boolean;
+  setRequestValue?: React.Dispatch<
+    React.SetStateAction<IPaymentChannel[] | undefined>
+  >;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
   const {
     prospectData,
     showMenu,
+    setRequestValue,
     isMobile,
     isPrint = false,
     showPrint = true,
@@ -468,19 +472,10 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         </Stack>
         {currentModal === "creditLimit" && (
-          <CreditLimit
+          <CreditLimitModal
             handleClose={handleCloseModal}
-            title="Origen de cupo"
-            onOpenPaymentCapacityModal={() => setOpenModal("paymentCapacity")}
-            onOpenReciprocityModal={() => setOpenModal("reciprocityModal")}
-            onOpenFrcModal={() => setOpenModal("scoreModal")}
-            maxPaymentCapacity={50000000}
-            maxReciprocity={40000000}
-            maxDebtFRC={45000000}
-            assignedLimit={0}
-            currentPortfolio={10000000}
-            maxUsableLimit={20000000}
-            availableLimitWithoutGuarantee={15000000}
+            isMobile={isMobile}
+            setRequestValue={setRequestValue || (() => {})}
           />
         )}
         {openModal === "paymentCapacity" && (

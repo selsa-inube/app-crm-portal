@@ -4,3 +4,8 @@ export interface IDataInformationItem {
   propertyValue?: string | string[];
   propertyName?: string;
 }
+
+export interface IProperty {
+  propertyName: string;
+  propertyValue: string;
+}

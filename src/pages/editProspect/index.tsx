@@ -10,7 +10,7 @@ import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
-import { ICreditRequest } from "@services/types";
+import { ICreditRequest, IPaymentChannel } from "@services/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
 
 import { ruleConfig } from "../SubmitCreditApplication/config/configRules";
@@ -49,7 +49,7 @@ export function EditProspect() {
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
-
+  const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const hasPermitSubmit = !!eventData.user.staff.useCases.canSubmitProspect;
 
   const fetchValidateCreditRequest = useCallback(async () => {
@@ -77,9 +77,7 @@ export function EditProspect() {
       return;
     }
 
-    navigate(
-      `/credit/submit-credit-application/${customerPublicCode}/${prospectCode}`,
-    );
+    navigate(`/credit/apply-for-credit/${customerPublicCode}/${prospectCode}`);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -257,6 +255,8 @@ export function EditProspect() {
       handleInfo={handleInfo}
       setIsModalOpen={setIsModalOpen}
       setShowCreditRequest={setShowCreditRequest}
+      setRequestValue={setRequestValue}
+      requestValue={requestValue}
     />
   );
 }

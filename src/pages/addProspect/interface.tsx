@@ -18,11 +18,21 @@ import { RequirementsModal } from "@pages/prospect/components/modals/Requirement
 import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
+import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { IIncomeSources } from "@services/incomeSources/types";
+import { BaseModal } from "@components/modals/baseModal";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
+import {
+  IFormData,
+  IStep,
+  StepDetails,
+  titleButtonTextAssited,
+  ICreditLineTerms,
+} from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
@@ -35,9 +45,6 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
-import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
-import { IIncomeSources } from "@services/incomeSources/types";
-import { BaseModal } from "@components/modals/baseModal";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -78,6 +85,8 @@ interface AddPositionUIProps {
   prospectData: any;
   creditLimitData?: IIncomeSources;
   totalIncome: number;
+  creditLineTerms?: ICreditLineTerms;
+  clientPortfolio: IObligations;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -96,7 +105,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
     handleFormDataChange,
     setSelectedProducts,
     getRuleByName,
-    getAllDataRuleByName,
     currentStepsNumber,
     customerData,
     dataHeader,
@@ -114,6 +122,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
     prospectData,
     creditLimitData,
     totalIncome,
+    creditLineTerms,
+    clientPortfolio,
   } = props;
 
   return (
@@ -285,7 +295,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   isMobile={isMobile}
                   choiceMoneyDestination={formData.selectedDestination}
                   allRules={{
-                    lineOfCredit: getAllDataRuleByName("LineOfCredit"),
                     PercentagePayableViaExtraInstallments: getRuleByName(
                       "PercentagePayableViaExtraInstallments",
                     ),
@@ -293,7 +302,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
                       "IncomeSourceUpdateAllowed",
                     ),
                   }}
-                  creditLimitData={creditLimitData}
+                  creditLineTerms={creditLineTerms!}
+                  creditLimitData={creditLimitData!}
                 />
               )}
             {currentStepsNumber &&
@@ -326,7 +336,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
             {currentStepsNumber &&
               currentStepsNumber.id ===
                 stepsAddProspect.obligationsFinancial.id && (
-                <ObligationsFinancial isMobile={isMobile} />
+                <ObligationsFinancial
+                  isMobile={isMobile}
+                  clientPortfolio={clientPortfolio}
+                />
               )}
             {currentStepsNumber &&
               currentStepsNumber.id === stepsAddProspect.loanConditions.id && (

@@ -10,9 +10,8 @@ import { BaseModal } from "@components/modals/baseModal";
 import { IIncomeSources } from "@services/incomeSources/types";
 import { currencyFormat } from "@utils/formatData/currency";
 
-import { removeDuplicates } from "@utils/mappingData/mappings";
-
 import { electionData } from "./config";
+import { ICreditLineTerms } from "../../types";
 
 interface IProductSelectionProps {
   initialValues: {
@@ -30,12 +29,11 @@ interface IProductSelectionProps {
   isMobile: boolean;
   choiceMoneyDestination: string;
   allRules: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    lineOfCredit: any[];
     PercentagePayableViaExtraInstallments: string[];
     IncomeSourceUpdateAllowed: string[];
   };
   creditLimitData?: IIncomeSources;
+  creditLineTerms: ICreditLineTerms;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -52,6 +50,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     allRules,
     choiceMoneyDestination,
     creditLimitData,
+    creditLineTerms,
   } = props;
 
   const validationSchema = Yup.object().shape({
@@ -77,7 +76,7 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   useEffect(() => {
     if (generalToggleChecked) {
-      const allProductValues = uniqueServerResponse.map((item) => item.value);
+      const allProductValues = Object.keys(creditLineTerms);
       setSelectedProducts(allProductValues);
       handleFormDataChange("selectedProducts", allProductValues);
     } else {
@@ -85,8 +84,6 @@ export function ProductSelection(props: IProductSelectionProps) {
       handleFormDataChange("selectedProducts", []);
     }
   }, [generalToggleChecked]);
-
-  const uniqueServerResponse = removeDuplicates(allRules.lineOfCredit, "value");
 
   const shouldShowPrograming = (
     allRules.PercentagePayableViaExtraInstallments || []
@@ -189,36 +186,39 @@ export function ProductSelection(props: IProductSelectionProps) {
                   padding={isMobile ? "0px 6px" : "0px 12px"}
                   wrap="wrap"
                 >
-                  {uniqueServerResponse.length > 0 ? (
-                    uniqueServerResponse.map((item, index) => (
-                      <Stack key={index} direction="column">
-                        <CardProductSelection
-                          key={index}
-                          amount={item.loan_amount_limit}
-                          rate={item.interest_rate}
-                          term={item.loan_term_limit}
-                          description={item.value}
-                          disabled={generalToggleChecked}
-                          isSelected={values.selectedProducts.includes(
-                            item.value,
-                          )}
-                          onSelect={() => {
-                            const newSelected =
-                              values.selectedProducts.includes(item.value)
-                                ? values.selectedProducts.filter(
-                                    (id) => id !== item.value,
-                                  )
-                                : [...values.selectedProducts, item.value];
-                            setFieldValue("selectedProducts", newSelected);
-                            setSelectedProducts(newSelected);
-                            handleFormDataChange(
-                              "selectedProducts",
-                              newSelected,
-                            );
-                          }}
-                        />
-                      </Stack>
-                    ))
+                  {Object.keys(creditLineTerms).length > 0 ? (
+                    Object.entries(creditLineTerms).map(
+                      ([lineName, terms], index) => (
+                        <Stack key={index} direction="column">
+                          <CardProductSelection
+                            key={lineName}
+                            amount={terms.LoanAmountLimit}
+                            rate={terms.RiskFreeInterestRate}
+                            term={terms.LoanTermLimit}
+                            description={lineName}
+                            disabled={generalToggleChecked}
+                            isSelected={values.selectedProducts.includes(
+                              lineName,
+                            )}
+                            onSelect={() => {
+                              const newSelected =
+                                values.selectedProducts.includes(lineName)
+                                  ? values.selectedProducts.filter(
+                                      (id) => id !== lineName,
+                                    )
+                                  : [...values.selectedProducts, lineName];
+
+                              setFieldValue("selectedProducts", newSelected);
+                              setSelectedProducts(newSelected);
+                              handleFormDataChange(
+                                "selectedProducts",
+                                newSelected,
+                              );
+                            }}
+                          />
+                        </Stack>
+                      ),
+                    )
                   ) : (
                     <Text type="body" size="medium">
                       {electionData.load}
