@@ -21,7 +21,6 @@ import { IPaymentChannel } from "@services/types";
 import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 import { IIncomeSources } from "@services/incomeSources/types";
-import { BaseModal } from "@components/modals/baseModal";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -45,6 +44,12 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
+import {
+  AlertCapacityAnalysis,
+  AlertCreditLimit,
+  AlertIncome,
+  AlertObligations,
+} from "./components/smallModals/modals";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -53,6 +58,8 @@ interface AddPositionUIProps {
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCapacityAnalysisModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCapacityAnalysisWarning: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAlertIncome: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAlertObligation: React.Dispatch<React.SetStateAction<boolean>>;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -87,6 +94,9 @@ interface AddPositionUIProps {
   totalIncome: number;
   creditLineTerms?: ICreditLineTerms;
   clientPortfolio: IObligations;
+  assistedButtonText: string;
+  isAlertIncome: boolean;
+  isAlertObligation: boolean;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -97,6 +107,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
     setIsCurrentFormValid,
     setIsCapacityAnalysisModal,
     setIsCapacityAnalysisWarning,
+    setIsAlertIncome,
+    setIsAlertObligation,
     setRequestValue,
     requestValue,
     handleNextStep,
@@ -124,6 +136,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
     totalIncome,
     creditLineTerms,
     clientPortfolio,
+    currentStep,
+    assistedButtonText,
+    isAlertIncome,
+    isAlertObligation,
   } = props;
 
   return (
@@ -238,7 +254,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
               totalSteps={steps.length}
               onBackClick={handlePreviousStep}
               onNextClick={handleNextStep}
-              controls={titleButtonTextAssited}
+              controls={{
+                ...titleButtonTextAssited,
+                goNextText: assistedButtonText,
+              }}
               onSubmitClick={handleSubmitClick}
               disableNext={!isCurrentFormValid}
               disableSubmit={!isCurrentFormValid}
@@ -377,7 +396,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
               )}
             {currentStepsNumber &&
               currentStepsNumber.id ===
-                stepsAddProspect.obligationsCollected.id && (
+                stepsAddProspect.obligationsCollected.id &&
+              formData.loanAmountState.toggleChecked && (
                 <ConsolidatedCredit
                   initialValues={formData.consolidatedCreditSelections}
                   isMobile={isMobile}
@@ -397,7 +417,9 @@ export function AddProspectUI(props: AddPositionUIProps) {
               {titleButtonTextAssited.goBackText}
             </Button>
             <Button onClick={handleNextStep} disabled={!isCurrentFormValid}>
-              {currentStepsNumber === steps[9]
+              {currentStep === steps[steps.length - 1].id ||
+              (currentStep === stepsAddProspect.loanAmount.id &&
+                !formData.loanAmountState.toggleChecked)
                 ? titleButtonTextAssited.submitText
                 : titleButtonTextAssited.goNextText}
             </Button>
@@ -418,17 +440,11 @@ export function AddProspectUI(props: AddPositionUIProps) {
             />
           )}
           {isCreditLimitWarning && (
-            <BaseModal
-              title={textAddCongfig.titleQuotas}
-              nextButton={textAddCongfig.close}
+            <AlertCreditLimit
               handleNext={() => setIsCreditLimitWarning(false)}
               handleClose={() => setIsCreditLimitWarning(false)}
-              width={isMobile ? "280px" : "450px"}
-            >
-              <Stack>
-                <Text>{textAddCongfig.descriptionQuotas}</Text>
-              </Stack>
-            </BaseModal>
+              isMobile={isMobile}
+            />
           )}
           {isCapacityAnalysisModal && (
             <PaymentCapacityAnalysis
@@ -437,17 +453,25 @@ export function AddProspectUI(props: AddPositionUIProps) {
             />
           )}
           {isCapacityAnalysisWarning && (
-            <BaseModal
-              title={textAddCongfig.titlePaymentCapacity}
-              nextButton={textAddCongfig.close}
+            <AlertCapacityAnalysis
               handleNext={() => setIsCapacityAnalysisWarning(false)}
               handleClose={() => setIsCapacityAnalysisWarning(false)}
-              width={isMobile ? "280px" : "400px"}
-            >
-              <Stack>
-                <Text>{textAddCongfig.descriptionPaymentCapacity}</Text>
-              </Stack>
-            </BaseModal>
+              isMobile={isMobile}
+            />
+          )}
+          {isAlertIncome && (
+            <AlertIncome
+              handleNext={() => setIsAlertIncome(false)}
+              handleClose={() => setIsAlertIncome(false)}
+              isMobile={isMobile}
+            />
+          )}
+          {isAlertObligation && (
+            <AlertObligations
+              handleNext={() => setIsAlertObligation(false)}
+              handleClose={() => setIsAlertObligation(false)}
+              isMobile={isMobile}
+            />
           )}
         </Stack>
       </Stack>
