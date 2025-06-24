@@ -36,15 +36,5 @@ const DefaultTemplate: StoryFn<AddSeriesModalProps> = (args) => {
   );
 };
 
-export const Default = DefaultTemplate.bind({});
-Default.args = {
-  initialValues: {
-    paymentMethod: "",
-    amount: 250000,
-    value: 500000,
-    frequency: "",
-    datePayment: "",
-  },
-};
-
+export const Default = DefaultTemplate.bind();
 export default story;

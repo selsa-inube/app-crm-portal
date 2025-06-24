@@ -7,12 +7,20 @@ import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableE
 import { IExtraordinaryPayment } from "@services/types";
 import { IProspect } from "@services/prospects/types";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
+import {
+  IExtraordinaryInstallment,
+  IExtraordinaryInstallments,
+} from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import { TextLabels } from "./config";
 
 export interface ExtraordinaryPaymentModalProps {
   dataTable: IExtraordinaryPayment[];
   prospectData?: IProspect;
+  sentData?: IExtraordinaryInstallments | null;
+  setSentData: React.Dispatch<
+    React.SetStateAction<IExtraordinaryInstallments | null>
+  >;
   handleClose: () => void;
   onClickDetails?: (id: string) => void;
   onClickEdit?: (id: string) => void;
@@ -22,19 +30,24 @@ export interface ExtraordinaryPaymentModalProps {
 export const ExtraordinaryPaymentModal = (
   props: ExtraordinaryPaymentModalProps,
 ) => {
-  const { handleClose, prospectData } = props;
+  const { handleClose, prospectData, sentData, setSentData } = props;
 
+  const [installmentState, setInstallmentState] = useState({
+    installmentAmount: 0,
+    installmentDate: "",
+    paymentChannelAbbreviatedName: "",
+  });
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width:880px)");
-
-  const handleConfirm = () => {
-    console.log("Confirmar acción");
-  };
 
   const openAddSeriesModal = () => {
     setAddSeriesModalOpen(true);
   };
-
+  const [seriesModal, setSeriesModal] = useState<IExtraordinaryInstallment[]>(
+    [],
+  );
+  const [selectedModal, setAddModal] =
+    useState<IExtraordinaryInstallment | null>(null);
   const closeAddSeriesModal = () => {
     setAddSeriesModalOpen(false);
   };
@@ -73,14 +86,25 @@ export const ExtraordinaryPaymentModal = (
           </Button>
         </Stack>
         <Stack>
-          <TableExtraordinaryInstallment prospectData={prospectData} />
+          <TableExtraordinaryInstallment
+            prospectData={prospectData}
+            sentData={sentData}
+            setSentData={setSentData}
+            handleClose={closeAddSeriesModal}
+          />
         </Stack>
         {isAddSeriesModalOpen && (
           <AddSeriesModal
             handleClose={closeAddSeriesModal}
             onSubmit={handleSubmit}
-            onConfirm={handleConfirm}
-            initialValues={{ field1: 0, field2: 0 }}
+            installmentState={installmentState}
+            setInstallmentState={setInstallmentState}
+            setSentData={setSentData}
+            sentData={sentData}
+            seriesModal={seriesModal}
+            setSeriesModal={setSeriesModal}
+            setAddModal={setAddModal}
+            selectedModal={selectedModal}
           />
         )}
       </Stack>

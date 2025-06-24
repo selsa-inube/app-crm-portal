@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { IProspect } from "@services/prospects/types";
+import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import {
   headersTableExtraordinaryInstallment,
@@ -12,9 +13,14 @@ import { TableExtraordinaryInstallmentUI } from "./interface";
 
 export interface TableExtraordinaryInstallmentProps {
   [key: string]: unknown;
+  sentData?: IExtraordinaryInstallments | null;
   prospectData?: IProspect;
   refreshKey?: number;
   id?: string;
+  setSentData?: React.Dispatch<
+    React.SetStateAction<IExtraordinaryInstallments | null>
+  >;
+  handleClose?: () => void;
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
@@ -51,7 +57,7 @@ const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
 export const TableExtraordinaryInstallment = (
   props: TableExtraordinaryInstallmentProps,
 ) => {
-  const { refreshKey, prospectData } = props;
+  const { refreshKey, prospectData, setSentData, handleClose } = props;
 
   const headers = headersTableExtraordinaryInstallment;
 
@@ -65,7 +71,6 @@ export const TableExtraordinaryInstallment = (
     setSelectedDebtor(debtor);
     setIsOpenModalEdit(true);
   };
-
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
@@ -85,7 +90,7 @@ export const TableExtraordinaryInstallment = (
         prospectData.creditProducts.flatMap((product) =>
           Array.isArray(product.extraordinaryInstallments)
             ? product.extraordinaryInstallments.map((installment) => ({
-                id: `${product.creditProductCode}-${installment.installmentDate}`,
+                id: `${product.creditProductCode},${installment.installmentDate}`,
                 datePayment: installment.installmentDate,
                 value: installment.installmentAmount,
                 paymentMethod: installment.paymentChannelAbbreviatedName,
@@ -97,10 +102,13 @@ export const TableExtraordinaryInstallment = (
     setLoading(false);
   }, [prospectData, refreshKey]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (
+    id: string,
+    updatedDebtor: TableExtraordinaryInstallmentProps,
+  ) => {
     try {
-      const updatedDebtors = extraordinaryInstallments.filter(
-        (debtor) => debtor.id !== id,
+      const updatedDebtors = extraordinaryInstallments.map((debtor) =>
+        debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
       );
       setExtraordinaryInstallments(updatedDebtors);
       console.log(`Debtor with ID ${id} deleted successfully.`);
@@ -122,7 +130,6 @@ export const TableExtraordinaryInstallment = (
       console.error("Error updating debtor:", error);
     }
   };
-
   return (
     <TableExtraordinaryInstallmentUI
       loading={loading}
@@ -139,6 +146,10 @@ export const TableExtraordinaryInstallment = (
       handleDelete={handleDelete}
       handleUpdate={handleUpdate}
       usePagination={usePagination}
+      setSentData={setSentData ?? (() => {})}
+      handleClose={handleClose}
+      prospectData={prospectData}
+      setSelectedDebtor={setSelectedDebtor}
     />
   );
 };

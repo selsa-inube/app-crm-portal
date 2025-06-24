@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   Pagination,
   SkeletonLine,
@@ -9,16 +10,22 @@ import {
   Th,
   Thead,
   Tr,
+  useFlag,
 } from "@inubekit/inubekit";
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { ListModal } from "@components/modals/ListModal";
 import { EditSeriesModal } from "@components/modals/EditSeriesModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
+import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { AppContext } from "@src/context/AppContext";
+import { TextLabels } from "@src/components/modals/ExtraordinaryPaymentModal/config";
+import { IProspect } from "@services/prospects/types";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";
 import { Detail } from "./Detail";
+import { removeExtraordinaryInstallment } from "./utils";
 
 interface ITableExtraordinaryInstallmentProps {
   loading: boolean;
@@ -36,7 +43,10 @@ interface ITableExtraordinaryInstallmentProps {
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
   handleEdit: (row: TableExtraordinaryInstallmentProps) => void;
-  handleDelete: (id: string) => void;
+  handleDelete: (
+    id: string,
+    updatedDebtor: TableExtraordinaryInstallmentProps,
+  ) => Promise<void>;
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
@@ -49,6 +59,14 @@ interface ITableExtraordinaryInstallmentProps {
     firstEntryInPage: number;
     lastEntryInPage: number;
   };
+  setSentData:
+    | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
+    | undefined;
+  handleClose: (() => void) | undefined;
+  prospectData: IProspect | undefined;
+  setSelectedDebtor: React.Dispatch<
+    React.SetStateAction<TableExtraordinaryInstallmentProps>
+  >;
 }
 
 export function TableExtraordinaryInstallmentUI(
@@ -61,6 +79,7 @@ export function TableExtraordinaryInstallmentUI(
     extraordinaryInstallments,
     isMobile,
     selectedDebtor,
+    setSelectedDebtor,
     isOpenModalDelete,
     isOpenModalEdit,
     setIsOpenModalDelete,
@@ -69,6 +88,9 @@ export function TableExtraordinaryInstallmentUI(
     handleDelete,
     handleUpdate,
     usePagination,
+    handleClose,
+    setSentData,
+    prospectData,
   } = props;
 
   const {
@@ -80,6 +102,58 @@ export function TableExtraordinaryInstallmentUI(
     firstEntryInPage,
     lastEntryInPage,
   } = usePagination(extraordinaryInstallments);
+  const { businessUnitSigla } = useContext(AppContext);
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+  const { addFlag } = useFlag();
+  const initialValues: IExtraordinaryInstallments = {
+    creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
+    extraordinaryInstallments:
+      prospectData?.creditProducts[0]?.extraordinaryInstallments
+        ?.filter((ins) => {
+          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${ins.installmentDate}`;
+          return expectedId === selectedDebtor?.id;
+        })
+        ?.map((installment) => ({
+          installmentDate:
+            typeof installment.installmentDate === "string"
+              ? installment.installmentDate
+              : new Date(installment.installmentDate).toISOString(),
+          installmentAmount: Number(installment.installmentAmount),
+          paymentChannelAbbreviatedName: String(
+            installment.paymentChannelAbbreviatedName,
+          ),
+        })) || [],
+    prospectId: prospectData?.prospectId || "",
+  };
+
+  const handleExtraordinaryInstallment = async (
+    extraordinaryInstallments: IExtraordinaryInstallments,
+  ) => {
+    await removeExtraordinaryInstallment(
+      businessUnitPublicCode,
+      extraordinaryInstallments,
+    )
+      .then(() => {
+        addFlag({
+          title: dataTableExtraordinaryInstallment.titleSuccess,
+          description: dataTableExtraordinaryInstallment.descriptionSuccess,
+          appearance: "success",
+          duration: 5000,
+        });
+        setSentData?.(extraordinaryInstallments);
+        setIsOpenModalDelete(false);
+        handleClose?.();
+      })
+      .catch(() => {
+        addFlag({
+          title: TextLabels.titleError,
+          description: TextLabels.descriptionError,
+          appearance: "danger",
+          duration: 5000,
+        });
+      });
+  };
 
   return (
     <Table>
@@ -145,13 +219,21 @@ export function TableExtraordinaryInstallmentUI(
                   <Td key={action.key} type="custom">
                     {isMobile ? (
                       <ActionMobile
-                        handleDelete={() => setIsOpenModalDelete(true)}
+                        handleDelete={() => {
+                          setSelectedDebtor(row);
+                          setIsOpenModalDelete(true);
+                        }}
                         handleEdit={() => handleEdit(row)}
                       />
                     ) : (
                       <Detail
-                        handleDelete={() => setIsOpenModalDelete(true)}
-                        handleEdit={() => handleEdit(row)}
+                        handleDelete={() => {
+                          setSelectedDebtor(row);
+                          setIsOpenModalDelete(true);
+                        }}
+                        handleEdit={() => {
+                          handleEdit(row);
+                        }}
                       />
                     )}
                   </Td>
@@ -202,10 +284,10 @@ export function TableExtraordinaryInstallmentUI(
         <ListModal
           title={dataTableExtraordinaryInstallment.deletion}
           handleClose={() => setIsOpenModalDelete(false)}
-          handleSubmit={() => setIsOpenModalDelete(false)}
+          handleSubmit={() => handleExtraordinaryInstallment(initialValues)}
           onSubmit={() => {
             if (selectedDebtor) {
-              handleDelete(selectedDebtor.id as string);
+              handleDelete(selectedDebtor.id as string, selectedDebtor);
               setIsOpenModalDelete(false);
             }
           }}
@@ -221,7 +303,9 @@ export function TableExtraordinaryInstallmentUI(
           onConfirm={async (updatedDebtor) => {
             await handleUpdate(updatedDebtor);
           }}
-          initialValues={selectedDebtor}
+          prospectData={prospectData}
+          selectedDebtor={selectedDebtor}
+          setSentData={setSentData}
         />
       )}
     </Table>
