@@ -71,10 +71,11 @@ export interface IBorrowerData {
 }
 
 export interface IConsolidatedCreditItem {
-  title: string;
-  code: string;
-  label: string;
-  value: number;
+  lineOfCreditDescription: string;
+  creditProductCode: string;
+  consolidatedAmount: number;
+  consolidatedAmountType: string;
+  estimatedDateOfConsolidation: Date;
 }
 
 export interface IFormData {

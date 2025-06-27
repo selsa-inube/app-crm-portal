@@ -22,6 +22,7 @@ import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnaly
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 import { IIncomeSources } from "@services/incomeSources/types";
 import { BaseModal } from "@components/modals/baseModal";
+import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -87,6 +88,7 @@ interface AddPositionUIProps {
   totalIncome: number;
   creditLineTerms?: ICreditLineTerms;
   clientPortfolio: IObligations;
+  obligationPayments: IPayment[];
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -124,6 +126,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     totalIncome,
     creditLineTerms,
     clientPortfolio,
+    obligationPayments,
   } = props;
 
   return (
@@ -384,6 +387,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                   onChange={(items) =>
                     handleFormDataChange("consolidatedCreditArray", items)
                   }
+                  data={obligationPayments}
                 />
               )}
           </Stack>

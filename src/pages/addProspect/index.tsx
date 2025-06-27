@@ -13,6 +13,8 @@ import { IIncomeSources } from "@services/incomeSources/types";
 import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { getCreditPayments } from "@services/creditLimit/getCreditPayments";
+import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue } from "./types";
@@ -39,6 +41,10 @@ export function AddProspect() {
   const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
     null,
   );
+  const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
+    null,
+  );
+
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
   const { addFlag } = useFlag();
@@ -117,11 +123,11 @@ export function AddProspect() {
               onlyBorrowerData.borrowerIdentificationNumber,
             borrowerIdentificationType:
               onlyBorrowerData.borrowerIdentificationType,
-            consolidatedAmount: item.value,
-            consolidatedAmountType: item.label,
-            creditProductCode: item.code,
-            estimatedDateOfConsolidation: "2025-06-12T15:04:05Z", // borrar en un futuro
-            lineOfCreditDescription: item.title,
+            consolidatedAmount: item.consolidatedAmount,
+            consolidatedAmountType: item.consolidatedAmountType,
+            creditProductCode: item.creditProductCode,
+            estimatedDateOfConsolidation: item.estimatedDateOfConsolidation, // borrar en un futuro
+            lineOfCreditDescription: item.lineOfCreditDescription,
           }))
         : [],
     linesOfCredit: formData.selectedProducts.map((product) => ({
@@ -436,6 +442,33 @@ export function AddProspect() {
     }
   };
 
+  const fetchDataObligationPayment = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    try {
+      const data = await getCreditPayments(
+        customerPublicCode,
+        businessUnitPublicCode,
+      );
+      setObligationPayment(data);
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
   useEffect(() => {
     if (customerData) {
       fetchCreditLineTerms();
@@ -627,6 +660,7 @@ export function AddProspect() {
     if (currentStep === stepsAddProspect.productSelection.id) {
       fetchCreditLimit();
       fetchDataClientPortfolio();
+      fetchDataObligationPayment();
     }
   }, [currentStep]);
   return (
@@ -668,6 +702,7 @@ export function AddProspect() {
         setIsCapacityAnalysisWarning={setIsCapacityAnalysisWarning}
         creditLineTerms={creditLineTerms}
         clientPortfolio={clientPortfolio as IObligations}
+        obligationPayments={obligationPayment as IPayment[]}
       />
       {showConsultingModal && <Consulting />}
     </>
