@@ -56,6 +56,7 @@ interface ITableExtraordinaryInstallmentProps {
     handleEndPage: () => void;
     firstEntryInPage: number;
     lastEntryInPage: number;
+    paddedCurrentData: TableExtraordinaryInstallmentProps[];
   };
   setSentData:
     | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
@@ -100,6 +101,7 @@ export function TableExtraordinaryInstallmentUI(
     handleEndPage,
     firstEntryInPage,
     lastEntryInPage,
+    paddedCurrentData,
   } = usePagination(extraordinaryInstallments);
 
   const { addFlag } = useFlag();
@@ -199,66 +201,81 @@ export function TableExtraordinaryInstallmentUI(
             </Td>
           </Tr>
         )}
+
         {!loading &&
-          extraordinaryInstallments &&
-          extraordinaryInstallments.length > 0 &&
-          extraordinaryInstallments.map((row, indx) => (
-            <Tr key={indx} zebra={indx % 2 !== 0}>
-              {visbleHeaders.map((header) => (
-                <Td key={header.key} align="left">
-                  {header.key === "datePayment"
-                    ? formatPrimaryDate(new Date(row[header.key] as string))
-                    : header.mask
-                      ? header.mask(row[header.key] as string | number)
-                      : (row[header.key] as React.ReactNode)}
-                </Td>
-              ))}
-              {visbleActions &&
-                visbleActions.length > 0 &&
-                visbleActions.map((action) => (
+          paddedCurrentData.filter(
+            (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+          ).length > 0 &&
+          paddedCurrentData
+            .filter(
+              (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+            )
+            .map((row: TableExtraordinaryInstallmentProps, index: number) => (
+              <Tr key={index} zebra={index % 2 !== 0}>
+                {visbleHeaders.map((header) => {
+                  const raw =
+                    row[header.key as keyof TableExtraordinaryInstallmentProps];
+                  const value =
+                    header.key === "datePayment"
+                      ? formatPrimaryDate(new Date(raw as string))
+                      : header.mask
+                        ? header.mask(raw as string | number)
+                        : raw;
+
+                  return (
+                    <Td key={header.key} align="left">
+                      {value?.toString() ?? ""}
+                    </Td>
+                  );
+                })}
+
+                {visbleActions.map((action) => (
                   <Td key={action.key} type="custom">
                     {isMobile ? (
                       <ActionMobile
+                        handleEdit={() => handleEdit(row)}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
                         }}
-                        handleEdit={() => handleEdit(row)}
                       />
                     ) : (
                       <Detail
+                        handleEdit={() => handleEdit(row)}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
-                        }}
-                        handleEdit={() => {
-                          handleEdit(row);
                         }}
                       />
                     )}
                   </Td>
                 ))}
-            </Tr>
-          ))}
-        {!loading && extraordinaryInstallments.length === 0 && (
-          <Tr>
-            <Td
-              colSpan={visbleHeaders.length + visbleActions.length}
-              align="center"
-              type="custom"
-            >
-              <Text
-                size="large"
-                type="label"
-                appearance="gray"
-                textAlign="center"
+              </Tr>
+            ))}
+
+        {!loading &&
+          paddedCurrentData.filter(
+            (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+          ).length === 0 && (
+            <Tr>
+              <Td
+                colSpan={visbleHeaders.length + visbleActions.length}
+                align="center"
+                type="custom"
               >
-                {dataTableExtraordinaryInstallment.noData}
-              </Text>
-            </Td>
-          </Tr>
-        )}
+                <Text
+                  size="large"
+                  type="label"
+                  appearance="gray"
+                  textAlign="center"
+                >
+                  {dataTableExtraordinaryInstallment.noData || "No hay datos"}
+                </Text>
+              </Td>
+            </Tr>
+          )}
       </Tbody>
+
       {extraordinaryInstallments.length > 0 && !loading && (
         <Tfoot>
           <Tr border="bottom">

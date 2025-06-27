@@ -12,9 +12,9 @@ import {
 
 import { BaseModal } from "@components/modals/baseModal";
 import {
+  currencyFormat,
   handleChangeWithCurrency,
   parseCurrencyString,
-  validateCurrencyField,
 } from "@utils/formatData/currency";
 import {
   frequencyOptionsMock,
@@ -84,6 +84,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   const formik = useFormik({
     initialValues: {
       installmentDate: "",
+      installmentAmount: 0,
       paymentChannelAbbreviatedName: "",
       value: "",
       frequency: "",
@@ -127,8 +128,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   };
 
   const handleInstallmentAmountChange = (name: string, value: string) => {
-    formik.setFieldValue(name, value);
     const parsed = parseCurrencyString(value);
+    formik.setFieldValue(name, currencyFormat(parsed, false));
     if (!isNaN(parsed) && setInstallmentState) {
       setInstallmentState((prev) => ({
         ...prev,
@@ -276,7 +277,12 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           onChange={(e) =>
             handleInstallmentAmountChange("installmentAmount", e.target.value)
           }
-          value={validateCurrencyField("installmentAmount", formik, false, "")}
+          value={
+            installmentState?.installmentAmount &&
+            installmentState.installmentAmount > 0
+              ? currencyFormat(installmentState.installmentAmount, false)
+              : ""
+          }
           required
           fullwidth
         />

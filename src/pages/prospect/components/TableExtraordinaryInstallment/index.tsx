@@ -41,6 +41,15 @@ const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
 
   const currentData = data.slice(firstEntryInPage, lastEntryInPage);
 
+  const paddingCount = pageLength - currentData.length;
+  const paddingItems = Array.from({
+    length: paddingCount > 0 ? paddingCount : 0,
+  }).map((_, i) => ({
+    __isPadding: true,
+    id: `padding-${i}`,
+  }));
+
+  const paddedCurrentData = [...currentData, ...paddingItems];
   return {
     currentPage,
     totalRecords,
@@ -51,7 +60,7 @@ const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
     handleEndPage,
     firstEntryInPage,
     lastEntryInPage,
-    currentData,
+    paddedCurrentData,
   };
 };
 
@@ -89,8 +98,8 @@ export const TableExtraordinaryInstallment = (
 
   useEffect(() => {
     if (prospectData?.creditProducts) {
-      const extraordinaryInstallmentsUpdate =
-        prospectData.creditProducts.flatMap((product) =>
+      const extraordinaryInstallmentsUpdate = prospectData.creditProducts
+        .flatMap((product) =>
           Array.isArray(product.extraordinaryInstallments)
             ? product.extraordinaryInstallments.map((installment) => ({
                 id: `${product.creditProductCode},${installment.installmentDate}`,
@@ -99,7 +108,8 @@ export const TableExtraordinaryInstallment = (
                 paymentMethod: installment.paymentChannelAbbreviatedName,
               }))
             : [],
-        );
+        )
+        .reverse();
       setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
     setLoading(false);
