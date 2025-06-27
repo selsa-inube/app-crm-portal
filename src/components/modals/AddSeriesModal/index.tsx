@@ -1,4 +1,4 @@
-import { Form, Formik } from "formik";
+import { useFormik } from "formik";
 import { useContext, useEffect } from "react";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
@@ -37,18 +37,15 @@ export interface AddSeriesModalProps {
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
   }) => void;
-
   installmentState?: {
     installmentAmount: number;
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
   };
-
   seriesModal?: IExtraordinaryInstallment[];
   setAddModal?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallment | null>
   >;
-
   setSeriesModal?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallment[]>
   >;
@@ -62,7 +59,6 @@ export interface AddSeriesModalProps {
       paymentChannelAbbreviatedName: string;
     }>
   >;
-
   sentData?: IExtraordinaryInstallments | null;
   selectedModal?: IExtraordinaryInstallment | null;
 }
@@ -77,19 +73,28 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     installmentState,
     setInstallmentState,
   } = props;
-  const { businessUnitSigla } = useContext(AppContext);
-  const businessUnitPublicCode: string =
-    JSON.parse(businessUnitSigla).businessUnitPublicCode;
-  const { addFlag } = useFlag();
 
+  const { businessUnitSigla } = useContext(AppContext);
+  const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
 
-  const handleGenericSelectChange = (
-    name: string,
-    value: string,
-    setFieldValue: (field: string, value: string) => void,
-  ) => {
-    setFieldValue(name, value);
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const formik = useFormik({
+    initialValues: {
+      installmentDate: "",
+      paymentChannelAbbreviatedName: "",
+      value: "",
+      frequency: "",
+    },
+    onSubmit: (values) => {
+      onSubmit?.(values);
+    },
+  });
+
+  const handleGenericSelectChange = (name: string, value: string) => {
+    formik.setFieldValue(name, value);
 
     if (name === "installmentDate") {
       const parsedDate = new Date(value);
@@ -97,9 +102,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         ? parsedDate.toISOString()
         : "";
 
-      const selected = seriesModal?.find(
-        (seriesModals) => seriesModals.installmentDate === value,
-      );
+      const selected = seriesModal?.find((s) => s.installmentDate === value);
 
       if (selected && setAddModal && setInstallmentState) {
         setAddModal(selected);
@@ -123,56 +126,57 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     }
   };
 
-  const handleInstallmentAmountChange = (
-    name: string,
-    value: string,
-    setFieldValue: (field: string, value: string) => void,
-  ) => {
-    setFieldValue(name, value);
-    const parsedValue = parseCurrencyString(value);
-    if (!isNaN(parsedValue) && setInstallmentState) {
+  const handleInstallmentAmountChange = (name: string, value: string) => {
+    formik.setFieldValue(name, value);
+    const parsed = parseCurrencyString(value);
+    if (!isNaN(parsed) && setInstallmentState) {
       setInstallmentState((prev) => ({
         ...prev,
-        installmentAmount: parsedValue,
+        installmentAmount: parsed,
       }));
     }
   };
+
   const initialValues: IExtraordinaryInstallments = {
     creditProductCode: "SC-000000038-1",
     extraordinaryInstallments: [
       {
-        installmentAmount: 2500,
+        installmentAmount: 0,
         installmentDate: "",
-        paymentChannelAbbreviatedName: "ullamco quis velit",
+        paymentChannelAbbreviatedName: "",
       },
     ],
     prospectId: "67f7e8f52c014414fca8b52d",
   };
+
   const handleExtraordinaryInstallment = async (
     extraordinaryInstallments: IExtraordinaryInstallments,
   ) => {
-    await saveExtraordinaryInstallment(
-      businessUnitPublicCode,
-      extraordinaryInstallments,
-    )
-      .then(() => {
-        addFlag({
-          title: TextLabels.titleSuccess,
-          description: TextLabels.descriptionSuccess,
-          appearance: "success",
-          duration: 5000,
-        });
-        setSentData?.(extraordinaryInstallments);
-        handleClose();
-      })
-      .catch(() => {
-        addFlag({
-          title: TextLabels.titleError,
-          description: TextLabels.descriptionError,
-          appearance: "danger",
-          duration: 5000,
-        });
+    try {
+      await saveExtraordinaryInstallment(
+        businessUnitPublicCode,
+        extraordinaryInstallments,
+      );
+
+      setSentData?.(extraordinaryInstallments);
+      handleClose();
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status?: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description =
+        code + (err?.message || "") + (err?.data?.description || "");
+
+      addFlag({
+        title: TextLabels.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
       });
+    }
   };
 
   const handleNextClick = () => {
@@ -188,9 +192,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       !installmentAmount ||
       !installmentDate ||
       !paymentChannelAbbreviatedName
-    ) {
+    )
       return;
-    }
 
     const updatedValues: IExtraordinaryInstallments = {
       ...initialValues,
@@ -218,118 +221,91 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   }, []);
 
   return (
-    <Formik
-      initialValues={{
-        installmentDate: "",
-        paymentChannelAbbreviatedName: "",
-        value: "",
-        frequency: "",
-      }}
-      onSubmit={(values, { setSubmitting }) => {
-        onSubmit?.(values);
-        setSubmitting(false);
-      }}
+    <BaseModal
+      title={dataAddSeriesModal.title}
+      backButton={dataAddSeriesModal.cancel}
+      nextButton={dataAddSeriesModal.add}
+      handleBack={handleClose}
+      handleNext={handleNextClick}
+      handleClose={handleClose}
+      width={isMobile ? "280px" : "425px"}
+      height={isMobile ? "auto" : "639px"}
+      finalDivider
+      disabledNext={
+        !installmentState?.paymentChannelAbbreviatedName ||
+        !installmentState?.installmentAmount ||
+        !installmentState?.installmentDate
+      }
     >
-      {({ setFieldValue, values }) => (
-        <Form>
-          <BaseModal
-            title={dataAddSeriesModal.title}
-            backButton={dataAddSeriesModal.cancel}
-            nextButton={dataAddSeriesModal.add}
-            handleBack={handleClose}
-            handleNext={handleNextClick}
-            handleClose={handleClose}
-            width={isMobile ? "280px" : "425px"}
-            height={isMobile ? "auto" : "639px"}
-            finalDivider={true}
-            disabledNext={
-              !installmentState?.paymentChannelAbbreviatedName ||
-              !installmentState?.installmentAmount ||
-              !installmentState?.installmentDate
-            }
-          >
-            <Stack gap="24px" direction="column">
-              <Select
-                name="paymentChannelAbbreviatedName"
-                id="paymentChannelAbbreviatedName"
-                label={dataAddSeriesModal.labelPaymentMethod}
-                placeholder={dataAddSeriesModal.placeHolderSelect}
-                options={paymentMethodOptionsMock}
-                value={values.paymentChannelAbbreviatedName}
-                onChange={(name, value) =>
-                  handleGenericSelectChange(name, value, setFieldValue)
-                }
-                size="wide"
-                fullwidth
-                required
-              />
+      <Stack gap="24px" direction="column">
+        <Select
+          name="paymentChannelAbbreviatedName"
+          id="paymentChannelAbbreviatedName"
+          label={dataAddSeriesModal.labelPaymentMethod}
+          placeholder={dataAddSeriesModal.placeHolderSelect}
+          options={paymentMethodOptionsMock}
+          value={formik.values.paymentChannelAbbreviatedName}
+          onChange={(name, value) => handleGenericSelectChange(name, value)}
+          size="wide"
+          fullwidth
+          required
+        />
 
-              <Textfield
-                name="value"
-                id="value"
-                label={dataAddSeriesModal.labelAmount}
-                placeholder={dataAddSeriesModal.placeHolderAmount}
-                onChange={(e) => {
-                  handleChangeWithCurrency({ setFieldValue }, e);
-                }}
-                value={values.value}
-                size="wide"
-                fullwidth
-              />
-              <Textfield
-                name="installmentAmount"
-                id="installmentAmount"
-                label={dataAddSeriesModal.labelValue}
-                placeholder={dataAddSeriesModal.placeHolderValue}
-                iconBefore={
-                  <MdOutlineAttachMoney color={inube.palette.green.G400} />
-                }
-                onChange={(e) =>
-                  handleInstallmentAmountChange(
-                    "installmentAmount",
-                    e.target.value,
-                    setFieldValue,
-                  )
-                }
-                value={validateCurrencyField(
-                  "installmentAmount",
-                  { values },
-                  false,
-                  "",
-                )}
-                required
-                fullwidth
-              />
-              <Select
-                name="frequency"
-                id="frequency"
-                label={dataAddSeriesModal.labelFrequency}
-                placeholder={dataAddSeriesModal.placeHolderSelect}
-                options={frequencyOptionsMock}
-                value={values.frequency}
-                onChange={(name, value) => setFieldValue(name, value)}
-                size="wide"
-                fullwidth
-              />
+        <Textfield
+          name="value"
+          id="value"
+          label={dataAddSeriesModal.labelAmount}
+          placeholder={dataAddSeriesModal.placeHolderAmount}
+          onChange={(e) => {
+            handleChangeWithCurrency(
+              { setFieldValue: formik.setFieldValue },
+              e,
+            );
+          }}
+          value={formik.values.value}
+          size="wide"
+          fullwidth
+        />
 
-              <Select
-                name="installmentDate"
-                id="installmentDate"
-                label={dataAddSeriesModal.labelDate}
-                placeholder={dataAddSeriesModal.placeHolderSelect}
-                options={paymentDateOptionsMock}
-                value={values.installmentDate}
-                onChange={(name, value) =>
-                  handleGenericSelectChange(name, value, setFieldValue)
-                }
-                size="wide"
-                required
-                fullwidth
-              />
-            </Stack>
-          </BaseModal>
-        </Form>
-      )}
-    </Formik>
+        <Textfield
+          name="installmentAmount"
+          id="installmentAmount"
+          label={dataAddSeriesModal.labelValue}
+          placeholder={dataAddSeriesModal.placeHolderValue}
+          iconBefore={<MdOutlineAttachMoney color={inube.palette.green.G400} />}
+          onChange={(e) =>
+            handleInstallmentAmountChange("installmentAmount", e.target.value)
+          }
+          value={validateCurrencyField("installmentAmount", formik, false, "")}
+          required
+          fullwidth
+        />
+
+        <Select
+          name="frequency"
+          id="frequency"
+          label={dataAddSeriesModal.labelFrequency}
+          placeholder={dataAddSeriesModal.placeHolderSelect}
+          options={frequencyOptionsMock}
+          value={formik.values.frequency}
+          onChange={(name, value) => formik.setFieldValue(name, value)}
+          size="wide"
+          fullwidth
+        />
+
+        <Select
+          name="installmentDate"
+          id="installmentDate"
+          label={dataAddSeriesModal.labelDate}
+          placeholder={dataAddSeriesModal.placeHolderSelect}
+          options={paymentDateOptionsMock}
+          value={formik.values.installmentDate}
+          onChange={(name, value) => handleGenericSelectChange(name, value)}
+          size="wide"
+          required
+          fullwidth
+        />
+      </Stack>
+    </BaseModal>
   );
 }

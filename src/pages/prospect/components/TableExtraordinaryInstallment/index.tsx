@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { IProspect } from "@services/prospects/types";
 import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { AppContext } from "@context/AppContext";
 
 import {
   headersTableExtraordinaryInstallment,
@@ -60,7 +61,9 @@ export const TableExtraordinaryInstallment = (
   const { refreshKey, prospectData, setSentData, handleClose } = props;
 
   const headers = headersTableExtraordinaryInstallment;
-
+  const { businessUnitSigla } = useContext(AppContext);
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
   const [extraordinaryInstallments, setExtraordinaryInstallments] = useState<
     TableExtraordinaryInstallmentProps[]
   >([]);
@@ -150,6 +153,7 @@ export const TableExtraordinaryInstallment = (
       handleClose={handleClose}
       prospectData={prospectData}
       setSelectedDebtor={setSelectedDebtor}
+      businessUnitPublicCode={businessUnitPublicCode}
     />
   );
 };

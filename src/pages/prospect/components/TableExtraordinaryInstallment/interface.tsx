@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import {
   Pagination,
   SkeletonLine,
@@ -14,12 +13,11 @@ import {
 } from "@inubekit/inubekit";
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
-import { ListModal } from "@components/modals/ListModal";
+import { DeleteModal } from "@components/modals/DeleteModal";
 import { EditSeriesModal } from "@components/modals/EditSeriesModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
-import { AppContext } from "@src/context/AppContext";
-import { TextLabels } from "@src/components/modals/ExtraordinaryPaymentModal/config";
+import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
 import { IProspect } from "@services/prospects/types";
 
 import { TableExtraordinaryInstallmentProps } from ".";
@@ -67,6 +65,7 @@ interface ITableExtraordinaryInstallmentProps {
   setSelectedDebtor: React.Dispatch<
     React.SetStateAction<TableExtraordinaryInstallmentProps>
   >;
+  businessUnitPublicCode: string;
 }
 
 export function TableExtraordinaryInstallmentUI(
@@ -85,12 +84,12 @@ export function TableExtraordinaryInstallmentUI(
     setIsOpenModalDelete,
     setIsOpenModalEdit,
     handleEdit,
-    handleDelete,
     handleUpdate,
     usePagination,
     handleClose,
     setSentData,
     prospectData,
+    businessUnitPublicCode,
   } = props;
 
   const {
@@ -102,9 +101,7 @@ export function TableExtraordinaryInstallmentUI(
     firstEntryInPage,
     lastEntryInPage,
   } = usePagination(extraordinaryInstallments);
-  const { businessUnitSigla } = useContext(AppContext);
-  const businessUnitPublicCode: string =
-    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
   const { addFlag } = useFlag();
   const initialValues: IExtraordinaryInstallments = {
     creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
@@ -130,29 +127,32 @@ export function TableExtraordinaryInstallmentUI(
   const handleExtraordinaryInstallment = async (
     extraordinaryInstallments: IExtraordinaryInstallments,
   ) => {
-    await removeExtraordinaryInstallment(
-      businessUnitPublicCode,
-      extraordinaryInstallments,
-    )
-      .then(() => {
-        addFlag({
-          title: dataTableExtraordinaryInstallment.titleSuccess,
-          description: dataTableExtraordinaryInstallment.descriptionSuccess,
-          appearance: "success",
-          duration: 5000,
-        });
-        setSentData?.(extraordinaryInstallments);
-        setIsOpenModalDelete(false);
-        handleClose?.();
-      })
-      .catch(() => {
-        addFlag({
-          title: TextLabels.titleError,
-          description: TextLabels.descriptionError,
-          appearance: "danger",
-          duration: 5000,
-        });
+    try {
+      await removeExtraordinaryInstallment(
+        businessUnitPublicCode,
+        extraordinaryInstallments,
+      );
+
+      setSentData?.(extraordinaryInstallments);
+      setIsOpenModalDelete(false);
+      handleClose?.();
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status?: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description =
+        code + (err?.message || "") + (err?.data?.description || "");
+
+      addFlag({
+        title: TextLabels.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
       });
+    }
   };
 
   return (
@@ -281,19 +281,10 @@ export function TableExtraordinaryInstallmentUI(
         </Tfoot>
       )}
       {isOpenModalDelete && (
-        <ListModal
-          title={dataTableExtraordinaryInstallment.deletion}
+        <DeleteModal
           handleClose={() => setIsOpenModalDelete(false)}
-          handleSubmit={() => handleExtraordinaryInstallment(initialValues)}
-          onSubmit={() => {
-            if (selectedDebtor) {
-              handleDelete(selectedDebtor.id as string, selectedDebtor);
-              setIsOpenModalDelete(false);
-            }
-          }}
-          buttonLabel={dataTableExtraordinaryInstallment.delete}
-          content={dataTableExtraordinaryInstallment.content}
-          cancelButton={dataTableExtraordinaryInstallment.cancel}
+          handleDelete={() => handleExtraordinaryInstallment(initialValues)}
+          TextDelete={dataTableExtraordinaryInstallment.content}
         />
       )}
       {isOpenModalEdit && (
@@ -306,6 +297,7 @@ export function TableExtraordinaryInstallmentUI(
           prospectData={prospectData}
           selectedDebtor={selectedDebtor}
           setSentData={setSentData}
+          businessUnitPublicCode={businessUnitPublicCode}
         />
       )}
     </Table>

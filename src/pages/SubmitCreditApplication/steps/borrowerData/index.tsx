@@ -20,6 +20,7 @@ import { IProspect } from "@services/types";
 
 import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
+import { borrowerData } from "./config";
 
 interface borrowersProps {
   onFormValid: (isValid: boolean) => void;
@@ -198,7 +199,10 @@ export function Borrowers(props: borrowersProps) {
               />
             )}
             {isModalDelete && (
-              <DeleteModal handleClose={() => setIsModalDelete(false)} />
+              <DeleteModal
+                handleClose={() => setIsModalDelete(false)}
+                TextDelete={borrowerData.delete}
+              />
             )}
             {isModalEdit && editIndex !== null && (
               <DebtorEditModal

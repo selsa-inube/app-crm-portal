@@ -374,7 +374,7 @@ export const ListModal = (props: IListModalProps) => {
           </>
         ) : (
           <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
-            <Button onClick={handleSubmit}>{buttonLabel}</Button>
+            <Button onClick={handleClose}>{buttonLabel}</Button>
           </Stack>
         )}
         {cancelButton && optionButtons && (
