@@ -21,6 +21,7 @@ import { AddProspectRoutes } from "@routes/addProspect";
 import { EditProspectRoutes } from "@routes/editProspect";
 import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
+import { Home } from "./pages/home";
 
 function LogOut() {
   localStorage.clear();
@@ -32,7 +33,7 @@ function LogOut() {
 function FirstPage() {
   const { businessUnitSigla } = useContext(AppContext);
   initializeDataDB(businessUnitSigla);
-  return businessUnitSigla.length === 0 ? <Login /> : <AppPage />;
+  return businessUnitSigla.length === 0 ? <Login /> : <Home />;
 }
 
 const router = createBrowserRouter(
