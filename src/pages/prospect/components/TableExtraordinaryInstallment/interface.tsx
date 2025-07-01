@@ -269,7 +269,7 @@ export function TableExtraordinaryInstallmentUI(
                   appearance="gray"
                   textAlign="center"
                 >
-                  {dataTableExtraordinaryInstallment.noData || "No hay datos"}
+                  {dataTableExtraordinaryInstallment.noData}
                 </Text>
               </Td>
             </Tr>

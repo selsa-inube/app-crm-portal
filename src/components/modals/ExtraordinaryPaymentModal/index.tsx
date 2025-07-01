@@ -21,6 +21,7 @@ export interface ExtraordinaryPaymentModalProps {
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
+  businessUnitPublicCode: string;
   handleClose: () => void;
   onClickDetails?: (id: string) => void;
   onClickEdit?: (id: string) => void;
@@ -30,7 +31,13 @@ export interface ExtraordinaryPaymentModalProps {
 export const ExtraordinaryPaymentModal = (
   props: ExtraordinaryPaymentModalProps,
 ) => {
-  const { handleClose, prospectData, sentData, setSentData } = props;
+  const {
+    handleClose,
+    prospectData,
+    sentData,
+    setSentData,
+    businessUnitPublicCode,
+  } = props;
 
   const [installmentState, setInstallmentState] = useState({
     installmentAmount: 0,
@@ -91,6 +98,7 @@ export const ExtraordinaryPaymentModal = (
             sentData={sentData}
             setSentData={setSentData}
             handleClose={closeAddSeriesModal}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         </Stack>
         {isAddSeriesModalOpen && (

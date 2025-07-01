@@ -594,6 +594,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             prospectData={prospectData}
             sentData={sentData}
             setSentData={setSentData}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
         {showShareModal && (
