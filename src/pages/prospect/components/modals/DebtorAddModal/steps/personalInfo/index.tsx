@@ -97,7 +97,6 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.tipeOfDocument}
           size="compact"
-          readonly={!AutoCompleted}
           fullwidth
         />
         <Input
@@ -174,7 +173,6 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.sex}
           size="compact"
-          readonly={!AutoCompleted}
           fullwidth
         />
         <Input

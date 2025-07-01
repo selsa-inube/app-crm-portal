@@ -98,14 +98,9 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
           <Tag
             label={dataConsolidatedCredit.regularPayroll}
             appearance="gray"
-            weight="strong"
           />
           {arrears && (
-            <Tag
-              label={dataConsolidatedCredit.arrears}
-              appearance="danger"
-              weight="strong"
-            />
+            <Tag label={dataConsolidatedCredit.arrears} appearance="danger" />
           )}
         </Stack>
         <Stack direction="column" gap="8px">
