@@ -44,7 +44,13 @@ const renderLogo = (imgUrl: string) => {
   );
 };
 
-function AppPage() {
+interface IAppPage {
+  showNav?: boolean;
+}
+
+function AppPage(props: IAppPage) {
+  const { showNav = true } = props;
+
   const { eventData, businessUnitsToTheStaff, setBusinessUnitSigla } =
     useContext(AppContext);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -194,11 +200,11 @@ function AppPage() {
           )}
 
           <Grid
-            templateColumns={!isTablet ? "auto 1fr" : "1fr"}
+            templateColumns={!isTablet ? (showNav ? "auto 1fr" : "1fr") : "1fr"}
             alignContent="unset"
             height={isTablet ? "81vh" : "92vh"}
           >
-            {!isTablet && (
+            {!isTablet && showNav && (
               <Nav
                 navigation={navConfig}
                 actions={actions}

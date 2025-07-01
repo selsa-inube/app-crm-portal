@@ -14,10 +14,9 @@ import { StyledContainer, StyledContainerClose } from "./styles";
 import { dataBaseModal } from "./config";
 
 export interface IBaseModalProps {
-  handleNext: () => void;
   title: string;
-  nextButton: string;
   children: JSX.Element | JSX.Element[];
+  handleNext?: () => void;
   handleBack?: () => void;
   handleClose?: () => void;
   width?: string;
@@ -28,6 +27,7 @@ export interface IBaseModalProps {
   iconAfterNext?: React.JSX.Element;
   iconBeforeback?: React.JSX.Element;
   iconAfterback?: React.JSX.Element;
+  nextButton?: string;
   backButton?: string;
   initialDivider?: boolean;
   finalDivider?: boolean;
@@ -112,14 +112,16 @@ export function BaseModal(props: IBaseModalProps) {
                 {backButton}
               </Button>
             )}
-            <Button
-              onClick={handleNext}
-              disabled={disabledNext}
-              iconAfter={iconAfterNext}
-              iconBefore={iconBeforeNext}
-            >
-              {nextButton}
-            </Button>
+            {nextButton && (
+              <Button
+                onClick={handleNext}
+                disabled={disabledNext}
+                iconAfter={iconAfterNext}
+                iconBefore={iconBeforeNext}
+              >
+                {nextButton}
+              </Button>
+            )}
           </Stack>
         </Stack>
       </StyledContainer>

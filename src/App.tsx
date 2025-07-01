@@ -19,6 +19,7 @@ import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
 import { AddProspectRoutes } from "@routes/addProspect";
 import { EditProspectRoutes } from "@routes/editProspect";
+import { CustomerRoutes } from "@routes/customer";
 import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 
@@ -50,6 +51,7 @@ const router = createBrowserRouter(
         path="credit/apply-for-credit/*"
         element={<SubmitCreditApplicationRoutes />}
       />
+      <Route path="customer*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
   ),
