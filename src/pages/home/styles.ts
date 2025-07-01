@@ -42,6 +42,23 @@ const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
   left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
 `;
+const StyledContainerCards = styled.div<IStyledContainer>`
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: ${(props) => (props.$smallScreen ? "center" : "flex-start")};
+  border: ${(props) => (props.$smallScreen ? "none" : "1px solid #E0E0E0")};
+  border-radius: 8px;
+  padding: 16px;
+
+  & > * {
+    flex: 1 1 calc(25% - 24px);
+    min-width: 250px;
+    max-width: calc(25% - 24px);
+  }
+`;
+
 export {
   StyledHeaderContainer,
   StyledTitle,
@@ -49,4 +66,5 @@ export {
   StyledLogo,
   StyledContentImg,
   StyledCollapse,
+  StyledContainerCards,
 };
