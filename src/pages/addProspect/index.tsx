@@ -15,7 +15,7 @@ import { getClientPortfolioObligationsById } from "@services/creditLimit/getClie
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData, RuleValue } from "./types";
+import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
 import { AddProspectUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
@@ -28,6 +28,8 @@ export function AddProspect() {
   );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
+  const [isAlertIncome, setIsAlertIncome] = useState(false);
+  const [isAlertObligation, setIsAlertObligation] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
   const [isCreditLimitWarning, setIsCreditLimitWarning] = useState(false);
@@ -74,7 +76,7 @@ export function AddProspect() {
     },
     loanAmountState: {
       inputValue: "",
-      toggleChecked: true,
+      toggleChecked: false,
       paymentPlan: "",
       periodicity: "",
       payAmount: "",
@@ -468,10 +470,7 @@ export function AddProspect() {
     (creditLimitData?.PersonalBusinessUtilities ?? 0) +
     (creditLimitData?.ProfessionalFees ?? 0);
 
-  const totalObligations = // modificar cuando se integre obligations
-    (creditLimitData?.PeriodicSalary ?? 0) +
-    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
-    (creditLimitData?.ProfessionalFees ?? 0);
+  const totalObligations = clientPortfolio?.obligations;
 
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -493,13 +492,13 @@ export function AddProspect() {
   );
 
   const handleNextStep = () => {
-    const { togglesState } = formData;
+    const { togglesState, loanAmountState } = formData;
 
     const isInExtraBorrowersStep =
       currentStep === stepsAddProspect.extraBorrowers.id;
 
     const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === 0;
+    const showObligations = togglesState[2] || totalObligations === undefined;
 
     const dynamicSteps = [
       togglesState[0]
@@ -510,20 +509,46 @@ export function AddProspect() {
         !(isInExtraBorrowersStep && totalIncome !== 0) && showSourcesIncome
           ? stepsAddProspect.sourcesIncome.id
           : undefined,
-        !(isInExtraBorrowersStep && totalObligations !== 0) && showObligations
+        !(isInExtraBorrowersStep && totalObligations !== undefined) &&
+        showObligations
           ? stepsAddProspect.obligationsFinancial.id
           : undefined,
       ],
       stepsAddProspect.loanConditions.id,
+      stepsAddProspect.loanAmount.id,
+      loanAmountState.toggleChecked
+        ? stepsAddProspect.obligationsCollected.id
+        : undefined,
     ].filter((step): step is number => step !== undefined);
 
     const currentStepIndex = dynamicSteps.indexOf(currentStep);
 
+    if (
+      currentStep === stepsAddProspect.loanAmount.id &&
+      !loanAmountState.toggleChecked
+    ) {
+      handleSubmitClick();
+      return;
+    }
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
     }
+    if (
+      currentStep === stepsAddProspect.sourcesIncome.id &&
+      totalIncome === 0
+    ) {
+      setIsAlertIncome(true);
+      return;
+    }
     if (currentStep === stepsAddProspect.sourcesIncome.id) {
       setCurrentStep(stepsAddProspect.obligationsFinancial.id);
+      return;
+    }
+    if (
+      currentStep === stepsAddProspect.obligationsFinancial.id &&
+      totalObligations === undefined
+    ) {
+      setIsAlertObligation(true);
       return;
     }
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -547,7 +572,7 @@ export function AddProspect() {
       currentStep === stepsAddProspect.loanConditions.id && togglesState[3];
 
     const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === 0;
+    const showObligations = togglesState[2] || totalObligations === undefined;
 
     const dynamicSteps = [
       togglesState[0]
@@ -559,7 +584,7 @@ export function AddProspect() {
         showSourcesIncome
           ? stepsAddProspect.sourcesIncome.id
           : undefined,
-        !(nextStepWouldBeExtraBorrowers && totalObligations !== 0) &&
+        !(nextStepWouldBeExtraBorrowers && totalObligations !== undefined) &&
         showObligations
           ? stepsAddProspect.obligationsFinancial.id
           : undefined,
@@ -578,6 +603,13 @@ export function AddProspect() {
     }
     setIsCurrentFormValid(true);
   };
+
+  const assistedButtonText =
+    (currentStep === stepsAddProspect.loanAmount.id &&
+      !formData.loanAmountState.toggleChecked) ||
+    currentStep === steps[steps.length - 1].id
+      ? titleButtonTextAssited.submitText
+      : titleButtonTextAssited.goNextText;
 
   const handleFlag = (error: unknown) => {
     addFlag({
@@ -629,6 +661,7 @@ export function AddProspect() {
       fetchDataClientPortfolio();
     }
   }, [currentStep]);
+
   return (
     <>
       <AddProspectUI
@@ -668,6 +701,11 @@ export function AddProspect() {
         setIsCapacityAnalysisWarning={setIsCapacityAnalysisWarning}
         creditLineTerms={creditLineTerms}
         clientPortfolio={clientPortfolio as IObligations}
+        assistedButtonText={assistedButtonText}
+        isAlertIncome={isAlertIncome}
+        isAlertObligation={isAlertObligation}
+        setIsAlertIncome={setIsAlertIncome}
+        setIsAlertObligation={setIsAlertObligation}
       />
       {showConsultingModal && <Consulting />}
     </>
