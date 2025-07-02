@@ -8,6 +8,9 @@ import { postSubmitCredit } from "@services/submitCredit";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { getSearchProspectByCode } from "@services/prospects/AllProspects";
+import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
+import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
+import { MessagingPlatform } from "@services/enum/messagingPlatform";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { SubmitCreditApplicationUI } from "./interface";
@@ -15,8 +18,6 @@ import { IFormData } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
 import { dataSubmitApplication, tittleOptions } from "./config/config";
-import { getSearchProspectSummaryById } from "@src/services/prospects/ProspectSummaryById";
-import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
 
 export function SubmitCreditApplication() {
   const { customerPublicCode, prospectCode } = useParams();
@@ -248,6 +249,18 @@ export function SubmitCreditApplication() {
   submitData.append("moneyDestinationId", "13698");
   submitData.append("prospectCode", prospectData.prospect_code);
   submitData.append("prospectId", prospectData.prospect_id);
+  submitData.append(
+    "instantMessagingPlatforms",
+    JSON.stringify([
+      {
+        instantMessagingPlatformName: MessagingPlatform[0].Value,
+        propertyName: formData.contactInformation.whatsAppPhone.toString(),
+        propertyValue: `+57${formData.contactInformation.whatsAppPhone}`, // modificar cuando se actualice el input phone
+        transactionOperation: "Insert",
+      },
+    ]),
+  );
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const metadataArray: any[] = [];
   Object.entries(attachedDocuments || {}).forEach(([, docsArray]) => {
