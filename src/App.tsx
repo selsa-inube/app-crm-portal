@@ -51,7 +51,7 @@ const router = createBrowserRouter(
         path="credit/apply-for-credit/*"
         element={<SubmitCreditApplicationRoutes />}
       />
-      <Route path="customer*" element={<CustomerRoutes />} />
+      <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
   ),

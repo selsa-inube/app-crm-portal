@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MdOutlineMicNone } from "react-icons/md";
-import { Button, Icon, Input, Select, Stack, Text } from "@inubekit/inubekit";
+import { Autocomplete, Button, Icon, Stack, Text } from "@inubekit/inubekit";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -15,20 +15,15 @@ import { StyledMic, StyledAutomatic } from "./styles";
 export function Customer() {
   const [isShowModal, setIsShowModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [selectValue, setSelectValue] = useState("");
+  const [justStartedListening, setJustStartedListening] = useState(false);
   const [options, setOptions] = useState<
     { id: string; label: string; value: string }[]
   >([]);
-  const [justStartedListening, setJustStartedListening] = useState(false);
 
   const selectRef = useRef<HTMLDivElement | null>(null);
 
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition,
-  } = useSpeechRecognition();
+  const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
+    useSpeechRecognition();
 
   const handleStartListening = () => {
     resetTranscript();
@@ -42,65 +37,53 @@ export function Customer() {
   };
 
   const handleSearch = async (value: string) => {
-    if (value.length > 3) {
-      let response = null;
-      if (/^\d+$/.test(value)) {
-        response = await getCustomerCatalog("test", "", value);
-      } else if (/^[A-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
-        response = await getCustomerCatalog("test", value, "");
-      }
-
-      if (response && Array.isArray(response) && response.length > 0) {
-        const mappedOptions = response.map((item, index) => ({
-          id: `${index}`,
-          label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
-          value: item.publicCode,
-        }));
-        setOptions(mappedOptions);
-        setSelectValue(mappedOptions[0]?.value || "");
-
-        if (mappedOptions.length > 1) {
-          setTimeout(() => {
-            const clickable = selectRef.current?.querySelector("input");
-            clickable?.dispatchEvent(
-              new MouseEvent("click", { bubbles: true }),
-            );
-          }, 100);
-        }
-      } else {
-        setOptions([]);
-        setSelectValue("");
-      }
-    }
-  };
-
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toUpperCase();
-    setInputValue(value);
-
-    if (value.trim() === "") {
+    if (value.length < 3) {
       setOptions([]);
-      setSelectValue("");
       return;
     }
 
-    handleSearch(value);
+    let response = null;
+    if (/^\d+$/.test(value)) {
+      response = await getCustomerCatalog("test", "", value);
+    } else if (/^[A-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
+      response = await getCustomerCatalog("test", value, "");
+    }
+
+    if (response && Array.isArray(response) && response.length > 0) {
+      const mappedOptions = response.map((item, index) => ({
+        id: `${index}`,
+        label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
+        value: item.publicCode,
+      }));
+      setOptions(mappedOptions);
+
+      setTimeout(() => {
+        const clickable = selectRef.current?.querySelector("input");
+        if (clickable) {
+          clickable.focus();
+          clickable.dispatchEvent(
+            new KeyboardEvent("keyup", { bubbles: true }),
+          );
+        }
+      }, 50);
+    } else {
+      setOptions([]);
+    }
   };
 
   useEffect(() => {
-    if (transcript) {
-      setInputValue(transcript);
+    if (inputValue.trim() === "") {
+      setOptions([]);
+      return;
     }
-  }, [transcript]);
+    handleSearch(inputValue);
+  }, [inputValue]);
 
   useEffect(() => {
     const recognition = SpeechRecognition.getRecognition();
-
     if (recognition) {
       recognition.onend = () => {
-        if (listening) {
-          setIsShowModal(false);
-        }
+        setIsShowModal(false);
       };
     }
 
@@ -109,7 +92,7 @@ export function Customer() {
         recognition.onend = null;
       }
     };
-  }, [listening]);
+  }, []);
 
   useEffect(() => {
     if (transcript) {
@@ -121,11 +104,13 @@ export function Customer() {
         .replace(/\s{2,}/g, " ")
         .trim();
 
+      setOptions([]);
       setInputValue(cleanedTranscript);
       setJustStartedListening(false);
-      handleSearch(cleanedTranscript);
     }
   }, [transcript]);
+
+  console.log(options);
 
   return (
     <Stack width="100%" justifyContent="center" margin="50px 0">
@@ -139,35 +124,23 @@ export function Customer() {
           </Text>
           <Fieldset hasOverflow>
             <Stack alignItems="center" gap="6px">
-              {options.length > 1 ? (
-                <StyledAutomatic ref={selectRef}>
-                  <Select
-                    id="clientSelect"
-                    name="clientSelect"
-                    fullwidth
-                    placeholder="Resultados encontrados"
-                    value={selectValue}
-                    onChange={(_, value) => {
-                      setSelectValue(value);
-                      if (!value) {
-                        setInputValue("");
-                        setOptions([]);
-                      }
-                    }}
-                    options={options}
-                  />
-                </StyledAutomatic>
-              ) : (
-                <Input
-                  id="keyWord"
-                  name="keyWord"
-                  placeholder="Selecciona un cliente"
+              <StyledAutomatic ref={selectRef}>
+                <Autocomplete
+                  id="clientSelect"
+                  name="clientSelect"
                   fullwidth
+                  placeholder={homeData.selectClient}
+                  options={options}
                   value={inputValue}
-                  onChange={handleInputChange}
+                  onChange={(_, value) => {
+                    const upperValue = value?.toUpperCase() || "";
+                    setInputValue(upperValue);
+                    if (!value) {
+                      setOptions([]);
+                    }
+                  }}
                 />
-              )}
-
+              </StyledAutomatic>
               <Icon
                 icon={<MdOutlineMicNone />}
                 size="28px"
