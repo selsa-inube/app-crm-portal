@@ -255,6 +255,7 @@ export function EditProspect() {
       setIsModalOpen={setIsModalOpen}
       setShowCreditRequest={setShowCreditRequest}
       setRequestValue={setRequestValue}
+      setProspectData={setDataProspect}
       requestValue={requestValue}
     />
   );

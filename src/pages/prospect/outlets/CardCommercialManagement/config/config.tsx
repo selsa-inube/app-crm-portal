@@ -354,6 +354,8 @@ export const tittleOptions = {
   titleAddProduct: "Agregar producto",
   titleExtraPayments: "Pagos extras",
   titleError: "¡Uy, algo ha salido mal!",
-  descriptionError: "No se han podido guardar los cambios.",
+  descriptionError: "Lamentamos los inconvenientes",
   deductibleExpensesErrorTitle: "Error al cargar gastos descontables",
+  editProduct: "Editar producto",
+  save: "Guardar",
 };

@@ -44,6 +44,7 @@ interface IEditProspectUIProps {
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
+  setProspectData?: (prospect: IProspect) => void;
   requestValue?: IPaymentChannel[];
 }
 
@@ -70,6 +71,7 @@ export function EditProspectUI(props: IEditProspectUIProps) {
     handleInfo,
     setIsModalOpen,
     setShowCreditRequest,
+    setProspectData,
   } = props;
 
   const getTotalLoanAmount = (data: IProspect | undefined): number => {
@@ -251,6 +253,7 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                         isPrint={true}
                         prospectData={dataProspect!}
                         setRequestValue={setRequestValue}
+                        onProspectUpdate={setProspectData}
                       />
                     </Fieldset>
                     <StyledPrint>
