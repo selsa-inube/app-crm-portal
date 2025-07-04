@@ -41,6 +41,9 @@ export function AddProspect() {
   const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
     null,
   );
+  const [codeError, setCodeError] = useState<number | null>(null);
+  const [addToFix, setAddToFix] = useState<string[]>([]);
+
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
   const { addFlag } = useFlag();
@@ -134,7 +137,7 @@ export function AddProspect() {
       {
         installmentAmount: 1,
         installmentDate: "2025-06-12T15:04:05Z",
-        paymentChannelAbbreviatedName: "",
+        paymentChannelAbbreviatedName: "none",
       },
     ],
     installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
@@ -204,6 +207,12 @@ export function AddProspect() {
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
+    if (customerData.fullName.length === 0) {
+      setCodeError(1016);
+      setAddToFix(["No se ha seleccionado ningún cliente "]);
+    } else {
+      setCodeError(null);
+    }
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     if (!clientInfo?.associateType) return;
 
@@ -706,6 +715,9 @@ export function AddProspect() {
         isAlertObligation={isAlertObligation}
         setIsAlertIncome={setIsAlertIncome}
         setIsAlertObligation={setIsAlertObligation}
+        codeError={codeError}
+        addToFix={addToFix}
+        navigate={navigate}
       />
       {showConsultingModal && <Consulting />}
     </>
