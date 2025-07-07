@@ -3,7 +3,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 import { AppContext } from "@context/AppContext";
 
-import { ICustomerContext, ICustomerData } from "./types";
+import { ICustomerContext, ICustomerData, initialCustomerData } from "./types";
 
 export const CustomerContext = createContext<ICustomerContext>(
   {} as ICustomerContext,
@@ -23,32 +23,8 @@ export function CustomerContextProvider({
     return "";
   };
 
-  const [customerData, setCustomerData] = useState<ICustomerData>({
-    customerId: "",
-    publicCode: "",
-    fullName: "",
-    natureClient: "",
-    generalAttributeClientNaturalPersons: [
-      {
-        employmentType: "",
-        associateType: "",
-        typeIdentification: "",
-        firstNames: "",
-        lastNames: "",
-        emailContact: "",
-        cellPhoneContact: "",
-        gender: "",
-        dateBirth: "",
-        zone: "",
-      },
-    ],
-    generalAssociateAttributes: [
-      {
-        affiliateSeniorityDate: "",
-        partnerStatus: "",
-      },
-    ],
-  });
+  const [customerData, setCustomerData] =
+    useState<ICustomerData>(initialCustomerData);
 
   const [customerPublicCodeState, setCustomerPublicCodeState] =
     useState<string>(getInitialPublicCode());
@@ -113,7 +89,7 @@ export function CustomerContextProvider({
 
   return (
     <CustomerContext.Provider
-      value={{ customerData, setCustomerPublicCodeState }}
+      value={{ customerData, setCustomerPublicCodeState, setCustomerData }}
     >
       {children}
     </CustomerContext.Provider>
