@@ -21,6 +21,7 @@ import { AddProspectRoutes } from "@routes/addProspect";
 import { EditProspectRoutes } from "@routes/editProspect";
 import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
+import { Credit } from "./pages/creditProspect";
 
 function LogOut() {
   localStorage.clear();
@@ -45,6 +46,7 @@ const router = createBrowserRouter(
       />
       <Route path="login/*" element={<LoginRoutes />} />
       <Route path="credit/simulate-credit/*" element={<AddProspectRoutes />} />
+      <Route path="credit/" element={<Credit />} />
       <Route path="credit/edit-prospect/*" element={<EditProspectRoutes />} />
       <Route
         path="credit/apply-for-credit/*"
