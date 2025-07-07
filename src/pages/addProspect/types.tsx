@@ -1,4 +1,4 @@
-import { IObligations } from "@src/services/creditLimit/getClientPortfolioObligations/types";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 export const titleButtonTextAssited = {
   goBackText: "Anterior",

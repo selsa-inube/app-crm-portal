@@ -668,13 +668,12 @@ export function AddProspect() {
   };
 
   useEffect(() => {
-    if (currentStep === stepsAddProspect.generalInformation.id) {
+    if (currentStep === stepsAddProspect.productSelection.id) {
       fetchCreditLimit();
       fetchDataClientPortfolio();
     }
   }, [currentStep]);
 
-  // Agrega este useEffect después de los otros useEffect existentes
   useEffect(() => {
     if (clientPortfolio) {
       setFormData((prevState) => ({

@@ -67,20 +67,6 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
           formState={formState}
         />
       </Stack>
-
-      {/* <Stack gap="15px" justifyContent="center">
-        {isOpenModal && (
-          <ListModal
-            title={dataReport.restore}
-            handleClose={() => setIsOpenModal(false)}
-            handleSubmit={() => setIsOpenModal(false)}
-            cancelButton="Cancelar"
-            appearanceCancel="gray"
-            buttonLabel={dataReport.restore}
-            content={dataReport.descriptionModal}
-          />
-        )}
-      </Stack> */}
     </Fieldset>
   );
 }

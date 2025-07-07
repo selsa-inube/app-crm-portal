@@ -162,7 +162,7 @@ export const TableFinancialObligationsUI = ({
     firstEntryInPage,
     lastEntryInPage,
     paddedCurrentData,
-  } = usePagination(dataInformation);
+  } = usePagination([...dataInformation].reverse());
 
   const getValueFromProperty = (
     value: string | number | string[] | undefined,
@@ -209,12 +209,14 @@ export const TableFinancialObligationsUI = ({
 
   const handleConfirm = (values: FormikValues) => {
     const newObligation = {
-      obligationNumber: `10-${Date.now()}`,
+      obligationNumber: values.idUser || "",
       productName: values.type || "",
       paymentMethodName: values.payment || "",
       balanceObligationTotal: values.balance || 0,
       nextPaymentValueTotal: values.fee || 0,
       entity: values.entity || "",
+      duesPaid: values.feePaid || "",
+      outstandingDues: values.term || "",
     };
     const updatedObligations = insertInDeepestObligations(
       initialValues.obligations,
