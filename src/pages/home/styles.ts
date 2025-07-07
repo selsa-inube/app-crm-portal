@@ -23,6 +23,15 @@ const StyledHeaderContainer = styled.div`
   width: 100%;
 `;
 
+const StyledGeneralHeader = styled.div`
+  position: sticky;
+  top: 74px;
+  z-index: 1;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+`;
+
 const StyledCollapse = styled.div`
   z-index: 2;
   position: absolute;
@@ -71,4 +80,5 @@ export {
   StyledContentImg,
   StyledCollapse,
   StyledContainerCards,
+  StyledGeneralHeader,
 };
