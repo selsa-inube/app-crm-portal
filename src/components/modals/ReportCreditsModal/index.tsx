@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { MdAdd, MdCached } from "react-icons/md";
-import { FormikValues } from "formik";
 import { Stack, useMediaQuery, Button, Select } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { dataReport } from "@pages/prospect/components/TableObligationsFinancial/config";
 import { IProspect } from "@services/prospects/types";
+
 import { ListModal } from "../ListModal";
 import { FinancialObligationModal } from "../financialObligationModal";
 export interface ReportCreditsModalProps {
@@ -23,17 +23,6 @@ export function ReportCreditsModal(props: ReportCreditsModalProps) {
   const [loading, setLoading] = useState(true);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-
-  const initialValues: FormikValues = {
-    type: "",
-    entity: "",
-    fee: "",
-    balance: "",
-    payment: "",
-    feePaid: "",
-    term: "",
-  };
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoading(false);
@@ -114,7 +103,6 @@ export function ReportCreditsModal(props: ReportCreditsModalProps) {
               title="Agregar obligaciones"
               onCloseModal={handleCloseModal}
               onConfirm={() => console.log("ok")}
-              initialValues={initialValues}
               confirmButtonText="Agregar"
             />
           )}

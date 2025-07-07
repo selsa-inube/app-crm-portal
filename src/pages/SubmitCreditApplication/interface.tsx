@@ -242,7 +242,7 @@ export function SubmitCreditApplicationUI(
                 )}
               {currentStepsNumber &&
                 currentStepsNumber.id ===
-                  stepsFilingApplication.BorrowerData.id && (
+                  stepsFilingApplication.generalInformation.id && (
                   <Borrowers
                     isMobile={isMobile}
                     onFormValid={setIsCurrentFormValid}

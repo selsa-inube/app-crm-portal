@@ -64,6 +64,28 @@ interface AddPositionUIProps {
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
   requestValue: IPaymentChannel[] | undefined;
+  formState: {
+    type: string;
+    entity: string;
+    fee: string;
+    balance: string;
+    payment: string;
+    feePaid: string;
+    term: string;
+    idUser: string;
+  };
+  setFormState: React.Dispatch<
+    React.SetStateAction<{
+      type: string;
+      entity: string;
+      fee: string;
+      balance: string;
+      payment: string;
+      feePaid: string;
+      term: string;
+      idUser: string;
+    }>
+  >;
   handleNextStep: () => void;
   handlePreviousStep: () => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
@@ -140,6 +162,8 @@ export function AddProspectUI(props: AddPositionUIProps) {
     assistedButtonText,
     isAlertIncome,
     isAlertObligation,
+    formState,
+    setFormState,
   } = props;
 
   return (
@@ -357,7 +381,14 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 stepsAddProspect.obligationsFinancial.id && (
                 <ObligationsFinancial
                   isMobile={isMobile}
+                  initialValues={formData.obligationsFinancial}
                   clientPortfolio={clientPortfolio}
+                  setFormState={setFormState}
+                  formState={formState}
+                  onFormValid={setIsCurrentFormValid}
+                  handleOnChange={(newObligation) =>
+                    handleFormDataChange("obligationsFinancial", newObligation)
+                  }
                 />
               )}
             {currentStepsNumber &&
