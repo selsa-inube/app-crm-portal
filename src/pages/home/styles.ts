@@ -18,10 +18,13 @@ const StyledTitle = styled.div<IStyledContainer>`
 `;
 
 const StyledHeaderContainer = styled.div`
-  position: relative;
+  z-index: 2;
+  position: fixed;
+  width: 100%;
 `;
 
 const StyledCollapse = styled.div`
+  z-index: 2;
   position: absolute;
   top: 48px;
 `;
@@ -41,6 +44,7 @@ const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
   left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
+  z-index: 3;
 `;
 const StyledContainerCards = styled.div<IStyledContainer>`
   box-sizing: border-box;

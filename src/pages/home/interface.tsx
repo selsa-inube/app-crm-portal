@@ -1,4 +1,4 @@
-import { MdOutlineChevronRight, MdOutlineDoorFront } from "react-icons/md";
+import { MdOutlineChevronRight } from "react-icons/md";
 import { Header, Icon, Stack } from "@inubekit/inubekit";
 
 import { Title } from "@components/layout/Title";
@@ -18,6 +18,7 @@ import {
   StyledTitle,
 } from "./styles";
 import { IHomeUIProps } from "./types";
+import { homeTitleConfig } from "./config/home.config";
 
 const HomeUI = (props: IHomeUIProps) => {
   const {
@@ -57,21 +58,20 @@ const HomeUI = (props: IHomeUIProps) => {
           }}
           menu={userMenu}
         />
+        <StyledCollapseIcon
+          $collapse={collapse}
+          onClick={() => setCollapse(!collapse)}
+          $isTablet={isTablet}
+          ref={collapseMenuRef}
+        >
+          <Icon
+            icon={<MdOutlineChevronRight />}
+            appearance="primary"
+            size="24px"
+            cursorHover
+          />
+        </StyledCollapseIcon>
       </StyledHeaderContainer>
-
-      <StyledCollapseIcon
-        $collapse={collapse}
-        onClick={() => setCollapse(!collapse)}
-        $isTablet={isTablet}
-        ref={collapseMenuRef}
-      >
-        <Icon
-          icon={<MdOutlineChevronRight />}
-          appearance="primary"
-          size="24px"
-          cursorHover
-        />
-      </StyledCollapseIcon>
 
       {collapse && (
         <StyledCollapse ref={businessUnitChangeRef}>
@@ -92,7 +92,7 @@ const HomeUI = (props: IHomeUIProps) => {
           direction="column"
           alignItems={isMobile ? "normal" : "center"}
           margin="20px 0px"
-          padding="24px 64px 0 64px"
+          padding="64px"
         >
           <Stack gap="24px" direction="column" height="100%" width="100%">
             <GeneralHeader
@@ -104,10 +104,10 @@ const HomeUI = (props: IHomeUIProps) => {
 
             <StyledTitle $smallScreen={smallScreen}>
               <Title
-                title={`Bienvenido, ${username}`}
-                description="Aquí tienes las funcionalidades disponibles."
-                icon={<MdOutlineDoorFront />}
-                sizeTitle="large"
+                title={homeTitleConfig(username).title}
+                description={homeTitleConfig(username).description}
+                icon={homeTitleConfig(username).icon}
+                sizeTitle={homeTitleConfig(username).sizeTitle}
               />
             </StyledTitle>
 

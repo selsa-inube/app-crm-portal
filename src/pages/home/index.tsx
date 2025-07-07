@@ -1,10 +1,10 @@
+import { useMediaQuery } from "@inubekit/inubekit";
 import { useContext, useEffect, useRef, useState } from "react";
 
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { mockData } from "@mocks/home/mockData";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import { useMediaQuery } from "@inubekit/inubekit";
 
 import { HomeUI } from "./interface";
 
