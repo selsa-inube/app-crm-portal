@@ -1,4 +1,4 @@
-export const dataCreditProspect = {
+export const dataCrsimulations = {
   addProduct: "Agregar producto",
   extraPayment: "Pagos extras",
   edit: "Editar",

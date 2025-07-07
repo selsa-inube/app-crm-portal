@@ -39,12 +39,12 @@ import { AppContext } from "@context/AppContext";
 import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
-import { dataCreditProspect } from "./config";
+import { dataCrsimulations } from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
 
-interface ICreditProspectProps {
+interface ICrsimulationsProps {
   showMenu: () => void;
   isMobile: boolean;
   prospectData?: IProspect;
@@ -55,7 +55,7 @@ interface ICreditProspectProps {
   >;
 }
 
-export function CreditProspect(props: ICreditProspectProps) {
+export function Crsimulations(props: ICrsimulationsProps) {
   const {
     prospectData,
     showMenu,
@@ -408,7 +408,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 }
                 onClick={() => handleOpenModal("editProductModal")}
               >
-                {dataCreditProspect.addProduct}
+                {dataCrsimulations.addProduct}
               </Button>
               {prospectData?.creditProducts && (
                 <Button
@@ -426,7 +426,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   }
                   onClick={() => handleOpenModal("extraPayments")}
                 >
-                  {dataCreditProspect.extraPayment}
+                  {dataCrsimulations.extraPayment}
                 </Button>
               )}
               <StyledVerticalDivider />
@@ -525,8 +525,8 @@ export function CreditProspect(props: ICreditProspectProps) {
         )}
         {currentModal === "IncomeModal" && (
           <BaseModal
-            title={dataCreditProspect.incomeSources}
-            nextButton={dataCreditProspect.close}
+            title={dataCrsimulations.incomeSources}
+            nextButton={dataCrsimulations.close}
             handleNext={handleCloseModal}
             handleClose={handleCloseModal}
           >
@@ -551,7 +551,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   setOpenModal("IncomeModalEdit");
                 }}
               >
-                {dataCreditProspect.edit}
+                {dataCrsimulations.edit}
               </Button>
             </Stack>
             <IncomeDebtor

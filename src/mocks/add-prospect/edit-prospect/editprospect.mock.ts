@@ -1,4 +1,4 @@
-export const mockEditProspect = [
+export const mocksimulations = [
   {
     name: "Camilo Alberto Rincón Jaramillo",
     choiceDestination: "Vacaciones",

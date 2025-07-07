@@ -1,10 +1,10 @@
-export interface IShareCreditProspect {
+export interface IShareCrsimulations {
   clientName: string;
   email: string;
   prospectId: string;
   optionalEmail: string;
   file: File | null;
 }
-export interface IShareCreditProspectResponse {
+export interface IShareCrsimulationsResponse {
   codeNotification: string;
 }

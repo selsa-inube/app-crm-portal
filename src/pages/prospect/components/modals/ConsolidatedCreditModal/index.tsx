@@ -9,9 +9,9 @@ import {
 } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
-import { InvestmentCreditCard } from "@pages/addProspect/components/InvestmentCreditCard";
+import { InvestmentCreditCard } from "@pages/SimulateCredit/components/InvestmentCreditCard";
 import { BaseModal } from "@components/modals/baseModal";
-import { CardConsolidatedCredit } from "@pages/addProspect/components/CardConsolidatedCredit";
+import { CardConsolidatedCredit } from "@pages/SimulateCredit/components/CardConsolidatedCredit";
 import { mockConsolidatedCreditModal } from "@mocks/add-prospect/consolidated-credit-modal/consolidatedcreditmodal.mock";
 import { IProspect } from "@services/prospects/types";
 

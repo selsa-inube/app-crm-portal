@@ -4,12 +4,12 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IShareCreditProspect, IShareCreditProspectResponse } from "./types";
+import { IShareCrsimulations, IShareCrsimulationsResponse } from "./types";
 
-export const patchShareCreditProspect = async (
+export const patchShareCrsimulations = async (
   businessUnitPublicCode: string,
-  payload: IShareCreditProspect,
-): Promise<IShareCreditProspectResponse | undefined> => {
+  payload: IShareCrsimulations,
+): Promise<IShareCrsimulationsResponse | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -30,7 +30,7 @@ export const patchShareCreditProspect = async (
       const options: RequestInit = {
         method: "PATCH",
         headers: {
-          "X-Action": "ShareCreditProspect",
+          "X-Action": "ShareCrsimulations",
           "X-Business-Unit": businessUnitPublicCode,
         },
         body: formData,

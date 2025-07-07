@@ -16,7 +16,7 @@ import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
 import { saveDocument } from "@services/saveDocument";
 import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";
-import { IDocumentUpload } from "@pages/SubmitCreditApplication/types";
+import { IDocumentUpload } from "@pages/applyForCredit/types";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
 

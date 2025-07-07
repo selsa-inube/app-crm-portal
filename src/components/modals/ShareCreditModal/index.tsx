@@ -4,7 +4,7 @@ import { MdInfoOutline } from "react-icons/md";
 import { Text, Stack, Icon, Textfield, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { patchShareCreditProspect } from "@services/iProspect/shareCreditProspect";
+import { patchShareCrsimulations } from "@services/iProspect/shareCrsimulations";
 import { pdfConverter } from "@utils/encrypt/encrypt";
 
 import { dataShareModal } from "./config";
@@ -64,7 +64,7 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     };
 
     try {
-      await patchShareCreditProspect("text", payload);
+      await patchShareCrsimulations("text", payload);
       handleClose();
       handleFlag(false);
     } catch (error) {
