@@ -23,4 +23,33 @@ export interface ICustomerData {
 
 export interface ICustomerContext {
   customerData: ICustomerData;
+  setCustomerPublicCodeState: (publicCode: string) => void;
+  setCustomerData: (data: ICustomerData) => void;
 }
+
+export const initialCustomerData: ICustomerData = {
+  customerId: "",
+  publicCode: "",
+  fullName: "",
+  natureClient: "",
+  generalAttributeClientNaturalPersons: [
+    {
+      employmentType: "",
+      associateType: "",
+      typeIdentification: "",
+      firstNames: "",
+      lastNames: "",
+      emailContact: "",
+      cellPhoneContact: "",
+      gender: "",
+      dateBirth: "",
+      zone: "",
+    },
+  ],
+  generalAssociateAttributes: [
+    {
+      affiliateSeniorityDate: "",
+      partnerStatus: "",
+    },
+  ],
+};

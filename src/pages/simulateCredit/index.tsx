@@ -41,6 +41,9 @@ export function SimulateCredit() {
   const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
     null,
   );
+  const [codeError, setCodeError] = useState<number | null>(null);
+  const [addToFix, setAddToFix] = useState<string[]>([]);
+
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
   const { addFlag } = useFlag();
@@ -51,6 +54,16 @@ export function SimulateCredit() {
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla } = useContext(AppContext);
   const { customerPublicCode } = useParams();
+  const [formState, setFormState] = useState({
+    type: "",
+    entity: "",
+    fee: "",
+    balance: "",
+    payment: "",
+    feePaid: "",
+    term: "",
+    idUser: "",
+  });
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -74,6 +87,7 @@ export function SimulateCredit() {
     borrowerData: {
       borrowers: {},
     },
+    obligationsFinancial: clientPortfolio,
     loanAmountState: {
       inputValue: "",
       toggleChecked: false,
@@ -111,6 +125,7 @@ export function SimulateCredit() {
         ? onlyBorrowerData
         : formData.borrowerData.borrowers,
     ],
+
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
@@ -134,7 +149,7 @@ export function SimulateCredit() {
       {
         installmentAmount: 1,
         installmentDate: "2025-06-12T15:04:05Z",
-        paymentChannelAbbreviatedName: "",
+        paymentChannelAbbreviatedName: "none",
       },
     ],
     installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
@@ -204,6 +219,12 @@ export function SimulateCredit() {
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
+    if (customerData.fullName.length === 0) {
+      setCodeError(1016);
+      setAddToFix(["No se ha seleccionado ningún cliente "]);
+    } else {
+      setCodeError(null);
+    }
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     if (!clientInfo?.associateType) return;
 
@@ -662,6 +683,15 @@ export function SimulateCredit() {
     }
   }, [currentStep]);
 
+  useEffect(() => {
+    if (clientPortfolio) {
+      setFormData((prevState) => ({
+        ...prevState,
+        obligationsFinancial: clientPortfolio,
+      }));
+    }
+  }, [clientPortfolio]);
+
   return (
     <>
       <SimulateCreditUI
@@ -706,6 +736,11 @@ export function SimulateCredit() {
         isAlertObligation={isAlertObligation}
         setIsAlertIncome={setIsAlertIncome}
         setIsAlertObligation={setIsAlertObligation}
+        codeError={codeError}
+        addToFix={addToFix}
+        navigate={navigate}
+        formState={formState}
+        setFormState={setFormState}
       />
       {showConsultingModal && <Consulting />}
     </>

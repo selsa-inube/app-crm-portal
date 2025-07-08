@@ -3,9 +3,9 @@ import localforage from "localforage";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { Icon, Grid, useMediaQuery, Textfield } from "@inubekit/inubekit";
-
+import { ITableFinancialObligationsProps } from "@pages/prospect/components/TableObligationsFinancial/interface";
 import { BaseModal } from "@components/modals/baseModal";
-import { ITableFinancialObligationsProps } from "@pages/prospect/components/TableObligationsFinancial";
+
 import {
   handleChangeWithCurrency,
   validateCurrencyField,

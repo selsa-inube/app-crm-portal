@@ -19,7 +19,8 @@ import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
 import { CreditRoutes } from "@src/routes/CreditRoutes";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
-import { CustomerContextProvider } from "./context/CustomerContext";
+import { CustomerContextProvider } from "@context/CustomerContext";
+import { CustomerRoutes } from "@routes/customer";
 
 function LogOut() {
   localStorage.clear();
@@ -46,6 +47,7 @@ const router = createBrowserRouter(
       <Route path="credit/*" element={<CreditRoutes />} />
       {/* <Route path="Home/*" element={<HomeRoutes /> } /> */}
       {/* <Route path="clients/select-client/*" element={<CustomerRoutes />} /> */}
+      <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
   ),
@@ -65,10 +67,12 @@ function App() {
   return (
     <AppContextProvider>
       <CustomerContextProvider>
-        <FlagProvider>
-          <GlobalStyles />
-          <RouterProvider router={router} />
-        </FlagProvider>
+        <CustomerContextProvider>
+          <FlagProvider>
+            <GlobalStyles />
+            <RouterProvider router={router} />
+          </FlagProvider>
+        </CustomerContextProvider>
       </CustomerContextProvider>
     </AppContextProvider>
   );

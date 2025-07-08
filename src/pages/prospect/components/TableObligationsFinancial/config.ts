@@ -47,7 +47,7 @@ export const dataReport = {
 };
 
 export function convertObligationsToProperties(
-  obligations: {
+  obligationsFinancial: {
     balanceObligationTotal: number;
     duesPaid: number;
     entity: string;
@@ -58,7 +58,7 @@ export function convertObligationsToProperties(
     productName: string;
   }[],
 ): { propertyName: string; propertyValue: string }[] {
-  return obligations.map((obligation) => ({
+  return obligationsFinancial.map((obligation) => ({
     propertyName: "FinancialObligation",
     propertyValue: [
       obligation.productName ?? "",
