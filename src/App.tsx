@@ -23,7 +23,6 @@ import { CustomerRoutes } from "@routes/customer";
 import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { CustomerContextProvider } from "@context/CustomerContext";
-import { Home } from "./pages/home";
 
 function LogOut() {
   localStorage.clear();
@@ -35,7 +34,7 @@ function LogOut() {
 function FirstPage() {
   const { businessUnitSigla } = useContext(AppContext);
   initializeDataDB(businessUnitSigla);
-  return businessUnitSigla.length === 0 ? <Login /> : <Home />;
+  return businessUnitSigla.length === 0 ? <Login /> : <AppPage />;
 }
 
 const router = createBrowserRouter(
