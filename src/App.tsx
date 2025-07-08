@@ -19,8 +19,10 @@ import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
 import { AddProspectRoutes } from "@routes/addProspect";
 import { EditProspectRoutes } from "@routes/editProspect";
+import { CustomerRoutes } from "@routes/customer";
 import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
+import { CustomerContextProvider } from "@context/CustomerContext";
 
 function LogOut() {
   localStorage.clear();
@@ -50,6 +52,7 @@ const router = createBrowserRouter(
         path="credit/apply-for-credit/*"
         element={<SubmitCreditApplicationRoutes />}
       />
+      <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
   ),
@@ -68,10 +71,12 @@ function App() {
 
   return (
     <AppContextProvider>
-      <FlagProvider>
-        <GlobalStyles />
-        <RouterProvider router={router} />
-      </FlagProvider>
+      <CustomerContextProvider>
+        <FlagProvider>
+          <GlobalStyles />
+          <RouterProvider router={router} />
+        </FlagProvider>
+      </CustomerContextProvider>
     </AppContextProvider>
   );
 }

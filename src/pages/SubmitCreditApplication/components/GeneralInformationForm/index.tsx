@@ -122,7 +122,6 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
             formik.setFieldValue(`${optionNameForm}.sex`, value)
           }
           value={formik.values[optionNameForm]?.sex || ""}
-          readonly={!isReadOnly}
           fullwidth
         />
         <Phonefield
@@ -166,7 +165,6 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           }
           value={formik.values[optionNameForm]?.city || ""}
           fullwidth
-          readonly={!isReadOnly}
         />
       </Stack>
     </>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FormikValues } from "formik";
 import { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@inubekit/inubekit";
 import { action } from "@storybook/addon-actions";
@@ -19,16 +18,6 @@ type Story = StoryObj<typeof FinancialObligationModal>;
 
 export const Create: Story = (args: FinancialObligationModalProps) => {
   const [showModal, setShowModal] = useState(false);
-  const initialValues: FormikValues = {
-    type: "",
-    entity: "",
-    fee: "",
-    balance: "",
-    payment: "",
-    idUser: "",
-    feePaid: "",
-    term: "",
-  };
 
   return (
     <>
@@ -36,7 +25,6 @@ export const Create: Story = (args: FinancialObligationModalProps) => {
       {showModal && (
         <FinancialObligationModal
           {...args}
-          initialValues={initialValues}
           onCloseModal={() => {
             setShowModal(false);
             action("onCloseModal")();
@@ -61,16 +49,6 @@ Create.args = {
 
 export const Edit: Story = (args: FinancialObligationModalProps) => {
   const [showModal, setShowModal] = useState(false);
-  const initialValues: FormikValues = {
-    type: "Consumo",
-    entity: "Bancolombia",
-    fee: 600000,
-    balance: 10000000,
-    payment: "Caja",
-    idUser: 12546,
-    feePaid: "5",
-    term: "60",
-  };
 
   return (
     <>
@@ -78,7 +56,6 @@ export const Edit: Story = (args: FinancialObligationModalProps) => {
       {showModal && (
         <FinancialObligationModal
           {...args}
-          initialValues={initialValues}
           onCloseModal={() => {
             setShowModal(false);
             action("onCloseModal")();
