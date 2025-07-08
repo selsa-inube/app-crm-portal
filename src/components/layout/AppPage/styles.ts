@@ -33,7 +33,7 @@ export const StyledLogo = styled.img`
 
 export const StyledHeaderContainer = styled.div`
   position: relative;
-  z-index: 2;
+  z-index: 0;
 `;
 
 export const StyledContainerNav = styled.div`
