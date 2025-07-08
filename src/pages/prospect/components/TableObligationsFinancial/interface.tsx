@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { MdOutlineEdit, MdDeleteOutline } from "react-icons/md";
+import { useContext, useState } from "react";
+import { FormikValues } from "formik";
+import {
+  MdOutlineEdit,
+  MdDeleteOutline,
+  MdAdd,
+  MdCached,
+} from "react-icons/md";
 
 import {
   Pagination,
@@ -15,12 +21,19 @@ import {
   Text,
   SkeletonLine,
   SkeletonIcon,
+  Button,
+  Divider,
 } from "@inubekit/inubekit";
 
 import { EditFinancialObligationModal } from "@components/modals/editFinancialObligationModal";
 import { NewPrice } from "@components/modals/ReportCreditsModal/components/newPrice";
 import { BaseModal } from "@components/modals/baseModal";
+import { FinancialObligationModal } from "@components/modals/financialObligationModal";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 import { currencyFormat } from "@utils/formatData/currency";
+import { CardGray } from "@components/cards/CardGray";
+import { ListModal } from "@components/modals/ListModal";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
@@ -34,9 +47,34 @@ export interface ITableFinancialObligationsProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialValues?: any;
   refreshKey?: number;
+  setRefreshKey?: React.Dispatch<React.SetStateAction<number>>;
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  setFormState?: React.Dispatch<
+    React.SetStateAction<{
+      type: string;
+      entity: string;
+      fee: string;
+      balance: string;
+      payment: string;
+      feePaid: string;
+      term: string;
+      idUser: string;
+    }>
+  >;
+  clientPortfolio?: IObligations;
+  handleOnChange?: (values: FormikValues) => void;
+  formState?: {
+    type: string;
+    entity: string;
+    fee: string;
+    balance: string;
+    payment: string;
+    feePaid: string;
+    term: string;
+    idUser: string;
+  };
 }
 
 export interface IDataInformationItem {
@@ -59,12 +97,41 @@ interface UIProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  setFormState?: React.Dispatch<
+    React.SetStateAction<{
+      type: string;
+      entity: string;
+      fee: string;
+      balance: string;
+      payment: string;
+      feePaid: string;
+      term: string;
+      idUser: string;
+    }>
+  >;
+  initialValuesModal?: FormikValues;
   handleEdit: (item: ITableFinancialObligationsProps) => void;
   isMobile: boolean;
   handleDelete: (id: string) => void;
   handleUpdate: (
     updatedDebtor: ITableFinancialObligationsProps,
   ) => Promise<void>;
+  formState:
+    | {
+        type: string;
+        entity: string;
+        fee: string;
+        balance: string;
+        payment: string;
+        feePaid: string;
+        term: string;
+        idUser: string;
+      }
+    | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialValues: any;
+  handleOnChange: (values: FormikValues) => void;
+  setRefreshKey: React.Dispatch<React.SetStateAction<number>> | undefined;
 }
 
 export const TableFinancialObligationsUI = ({
@@ -80,6 +147,9 @@ export const TableFinancialObligationsUI = ({
   handleEdit,
   handleDelete,
   handleUpdate,
+  initialValues,
+  handleOnChange,
+  setRefreshKey,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -92,7 +162,7 @@ export const TableFinancialObligationsUI = ({
     firstEntryInPage,
     lastEntryInPage,
     paddedCurrentData,
-  } = usePagination(dataInformation);
+  } = usePagination([...dataInformation].reverse());
 
   const getValueFromProperty = (
     value: string | number | string[] | undefined,
@@ -108,6 +178,59 @@ export const TableFinancialObligationsUI = ({
       return isNaN(num) ? 0 : num;
     }
     return 0;
+  };
+  const [openModal, setOpenModal] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const { customerData } = useContext(CustomerContext);
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setRefreshKey?.((prevKey) => prevKey + 1);
+  };
+
+  function insertInDeepestObligations<T extends { obligations?: FormikValues }>(
+    o: T,
+    newItem: FormikValues,
+  ): T {
+    if (!o.obligations || typeof o.obligations !== "object") {
+      return o;
+    }
+
+    if (Array.isArray(o.obligations)) {
+      return {
+        ...o,
+        obligations: [...o.obligations, newItem],
+      };
+    }
+    return {
+      ...o,
+      obligations: insertInDeepestObligations(o.obligations, newItem),
+    };
+  }
+
+  const handleConfirm = (values: FormikValues) => {
+    const newObligation = {
+      obligationNumber: values.idUser || "",
+      productName: values.type || "",
+      paymentMethodName: values.payment || "",
+      balanceObligationTotal: values.balance || 0,
+      nextPaymentValueTotal: values.fee || 0,
+      entity: values.entity || "",
+      duesPaid: values.feePaid || "",
+      outstandingDues: values.term || "",
+    };
+    const updatedObligations = insertInDeepestObligations(
+      initialValues.obligations,
+      newObligation,
+    );
+
+    const updatedInitialValues = {
+      ...initialValues,
+      obligations: updatedObligations,
+    };
+
+    handleOnChange(updatedInitialValues);
+    setOpenModal(false);
+    setRefreshKey?.((prev) => prev + 1);
   };
 
   const totalBalance = dataInformation.reduce(
@@ -246,6 +369,61 @@ export const TableFinancialObligationsUI = ({
 
   return (
     <Stack direction="column" width="100%" gap="16px">
+      <Stack direction="column">
+        <Stack alignItems="center">
+          {!isMobile && (
+            <Text size="medium" type="label" weight="bold">
+              {dataReport.title}
+            </Text>
+          )}
+        </Stack>
+        <Stack
+          justifyContent="space-between"
+          alignItems={isMobile ? "normal" : "end"}
+          direction={isMobile ? "column" : "row"}
+        >
+          {!isMobile && (
+            <Text size="medium" type="title" appearance="dark">
+              {customerData?.fullName}
+            </Text>
+          )}
+          {isMobile && (
+            <Stack padding="0px 0px 10px 0px">
+              <CardGray
+                label={dataReport.title}
+                placeHolder={customerData?.fullName}
+                isMobile={true}
+              />
+            </Stack>
+          )}
+          <Stack
+            justifyContent="end"
+            gap="16px"
+            direction={isMobile ? "column" : "row"}
+            width={isMobile ? "100%" : "auto"}
+          >
+            <Stack>
+              <Button
+                children="Restablecer"
+                iconBefore={<MdCached />}
+                fullwidth={isMobile}
+                variant="outlined"
+                spacing="wide"
+                onClick={() => setIsOpenModal(true)}
+              />
+            </Stack>
+            <Stack>
+              <Button
+                children={dataReport.addObligations}
+                iconBefore={<MdAdd />}
+                fullwidth={isMobile}
+                onClick={() => setOpenModal(true)}
+              />
+            </Stack>
+          </Stack>
+        </Stack>
+      </Stack>
+      <Divider />
       <Table tableLayout="auto">
         <Thead>
           <Tr>{renderHeaders()}</Tr>
@@ -304,6 +482,27 @@ export const TableFinancialObligationsUI = ({
           </BaseModal>
         )}
       </Table>
+      <Stack gap="15px" justifyContent="center">
+        {isOpenModal && (
+          <ListModal
+            title={dataReport.restore}
+            handleClose={() => setIsOpenModal(false)}
+            handleSubmit={() => setIsOpenModal(false)}
+            cancelButton="Cancelar"
+            appearanceCancel="gray"
+            buttonLabel={dataReport.restore}
+            content={dataReport.descriptionModal}
+          />
+        )}
+      </Stack>
+      {openModal && (
+        <FinancialObligationModal
+          title="Agregar obligaciones"
+          onCloseModal={handleCloseModal}
+          onConfirm={handleConfirm}
+          confirmButtonText="Agregar"
+        />
+      )}
       <Stack
         gap="48px"
         direction={!isMobile ? "row" : "column"}
