@@ -53,7 +53,12 @@ export function CreditProspectuses() {
       <Fieldset>
         <Stack direction="column" gap="20px">
           <Stack justifyContent="space-between" alignItems="center">
-            <Input id="keyWord" label="Buscar" placeholder="Palabra clave" />
+            <Input
+              id="keyWord"
+              label="Buscar"
+              placeholder={dataCreditProspectuses.keyWord}
+              type="search"
+            />
             <Button iconBefore={<MdAdd />}>
               {dataCreditProspectuses.simulate}
             </Button>

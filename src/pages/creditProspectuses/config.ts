@@ -1,6 +1,6 @@
 export const addConfig = {
   id: 1,
-  title: "Prospectos de crédito",
+  title: "Simulaciones de crédito",
   route: "/credit",
   crumbs: [
     {
@@ -26,4 +26,5 @@ export const addConfig = {
 
 export const dataCreditProspectuses = {
   simulate: "Simular crédito",
+  keyWord: "Palabra clave",
 };
