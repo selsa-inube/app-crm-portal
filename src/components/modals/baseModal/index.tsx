@@ -15,7 +15,6 @@ import { dataBaseModal } from "./config";
 
 export interface IBaseModalProps {
   title: string;
-  nextButton: string;
   children: JSX.Element | JSX.Element[];
   handleNext?: () => void;
   handleBack?: () => void;
@@ -29,6 +28,7 @@ export interface IBaseModalProps {
   iconBeforeback?: React.JSX.Element;
   iconAfterback?: React.JSX.Element;
   apparenceNext?: Appearance;
+  nextButton?: string;
   backButton?: string;
   initialDivider?: boolean;
   finalDivider?: boolean;
@@ -114,15 +114,17 @@ export function BaseModal(props: IBaseModalProps) {
                 {backButton}
               </Button>
             )}
-            <Button
-              onClick={handleNext}
-              disabled={disabledNext}
-              iconAfter={iconAfterNext}
-              iconBefore={iconBeforeNext}
-              appearance={apparenceNext}
-            >
-              {nextButton}
-            </Button>
+            {nextButton && (
+              <Button
+                onClick={handleNext}
+                disabled={disabledNext}
+                iconAfter={iconAfterNext}
+                iconBefore={iconBeforeNext}
+                appearance={apparenceNext}
+              >
+                {nextButton}
+              </Button>
+            )}
           </Stack>
         </Stack>
       </StyledContainer>
