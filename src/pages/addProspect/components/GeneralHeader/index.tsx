@@ -1,13 +1,17 @@
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MdAdd,
-  MdCheckCircle,
-  MdOutlineAccessTime,
-  MdCancel,
   MdOutlineManageAccounts,
+  MdOutlineCached,
 } from "react-icons/md";
 import { Stack, Icon, Text, useMediaQuery, Button } from "@inubekit/inubekit";
 
+import { CustomerContext } from "@context/CustomerContext";
+import { initialCustomerData } from "@context/CustomerContext/types";
+
 import { StyledContainerGeneralHeader, StyledPerfil } from "./styles";
+import { appearanceTag } from "./config";
 
 interface IGeneralHeaderProps {
   profileImageUrl: string;
@@ -22,19 +26,7 @@ interface IGeneralHeaderProps {
   onClickButton?: () => void;
 }
 
-type AppearanceType =
-  | "success"
-  | "danger"
-  | "primary"
-  | "warning"
-  | "help"
-  | "dark"
-  | "gray"
-  | "light";
-
 export function GeneralHeader(props: IGeneralHeaderProps) {
-  const isMobile = useMediaQuery("(max-width: 460px)");
-
   const {
     profileImageUrl,
     name,
@@ -46,23 +38,10 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
     onClickButton,
   } = props;
 
-  const appearanceTag = (label: string = "") => {
-    const config: Record<
-      string,
-      { appearance: AppearanceType; icon: JSX.Element }
-    > = {
-      Activo: { appearance: "success", icon: <MdCheckCircle /> },
-      Vinculado: { appearance: "success", icon: <MdCheckCircle /> },
-      Inactivo: { appearance: "warning", icon: <MdCheckCircle /> },
-      "En proceso devinculación": {
-        appearance: "warning",
-        icon: <MdOutlineAccessTime />,
-      },
-      "En proceso de retiro": { appearance: "danger", icon: <MdCancel /> },
-      Retirado: { appearance: "danger", icon: <MdCancel /> },
-    };
-    return config[label] || { appearance: "danger", icon: "" };
-  };
+  const { setCustomerPublicCodeState, setCustomerData } =
+    useContext(CustomerContext);
+  const isMobile = useMediaQuery("(max-width: 460px)");
+  const navigate = useNavigate();
 
   return (
     <StyledContainerGeneralHeader>
@@ -101,6 +80,20 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
                 </Text>
               </Stack>
             </Stack>
+            <Stack height="100%" margin="auto 0">
+              <Icon
+                icon={<MdOutlineCached />}
+                appearance="primary"
+                variant="outlined"
+                size="20px"
+                cursorHover
+                onClick={() => {
+                  setCustomerPublicCodeState("");
+                  setCustomerData(initialCustomerData);
+                  navigate("/clients/select-client/");
+                }}
+              />
+            </Stack>
           </Stack>
           {showIcon && (
             <Icon
@@ -115,7 +108,6 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
             />
           )}
         </Stack>
-
         {showButton && (
           <Stack
             justifyContent="space-between"
