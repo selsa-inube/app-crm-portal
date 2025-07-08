@@ -21,7 +21,6 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
         gap="12px"
         wrap="wrap"
         justifyContent={isTablet ? "center" : "initial"}
-        padding={isTablet ? "0px 4px" : "10px 16px"}
       >
         {destinations &&
           destinations.map((destination) => {
