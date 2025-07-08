@@ -406,7 +406,17 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     stepsAddProspect.obligationsFinancial.id && (
                     <ObligationsFinancial
                       isMobile={isMobile}
+                      initialValues={formData.obligationsFinancial}
                       clientPortfolio={clientPortfolio}
+                      setFormState={setFormState}
+                      formState={formState}
+                      onFormValid={setIsCurrentFormValid}
+                      handleOnChange={(newObligation) =>
+                        handleFormDataChange(
+                          "obligationsFinancial",
+                          newObligation,
+                        )
+                      }
                     />
                   )}
                 {currentStepsNumber &&
@@ -500,14 +510,6 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 <PaymentCapacityAnalysis
                   isMobile={isMobile}
                   handleClose={() => setIsCapacityAnalysisModal(false)}
-                  initialValues={formData.obligationsFinancial}
-                  clientPortfolio={clientPortfolio}
-                  setFormState={setFormState}
-                  formState={formState}
-                  onFormValid={setIsCurrentFormValid}
-                  handleOnChange={(newObligation) =>
-                    handleFormDataChange("obligationsFinancial", newObligation)
-                  }
                 />
               )}
               {isCapacityAnalysisWarning && (
