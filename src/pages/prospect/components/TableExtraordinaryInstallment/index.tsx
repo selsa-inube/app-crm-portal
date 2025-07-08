@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { IProspect } from "@services/prospects/types";
+import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import {
   headersTableExtraordinaryInstallment,
@@ -12,9 +13,15 @@ import { TableExtraordinaryInstallmentUI } from "./interface";
 
 export interface TableExtraordinaryInstallmentProps {
   [key: string]: unknown;
+  sentData?: IExtraordinaryInstallments | null;
   prospectData?: IProspect;
   refreshKey?: number;
   id?: string;
+  setSentData?: React.Dispatch<
+    React.SetStateAction<IExtraordinaryInstallments | null>
+  >;
+  handleClose?: () => void;
+  businessUnitPublicCode?: string;
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
@@ -34,6 +41,15 @@ const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
 
   const currentData = data.slice(firstEntryInPage, lastEntryInPage);
 
+  const paddingCount = pageLength - currentData.length;
+  const paddingItems = Array.from({
+    length: paddingCount > 0 ? paddingCount : 0,
+  }).map((_, i) => ({
+    __isPadding: true,
+    id: `padding-${i}`,
+  }));
+
+  const paddedCurrentData = [...currentData, ...paddingItems];
   return {
     currentPage,
     totalRecords,
@@ -44,17 +60,22 @@ const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
     handleEndPage,
     firstEntryInPage,
     lastEntryInPage,
-    currentData,
+    paddedCurrentData,
   };
 };
 
 export const TableExtraordinaryInstallment = (
   props: TableExtraordinaryInstallmentProps,
 ) => {
-  const { refreshKey, prospectData } = props;
+  const {
+    refreshKey,
+    prospectData,
+    setSentData,
+    handleClose,
+    businessUnitPublicCode,
+  } = props;
 
   const headers = headersTableExtraordinaryInstallment;
-
   const [extraordinaryInstallments, setExtraordinaryInstallments] = useState<
     TableExtraordinaryInstallmentProps[]
   >([]);
@@ -65,7 +86,6 @@ export const TableExtraordinaryInstallment = (
     setSelectedDebtor(debtor);
     setIsOpenModalEdit(true);
   };
-
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
@@ -81,26 +101,30 @@ export const TableExtraordinaryInstallment = (
 
   useEffect(() => {
     if (prospectData?.creditProducts) {
-      const extraordinaryInstallmentsUpdate =
-        prospectData.creditProducts.flatMap((product) =>
+      const extraordinaryInstallmentsUpdate = prospectData.creditProducts
+        .flatMap((product) =>
           Array.isArray(product.extraordinaryInstallments)
             ? product.extraordinaryInstallments.map((installment) => ({
-                id: `${product.creditProductCode}-${installment.installmentDate}`,
+                id: `${product.creditProductCode},${installment.installmentDate}`,
                 datePayment: installment.installmentDate,
                 value: installment.installmentAmount,
                 paymentMethod: installment.paymentChannelAbbreviatedName,
               }))
             : [],
-        );
+        )
+        .reverse();
       setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
     setLoading(false);
   }, [prospectData, refreshKey]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (
+    id: string,
+    updatedDebtor: TableExtraordinaryInstallmentProps,
+  ) => {
     try {
-      const updatedDebtors = extraordinaryInstallments.filter(
-        (debtor) => debtor.id !== id,
+      const updatedDebtors = extraordinaryInstallments.map((debtor) =>
+        debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
       );
       setExtraordinaryInstallments(updatedDebtors);
       console.log(`Debtor with ID ${id} deleted successfully.`);
@@ -122,7 +146,6 @@ export const TableExtraordinaryInstallment = (
       console.error("Error updating debtor:", error);
     }
   };
-
   return (
     <TableExtraordinaryInstallmentUI
       loading={loading}
@@ -139,6 +162,11 @@ export const TableExtraordinaryInstallment = (
       handleDelete={handleDelete}
       handleUpdate={handleUpdate}
       usePagination={usePagination}
+      setSentData={setSentData ?? (() => {})}
+      handleClose={handleClose}
+      prospectData={prospectData}
+      setSelectedDebtor={setSelectedDebtor}
+      businessUnitPublicCode={businessUnitPublicCode ?? ""}
     />
   );
 };
