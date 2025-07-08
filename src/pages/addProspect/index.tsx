@@ -54,6 +54,16 @@ export function AddProspect() {
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla } = useContext(AppContext);
   const { customerPublicCode } = useParams();
+  const [formState, setFormState] = useState({
+    type: "",
+    entity: "",
+    fee: "",
+    balance: "",
+    payment: "",
+    feePaid: "",
+    term: "",
+    idUser: "",
+  });
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -77,6 +87,7 @@ export function AddProspect() {
     borrowerData: {
       borrowers: {},
     },
+    obligationsFinancial: clientPortfolio,
     loanAmountState: {
       inputValue: "",
       toggleChecked: false,
@@ -114,6 +125,7 @@ export function AddProspect() {
         ? onlyBorrowerData
         : formData.borrowerData.borrowers,
     ],
+
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
@@ -671,6 +683,15 @@ export function AddProspect() {
     }
   }, [currentStep]);
 
+  useEffect(() => {
+    if (clientPortfolio) {
+      setFormData((prevState) => ({
+        ...prevState,
+        obligationsFinancial: clientPortfolio,
+      }));
+    }
+  }, [clientPortfolio]);
+
   return (
     <>
       <AddProspectUI
@@ -718,6 +739,8 @@ export function AddProspect() {
         codeError={codeError}
         addToFix={addToFix}
         navigate={navigate}
+        formState={formState}
+        setFormState={setFormState}
       />
       {showConsultingModal && <Consulting />}
     </>
