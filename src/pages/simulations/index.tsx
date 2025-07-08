@@ -29,7 +29,7 @@ export function Simulations() {
   const [pdfProspect, setPdfProspect] = useState<string | null>(null);
 
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { customerPublicCode, prospectCode } = useParams();
+  const { prospectCode } = useParams();
 
   const dataCreditRef = useRef<ICreditRequest>();
   const valueRuleRef = useRef<{ [ruleName: string]: string[] }>({});
@@ -79,7 +79,7 @@ export function Simulations() {
       return;
     }
 
-    navigate(`/credit/apply-for-credit/${customerPublicCode}/${prospectCode}`);
+    navigate(`/credit/apply-for-credit/${prospectCode}`);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
