@@ -23,4 +23,5 @@ export interface ICustomerData {
 
 export interface ICustomerContext {
   customerData: ICustomerData;
+  setCustomerPublicCodeState: (publicCode: string) => void;
 }

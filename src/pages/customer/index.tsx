@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdOutlineMicNone } from "react-icons/md";
 import { Autocomplete, Button, Icon, Stack, Text } from "@inubekit/inubekit";
 import SpeechRecognition, {
@@ -8,6 +9,7 @@ import SpeechRecognition, {
 import { getCustomerCatalog } from "@services/customerCatalog";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { homeData } from "./config";
 import { StyledMic, StyledAutomatic } from "./styles";
@@ -19,6 +21,8 @@ export function Customer() {
   const [options, setOptions] = useState<
     { id: string; label: string; value: string }[]
   >([]);
+
+  const { setCustomerPublicCodeState } = useContext(CustomerContext);
 
   const selectRef = useRef<HTMLDivElement | null>(null);
 
@@ -110,7 +114,12 @@ export function Customer() {
     }
   }, [transcript]);
 
-  console.log(options);
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    setCustomerPublicCodeState(inputValue);
+    navigate(`/`);
+  };
 
   return (
     <Stack width="100%" justifyContent="center" margin="50px 0">
@@ -151,7 +160,7 @@ export function Customer() {
                   handleStartListening();
                 }}
               />
-              <Button>{homeData.continue}</Button>
+              <Button onClick={handleSubmit}>{homeData.continue}</Button>
             </Stack>
           </Fieldset>
         </Stack>

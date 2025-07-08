@@ -22,6 +22,7 @@ import { EditProspectRoutes } from "@routes/editProspect";
 import { CustomerRoutes } from "@routes/customer";
 import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
+import { CustomerContextProvider } from "@context/CustomerContext";
 import { Home } from "./pages/home";
 
 function LogOut() {
@@ -71,10 +72,12 @@ function App() {
 
   return (
     <AppContextProvider>
-      <FlagProvider>
-        <GlobalStyles />
-        <RouterProvider router={router} />
-      </FlagProvider>
+      <CustomerContextProvider>
+        <FlagProvider>
+          <GlobalStyles />
+          <RouterProvider router={router} />
+        </FlagProvider>
+      </CustomerContextProvider>
     </AppContextProvider>
   );
 }
