@@ -37,7 +37,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     initialValues.totalCollected,
   );
 
-  console.log(totalCollected);
+  // console.log(totalCollected);
 
   const [selectedLabels, setSelectedLabels] = useState<Record<string, string>>(
     {},
