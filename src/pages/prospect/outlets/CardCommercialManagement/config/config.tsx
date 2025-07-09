@@ -358,4 +358,6 @@ export const tittleOptions = {
   deductibleExpensesErrorTitle: "Error al cargar gastos descontables",
   editProduct: "Editar producto",
   save: "Guardar",
+  deletedExpensesErrorDescription:
+    "¿Realmente desea eliminar el gasto descontable.",
 };

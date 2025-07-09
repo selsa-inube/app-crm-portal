@@ -267,6 +267,7 @@ export const CardCommercialManagement = (
         <DeleteModal
           handleClose={() => setShowDeleteModal(false)}
           handleDelete={handleDelete}
+          TextDelete={tittleOptions.deletedExpensesErrorDescription}
         />
       )}
       {currentModal === "editProductModal" && selectedProduct && (

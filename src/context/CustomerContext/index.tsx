@@ -1,10 +1,9 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
 
 import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 import { AppContext } from "@context/AppContext";
 
-import { ICustomerContext, ICustomerData } from "./types";
+import { ICustomerContext, ICustomerData, initialCustomerData } from "./types";
 
 export const CustomerContext = createContext<ICustomerContext>(
   {} as ICustomerContext,
@@ -17,42 +16,29 @@ interface ICustomerContextProviderProps {
 export function CustomerContextProvider({
   children,
 }: ICustomerContextProviderProps) {
-  const { customerPublicCode } = useParams();
-  const [customerData, setCustomerData] = useState<ICustomerData>({
-    customerId: "",
-    publicCode: "",
-    fullName: "",
-    natureClient: "",
-    generalAttributeClientNaturalPersons: [
-      {
-        employmentType: "",
-        associateType: "",
-        typeIdentification: "",
-        firstNames: "",
-        lastNames: "",
-        emailContact: "",
-        cellPhoneContact: "",
-        gender: "",
-        dateBirth: "",
-        zone: "",
-      },
-    ],
-    generalAssociateAttributes: [
-      {
-        affiliateSeniorityDate: "",
-        partnerStatus: "",
-      },
-    ],
-  });
+  const getInitialPublicCode = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("customerPublicCodeState") || "";
+    }
+    return "";
+  };
 
+  const [customerData, setCustomerData] =
+    useState<ICustomerData>(initialCustomerData);
+
+  const [customerPublicCodeState, setCustomerPublicCodeState] =
+    useState<string>(getInitialPublicCode());
   const { businessUnitSigla } = useContext(AppContext);
+  let businessUnitPublicCode: string = "";
 
-  const businessUnitPublicCode: string =
-    JSON.parse(businessUnitSigla).businessUnitPublicCode;
-
-  useEffect(() => {
-    fetchCustomerData(customerPublicCode!, businessUnitPublicCode);
-  }, [customerPublicCode, businessUnitPublicCode]);
+  try {
+    if (businessUnitSigla) {
+      const parsed = JSON.parse(businessUnitSigla);
+      businessUnitPublicCode = parsed?.businessUnitPublicCode || "";
+    }
+  } catch (e) {
+    businessUnitPublicCode = "";
+  }
 
   const fetchCustomerData = async (
     publicCode: string,
@@ -87,8 +73,24 @@ export function CustomerContextProvider({
     }
   };
 
+  useEffect(() => {
+    if (customerPublicCodeState) {
+      fetchCustomerData(customerPublicCodeState, businessUnitPublicCode);
+    }
+  }, [customerPublicCodeState, businessUnitPublicCode]);
+
+  useEffect(() => {
+    if (customerPublicCodeState) {
+      localStorage.setItem("customerPublicCodeState", customerPublicCodeState);
+    } else {
+      localStorage.removeItem("customerPublicCodeState");
+    }
+  }, [customerPublicCodeState]);
+
   return (
-    <CustomerContext.Provider value={{ customerData }}>
+    <CustomerContext.Provider
+      value={{ customerData, setCustomerPublicCodeState, setCustomerData }}
+    >
       {children}
     </CustomerContext.Provider>
   );

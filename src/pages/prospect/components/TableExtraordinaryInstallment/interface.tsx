@@ -9,16 +9,21 @@ import {
   Th,
   Thead,
   Tr,
+  useFlag,
 } from "@inubekit/inubekit";
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
-import { ListModal } from "@components/modals/ListModal";
+import { DeleteModal } from "@components/modals/DeleteModal";
 import { EditSeriesModal } from "@components/modals/EditSeriesModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
+import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
+import { IProspect } from "@services/prospects/types";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";
 import { Detail } from "./Detail";
+import { removeExtraordinaryInstallment } from "./utils";
 
 interface ITableExtraordinaryInstallmentProps {
   loading: boolean;
@@ -36,7 +41,10 @@ interface ITableExtraordinaryInstallmentProps {
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
   handleEdit: (row: TableExtraordinaryInstallmentProps) => void;
-  handleDelete: (id: string) => void;
+  handleDelete: (
+    id: string,
+    updatedDebtor: TableExtraordinaryInstallmentProps,
+  ) => Promise<void>;
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
@@ -48,7 +56,17 @@ interface ITableExtraordinaryInstallmentProps {
     handleEndPage: () => void;
     firstEntryInPage: number;
     lastEntryInPage: number;
+    paddedCurrentData: TableExtraordinaryInstallmentProps[];
   };
+  setSentData:
+    | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
+    | undefined;
+  handleClose: (() => void) | undefined;
+  prospectData: IProspect | undefined;
+  setSelectedDebtor: React.Dispatch<
+    React.SetStateAction<TableExtraordinaryInstallmentProps>
+  >;
+  businessUnitPublicCode: string;
 }
 
 export function TableExtraordinaryInstallmentUI(
@@ -61,14 +79,18 @@ export function TableExtraordinaryInstallmentUI(
     extraordinaryInstallments,
     isMobile,
     selectedDebtor,
+    setSelectedDebtor,
     isOpenModalDelete,
     isOpenModalEdit,
     setIsOpenModalDelete,
     setIsOpenModalEdit,
     handleEdit,
-    handleDelete,
     handleUpdate,
     usePagination,
+    handleClose,
+    setSentData,
+    prospectData,
+    businessUnitPublicCode,
   } = props;
 
   const {
@@ -79,7 +101,61 @@ export function TableExtraordinaryInstallmentUI(
     handleEndPage,
     firstEntryInPage,
     lastEntryInPage,
+    paddedCurrentData,
   } = usePagination(extraordinaryInstallments);
+
+  const { addFlag } = useFlag();
+  const initialValues: IExtraordinaryInstallments = {
+    creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
+    extraordinaryInstallments:
+      prospectData?.creditProducts[0]?.extraordinaryInstallments
+        ?.filter((ins) => {
+          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${ins.installmentDate}`;
+          return expectedId === selectedDebtor?.id;
+        })
+        ?.map((installment) => ({
+          installmentDate:
+            typeof installment.installmentDate === "string"
+              ? installment.installmentDate
+              : new Date(installment.installmentDate).toISOString(),
+          installmentAmount: Number(installment.installmentAmount),
+          paymentChannelAbbreviatedName: String(
+            installment.paymentChannelAbbreviatedName,
+          ),
+        })) || [],
+    prospectId: prospectData?.prospectId || "",
+  };
+
+  const handleExtraordinaryInstallment = async (
+    extraordinaryInstallments: IExtraordinaryInstallments,
+  ) => {
+    try {
+      await removeExtraordinaryInstallment(
+        businessUnitPublicCode,
+        extraordinaryInstallments,
+      );
+
+      setSentData?.(extraordinaryInstallments);
+      setIsOpenModalDelete(false);
+      handleClose?.();
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status?: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description =
+        code + (err?.message || "") + (err?.data?.description || "");
+
+      addFlag({
+        title: TextLabels.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
 
   return (
     <Table>
@@ -125,58 +201,81 @@ export function TableExtraordinaryInstallmentUI(
             </Td>
           </Tr>
         )}
+
         {!loading &&
-          extraordinaryInstallments &&
-          extraordinaryInstallments.length > 0 &&
-          extraordinaryInstallments.map((row, indx) => (
-            <Tr key={indx} zebra={indx % 2 !== 0}>
-              {visbleHeaders.map((header) => (
-                <Td key={header.key} align="left">
-                  {header.key === "datePayment"
-                    ? formatPrimaryDate(new Date(row[header.key] as string))
-                    : header.mask
-                      ? header.mask(row[header.key] as string | number)
-                      : (row[header.key] as React.ReactNode)}
-                </Td>
-              ))}
-              {visbleActions &&
-                visbleActions.length > 0 &&
-                visbleActions.map((action) => (
+          paddedCurrentData.filter(
+            (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+          ).length > 0 &&
+          paddedCurrentData
+            .filter(
+              (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+            )
+            .map((row: TableExtraordinaryInstallmentProps, index: number) => (
+              <Tr key={index} zebra={index % 2 !== 0}>
+                {visbleHeaders.map((header) => {
+                  const raw =
+                    row[header.key as keyof TableExtraordinaryInstallmentProps];
+                  const value =
+                    header.key === "datePayment"
+                      ? formatPrimaryDate(new Date(raw as string))
+                      : header.mask
+                        ? header.mask(raw as string | number)
+                        : raw;
+
+                  return (
+                    <Td key={header.key} align="left">
+                      {value?.toString() ?? ""}
+                    </Td>
+                  );
+                })}
+
+                {visbleActions.map((action) => (
                   <Td key={action.key} type="custom">
                     {isMobile ? (
                       <ActionMobile
-                        handleDelete={() => setIsOpenModalDelete(true)}
                         handleEdit={() => handleEdit(row)}
+                        handleDelete={() => {
+                          setSelectedDebtor(row);
+                          setIsOpenModalDelete(true);
+                        }}
                       />
                     ) : (
                       <Detail
-                        handleDelete={() => setIsOpenModalDelete(true)}
                         handleEdit={() => handleEdit(row)}
+                        handleDelete={() => {
+                          setSelectedDebtor(row);
+                          setIsOpenModalDelete(true);
+                        }}
                       />
                     )}
                   </Td>
                 ))}
-            </Tr>
-          ))}
-        {!loading && extraordinaryInstallments.length === 0 && (
-          <Tr>
-            <Td
-              colSpan={visbleHeaders.length + visbleActions.length}
-              align="center"
-              type="custom"
-            >
-              <Text
-                size="large"
-                type="label"
-                appearance="gray"
-                textAlign="center"
+              </Tr>
+            ))}
+
+        {!loading &&
+          paddedCurrentData.filter(
+            (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+          ).length === 0 && (
+            <Tr>
+              <Td
+                colSpan={visbleHeaders.length + visbleActions.length}
+                align="center"
+                type="custom"
               >
-                {dataTableExtraordinaryInstallment.noData}
-              </Text>
-            </Td>
-          </Tr>
-        )}
+                <Text
+                  size="large"
+                  type="label"
+                  appearance="gray"
+                  textAlign="center"
+                >
+                  {dataTableExtraordinaryInstallment.noData}
+                </Text>
+              </Td>
+            </Tr>
+          )}
       </Tbody>
+
       {extraordinaryInstallments.length > 0 && !loading && (
         <Tfoot>
           <Tr border="bottom">
@@ -199,19 +298,10 @@ export function TableExtraordinaryInstallmentUI(
         </Tfoot>
       )}
       {isOpenModalDelete && (
-        <ListModal
-          title={dataTableExtraordinaryInstallment.deletion}
+        <DeleteModal
           handleClose={() => setIsOpenModalDelete(false)}
-          handleSubmit={() => setIsOpenModalDelete(false)}
-          onSubmit={() => {
-            if (selectedDebtor) {
-              handleDelete(selectedDebtor.id as string);
-              setIsOpenModalDelete(false);
-            }
-          }}
-          buttonLabel={dataTableExtraordinaryInstallment.delete}
-          content={dataTableExtraordinaryInstallment.content}
-          cancelButton={dataTableExtraordinaryInstallment.cancel}
+          handleDelete={() => handleExtraordinaryInstallment(initialValues)}
+          TextDelete={dataTableExtraordinaryInstallment.content}
         />
       )}
       {isOpenModalEdit && (
@@ -221,7 +311,10 @@ export function TableExtraordinaryInstallmentUI(
           onConfirm={async (updatedDebtor) => {
             await handleUpdate(updatedDebtor);
           }}
-          initialValues={selectedDebtor}
+          prospectData={prospectData}
+          selectedDebtor={selectedDebtor}
+          setSentData={setSentData}
+          businessUnitPublicCode={businessUnitPublicCode}
         />
       )}
     </Table>

@@ -11,6 +11,7 @@ import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
+import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import { ruleConfig } from "../SubmitCreditApplication/config/configRules";
 import { evaluateRule } from "../SubmitCreditApplication/evaluateRule";
@@ -39,7 +40,9 @@ export function EditProspect() {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const data = dataProspect;
-
+  const [sentData, setSentData] = useState<IExtraordinaryInstallments | null>(
+    null,
+  );
   const { customerData } = useContext(CustomerContext);
   const navigate = useNavigate();
 
@@ -111,7 +114,7 @@ export function EditProspect() {
     };
 
     fetchData();
-  }, [businessUnitPublicCode]);
+  }, [businessUnitPublicCode, sentData]);
 
   useEffect(() => {
     const fetchPDF = async () => {
@@ -257,6 +260,8 @@ export function EditProspect() {
       setRequestValue={setRequestValue}
       setProspectData={setDataProspect}
       requestValue={requestValue}
+      sentData={sentData}
+      setSentData={setSentData}
     />
   );
 }

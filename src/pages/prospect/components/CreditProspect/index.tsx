@@ -32,6 +32,7 @@ import {
 } from "@pages/prospect/outlets/CardCommercialManagement/styles";
 import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
 import { IProspect } from "@services/prospects/types";
+import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
@@ -50,6 +51,10 @@ interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
   prospectData?: IProspect;
+  sentData: IExtraordinaryInstallments | null;
+  setSentData: React.Dispatch<
+    React.SetStateAction<IExtraordinaryInstallments | null>
+  >;
   isPrint?: boolean;
   showPrint?: boolean;
   setRequestValue?: React.Dispatch<
@@ -64,6 +69,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     showMenu,
     setRequestValue,
     onProspectUpdate,
+    sentData,
+    setSentData,
     isMobile,
     isPrint = false,
     showPrint = true,
@@ -627,6 +634,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             dataTable={extraordinaryInstallmentMock}
             handleClose={handleCloseModal}
             prospectData={prospectData}
+            sentData={sentData}
+            setSentData={setSentData}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
         {showShareModal && (

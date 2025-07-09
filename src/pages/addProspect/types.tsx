@@ -1,3 +1,5 @@
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+
 export const titleButtonTextAssited = {
   goBackText: "Anterior",
   goNextText: "Siguiente",
@@ -89,6 +91,7 @@ export interface IFormData {
     maximumTermValue: string | number;
   };
   borrowerData: IBorrowerData;
+  obligationsFinancial: IObligations | null;
   generalToggleChecked: boolean;
   togglesState: boolean[];
   loanAmountState: {
