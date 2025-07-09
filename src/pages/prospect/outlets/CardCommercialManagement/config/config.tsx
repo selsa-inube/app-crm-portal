@@ -356,4 +356,6 @@ export const tittleOptions = {
   titleError: "¡Uy, algo ha salido mal!",
   descriptionError: "No se han podido guardar los cambios.",
   deductibleExpensesErrorTitle: "Error al cargar gastos descontables",
+  deletedExpensesErrorDescription:
+    "¿Realmente desea eliminar el gasto descontable.",
 };

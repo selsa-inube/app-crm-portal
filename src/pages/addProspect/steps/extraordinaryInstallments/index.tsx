@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FormikValues } from "formik";
 import { MdOutlineAdd } from "react-icons/md";
 import { Stack, Icon, Text, Button } from "@inubekit/inubekit";
 
@@ -24,14 +23,6 @@ export function ExtraordinaryInstallments(
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const initialValues: FormikValues = {
-    paymentMethod: "",
-    amount: "",
-    value: "",
-    frequency: "",
-    datePayment: "",
-  };
-
   const toggleAddSeriesModal = () => {
     setAddSeriesModalOpen(!isAddSeriesModalOpen);
     setRefreshKey((prevKey) => prevKey + 1);
@@ -46,9 +37,6 @@ export function ExtraordinaryInstallments(
     toggleAddSeriesModal();
   };
 
-  const handleConfirm = () => {
-    console.log("Confirmar acción");
-  };
   return (
     <Fieldset>
       <Stack direction="column">
@@ -84,8 +72,6 @@ export function ExtraordinaryInstallments(
           <AddSeriesModal
             handleClose={handleCloseModal}
             onSubmit={handleSubmit}
-            onConfirm={handleConfirm}
-            initialValues={initialValues}
           />
         )}
       </Stack>

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Stack, Text, Divider, Grid } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
-import { CardGray } from "@components/cards/CardGray";
 import { CardConsolidatedCredit } from "@pages/addProspect/components/CardConsolidatedCredit";
 import { currencyFormat } from "@utils/formatData/currency";
 import { IPayment } from "@services/creditLimit/getCreditPayments/types";
@@ -109,43 +108,16 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     <Fieldset heightFieldset="100%">
       <Stack direction="column" gap="24px" padding="16px">
         <Stack
-          justifyContent="space-between"
-          alignItems={isMobile ? "initial" : "end"}
-          direction={isMobile ? "column" : "row"}
+          direction="column"
+          alignItems="flex-end"
+          margin={isMobile ? "10px 0px 0px 0px" : "0px"}
         >
-          {!isMobile && (
-            <Stack direction="column">
-              <Text type="body" size="small" weight="bold" appearance="gray">
-                {dataConsolidated.debtor}
-              </Text>
-              <Text type="title" size="medium">
-                {"debtorData.name"}
-              </Text>
-            </Stack>
-          )}
-          {isMobile && (
-            <CardGray
-              label={dataConsolidated.debtor}
-              placeHolder={"debtorData.name"}
-            />
-          )}
-          <Stack
-            direction="column"
-            alignItems="center"
-            margin={isMobile ? "10px 0px 0px 0px" : "0px"}
-          >
-            <Text
-              type="headline"
-              size="large"
-              weight="bold"
-              appearance="primary"
-            >
-              {currencyFormat(totalCollected)}
-            </Text>
-            <Text type="body" size="small" appearance="gray">
-              {dataConsolidated.totalvalue}
-            </Text>
-          </Stack>
+          <Text type="headline" size="large" weight="bold" appearance="primary">
+            {currencyFormat(totalCollected)}
+          </Text>
+          <Text type="body" size="small" appearance="gray">
+            {dataConsolidated.totalvalue}
+          </Text>
         </Stack>
         <Divider />
         <StyledCards>

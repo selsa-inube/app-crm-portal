@@ -17,7 +17,7 @@ import { getCreditPayments } from "@services/creditLimit/getCreditPayments";
 import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData, RuleValue } from "./types";
+import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
 import { AddProspectUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
@@ -30,6 +30,8 @@ export function AddProspect() {
   );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
+  const [isAlertIncome, setIsAlertIncome] = useState(false);
+  const [isAlertObligation, setIsAlertObligation] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
   const [isCreditLimitWarning, setIsCreditLimitWarning] = useState(false);
@@ -41,6 +43,8 @@ export function AddProspect() {
   const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
     null,
   );
+  const [codeError, setCodeError] = useState<number | null>(null);
+  const [addToFix, setAddToFix] = useState<string[]>([]);
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
   );
@@ -55,6 +59,16 @@ export function AddProspect() {
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla } = useContext(AppContext);
   const { customerPublicCode } = useParams();
+  const [formState, setFormState] = useState({
+    type: "",
+    entity: "",
+    fee: "",
+    balance: "",
+    payment: "",
+    feePaid: "",
+    term: "",
+    idUser: "",
+  });
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -78,9 +92,10 @@ export function AddProspect() {
     borrowerData: {
       borrowers: {},
     },
+    obligationsFinancial: clientPortfolio,
     loanAmountState: {
       inputValue: "",
-      toggleChecked: true,
+      toggleChecked: false,
       paymentPlan: "",
       periodicity: "",
       payAmount: "",
@@ -115,6 +130,7 @@ export function AddProspect() {
         ? onlyBorrowerData
         : formData.borrowerData.borrowers,
     ],
+
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
@@ -138,7 +154,7 @@ export function AddProspect() {
       {
         installmentAmount: 1,
         installmentDate: "2025-06-12T15:04:05Z",
-        paymentChannelAbbreviatedName: "",
+        paymentChannelAbbreviatedName: "none",
       },
     ],
     installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
@@ -208,6 +224,12 @@ export function AddProspect() {
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
+    if (customerData.fullName.length === 0) {
+      setCodeError(1016);
+      setAddToFix(["No se ha seleccionado ningún cliente "]);
+    } else {
+      setCodeError(null);
+    }
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     if (!clientInfo?.associateType) return;
 
@@ -501,10 +523,7 @@ export function AddProspect() {
     (creditLimitData?.PersonalBusinessUtilities ?? 0) +
     (creditLimitData?.ProfessionalFees ?? 0);
 
-  const totalObligations = // modificar cuando se integre obligations
-    (creditLimitData?.PeriodicSalary ?? 0) +
-    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
-    (creditLimitData?.ProfessionalFees ?? 0);
+  const totalObligations = clientPortfolio?.obligations;
 
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -526,13 +545,13 @@ export function AddProspect() {
   );
 
   const handleNextStep = () => {
-    const { togglesState } = formData;
+    const { togglesState, loanAmountState } = formData;
 
     const isInExtraBorrowersStep =
       currentStep === stepsAddProspect.extraBorrowers.id;
 
     const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === 0;
+    const showObligations = togglesState[2] || totalObligations === undefined;
 
     const dynamicSteps = [
       togglesState[0]
@@ -543,20 +562,46 @@ export function AddProspect() {
         !(isInExtraBorrowersStep && totalIncome !== 0) && showSourcesIncome
           ? stepsAddProspect.sourcesIncome.id
           : undefined,
-        !(isInExtraBorrowersStep && totalObligations !== 0) && showObligations
+        !(isInExtraBorrowersStep && totalObligations !== undefined) &&
+        showObligations
           ? stepsAddProspect.obligationsFinancial.id
           : undefined,
       ],
       stepsAddProspect.loanConditions.id,
+      stepsAddProspect.loanAmount.id,
+      loanAmountState.toggleChecked
+        ? stepsAddProspect.obligationsCollected.id
+        : undefined,
     ].filter((step): step is number => step !== undefined);
 
     const currentStepIndex = dynamicSteps.indexOf(currentStep);
 
+    if (
+      currentStep === stepsAddProspect.loanAmount.id &&
+      !loanAmountState.toggleChecked
+    ) {
+      handleSubmitClick();
+      return;
+    }
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
     }
+    if (
+      currentStep === stepsAddProspect.sourcesIncome.id &&
+      totalIncome === 0
+    ) {
+      setIsAlertIncome(true);
+      return;
+    }
     if (currentStep === stepsAddProspect.sourcesIncome.id) {
       setCurrentStep(stepsAddProspect.obligationsFinancial.id);
+      return;
+    }
+    if (
+      currentStep === stepsAddProspect.obligationsFinancial.id &&
+      totalObligations === undefined
+    ) {
+      setIsAlertObligation(true);
       return;
     }
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -580,7 +625,7 @@ export function AddProspect() {
       currentStep === stepsAddProspect.loanConditions.id && togglesState[3];
 
     const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === 0;
+    const showObligations = togglesState[2] || totalObligations === undefined;
 
     const dynamicSteps = [
       togglesState[0]
@@ -592,7 +637,7 @@ export function AddProspect() {
         showSourcesIncome
           ? stepsAddProspect.sourcesIncome.id
           : undefined,
-        !(nextStepWouldBeExtraBorrowers && totalObligations !== 0) &&
+        !(nextStepWouldBeExtraBorrowers && totalObligations !== undefined) &&
         showObligations
           ? stepsAddProspect.obligationsFinancial.id
           : undefined,
@@ -611,6 +656,13 @@ export function AddProspect() {
     }
     setIsCurrentFormValid(true);
   };
+
+  const assistedButtonText =
+    (currentStep === stepsAddProspect.loanAmount.id &&
+      !formData.loanAmountState.toggleChecked) ||
+    currentStep === steps[steps.length - 1].id
+      ? titleButtonTextAssited.submitText
+      : titleButtonTextAssited.goNextText;
 
   const handleFlag = (error: unknown) => {
     addFlag({
@@ -663,6 +715,16 @@ export function AddProspect() {
       fetchDataObligationPayment();
     }
   }, [currentStep]);
+
+  useEffect(() => {
+    if (clientPortfolio) {
+      setFormData((prevState) => ({
+        ...prevState,
+        obligationsFinancial: clientPortfolio,
+      }));
+    }
+  }, [clientPortfolio]);
+
   return (
     <>
       <AddProspectUI
@@ -703,6 +765,16 @@ export function AddProspect() {
         creditLineTerms={creditLineTerms}
         clientPortfolio={clientPortfolio as IObligations}
         obligationPayments={obligationPayment as IPayment[]}
+        assistedButtonText={assistedButtonText}
+        isAlertIncome={isAlertIncome}
+        isAlertObligation={isAlertObligation}
+        setIsAlertIncome={setIsAlertIncome}
+        setIsAlertObligation={setIsAlertObligation}
+        codeError={codeError}
+        addToFix={addToFix}
+        navigate={navigate}
+        formState={formState}
+        setFormState={setFormState}
       />
       {showConsultingModal && <Consulting />}
     </>

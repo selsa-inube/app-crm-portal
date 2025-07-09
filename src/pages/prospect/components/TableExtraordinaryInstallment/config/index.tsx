@@ -23,6 +23,8 @@ export const dataTableExtraordinaryInstallment = {
   delete: "Eliminar",
   content: "¿Realmente desea eliminar este pago extra?",
   cancel: "Cancelar",
+  titleSuccess: "Cambios guardados con éxito!",
+  descriptionSuccess: `Hemos eliminado la Instalación extraordinaria exitosamente.`,
 };
 
 export const pageLength = 5;

@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { useFlag, Stack, Icon, Text } from "@inubekit/inubekit";
-import { MdCheckCircleOutline } from "react-icons/md";
+import { useFlag, Stack, Icon, Tag, Text, Spinner } from "@inubekit/inubekit";
+import { MdCheckCircleOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospects/types";
 import { patchValidateRequirements } from "@services/validateRequirements";
 import { IValidateRequirement } from "@services/validateRequirements/types";
-
 import { BaseModal } from "@components/modals/baseModal";
-import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
+import { TableBoard } from "@components/data/TableBoard";
+import { Fieldset } from "@components/data/Fieldset";
+import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 
-import { dataError, dataRequirementsNotMet } from "./config";
-import { ScrollableContainer } from "./styles";
+import {
+  dataError,
+  dataRequirementsNotMet,
+  getActionsMobileIcon,
+  titlesRequirementsModal,
+} from "./config";
 
 export interface IRequirementsModalProps {
   handleClose: () => void;
@@ -26,6 +31,11 @@ export function RequirementsModal(props: IRequirementsModalProps) {
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
   >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [modalData, setModalData] = useState<{
+    evaluation: string;
+    description: string;
+  } | null>(null);
 
   const { addFlag } = useFlag();
 
@@ -34,12 +44,11 @@ export function RequirementsModal(props: IRequirementsModalProps) {
 
     const payload = {
       clientIdentificationNumber: customerData.customerId,
-      prospect: {
-        ...prospectData,
-      },
+      prospect: { ...prospectData },
     };
 
     const handleSubmit = async () => {
+      setIsLoading(true);
       try {
         const data = await patchValidateRequirements(payload);
         if (data) {
@@ -52,11 +61,44 @@ export function RequirementsModal(props: IRequirementsModalProps) {
           appearance: "danger",
           duration: 5000,
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
     handleSubmit();
   }, [customerData, prospectData]);
+
+  const entries = validateRequirements.map((item, idx) => ({
+    id: `${item.requirementName}-${idx}`,
+    requierement: item.requirementName,
+    tag: (
+      <Tag
+        label={item.requirementStatus}
+        appearance={
+          item.requirementStatus === "Aprobado"
+            ? "success"
+            : item.requirementStatus === "Rechazado"
+              ? "danger"
+              : "warning"
+        }
+      />
+    ),
+    action: (
+      <Icon
+        icon={<MdOutlineRemoveRedEye />}
+        appearance="dark"
+        cursorHover
+        onClick={() =>
+          setModalData({
+            evaluation: item.requirementName,
+            description: item.descriptionEvaluationRequirement,
+          })
+        }
+        size="18px"
+      />
+    ),
+  }));
 
   return (
     <BaseModal
@@ -64,30 +106,39 @@ export function RequirementsModal(props: IRequirementsModalProps) {
       nextButton={dataRequirementsNotMet.close}
       handleNext={handleClose}
       handleClose={handleClose}
-      width={isMobile ? "300px " : "402px"}
-      height={isMobile ? "auto" : "652px"}
-      finalDivider={true}
+      width={isMobile ? "300px " : "652px"}
+      height={isMobile ? "auto" : "538px"}
     >
-      <ScrollableContainer $isMobile={isMobile}>
-        {validateRequirements && validateRequirements.length > 0 ? (
+      <Fieldset>
+        {isLoading ? (
           <Stack
             gap="16px"
+            padding="16px"
             margin={isMobile ? "8px" : "16px"}
-            direction={isMobile ? "column" : "row"}
-            wrap="wrap"
-            height={isMobile ? "auto" : "324px"}
+            justifyContent="center"
+            direction="column"
+            alignItems="center"
           >
-            {validateRequirements.map((requirementData, index) => (
-              <UnfulfilledRequirements
-                key={index}
-                title={requirementData.requirementName}
-                isMobile={true}
-                requirement={requirementData.requirementStatus}
-                causeNonCompliance={
-                  requirementData.descriptionEvaluationRequirement
-                }
+            <Spinner />
+            <Text type="title" size="medium" appearance="dark">
+              {dataError.loadRequirements}
+            </Text>
+          </Stack>
+        ) : validateRequirements && validateRequirements.length > 0 ? (
+          <Stack height="340px" direction="column">
+            <TableBoard
+              id="requirements"
+              titles={titlesRequirementsModal}
+              entries={entries}
+              actionMobileIcon={getActionsMobileIcon()}
+            />
+            {modalData && (
+              <TraceDetailsModal
+                data={modalData}
+                handleClose={() => setModalData(null)}
+                isMobile={isMobile}
               />
-            ))}
+            )}
           </Stack>
         ) : (
           <Stack
@@ -108,7 +159,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
             </Text>
           </Stack>
         )}
-      </ScrollableContainer>
+      </Fieldset>
     </BaseModal>
   );
 }

@@ -6,7 +6,6 @@ interface IStyledModal {
 }
 
 export const ScrollableContainer = styled.div<IStyledModal>`
-  width: 600px;
   padding: 10px;
   overflow: ${({ $smallScreen }) => ($smallScreen ? "auto" : "visable")};
   display: flex;

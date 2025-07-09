@@ -13,6 +13,7 @@ import { IProspect } from "@services/prospects/types";
 import { IPaymentChannel } from "@services/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
+import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import { GeneralHeader } from "../addProspect/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
@@ -45,6 +46,10 @@ interface IEditProspectUIProps {
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
   requestValue?: IPaymentChannel[];
+  sentData: IExtraordinaryInstallments | null;
+  setSentData: React.Dispatch<
+    React.SetStateAction<IExtraordinaryInstallments | null>
+  >;
 }
 
 export function EditProspectUI(props: IEditProspectUIProps) {
@@ -69,6 +74,8 @@ export function EditProspectUI(props: IEditProspectUIProps) {
     handleSubmitClick,
     handleInfo,
     setIsModalOpen,
+    sentData,
+    setSentData,
     setShowCreditRequest,
   } = props;
 
@@ -250,6 +257,8 @@ export function EditProspectUI(props: IEditProspectUIProps) {
                         showPrint={true}
                         isPrint={true}
                         prospectData={dataProspect!}
+                        sentData={sentData}
+                        setSentData={setSentData}
                         setRequestValue={setRequestValue}
                       />
                     </Fieldset>
