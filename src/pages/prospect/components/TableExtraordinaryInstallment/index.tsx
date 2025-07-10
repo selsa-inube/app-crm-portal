@@ -13,15 +13,14 @@ import { TableExtraordinaryInstallmentUI } from "./interface";
 
 export interface TableExtraordinaryInstallmentProps {
   [key: string]: unknown;
-  sentData?: IExtraordinaryInstallments | null;
   prospectData?: IProspect;
   refreshKey?: number;
-  id?: string;
   setSentData?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   handleClose?: () => void;
   businessUnitPublicCode?: string;
+  extraordinary?: TableExtraordinaryInstallmentProps[];
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
@@ -73,6 +72,7 @@ export const TableExtraordinaryInstallment = (
     setSentData,
     handleClose,
     businessUnitPublicCode,
+    extraordinary,
   } = props;
 
   const headers = headersTableExtraordinaryInstallment;
@@ -146,12 +146,15 @@ export const TableExtraordinaryInstallment = (
       console.error("Error updating debtor:", error);
     }
   };
+
   return (
     <TableExtraordinaryInstallmentUI
       loading={loading}
       visbleHeaders={visbleHeaders}
       visbleActions={visbleActions}
-      extraordinaryInstallments={extraordinaryInstallments}
+      extraordinaryInstallments={
+        !extraordinary ? extraordinaryInstallments : extraordinary
+      }
       isMobile={isMobile}
       selectedDebtor={selectedDebtor}
       isOpenModalDelete={isOpenModalDelete}

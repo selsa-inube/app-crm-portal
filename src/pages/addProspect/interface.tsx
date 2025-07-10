@@ -378,6 +378,13 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     <ExtraordinaryInstallments
                       dataTable={extraordinaryInstallmentMock}
                       isMobile={isMobile}
+                      initialValues={formData.extraordinaryInstallments}
+                      handleOnChange={(newObligation) =>
+                        handleFormDataChange(
+                          "obligationsFinancial",
+                          newObligation,
+                        )
+                      }
                     />
                   )}
                 {currentStepsNumber &&

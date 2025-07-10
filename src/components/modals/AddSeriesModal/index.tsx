@@ -63,6 +63,7 @@ export interface AddSeriesModalProps {
   sentData?: IExtraordinaryInstallments | null;
   selectedModal?: IExtraordinaryInstallment | null;
   prospectData?: IProspect;
+  service?: boolean;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
@@ -75,6 +76,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     installmentState,
     setInstallmentState,
     prospectData,
+    service = true,
   } = props;
 
   const { businessUnitSigla } = useContext(AppContext);
@@ -228,6 +230,53 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     handleExtraordinaryInstallment(updatedValues);
   };
 
+  const handleSimpleSubmit = () => {
+    if (!installmentState) return;
+
+    const {
+      installmentAmount,
+      installmentDate,
+      paymentChannelAbbreviatedName,
+    } = installmentState;
+
+    const count = parseInt(formik.values.value, 10);
+    const frequency = formik.values.frequency;
+
+    if (
+      !installmentAmount ||
+      !installmentDate ||
+      !paymentChannelAbbreviatedName ||
+      isNaN(count) ||
+      count < 1 ||
+      !frequency
+    ) {
+      return;
+    }
+
+    const installments = [];
+    const currentDate = new Date(installmentDate);
+    for (let i = 0; i < count; i++) {
+      installments.push({
+        installmentDate: currentDate.toISOString(),
+        paymentChannelAbbreviatedName,
+      });
+
+      if (frequency === "Semestral") {
+        currentDate.setMonth(currentDate.getMonth() + 6);
+      } else if (frequency === "Anual") {
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+      }
+    }
+
+    installments.forEach((installment) => {
+      onSubmit?.({
+        installmentDate: installment.installmentDate,
+        paymentChannelAbbreviatedName:
+          installment.paymentChannelAbbreviatedName,
+      });
+    });
+  };
+
   useEffect(() => {
     if (setInstallmentState) {
       setInstallmentState({
@@ -244,7 +293,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       backButton={dataAddSeriesModal.cancel}
       nextButton={dataAddSeriesModal.add}
       handleBack={handleClose}
-      handleNext={handleNextClick}
+      handleNext={service ? handleNextClick : handleSimpleSubmit}
       handleClose={handleClose}
       width={isMobile ? "280px" : "425px"}
       height={isMobile ? "auto" : "639px"}

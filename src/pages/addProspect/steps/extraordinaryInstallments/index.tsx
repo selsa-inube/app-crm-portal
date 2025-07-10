@@ -1,25 +1,27 @@
 import { useState } from "react";
 import { MdOutlineAdd } from "react-icons/md";
-import { Stack, Icon, Text, Button } from "@inubekit/inubekit";
+import { Stack, Icon, Button } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 import { IExtraordinaryPayment } from "@services/types";
-import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment";
+import {
+  TableExtraordinaryInstallment,
+  TableExtraordinaryInstallmentProps,
+} from "@pages/prospect/components/TableExtraordinaryInstallment";
 import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments/ExtraordinaryInstallments.config";
 
 export interface ExtraordinaryInstallmentsProps {
   dataTable: IExtraordinaryPayment[];
-  onClickDetails?: (id: string) => void;
-  onClickEdit?: (id: string) => void;
-  onClickEliminate?: (id: string) => void;
   isMobile: boolean;
+  initialValues?: IExtraordinaryPayment[] | null;
+  handleOnChange?: (newData: IExtraordinaryPayment[]) => void;
 }
 
 export function ExtraordinaryInstallments(
   props: ExtraordinaryInstallmentsProps,
 ) {
-  const { dataTable, isMobile } = props;
+  const { isMobile } = props;
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -33,7 +35,37 @@ export function ExtraordinaryInstallments(
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  const handleSubmit = () => {
+  const [installmentState, setInstallmentState] = useState({
+    installmentAmount: 0,
+    installmentDate: "",
+    paymentChannelAbbreviatedName: "",
+  });
+
+  const [extraordinary, setExtraordinary] = useState<
+    TableExtraordinaryInstallmentProps[]
+  >([]);
+
+  const handleSubmit = (installment: {
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  }) => {
+    const { installmentDate, paymentChannelAbbreviatedName } = installment;
+
+    const newPayment: TableExtraordinaryInstallmentProps = {
+      id: `${paymentChannelAbbreviatedName},${installmentDate}`,
+      datePayment: installmentDate,
+      value: installmentState.installmentAmount,
+      paymentMethod: paymentChannelAbbreviatedName,
+    };
+
+    setExtraordinary((prev) => {
+      const exists = prev.some((p) => p.id === newPayment.id);
+      if (!exists) {
+        return [...prev, newPayment];
+      }
+      return prev;
+    });
+
     toggleAddSeriesModal();
   };
 
@@ -58,13 +90,10 @@ export function ExtraordinaryInstallments(
             </Button>
           </Stack>
           <Stack justifyContent="center">
-            {dataTable.length > 0 ? (
-              <TableExtraordinaryInstallment refreshKey={refreshKey} />
-            ) : (
-              <Text type="label" appearance="gray" weight="bold">
-                {TextLabels.NoData}
-              </Text>
-            )}
+            <TableExtraordinaryInstallment
+              refreshKey={refreshKey}
+              extraordinary={extraordinary}
+            />
           </Stack>
           <Stack></Stack>
         </Stack>
@@ -72,6 +101,9 @@ export function ExtraordinaryInstallments(
           <AddSeriesModal
             handleClose={handleCloseModal}
             onSubmit={handleSubmit}
+            installmentState={installmentState}
+            setInstallmentState={setInstallmentState}
+            service={false}
           />
         )}
       </Stack>
