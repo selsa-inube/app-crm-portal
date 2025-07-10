@@ -20,7 +20,6 @@ import { BaseModal } from "@components/modals/baseModal";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
 import { ICreditProductProspect, IPaymentChannel } from "@services/types";
-import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { addCreditProduct } from "@mocks/utils/addCreditProductMock.service";
 import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
 import {
@@ -589,7 +588,6 @@ export function CreditProspect(props: ICreditProspectProps) {
         )}
         {currentModal === "extraPayments" && (
           <ExtraordinaryPaymentModal
-            dataTable={extraordinaryInstallmentMock}
             handleClose={handleCloseModal}
             prospectData={prospectData}
             sentData={sentData}

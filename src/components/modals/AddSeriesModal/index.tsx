@@ -26,6 +26,7 @@ import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
 } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { IProspect } from "@services/prospects/types";
 
 import { dataAddSeriesModal } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
@@ -61,6 +62,7 @@ export interface AddSeriesModalProps {
   >;
   sentData?: IExtraordinaryInstallments | null;
   selectedModal?: IExtraordinaryInstallment | null;
+  prospectData?: IProspect;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
@@ -72,6 +74,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     setAddModal,
     installmentState,
     setInstallmentState,
+    prospectData,
   } = props;
 
   const { businessUnitSigla } = useContext(AppContext);
@@ -139,7 +142,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   };
 
   const initialValues: IExtraordinaryInstallments = {
-    creditProductCode: "SC-000000038-1",
+    creditProductCode:
+      prospectData?.creditProducts?.[0]?.creditProductCode || "",
     extraordinaryInstallments: [
       {
         installmentAmount: 0,
@@ -147,7 +151,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         paymentChannelAbbreviatedName: "",
       },
     ],
-    prospectId: "67f7e8f52c014414fca8b52d",
+    prospectId: prospectData?.prospectId || "",
   };
 
   const handleExtraordinaryInstallment = async (
@@ -189,23 +193,36 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       paymentChannelAbbreviatedName,
     } = installmentState;
 
+    const count = parseInt(formik.values.value, 10);
+    const frequency = formik.values.frequency;
     if (
       !installmentAmount ||
       !installmentDate ||
-      !paymentChannelAbbreviatedName
+      !paymentChannelAbbreviatedName ||
+      isNaN(count) ||
+      count < 1 ||
+      !frequency
     )
       return;
 
+    const installments = [];
+    const currentDate = new Date(installmentDate);
+    for (let i = 0; i < count; i++) {
+      installments.push({
+        installmentAmount,
+        installmentDate: currentDate.toISOString(),
+        paymentChannelAbbreviatedName,
+      });
+      if (frequency === "Semestral") {
+        currentDate.setMonth(currentDate.getMonth() + 6);
+      } else if (frequency === "Anual") {
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+      }
+    }
+
     const updatedValues: IExtraordinaryInstallments = {
       ...initialValues,
-      extraordinaryInstallments: [
-        {
-          ...initialValues.extraordinaryInstallments[0],
-          installmentDate,
-          installmentAmount,
-          paymentChannelAbbreviatedName,
-        },
-      ],
+      extraordinaryInstallments: installments,
     };
 
     handleExtraordinaryInstallment(updatedValues);

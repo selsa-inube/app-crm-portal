@@ -46,6 +46,7 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
     selectedDebtor,
     setSentData,
     businessUnitPublicCode,
+    prospectData,
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -79,8 +80,9 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
     } = formik.values;
 
     const data: IExtraordinaryInstallments = {
-      creditProductCode: "SC-000000038-1",
-      prospectId: "67f7e8f52c014414fca8b52d",
+      creditProductCode:
+        prospectData?.creditProducts?.[0]?.creditProductCode || "",
+      prospectId: prospectData?.prospectId || "",
       extraordinaryInstallments: [
         {
           installmentAmount: parseCurrencyString(installmentAmount.toString()),

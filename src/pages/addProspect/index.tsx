@@ -87,6 +87,7 @@ export function AddProspect() {
     borrowerData: {
       borrowers: {},
     },
+    extraordinaryInstallments: [],
     obligationsFinancial: clientPortfolio,
     loanAmountState: {
       inputValue: "",

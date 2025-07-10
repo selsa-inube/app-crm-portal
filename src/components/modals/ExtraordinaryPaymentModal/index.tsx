@@ -4,7 +4,6 @@ import { Stack, Icon, useMediaQuery, Button } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment";
-import { IExtraordinaryPayment } from "@services/types";
 import { IProspect } from "@services/prospects/types";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 import {
@@ -15,7 +14,6 @@ import {
 import { TextLabels } from "./config";
 
 export interface ExtraordinaryPaymentModalProps {
-  dataTable: IExtraordinaryPayment[];
   prospectData?: IProspect;
   sentData?: IExtraordinaryInstallments | null;
   setSentData: React.Dispatch<
@@ -113,6 +111,7 @@ export const ExtraordinaryPaymentModal = (
             setSeriesModal={setSeriesModal}
             setAddModal={setAddModal}
             selectedModal={selectedModal}
+            prospectData={prospectData}
           />
         )}
       </Stack>

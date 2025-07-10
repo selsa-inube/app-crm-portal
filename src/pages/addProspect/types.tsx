@@ -94,6 +94,8 @@ export interface IFormData {
   obligationsFinancial: IObligations | null;
   generalToggleChecked: boolean;
   togglesState: boolean[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extraordinaryInstallments: any;
   loanAmountState: {
     inputValue: number | string;
     toggleChecked: boolean;
