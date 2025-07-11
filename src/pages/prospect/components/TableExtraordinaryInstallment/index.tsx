@@ -15,12 +15,14 @@ export interface TableExtraordinaryInstallmentProps {
   [key: string]: unknown;
   prospectData?: IProspect;
   refreshKey?: number;
+  businessUnitPublicCode?: string;
+  extraordinary?: TableExtraordinaryInstallmentProps[];
+  service?: boolean;
   setSentData?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   handleClose?: () => void;
-  businessUnitPublicCode?: string;
-  extraordinary?: TableExtraordinaryInstallmentProps[];
+  handleDelete?: (id: string) => void;
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
@@ -69,10 +71,12 @@ export const TableExtraordinaryInstallment = (
   const {
     refreshKey,
     prospectData,
-    setSentData,
-    handleClose,
     businessUnitPublicCode,
     extraordinary,
+    service = true,
+    setSentData,
+    handleClose,
+    handleDelete,
   } = props;
 
   const headers = headersTableExtraordinaryInstallment;
@@ -118,21 +122,6 @@ export const TableExtraordinaryInstallment = (
     setLoading(false);
   }, [prospectData, refreshKey]);
 
-  const handleDelete = async (
-    id: string,
-    updatedDebtor: TableExtraordinaryInstallmentProps,
-  ) => {
-    try {
-      const updatedDebtors = extraordinaryInstallments.map((debtor) =>
-        debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
-      );
-      setExtraordinaryInstallments(updatedDebtors);
-      console.log(`Debtor with ID ${id} deleted successfully.`);
-    } catch (error) {
-      console.error("Failed to delete debtor:", error);
-    }
-  };
-
   const handleUpdate = async (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => {
@@ -159,17 +148,18 @@ export const TableExtraordinaryInstallment = (
       selectedDebtor={selectedDebtor}
       isOpenModalDelete={isOpenModalDelete}
       isOpenModalEdit={isOpenModalEdit}
+      businessUnitPublicCode={businessUnitPublicCode ?? ""}
+      prospectData={prospectData}
       setIsOpenModalDelete={setIsOpenModalDelete}
       setIsOpenModalEdit={setIsOpenModalEdit}
       handleEdit={handleEdit}
-      handleDelete={handleDelete}
       handleUpdate={handleUpdate}
       usePagination={usePagination}
       setSentData={setSentData ?? (() => {})}
       handleClose={handleClose}
-      prospectData={prospectData}
       setSelectedDebtor={setSelectedDebtor}
-      businessUnitPublicCode={businessUnitPublicCode ?? ""}
+      handleDelete={handleDelete}
+      service={service}
     />
   );
 };

@@ -12,14 +12,15 @@ import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments
 
 export interface ExtraordinaryInstallmentsProps {
   isMobile: boolean;
-  initialValues?: TableExtraordinaryInstallmentProps[] | null;
-  handleOnChange?: (newData: TableExtraordinaryInstallmentProps[]) => void;
+  initialValues: TableExtraordinaryInstallmentProps[] | null;
+  handleOnChange: (newData: TableExtraordinaryInstallmentProps[]) => void;
 }
 
 export function ExtraordinaryInstallments(
   props: ExtraordinaryInstallmentsProps,
 ) {
   const { initialValues, isMobile, handleOnChange } = props;
+
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -68,6 +69,16 @@ export function ExtraordinaryInstallments(
     toggleAddSeriesModal();
   };
 
+  const handleDelete = (id: string) => {
+    setExtraordinary((prev) => {
+      const updated = prev.filter((item) => item.id !== id);
+      if (handleOnChange) {
+        handleOnChange(updated);
+      }
+      return updated;
+    });
+  };
+
   return (
     <Fieldset>
       <Stack direction="column">
@@ -92,9 +103,10 @@ export function ExtraordinaryInstallments(
             <TableExtraordinaryInstallment
               refreshKey={refreshKey}
               extraordinary={initialValues || extraordinary}
+              service={false}
+              handleDelete={handleDelete}
             />
           </Stack>
-          <Stack></Stack>
         </Stack>
         {isAddSeriesModalOpen && (
           <AddSeriesModal
