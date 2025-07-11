@@ -12,13 +12,13 @@ import {
 
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
-import { TableCreditProspectuses } from "@pages/prospect/components/TableCreditProspectuses";
+import { TableCreditProspects } from "@pages/prospect/components/TableCreditProspects";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
-import { addConfig, dataCreditProspectuses } from "./config";
+import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
 
-export function CreditProspectuses() {
+export function CreditProspects() {
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const { customerData } = useContext(CustomerContext);
@@ -56,14 +56,14 @@ export function CreditProspectuses() {
             <Input
               id="keyWord"
               label="Buscar"
-              placeholder={dataCreditProspectuses.keyWord}
+              placeholder={dataCreditProspects.keyWord}
               type="search"
             />
             <Button iconBefore={<MdAdd />}>
-              {dataCreditProspectuses.simulate}
+              {dataCreditProspects.simulate}
             </Button>
           </Stack>
-          <TableCreditProspectuses />
+          <TableCreditProspects />
         </Stack>
       </Fieldset>
     </Stack>

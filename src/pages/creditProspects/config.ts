@@ -24,7 +24,7 @@ export const addConfig = {
   ],
 };
 
-export const dataCreditProspectuses = {
+export const dataCreditProspects = {
   simulate: "Simular crédito",
   keyWord: "Palabra clave",
 };

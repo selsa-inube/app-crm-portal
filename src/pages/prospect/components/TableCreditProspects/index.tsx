@@ -17,7 +17,7 @@ import { dataSimulations } from "@mocks/simulations/simulations.mock";
 import { headers } from "./config";
 import { usePagination } from "./utils";
 
-export function TableCreditProspectuses() {
+export function TableCreditProspects() {
   const {
     totalRecords,
     handleStartPage,
