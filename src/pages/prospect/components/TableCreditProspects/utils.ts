@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { IBorrowerDocumentRule } from "@pages/applyForCredit/steps/attachedDocuments";
+import { RowData } from "./types";
 
-export const usePagination = (dataToRender: IBorrowerDocumentRule[]) => {
+export const usePagination = (dataToRender: RowData[]) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const pageLength = 5;

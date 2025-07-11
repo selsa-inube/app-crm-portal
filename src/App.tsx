@@ -17,12 +17,10 @@ import { Login } from "@pages/login";
 import { environment } from "@config/environment";
 import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
-import { AddProspectRoutes } from "@routes/addProspect";
-import { EditProspectRoutes } from "@routes/editProspect";
-import { CustomerRoutes } from "@routes/customer";
-import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
+import { CreditRoutes } from "@src/routes/CreditRoutes";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { CustomerContextProvider } from "@context/CustomerContext";
+import { CustomerRoutes } from "@routes/customer";
 
 function LogOut() {
   localStorage.clear();
@@ -46,12 +44,9 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage errorCode={400} />}
       />
       <Route path="login/*" element={<LoginRoutes />} />
-      <Route path="credit/simulate-credit/*" element={<AddProspectRoutes />} />
-      <Route path="credit/edit-prospect/*" element={<EditProspectRoutes />} />
-      <Route
-        path="credit/apply-for-credit/*"
-        element={<SubmitCreditApplicationRoutes />}
-      />
+      <Route path="credit/*" element={<CreditRoutes />} />
+      {/* <Route path="Home/*" element={<HomeRoutes /> } /> */}
+      {/* <Route path="clients/select-client/*" element={<CustomerRoutes />} /> */}
       <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
@@ -72,10 +67,12 @@ function App() {
   return (
     <AppContextProvider>
       <CustomerContextProvider>
-        <FlagProvider>
-          <GlobalStyles />
-          <RouterProvider router={router} />
-        </FlagProvider>
+        <CustomerContextProvider>
+          <FlagProvider>
+            <GlobalStyles />
+            <RouterProvider router={router} />
+          </FlagProvider>
+        </CustomerContextProvider>
       </CustomerContextProvider>
     </AppContextProvider>
   );
