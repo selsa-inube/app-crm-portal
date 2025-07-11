@@ -36,6 +36,7 @@ export interface EditSeriesModalProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   businessUnitPublicCode: string;
+  service?: boolean;
 }
 
 export function EditSeriesModal(props: EditSeriesModalProps) {
@@ -47,6 +48,7 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
     setSentData,
     businessUnitPublicCode,
     prospectData,
+    service = true,
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -73,6 +75,11 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
   });
 
   const handleExtraordinaryInstallment = async () => {
+    if (!service) {
+      await handleFormSubmit(formik.values, onConfirm);
+      handleClose();
+      return;
+    }
     const {
       installmentAmount,
       installmentDate,

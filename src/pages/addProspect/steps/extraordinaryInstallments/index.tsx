@@ -79,6 +79,18 @@ export function ExtraordinaryInstallments(
     });
   };
 
+  const handleUpdate = (updatedDebtor: TableExtraordinaryInstallmentProps) => {
+    setExtraordinary((prev) => {
+      const updated = prev.map((item) =>
+        item.id === updatedDebtor.id ? updatedDebtor : item,
+      );
+      if (handleOnChange) {
+        handleOnChange(updated);
+      }
+      return updated;
+    });
+  };
+
   return (
     <Fieldset>
       <Stack direction="column">
@@ -105,6 +117,7 @@ export function ExtraordinaryInstallments(
               extraordinary={initialValues || extraordinary}
               service={false}
               handleDelete={handleDelete}
+              handleUpdate={handleUpdate}
             />
           </Stack>
         </Stack>

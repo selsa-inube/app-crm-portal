@@ -311,13 +311,24 @@ export function TableExtraordinaryInstallmentUI(
         <EditSeriesModal
           handleClose={() => setIsOpenModalEdit(false)}
           onSubmit={() => setIsOpenModalEdit(false)}
-          onConfirm={async (updatedDebtor) => {
-            await handleUpdate(updatedDebtor);
+          onConfirm={async (values) => {
+            if (!service) {
+              const updatedDebtor = {
+                ...selectedDebtor,
+                value: values.installmentAmount,
+                paymentMethod: values.paymentChannelAbbreviatedName,
+                datePayment: values.installmentDate,
+              };
+              await handleUpdate(updatedDebtor);
+              return;
+            }
+            await handleUpdate(values);
           }}
           prospectData={prospectData}
           selectedDebtor={selectedDebtor}
           setSentData={setSentData}
           businessUnitPublicCode={businessUnitPublicCode}
+          service={service}
         />
       )}
     </Table>

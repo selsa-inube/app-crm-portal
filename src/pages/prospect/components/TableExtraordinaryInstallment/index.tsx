@@ -23,6 +23,7 @@ export interface TableExtraordinaryInstallmentProps {
   >;
   handleClose?: () => void;
   handleDelete?: (id: string) => void;
+  handleUpdate?: (updatedDebtor: TableExtraordinaryInstallmentProps) => void;
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
@@ -77,6 +78,7 @@ export const TableExtraordinaryInstallment = (
     setSentData,
     handleClose,
     handleDelete,
+    handleUpdate,
   } = props;
 
   const headers = headersTableExtraordinaryInstallment;
@@ -122,9 +124,14 @@ export const TableExtraordinaryInstallment = (
     setLoading(false);
   }, [prospectData, refreshKey]);
 
-  const handleUpdate = async (
+  const handleUpdateData = async (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => {
+    if (!service && typeof handleUpdate === "function") {
+      handleUpdate(updatedDebtor);
+      setIsOpenModalEdit(false);
+      return;
+    }
     try {
       const updatedDebtors = extraordinaryInstallments.map((debtor) =>
         debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
@@ -132,18 +139,23 @@ export const TableExtraordinaryInstallment = (
       setExtraordinaryInstallments(updatedDebtors);
       setIsOpenModalEdit(false);
     } catch (error) {
-      console.error("Error updating debtor:", error);
+      console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (extraordinary && Array.isArray(extraordinary)) {
+      setExtraordinaryInstallments(extraordinary);
+      setLoading(false);
+    }
+  }, [extraordinary]);
 
   return (
     <TableExtraordinaryInstallmentUI
       loading={loading}
       visbleHeaders={visbleHeaders}
       visbleActions={visbleActions}
-      extraordinaryInstallments={
-        !extraordinary ? extraordinaryInstallments : extraordinary
-      }
+      extraordinaryInstallments={extraordinaryInstallments}
       isMobile={isMobile}
       selectedDebtor={selectedDebtor}
       isOpenModalDelete={isOpenModalDelete}
@@ -153,7 +165,7 @@ export const TableExtraordinaryInstallment = (
       setIsOpenModalDelete={setIsOpenModalDelete}
       setIsOpenModalEdit={setIsOpenModalEdit}
       handleEdit={handleEdit}
-      handleUpdate={handleUpdate}
+      handleUpdate={handleUpdateData}
       usePagination={usePagination}
       setSentData={setSentData ?? (() => {})}
       handleClose={handleClose}
