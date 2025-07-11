@@ -33,17 +33,16 @@ import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils
 import { TextLabels } from "../ExtraordinaryPaymentModal/config";
 
 export interface AddSeriesModalProps {
-  handleClose: () => void;
-  onSubmit: (values: {
-    installmentDate: string;
-    paymentChannelAbbreviatedName: string;
-  }) => void;
   installmentState?: {
     installmentAmount: number;
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
   };
   seriesModal?: IExtraordinaryInstallment[];
+  sentData?: IExtraordinaryInstallments | null;
+  selectedModal?: IExtraordinaryInstallment | null;
+  prospectData?: IProspect;
+  service?: boolean;
   setAddModal?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallment | null>
   >;
@@ -60,23 +59,24 @@ export interface AddSeriesModalProps {
       paymentChannelAbbreviatedName: string;
     }>
   >;
-  sentData?: IExtraordinaryInstallments | null;
-  selectedModal?: IExtraordinaryInstallment | null;
-  prospectData?: IProspect;
-  service?: boolean;
+  handleClose: () => void;
+  onSubmit: (values: {
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  }) => void;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
   const {
-    handleClose,
-    onSubmit,
-    seriesModal,
-    setSentData,
-    setAddModal,
-    installmentState,
-    setInstallmentState,
     prospectData,
     service = true,
+    seriesModal,
+    installmentState,
+    handleClose,
+    onSubmit,
+    setInstallmentState,
+    setSentData,
+    setAddModal,
   } = props;
 
   const { businessUnitSigla } = useContext(AppContext);

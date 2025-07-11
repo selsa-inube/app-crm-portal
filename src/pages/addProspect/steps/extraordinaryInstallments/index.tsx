@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineAdd } from "react-icons/md";
 import { Stack, Icon, Button } from "@inubekit/inubekit";
 
@@ -13,7 +13,9 @@ import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments
 export interface ExtraordinaryInstallmentsProps {
   isMobile: boolean;
   initialValues: TableExtraordinaryInstallmentProps[] | null;
-  handleOnChange: (newData: TableExtraordinaryInstallmentProps[]) => void;
+  handleOnChange: (
+    newExtraordinary: TableExtraordinaryInstallmentProps[],
+  ) => void;
 }
 
 export function ExtraordinaryInstallments(
@@ -42,7 +44,11 @@ export function ExtraordinaryInstallments(
 
   const [extraordinary, setExtraordinary] = useState<
     TableExtraordinaryInstallmentProps[]
-  >([]);
+  >(initialValues || []);
+
+  useEffect(() => {
+    setExtraordinary(initialValues || []);
+  }, [initialValues]);
 
   const handleSubmit = (installment: {
     installmentDate: string;
@@ -60,9 +66,8 @@ export function ExtraordinaryInstallments(
     setExtraordinary((prev) => {
       const exists = prev.some((p) => p.id === newPayment.id);
       const updated = !exists ? [...prev, newPayment] : prev;
-      if (handleOnChange) {
-        handleOnChange(updated);
-      }
+      // Solo llama a handleOnChange en respuesta a evento de usuario
+      handleOnChange(updated);
       return updated;
     });
 
@@ -72,9 +77,7 @@ export function ExtraordinaryInstallments(
   const handleDelete = (id: string) => {
     setExtraordinary((prev) => {
       const updated = prev.filter((item) => item.id !== id);
-      if (handleOnChange) {
-        handleOnChange(updated);
-      }
+      handleOnChange(updated);
       return updated;
     });
   };
@@ -84,9 +87,7 @@ export function ExtraordinaryInstallments(
       const updated = prev.map((item) =>
         item.id === updatedDebtor.id ? updatedDebtor : item,
       );
-      if (handleOnChange) {
-        handleOnChange(updated);
-      }
+      handleOnChange(updated);
       return updated;
     });
   };
@@ -114,7 +115,7 @@ export function ExtraordinaryInstallments(
           <Stack justifyContent="center">
             <TableExtraordinaryInstallment
               refreshKey={refreshKey}
-              extraordinary={initialValues || extraordinary}
+              extraordinary={extraordinary}
               service={false}
               handleDelete={handleDelete}
               handleUpdate={handleUpdate}

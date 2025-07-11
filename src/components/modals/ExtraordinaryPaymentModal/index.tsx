@@ -14,27 +14,24 @@ import {
 import { TextLabels } from "./config";
 
 export interface ExtraordinaryPaymentModalProps {
+  businessUnitPublicCode: string;
   prospectData?: IProspect;
   sentData?: IExtraordinaryInstallments | null;
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
-  businessUnitPublicCode: string;
   handleClose: () => void;
-  onClickDetails?: (id: string) => void;
-  onClickEdit?: (id: string) => void;
-  onClickEliminate?: (id: string) => void;
 }
 
 export const ExtraordinaryPaymentModal = (
   props: ExtraordinaryPaymentModalProps,
 ) => {
   const {
-    handleClose,
+    businessUnitPublicCode,
     prospectData,
     sentData,
     setSentData,
-    businessUnitPublicCode,
+    handleClose,
   } = props;
 
   const [installmentState, setInstallmentState] = useState({

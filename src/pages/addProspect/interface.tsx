@@ -377,10 +377,10 @@ export function AddProspectUI(props: AddPositionUIProps) {
                     <ExtraordinaryInstallments
                       isMobile={isMobile}
                       initialValues={formData.extraordinaryInstallments}
-                      handleOnChange={(newObligation) =>
+                      handleOnChange={(newExtraordinary) =>
                         handleFormDataChange(
                           "extraordinaryInstallments",
-                          newObligation,
+                          newExtraordinary,
                         )
                       }
                     />
