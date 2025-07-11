@@ -126,7 +126,6 @@ export function AddProspect() {
         ? onlyBorrowerData
         : formData.borrowerData.borrowers,
     ],
-
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
@@ -146,13 +145,13 @@ export function AddProspect() {
       lineOfCreditAbbreviatedName: product,
     })),
     firstPaymentCycleDate: "2025-06-15T15:04:05Z",
-    extraordinaryInstallments: [
-      {
-        installmentAmount: 1,
-        installmentDate: "2025-06-12T15:04:05Z",
-        paymentChannelAbbreviatedName: "none",
-      },
-    ],
+    extraordinaryInstallments: Array.isArray(formData.extraordinaryInstallments)
+      ? formData.extraordinaryInstallments.map((item) => ({
+          installmentAmount: item.value,
+          installmentDate: item.datePayment,
+          paymentChannelAbbreviatedName: item.paymentMethod,
+        }))
+      : [],
     installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
     moneyDestinationAbbreviatedName: formData.selectedDestination,
     preferredPaymentChannelAbbreviatedName:

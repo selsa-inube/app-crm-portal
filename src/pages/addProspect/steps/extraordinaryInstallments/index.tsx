@@ -4,7 +4,6 @@ import { Stack, Icon, Button } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
-import { IExtraordinaryPayment } from "@services/types";
 import {
   TableExtraordinaryInstallment,
   TableExtraordinaryInstallmentProps,
@@ -12,16 +11,15 @@ import {
 import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments/ExtraordinaryInstallments.config";
 
 export interface ExtraordinaryInstallmentsProps {
-  dataTable: IExtraordinaryPayment[];
   isMobile: boolean;
-  initialValues?: IExtraordinaryPayment[] | null;
-  handleOnChange?: (newData: IExtraordinaryPayment[]) => void;
+  initialValues?: TableExtraordinaryInstallmentProps[] | null;
+  handleOnChange?: (newData: TableExtraordinaryInstallmentProps[]) => void;
 }
 
 export function ExtraordinaryInstallments(
   props: ExtraordinaryInstallmentsProps,
 ) {
-  const { isMobile } = props;
+  const { initialValues, isMobile, handleOnChange } = props;
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -52,7 +50,7 @@ export function ExtraordinaryInstallments(
     const { installmentDate, paymentChannelAbbreviatedName } = installment;
 
     const newPayment: TableExtraordinaryInstallmentProps = {
-      id: `${paymentChannelAbbreviatedName},${installmentDate}`,
+      id: `${paymentChannelAbbreviatedName},${installmentDate},${Date.now()}`,
       datePayment: installmentDate,
       value: installmentState.installmentAmount,
       paymentMethod: paymentChannelAbbreviatedName,
@@ -60,10 +58,11 @@ export function ExtraordinaryInstallments(
 
     setExtraordinary((prev) => {
       const exists = prev.some((p) => p.id === newPayment.id);
-      if (!exists) {
-        return [...prev, newPayment];
+      const updated = !exists ? [...prev, newPayment] : prev;
+      if (handleOnChange) {
+        handleOnChange(updated);
       }
-      return prev;
+      return updated;
     });
 
     toggleAddSeriesModal();
@@ -92,7 +91,7 @@ export function ExtraordinaryInstallments(
           <Stack justifyContent="center">
             <TableExtraordinaryInstallment
               refreshKey={refreshKey}
-              extraordinary={extraordinary}
+              extraordinary={initialValues || extraordinary}
             />
           </Stack>
           <Stack></Stack>
