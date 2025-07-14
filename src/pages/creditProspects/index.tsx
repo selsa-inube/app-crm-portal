@@ -39,7 +39,6 @@ export function CreditProspects() {
   const [prospectSummaryData, setProspectSummaryData] = useState<IProspect[]>(
     [],
   );
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -73,11 +72,11 @@ export function CreditProspects() {
         setProspectSummaryData([]);
       }
     };
-    if (customerData && businessUnitPublicCode) {
+    if (customerData?.publicCode && businessUnitPublicCode) {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessUnitPublicCode]);
+  }, [businessUnitPublicCode, customerData?.publicCode]);
 
   return (
     <Stack

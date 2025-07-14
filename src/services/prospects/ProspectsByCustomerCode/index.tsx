@@ -40,7 +40,7 @@ const getProspectsByCustomerCode = async (
       const data = await res.json();
       if (!res.ok) {
         throw {
-          message: "Error al obtener el prospecto.",
+          message: "Ha ocurrido un error: ",
           status: res.status,
           data,
         };
