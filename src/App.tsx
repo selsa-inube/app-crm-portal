@@ -17,8 +17,9 @@ import { Login } from "@pages/login";
 import { environment } from "@config/environment";
 import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
-import { CreditRoutes } from "@src/routes/CreditRoutes";
+import { CreditRoutes } from "@routes/CreditRoutes";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
+import { Home } from "@pages/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { CustomerRoutes } from "@routes/customer";
 
@@ -48,6 +49,7 @@ const router = createBrowserRouter(
       {/* <Route path="Home/*" element={<HomeRoutes /> } /> */}
       {/* <Route path="clients/select-client/*" element={<CustomerRoutes />} /> */}
       <Route path="clients/select-client/*" element={<CustomerRoutes />} />
+      <Route path="home/*" element={<Home />} />
       <Route path="logout" element={<LogOut />} />
     </>,
   ),
