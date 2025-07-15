@@ -1,37 +1,49 @@
 import { useState, useEffect } from "react";
 import localforage from "localforage";
 import { useMediaQuery } from "@inubekit/inubekit";
-
+import { FormikValues, useFormik } from "formik";
 import { currencyFormat } from "@utils/formatData/currency";
+import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 
 import { convertObligationsToProperties, headers } from "./config";
-import { TableFinancialObligationsUI } from "./interface";
+import {
+  ITableFinancialObligationsProps,
+  TableFinancialObligationsUI,
+} from "./interface";
 import { IProperty } from "./types";
-export interface ITableFinancialObligationsProps {
-  type?: string;
-  id?: string;
-  propertyValue?: string;
-  balance?: string;
-  fee?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues?: any;
-  refreshKey?: number;
-  showActions?: boolean;
-  showOnlyEdit?: boolean;
-  showButtons?: boolean;
-}
 
 export const TableFinancialObligations = (
   props: ITableFinancialObligationsProps,
 ) => {
-  const { refreshKey, initialValues, showActions, showButtons } = props;
-  const [loading, setLoading] = useState(true);
+  const {
+    refreshKey,
+    initialValues,
+    handleOnChange = () => {},
+    setRefreshKey,
+    showActions,
+    showButtons,
+    formState,
+  } = props;
+  const [loading] = useState(false);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
   const [selectedDebtor, setSelectedDebtor] =
     useState<ITableFinancialObligationsProps | null>(null);
   const [extraDebtors, setExtraDebtors] = useState<
     ITableFinancialObligationsProps[]
   >([]);
+
+  const formik = useFormik<{
+    obligations: IObligations | null;
+  }>({
+    initialValues: {
+      obligations: initialValues,
+    },
+    onSubmit: () => {},
+  });
+
+  useEffect(() => {
+    handleOnChange(formik.values);
+  }, []);
 
   const handleEdit = (debtor: ITableFinancialObligationsProps) => {
     let balance = "";
@@ -51,11 +63,6 @@ export const TableFinancialObligations = (
     setIsModalOpenEdit(true);
   };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timeout);
-  }, []);
-
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const visibleHeaders = isMobile
@@ -68,7 +75,6 @@ export const TableFinancialObligations = (
 
   useEffect(() => {
     const data = Array.isArray(initialValues) ? initialValues : [initialValues];
-
     if (data && data.length > 0) {
       const borrowerList = Array.isArray(data[0]?.borrowers)
         ? data[0]?.borrowers
@@ -78,7 +84,27 @@ export const TableFinancialObligations = (
         borrowerList?.[0]?.borrowerProperties?.filter(
           (prop: IProperty) => prop.propertyName === "FinancialObligation",
         ) || [];
-      const obligations = data?.[0]?.obligations || [];
+
+      function getDeepestObligations(obj: FormikValues) {
+        let current = obj;
+        while (current && typeof current.obligations === "object") {
+          current = current.obligations;
+        }
+        return current;
+      }
+
+      if (initialValues && !initialValues.obligations) {
+        initialValues.obligations = {
+          obligations: [],
+        };
+      } else if (
+        initialValues?.obligations &&
+        !initialValues.obligations.obligations
+      ) {
+        initialValues.obligations.obligations = [];
+      }
+      const obligations = getDeepestObligations(initialValues);
+
       const obligationsConverted = Array.isArray(obligations)
         ? convertObligationsToProperties(obligations)
         : [];
@@ -88,6 +114,11 @@ export const TableFinancialObligations = (
         ...obligationsConverted,
       ]);
     } else {
+      if (initialValues) {
+        initialValues.obligations = {
+          obligations: [],
+        };
+      }
       setExtraDebtors([]);
     }
   }, [refreshKey, initialValues]);
@@ -119,7 +150,6 @@ export const TableFinancialObligations = (
       console.error("Error updating debtor:", error);
     }
   };
-
   const dataInformation =
     (initialValues?.[0]?.borrowers?.[0]?.borrowerProperties?.filter(
       (prop: IProperty) => prop.propertyName === "FinancialObligation",
@@ -141,6 +171,10 @@ export const TableFinancialObligations = (
       handleDelete={handleDelete}
       handleUpdate={handleUpdate}
       showButtons={showButtons}
+      formState={formState}
+      initialValues={initialValues}
+      handleOnChange={handleOnChange}
+      setRefreshKey={setRefreshKey}
     />
   );
 };

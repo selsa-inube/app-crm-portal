@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Stack, Tabs } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { IDebtorDetail } from "@pages/SubmitCreditApplication/types";
+import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 
 import { dataDetails, dataTabs } from "./config";
