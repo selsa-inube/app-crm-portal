@@ -14,9 +14,9 @@ import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableCreditProspects } from "@pages/prospect/components/TableCreditProspects";
 
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
+import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 
 export function CreditProspects() {
   const isMobile = useMediaQuery("(max-width:880px)");

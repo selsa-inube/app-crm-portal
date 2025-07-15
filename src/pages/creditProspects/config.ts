@@ -1,6 +1,6 @@
 export const addConfig = {
   id: 1,
-  title: "Simulaciones de crédito",
+  title: "Prospectos de crédito",
   route: "/credit",
   crumbs: [
     {
