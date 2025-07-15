@@ -11,7 +11,7 @@ import {
 import { CreditCard } from "@components/cards/CreditCard";
 import { CustomerContext } from "@context/CustomerContext";
 
-import { addConfig, creditCards } from "./config/credit.config";
+import { addConfig, useCreditCards } from "./config/credit.config";
 import { IHomeUIProps } from "./types";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -21,6 +21,9 @@ const CreditUI = (props: IHomeUIProps) => {
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
   const { customerData } = useContext(CustomerContext);
+
+  const creditCards = useCreditCards();
+
   const dataHeader = {
     name: customerData.fullName,
     status:
@@ -30,10 +33,10 @@ const CreditUI = (props: IHomeUIProps) => {
   return (
     <>
       <Stack
-        gap="24px"
+        margin="20px auto"
+        width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
         direction="column"
-        height="100%"
-        padding="24px 64px 0 64px"
+        gap="24px"
       >
         <GeneralHeader
           buttonText="Agregar vinculación"
@@ -51,7 +54,11 @@ const CreditUI = (props: IHomeUIProps) => {
               </Text>
             </Stack>
           </StyledArrowBack>
-          <Stack direction={isTablet ? "column" : "row"} wrap="wrap">
+          <Stack
+            direction={isTablet ? "column" : "row"}
+            wrap="wrap"
+            alignItems={isTablet ? "center" : "flex-start"}
+          >
             {creditCards.map(({ key, icon, title, subtitle, onClick }) => (
               <CreditCard
                 key={key}

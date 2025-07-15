@@ -20,7 +20,6 @@ export const StyledContainer = styled.div`
 export const StyledMain = styled.main`
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
 `;
 
 export const StyledContentImg = styled(Link)`

@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
 import { MdMoneyOff, MdOutlineAttachMoney } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const addConfig = {
   id: 1,
@@ -34,19 +35,23 @@ interface CreditCardCfg {
   onClick: () => void;
 }
 
-export const creditCards: CreditCardCfg[] = [
-  {
-    key: "credit",
-    icon: <MdOutlineAttachMoney />,
-    title: "Prospectos de crédiito",
-    subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    onClick: () => console.log("Crédito"),
-  },
-  {
-    key: "advance",
-    icon: <MdMoneyOff />,
-    title: "Solicitudes de crédito",
-    subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    onClick: () => console.log("Anticipo salarial"),
-  },
-];
+export const useCreditCards = (): CreditCardCfg[] => {
+  const navigate = useNavigate();
+
+  return [
+    {
+      key: "credit",
+      icon: <MdOutlineAttachMoney />,
+      title: "Prospectos de crédito",
+      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      onClick: () => navigate("/credit/simulations"),
+    },
+    {
+      key: "advance",
+      icon: <MdMoneyOff />,
+      title: "Solicitudes de crédito",
+      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      onClick: () => console.log("Anticipo salarial"),
+    },
+  ];
+};
