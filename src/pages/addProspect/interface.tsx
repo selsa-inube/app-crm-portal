@@ -52,6 +52,7 @@ import {
   AlertIncome,
   AlertObligations,
 } from "./components/smallModals/modals";
+import { IPaymentCapacityResponse } from "@src/services/creditLimit/getBorrowePaymentCapacity/types";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -124,6 +125,7 @@ interface AddPositionUIProps {
   isAlertObligation: boolean;
   codeError: number | null;
   addToFix: string[];
+  paymentCapacity?: IPaymentCapacityResponse | null;
 }
 
 export function AddProspectUI(props: AddPositionUIProps) {
@@ -172,6 +174,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
     addToFix,
     formState,
     setFormState,
+    paymentCapacity,
   } = props;
 
   return (
@@ -510,6 +513,7 @@ export function AddProspectUI(props: AddPositionUIProps) {
                 <PaymentCapacityAnalysis
                   isMobile={isMobile}
                   handleClose={() => setIsCapacityAnalysisModal(false)}
+                  paymentCapacity={paymentCapacity}
                 />
               )}
               {isCapacityAnalysisWarning && (

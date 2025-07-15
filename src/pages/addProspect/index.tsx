@@ -21,6 +21,11 @@ import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
 import { textAddCongfig } from "./config/addConfig";
 import { tittleOptions } from "./steps/financialObligations/config/config";
+import { getBorrowerPaymentCapacityById } from "@src/services/creditLimit/getBorrowePaymentCapacity";
+import {
+  IPaymentCapacity,
+  IPaymentCapacityResponse,
+} from "@src/services/creditLimit/getBorrowePaymentCapacity/types";
 
 export function AddProspect() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -41,6 +46,8 @@ export function AddProspect() {
   const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
     null,
   );
+  const [paymentCapacity, setPaymentCapacity] =
+    useState<IPaymentCapacityResponse | null>(null);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
 
@@ -459,6 +466,46 @@ export function AddProspect() {
     }
   };
 
+  const fetchCapacityAnalysis = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    const data: IPaymentCapacity = {
+      clientIdentificationNumber: "16378491",
+      dividends: 0,
+      financialIncome: 0,
+      leases: 0,
+      otherNonSalaryEmoluments: 0,
+      pensionAllowances: 0,
+      periodicSalary: 0,
+      personalBusinessUtilities: 0,
+      professionalFees: 0,
+      livingExpenseToIncomeRatio: 0,
+    };
+
+    try {
+      const paymentCapacity = await getBorrowerPaymentCapacityById(
+        businessUnitPublicCode,
+        data,
+      );
+      setPaymentCapacity(paymentCapacity ?? null);
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
   useEffect(() => {
     if (customerData) {
       fetchCreditLineTerms();
@@ -680,6 +727,7 @@ export function AddProspect() {
     if (currentStep === stepsAddProspect.productSelection.id) {
       fetchCreditLimit();
       fetchDataClientPortfolio();
+      fetchCapacityAnalysis();
     }
   }, [currentStep]);
 
@@ -741,6 +789,7 @@ export function AddProspect() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
+        paymentCapacity={paymentCapacity}
       />
       {showConsultingModal && <Consulting />}
     </>
