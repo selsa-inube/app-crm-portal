@@ -14,7 +14,7 @@ import { dataSubmitApplication } from "@pages/applyForCredit/config/config";
 import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { IBorrowerProperty } from "@services/incomeSources/types";
+import { IBorrowerProperty } from "@src/services/creditLimit/getIncomeSources/types";
 import { IBorrowerData } from "@pages/applyForCredit/types";
 import { IProspect } from "@services/types";
 

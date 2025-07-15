@@ -20,7 +20,7 @@ const getIncomeSourcesById = async (
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "ClientIncomeSourcesById",
+          "X-Action": "SearchClientIncomeSourcesById",
           "X-Business-Unit": "fondecom",
           "Content-type": "application/json; charset=UTF-8",
         },
@@ -29,7 +29,7 @@ const getIncomeSourcesById = async (
 
       console.log(businessUnitPublicCode);
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests/client-income-sources/${publicCode}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/client-income-sources/${publicCode}`,
         options,
       );
 
