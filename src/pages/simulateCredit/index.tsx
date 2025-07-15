@@ -9,7 +9,7 @@ import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { postSimulateCredit } from "@services/iProspect/simulateCredit";
 import { IPaymentChannel } from "@services/types";
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";

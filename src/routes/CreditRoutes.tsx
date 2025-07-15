@@ -5,8 +5,8 @@ import { AppPage } from "@components/layout/AppPage";
 import { Simulations } from "@pages/simulations";
 import { ApplyForCredit } from "@pages/applyForCredit";
 import { SimulateCredit } from "@pages/simulateCredit";
-import { CreditProspects } from "@src/pages/creditProspects";
-import { Credit } from "@src/pages/creditProspect";
+import { CreditProspects } from "@pages/creditProspects";
+import { Credit } from "@pages/creditProspect";
 
 function CreditRoutes() {
   return (
