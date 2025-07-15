@@ -22,7 +22,7 @@ export const mockData: ICardInteractiveBox[] = [
     label: "Crédito",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     icon: () => MdOutlineAccountBalance({}),
-    url: "/credit/simulate-credit",
+    url: "/credit",
   },
   {
     id: "2",

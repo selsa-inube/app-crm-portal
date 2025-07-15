@@ -10,7 +10,7 @@ import {
   parseCurrencyString,
 } from "@utils/formatData/currency";
 import { IIncome } from "@services/types";
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ICustomerData } from "@context/CustomerContext/types";
 
