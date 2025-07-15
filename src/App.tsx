@@ -46,10 +46,8 @@ const router = createBrowserRouter(
       />
       <Route path="login/*" element={<LoginRoutes />} />
       <Route path="credit/*" element={<CreditRoutes />} />
-      {/* <Route path="Home/*" element={<HomeRoutes /> } /> */}
-      {/* <Route path="clients/select-client/*" element={<CustomerRoutes />} /> */}
-      <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="home/*" element={<Home />} />
+      <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
   ),
