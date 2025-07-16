@@ -32,7 +32,6 @@ export const StyledLogo = styled.img`
 
 export const StyledHeaderContainer = styled.div`
   position: relative;
-  z-index: 0;
 `;
 
 export const StyledContainerNav = styled.div`
@@ -47,7 +46,6 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
   left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
-  z-index: 3;
 `;
 
 export const StyledMenuContainer = styled.div`
