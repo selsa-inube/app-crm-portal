@@ -29,7 +29,9 @@ function CheckingCredentials({
 
         navigate("/login/loading-app");
       } else {
-        navigate(`/login/${eventData.user.userAccount}/clients`);
+        navigate(
+          `/login/${eventData.user.userAccount}/business-units/select-business-unit`,
+        );
       }
     } catch (error) {
       navigate("/login/error/not-available");

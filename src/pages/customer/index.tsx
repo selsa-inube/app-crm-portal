@@ -118,7 +118,7 @@ export function Customer() {
 
   const handleSubmit = () => {
     setCustomerPublicCodeState(inputValue);
-    navigate(`/`);
+    navigate(`/home`);
   };
 
   return (

@@ -3,7 +3,7 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 
 import { mapCreditLimitEntity } from "./mapper";
 
@@ -30,7 +30,7 @@ const getCreditLimit = async (
 
       console.log(businessUnitPublicCode);
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limit/client-income-sources/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/client-income-sources/${clientIdentificationNumber}`,
         options,
       );
 
