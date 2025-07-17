@@ -51,17 +51,15 @@ function EditProductModal(props: EditProductModalProps) {
   const isMobile = useMediaQuery("(max-width: 550px)");
 
   const validationSchema = Yup.object({
-    creditLine: Yup.string().required("Campo requerido"),
-    creditAmount: Yup.number().required("Campo requerido"),
-    paymentMethod: Yup.string().required("Campo requerido"),
-    paymentCycle: Yup.string().required("Campo requerido"),
-    firstPaymentCycle: Yup.string().required("Campo requerido"),
-    termInMonths: Yup.number().required("Campo requerido"),
-    amortizationType: Yup.string().required("Campo requerido"),
-    interestRate: Yup.number()
-      .required("Campo requerido")
-      .min(0, "No puede ser negativo"),
-    rateType: Yup.string().required("Campo requerido"),
+    creditLine: Yup.string(),
+    creditAmount: Yup.number(),
+    paymentMethod: Yup.string(),
+    paymentCycle: Yup.string(),
+    firstPaymentCycle: Yup.string(),
+    termInMonths: Yup.number(),
+    amortizationType: Yup.string(),
+    interestRate: Yup.number().min(0, ""),
+    rateType: Yup.string(),
   });
 
   return (

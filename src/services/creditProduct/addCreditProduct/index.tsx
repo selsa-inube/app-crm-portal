@@ -3,14 +3,14 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 
-import { mapCreditLimitEntity } from "./mapper";
+import { IAddCreditProduct } from "./types";
+import { ICreditProductResponse } from "../types";
 
-const getCreditLimit = async (
+export const addCreditProduct = async (
   businessUnitPublicCode: string,
-  clientIdentificationNumber: string,
-): Promise<IIncomeSources> => {
+  payload: IAddCreditProduct,
+): Promise<ICreditProductResponse | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -19,49 +19,50 @@ const getCreditLimit = async (
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
-        method: "GET",
+        method: "PATCH",
         headers: {
-          "X-Action": "SearchClientIncomeSourcesById",
-          "X-Business-Unit": "fondecom",
+          "X-Action": "AddCreditProduct",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
+        body: JSON.stringify(payload),
         signal: controller.signal,
       };
 
-      console.log(businessUnitPublicCode);
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/client-income-sources/${clientIdentificationNumber}`,
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay credito disponible.");
+        return;
       }
 
       const data = await res.json();
 
       if (!res.ok) {
         throw {
-          message: "Error al obtener credito.",
+          message: "Ha ocurrido un error: ",
           status: res.status,
           data,
         };
       }
 
-      return mapCreditLimitEntity(data);
+      return data;
     } catch (error) {
-      console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo traer el credito.",
+          "Todos los intentos fallaron. No se pudo agregar el producto de credito.",
         );
       }
     }
   }
-
-  throw new Error("No se pudo obtener el credito después de varios intentos.");
 };
-
-export { getCreditLimit };

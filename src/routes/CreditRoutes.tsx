@@ -5,12 +5,14 @@ import { AppPage } from "@components/layout/AppPage";
 import { Simulations } from "@pages/simulations";
 import { ApplyForCredit } from "@pages/applyForCredit";
 import { SimulateCredit } from "@pages/simulateCredit";
-import { CreditProspects } from "@src/pages/creditProspects";
+import { CreditProspects } from "@pages/creditProspects";
+import { Credit } from "@pages/creditProspect";
 
 function CreditRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AppPage />}>
+        <Route path="/" element={<Credit />} />
         <Route path="/simulate-credit" element={<SimulateCredit />} />
         <Route path="/simulations" element={<CreditProspects />} />
         <Route path="/simulations/:prospectCode" element={<Simulations />} />

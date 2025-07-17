@@ -7,7 +7,7 @@ import {
   MdOutlinePictureAsPdf,
   MdOutlineShare,
 } from "react-icons/md";
-import { Stack, Icon, Button, Select } from "@inubekit/inubekit";
+import { Stack, Icon, Button, Select, useFlag } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
 import { PaymentCapacity } from "@components/modals/PaymentCapacityModal";
@@ -20,7 +20,6 @@ import { BaseModal } from "@components/modals/baseModal";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
 import { ICreditProductProspect, IPaymentChannel } from "@services/types";
-import { addCreditProduct } from "@mocks/utils/addCreditProductMock.service";
 import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
 import {
   incomeOptions,
@@ -37,6 +36,9 @@ import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
 import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
+import { addCreditProduct } from "@services/creditProduct/addCreditProduct";
+import { IAddCreditProduct } from "@services/creditProduct/addCreditProduct/types";
+import { getSearchProspectById } from "@services/prospects";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
@@ -57,6 +59,7 @@ interface ICreditProspectProps {
   setRequestValue?: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
+  onProspectUpdate?: (prospect: IProspect) => void;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -64,6 +67,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     prospectData,
     showMenu,
     setRequestValue,
+    onProspectUpdate,
     sentData,
     setSentData,
     isMobile,
@@ -89,6 +93,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     useState<ICreditProductProspect>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [pdfProspect, setPdfProspect] = useState<string | null>(null);
+
+  const { addFlag } = useFlag();
 
   const dataPrint = useRef<HTMLDivElement>(null);
 
@@ -164,16 +170,51 @@ export function CreditProspect(props: ICreditProspectProps) {
   };
 
   const handleConfirm = async (values: FormikValues) => {
-    if (!id) {
+    if (!prospectData?.prospectId) {
       console.error("ID no está definido");
       setProspectProducts;
       return;
     }
 
-    const result = await addCreditProduct(id, values, mockProspectCredit);
+    try {
+      const payload: IAddCreditProduct = {
+        prospectId: prospectData.prospectId,
+        creditProducts: [
+          {
+            lineOfCreditAbbreviatedName: values.creditLine,
+          },
+        ],
+      };
 
-    if (result) {
+      await addCreditProduct(businessUnitPublicCode, payload);
+
+      if (prospectData?.prospectId) {
+        const updatedProspect = await getSearchProspectById(
+          businessUnitPublicCode,
+          prospectData.prospectId,
+        );
+        setDataProspect([updatedProspect]);
+        if (onProspectUpdate) {
+          onProspectUpdate(updatedProspect);
+        }
+      }
+
       handleCloseModal();
+    } catch (error) {
+      handleCloseModal();
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: dataCreditProspect.descriptionError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
     }
   };
 
@@ -475,6 +516,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             dataRef={dataCommercialManagementRef}
             onClick={() => handleOpenModal("editProductModal")}
             prospectData={prospectData || undefined}
+            onProspectUpdate={onProspectUpdate}
           />
         </Stack>
         {currentModal === "creditLimit" && (

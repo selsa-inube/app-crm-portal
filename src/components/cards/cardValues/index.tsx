@@ -20,7 +20,6 @@ export interface CardValuesProps {
   firstIcon?: React.ReactNode;
   showIcon?: boolean;
   showMiniIcons?: boolean;
-  showSummaryFirstItem?: boolean;
 }
 
 export function CardValues(props: CardValuesProps) {
@@ -33,18 +32,13 @@ export function CardValues(props: CardValuesProps) {
     handleView = () => {},
     showIcon = true,
     showMiniIcons = true,
-    showSummaryFirstItem = false,
   } = props;
 
   return (
     <Container $showIcon={showIcon}>
       <ContentWrapper>
         {items.map((item, index) => (
-          <Stack
-            alignItems="center"
-            key={index}
-            gap={showSummaryFirstItem ? "2vw" : "3vw"}
-          >
+          <Stack alignItems="center" key={index}>
             <Stack
               direction="column"
               margin="4px"

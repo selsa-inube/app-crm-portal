@@ -25,6 +25,10 @@ enum Schedule {
 }
 
 enum CreditLine {
+  Home = "Hogar",
+  Construction = "Construcción en lote",
+  Investment = "Libre inversión",
+  Dwelling = "Vivienda VIS",
   Vacation = "vacation",
   Education = "education",
   Mortgage = "mortgage",

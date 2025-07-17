@@ -258,6 +258,7 @@ export function Simulations() {
       setIsModalOpen={setIsModalOpen}
       setShowCreditRequest={setShowCreditRequest}
       setRequestValue={setRequestValue}
+      setProspectData={setDataProspect}
       requestValue={requestValue}
       sentData={sentData}
       setSentData={setSentData}

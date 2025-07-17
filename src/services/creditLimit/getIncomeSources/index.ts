@@ -3,13 +3,11 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
+import { IIncomeSources } from "./types";
 
-import { mapCreditLimitEntity } from "./mapper";
-
-const getCreditLimit = async (
+const getIncomeSourcesById = async (
+  publicCode: string,
   businessUnitPublicCode: string,
-  clientIdentificationNumber: string,
 ): Promise<IIncomeSources> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -18,6 +16,7 @@ const getCreditLimit = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+
       const options: RequestInit = {
         method: "GET",
         headers: {
@@ -30,38 +29,42 @@ const getCreditLimit = async (
 
       console.log(businessUnitPublicCode);
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/client-income-sources/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/client-income-sources/${publicCode}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay credito disponible.");
+        throw new Error("No hay tarea disponible.");
       }
 
       const data = await res.json();
 
       if (!res.ok) {
         throw {
-          message: "Error al obtener credito.",
+          message: "Error al obtener la tarea.",
           status: res.status,
           data,
         };
       }
 
-      return mapCreditLimitEntity(data);
+      if (Array.isArray(data) && data.length > 0) {
+        return data[0];
+      }
+
+      return data;
     } catch (error) {
       console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo traer el credito.",
+          "Todos los intentos fallaron. No se pudo obtener la tarea.",
         );
       }
     }
   }
 
-  throw new Error("No se pudo obtener el credito después de varios intentos.");
+  throw new Error("No se pudo obtener la tarea después de varios intentos.");
 };
 
-export { getCreditLimit };
+export { getIncomeSourcesById };
