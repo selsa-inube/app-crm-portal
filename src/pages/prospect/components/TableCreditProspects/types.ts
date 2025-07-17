@@ -1,6 +1,6 @@
 export type RowData = {
-  codigo: string;
-  fecha: string;
-  destino: string;
-  valor: string;
+  code: string;
+  date: string;
+  destination: string;
+  value: string;
 };

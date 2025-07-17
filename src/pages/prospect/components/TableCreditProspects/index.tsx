@@ -12,12 +12,45 @@ import {
   Pagination,
 } from "@inubekit/inubekit";
 
-import { dataSimulations } from "@mocks/simulations/simulations.mock";
+import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";
+import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
 
-import { headers } from "./config";
 import { usePagination } from "./utils";
+import { tableConfig } from "./config";
+import { RowData } from "./types";
 
-export function TableCreditProspects() {
+interface TableCreditProspectsProps {
+  prospectData: IProspect[];
+}
+
+const getDestinationName = (code: string): string => {
+  const destination = MoneyDestinationTranslations.find(
+    (item) => item.Code === code,
+  );
+  return destination
+    ? destination.Name
+    : code || tableConfig.messages.notAvailable;
+};
+
+export function TableCreditProspects({
+  prospectData,
+}: TableCreditProspectsProps) {
+  const tableData =
+    prospectData && prospectData.length > 0
+      ? prospectData.map((prospect) => ({
+          code: prospect.prospectCode,
+          date: prospect.timeOfCreation
+            ? new Date(prospect.timeOfCreation).toLocaleDateString()
+            : tableConfig.messages.notAvailable,
+          destination: getDestinationName(
+            prospect.moneyDestinationAbbreviatedName,
+          ),
+          value: prospect.requestedAmount
+            ? prospect.requestedAmount.toString()
+            : tableConfig.messages.notAvailable,
+        }))
+      : [];
+
   const {
     totalRecords,
     handleStartPage,
@@ -27,13 +60,13 @@ export function TableCreditProspects() {
     firstEntryInPage,
     lastEntryInPage,
     currentData,
-  } = usePagination(dataSimulations);
+  } = usePagination(tableData);
 
   return (
     <Table tableLayout="auto">
       <Thead>
         <Tr>
-          {headers.map((header) => (
+          {tableConfig.headers.map((header) => (
             <Th key={header.key} align="center" action={header.action}>
               {header.label}
             </Th>
@@ -41,43 +74,50 @@ export function TableCreditProspects() {
         </Tr>
       </Thead>
       <Tbody>
-        {currentData.map((row, rowIndex) => (
-          <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
-            {headers.map((header, colIndex) => (
-              <Td key={colIndex} align="center">
-                {header.action ? (
-                  <Stack justifyContent="space-between" gap="8px">
-                    <Icon
-                      icon={<MdOutlineSend />}
-                      size="18px"
-                      appearance="primary"
-                      cursorHover
-                    />
-                    <Icon
-                      icon={<MdOutlineEdit />}
-                      size="18px"
-                      appearance="dark"
-                      cursorHover
-                    />
-                    <Icon
-                      icon={<MdDeleteOutline />}
-                      size="18px"
-                      appearance="danger"
-                      cursorHover
-                    />
-                  </Stack>
-                ) : (
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  ((row as any)[header.key] ?? "")
-                )}
-              </Td>
-            ))}
+        {currentData.length > 0 ? (
+          currentData.map((row, rowIndex) => (
+            <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
+              {tableConfig.headers.map((header, colIndex) => (
+                <Td key={colIndex} align="center">
+                  {header.action ? (
+                    <Stack justifyContent="space-between" gap="8px">
+                      <Icon
+                        icon={<MdOutlineSend />}
+                        size="18px"
+                        appearance="primary"
+                        cursorHover
+                      />
+                      <Icon
+                        icon={<MdOutlineEdit />}
+                        size="18px"
+                        appearance="dark"
+                        cursorHover
+                      />
+                      <Icon
+                        icon={<MdDeleteOutline />}
+                        size="18px"
+                        appearance="danger"
+                        cursorHover
+                      />
+                    </Stack>
+                  ) : (
+                    (row[header.key as keyof RowData] ?? "")
+                  )}
+                </Td>
+              ))}
+            </Tr>
+          ))
+        ) : (
+          <Tr>
+            <Td colSpan={tableConfig.headers.length} align="center">
+              {tableConfig.messages.noDataAvailable}
+            </Td>
           </Tr>
-        ))}
+        )}
       </Tbody>
       <Tfoot>
         <Tr border="bottom">
-          <Td colSpan={headers.length} type="custom" align="center">
+          <Td colSpan={tableConfig.headers.length} type="custom" align="center">
             <Pagination
               firstEntryInPage={firstEntryInPage}
               lastEntryInPage={lastEntryInPage}
