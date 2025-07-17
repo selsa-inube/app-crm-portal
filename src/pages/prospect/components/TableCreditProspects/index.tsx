@@ -15,8 +15,9 @@ import {
 import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";
 import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
 
-import { headers } from "./config";
 import { usePagination } from "./utils";
+import { tableConfig } from "./config";
+import { RowData } from "../TableObligationsFinancial/config";
 
 interface TableCreditProspectsProps {
   prospectData: IProspect[];
@@ -26,7 +27,9 @@ const getDestinationName = (code: string): string => {
   const destination = MoneyDestinationTranslations.find(
     (item) => item.Code === code,
   );
-  return destination ? destination.Name : code || "N/A";
+  return destination
+    ? destination.Name
+    : code || tableConfig.messages.notAvailable;
 };
 
 export function TableCreditProspects({
@@ -35,14 +38,16 @@ export function TableCreditProspects({
   const tableData =
     prospectData && prospectData.length > 0
       ? prospectData.map((prospect) => ({
-          codigo: prospect.prospectCode,
-          fecha: prospect.timeOfCreation
+          code: prospect.prospectCode,
+          date: prospect.timeOfCreation
             ? new Date(prospect.timeOfCreation).toLocaleDateString()
-            : "N/A",
-          destino: getDestinationName(prospect.moneyDestinationAbbreviatedName),
-          valor: prospect.requestedAmount
+            : tableConfig.messages.notAvailable,
+          destination: getDestinationName(
+            prospect.moneyDestinationAbbreviatedName,
+          ),
+          value: prospect.requestedAmount
             ? prospect.requestedAmount.toString()
-            : "N/A",
+            : tableConfig.messages.notAvailable,
         }))
       : [];
 
@@ -61,7 +66,7 @@ export function TableCreditProspects({
     <Table tableLayout="auto">
       <Thead>
         <Tr>
-          {headers.map((header) => (
+          {tableConfig.headers.map((header) => (
             <Th key={header.key} align="center" action={header.action}>
               {header.label}
             </Th>
@@ -72,7 +77,7 @@ export function TableCreditProspects({
         {currentData.length > 0 ? (
           currentData.map((row, rowIndex) => (
             <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
-              {headers.map((header, colIndex) => (
+              {tableConfig.headers.map((header, colIndex) => (
                 <Td key={colIndex} align="center">
                   {header.action ? (
                     <Stack justifyContent="space-between" gap="8px">
@@ -96,8 +101,7 @@ export function TableCreditProspects({
                       />
                     </Stack>
                   ) : (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    ((row as any)[header.key] ?? "")
+                    (row[header.key as keyof RowData] ?? "")
                   )}
                 </Td>
               ))}
@@ -105,15 +109,15 @@ export function TableCreditProspects({
           ))
         ) : (
           <Tr>
-            <Td colSpan={headers.length} align="center">
-              No hay datos disponibles
+            <Td colSpan={tableConfig.headers.length} align="center">
+              {tableConfig.messages.noDataAvailable}
             </Td>
           </Tr>
         )}
       </Tbody>
       <Tfoot>
         <Tr border="bottom">
-          <Td colSpan={headers.length} type="custom" align="center">
+          <Td colSpan={tableConfig.headers.length} type="custom" align="center">
             <Pagination
               firstEntryInPage={firstEntryInPage}
               lastEntryInPage={lastEntryInPage}

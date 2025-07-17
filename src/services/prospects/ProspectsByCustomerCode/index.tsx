@@ -53,7 +53,7 @@ const getProspectsByCustomerCode = async (
       console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener el prospecto..",
+          "Todos los intentos fallaron. No se pudo obtener el prospecto.",
         );
       }
     }
