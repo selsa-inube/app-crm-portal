@@ -21,7 +21,7 @@ function LoginRoutes() {
           element={<CheckingCredentials businessUnits={business} />}
         />
         <Route
-          path="/:user_id/clients"
+          path="/:user_id/business-units/select-business-unit"
           element={<BusinessUnits businessUnits={business} />}
         />
         <Route path="loading-app" element={<LoadingApp />} />
