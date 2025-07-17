@@ -17,7 +17,7 @@ import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTra
 
 import { usePagination } from "./utils";
 import { tableConfig } from "./config";
-import { RowData } from "../TableObligationsFinancial/config";
+import { RowData } from "./types";
 
 interface TableCreditProspectsProps {
   prospectData: IProspect[];

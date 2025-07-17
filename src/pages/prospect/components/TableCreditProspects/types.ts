@@ -1,4 +1,4 @@
-export type RowDataRowData = {
+export type RowData = {
   code: string;
   date: string;
   destination: string;
