@@ -66,7 +66,6 @@ export function ExtraordinaryInstallments(
     setExtraordinary((prev) => {
       const exists = prev.some((p) => p.id === newPayment.id);
       const updated = !exists ? [...prev, newPayment] : prev;
-      // Solo llama a handleOnChange en respuesta a evento de usuario
       handleOnChange(updated);
       return updated;
     });
