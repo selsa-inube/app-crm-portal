@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { FormikValues } from "formik";
 import { Stack, Divider, useMediaQuery, useFlag } from "@inubekit/inubekit";
 
 import { CreditProductCard } from "@components/cards/CreditProductCard";
@@ -7,7 +8,6 @@ import { CardValues } from "@components/cards/cardValues";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ConsolidatedCredits } from "@pages/prospect/components/modals/ConsolidatedCreditModal";
 import { DeductibleExpensesModal } from "@pages/prospect/components/modals/DeductibleExpensesModal";
-import { deleteCreditProductMock } from "@mocks/utils/deleteCreditProductMock.service";
 import { IProspect, ICreditProduct } from "@services/prospects/types";
 import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
 import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
@@ -15,6 +15,9 @@ import { AppContext } from "@context/AppContext";
 import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { Schedule } from "@services/enums";
 import { getAllDeductibleExpensesById } from "@services/prospects/deductibleExpenses";
+import { RemoveCreditProduct } from "@services/creditProduct/removeCreditProduct";
+import { updateCreditProduct } from "@services/creditProduct/updateCreditProduct";
+import { getSearchProspectById } from "@services/prospects";
 
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";
@@ -25,12 +28,13 @@ interface CardCommercialManagementProps {
   onClick: () => void;
   prospectData?: IProspect;
   refreshProducts?: () => void;
+  onProspectUpdate?: (prospect: IProspect) => void;
 }
 
 export const CardCommercialManagement = (
   props: CardCommercialManagementProps,
 ) => {
-  const { dataRef, id, onClick, prospectData } = props;
+  const { dataRef, onClick, prospectData, onProspectUpdate } = props;
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
@@ -65,18 +69,93 @@ export const CardCommercialManagement = (
   const isMobile = useMediaQuery("(max-width: 800px)");
 
   const handleDelete = async () => {
-    await deleteCreditProductMock(
-      id,
-      selectedProductId,
-      prospectProducts,
-      setProspectProducts,
-    );
-    setShowDeleteModal(false);
+    if (!prospectData || !prospectProducts.length) return;
+    try {
+      await RemoveCreditProduct("test", {
+        creditProductCode: selectedProductId,
+        prospectId: prospectData.prospectId,
+      });
+      setProspectProducts((prev) =>
+        prev.filter(
+          (product) => product.creditProductCode !== selectedProductId,
+        ),
+      );
+
+      if (prospectData?.prospectId) {
+        const updatedProspect = await getSearchProspectById(
+          businessUnitPublicCode,
+          prospectData.prospectId,
+        );
+        if (onProspectUpdate) {
+          onProspectUpdate(updatedProspect);
+        }
+      }
+
+      setShowDeleteModal(false);
+    } catch (error) {
+      setShowDeleteModal(false);
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.descriptionError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
   };
+
+  const handleConfirm = async (values: FormikValues) => {
+    if (!prospectData || !selectedProduct) return;
+
+    try {
+      const payload = {
+        creditProductCode: selectedProduct.creditProductCode,
+        interestRate: Number(values.interestRate),
+        loanTerm: Number(values.termInMonths),
+        prospectId: prospectData.prospectId,
+      };
+
+      await updateCreditProduct(businessUnitPublicCode, payload);
+
+      if (prospectData?.prospectId) {
+        const updatedProspect = await getSearchProspectById(
+          businessUnitPublicCode,
+          prospectData.prospectId,
+        );
+        if (onProspectUpdate) {
+          onProspectUpdate(updatedProspect);
+        }
+      }
+
+      setModalHistory((prev) => prev.slice(0, -1));
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.descriptionError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
   const handleDeleteClick = (creditProductId: string) => {
     setSelectedProductId(creditProductId);
     setShowDeleteModal(true);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -194,9 +273,9 @@ export const CardCommercialManagement = (
       {currentModal === "editProductModal" && selectedProduct && (
         <EditProductModal
           onCloseModal={() => setModalHistory((prev) => prev.slice(0, -1))}
-          onConfirm={() => setModalHistory((prev) => prev.slice(0, -1))}
-          title={`Editar producto`}
-          confirmButtonText="Guardar"
+          onConfirm={handleConfirm}
+          title={tittleOptions.editProduct}
+          confirmButtonText={tittleOptions.save}
           initialValues={{
             creditLine: selectedProduct.lineOfCreditAbbreviatedName || "",
             creditAmount: selectedProduct.loanAmount || 0,
@@ -212,7 +291,6 @@ export const CardCommercialManagement = (
           }}
         />
       )}
-
       {showConsolidatedModal && (
         <ConsolidatedCredits
           handleClose={() => setShowConsolidatedModal(false)}

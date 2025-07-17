@@ -3,12 +3,14 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IIncomeSources } from "./types";
 
-const getIncomeSourcesById = async (
-  publicCode: string,
+import { IRemoveCreditProduct } from "./types";
+import { ICreditProductResponse } from "../types";
+
+export const RemoveCreditProduct = async (
   businessUnitPublicCode: string,
-): Promise<IIncomeSources> => {
+  payload: IRemoveCreditProduct,
+): Promise<ICreditProductResponse | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -16,55 +18,51 @@ const getIncomeSourcesById = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-
       const options: RequestInit = {
-        method: "GET",
+        method: "PATCH",
         headers: {
-          "X-Action": "ClientIncomeSourcesById",
-          "X-Business-Unit": "fondecom",
+          "X-Action": "RemoveCreditProduct",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
+        body: JSON.stringify(payload),
         signal: controller.signal,
       };
 
-      console.log(businessUnitPublicCode);
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests/client-income-sources/${publicCode}`,
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay tarea disponible.");
+        return;
       }
 
       const data = await res.json();
 
       if (!res.ok) {
         throw {
-          message: "Error al obtener la tarea.",
+          message: "Ha ocurrido un error: ",
           status: res.status,
           data,
         };
       }
 
-      if (Array.isArray(data) && data.length > 0) {
-        return data[0];
-      }
-
       return data;
     } catch (error) {
-      console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener la tarea.",
+          "Todos los intentos fallaron. No se pudo eliminar el producto de credito.",
         );
       }
     }
   }
-
-  throw new Error("No se pudo obtener la tarea después de varios intentos.");
 };
-
-export { getIncomeSourcesById };

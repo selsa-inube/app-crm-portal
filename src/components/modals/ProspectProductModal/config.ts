@@ -8,45 +8,24 @@ import {
 
 const creditLineOptions = [
   {
-    id: CreditLine.Vacation,
-    label: "Crédito Vacacional",
-    value: CreditLine.Vacation,
+    id: CreditLine.Home,
+    label: "Hogar",
+    value: CreditLine.Home,
   },
   {
-    id: CreditLine.Education,
-    label: "Crédito Educativo",
-    value: CreditLine.Education,
+    id: CreditLine.Construction,
+    label: "Construcción en lote",
+    value: CreditLine.Construction,
   },
   {
-    id: CreditLine.Mortgage,
-    label: "Crédito Hipotecario",
-    value: CreditLine.Mortgage,
+    id: CreditLine.Investment,
+    label: "Libre inversión",
+    value: CreditLine.Investment,
   },
   {
-    id: CreditLine.Personal,
-    label: "Crédito Personal",
-    value: CreditLine.Personal,
-  },
-  {
-    id: CreditLine.Business,
-    label: "Crédito Empresarial",
-    value: CreditLine.Business,
-  },
-  { id: CreditLine.Auto, label: "Crédito Automotriz", value: CreditLine.Auto },
-  {
-    id: CreditLine.Health,
-    label: "Crédito de Salud",
-    value: CreditLine.Health,
-  },
-  {
-    id: CreditLine.CreditCard,
-    label: "Tarjeta de Crédito",
-    value: CreditLine.CreditCard,
-  },
-  {
-    id: CreditLine.Consolidation,
-    label: "Consolidación de Deudas",
-    value: CreditLine.Consolidation,
+    id: CreditLine.Dwelling,
+    label: "Vivienda VIS",
+    value: CreditLine.Dwelling,
   },
 ];
 

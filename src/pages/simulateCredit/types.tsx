@@ -1,4 +1,5 @@
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
 
 export const titleButtonTextAssited = {
   goBackText: "Anterior",
@@ -94,6 +95,7 @@ export interface IFormData {
   obligationsFinancial: IObligations | null;
   generalToggleChecked: boolean;
   togglesState: boolean[];
+  extraordinaryInstallments: TableExtraordinaryInstallmentProps[];
   loanAmountState: {
     inputValue: number | string;
     toggleChecked: boolean;

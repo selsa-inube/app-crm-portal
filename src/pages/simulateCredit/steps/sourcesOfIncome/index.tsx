@@ -2,7 +2,7 @@ import { Stack } from "@inubekit/inubekit";
 
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { Fieldset } from "@components/data/Fieldset";
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 
 interface ISourcesOfIncomeProps {

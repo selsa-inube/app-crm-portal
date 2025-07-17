@@ -1,25 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineAdd } from "react-icons/md";
-import { Stack, Icon, Text, Button } from "@inubekit/inubekit";
+import { Stack, Icon, Button } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
-import { IExtraordinaryPayment } from "@services/types";
-import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment";
+import {
+  TableExtraordinaryInstallment,
+  TableExtraordinaryInstallmentProps,
+} from "@pages/prospect/components/TableExtraordinaryInstallment";
 import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments/ExtraordinaryInstallments.config";
 
 export interface ExtraordinaryInstallmentsProps {
-  dataTable: IExtraordinaryPayment[];
-  onClickDetails?: (id: string) => void;
-  onClickEdit?: (id: string) => void;
-  onClickEliminate?: (id: string) => void;
   isMobile: boolean;
+  initialValues: TableExtraordinaryInstallmentProps[] | null;
+  handleOnChange: (
+    newExtraordinary: TableExtraordinaryInstallmentProps[],
+  ) => void;
 }
 
 export function ExtraordinaryInstallments(
   props: ExtraordinaryInstallmentsProps,
 ) {
-  const { dataTable, isMobile } = props;
+  const { initialValues, isMobile, handleOnChange } = props;
+
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -33,8 +36,59 @@ export function ExtraordinaryInstallments(
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  const handleSubmit = () => {
+  const [installmentState, setInstallmentState] = useState({
+    installmentAmount: 0,
+    installmentDate: "",
+    paymentChannelAbbreviatedName: "",
+  });
+
+  const [extraordinary, setExtraordinary] = useState<
+    TableExtraordinaryInstallmentProps[]
+  >(initialValues || []);
+
+  useEffect(() => {
+    setExtraordinary(initialValues || []);
+  }, [initialValues]);
+
+  const handleSubmit = (installment: {
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  }) => {
+    const { installmentDate, paymentChannelAbbreviatedName } = installment;
+
+    const newPayment: TableExtraordinaryInstallmentProps = {
+      id: `${paymentChannelAbbreviatedName},${installmentDate},${Date.now()}`,
+      datePayment: installmentDate,
+      value: installmentState.installmentAmount,
+      paymentMethod: paymentChannelAbbreviatedName,
+    };
+
+    setExtraordinary((prev) => {
+      const exists = prev.some((p) => p.id === newPayment.id);
+      const updated = !exists ? [...prev, newPayment] : prev;
+      handleOnChange(updated);
+      return updated;
+    });
+
     toggleAddSeriesModal();
+  };
+
+  const handleDelete = (id: string) => {
+    setExtraordinary((prev) => {
+      const updated = prev.filter((item) => item.id !== id);
+      handleOnChange(updated);
+      return updated;
+    });
+  };
+
+  const handleUpdate = (updatedDebtor: TableExtraordinaryInstallmentProps) => {
+    setExtraordinary((prev) => {
+      const updated = prev.map((item) =>
+        item.id === updatedDebtor.id ? updatedDebtor : item,
+      );
+      handleOnChange(updated);
+      return updated;
+    });
   };
 
   return (
@@ -58,20 +112,22 @@ export function ExtraordinaryInstallments(
             </Button>
           </Stack>
           <Stack justifyContent="center">
-            {dataTable.length > 0 ? (
-              <TableExtraordinaryInstallment refreshKey={refreshKey} />
-            ) : (
-              <Text type="label" appearance="gray" weight="bold">
-                {TextLabels.NoData}
-              </Text>
-            )}
+            <TableExtraordinaryInstallment
+              refreshKey={refreshKey}
+              extraordinary={extraordinary}
+              service={false}
+              handleDelete={handleDelete}
+              handleUpdate={handleUpdate}
+            />
           </Stack>
-          <Stack></Stack>
         </Stack>
         {isAddSeriesModalOpen && (
           <AddSeriesModal
             handleClose={handleCloseModal}
             onSubmit={handleSubmit}
+            installmentState={installmentState}
+            setInstallmentState={setInstallmentState}
+            service={false}
           />
         )}
       </Stack>

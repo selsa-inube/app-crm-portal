@@ -18,9 +18,9 @@ import { getProspectsByCustomerCode } from "@services/prospects/ProspectsByCusto
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";
 
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
+import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 
 export function CreditProspects() {
   const isMobile = useMediaQuery("(max-width:880px)");

@@ -8,6 +8,7 @@ export const StyledContainerGeneralHeader = styled.div`
   top: 0;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
+  z-index: 1;
 `;
 
 export const StyledPerfil = styled.img`
