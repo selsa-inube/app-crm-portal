@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
-import { extraordinaryInstallmentMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
 import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
@@ -376,8 +375,14 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   currentStepsNumber.id ===
                     stepsAddProspect.extraordinaryInstallments.id && (
                     <ExtraordinaryInstallments
-                      dataTable={extraordinaryInstallmentMock}
                       isMobile={isMobile}
+                      initialValues={formData.extraordinaryInstallments}
+                      handleOnChange={(newExtraordinary) =>
+                        handleFormDataChange(
+                          "extraordinaryInstallments",
+                          newExtraordinary,
+                        )
+                      }
                     />
                   )}
                 {currentStepsNumber &&
