@@ -27,7 +27,7 @@ import { GeneralInformationForm } from "@pages/SubmitCreditApplication/component
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 import { getAllInternalAccounts } from "@services/integrationInternalAccounts";
-import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
+import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;

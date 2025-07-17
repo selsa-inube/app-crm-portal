@@ -1,4 +1,8 @@
-import { environment } from "@config/environment";
+import {
+  environment,
+  fetchTimeoutServices,
+  maxRetriesServices,
+} from "@config/environment";
 
 import { mapPaymentCapacityResponse } from "./mapper";
 import { IPaymentCapacity, IPaymentCapacityResponse } from "./types";
@@ -7,46 +11,66 @@ const getBorrowerPaymentCapacityById = async (
   businessUnitPublicCode: string,
   data: IPaymentCapacity,
 ): Promise<IPaymentCapacityResponse | undefined> => {
-  const requestUrl = `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits`;
+  const maxRetries = maxRetriesServices;
+  const fetchTimeout = fetchTimeoutServices;
+
   console.log(businessUnitPublicCode);
-  try {
-    const options: RequestInit = {
-      method: "POST",
-      headers: {
-        "X-Action": "GetBorrowerPaymentCapacityByIdentificationNumber",
-        "X-Business-Unit": "fondecom", //businessUnitPublicCode,
-        "Content-type": "application/json; charset=UTF-8",
-      },
-      body: JSON.stringify(data),
-    };
-
-    const res = await fetch(requestUrl, options);
-
-    if (res.status === 204) {
-      return;
-    }
-
-    let responseData: IPaymentCapacityResponse;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      responseData = await res.json();
-    } catch (error) {
-      throw new Error("Failed to parse response JSON");
-    }
-
-    if (!res.ok) {
-      throw {
-        message: "Error al obtener la capacidad de pago del deudor",
-        status: res.status,
-        data: responseData,
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+      const options: RequestInit = {
+        method: "POST",
+        headers: {
+          "X-Action": "GetBorrowerPaymentCapacityByIdentificationNumber",
+          "X-Business-Unit": "fondecom", //businessUnitPublicCode,
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify(data),
       };
+
+      const res = await fetch(
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits`,
+        options,
+      );
+
+      clearTimeout(timeoutId);
+
+      if (res.status === 204) {
+        return;
+      }
+
+      let responseData: IPaymentCapacityResponse;
+      try {
+        responseData = await res.json();
+      } catch (error) {
+        throw new Error("Failed to parse response JSON");
+      }
+
+      if (!res.ok) {
+        throw {
+          message: "Ha ocurrido un error: ",
+          status: res.status,
+          data,
+        };
+      }
+
+      const normalized = mapPaymentCapacityResponse(responseData);
+
+      return normalized;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
+        throw new Error(
+          "Todos los intentos fallaron. No se pudo obtener el portafolio de obligaciones.",
+        );
+      }
     }
-
-    const normalized = mapPaymentCapacityResponse(responseData);
-
-    return normalized;
-  } catch (error) {
-    console.error("Failed to get borrower payment capacity:", error);
-    throw error;
   }
 };
 

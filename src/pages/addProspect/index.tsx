@@ -13,6 +13,11 @@ import { IIncomeSources } from "@services/incomeSources/types";
 import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
+import {
+  IPaymentCapacity,
+  IPaymentCapacityResponse,
+} from "@services/creditLimit/getBorrowePaymentCapacity/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -21,11 +26,6 @@ import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
 import { textAddCongfig } from "./config/addConfig";
 import { tittleOptions } from "./steps/financialObligations/config/config";
-import { getBorrowerPaymentCapacityById } from "@src/services/creditLimit/getBorrowePaymentCapacity";
-import {
-  IPaymentCapacity,
-  IPaymentCapacityResponse,
-} from "@src/services/creditLimit/getBorrowePaymentCapacity/types";
 
 export function AddProspect() {
   const [currentStep, setCurrentStep] = useState<number>(

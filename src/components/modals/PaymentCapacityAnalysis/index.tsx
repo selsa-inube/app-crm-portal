@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Stack, Tabs } from "@inubekit/inubekit";
+import {
+  IIncomeDetail,
+  IPaymentCapacityResponse,
+} from "@services/creditLimit/getBorrowePaymentCapacity/types";
+import { currencyFormat } from "@utils/formatData/currency";
 
 import { BaseModal } from "../baseModal";
 import { PaymentCapacityAnalysisDetails } from "./Details";
 import { DataCapacityAnalysis } from "./config";
 import { IFieldsetData, ISummaryItem } from "./types";
 import { FieldsetSection, SummarySection } from "./Section";
-import {
-  IIncomeDetail,
-  IPaymentCapacityResponse,
-} from "@src/services/creditLimit/getBorrowePaymentCapacity/types";
-import { currencyFormat } from "@src/utils/formatData/currency";
 import { ScrollableContainer } from "./styles";
 
 export interface IPaymentCapacityAnalysisProps {

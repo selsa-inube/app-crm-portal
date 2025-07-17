@@ -23,6 +23,7 @@ import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnaly
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 import { IIncomeSources } from "@services/incomeSources/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { IPaymentCapacityResponse } from "@services/creditLimit/getBorrowePaymentCapacity/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -52,7 +53,6 @@ import {
   AlertIncome,
   AlertObligations,
 } from "./components/smallModals/modals";
-import { IPaymentCapacityResponse } from "@src/services/creditLimit/getBorrowePaymentCapacity/types";
 
 interface AddPositionUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
