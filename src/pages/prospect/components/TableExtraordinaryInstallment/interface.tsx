@@ -38,13 +38,12 @@ interface ITableExtraordinaryInstallmentProps {
   selectedDebtor: TableExtraordinaryInstallmentProps;
   isOpenModalDelete: boolean;
   isOpenModalEdit: boolean;
+  prospectData: IProspect | undefined;
+  businessUnitPublicCode: string;
+  service: boolean;
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
   handleEdit: (row: TableExtraordinaryInstallmentProps) => void;
-  handleDelete: (
-    id: string,
-    updatedDebtor: TableExtraordinaryInstallmentProps,
-  ) => Promise<void>;
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
@@ -58,15 +57,14 @@ interface ITableExtraordinaryInstallmentProps {
     lastEntryInPage: number;
     paddedCurrentData: TableExtraordinaryInstallmentProps[];
   };
-  setSentData:
+  setSentData?:
     | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
     | undefined;
-  handleClose: (() => void) | undefined;
-  prospectData: IProspect | undefined;
+  handleClose?: (() => void) | undefined;
   setSelectedDebtor: React.Dispatch<
     React.SetStateAction<TableExtraordinaryInstallmentProps>
   >;
-  businessUnitPublicCode: string;
+  handleDelete?: (id: string) => void;
 }
 
 export function TableExtraordinaryInstallmentUI(
@@ -79,9 +77,11 @@ export function TableExtraordinaryInstallmentUI(
     extraordinaryInstallments,
     isMobile,
     selectedDebtor,
-    setSelectedDebtor,
     isOpenModalDelete,
     isOpenModalEdit,
+    prospectData,
+    businessUnitPublicCode,
+    service,
     setIsOpenModalDelete,
     setIsOpenModalEdit,
     handleEdit,
@@ -89,19 +89,19 @@ export function TableExtraordinaryInstallmentUI(
     usePagination,
     handleClose,
     setSentData,
-    prospectData,
-    businessUnitPublicCode,
+    setSelectedDebtor,
+    handleDelete,
   } = props;
 
   const {
     totalRecords,
+    firstEntryInPage,
+    lastEntryInPage,
+    paddedCurrentData,
     handleStartPage,
     handlePrevPage,
     handleNextPage,
     handleEndPage,
-    firstEntryInPage,
-    lastEntryInPage,
-    paddedCurrentData,
   } = usePagination(extraordinaryInstallments);
 
   const { addFlag } = useFlag();
@@ -126,34 +126,37 @@ export function TableExtraordinaryInstallmentUI(
     prospectId: prospectData?.prospectId || "",
   };
 
-  const handleExtraordinaryInstallment = async (
-    extraordinaryInstallments: IExtraordinaryInstallments,
-  ) => {
-    try {
-      await removeExtraordinaryInstallment(
-        businessUnitPublicCode,
-        extraordinaryInstallments,
-      );
-
-      setSentData?.(extraordinaryInstallments);
+  const handleDeleteAction = async () => {
+    if (handleDelete && selectedDebtor.id) {
+      handleDelete(selectedDebtor.id as string);
       setIsOpenModalDelete(false);
-      handleClose?.();
-    } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status?: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description =
-        code + (err?.message || "") + (err?.data?.description || "");
+    } else if (service) {
+      try {
+        await removeExtraordinaryInstallment(
+          businessUnitPublicCode,
+          initialValues,
+        );
 
-      addFlag({
-        title: TextLabels.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+        setSentData?.(initialValues);
+        setIsOpenModalDelete(false);
+        handleClose?.();
+      } catch (error: unknown) {
+        const err = error as {
+          message?: string;
+          status?: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + (err?.message || "") + (err?.data?.description || "");
+
+        addFlag({
+          title: TextLabels.titleError,
+          description,
+          appearance: "danger",
+          duration: 5000,
+        });
+      }
     }
   };
 
@@ -300,7 +303,7 @@ export function TableExtraordinaryInstallmentUI(
       {isOpenModalDelete && (
         <DeleteModal
           handleClose={() => setIsOpenModalDelete(false)}
-          handleDelete={() => handleExtraordinaryInstallment(initialValues)}
+          handleDelete={handleDeleteAction}
           TextDelete={dataTableExtraordinaryInstallment.content}
         />
       )}
@@ -308,13 +311,24 @@ export function TableExtraordinaryInstallmentUI(
         <EditSeriesModal
           handleClose={() => setIsOpenModalEdit(false)}
           onSubmit={() => setIsOpenModalEdit(false)}
-          onConfirm={async (updatedDebtor) => {
-            await handleUpdate(updatedDebtor);
+          onConfirm={async (values) => {
+            if (!service) {
+              const updatedDebtor = {
+                ...selectedDebtor,
+                value: values.installmentAmount,
+                paymentMethod: values.paymentChannelAbbreviatedName,
+                datePayment: values.installmentDate,
+              };
+              await handleUpdate(updatedDebtor);
+              return;
+            }
+            await handleUpdate(values);
           }}
           prospectData={prospectData}
           selectedDebtor={selectedDebtor}
           setSentData={setSentData}
           businessUnitPublicCode={businessUnitPublicCode}
+          service={service}
         />
       )}
     </Table>

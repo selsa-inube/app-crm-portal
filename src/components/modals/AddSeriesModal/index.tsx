@@ -26,23 +26,23 @@ import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
 } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { IProspect } from "@services/prospects/types";
 
 import { dataAddSeriesModal } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
 import { TextLabels } from "../ExtraordinaryPaymentModal/config";
 
 export interface AddSeriesModalProps {
-  handleClose: () => void;
-  onSubmit: (values: {
-    installmentDate: string;
-    paymentChannelAbbreviatedName: string;
-  }) => void;
   installmentState?: {
     installmentAmount: number;
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
   };
   seriesModal?: IExtraordinaryInstallment[];
+  sentData?: IExtraordinaryInstallments | null;
+  selectedModal?: IExtraordinaryInstallment | null;
+  prospectData?: IProspect;
+  service?: boolean;
   setAddModal?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallment | null>
   >;
@@ -59,19 +59,24 @@ export interface AddSeriesModalProps {
       paymentChannelAbbreviatedName: string;
     }>
   >;
-  sentData?: IExtraordinaryInstallments | null;
-  selectedModal?: IExtraordinaryInstallment | null;
+  handleClose: () => void;
+  onSubmit: (values: {
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  }) => void;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
   const {
+    prospectData,
+    service = true,
+    seriesModal,
+    installmentState,
     handleClose,
     onSubmit,
-    seriesModal,
+    setInstallmentState,
     setSentData,
     setAddModal,
-    installmentState,
-    setInstallmentState,
   } = props;
 
   const { businessUnitSigla } = useContext(AppContext);
@@ -139,7 +144,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   };
 
   const initialValues: IExtraordinaryInstallments = {
-    creditProductCode: "SC-000000038-1",
+    creditProductCode:
+      prospectData?.creditProducts?.[0]?.creditProductCode || "",
     extraordinaryInstallments: [
       {
         installmentAmount: 0,
@@ -147,7 +153,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         paymentChannelAbbreviatedName: "",
       },
     ],
-    prospectId: "67f7e8f52c014414fca8b52d",
+    prospectId: prospectData?.prospectId || "",
   };
 
   const handleExtraordinaryInstallment = async (
@@ -189,26 +195,86 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       paymentChannelAbbreviatedName,
     } = installmentState;
 
+    const count = parseInt(formik.values.value, 10);
+    const frequency = formik.values.frequency;
     if (
       !installmentAmount ||
       !installmentDate ||
-      !paymentChannelAbbreviatedName
+      !paymentChannelAbbreviatedName ||
+      isNaN(count) ||
+      count < 1 ||
+      !frequency
     )
       return;
 
+    const installments = [];
+    const currentDate = new Date(installmentDate);
+    for (let i = 0; i < count; i++) {
+      installments.push({
+        installmentAmount,
+        installmentDate: currentDate.toISOString(),
+        paymentChannelAbbreviatedName,
+      });
+      if (frequency === "Semestral") {
+        currentDate.setMonth(currentDate.getMonth() + 6);
+      } else if (frequency === "Anual") {
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+      }
+    }
+
     const updatedValues: IExtraordinaryInstallments = {
       ...initialValues,
-      extraordinaryInstallments: [
-        {
-          ...initialValues.extraordinaryInstallments[0],
-          installmentDate,
-          installmentAmount,
-          paymentChannelAbbreviatedName,
-        },
-      ],
+      extraordinaryInstallments: installments,
     };
 
     handleExtraordinaryInstallment(updatedValues);
+  };
+
+  const handleSimpleSubmit = () => {
+    if (!installmentState) return;
+
+    const {
+      installmentAmount,
+      installmentDate,
+      paymentChannelAbbreviatedName,
+    } = installmentState;
+
+    const count = parseInt(formik.values.value, 10);
+    const frequency = formik.values.frequency;
+
+    if (
+      !installmentAmount ||
+      !installmentDate ||
+      !paymentChannelAbbreviatedName ||
+      isNaN(count) ||
+      count < 1 ||
+      !frequency
+    ) {
+      return;
+    }
+
+    const installments = [];
+    const currentDate = new Date(installmentDate);
+    for (let i = 0; i < count; i++) {
+      installments.push({
+        installmentDate: currentDate.toISOString(),
+        paymentChannelAbbreviatedName,
+      });
+
+      if (frequency === "Semestral") {
+        currentDate.setMonth(currentDate.getMonth() + 6);
+      } else if (frequency === "Anual") {
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+      }
+    }
+
+    installments.forEach((installment) => {
+      onSubmit?.({
+        installmentDate: installment.installmentDate,
+        paymentChannelAbbreviatedName:
+          installment.paymentChannelAbbreviatedName,
+      });
+    });
   };
 
   useEffect(() => {
@@ -227,7 +293,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       backButton={dataAddSeriesModal.cancel}
       nextButton={dataAddSeriesModal.add}
       handleBack={handleClose}
-      handleNext={handleNextClick}
+      handleNext={service ? handleNextClick : handleSimpleSubmit}
       handleClose={handleClose}
       width={isMobile ? "280px" : "425px"}
       height={isMobile ? "auto" : "639px"}

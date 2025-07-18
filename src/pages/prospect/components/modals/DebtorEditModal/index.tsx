@@ -8,7 +8,7 @@ import {
   IBorrower,
   IBorrowerProperty,
   IIncomeSources,
-} from "@services/incomeSources/types";
+} from "@services/creditLimit/getIncomeSources/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 
 import { dataEditDebtor, dataTabs, dataReport } from "./config";

@@ -405,7 +405,7 @@ export interface IRiskScoringRangeRequered {
 }
 
 export interface IExtraordinaryPayment {
-  id: number;
+  id: number | string;
   datePayment: string;
   amount?: number;
   value: number;

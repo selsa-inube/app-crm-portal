@@ -1,4 +1,4 @@
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
 
 export const income: IIncomeSources = {
   Dividends: 0,

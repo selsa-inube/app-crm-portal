@@ -10,11 +10,3 @@ export const StyledContainer = styled.div`
     theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
   border-radius: 8px;
 `;
-export const StyledContainerBlanket = styled.div`
-  && div:nth-child(3) {
-    z-index: 1;
-  }
-  && div:nth-child(1) {
-    z-index: 0;
-  }
-`;
