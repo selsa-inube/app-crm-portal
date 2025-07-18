@@ -5,6 +5,7 @@ import { Stack, Tabs } from "@inubekit/inubekit";
 import { Fieldset } from "@components/data/Fieldset";
 import { AppContext } from "@context/AppContext";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
 
 import { DisbursementWithInternalAccount } from "./disbursementWithInternalAccount/index";
 import { DisbursementWithExternalAccount } from "./disbursementWithExternalAccount";
@@ -12,7 +13,6 @@ import { DisbursementWithCheckEntity } from "./disbursementWithCheckEntity";
 import { DisbursementWithCheckManagement } from "./DisbursementWithCheckManagement";
 import { DisbursementWithCash } from "./DisbursementWithCash";
 import { disbursemenTabs } from "./config";
-import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
 
 interface IDisbursementGeneralProps {
   isMobile: boolean;

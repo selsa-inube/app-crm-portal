@@ -46,6 +46,7 @@ enum EPaymentOptionType {
   TOTALVALUE = "TOTALVALUE",
   OTHERVALUE = "CAPITALCREDIT",
   UNSELECTALL = "UNSELECTALL",
+  INMEDIATE = "INMEDIATE",
   REPROGRAMMINGDEADLINE = "rmp",
   REPROGRAMMINGMAINTAININGVALUE = "rmc",
   REDUCEFUTUREQUOTA = "acf",
@@ -59,6 +60,7 @@ const paymentOptionValues: Record<string, string> = {
   [EPaymentOptionType.REPROGRAMMINGDEADLINE]: "Reducir cuota",
   [EPaymentOptionType.REPROGRAMMINGMAINTAININGVALUE]: "Reducir plazo",
   [EPaymentOptionType.REDUCEFUTUREQUOTA]: "Pagar cuotas futuras",
+  [EPaymentOptionType.INMEDIATE]: "Inmediato",
 };
 
 export { otherValueAvailableDM, EPaymentOptionType, paymentOptionValues };

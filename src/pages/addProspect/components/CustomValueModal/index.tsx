@@ -12,6 +12,7 @@ import {
   Text,
   useMediaQuery,
 } from "@inubekit/inubekit";
+
 import { IPaymentOption } from "@services/creditLimit/getCreditPayments/types";
 import {
   currencyFormat,
@@ -26,18 +27,19 @@ import {
   StyledModal,
 } from "./styles";
 import { IApplyPayOption, getOptions } from "./utils";
+import { options } from "./config";
 
 interface CustomValueModalProps {
   portalId: string;
   value: number;
   id: string;
-  nextPaymentDate?: Date;
   lineCode: string;
   nextPaymentValue: number;
   totalPaymentValue: number;
   expiredValue: number;
   onCloseModal: () => void;
   onChangeOtherValue: (option: IPaymentOption) => void;
+  nextPaymentDate?: Date;
   onApplyPayOption?: (applyPayOption: IApplyPayOption, value: number) => void;
 }
 
@@ -74,7 +76,7 @@ function CustomValueModal(props: CustomValueModalProps) {
     if (totalPaymentValue !== 0 && customValue > totalPaymentValue) {
       setInputValidation({
         state: "invalid",
-        message: "(Valor superior al saldo total)",
+        message: options.messageValidation,
       });
 
       return;
@@ -100,7 +102,7 @@ function CustomValueModal(props: CustomValueModalProps) {
       setShowResponse(true);
     } else {
       onChangeOtherValue({
-        label: "Abono a capital",
+        label: options.labelOtherValue,
         value: customValue,
       });
       onCloseModal();
@@ -133,7 +135,7 @@ function CustomValueModal(props: CustomValueModalProps) {
         <Stack direction="column" width="100%" gap="8px">
           <Stack justifyContent="space-between" alignItems="center">
             <Text type="title" size="medium">
-              Pagar otro valor
+              {options.labelPayAnotherValue}
             </Text>
 
             <Icon
@@ -146,7 +148,7 @@ function CustomValueModal(props: CustomValueModalProps) {
             />
           </Stack>
           <Text type="body" size="medium" appearance="gray">
-            Ingresar el valor que deseas pagar.
+            {options.labelInputValue}
           </Text>
         </Stack>
 
@@ -156,7 +158,7 @@ function CustomValueModal(props: CustomValueModalProps) {
           <Moneyfield
             id="customValue"
             name="customValue"
-            label="Valor"
+            label={options.labelCustomValue}
             placeholder=""
             value={customValue ? currencyFormat(customValue, false) : ""}
             onChange={handleChangeCustomValue}
@@ -174,7 +176,7 @@ function CustomValueModal(props: CustomValueModalProps) {
               onClick={handleValidateValue}
               disabled={customValue === 0 || showResponse}
             >
-              Continuar
+              {options.buttonContinue}
             </Button>
           </Stack>
         </Stack>
@@ -189,7 +191,7 @@ function CustomValueModal(props: CustomValueModalProps) {
               {customValue !== totalPaymentValue && (
                 <>
                   <Text type="body" size="medium" appearance="gray">
-                    Selecciona como quieres aplicar el pago.
+                    {options.labelSelectPaymentApplication}
                   </Text>
 
                   <StyledApplyPayContainer>
@@ -225,7 +227,7 @@ function CustomValueModal(props: CustomValueModalProps) {
                   spacing="compact"
                   onClick={onCloseModal}
                 >
-                  Cancelar
+                  {options.buttonCancel}
                 </Button>
                 <Button
                   spacing="compact"
@@ -235,7 +237,7 @@ function CustomValueModal(props: CustomValueModalProps) {
                     (totalPaymentValue !== 0 && customValue > totalPaymentValue)
                   }
                 >
-                  Aceptar
+                  {options.buttonAccept}
                 </Button>
               </Stack>
             </Stack>

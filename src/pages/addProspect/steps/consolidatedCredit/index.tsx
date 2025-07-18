@@ -4,7 +4,10 @@ import { Stack, Text, Divider, Grid } from "@inubekit/inubekit";
 import { Fieldset } from "@components/data/Fieldset";
 import { CardConsolidatedCredit } from "@pages/addProspect/components/CardConsolidatedCredit";
 import { currencyFormat } from "@utils/formatData/currency";
-import { IPayment } from "@services/creditLimit/getCreditPayments/types";
+import {
+  IPayment,
+  paymentOptionValues,
+} from "@services/creditLimit/getCreditPayments/types";
 
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";
@@ -140,22 +143,26 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
                   code={creditData.id}
                   expiredValue={
                     creditData.options.find(
-                      (option) => option.label === "Valor vencido",
+                      (option) =>
+                        option.label === paymentOptionValues.EXPIREDVALUE,
                     )?.value ?? 0
                   }
                   nextDueDate={
                     creditData.options.find(
-                      (option) => option.label === "Próximo vencimiento",
+                      (option) =>
+                        option.label === paymentOptionValues.NEXTVALUE,
                     )?.value ?? 0
                   }
                   fullPayment={
                     creditData.options.find(
-                      (option) => option.label === "Pago total",
+                      (option) =>
+                        option.label === paymentOptionValues.TOTALVALUE,
                     )?.value ?? 0
                   }
                   description={
                     creditData.options.find(
-                      (option) => option.description === "Inmediato",
+                      (option) =>
+                        option.description === paymentOptionValues.INMEDIATE,
                     )?.description ?? ""
                   }
                   date={

@@ -3,6 +3,10 @@ import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Tag, Button, ITag, Icon } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
+import {
+  EPaymentOptionType,
+  IPaymentOption,
+} from "@services/creditLimit/getCreditPayments/types";
 
 import {
   StyledCardContainer,
@@ -11,10 +15,7 @@ import {
 } from "./styles";
 import { dataConsolidatedCredit } from "./config";
 import { CustomValueModal } from "../CustomValueModal";
-import {
-  EPaymentOptionType,
-  IPaymentOption,
-} from "@src/services/creditLimit/getCreditPayments/types";
+
 import { IApplyPayOption } from "../CustomValueModal/utils";
 
 export interface ICardConsolidatedCreditProps {
@@ -26,8 +27,8 @@ export interface ICardConsolidatedCreditProps {
   fullPayment: number;
   description: string;
   date: Date;
-  isMobile?: boolean;
   tags: ITag[];
+  isMobile?: boolean;
   initialValue?: number;
   allowCustomValue?: boolean;
   onApplyPayOption?: (
@@ -45,9 +46,9 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
     expiredValue,
     nextDueDate,
     fullPayment,
-    tags,
     description,
     date,
+    tags,
     initialValue,
     allowCustomValue,
   } = props;
@@ -174,7 +175,7 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
         </Stack>
         <Stack justifyContent="space-between" alignItems="center" width="100%">
           <Button
-            children="Eliminar"
+            children={dataConsolidatedCredit.button}
             iconBefore={<MdOutlineDelete />}
             variant="outlined"
             appearance="danger"
