@@ -139,7 +139,6 @@ export function SimulateCredit() {
         ? onlyBorrowerData
         : formData.borrowerData.borrowers,
     ],
-
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
