@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Stack, Text, Divider, Grid } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
-import { CardGray } from "@components/cards/CardGray";
 import { CardConsolidatedCredit } from "@pages/simulateCredit/components/CardConsolidatedCredit";
 import { currencyFormat } from "@utils/formatData/currency";
 import {

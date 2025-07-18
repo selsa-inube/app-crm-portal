@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
@@ -58,7 +58,8 @@ export function SimulateCredit() {
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla } = useContext(AppContext);
-  const { customerPublicCode } = useParams();
+  const customerPublicCode: string = customerData.publicCode;
+
   const [formState, setFormState] = useState({
     type: "",
     entity: "",

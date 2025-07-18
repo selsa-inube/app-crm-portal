@@ -7,6 +7,8 @@ import {
   EPaymentOptionType,
   IPaymentOption,
 } from "@services/creditLimit/getCreditPayments/types";
+import { CustomValueModal } from "@pages/addProspect/components/CustomValueModal";
+import { IApplyPayOption } from "@pages/addProspect/components/CustomValueModal/utils";
 
 import {
   StyledCardContainer,
@@ -14,9 +16,6 @@ import {
   StyledInputRadio,
 } from "./styles";
 import { dataConsolidatedCredit } from "./config";
-import { CustomValueModal } from "../CustomValueModal";
-
-import { IApplyPayOption } from "../CustomValueModal/utils";
 
 export interface ICardConsolidatedCreditProps {
   onUpdateTotal: (oldValue: number, newValue: number, label?: string) => void;
