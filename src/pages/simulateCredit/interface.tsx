@@ -20,7 +20,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IPaymentChannel } from "@services/types";
 import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
-import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
+import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 import { IPaymentCapacityResponse } from "@services/creditLimit/getBorrowePaymentCapacity/types";
