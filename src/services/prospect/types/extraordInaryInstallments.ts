@@ -1,8 +1,8 @@
 export interface IExtraordinaryInstallment {
-  id?: string;
   installmentAmount: number;
   installmentDate: string;
   paymentChannelAbbreviatedName: string;
+  id?: string;
 }
 export interface IExtraordinaryInstallments {
   creditProductCode: string;

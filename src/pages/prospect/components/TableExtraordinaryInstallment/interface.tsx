@@ -14,9 +14,8 @@ import {
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { DeleteModal } from "@components/modals/DeleteModal";
-import { EditSeriesModal } from "@components/modals/EditSeriesModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { IExtraordinaryInstallments } from "@services/prospect/types/extraordInaryInstallments";
 import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
 import { IProspect } from "@services/prospects/types";
 
@@ -43,7 +42,6 @@ interface ITableExtraordinaryInstallmentProps {
   service: boolean;
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
-  handleEdit: (row: TableExtraordinaryInstallmentProps) => void;
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
@@ -78,14 +76,10 @@ export function TableExtraordinaryInstallmentUI(
     isMobile,
     selectedDebtor,
     isOpenModalDelete,
-    isOpenModalEdit,
     prospectData,
     businessUnitPublicCode,
     service,
     setIsOpenModalDelete,
-    setIsOpenModalEdit,
-    handleEdit,
-    handleUpdate,
     usePagination,
     handleClose,
     setSentData,
@@ -105,12 +99,12 @@ export function TableExtraordinaryInstallmentUI(
   } = usePagination(extraordinaryInstallments);
 
   const { addFlag } = useFlag();
-  const initialValues: IExtraordinaryInstallments = {
+  const itemIdentifiersForUpdate: IExtraordinaryInstallments = {
     creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
     extraordinaryInstallments:
       prospectData?.creditProducts[0]?.extraordinaryInstallments
         ?.filter((ins) => {
-          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${ins.installmentDate}`;
+          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${ins.installmentDate},${ins.paymentChannelAbbreviatedName}`;
           return expectedId === selectedDebtor?.id;
         })
         ?.map((installment) => ({
@@ -134,10 +128,10 @@ export function TableExtraordinaryInstallmentUI(
       try {
         await removeExtraordinaryInstallment(
           businessUnitPublicCode,
-          initialValues,
+          itemIdentifiersForUpdate,
         );
 
-        setSentData?.(initialValues);
+        setSentData?.(itemIdentifiersForUpdate);
         setIsOpenModalDelete(false);
         handleClose?.();
       } catch (error: unknown) {
@@ -236,7 +230,6 @@ export function TableExtraordinaryInstallmentUI(
                   <Td key={action.key} type="custom">
                     {isMobile ? (
                       <ActionMobile
-                        handleEdit={() => handleEdit(row)}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
@@ -244,7 +237,6 @@ export function TableExtraordinaryInstallmentUI(
                       />
                     ) : (
                       <Detail
-                        handleEdit={() => handleEdit(row)}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
@@ -305,30 +297,6 @@ export function TableExtraordinaryInstallmentUI(
           handleClose={() => setIsOpenModalDelete(false)}
           handleDelete={handleDeleteAction}
           TextDelete={dataTableExtraordinaryInstallment.content}
-        />
-      )}
-      {isOpenModalEdit && (
-        <EditSeriesModal
-          handleClose={() => setIsOpenModalEdit(false)}
-          onSubmit={() => setIsOpenModalEdit(false)}
-          onConfirm={async (values) => {
-            if (!service) {
-              const updatedDebtor = {
-                ...selectedDebtor,
-                value: values.installmentAmount,
-                paymentMethod: values.paymentChannelAbbreviatedName,
-                datePayment: values.installmentDate,
-              };
-              await handleUpdate(updatedDebtor);
-              return;
-            }
-            await handleUpdate(values);
-          }}
-          prospectData={prospectData}
-          selectedDebtor={selectedDebtor}
-          setSentData={setSentData}
-          businessUnitPublicCode={businessUnitPublicCode}
-          service={service}
         />
       )}
     </Table>

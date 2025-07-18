@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   Select,
@@ -25,7 +25,7 @@ import { AppContext } from "@context/AppContext";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
-} from "@services/iProspect/saveExtraordinaryInstallments/types";
+} from "@services/prospect/types/extraordInaryInstallments";
 import { IProspect } from "@services/prospects/types";
 
 import { dataAddSeriesModal } from "./config";
@@ -99,27 +99,25 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     },
   });
 
-  const handleGenericSelectChange = (name: string, value: string) => {
+  const handleFieldChange = (name: string, value: string) => {
     formik.setFieldValue(name, value);
 
     if (name === "installmentDate") {
       const parsedDate = new Date(value);
-      const isoDate = !isNaN(parsedDate.getTime())
-        ? parsedDate.toISOString()
-        : "";
-
+      const isValidDate = !isNaN(parsedDate.getTime());
+      const dateString = isValidDate ? parsedDate.toISOString() : "";
       const selected = seriesModal?.find((s) => s.installmentDate === value);
 
       if (selected && setAddModal && setInstallmentState) {
         setAddModal(selected);
         setInstallmentState((prev) => ({
           ...prev,
-          installmentDate: isoDate || selected.installmentDate,
+          installmentDate: dateString || selected.installmentDate,
         }));
       } else if (setInstallmentState) {
         setInstallmentState((prev) => ({
           ...prev,
-          installmentDate: isoDate,
+          installmentDate: dateString,
         }));
       }
     }
@@ -143,7 +141,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     }
   };
 
-  const initialValues: IExtraordinaryInstallments = {
+  const itemIdentifiersForUpdate: IExtraordinaryInstallments = {
     creditProductCode:
       prospectData?.creditProducts?.[0]?.creditProductCode || "",
     extraordinaryInstallments: [
@@ -223,7 +221,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     }
 
     const updatedValues: IExtraordinaryInstallments = {
-      ...initialValues,
+      ...itemIdentifiersForUpdate,
       extraordinaryInstallments: installments,
     };
 
@@ -276,16 +274,19 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       });
     });
   };
+  const isFormValid = () => {
+    const count = parseInt(formik.values.value, 10);
 
-  useEffect(() => {
-    if (setInstallmentState) {
-      setInstallmentState({
-        installmentAmount: 0,
-        installmentDate: "",
-        paymentChannelAbbreviatedName: "",
-      });
-    }
-  }, []);
+    return (
+      installmentState?.paymentChannelAbbreviatedName &&
+      installmentState?.installmentAmount &&
+      installmentState?.installmentAmount > 0 &&
+      installmentState?.installmentDate &&
+      formik.values.frequency &&
+      !isNaN(count) &&
+      count > 0
+    );
+  };
 
   return (
     <BaseModal
@@ -298,11 +299,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       width={isMobile ? "280px" : "425px"}
       height={isMobile ? "auto" : "639px"}
       finalDivider
-      disabledNext={
-        !installmentState?.paymentChannelAbbreviatedName ||
-        !installmentState?.installmentAmount ||
-        !installmentState?.installmentDate
-      }
+      disabledNext={!isFormValid()}
     >
       <Stack gap="24px" direction="column">
         <Select
@@ -312,7 +309,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           placeholder={dataAddSeriesModal.placeHolderSelect}
           options={paymentMethodOptionsMock}
           value={formik.values.paymentChannelAbbreviatedName}
-          onChange={(name, value) => handleGenericSelectChange(name, value)}
+          onChange={(name, value) => handleFieldChange(name, value)}
           size="wide"
           fullwidth
           required
@@ -323,15 +320,16 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           id="value"
           label={dataAddSeriesModal.labelAmount}
           placeholder={dataAddSeriesModal.placeHolderAmount}
-          onChange={(e) => {
+          onChange={(event) => {
             handleChangeWithCurrency(
               { setFieldValue: formik.setFieldValue },
-              e,
+              event,
             );
           }}
           value={formik.values.value}
           size="wide"
           fullwidth
+          required
         />
 
         <Textfield
@@ -340,8 +338,11 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           label={dataAddSeriesModal.labelValue}
           placeholder={dataAddSeriesModal.placeHolderValue}
           iconBefore={<MdOutlineAttachMoney color={inube.palette.green.G400} />}
-          onChange={(e) =>
-            handleInstallmentAmountChange("installmentAmount", e.target.value)
+          onChange={(event) =>
+            handleInstallmentAmountChange(
+              "installmentAmount",
+              event.target.value,
+            )
           }
           value={
             installmentState?.installmentAmount &&
@@ -363,6 +364,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           onChange={(name, value) => formik.setFieldValue(name, value)}
           size="wide"
           fullwidth
+          required
         />
 
         <Select
@@ -372,7 +374,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           placeholder={dataAddSeriesModal.placeHolderSelect}
           options={paymentDateOptionsMock}
           value={formik.values.installmentDate}
-          onChange={(name, value) => handleGenericSelectChange(name, value)}
+          onChange={(name, value) => handleFieldChange(name, value)}
           size="wide"
           required
           fullwidth

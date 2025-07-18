@@ -31,7 +31,7 @@ import {
 } from "@pages/prospect/outlets/CardCommercialManagement/styles";
 import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
 import { IProspect } from "@services/prospects/types";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
@@ -39,6 +39,7 @@ import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 import { addCreditProduct } from "@services/creditProduct/addCreditProduct";
 import { IAddCreditProduct } from "@services/creditProduct/addCreditProduct/types";
 import { getSearchProspectById } from "@services/prospects";
+import { IExtraordinaryInstallments } from "@services/prospect/types/extraordInaryInstallments";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { IProspect } from "@services/prospects/types";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { IExtraordinaryInstallments } from "@services/prospect/types/extraordInaryInstallments";
 
 import {
   headersTableExtraordinaryInstallment,
@@ -88,10 +88,6 @@ export const TableExtraordinaryInstallment = (
   const [selectedDebtor, setSelectedDebtor] =
     useState<TableExtraordinaryInstallmentProps>({});
 
-  const handleEdit = (debtor: TableExtraordinaryInstallmentProps) => {
-    setSelectedDebtor(debtor);
-    setIsOpenModalEdit(true);
-  };
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
@@ -107,18 +103,45 @@ export const TableExtraordinaryInstallment = (
 
   useEffect(() => {
     if (prospectData?.creditProducts) {
-      const extraordinaryInstallmentsUpdate = prospectData.creditProducts
-        .flatMap((product) =>
+      const extraordinaryInstallmentsFlat = prospectData.creditProducts.flatMap(
+        (product) =>
           Array.isArray(product.extraordinaryInstallments)
             ? product.extraordinaryInstallments.map((installment) => ({
-                id: `${product.creditProductCode},${installment.installmentDate}`,
+                id: `${product.creditProductCode},${installment.installmentDate},${installment.paymentChannelAbbreviatedName}`,
                 datePayment: installment.installmentDate,
                 value: installment.installmentAmount,
                 paymentMethod: installment.paymentChannelAbbreviatedName,
+                creditProductCode: product.creditProductCode,
               }))
             : [],
-        )
-        .reverse();
+      );
+      const installmentsByUniqueKey = extraordinaryInstallmentsFlat.reduce(
+        (
+          installmentsAccumulator: Record<
+            string,
+            TableExtraordinaryInstallmentProps
+          >,
+          currentInstallment,
+        ) => {
+          const uniqueKey = `${currentInstallment.creditProductCode}_${currentInstallment.datePayment}_${currentInstallment.paymentMethod}`;
+
+          if (installmentsAccumulator[uniqueKey]) {
+            installmentsAccumulator[uniqueKey].value =
+              (installmentsAccumulator[uniqueKey].value as number) +
+              (currentInstallment.value as number);
+          } else {
+            installmentsAccumulator[uniqueKey] = { ...currentInstallment };
+          }
+
+          return installmentsAccumulator;
+        },
+        {},
+      );
+
+      const extraordinaryInstallmentsUpdate = Object.values(
+        installmentsByUniqueKey,
+      ).reverse() as TableExtraordinaryInstallmentProps[];
+
       setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
     setLoading(false);
@@ -164,7 +187,6 @@ export const TableExtraordinaryInstallment = (
       prospectData={prospectData}
       setIsOpenModalDelete={setIsOpenModalDelete}
       setIsOpenModalEdit={setIsOpenModalEdit}
-      handleEdit={handleEdit}
       handleUpdate={handleUpdateData}
       usePagination={usePagination}
       setSentData={setSentData ?? (() => {})}

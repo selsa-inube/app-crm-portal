@@ -9,7 +9,7 @@ import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
-} from "@services/iProspect/saveExtraordinaryInstallments/types";
+} from "@services/prospect/types/extraordInaryInstallments";
 
 import { TextLabels } from "./config";
 
@@ -43,6 +43,11 @@ export const ExtraordinaryPaymentModal = (
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const openAddSeriesModal = () => {
+    setInstallmentState({
+      installmentAmount: 0,
+      installmentDate: "",
+      paymentChannelAbbreviatedName: "",
+    });
     setAddSeriesModalOpen(true);
   };
   const [seriesModal, setSeriesModal] = useState<IExtraordinaryInstallment[]>(

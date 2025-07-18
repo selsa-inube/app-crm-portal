@@ -1,5 +1,5 @@
-import { saveExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import { IExtraordinaryInstallments } from "@services/prospect/types/extraordInaryInstallments";
+import { saveExtraordinaryInstallments } from "@services/prospect/saveExtraordinaryInstallments";
 
 const saveExtraordinaryInstallment = (
   businessUnitPublicCode: string,
