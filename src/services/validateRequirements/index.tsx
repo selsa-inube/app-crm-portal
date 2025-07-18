@@ -30,7 +30,7 @@ export const patchValidateRequirements = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-requests`,
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/requirements`,
         options,
       );
 

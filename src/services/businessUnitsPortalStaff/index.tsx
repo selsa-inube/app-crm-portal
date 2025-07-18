@@ -4,16 +4,16 @@ import { IBusinessUnitsPortalStaff } from "./types";
 import { mapBusinessUnitsPortalStaffToEntity } from "./mappers";
 
 const getBusinessUnitsPortalStaff = async (
-  publicCode: string,
+  portalPublicCode: string,
   identificationDocumentNumber: string,
 ): Promise<IBusinessUnitsPortalStaff[]> => {
-  const requestUrl = `${environment.IVITE_IPORTAL_STAFF_QUERY_PROCESS_SERVICE}/business-units-portal-staff/${identificationDocumentNumber}/${publicCode}`;
+  const requestUrl = `${environment.IVITE_IPORTAL_STAFF_QUERY_PROCESS_SERVICE}/business-units-portal-staff/${identificationDocumentNumber}/${portalPublicCode}`;
 
   try {
     const options: RequestInit = {
       method: "GET",
       headers: {
-        "X-Action": "SearchBusinessUnitsForAnOfficerLinpar",
+        "X-Action": "SearchBusinessUnitsForAnOfficer",
         "Content-type": "application/json; charset=UTF-8",
       },
     };

@@ -2,11 +2,11 @@ import { getBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff"
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 
 const validateBusinessUnits = async (
-  publicCode: string,
+  portalPublicCode: string,
   identificationDocumentNumber: string,
 ): Promise<IBusinessUnitsPortalStaff[]> => {
   const newData = await getBusinessUnitsPortalStaff(
-    publicCode,
+    portalPublicCode,
     identificationDocumentNumber,
   );
 
