@@ -473,7 +473,7 @@ export function AddProspect() {
         customerPublicCode,
         businessUnitPublicCode,
       );
-      setObligationPayment(data);
+      setObligationPayment(data ?? null);
     } catch (error: unknown) {
       const err = error as {
         message?: string;
