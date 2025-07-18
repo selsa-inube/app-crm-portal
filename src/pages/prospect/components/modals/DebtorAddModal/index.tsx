@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
-import { getIncomeSourcesById } from "@src/services/creditLimit/getIncomeSources";
-import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
+import { getIncomeSourcesById } from "@services/creditLimit/getIncomeSources";
+import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
 import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
 import { getAge } from "@utils/formatData/currency";
 import { getAllPropertyValues } from "@utils/mappingData/mappings";

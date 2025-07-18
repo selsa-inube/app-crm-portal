@@ -1,7 +1,8 @@
 export interface IFieldItem {
   label: string;
-  value: string;
+  value: string | number;
   showIcon?: boolean;
+  onShowModal?: () => void;
 }
 
 export interface IFieldsetData {
@@ -11,28 +12,35 @@ export interface IFieldsetData {
 
 export interface ISummaryItem {
   label: string;
-  value: string;
+  value: string | number;
   bold?: boolean;
   gray?: boolean;
   showIcon?: boolean;
+  onShowModal?: () => void;
 }
 
 export interface IValueWithIcon {
-  value: string;
+  value: string | number;
   showIcon?: boolean;
   isMobile: boolean;
-  onShowModal: () => void;
+  onShowModal?: () => void;
 }
 
 export interface IFieldsetSection {
   legend: string;
   items: IFieldItem[];
   isMobile: boolean;
-  onShowModal: () => void;
 }
 
 export interface ISummarySection {
   items: ISummaryItem[];
   isMobile: boolean;
-  onShowModal: () => void;
+  showIcon?: boolean;
+}
+
+export interface IFieldsetItem {
+  label: string;
+  value: string;
+  showIcon?: boolean;
+  onShowModal?: () => void;
 }

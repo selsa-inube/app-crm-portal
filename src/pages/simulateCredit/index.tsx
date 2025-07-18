@@ -9,12 +9,17 @@ import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { postSimulateCredit } from "@services/iProspect/simulateCredit";
 import { IPaymentChannel } from "@services/types";
-import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
+import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
 import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 import { getCreditPayments } from "@services/creditLimit/getCreditPayments";
 import { IPayment } from "@services/creditLimit/getCreditPayments/types";
+import {
+  IPaymentCapacity,
+  IPaymentCapacityResponse,
+} from "@services/creditLimit/getBorrowePaymentCapacity/types";
+import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -43,6 +48,8 @@ export function SimulateCredit() {
   const [clientPortfolio, setClientPortfolio] = useState<IObligations | null>(
     null,
   );
+  const [paymentCapacity, setPaymentCapacity] =
+    useState<IPaymentCapacityResponse | null>(null);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
@@ -465,6 +472,46 @@ export function SimulateCredit() {
     }
   };
 
+  const fetchCapacityAnalysis = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    const data: IPaymentCapacity = {
+      clientIdentificationNumber: "16378491",
+      dividends: 0,
+      financialIncome: 0,
+      leases: 0,
+      otherNonSalaryEmoluments: 0,
+      pensionAllowances: 0,
+      periodicSalary: 0,
+      personalBusinessUtilities: 0,
+      professionalFees: 0,
+      livingExpenseToIncomeRatio: 0,
+    };
+
+    try {
+      const paymentCapacity = await getBorrowerPaymentCapacityById(
+        businessUnitPublicCode,
+        data,
+      );
+      setPaymentCapacity(paymentCapacity ?? null);
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
   const fetchDataObligationPayment = async () => {
     if (!customerPublicCode) {
       return;
@@ -714,6 +761,7 @@ export function SimulateCredit() {
       fetchCreditLimit();
       fetchDataClientPortfolio();
       fetchDataObligationPayment();
+      fetchCapacityAnalysis();
     }
   }, [currentStep]);
 
@@ -776,6 +824,7 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
+        paymentCapacity={paymentCapacity}
       />
       {showConsultingModal && <Consulting />}
     </>

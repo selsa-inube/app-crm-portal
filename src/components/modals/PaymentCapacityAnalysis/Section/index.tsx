@@ -24,7 +24,7 @@ const ValueWithIcon = (props: IValueWithIcon) => {
       >
         {value}
       </Text>
-      {showIcon && (
+      {showIcon && onShowModal && (
         <Icon
           icon={<MdOutlineRemoveRedEye />}
           appearance="primary"
@@ -38,7 +38,7 @@ const ValueWithIcon = (props: IValueWithIcon) => {
 };
 
 const FieldsetSection = (props: IFieldsetSection) => {
-  const { legend, items, isMobile, onShowModal } = props;
+  const { legend, items, isMobile } = props;
 
   return (
     <Fieldset legend={legend} type="body" size={isMobile ? "small" : "medium"}>
@@ -66,7 +66,7 @@ const FieldsetSection = (props: IFieldsetSection) => {
                 <ValueWithIcon
                   value={item.value}
                   showIcon={item.showIcon}
-                  onShowModal={onShowModal}
+                  onShowModal={item.onShowModal}
                   isMobile={isMobile}
                 />
               </Stack>
@@ -79,7 +79,7 @@ const FieldsetSection = (props: IFieldsetSection) => {
 };
 
 const SummarySection = (props: ISummarySection) => {
-  const { items, isMobile, onShowModal } = props;
+  const { items, isMobile } = props;
 
   return (
     <Stack direction="column" gap="12px" margin="16px 0 0 0">
@@ -96,7 +96,7 @@ const SummarySection = (props: ISummarySection) => {
           <ValueWithIcon
             value={item.value}
             showIcon={item.showIcon}
-            onShowModal={onShowModal}
+            onShowModal={item.onShowModal}
             isMobile={isMobile}
           />
         </Stack>
