@@ -3,7 +3,7 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 
 import { mapCreditLimitEntity } from "./mapper";
 

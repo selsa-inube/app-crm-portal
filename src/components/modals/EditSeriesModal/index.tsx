@@ -36,6 +36,7 @@ export interface EditSeriesModalProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   businessUnitPublicCode: string;
+  service?: boolean;
 }
 
 export function EditSeriesModal(props: EditSeriesModalProps) {
@@ -46,6 +47,8 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
     selectedDebtor,
     setSentData,
     businessUnitPublicCode,
+    prospectData,
+    service = true,
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -72,6 +75,11 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
   });
 
   const handleExtraordinaryInstallment = async () => {
+    if (!service) {
+      await handleFormSubmit(formik.values, onConfirm);
+      handleClose();
+      return;
+    }
     const {
       installmentAmount,
       installmentDate,
@@ -79,8 +87,9 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
     } = formik.values;
 
     const data: IExtraordinaryInstallments = {
-      creditProductCode: "SC-000000038-1",
-      prospectId: "67f7e8f52c014414fca8b52d",
+      creditProductCode:
+        prospectData?.creditProducts?.[0]?.creditProductCode || "",
+      prospectId: prospectData?.prospectId || "",
       extraordinaryInstallments: [
         {
           installmentAmount: parseCurrencyString(installmentAmount.toString()),

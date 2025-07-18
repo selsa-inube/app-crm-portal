@@ -48,7 +48,7 @@ function BusinessUnits(props: IBusinessUnitsProps) {
       const selectJSON = JSON.stringify(selectedBusinessUnit);
       setBusinessUnitSigla(selectJSON);
     }
-    navigate("/login/loading-app");
+    navigate("/clients/select-client");
   };
 
   function filterBusinessUnits(

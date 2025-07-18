@@ -1,4 +1,4 @@
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 
 export const mapCreditLimitEntity = (
   data: Record<string, string | number | object>,

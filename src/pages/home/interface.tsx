@@ -7,7 +7,7 @@ import { InteractiveBox } from "@components/cards/interactiveBox";
 import { useNavigationConfig } from "@components/layout/AppPage/config/apps.config";
 import { userMenu } from "@config/menuMainConfiguration";
 
-import { GeneralHeader } from "../addProspect/components/GeneralHeader";
+import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import {
   StyledCollapse,
   StyledCollapseIcon,

@@ -24,7 +24,7 @@ import {
 import { ListModal } from "@components/modals/ListModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
-import { IBorrowerDocumentRule } from "@pages/SubmitCreditApplication/steps/attachedDocuments";
+import { IBorrowerDocumentRule } from "@pages/applyForCredit/steps/attachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
 
 import { headers, dataReport } from "./config";

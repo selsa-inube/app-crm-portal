@@ -13,15 +13,17 @@ import { TableExtraordinaryInstallmentUI } from "./interface";
 
 export interface TableExtraordinaryInstallmentProps {
   [key: string]: unknown;
-  sentData?: IExtraordinaryInstallments | null;
   prospectData?: IProspect;
   refreshKey?: number;
-  id?: string;
+  businessUnitPublicCode?: string;
+  extraordinary?: TableExtraordinaryInstallmentProps[];
+  service?: boolean;
   setSentData?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   handleClose?: () => void;
-  businessUnitPublicCode?: string;
+  handleDelete?: (id: string) => void;
+  handleUpdate?: (updatedDebtor: TableExtraordinaryInstallmentProps) => void;
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
@@ -70,9 +72,13 @@ export const TableExtraordinaryInstallment = (
   const {
     refreshKey,
     prospectData,
+    businessUnitPublicCode,
+    extraordinary,
+    service = true,
     setSentData,
     handleClose,
-    businessUnitPublicCode,
+    handleDelete,
+    handleUpdate,
   } = props;
 
   const headers = headersTableExtraordinaryInstallment;
@@ -118,24 +124,14 @@ export const TableExtraordinaryInstallment = (
     setLoading(false);
   }, [prospectData, refreshKey]);
 
-  const handleDelete = async (
-    id: string,
+  const handleUpdateData = async (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => {
-    try {
-      const updatedDebtors = extraordinaryInstallments.map((debtor) =>
-        debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
-      );
-      setExtraordinaryInstallments(updatedDebtors);
-      console.log(`Debtor with ID ${id} deleted successfully.`);
-    } catch (error) {
-      console.error("Failed to delete debtor:", error);
+    if (!service && typeof handleUpdate === "function") {
+      handleUpdate(updatedDebtor);
+      setIsOpenModalEdit(false);
+      return;
     }
-  };
-
-  const handleUpdate = async (
-    updatedDebtor: TableExtraordinaryInstallmentProps,
-  ) => {
     try {
       const updatedDebtors = extraordinaryInstallments.map((debtor) =>
         debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
@@ -143,9 +139,17 @@ export const TableExtraordinaryInstallment = (
       setExtraordinaryInstallments(updatedDebtors);
       setIsOpenModalEdit(false);
     } catch (error) {
-      console.error("Error updating debtor:", error);
+      console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (extraordinary && Array.isArray(extraordinary)) {
+      setExtraordinaryInstallments(extraordinary);
+      setLoading(false);
+    }
+  }, [extraordinary]);
+
   return (
     <TableExtraordinaryInstallmentUI
       loading={loading}
@@ -156,17 +160,18 @@ export const TableExtraordinaryInstallment = (
       selectedDebtor={selectedDebtor}
       isOpenModalDelete={isOpenModalDelete}
       isOpenModalEdit={isOpenModalEdit}
+      businessUnitPublicCode={businessUnitPublicCode ?? ""}
+      prospectData={prospectData}
       setIsOpenModalDelete={setIsOpenModalDelete}
       setIsOpenModalEdit={setIsOpenModalEdit}
       handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      handleUpdate={handleUpdate}
+      handleUpdate={handleUpdateData}
       usePagination={usePagination}
       setSentData={setSentData ?? (() => {})}
       handleClose={handleClose}
-      prospectData={prospectData}
       setSelectedDebtor={setSelectedDebtor}
-      businessUnitPublicCode={businessUnitPublicCode ?? ""}
+      handleDelete={handleDelete}
+      service={service}
     />
   );
 };
