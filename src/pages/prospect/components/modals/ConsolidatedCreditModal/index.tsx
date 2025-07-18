@@ -125,6 +125,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                       nextDueDate={item.next_due_date}
                       onUpdateTotal={() => {}}
                       title={item.consolidated_credit_title}
+                      description={""}
+                      tags={[]}
                     />
                   ))}
                 </Grid>

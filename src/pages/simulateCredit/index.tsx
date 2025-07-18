@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
@@ -13,6 +13,8 @@ import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types
 import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
 import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { getCreditPayments } from "@services/creditLimit/getCreditPayments";
+import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -43,6 +45,9 @@ export function SimulateCredit() {
   );
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
+    null,
+  );
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
@@ -53,7 +58,8 @@ export function SimulateCredit() {
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla } = useContext(AppContext);
-  const { customerPublicCode } = useParams();
+  const customerPublicCode: string = customerData.publicCode;
+
   const [formState, setFormState] = useState({
     type: "",
     entity: "",
@@ -134,11 +140,11 @@ export function SimulateCredit() {
               onlyBorrowerData.borrowerIdentificationNumber,
             borrowerIdentificationType:
               onlyBorrowerData.borrowerIdentificationType,
-            consolidatedAmount: item.value,
-            consolidatedAmountType: item.label,
-            creditProductCode: item.code,
-            estimatedDateOfConsolidation: "2025-06-12T15:04:05Z", // borrar en un futuro
-            lineOfCreditDescription: item.title,
+            consolidatedAmount: item.consolidatedAmount,
+            consolidatedAmountType: item.consolidatedAmountType,
+            creditProductCode: item.creditProductCode,
+            estimatedDateOfConsolidation: item.estimatedDateOfConsolidation, // borrar en un futuro
+            lineOfCreditDescription: item.lineOfCreditDescription,
           }))
         : [],
     linesOfCredit: formData.selectedProducts.map((product) => ({
@@ -459,6 +465,33 @@ export function SimulateCredit() {
     }
   };
 
+  const fetchDataObligationPayment = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    try {
+      const data = await getCreditPayments(
+        customerPublicCode,
+        businessUnitPublicCode,
+      );
+      setObligationPayment(data ?? null);
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  };
+
   useEffect(() => {
     if (customerData) {
       fetchCreditLineTerms();
@@ -680,6 +713,7 @@ export function SimulateCredit() {
     if (currentStep === stepsAddProspect.productSelection.id) {
       fetchCreditLimit();
       fetchDataClientPortfolio();
+      fetchDataObligationPayment();
     }
   }, [currentStep]);
 
@@ -731,6 +765,7 @@ export function SimulateCredit() {
         setIsCapacityAnalysisWarning={setIsCapacityAnalysisWarning}
         creditLineTerms={creditLineTerms}
         clientPortfolio={clientPortfolio as IObligations}
+        obligationPayments={obligationPayment as IPayment[]}
         assistedButtonText={assistedButtonText}
         isAlertIncome={isAlertIncome}
         isAlertObligation={isAlertObligation}

@@ -22,6 +22,7 @@ import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnaly
 import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
 import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -118,6 +119,7 @@ interface SimulateCreditUIProps {
   totalIncome: number;
   creditLineTerms?: ICreditLineTerms;
   clientPortfolio: IObligations;
+  obligationPayments: IPayment[];
   assistedButtonText: string;
   isAlertIncome: boolean;
   isAlertObligation: boolean;
@@ -163,6 +165,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     totalIncome,
     creditLineTerms,
     clientPortfolio,
+    obligationPayments,
     currentStep,
     assistedButtonText,
     isAlertIncome,
@@ -469,6 +472,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       onChange={(items) =>
                         handleFormDataChange("consolidatedCreditArray", items)
                       }
+                      data={obligationPayments}
                     />
                   )}
               </Stack>

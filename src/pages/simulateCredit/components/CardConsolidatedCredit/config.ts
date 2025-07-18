@@ -4,4 +4,5 @@ export const dataConsolidatedCredit = {
   fullPayment: "Pago total",
   arrears: "En mora",
   regularPayroll: "Nómina regular mensual",
+  button: "Eliminar",
 };

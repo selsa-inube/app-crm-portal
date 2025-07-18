@@ -51,8 +51,9 @@ Default.args = {
   expiredValue: 5000,
   nextDueDate: 3000,
   fullPayment: 8000,
-  arrears: false,
   date: new Date(),
+  description: "",
+  tags: [],
 } satisfies ICardConsolidatedCreditProps;
 
 export default story;
