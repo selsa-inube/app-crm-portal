@@ -5,17 +5,17 @@ import { useNavigate } from "react-router-dom";
 export const addConfig = {
   id: 1,
   title: "Crédito",
-  route: "/credit",
+  route: "/",
   crumbs: [
     {
-      path: "/",
+      path: "/home",
       label: "Inicio",
       id: "/home",
       isActive: true,
     },
     {
       path: "/credit",
-      label: "credito",
+      label: "Crédito",
       id: "/credito",
       isActive: false,
     },

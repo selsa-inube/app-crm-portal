@@ -178,6 +178,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setFormState,
     paymentCapacity,
   } = props;
+  //const navigate = useNavigate();
 
   return (
     <>
@@ -197,7 +198,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
             direction="column"
             alignItems={isMobile ? "normal" : "center"}
             margin="20px 0px"
-            padding="24px"
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
               <GeneralHeader

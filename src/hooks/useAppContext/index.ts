@@ -9,8 +9,7 @@ import {
 } from "@context/AppContext/utils";
 import { ICRMPortalData } from "@context/AppContext/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import { getStaff } from "@services/staffs";
-
+import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 
 interface IBusinessUnits {

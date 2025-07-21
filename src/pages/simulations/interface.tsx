@@ -12,7 +12,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { IProspect } from "@services/prospects/types";
 import { IPaymentChannel } from "@services/types";
 import { currencyFormat } from "@utils/formatData/currency";
-import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
+import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";

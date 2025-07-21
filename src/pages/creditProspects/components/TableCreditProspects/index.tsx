@@ -13,7 +13,7 @@ import {
 } from "@inubekit/inubekit";
 
 import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";
-import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
+import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 
 import { usePagination } from "./utils";
 import { tableConfig } from "./config";

@@ -10,7 +10,7 @@ import { getMonthsElapsed } from "@utils/formatData/currency";
 import { getSearchProspectByCode } from "@services/prospects/AllProspects";
 import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
 import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
-import { MessagingPlatform } from "@services/enum/messagingPlatform";
+import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";

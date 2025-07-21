@@ -4,14 +4,14 @@ export const addConfig = {
   route: "/credit",
   crumbs: [
     {
-      path: "/",
+      path: "/home",
       label: "Inicio",
       id: "/home",
       isActive: true,
     },
     {
       path: "/credit",
-      label: "credito",
+      label: "Crédito",
       id: "/credito",
       isActive: false,
     },

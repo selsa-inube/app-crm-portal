@@ -6,7 +6,7 @@ import { Simulations } from "@pages/simulations";
 import { ApplyForCredit } from "@pages/applyForCredit";
 import { SimulateCredit } from "@pages/simulateCredit";
 import { CreditProspects } from "@pages/creditProspects";
-import { Credit } from "@pages/creditProspect";
+import { Credit } from "@pages/credit";
 
 function CreditRoutes() {
   return (
