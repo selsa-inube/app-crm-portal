@@ -4,10 +4,9 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
+import { useAppContext } from "@hooks/useAppContext";
 
 import { HomeUI } from "./interface";
-import { IOptionStaff } from "@src/services/staffs/searchOptionForStaff/types";
-import { getSearchOptionForStaff } from "@src/services/staffs/searchOptionForStaff";
 
 const Home = () => {
   const { eventData, businessUnitsToTheStaff, setBusinessUnitSigla } =
@@ -28,13 +27,13 @@ const Home = () => {
   const collapseMenuRef = useRef<HTMLDivElement>(null);
   const businessUnitChangeRef = useRef<HTMLDivElement>(null);
 
-  const [dataStaff, setDataStaff] = useState<IOptionStaff[]>([]);
-
   const dataHeader = {
     name: customerData.fullName,
     status:
       customerData?.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
+
+  const { optionStaffData } = useAppContext();
 
   const handleLogoClick = (businessUnit: IBusinessUnitsPortalStaff) => {
     const selectJSON = JSON.stringify(businessUnit);
@@ -48,23 +47,6 @@ const Home = () => {
       setLoading(false);
     }, 1000);
     return () => clearTimeout(timer);
-  }, []);
-
-  const fectchCreditCards = async () => {
-    try {
-      const result = await getSearchOptionForStaff(
-        "Crm-portal", //businessUnitPublicCode,
-        "test", //prospectCode!,
-        "ca.rincon97@gmail.co",
-      );
-      setDataStaff(result);
-    } catch (error) {
-      console.error("Error fetching credit cards:", error);
-    }
-  };
-
-  useEffect(() => {
-    fectchCreditCards();
   }, []);
 
   return (
@@ -83,7 +65,7 @@ const Home = () => {
       handleLogoClick={handleLogoClick}
       dataHeader={dataHeader}
       loading={loading}
-      dataOptions={dataStaff}
+      dataOptions={optionStaffData}
     />
   );
 };

@@ -13,7 +13,7 @@ import {
 
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
-import { TableCreditProspects } from "@src/pages/creditProspects/components/TableCreditProspects";
+import { TableCreditProspects } from "@pages/creditProspects/components/TableCreditProspects";
 import { getProspectsByCustomerCode } from "@services/prospects/ProspectsByCustomerCode";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";

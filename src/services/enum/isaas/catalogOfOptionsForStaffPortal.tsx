@@ -13,14 +13,34 @@ interface IOptionStaffPortalItem {
   icon: React.ReactNode;
   descriptionUse: string;
   url: string;
+  subOptions?: {
+    id: string;
+    icon: React.ReactNode;
+    descriptionUse: string;
+    url: string;
+  }[];
 }
 
 export const OptionStaffPortal: IOptionStaffPortalItem[] = [
   {
-    id: "Credito",
+    id: "Crédito",
     icon: getIconByName("MdOutlineAccountBalance"),
     descriptionUse: "Manage your credit options",
     url: "/credit",
+    subOptions: [
+      {
+        id: "Simulaciones de crédito",
+        icon: getIconByName("MdOutlineAttachMoney"),
+        descriptionUse: "Descripción del Crédito 1",
+        url: "/credit/simulations",
+      },
+      {
+        id: "Solicitudes de crédito",
+        icon: getIconByName("MdMoneyOff"),
+        descriptionUse: "Descripción del Crédito 2",
+        url: "/credit/simulaciones-2",
+      },
+    ],
   },
   {
     id: "Ahorros",
