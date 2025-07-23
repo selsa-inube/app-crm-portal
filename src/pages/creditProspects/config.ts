@@ -1,6 +1,6 @@
 export const addConfig = {
   id: 1,
-  title: "Prospectos aaade crédito",
+  title: "Prospectos de crédito",
   route: "/credit",
   crumbs: [
     {
