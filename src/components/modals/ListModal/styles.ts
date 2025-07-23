@@ -62,3 +62,8 @@ export const StyledAttachContainer = styled.div<IStyledAttachContainer>`
 export const StyledContainerClose = styled.div`
   cursor: pointer;
 `;
+
+export const StyledDocuments = styled.ul`
+  padding-inline-start: 2px;
+  margin-block: 8px;
+`;

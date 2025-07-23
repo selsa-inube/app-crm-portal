@@ -23,17 +23,18 @@ import { AppContext } from "@context/AppContext";
 import { IDocumentUpload } from "@pages/applyForCredit/types";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
+import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import { DocumentViewer } from "../DocumentViewer";
 import {
   StyledAttachContainer,
   StyledContainerClose,
   StyledContainerContent,
+  StyledDocuments,
   StyledItem,
   StyledModal,
 } from "./styles";
 import { listModalData } from "./config";
-import { truncateTextToMaxLength } from "@src/utils/formatData/text";
 
 export interface IOptionButtons {
   label: string;
@@ -146,12 +147,7 @@ export const ListModal = (props: IListModalProps) => {
     const maxLength = isMobile ? 20 : 40;
 
     return (
-      <ul
-        style={{
-          paddingInlineStart: "2px",
-          marginBlock: "8px",
-        }}
-      >
+      <StyledDocuments>
         {data?.map((element) => (
           <StyledItem key={element.id}>
             <Text>{truncateTextToMaxLength(element.name, maxLength)}</Text>
@@ -171,7 +167,7 @@ export const ListModal = (props: IListModalProps) => {
             />
           </StyledItem>
         ))}
-      </ul>
+      </StyledDocuments>
     );
   };
 
