@@ -55,17 +55,6 @@ const ruleIncludeExtraordinaryInstallments = (
   generalToggleChecked: boolean,
   selectedProducts: string[],
 ) => {
-  console.log(
-    generalToggleChecked,
-    "mocksRules called with rule ruleIncludeExtraorggggggggdinaryInstallments: ",
-    rule,
-    "logic validation ",
-    !generalToggleChecked && selectedProducts.includes("Hogar"),
-    "rule.conditions[0].value: ",
-    rule.conditions[0].value,
-    "SELECTEC PROEUCTS: ",
-    selectedProducts,
-  );
   if (!generalToggleChecked && selectedProducts.includes("Hogar")) {
     return ruleIncludeExtraordinaryInstallmentsEnableQuestion;
   }

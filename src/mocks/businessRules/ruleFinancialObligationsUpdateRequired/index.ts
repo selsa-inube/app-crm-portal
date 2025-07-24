@@ -2,7 +2,7 @@ const ruleFinancialObligationsUpdateRequired = [
   {
     name: "FinancialObligationsUpdateRequired",
     dataType: "Alphabetical",
-    value: "Y",
+    value: "N",
     valueUse: "EqualTo",
     startDate: "2025-06-03T00:00:00Z",
     typeDecision: "Permanent",

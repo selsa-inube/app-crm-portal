@@ -786,7 +786,7 @@ export function SimulateCredit() {
       }));
     }
   }, [clientPortfolio]);
-
+  console.log(currentStepsNumber, " ****steps: ", steps);
   return (
     <>
       <SimulateCreditUI

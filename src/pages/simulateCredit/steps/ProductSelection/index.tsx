@@ -117,7 +117,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     if (key === "includeExtraordinaryInstallments") {
       return !shouldShowPrograming;
     }
-    if (key === "updateIncomeSources" || key === "updateFinancialObligations") {
+    if (key === "updateIncomeSources") {
       return !shouldShowIncomeUpdate;
     }
     return false;
