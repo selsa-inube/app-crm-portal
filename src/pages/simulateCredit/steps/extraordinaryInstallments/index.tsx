@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { MdOutlineAdd } from "react-icons/md";
 import { Stack, Icon, Button } from "@inubekit/inubekit";
 
@@ -25,6 +25,7 @@ export function ExtraordinaryInstallments(
 
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const isInitialMount = useRef(true);
 
   const initialInstallmentState = {
     installmentAmount: 0,
@@ -57,6 +58,18 @@ export function ExtraordinaryInstallments(
   useEffect(() => {
     setExtraordinary(initialValues || []);
   }, [initialValues]);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    const timeoutId = setTimeout(() => {
+      handleOnChange(extraordinary);
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [extraordinary, handleOnChange]);
 
   const handleSubmit = (installment: {
     installmentDate: string;
@@ -93,7 +106,6 @@ export function ExtraordinaryInstallments(
         updated = [...prev, newPayment];
       }
 
-      handleOnChange(updated);
       return updated;
     });
 
@@ -103,7 +115,6 @@ export function ExtraordinaryInstallments(
   const handleDelete = (id: string) => {
     setExtraordinary((prev) => {
       const updated = prev.filter((item) => item.id !== id);
-      handleOnChange(updated);
       return updated;
     });
   };

@@ -9,20 +9,17 @@ import {
   Th,
   Thead,
   Tr,
-  useFlag,
 } from "@inubekit/inubekit";
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { IExtraordinaryInstallments } from "@services/prospect/types/extraordInaryInstallments";
-import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
 import { IProspect } from "@services/prospects/types";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";
 import { Detail } from "./Detail";
-import { removeExtraordinaryInstallment } from "./utils";
 
 interface ITableExtraordinaryInstallmentProps {
   loading: boolean;
@@ -45,7 +42,7 @@ interface ITableExtraordinaryInstallmentProps {
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
-  usePagination: (data: TableExtraordinaryInstallmentProps[]) => {
+  usePagination: {
     totalRecords: number;
     handleStartPage: () => void;
     handlePrevPage: () => void;
@@ -63,6 +60,8 @@ interface ITableExtraordinaryInstallmentProps {
     React.SetStateAction<TableExtraordinaryInstallmentProps>
   >;
   handleDelete?: (id: string) => void;
+  itemIdentifiersForUpdate: IExtraordinaryInstallments;
+  handleDeleteAction: () => Promise<void>;
 }
 
 export function TableExtraordinaryInstallmentUI(
@@ -74,17 +73,11 @@ export function TableExtraordinaryInstallmentUI(
     visbleActions,
     extraordinaryInstallments,
     isMobile,
-    selectedDebtor,
     isOpenModalDelete,
-    prospectData,
-    businessUnitPublicCode,
-    service,
     setIsOpenModalDelete,
     usePagination,
-    handleClose,
-    setSentData,
     setSelectedDebtor,
-    handleDelete,
+    handleDeleteAction,
   } = props;
 
   const {
@@ -96,63 +89,7 @@ export function TableExtraordinaryInstallmentUI(
     handlePrevPage,
     handleNextPage,
     handleEndPage,
-  } = usePagination(extraordinaryInstallments);
-
-  const { addFlag } = useFlag();
-  const itemIdentifiersForUpdate: IExtraordinaryInstallments = {
-    creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
-    extraordinaryInstallments:
-      prospectData?.creditProducts[0]?.extraordinaryInstallments
-        ?.filter((ins) => {
-          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${ins.installmentDate},${ins.paymentChannelAbbreviatedName}`;
-          return expectedId === selectedDebtor?.id;
-        })
-        ?.map((installment) => ({
-          installmentDate:
-            typeof installment.installmentDate === "string"
-              ? installment.installmentDate
-              : new Date(installment.installmentDate).toISOString(),
-          installmentAmount: Number(installment.installmentAmount),
-          paymentChannelAbbreviatedName: String(
-            installment.paymentChannelAbbreviatedName,
-          ),
-        })) || [],
-    prospectId: prospectData?.prospectId || "",
-  };
-
-  const handleDeleteAction = async () => {
-    if (handleDelete && selectedDebtor.id) {
-      handleDelete(selectedDebtor.id as string);
-      setIsOpenModalDelete(false);
-    } else if (service) {
-      try {
-        await removeExtraordinaryInstallment(
-          businessUnitPublicCode,
-          itemIdentifiersForUpdate,
-        );
-
-        setSentData?.(itemIdentifiersForUpdate);
-        setIsOpenModalDelete(false);
-        handleClose?.();
-      } catch (error: unknown) {
-        const err = error as {
-          message?: string;
-          status?: number;
-          data?: { description?: string; code?: string };
-        };
-        const code = err?.data?.code ? `[${err.data.code}] ` : "";
-        const description =
-          code + (err?.message || "") + (err?.data?.description || "");
-
-        addFlag({
-          title: TextLabels.titleError,
-          description,
-          appearance: "danger",
-          duration: 5000,
-        });
-      }
-    }
-  };
+  } = usePagination;
 
   return (
     <Table>
