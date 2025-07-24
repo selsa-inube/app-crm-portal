@@ -1,4 +1,4 @@
-import { DmEtapasPrs, ICreditRequest } from "@services/types";
+import { DmEtapasPrs, ICreditRequest } from "../types";
 
 export const mapCreditRequestToEntity = (
   data: Record<string, string | number | object>,

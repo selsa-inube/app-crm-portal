@@ -1,16 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { IStaffPortalByBusinessManager } from "@services/staffPortal/types";
-import { IBusinessManagers } from "@services/businessManager/types";
 
+import { IStaffPortalByBusinessManager } from "@services/staff/types";
+import { IBusinessManagers } from "@services/businessManager/types";
 import {
   validateBusinessManagers,
   validateConsultation,
 } from "@context/AppContext/utils";
 import { ICRMPortalData } from "@context/AppContext/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import { getStaff } from "@services/staffs";
-
+import { getStaff } from "@services/staff/staffs";
 import { decrypt } from "@utils/encrypt/encrypt";
 
 interface IBusinessUnits {

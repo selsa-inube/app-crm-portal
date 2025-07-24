@@ -4,12 +4,12 @@ import { Stack, Icon, useMediaQuery, Button } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment";
-import { IProspect } from "@services/prospects/types";
+import { IProspect } from "@services/prospect/types";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
-} from "@services/iProspect/saveExtraordinaryInstallments/types";
+} from "@services/prospect/types";
 
 import { TextLabels } from "./config";
 

@@ -1,4 +1,4 @@
-import { IPaymentChannel } from "@services/types";
+import { IPaymentChannel } from "@services/creditRequest/types";
 
 export const mockPaymentChannel: IPaymentChannel[] = [
   { id: "1", label: "Nomina Colpensiones", value: "nomina-colpensiones" },

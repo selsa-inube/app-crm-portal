@@ -7,18 +7,18 @@ import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
-import { postSimulateCredit } from "@services/iProspect/simulateCredit";
-import { IPaymentChannel } from "@services/types";
-import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
-import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
-import { getClientPortfolioObligationsById } from "@services/creditLimit/getClientPortfolioObligations";
-import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
-import { getCreditPayments } from "@services/creditLimit/getCreditPayments";
-import { IPayment } from "@services/creditLimit/getCreditPayments/types";
+import { postSimulateCredit } from "@services/prospect/simulateCredit";
+import { IPaymentChannel } from "@services/creditRequest/types";
+import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
+import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
+import { IObligations } from "@services/creditRequest/types";
+import { getCreditPayments } from "@services/portfolioObligation/getCreditPayments";
+import { IPayment } from "@services/portfolioObligation/getCreditPayments/types";
 import {
   IPaymentCapacity,
   IPaymentCapacityResponse,
-} from "@services/creditLimit/getBorrowePaymentCapacity/types";
+  IIncomeSources,
+} from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 
 import { stepsAddProspect } from "./config/addProspect.config";

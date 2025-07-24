@@ -3,7 +3,7 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IIncomeSources } from "./types";
+import { IIncomeSources } from "../types";
 
 const getIncomeSourcesById = async (
   publicCode: string,

@@ -7,7 +7,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import {
   IPayment,
   paymentOptionValues,
-} from "@services/creditLimit/getCreditPayments/types";
+} from "@services/portfolioObligation/getCreditPayments/types";
 
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";

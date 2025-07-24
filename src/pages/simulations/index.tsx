@@ -3,15 +3,17 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
-import { getSearchProspectByCode } from "@services/prospects/AllProspects";
-import { IProspect } from "@services/prospects/types";
+import { getSearchProspectByCode } from "@services/prospect/AllProspects";
+import {
+  IProspect,
+  IExtraordinaryInstallments,
+} from "@services/prospect/types";
 import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
-import { ICreditRequest, IPaymentChannel } from "@services/types";
+import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import { ruleConfig } from "../applyForCredit/config/configRules";
 import { evaluateRule } from "../applyForCredit/evaluateRule";

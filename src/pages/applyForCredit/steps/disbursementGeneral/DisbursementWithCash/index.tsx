@@ -23,7 +23,7 @@ import {
 import { GeneralInformationForm } from "@pages/applyForCredit/components/GeneralInformationForm";
 import { IDisbursementGeneral } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
+import { getSearchCustomerByCode } from "@services/customer/AllCustomers";
 interface IDisbursementWithCashProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;

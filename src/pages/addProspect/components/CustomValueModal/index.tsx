@@ -13,7 +13,7 @@ import {
   useMediaQuery,
 } from "@inubekit/inubekit";
 
-import { IPaymentOption } from "@services/creditLimit/getCreditPayments/types";
+import { IPaymentOption } from "@services/portfolioObligation/getCreditPayments/types";
 import {
   currencyFormat,
   parseCurrencyString,

@@ -8,16 +8,19 @@ import { CardValues } from "@components/cards/cardValues";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ConsolidatedCredits } from "@pages/prospect/components/modals/ConsolidatedCreditModal";
 import { DeductibleExpensesModal } from "@pages/prospect/components/modals/DeductibleExpensesModal";
-import { IProspect, ICreditProduct } from "@services/prospects/types";
-import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
-import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
+import {
+  IProspect,
+  ICreditProduct,
+  IProspectSummaryById,
+} from "@services/prospect/types";
+import { getSearchProspectSummaryById } from "@services/prospect/ProspectSummaryById";
 import { AppContext } from "@context/AppContext";
 import { EditProductModal } from "@components/modals/ProspectProductModal";
-import { Schedule } from "@services/enums";
-import { getAllDeductibleExpensesById } from "@services/prospects/deductibleExpenses";
-import { RemoveCreditProduct } from "@services/creditProduct/removeCreditProduct";
-import { updateCreditProduct } from "@services/creditProduct/updateCreditProduct";
-import { getSearchProspectById } from "@services/prospects";
+import { Schedule } from "@services/enum/schedule";
+import { getAllDeductibleExpensesById } from "@services/prospect/deductibleExpenses";
+import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
+import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
+import { getSearchProspectById } from "@services/prospect/searchProspectById";
 
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";
@@ -178,7 +181,6 @@ export const CardCommercialManagement = (
     if (prospectData) {
       fetchData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitPublicCode, prospectData?.prospectId]);
 
   useEffect(() => {

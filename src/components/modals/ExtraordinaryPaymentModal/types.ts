@@ -1,4 +1,11 @@
-import { IExtraordinaryPayment } from "@services/types";
+interface IExtraordinaryPayment {
+  id: number | string;
+  datePayment: string;
+  amount?: number;
+  value: number;
+  paymentMethod: string;
+  frequency?: string;
+}
 interface IHeaders {
   label: string;
   key: keyof IExtraordinaryPayment;

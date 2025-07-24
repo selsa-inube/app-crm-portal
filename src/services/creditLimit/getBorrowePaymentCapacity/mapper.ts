@@ -1,4 +1,4 @@
-import { IPaymentCapacityResponse } from "./types";
+import { IPaymentCapacityResponse } from "../types";
 
 export const mapPaymentCapacityResponse = (
   response: IPaymentCapacityResponse,

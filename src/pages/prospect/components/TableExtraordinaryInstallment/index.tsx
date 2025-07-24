@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 
-import { IProspect } from "@services/prospects/types";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import {
+  IProspect,
+  IExtraordinaryInstallments,
+} from "@services/prospect/types";
 
 import {
   headersTableExtraordinaryInstallment,

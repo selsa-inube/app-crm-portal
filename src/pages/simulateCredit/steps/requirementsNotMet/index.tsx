@@ -4,10 +4,10 @@ import { Stack, Text, Icon, useFlag, Spinner } from "@inubekit/inubekit";
 
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
 import { Fieldset } from "@components/data/Fieldset";
-import { patchValidateRequirements } from "@services/validateRequirements";
+import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { IProspect } from "@services/prospects/types";
-import { IValidateRequirement } from "@services/validateRequirements/types";
+import { IProspect } from "@services/prospect/types";
+import { IValidateRequirement } from "@services/requirement/types";
 
 import { dataError } from "./config";
 

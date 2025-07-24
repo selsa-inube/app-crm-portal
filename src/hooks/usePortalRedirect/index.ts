@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { IStaffPortalByBusinessManager } from "@services/staffPortal/types";
+import { IStaffPortalByBusinessManager } from "@services/staff/types";
 import { IBusinessManagers } from "@services/businessManager/types";
-import { getStaffPortalsByBusinessManager } from "@services/staffPortal";
+import { getStaffPortalsByBusinessManager } from "@services/staff/staffPortal";
 import { getBusinessManagers } from "@services/businessManager";
 import { decrypt, encrypt } from "@utils/encrypt/encrypt";
 

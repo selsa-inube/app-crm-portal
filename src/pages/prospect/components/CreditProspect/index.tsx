@@ -19,8 +19,6 @@ import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
-import { ICreditProductProspect, IPaymentChannel } from "@services/types";
-import { mockProspectCredit } from "@mocks/prospect/prospectCredit.mock";
 import {
   incomeOptions,
   menuOptions,
@@ -30,15 +28,19 @@ import {
   StyledVerticalDivider,
 } from "@pages/prospect/outlets/CardCommercialManagement/styles";
 import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
-import { IProspect } from "@services/prospects/types";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
-import { getCreditLimit } from "@services/creditRequest/getCreditLimit";
-import { addCreditProduct } from "@services/creditProduct/addCreditProduct";
-import { IAddCreditProduct } from "@services/creditProduct/addCreditProduct/types";
-import { getSearchProspectById } from "@services/prospects";
+import {
+  IAddCreditProduct,
+  ICreditProduct,
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@services/prospect/types";
+import { IPaymentChannel } from "@services/creditRequest/types";
+import { addCreditProduct } from "@services/prospect/addCreditProduct";
+import { getSearchProspectById } from "@services/prospect/searchProspectById";
+import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
@@ -89,8 +91,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [incomeData, setIncomeData] = useState<Record<string, IIncomeSources>>(
     {},
   );
-  const [prospectProducts, setProspectProducts] =
-    useState<ICreditProductProspect>();
+  const [prospectProducts, setProspectProducts] = useState<ICreditProduct>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [pdfProspect, setPdfProspect] = useState<string | null>(null);
 
@@ -113,29 +114,6 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const { id } = useParams();
   const dataCommercialManagementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (id) {
-      const foundProspect = mockProspectCredit.find(
-        (prospect) => prospect.public_code === id,
-      );
-      if (foundProspect) {
-        const mockCredit = foundProspect.consolidated_credit[0];
-        setForm({
-          borrower: foundProspect.borrower[0].borrower_name,
-          monthlySalary: mockCredit.monthly_salary ?? 0,
-          otherMonthlyPayments: mockCredit.other_monthly_payments ?? 0,
-          pensionAllowances: mockCredit.pension_allowances ?? 0,
-          leases: mockCredit.leases ?? 0,
-          dividendsOrShares: mockCredit.dividends_or_shares ?? 0,
-          financialReturns: mockCredit.financial_returns ?? 0,
-          averageMonthlyProfit: mockCredit.average_monthly_profit ?? 0,
-          monthlyFees: mockCredit.monthly_fees ?? 0,
-          total: undefined,
-        });
-      }
-    }
-  }, [id]);
 
   const [form, setForm] = useState({
     borrower: "",
@@ -502,7 +480,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   only
                   options={menuOptions(
                     handleOpenModal,
-                    !prospectProducts?.ordinary_installment_for_principal,
+                    !prospectProducts?.ordinaryInstallmentsForPrincipal,
                   )}
                   onMouseLeave={showMenu}
                 />

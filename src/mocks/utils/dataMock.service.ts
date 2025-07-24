@@ -1,5 +1,5 @@
 import localforage from "localforage";
-import { ICreditProduct } from "@services/prospects/types";
+import { ICreditProduct } from "@services/prospect/types";
 
 export async function intializedData<T>(option: string, data: T[]) {
   try {

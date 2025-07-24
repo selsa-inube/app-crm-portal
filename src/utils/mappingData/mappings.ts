@@ -1,4 +1,5 @@
-import { MaritalStatus, EconomicActivity, Schedule } from "@services/enums";
+import { EconomicActivity, MaritalStatus } from "@services/enum/marital";
+import { Schedule } from "@services/enum/schedule";
 
 export const getMaritalStatusInSpanish = (
   status: keyof typeof MaritalStatus,
