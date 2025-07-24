@@ -91,7 +91,7 @@ export interface IProspect {
   gracePeriodType: string;
   moneyDestinationAbbreviatedName: string;
   bondValue: number;
-  borrowers: IBorrower[] | unknown;
+  borrowers: IBorrower[];
   consolidatedCredits: IConsolidatedCredit[];
   creditProducts: ICreditProduct[];
   outlays: IOutlay[];
@@ -141,4 +141,25 @@ export interface IShareCreditProspect {
 }
 export interface IShareCreditProspectResponse {
   codeNotification: string;
+}
+
+export interface IProspectBorrower {
+  prospectId: string;
+  prospectCode: string;
+  state: string;
+  requestedAmount: number;
+  installmentLimit: number;
+  termLimit: number;
+  timeOfCreation: Date;
+  selectedRegularPaymentSchedule: string;
+  selectedRateType: string;
+  preferredPaymentChannelAbbreviatedName: string;
+  gracePeriod: number;
+  gracePeriodType: string;
+  moneyDestinationAbbreviatedName: string;
+  bondValue: number;
+  borrowers: unknown;
+  consolidatedCredits: IConsolidatedCredit[];
+  creditProducts: ICreditProduct[];
+  outlays: IOutlay[];
 }

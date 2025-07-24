@@ -16,7 +16,7 @@ import { AppContext } from "@context/AppContext";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { IBorrowerProperty } from "@services/creditLimit/types";
 import { IBorrowerData } from "@pages/applyForCredit/types";
-import { IProspect } from "@services/prospect/types";
+import { IProspectBorrower } from "@services/prospect/types";
 
 import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
@@ -27,7 +27,7 @@ interface borrowersProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleOnChange: (values: any) => void;
   onUpdate?: (updatedBorrower: Borrower) => void;
-  prospectData: IProspect;
+  prospectData: IProspectBorrower;
   initialValues: IBorrowerData;
   isMobile: boolean;
   valueRule: string[];
