@@ -14,9 +14,9 @@ import { dataSubmitApplication } from "@pages/applyForCredit/config/config";
 import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { IBorrowerProperty } from "@services/creditLimit/getIncomeSources/types";
+import { IBorrowerProperty } from "@services/creditLimit/types";
 import { IBorrowerData } from "@pages/applyForCredit/types";
-import { IProspect } from "@services/types";
+import { IProspect } from "@services/prospect/types";
 
 import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
@@ -61,8 +61,8 @@ export function Borrowers(props: borrowersProps) {
 
   const dataDebtorDetail = Array.isArray(prospectData.borrowers)
     ? [...prospectData.borrowers].sort((a, b) => {
-        if (a.borrower_type === "MainBorrower") return -1;
-        if (b.borrower_type === "MainBorrower") return 1;
+        if (a.borrowerType === "MainBorrower") return -1;
+        if (b.borrowerType === "MainBorrower") return 1;
         return 0;
       })
     : [];

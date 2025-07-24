@@ -3,8 +3,8 @@ import { Stack, Divider, Assisted } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
-import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
-import { IProspect } from "@services/types";
+import { IIncomeSources } from "@services/creditLimit/types";
+import { IProspect } from "@services/prospect/types";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";

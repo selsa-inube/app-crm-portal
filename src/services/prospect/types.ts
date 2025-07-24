@@ -91,7 +91,7 @@ export interface IProspect {
   gracePeriodType: string;
   moneyDestinationAbbreviatedName: string;
   bondValue: number;
-  borrowers: IBorrower[];
+  borrowers: IBorrower[] | unknown;
   consolidatedCredits: IConsolidatedCredit[];
   creditProducts: ICreditProduct[];
   outlays: IOutlay[];
