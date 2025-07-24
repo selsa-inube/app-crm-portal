@@ -20,6 +20,7 @@ import {
   IPaymentCapacityResponse,
 } from "@services/creditLimit/getBorrowePaymentCapacity/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
+import { mocksRules } from "@mocks/businessRules";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -186,7 +187,6 @@ export function SimulateCredit() {
       RiskFreeInterestRate: number;
     };
   }>({});
-
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
@@ -400,6 +400,9 @@ export function SimulateCredit() {
     const rulesToValidate = [
       "PercentagePayableViaExtraInstallments",
       "IncomeSourceUpdateAllowed",
+      "FinancialObligationsUpdateRequired",
+      "AdditionalBorrowersAllowedGP",
+      "IncludeExtraordinaryInstallments",
     ];
 
     const ruleResults: { [ruleName: string]: string[] } = {};
@@ -412,15 +415,26 @@ export function SimulateCredit() {
           rulesToValidate.map(async (ruleName) => {
             const rule = ruleConfig[ruleName]?.(productData);
             if (!rule) return;
-
-            const result = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            );
-
+            let result;
+            if (
+              rule.ruleName === "FinancialObligationsUpdateRequired" ||
+              rule.ruleName === "AdditionalBorrowersAllowedGP" ||
+              rule.ruleName === "IncludeExtraordinaryInstallments"
+            ) {
+              result = mocksRules(
+                rule,
+                formData.generalToggleChecked,
+                formData.selectedProducts,
+              );
+            } else {
+              result = await evaluateRule(
+                rule,
+                postBusinessUnitRules,
+                "value",
+                businessUnitPublicCode,
+                true,
+              );
+            }
             const normalizedResult = normalizeValues(result);
 
             normalizedResult.forEach((value) => {
@@ -436,7 +450,6 @@ export function SimulateCredit() {
         );
       }),
     );
-
     setValueRule(ruleResults);
   }, [
     customerData,
