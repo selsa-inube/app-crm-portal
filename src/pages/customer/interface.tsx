@@ -23,7 +23,7 @@ interface ICustomerUI {
   isShowModal: boolean;
   inputValue: string;
   justStartedListening: boolean;
-  options: { id: string; label: string; value: string }[];
+  options: IOption[];
   showError: boolean;
   noResultsFound: boolean;
   pendingTranscript: string;
