@@ -5,4 +5,5 @@ export const homeData = {
   listening: "Escuchando...",
   noSupport: "Tu navegador no soporta reconocimiento de voz.",
   search: "Búsqueda por voz",
+  noSelectClient: "Para continuar, primero debes seleccionar un cliente.",
 };

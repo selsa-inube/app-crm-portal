@@ -10,6 +10,7 @@ interface IStyledContainerFieldset {
   $hasTable: boolean;
   $height?: string;
   $borderColor?: string;
+  $showFieldset?: boolean;
 }
 
 export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
@@ -19,7 +20,7 @@ export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
   box-sizing: border-box;
   height: ${({ $height }) => $height};
   border-radius: 8px;
-  border: 1px solid;
+  border: ${({ $showFieldset }) => ($showFieldset ? "1px solid" : "none")};
   padding-top: ${({ $hasTable }) => !$hasTable && "16px"};
   padding-bottom: ${({ $hasTable }) => !$hasTable && "16px"};
   padding-right: ${({ $hasTable }) => !$hasTable && "8px"};

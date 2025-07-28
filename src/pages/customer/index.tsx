@@ -1,7 +1,18 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineMicNone } from "react-icons/md";
-import { Autocomplete, Button, Icon, Stack, Text } from "@inubekit/inubekit";
+import {
+  MdOutlineArrowForward,
+  MdOutlineMicNone,
+  MdReportProblem,
+} from "react-icons/md";
+import {
+  Autocomplete,
+  Button,
+  Icon,
+  Stack,
+  Text,
+  useMediaQuery,
+} from "@inubekit/inubekit";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -21,10 +32,13 @@ export function Customer() {
   const [options, setOptions] = useState<
     { id: string; label: string; value: string }[]
   >([]);
+  const [showError, setShowError] = useState(false);
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
 
   const selectRef = useRef<HTMLDivElement | null>(null);
+
+  const isMobile = useMediaQuery("(max-width:880px)");
 
   const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
@@ -117,15 +131,33 @@ export function Customer() {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
+    const isValidOption = options.some(
+      (option) => option.value === inputValue || option.label === inputValue,
+    );
+
+    if (!isValidOption) {
+      setShowError(true);
+      return;
+    }
+
+    setShowError(false);
     setCustomerPublicCodeState(inputValue);
     navigate(`/home`);
   };
 
   return (
-    <Stack width="100%" justifyContent="center" margin="50px 0">
-      <Fieldset width="600px" hasOverflow>
+    <Stack
+      width="100%"
+      justifyContent="center"
+      margin={isMobile ? "0px" : "50px 0"}
+    >
+      <Fieldset
+        width="600px"
+        showFieldset={isMobile ? false : true}
+        hasOverflow
+      >
         <Stack direction="column" gap="8px">
-          <Text type="headline" size="large">
+          <Text type="headline" size={isMobile ? "small" : "large"}>
             {homeData.selectClient}
           </Text>
           <Text type="body" size="large" appearance="gray">
@@ -144,11 +176,24 @@ export function Customer() {
                   onChange={(_, value) => {
                     const upperValue = value?.toUpperCase() || "";
                     setInputValue(upperValue);
+                    setShowError(false);
                     if (!value) {
                       setOptions([]);
                     }
                   }}
                 />
+                {showError && (
+                  <Stack gap="4px" margin="4px 0 0 16px ">
+                    <Icon
+                      icon={<MdReportProblem />}
+                      appearance="danger"
+                      size="14px"
+                    />
+                    <Text type="body" size="small" appearance="danger">
+                      {homeData.noSelectClient}
+                    </Text>
+                  </Stack>
+                )}
               </StyledAutomatic>
               <Icon
                 icon={<MdOutlineMicNone />}
@@ -160,7 +205,18 @@ export function Customer() {
                   handleStartListening();
                 }}
               />
-              <Button onClick={handleSubmit}>{homeData.continue}</Button>
+              {isMobile ? (
+                <Icon
+                  icon={<MdOutlineArrowForward />}
+                  appearance="primary"
+                  variant="filled"
+                  spacing="compact"
+                  size="40px"
+                  onClick={handleSubmit}
+                />
+              ) : (
+                <Button onClick={handleSubmit}>{homeData.continue}</Button>
+              )}
             </Stack>
           </Fieldset>
         </Stack>
@@ -169,7 +225,7 @@ export function Customer() {
         (browserSupportsSpeechRecognition ? (
           <BaseModal
             title={homeData.search}
-            width="450px"
+            width={isMobile ? "300px" : "450px"}
             handleClose={handleCloseModal}
           >
             <Stack direction="column" gap="24px">
@@ -197,7 +253,7 @@ export function Customer() {
         ) : (
           <BaseModal
             title={homeData.search}
-            width="450px"
+            width={isMobile ? "300px" : "450px"}
             handleClose={handleCloseModal}
           >
             <Text>{homeData.noSupport}</Text>
