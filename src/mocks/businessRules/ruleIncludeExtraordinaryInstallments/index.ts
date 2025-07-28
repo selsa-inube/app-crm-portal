@@ -1,5 +1,3 @@
-import { Irule } from "@src/pages/applyForCredit/types";
-
 const ruleIncludeExtraordinaryInstallmentsEnableQuestion = [
   {
     name: "IncludeExtraordinaryInstallments",
