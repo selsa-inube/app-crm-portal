@@ -33,6 +33,8 @@ export function Customer() {
     { id: string; label: string; value: string }[]
   >([]);
   const [showError, setShowError] = useState(false);
+  const [noResultsFound, setNoResultsFound] = useState(false);
+  const [pendingTranscript, setPendingTranscript] = useState("");
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
 
@@ -46,17 +48,20 @@ export function Customer() {
   const handleStartListening = () => {
     resetTranscript();
     setJustStartedListening(true);
+    setNoResultsFound(false);
     SpeechRecognition.startListening({ continuous: false, language: "es-ES" });
   };
 
   const handleCloseModal = () => {
     SpeechRecognition.stopListening();
     setIsShowModal(false);
+    setNoResultsFound(false);
   };
 
   const handleSearch = async (value: string) => {
     if (value.length < 3) {
       setOptions([]);
+      setNoResultsFound(false);
       return;
     }
 
@@ -74,6 +79,9 @@ export function Customer() {
         value: item.publicCode,
       }));
       setOptions(mappedOptions);
+      setNoResultsFound(false);
+
+      setIsShowModal(false);
 
       setTimeout(() => {
         const clickable = selectRef.current?.querySelector("input");
@@ -86,12 +94,14 @@ export function Customer() {
       }, 50);
     } else {
       setOptions([]);
+      setNoResultsFound(true);
     }
   };
 
   useEffect(() => {
     if (inputValue.trim() === "") {
       setOptions([]);
+      setNoResultsFound(false);
       return;
     }
     handleSearch(inputValue);
@@ -100,9 +110,7 @@ export function Customer() {
   useEffect(() => {
     const recognition = SpeechRecognition.getRecognition();
     if (recognition) {
-      recognition.onend = () => {
-        setIsShowModal(false);
-      };
+      recognition.onend = () => {};
     }
 
     return () => {
@@ -122,9 +130,14 @@ export function Customer() {
         .replace(/\s{2,}/g, " ")
         .trim();
 
-      setOptions([]);
-      setInputValue(cleanedTranscript);
+      setPendingTranscript(cleanedTranscript);
       setJustStartedListening(false);
+
+      const timer = setTimeout(() => {
+        setInputValue(cleanedTranscript);
+      }, 800);
+
+      return () => clearTimeout(timer);
     }
   }, [transcript]);
 
@@ -229,25 +242,48 @@ export function Customer() {
             handleClose={handleCloseModal}
           >
             <Stack direction="column" gap="24px">
-              <Text type="title" size="large">
-                {justStartedListening || !inputValue.trim()
-                  ? homeData.listening
-                  : inputValue}
-              </Text>
-              <Stack justifyContent="center">
-                <StyledMic>
-                  <Icon
-                    icon={<MdOutlineMicNone />}
-                    size="58px"
-                    appearance="primary"
-                    shape="circle"
-                    variant="filled"
-                    spacing="compact"
-                    cursorHover
-                    onClick={handleStartListening}
-                  />
-                </StyledMic>
-              </Stack>
+              {noResultsFound ? (
+                <>
+                  <Text type="title" size="large">
+                    {homeData.notFound}
+                  </Text>
+                  <Stack justifyContent="center">
+                    <Icon
+                      icon={<MdOutlineMicNone />}
+                      size="58px"
+                      appearance="gray"
+                      shape="circle"
+                      spacing="compact"
+                      cursorHover
+                      onClick={handleStartListening}
+                    />
+                  </Stack>
+                </>
+              ) : (
+                <>
+                  <Text type="title" size="large">
+                    {justStartedListening ||
+                    (!pendingTranscript && !inputValue.trim())
+                      ? homeData.listening
+                      : pendingTranscript || inputValue}
+                  </Text>
+
+                  <Stack justifyContent="center">
+                    <StyledMic>
+                      <Icon
+                        icon={<MdOutlineMicNone />}
+                        size="58px"
+                        appearance="primary"
+                        shape="circle"
+                        variant="filled"
+                        spacing="compact"
+                        cursorHover
+                        onClick={handleStartListening}
+                      />
+                    </StyledMic>
+                  </Stack>
+                </>
+              )}
             </Stack>
           </BaseModal>
         ) : (
