@@ -1,8 +1,4 @@
-import {
-  environment,
-  fetchTimeoutServices,
-  maxRetriesServices,
-} from "@config/environment";
+import { environment, maxRetriesServices } from "@config/environment";
 
 import { IUnmetRequirementsAmount } from "./IUnmetRequirementsAmount";
 import { IValidateRequirement } from "./types";
