@@ -5,7 +5,7 @@ import {
 } from "@config/environment";
 
 import { IUnmetRequirementsAmount } from "./IUnmetRequirementsAmount";
-import { IValidateRequirement } from "../validateRequirements/types";
+import { IValidateRequirement } from "./types";
 
 const getUnmetRequirementsAmount = async (
   validataRequirements: IUnmetRequirementsAmount | null,
