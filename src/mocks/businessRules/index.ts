@@ -11,7 +11,6 @@ const mocksRules = (
   switch (rule.ruleName) {
     case "AdditionalBorrowersAllowedGP":
       return ruleAdditionalBorrowersAllowedGP(
-        rule,
         generalToggleChecked,
         selectedProducts,
       );
@@ -19,7 +18,6 @@ const mocksRules = (
       return ruleFinancialObligationsUpdateRequired;
     case "IncludeExtraordinaryInstallments":
       return ruleIncludeExtraordinaryInstallments(
-        rule,
         generalToggleChecked,
         selectedProducts,
       );
