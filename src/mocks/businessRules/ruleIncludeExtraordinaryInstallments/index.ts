@@ -51,7 +51,6 @@ const ruleIncludeExtraordinaryInstallmentsDisableQuestion = [
 ];
 
 const ruleIncludeExtraordinaryInstallments = (
-  rule: Irule,
   generalToggleChecked: boolean,
   selectedProducts: string[],
 ) => {
