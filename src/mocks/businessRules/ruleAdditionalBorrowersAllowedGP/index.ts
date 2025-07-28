@@ -51,7 +51,6 @@ const ruleAdditionalBorrowersAllowedGPDisableQuestion = [
 ];
 
 const ruleAdditionalBorrowersAllowedGP = (
-  rule: Irule,
   generalToggleChecked: boolean,
   selectedProducts: string[],
 ) => {
