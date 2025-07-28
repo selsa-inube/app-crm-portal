@@ -1,5 +1,5 @@
-interface IValidateRequirement {
-  unmetRequirementsAmount: number;
+export interface IValidateRequirement {
+  descriptionEvaluationRequirement: string;
+  requirementName: string;
+  requirementStatus: string;
 }
-
-export type { IValidateRequirement };
