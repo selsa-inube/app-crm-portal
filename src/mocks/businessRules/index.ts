@@ -1,6 +1,7 @@
+import { Irule } from "@pages/applyForCredit/types";
+
 import { ruleFinancialObligationsUpdateRequired } from "./ruleFinancialObligationsUpdateRequired";
 import { ruleAdditionalBorrowersAllowedGP } from "./ruleAdditionalBorrowersAllowedGP";
-import { Irule } from "@src/pages/applyForCredit/types";
 import { ruleIncludeExtraordinaryInstallments } from "./ruleIncludeExtraordinaryInstallments";
 
 const mocksRules = (
