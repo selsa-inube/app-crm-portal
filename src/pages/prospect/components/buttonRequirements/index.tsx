@@ -1,22 +1,19 @@
 import { MdOutlineRule } from "react-icons/md";
 import { Button } from "@inubekit/inubekit";
 
-import { mockRequirementsNotMet } from "@mocks/requirements-not-met/requirementsnotmet.mock";
-
 import { StyledButton } from "./styles";
 import { dataButtonRequirements } from "./config";
 
 interface IButtonRequirementsProps {
   onClick: () => void;
+  unmetRequirementsAmount?: number;
 }
 
 export function ButtonRequirements(props: IButtonRequirementsProps) {
-  const { onClick } = props;
-
-  const dataCount = mockRequirementsNotMet.length;
+  const { onClick, unmetRequirementsAmount } = props;
 
   return (
-    <StyledButton onClick={onClick} $data={dataCount}>
+    <StyledButton onClick={onClick} $data={unmetRequirementsAmount}>
       <Button
         iconBefore={<MdOutlineRule />}
         appearance="gray"

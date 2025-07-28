@@ -368,7 +368,6 @@ export function ApplyForCredit() {
         businessUnitPublicCode,
         prospectCode || "",
       );
-
       if (prospect && typeof prospect === "object") {
         if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
           setProspectData(prospect);

@@ -178,7 +178,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setFormState,
     paymentCapacity,
   } = props;
-
   return (
     <>
       {codeError ? (
@@ -292,6 +291,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       />
                       <ButtonRequirements
                         onClick={() => setIsModalOpenRequirements(true)}
+                        unmetRequirementsAmount={
+                          formData.numberOfUnmetRequirements
+                        }
                       />
                     </>
                   )}
