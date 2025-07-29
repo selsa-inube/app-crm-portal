@@ -1,7 +1,6 @@
 import { environment, maxRetriesServices } from "@config/environment";
 
-import { IUnmetRequirementsAmount } from "./IUnmetRequirementsAmount";
-import { IValidateRequirement } from "./types";
+import { IValidateRequirement, IUnmetRequirementsAmount } from "./types";
 
 const getUnmetRequirementsAmount = async (
   validataRequirements: IUnmetRequirementsAmount | null,

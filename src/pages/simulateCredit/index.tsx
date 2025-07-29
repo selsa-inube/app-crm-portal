@@ -21,10 +21,11 @@ import {
 } from "@services/creditLimit/getBorrowePaymentCapacity/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 import { getUnmetRequirementsAmount } from "@services/unmetRequirementsAmount";
-import { IUnmetRequirementsAmount } from "@services/unmetRequirementsAmount/IUnmetRequirementsAmount";
-import { IBorrower } from "@services/unmetRequirementsAmount/IUnmetRequirementsAmount/IProspect/IBorrower";
-import { IConsolidatedCredit } from "@services/unmetRequirementsAmount/IUnmetRequirementsAmount/IProspect/IConsolidatedCredit";
-import { ICreditProduct } from "@services/unmetRequirementsAmount/IUnmetRequirementsAmount/ICreditProduct";
+import { IUnmetRequirementsAmount } from "@services/unmetRequirementsAmount/types";
+import { IBorrower } from "@services/types";
+import { IConsolidatedCredit } from "@services/types";
+import { ICreditProductProspect } from "@services/types";
+import { IBorrowerProperty } from "@services/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -33,6 +34,7 @@ import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
 import { textAddCongfig } from "./config/addConfig";
 import { tittleOptions } from "./steps/financialObligations/config/config";
+import { Schedule } from "@src/services/enums";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -785,16 +787,21 @@ export function SimulateCredit() {
     const creditsSelected = formData.selectedProducts;
     const termsCredit = creditLineTerms;
 
-    const borrowers: IBorrower[] = prospectOnSimulate.borrowers.map((b) => ({
-      borrower_identification_number: b.borrowerIdentificationNumber,
-      borrower_identification_type: b.borrowerIdentificationType,
-      borrower_name: b.borrowerName,
-      borrower_properties: (b.borrowerProperties || []).map((prop) => ({
-        property_name: prop.propertyName,
-        property_value: prop.propertyValue,
-      })),
-      borrower_type: b.borrowerType,
-    }));
+    const borrowers: IBorrower[] = prospectOnSimulate.borrowers.map(
+      (borrower) => ({
+        borrower_identification_number: borrower.borrowerIdentificationNumber,
+        borrower_identification_type: borrower.borrowerIdentificationType,
+        borrower_name: borrower.borrowerName,
+        borrower_properties: (borrower.borrowerProperties || []).map(
+          (prop) => ({
+            property_name:
+              prop.propertyName as IBorrowerProperty["property_name"],
+            property_value: prop.propertyValue,
+          }),
+        ),
+        borrower_type: borrower.borrowerType,
+      }),
+    );
 
     const consolidated_credits: IConsolidatedCredit[] = (
       prospectOnSimulate.consolidatedCredits || []
@@ -809,17 +816,18 @@ export function SimulateCredit() {
       line_of_credit_description: credit.lineOfCreditDescription,
     }));
 
-    const credit_products: ICreditProduct[] = creditsSelected.map(
-      (nombreProducto) => {
-        const terms = termsCredit[nombreProducto] || {};
+    const credit_products: ICreditProductProspect[] = creditsSelected.map(
+      (productName) => {
+        const terms = termsCredit[productName] || {};
         return {
-          line_of_credit_abbreviated_name: nombreProducto,
+          line_of_credit_abbreviated_name: productName,
           loan_amount:
             terms.LoanAmountLimit || Number(prospectOnSimulate.requestedAmount),
           loan_term:
             terms.LoanTermLimit || Number(prospectOnSimulate.termLimit),
           interest_rate: terms.RiskFreeInterestRate || 0,
-          schedule: prospectOnSimulate.selectedRegularPaymentSchedule,
+          schedule:
+            prospectOnSimulate.selectedRegularPaymentSchedule as Schedule,
           credit_product_code: "",
           fixed_points: 0,
           acquired_cash_flows: [],
@@ -835,8 +843,8 @@ export function SimulateCredit() {
       prospect: {
         bond_value: 0,
         grace_period: 0,
-        grace_period_type: "",
-        outlays: [],
+        grace_period_type: "principal_grace",
+        outlay: [],
         prospect_code: "",
         prospect_id: "",
         selected_rate_type: "",

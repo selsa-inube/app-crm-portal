@@ -120,17 +120,17 @@ export function CreditProspect(props: ICreditProspectProps) {
         (prospect) => prospect.public_code === id,
       );
       if (foundProspect) {
-        const mockCredit = foundProspect.consolidated_credit[0];
+        const mockCredit = foundProspect.consolidated_credit?.[0];
         setForm({
-          borrower: foundProspect.borrower[0].borrower_name,
-          monthlySalary: mockCredit.monthly_salary ?? 0,
-          otherMonthlyPayments: mockCredit.other_monthly_payments ?? 0,
-          pensionAllowances: mockCredit.pension_allowances ?? 0,
-          leases: mockCredit.leases ?? 0,
-          dividendsOrShares: mockCredit.dividends_or_shares ?? 0,
-          financialReturns: mockCredit.financial_returns ?? 0,
-          averageMonthlyProfit: mockCredit.average_monthly_profit ?? 0,
-          monthlyFees: mockCredit.monthly_fees ?? 0,
+          borrower: foundProspect.borrower?.[0].borrower_name || "",
+          monthlySalary: mockCredit?.monthly_salary ?? 0,
+          otherMonthlyPayments: mockCredit?.other_monthly_payments ?? 0,
+          pensionAllowances: mockCredit?.pension_allowances ?? 0,
+          leases: mockCredit?.leases ?? 0,
+          dividendsOrShares: mockCredit?.dividends_or_shares ?? 0,
+          financialReturns: mockCredit?.financial_returns ?? 0,
+          averageMonthlyProfit: mockCredit?.average_monthly_profit ?? 0,
+          monthlyFees: mockCredit?.monthly_fees ?? 0,
           total: undefined,
         });
       }

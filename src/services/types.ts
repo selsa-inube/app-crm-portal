@@ -256,24 +256,32 @@ export interface IErrorService {
 }
 
 export interface IProspect {
+  prospect_code?: string;
   prospect_id: string;
-  public_code: string;
-  state: string;
-  loan_amount: number;
+  public_code?: string;
+  state?: string;
+  loan_amount?: number;
   installment_limit: number;
-  term_limit: number;
-  timestamp: string;
-  selected_payment_schedule: Schedule;
+  term_limit?: number;
+  timestamp?: string;
+  selected_payment_schedule?: Schedule;
   selected_rate_type: string;
-  payment_method: string;
+  payment_method?: string;
   grace_period: number;
   grace_period_type: (typeof GracePeriodType)[keyof typeof GracePeriodType];
-  borrower: IBorrower[];
-  consolidated_credit: IConsolidatedCredit[];
-  credit_product: ICreditProductProspect[];
+  borrower?: IBorrower[];
+  consolidated_credit?: IConsolidatedCredit[];
+  credit_product?: ICreditProductProspect[] | unknown[];
   outlay: IOutlay[];
   borrowers?: unknown;
   requested_amount?: number;
+  bond_value?: number;
+  money_destination_abbreviated_name?: string;
+  preferred_payment_channel_abbreviated_name?: string;
+  time_of_creation?: string;
+  consolidated_credits?: IConsolidatedCredit[];
+  credit_products?: ICreditProductProspect[];
+  selected_regular_payment_schedule?: string;
 }
 
 export interface ILineCredit {
@@ -290,10 +298,10 @@ export interface IConsolidatedCredit {
   consolidated_amount: number;
   consolidated_amount_type: string;
   estimated_date_of_consolidation: string;
-  credit_id: string;
+  credit_id?: string;
   line_of_credit_description: string;
-  borrower_id: string;
-  consolidated_credit_schema: string;
+  borrower_id?: string;
+  consolidated_credit_schema?: string;
   monthly_salary?: number;
   other_monthly_payments?: number;
   pension_allowances?: number;
@@ -302,6 +310,9 @@ export interface IConsolidatedCredit {
   financial_returns?: number;
   average_monthly_profit?: number;
   monthly_fees?: number;
+  borrower_identification_number?: string;
+  borrower_identification_type?: string;
+  credit_product_code?: string;
 }
 
 export interface IExtraordinaryInstallment {
@@ -311,19 +322,22 @@ export interface IExtraordinaryInstallment {
 }
 
 export interface ICreditProductProspect {
-  abbreviated_name: string;
+  acquired_cash_flows: IAcquiredCashFlow[];
+  abbreviated_name?: string;
   credit_product_code: string;
+  extraordinary_installments: IExtraordinaryInstallment[];
   loan_amount: number;
-  line_of_credit_code: string;
+  line_of_credit_code?: string;
   line_of_credit_abbreviated_name: string;
   interest_rate: number;
+  installments_for_interest: IInstallmentsForInterest[];
   fixed_points: number;
   loan_term: number;
   schedule: Schedule;
   ordinary_installment_for_principal?: IOrdinaryInstallmentsForPrincipal;
-  ordinary_installment_for_interest: IInstallmentsForInterest;
-  extraordinary_installment: IExtraordinaryInstallment;
-  acquired_cash_flow: IAcquiredCashFlow;
+  ordinary_installment_for_interest?: IInstallmentsForInterest;
+  extraordinary_installment?: IExtraordinaryInstallment;
+  acquired_cash_flow?: IAcquiredCashFlow;
 }
 
 interface IDebtor {
@@ -347,7 +361,7 @@ export interface IBorrowerProperty {
 }
 
 export interface IOutlay {
-  abreviated_name: string;
+  abreviated_name?: string;
   date: string;
   amount: number;
 }
@@ -357,7 +371,8 @@ export interface IBorrower {
   borrower_type: string;
   borrower_identification_type: string;
   borrower_identification_number: string;
-  borrower_property: IBorrowerProperty[];
+  borrower_property?: IBorrowerProperty[];
+  borrower_properties?: IBorrowerProperty[];
 }
 
 export interface IOrdinaryInstallmentsForPrincipal {
