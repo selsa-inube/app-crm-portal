@@ -357,6 +357,11 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                             !formData.generalToggleChecked,
                           ),
                         onToggleChange: (index: number) => {
+                          console.log(
+                            index,
+                            " Toggles State: ",
+                            formData.togglesState,
+                          );
                           const newToggles = [...formData.togglesState];
                           newToggles[index] = !newToggles[index];
                           handleFormDataChange("togglesState", newToggles);
