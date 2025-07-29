@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 interface Props {
   $width?: string;
+  $isDisabled?: boolean;
 }
 
 export const StyledCreditCard = styled(Link)<Props>`
@@ -17,4 +18,6 @@ export const StyledCreditCard = styled(Link)<Props>`
     box-shadow 0.2s,
     transform 0.2s;
   text-decoration: none;
+  opacity: ${({ $isDisabled }) => ($isDisabled ? 0.5 : 1)};
+  pointer-events: ${({ $isDisabled }) => ($isDisabled ? "none" : "auto")};
 `;

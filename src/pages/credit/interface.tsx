@@ -22,6 +22,7 @@ type IEnhancedSubOption = {
   title: string;
   subtitle: string;
   url: string;
+  isDisabled: boolean;
 };
 
 const CreditUI = (props: ICreditUIProps) => {
@@ -37,24 +38,22 @@ const CreditUI = (props: ICreditUIProps) => {
         (item) => item.id === backendOption.publicCode,
       );
 
-      if (
-        !configOption ||
-        !Array.isArray(backendOption.subOption) ||
-        backendOption.subOption.length === 0
-      )
-        return [];
+      if (!configOption || !Array.isArray(configOption.subOptions)) return [];
 
-      return backendOption.subOption.map((sub) => {
-        const configSub = configOption.subOptions?.find(
-          (item) => item.id === sub.publicCode,
-        );
+      const backendSubs = Array.isArray(backendOption.subOption)
+        ? backendOption.subOption
+        : [];
+
+      return configOption.subOptions.map((sub) => {
+        const match = backendSubs.find((opt) => opt.publicCode === sub.id);
 
         return {
-          key: sub.optionStaffId,
-          icon: configSub?.icon ?? "",
-          title: sub.abbreviatedName,
-          subtitle: sub.descriptionUse,
-          url: configSub?.url ?? "",
+          key: sub.id,
+          icon: sub.icon,
+          title: match?.abbreviatedName || sub.id,
+          subtitle: match?.descriptionUse || sub.descriptionUse,
+          url: sub.url ?? "",
+          isDisabled: !match,
         };
       });
     });
@@ -93,13 +92,14 @@ const CreditUI = (props: ICreditUIProps) => {
             wrap="wrap"
             alignItems={isTablet ? "center" : "flex-start"}
           >
-            {options.map(({ key, icon, title, subtitle, url }) => (
+            {options.map(({ key, icon, title, subtitle, url, isDisabled }) => (
               <CreditCard
                 key={key}
                 icon={icon}
                 title={title}
                 subtitle={subtitle}
                 url={url}
+                isDisabled={isDisabled}
               />
             ))}
           </Stack>

@@ -178,7 +178,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setFormState,
     paymentCapacity,
   } = props;
-  //const navigate = useNavigate();
 
   return (
     <>

@@ -8,6 +8,7 @@ interface Props {
   subtitle: string;
   url?: string;
   width?: string;
+  isDisabled?: boolean;
 }
 
 export const CreditCard: FC<Props> = ({
@@ -16,8 +17,9 @@ export const CreditCard: FC<Props> = ({
   subtitle,
   url,
   width,
+  isDisabled = false,
 }) => (
-  <StyledCreditCard to={url ?? ""} $width={width}>
+  <StyledCreditCard to={url ?? ""} $width={width} $isDisabled={isDisabled}>
     <Stack
       direction="column"
       width={width ?? "194px"}

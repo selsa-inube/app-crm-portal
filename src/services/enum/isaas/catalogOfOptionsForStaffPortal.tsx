@@ -31,13 +31,15 @@ export const OptionStaffPortal: IOptionStaffPortalItem[] = [
       {
         id: "Simulaciones de crédito",
         icon: getIconByName("MdOutlineAttachMoney"),
-        descriptionUse: "Descripción del Crédito 1",
+        descriptionUse:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         url: "/credit/simulations",
       },
       {
         id: "Solicitudes de crédito",
         icon: getIconByName("MdMoneyOff"),
-        descriptionUse: "Descripción del Crédito 2",
+        descriptionUse:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         url: "/credit/simulaciones-2",
       },
     ],

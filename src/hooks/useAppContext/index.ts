@@ -202,7 +202,7 @@ function useAppContext() {
         const result = await getSearchOptionForStaff(
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
-          user.email,
+          user.email.substring(0, 20),
         );
         setOptionStaffData(result);
       } catch (error) {
