@@ -63,7 +63,6 @@ export function Customer() {
       }));
       setOptions(mappedOptions);
       setNoResultsFound(false);
-
       setIsShowModal(false);
 
       setTimeout(() => {
@@ -78,6 +77,15 @@ export function Customer() {
     } else {
       setOptions([]);
       setNoResultsFound(true);
+    }
+  };
+
+  const handleChangeAutocomplete = (_: unknown, value: string | null) => {
+    const upperValue = value?.toUpperCase() || "";
+    setInputValue(upperValue);
+    setShowError(false);
+    if (!value) {
+      setOptions([]);
     }
   };
 
@@ -153,12 +161,10 @@ export function Customer() {
       pendingTranscript={pendingTranscript}
       selectRef={selectRef}
       browserSupportsSpeechRecognition={browserSupportsSpeechRecognition}
-      setOptions={setOptions}
       handleStartListening={handleStartListening}
       handleCloseModal={handleCloseModal}
-      setInputValue={setInputValue}
+      handleChangeAutocomplete={handleChangeAutocomplete}
       setIsShowModal={setIsShowModal}
-      setShowError={setShowError}
       handleSubmit={handleSubmit}
     />
   );

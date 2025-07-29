@@ -29,12 +29,10 @@ interface ICustomerUI {
   pendingTranscript: string;
   selectRef: React.RefObject<HTMLDivElement>;
   browserSupportsSpeechRecognition: boolean;
-  setOptions: React.Dispatch<React.SetStateAction<IOption[]>>;
   handleStartListening: () => void;
   handleCloseModal: () => void;
-  setInputValue: (value: string) => void;
+  handleChangeAutocomplete: (event: unknown, value: string | null) => void;
   setIsShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowError: (value: boolean) => void;
   handleSubmit: () => void;
 }
 
@@ -50,12 +48,10 @@ export function CustomerUI(props: ICustomerUI) {
     pendingTranscript,
     selectRef,
     browserSupportsSpeechRecognition,
-    setOptions,
     handleStartListening,
     handleCloseModal,
-    setInputValue,
+    handleChangeAutocomplete,
     setIsShowModal,
-    setShowError,
     handleSubmit,
   } = props;
 
@@ -87,14 +83,7 @@ export function CustomerUI(props: ICustomerUI) {
                   placeholder={homeData.selectClient}
                   options={options}
                   value={inputValue}
-                  onChange={(_, value) => {
-                    const upperValue = value?.toUpperCase() || "";
-                    setInputValue(upperValue);
-                    setShowError(false);
-                    if (!value) {
-                      setOptions([]);
-                    }
-                  }}
+                  onChange={handleChangeAutocomplete}
                 />
                 {showError && (
                   <Stack gap="4px" margin="4px 0 0 16px ">
