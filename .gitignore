@@ -31,6 +31,5 @@ vite.config.ts
 tsconfig.json
 tsconfig.paths.json
 tsconfig.node.json
-vite.config.js
 .storybook/main.js
 .storybook/preview.js
