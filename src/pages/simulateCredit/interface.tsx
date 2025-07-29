@@ -24,6 +24,7 @@ import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 import { IPaymentCapacityResponse } from "@services/creditLimit/getBorrowePaymentCapacity/types";
+import { IConsolidatedCreditProps } from "@pages/simulateCredit/steps/consolidatedCredit";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -472,7 +473,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     stepsAddProspect.obligationsCollected.id &&
                   formData.loanAmountState.toggleChecked && (
                     <ConsolidatedCredit
-                      initialValues={formData.consolidatedCreditSelections}
+                      initialValues={
+                        formData.consolidatedCreditSelections as IConsolidatedCreditProps["initialValues"]
+                      }
                       isMobile={isMobile}
                       onChange={(items) =>
                         handleFormDataChange("consolidatedCreditArray", items)

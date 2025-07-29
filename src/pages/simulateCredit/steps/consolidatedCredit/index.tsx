@@ -12,7 +12,7 @@ import {
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";
 
-interface IConsolidatedCreditProps {
+export interface IConsolidatedCreditProps {
   initialValues: {
     totalCollected: number;
     selectedValues: Record<string, number>;
