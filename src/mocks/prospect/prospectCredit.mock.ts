@@ -87,6 +87,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 10,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -166,6 +169,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 10,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -261,6 +267,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 11,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -356,6 +365,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 12,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -451,6 +463,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 13,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -546,6 +561,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 14,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -641,6 +659,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 15,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -736,6 +757,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 16,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -831,6 +855,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 16,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -926,6 +953,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 17,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -1021,6 +1051,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 18,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -1117,6 +1150,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 19,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -1213,6 +1249,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 20,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -1308,6 +1347,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 21,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -1404,6 +1446,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 22,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -1500,6 +1545,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 23,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [
@@ -1596,6 +1644,9 @@ export const mockProspectCredit: IProspect[] = [
           payment_channel_unique_code: "Principal",
           flow_number: 24,
         },
+        acquired_cash_flows: [],
+        extraordinary_installments: [],
+        installments_for_interest: [],
       },
     ],
     outlay: [

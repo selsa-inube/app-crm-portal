@@ -271,7 +271,7 @@ export interface IProspect {
   grace_period_type: (typeof GracePeriodType)[keyof typeof GracePeriodType];
   borrower?: IBorrower[];
   consolidated_credit?: IConsolidatedCredit[];
-  credit_product?: ICreditProductProspect[] | unknown[];
+  credit_product?: ICreditProductProspect[];
   outlay: IOutlay[];
   borrowers?: unknown;
   requested_amount?: number;

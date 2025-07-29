@@ -27,7 +27,7 @@ dist-ssr
 *storybook.log
 *.d.ts
 *.tsbuildinfo
-vite.config.ts
+
 tsconfig.json
 tsconfig.paths.json
 tsconfig.node.json

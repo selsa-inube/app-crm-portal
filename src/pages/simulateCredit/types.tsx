@@ -81,6 +81,16 @@ export interface IConsolidatedCreditItem {
   estimatedDateOfConsolidation: Date;
 }
 
+interface IConsolidatedCreditSelections {
+  title: string;
+  code: string;
+  label: string;
+  value: number;
+  totalCollected: number;
+  selectedValues: Record<string, number>;
+  selectedLabels?: Record<string, string>;
+}
+
 export interface IFormData {
   selectedDestination: string;
   selectedProducts: string[];
@@ -104,7 +114,7 @@ export interface IFormData {
     periodicity: string;
     payAmount: string;
   };
-  consolidatedCreditSelections: Record<string, unknown>;
+  consolidatedCreditSelections: IConsolidatedCreditSelections;
   consolidatedCreditArray?: IConsolidatedCreditItem[];
   numberOfUnmetRequirements: number;
 }
