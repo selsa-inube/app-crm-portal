@@ -25,11 +25,3 @@ dist-ssr
 *.sw?
 
 *storybook.log
-
-
-
-.storybook/main.js
-.storybook/preview.js
-tsconfig.node.tsbuildinfo
-tsconfig.tsbuildinfo
-vite.config.js
