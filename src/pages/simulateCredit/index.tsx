@@ -133,7 +133,6 @@ export function SimulateCredit() {
       },
     ],
   };
-  useEffect(() => {}, [formData.togglesState]);
   const simulateData = {
     borrowers: [
       Object.keys(formData.borrowerData.borrowers).length === 0
