@@ -133,7 +133,7 @@ export function SimulateCredit() {
       },
     ],
   };
-
+  useEffect(() => {}, [formData.togglesState]);
   const simulateData = {
     borrowers: [
       Object.keys(formData.borrowerData.borrowers).length === 0
@@ -456,7 +456,10 @@ export function SimulateCredit() {
       }),
     );
 
-    if (ruleResults.FinancialObligationsUpdateRequired) {
+    if (
+      ruleResults.FinancialObligationsUpdateRequired &&
+      !formData.togglesState[1]
+    ) {
       ruleResults.FinancialObligationsUpdateRequired.includes("Y") &&
         setFinancialObligationsUpdateRequired();
     }
