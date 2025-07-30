@@ -179,7 +179,6 @@ export function SimulateCredit() {
   const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
     {},
   );
-
   const [creditLineTerms, setCreditLineTerms] = useState<{
     [lineName: string]: {
       LoanAmountLimit: number;
@@ -229,6 +228,12 @@ export function SimulateCredit() {
     return typeof input === "string" || typeof input === "number"
       ? input
       : null;
+  };
+
+  const setFinancialObligationsUpdateRequired = () => {
+    const newToggles = [...formData.togglesState];
+    newToggles[1] = !newToggles[1];
+    handleFormDataChange("togglesState", newToggles);
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
@@ -450,6 +455,12 @@ export function SimulateCredit() {
         );
       }),
     );
+
+    if (ruleResults.FinancialObligationsUpdateRequired) {
+      ruleResults.FinancialObligationsUpdateRequired.includes("Y") &&
+        setFinancialObligationsUpdateRequired();
+    }
+
     setValueRule(ruleResults);
   }, [
     customerData,
