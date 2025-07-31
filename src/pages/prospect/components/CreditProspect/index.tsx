@@ -122,7 +122,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       if (foundProspect) {
         const mockCredit = foundProspect.consolidated_credit?.[0];
         setForm({
-          borrower: foundProspect.borrower?.[0].borrower_name || "",
+          borrower: foundProspect.borrower?.[0].borrower_name ?? "",
           monthlySalary: mockCredit?.monthly_salary ?? 0,
           otherMonthlyPayments: mockCredit?.other_monthly_payments ?? 0,
           pensionAllowances: mockCredit?.pension_allowances ?? 0,

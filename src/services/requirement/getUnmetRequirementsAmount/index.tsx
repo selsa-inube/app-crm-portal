@@ -3,7 +3,8 @@ import { environment, maxRetriesServices } from "@config/environment";
 import { IValidateRequirement, IUnmetRequirementsAmount } from "./types";
 
 const getUnmetRequirementsAmount = async (
-  validataRequirements: IUnmetRequirementsAmount | null,
+  validDataRequirements: IUnmetRequirementsAmount | null,
+  businessUnitPublicCode: string,
 ): Promise<IValidateRequirement | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = 50000;
@@ -16,10 +17,10 @@ const getUnmetRequirementsAmount = async (
         method: "POST",
         headers: {
           "X-Action": "GetUnmetRequirementsAmount",
-          "X-Business-Unit": "test",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
-        body: JSON.stringify(validataRequirements),
+        body: JSON.stringify(validDataRequirements),
         signal: controller.signal,
       };
 
@@ -37,7 +38,7 @@ const getUnmetRequirementsAmount = async (
 
       if (!res.ok) {
         throw {
-          message: "Error al acceder a los requisitos no cumplidos.",
+          message: "Ocurrió un error durante la evaluación de requisitos.",
           status: res.status,
           data,
         };
@@ -47,7 +48,7 @@ const getUnmetRequirementsAmount = async (
     } catch (error) {
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo consultar el monto de requisitos no cumplidos. error: " +
+          "Todos los intentos fallaron. No se pudo consultar la cantidad de requsitios no complidos. Error: " +
             error,
         );
       }

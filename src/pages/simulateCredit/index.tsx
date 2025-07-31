@@ -20,8 +20,8 @@ import {
   IPaymentCapacityResponse,
 } from "@services/creditLimit/getBorrowePaymentCapacity/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
-import { getUnmetRequirementsAmount } from "@services/unmetRequirementsAmount";
-import { IUnmetRequirementsAmount } from "@services/unmetRequirementsAmount/types";
+import { getUnmetRequirementsAmount } from "@src/services/requirement/getUnmetRequirementsAmount";
+import { IUnmetRequirementsAmount } from "@src/services/requirement/getUnmetRequirementsAmount/types";
 import { IBorrower } from "@services/types";
 import { IConsolidatedCredit } from "@services/types";
 import { ICreditProductProspect } from "@services/types";
@@ -34,7 +34,7 @@ import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
 import { textAddCongfig } from "./config/addConfig";
 import { tittleOptions } from "./steps/financialObligations/config/config";
-import { Schedule } from "@src/services/enums";
+import { Schedule } from "@services/enums";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -782,29 +782,19 @@ export function SimulateCredit() {
   }, [clientPortfolio]);
 
   const handleUnmetRequirements = async () => {
-    const prospectOnSimulate = simulateData;
-    const client = customerData;
-    const creditsSelected = formData.selectedProducts;
-    const termsCredit = creditLineTerms;
-
-    const borrowers: IBorrower[] = prospectOnSimulate.borrowers.map(
-      (borrower) => ({
-        borrower_identification_number: borrower.borrowerIdentificationNumber,
-        borrower_identification_type: borrower.borrowerIdentificationType,
-        borrower_name: borrower.borrowerName,
-        borrower_properties: (borrower.borrowerProperties || []).map(
-          (prop) => ({
-            property_name:
-              prop.propertyName as IBorrowerProperty["property_name"],
-            property_value: prop.propertyValue,
-          }),
-        ),
-        borrower_type: borrower.borrowerType,
-      }),
-    );
+    const borrowers: IBorrower[] = simulateData.borrowers.map((borrower) => ({
+      borrower_identification_number: borrower.borrowerIdentificationNumber,
+      borrower_identification_type: borrower.borrowerIdentificationType,
+      borrower_name: borrower.borrowerName,
+      borrower_properties: (borrower.borrowerProperties || []).map((prop) => ({
+        property_name: prop.propertyName as IBorrowerProperty["property_name"],
+        property_value: prop.propertyValue,
+      })),
+      borrower_type: borrower.borrowerType,
+    }));
 
     const consolidated_credits: IConsolidatedCredit[] = (
-      prospectOnSimulate.consolidatedCredits || []
+      simulateData.consolidatedCredits || []
     ).map((credit) => ({
       borrower_identification_number: credit.borrowerIdentificationNumber,
       borrower_identification_type: credit.borrowerIdentificationType,
@@ -816,18 +806,16 @@ export function SimulateCredit() {
       line_of_credit_description: credit.lineOfCreditDescription,
     }));
 
-    const credit_products: ICreditProductProspect[] = creditsSelected.map(
-      (productName) => {
-        const terms = termsCredit[productName] || {};
+    const creditProductTerms: ICreditProductProspect[] =
+      formData.selectedProducts.map((productName) => {
+        const terms = creditLineTerms[productName] || {};
         return {
           line_of_credit_abbreviated_name: productName,
           loan_amount:
-            terms.LoanAmountLimit || Number(prospectOnSimulate.requestedAmount),
-          loan_term:
-            terms.LoanTermLimit || Number(prospectOnSimulate.termLimit),
+            terms.LoanAmountLimit || Number(simulateData.requestedAmount),
+          loan_term: terms.LoanTermLimit || Number(simulateData.termLimit),
           interest_rate: terms.RiskFreeInterestRate || 0,
-          schedule:
-            prospectOnSimulate.selectedRegularPaymentSchedule as Schedule,
+          schedule: simulateData.selectedRegularPaymentSchedule as Schedule,
           credit_product_code: "",
           fixed_points: 0,
           acquired_cash_flows: [],
@@ -835,11 +823,10 @@ export function SimulateCredit() {
           installments_for_interest: [],
           ordinary_installments_for_principal: [],
         };
-      },
-    );
+      });
 
     const payload: IUnmetRequirementsAmount = {
-      clientIdentificationNumber: client.publicCode,
+      clientIdentificationNumber: customerData.publicCode,
       prospect: {
         bond_value: 0,
         grace_period: 0,
@@ -852,20 +839,23 @@ export function SimulateCredit() {
         time_of_creation: new Date().toISOString(),
         borrowers,
         consolidated_credits,
-        credit_products,
-        installment_limit: Number(prospectOnSimulate.installmentLimit),
+        credit_products: creditProductTerms,
+        installment_limit: Number(simulateData.installmentLimit),
         money_destination_abbreviated_name:
-          prospectOnSimulate.moneyDestinationAbbreviatedName,
+          simulateData.moneyDestinationAbbreviatedName,
         preferred_payment_channel_abbreviated_name:
-          prospectOnSimulate.preferredPaymentChannelAbbreviatedName,
-        requested_amount: Number(prospectOnSimulate.requestedAmount),
+          simulateData.preferredPaymentChannelAbbreviatedName,
+        requested_amount: Number(simulateData.requestedAmount),
         selected_regular_payment_schedule:
-          prospectOnSimulate.selectedRegularPaymentSchedule,
-        term_limit: Number(prospectOnSimulate.termLimit),
+          simulateData.selectedRegularPaymentSchedule,
+        term_limit: Number(simulateData.termLimit),
       },
     };
 
-    const numberOfUnmetRequirements = await getUnmetRequirementsAmount(payload);
+    const numberOfUnmetRequirements = await getUnmetRequirementsAmount(
+      payload,
+      businessUnitPublicCode,
+    );
     if (numberOfUnmetRequirements) {
       setFormData((prev) => ({
         ...prev,

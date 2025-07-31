@@ -25,7 +25,6 @@ dist-ssr
 *.sw?
 
 *storybook.log
-*.d.ts
 *.tsbuildinfo
 
 tsconfig.json

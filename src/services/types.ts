@@ -256,8 +256,10 @@ export interface IErrorService {
 }
 
 export interface IProspect {
-  prospect_code?: string;
   prospect_id: string;
+  selected_rate_type: string;
+  grace_period: number;
+  prospect_code?: string;
   public_code?: string;
   state?: string;
   loan_amount?: number;
@@ -265,9 +267,7 @@ export interface IProspect {
   term_limit?: number;
   timestamp?: string;
   selected_payment_schedule?: Schedule;
-  selected_rate_type: string;
   payment_method?: string;
-  grace_period: number;
   grace_period_type: (typeof GracePeriodType)[keyof typeof GracePeriodType];
   borrower?: IBorrower[];
   consolidated_credit?: IConsolidatedCredit[];
@@ -322,18 +322,18 @@ export interface IExtraordinaryInstallment {
 }
 
 export interface ICreditProductProspect {
-  acquired_cash_flows: IAcquiredCashFlow[];
-  abbreviated_name?: string;
   credit_product_code: string;
-  extraordinary_installments: IExtraordinaryInstallment[];
   loan_amount: number;
-  line_of_credit_code?: string;
   line_of_credit_abbreviated_name: string;
   interest_rate: number;
-  installments_for_interest: IInstallmentsForInterest[];
   fixed_points: number;
   loan_term: number;
   schedule: Schedule;
+  acquired_cash_flows?: IAcquiredCashFlow[];
+  abbreviated_name?: string;
+  line_of_credit_code?: string;
+  extraordinary_installments?: IExtraordinaryInstallment[];
+  installments_for_interest?: IInstallmentsForInterest[];
   ordinary_installment_for_principal?: IOrdinaryInstallmentsForPrincipal;
   ordinary_installment_for_interest?: IInstallmentsForInterest;
   extraordinary_installment?: IExtraordinaryInstallment;
