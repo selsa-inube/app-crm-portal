@@ -5,6 +5,7 @@ export interface IAttachedDocuments {
   attach: string;
   download: string;
   remove: string;
+  actions: string;
 }
 
 export const headers: {
@@ -15,9 +16,7 @@ export const headers: {
   { label: "Deudor", key: "borrower" },
   { label: "Documento solicitado", key: "value" },
   { label: "Adjunto", key: "attached" },
-  { label: "Adjuntar", key: "attach", action: true },
-  { label: "Descargar", key: "download", action: true },
-  { label: "Quitar", key: "remove", action: true },
+  { label: "Acciones", key: "actions", action: true },
 ];
 
 export const dataReport = {

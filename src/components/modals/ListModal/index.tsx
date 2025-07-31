@@ -1,6 +1,10 @@
 import { useRef, useState, useContext } from "react";
 import { createPortal } from "react-dom";
-import { MdClear, MdOutlineCloudUpload } from "react-icons/md";
+import {
+  MdClear,
+  MdOutlineCloudUpload,
+  MdOutlineRemoveRedEye,
+} from "react-icons/md";
 import {
   Stack,
   Icon,
@@ -19,11 +23,15 @@ import { AppContext } from "@context/AppContext";
 import { IDocumentUpload } from "@pages/applyForCredit/types";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
+import { truncateTextToMaxLength } from "@utils/formatData/text";
 
+import { DocumentViewer } from "../DocumentViewer";
 import {
   StyledAttachContainer,
   StyledContainerClose,
   StyledContainerContent,
+  StyledDocuments,
+  StyledItem,
   StyledModal,
 } from "./styles";
 import { listModalData } from "./config";
@@ -75,6 +83,8 @@ export const ListModal = (props: IListModalProps) => {
     appearanceCancel = "primary",
     buttonLabel,
     uploadMode,
+    dataDocument,
+    isViewing,
     uploadedFiles,
     onlyDocumentReceived,
     handleClose,
@@ -99,6 +109,11 @@ export const ListModal = (props: IListModalProps) => {
   const [pendingFiles, setPendingFiles] = useState<
     { id: string; name: string; file: File }[]
   >([]);
+  const [openViewer, setOpenViewer] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<{
+    name: string;
+    url: string;
+  } | null>(null);
 
   const dragCounter = useRef(0);
   const MAX_FILE_SIZE = 2.5 * 1024 * 1024;
@@ -117,6 +132,43 @@ export const ListModal = (props: IListModalProps) => {
     }));
 
     setPendingFiles(newFiles);
+  };
+
+  interface IListdataProps {
+    data: { id: string; name: string }[] | null | undefined;
+    onDelete?: (id: string) => void;
+    icon?: React.ReactNode;
+    onPreview?: (id: string, name: string) => void;
+  }
+
+  const Listdata = (props: IListdataProps) => {
+    const { data, icon, onDelete, onPreview } = props;
+
+    const maxLength = isMobile ? 20 : 40;
+
+    return (
+      <StyledDocuments>
+        {data?.map((element) => (
+          <StyledItem key={element.id}>
+            <Text>{truncateTextToMaxLength(element.name, maxLength)}</Text>
+            <Icon
+              icon={icon}
+              appearance="dark"
+              spacing="narrow"
+              size="24px"
+              cursorHover
+              onClick={() => {
+                if (onDelete) {
+                  onDelete(element.id);
+                } else if (onPreview) {
+                  onPreview(element.id, element.name);
+                }
+              }}
+            />
+          </StyledItem>
+        ))}
+      </StyledDocuments>
+    );
   };
 
   type FlagAppearance =
@@ -250,6 +302,17 @@ export const ListModal = (props: IListModalProps) => {
     }
   };
 
+  const handlePreview = (id: string, name: string) => {
+    const fileData = uploadedFiles?.find((file) => file.id === id);
+
+    if (!fileData || !fileData.file) return;
+
+    const url = URL.createObjectURL(fileData.file);
+
+    setSelectedDocument({ name, url });
+    setOpenViewer(true);
+  };
+
   return createPortal(
     <Blanket>
       <StyledModal $smallScreen={isMobile}>
@@ -271,10 +334,22 @@ export const ListModal = (props: IListModalProps) => {
         </Stack>
         <Divider />
         <StyledContainerContent $smallScreen={isMobile}>
-          {typeof content === "string" && (
+          {typeof content === "string" ? (
             <Stack>
               <Text>{content}</Text>
             </Stack>
+          ) : (
+            <>
+              {isViewing && (
+                <StyledContainerContent $smallScreen={isMobile}>
+                  <Listdata
+                    data={isViewing ? (dataDocument ?? []) : uploadedFiles}
+                    icon={<MdOutlineRemoveRedEye />}
+                    onPreview={handlePreview}
+                  />
+                </StyledContainerContent>
+              )}
+            </>
           )}
         </StyledContainerContent>
         {optionButtons ? (
@@ -389,6 +464,16 @@ export const ListModal = (props: IListModalProps) => {
             </Button>
             <Button onClick={onSubmit ?? handleClose}>{buttonLabel}</Button>
           </Stack>
+        )}
+        {openViewer && selectedDocument && (
+          <DocumentViewer
+            title={selectedDocument.name}
+            selectedFile={selectedDocument.url}
+            handleClose={() => {
+              setOpenViewer(false);
+              setSelectedDocument(null);
+            }}
+          />
         )}
       </StyledModal>
     </Blanket>,
