@@ -21,7 +21,7 @@ import {
   mockPeriodicity,
 } from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
 import { get } from "@mocks/utils/dataMock.service";
-import { IPaymentChannel } from "@services/types";
+import { IPaymentChannel } from "@services/creditRequest/types";
 
 import { dataAmount } from "./config";
 

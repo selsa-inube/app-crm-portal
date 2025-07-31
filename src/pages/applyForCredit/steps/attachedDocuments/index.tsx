@@ -5,9 +5,9 @@ import { Fieldset } from "@components/data/Fieldset";
 import { TableAttachedDocuments } from "@pages/prospect/components/tableAttachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { AppContext } from "@context/AppContext";
-import { IProspect } from "@services/prospects/types";
+import { IProspect } from "@services/prospect/types";
 import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules";
+import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 
 import { ruleConfig } from "../../config/configRules";
 import { evaluateRule } from "../../evaluateRule";

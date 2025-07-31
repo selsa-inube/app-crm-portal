@@ -1,5 +1,4 @@
-import { IStaff } from "@services/types";
-
+import { IStaff } from "../types";
 export const mockAnalyst: IStaff[] = [
   {
     userId: "34567890",

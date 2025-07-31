@@ -13,10 +13,10 @@ import {
 
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
-import { TableCreditProspects } from "@pages/creditProspects/components/TableCreditProspects";
-import { getProspectsByCustomerCode } from "@services/prospects/ProspectsByCustomerCode";
+import { TableCreditProspects } from "@pages/prospect/components/TableCreditProspects";
+import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
 import { AppContext } from "@context/AppContext";
-import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";
+import { IProspect } from "@services/prospect/types";
 
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";

@@ -6,7 +6,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-import { getCustomerCatalog } from "@services/customerCatalog";
+import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
 import { CustomerContext } from "@context/CustomerContext";

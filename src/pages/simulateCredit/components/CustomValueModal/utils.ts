@@ -1,7 +1,7 @@
 import {
   EPaymentOptionType,
   paymentOptionValues,
-} from "@services/creditLimit/getCreditPayments/types";
+} from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 
 interface IApplyPayOption {
   id: string;

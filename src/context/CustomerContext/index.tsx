@@ -1,10 +1,11 @@
 import { createContext, useState, useEffect, useContext } from "react";
 
-import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
+import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { AppContext } from "@context/AppContext";
 
 import { ICustomerContext, ICustomerData, initialCustomerData } from "./types";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const CustomerContext = createContext<ICustomerContext>(
   {} as ICustomerContext,
 );

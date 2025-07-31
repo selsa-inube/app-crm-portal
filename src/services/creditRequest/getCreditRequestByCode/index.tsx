@@ -3,7 +3,7 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { ICreditRequest } from "@services/types";
+import { ICreditRequest } from "../types";
 
 import { mapCreditRequestToEntities } from "./mapper";
 

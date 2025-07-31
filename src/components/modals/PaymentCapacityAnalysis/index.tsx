@@ -3,7 +3,7 @@ import { Stack, Tabs } from "@inubekit/inubekit";
 import {
   IIncomeDetail,
   IPaymentCapacityResponse,
-} from "@services/creditLimit/getBorrowePaymentCapacity/types";
+} from "@services/creditLimit/types";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { BaseModal } from "../baseModal";

@@ -1,10 +1,10 @@
 import {
-  Schedule,
   CreditLine,
   PaymentMethod,
   AmortizationType,
   RateType,
-} from "@services/enums";
+} from "@services/enum/prospectProduct";
+import { Schedule } from "@services/enum/schedule";
 
 const creditLineOptions = [
   {

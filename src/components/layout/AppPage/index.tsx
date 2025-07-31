@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { MdLogout, MdOutlineChevronRight } from "react-icons/md";
 import {
   Nav,
@@ -20,6 +20,7 @@ import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
 import { userMenu } from "@config/menuMainConfiguration";
 
+import { useNavigationConfig } from "./config/apps.config";
 import {
   StyledAppPage,
   StyledContainer,
@@ -34,11 +35,9 @@ import {
   StyledFooter,
 } from "./styles";
 
-import { useNavigationConfig } from "./config/apps.config";
-
 const renderLogo = (imgUrl: string) => {
   return (
-    <StyledContentImg to="/">
+    <StyledContentImg to="/home">
       <StyledLogo src={imgUrl} />
     </StyledContentImg>
   );
@@ -59,6 +58,7 @@ function AppPage(props: IAppPage) {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const collapseMenuRef = useRef<HTMLDivElement>(null);
   const businessUnitChangeRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -85,6 +85,7 @@ function AppPage(props: IAppPage) {
   const [selectedClient, setSelectedClient] = useState<string>(
     eventData.businessUnit.abbreviatedName,
   );
+
   useEffect(() => {
     const selectUser = document.querySelector("header div div:nth-child(0)");
     const handleToggleuserMenu = () => {
@@ -109,6 +110,11 @@ function AppPage(props: IAppPage) {
     setBusinessUnitSigla(selectJSON);
     setSelectedClient(businessUnit.abbreviatedName);
     setCollapse(false);
+    if (
+      businessUnit.abbreviatedName !== eventData.businessUnit.abbreviatedName
+    ) {
+      navigate("/clients/select-client/");
+    }
   };
 
   const { addFlag } = useFlag();
