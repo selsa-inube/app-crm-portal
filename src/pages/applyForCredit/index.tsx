@@ -10,7 +10,7 @@ import { getMonthsElapsed } from "@utils/formatData/currency";
 import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
 import { IProspectSummaryById } from "@services/prospect/types";
-import { MessagingPlatform } from "@services/enum/messagingPlatform";
+import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
@@ -20,15 +20,18 @@ import { ruleConfig } from "./config/configRules";
 import { dataSubmitApplication, tittleOptions } from "./config/config";
 
 export function ApplyForCredit() {
-  const { customerPublicCode, prospectCode } = useParams();
-  const { customerData } = useContext(CustomerContext);
+  const { prospectCode } = useParams();
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const { customerData } = useContext(CustomerContext);
   const [sentModal, setSentModal] = useState(false);
   const [approvedRequestModal, setApprovedRequestModal] = useState(false);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>();
+
+  const customerPublicCode: string = customerData.publicCode;
+
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -442,7 +445,7 @@ export function ApplyForCredit() {
   }, [businessUnitPublicCode]);
 
   useEffect(() => {
-    if (!customerData) return;
+    if (!customerData || !customerPublicCode) return;
     fetchProspectData();
   }, [customerData, fetchProspectData]);
 

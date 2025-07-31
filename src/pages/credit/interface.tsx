@@ -1,5 +1,4 @@
 import { MdArrowBack } from "react-icons/md";
-import { useContext } from "react";
 import {
   Breadcrumbs,
   Icon,
@@ -9,26 +8,60 @@ import {
 } from "@inubekit/inubekit";
 
 import { CreditCard } from "@components/cards/CreditCard";
-import { CustomerContext } from "@context/CustomerContext";
+import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+import { OptionStaffPortal } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 
-import { addConfig, useCreditCards } from "./config/credit.config";
-import { IHomeUIProps } from "./types";
+import { addConfig } from "./config/credit.config";
+import { ICreditUIProps } from "./types";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 
-const CreditUI = (props: IHomeUIProps) => {
-  const { isMobile } = props;
+type IEnhancedSubOption = {
+  key: string;
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  url: string;
+  isDisabled: boolean;
+};
+
+const CreditUI = (props: ICreditUIProps) => {
+  const { isMobile, dataOptions, dataHeader } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
-  const { customerData } = useContext(CustomerContext);
 
-  const creditCards = useCreditCards();
+  const mergeSubOptions = (
+    backendOptions: IOptionStaff[],
+  ): IEnhancedSubOption[] => {
+    return backendOptions.flatMap((backendOption) => {
+      const configOption = OptionStaffPortal.find(
+        (item) => item.id === backendOption.publicCode,
+      );
 
-  const dataHeader = {
-    name: customerData.fullName,
-    status:
-      customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
+      if (!configOption || !Array.isArray(configOption.subOptions)) return [];
+
+      const backendSubs = Array.isArray(backendOption.subOption)
+        ? backendOption.subOption
+        : [];
+
+      return configOption.subOptions.map((sub) => {
+        const match = backendSubs.find((opt) => opt.publicCode === sub.id);
+
+        return {
+          key: sub.id,
+          icon: sub.icon,
+          title: match?.abbreviatedName || sub.id,
+          subtitle: match?.descriptionUse || sub.descriptionUse,
+          url: sub.url ?? "",
+          isDisabled: !match,
+        };
+      });
+    });
   };
+
+  const options = mergeSubOptions(
+    Array.isArray(dataOptions) ? dataOptions : [dataOptions],
+  );
 
   return (
     <>
@@ -59,13 +92,14 @@ const CreditUI = (props: IHomeUIProps) => {
             wrap="wrap"
             alignItems={isTablet ? "center" : "flex-start"}
           >
-            {creditCards.map(({ key, icon, title, subtitle, onClick }) => (
+            {options.map(({ key, icon, title, subtitle, url, isDisabled }) => (
               <CreditCard
                 key={key}
                 icon={icon}
                 title={title}
                 subtitle={subtitle}
-                onClick={onClick}
+                url={url}
+                isDisabled={isDisabled}
               />
             ))}
           </Stack>

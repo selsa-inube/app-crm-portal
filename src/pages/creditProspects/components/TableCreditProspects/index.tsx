@@ -13,7 +13,8 @@ import {
 } from "@inubekit/inubekit";
 
 import { IProspect } from "@services/prospect/types";
-import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
+import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
+import { currencyFormat } from "@utils/formatData/currency";
 
 import { usePagination } from "./utils";
 import { tableConfig } from "./config";
@@ -46,7 +47,7 @@ export function TableCreditProspects({
             prospect.moneyDestinationAbbreviatedName,
           ),
           value: prospect.requestedAmount
-            ? prospect.requestedAmount.toString()
+            ? currencyFormat(prospect.requestedAmount)
             : tableConfig.messages.notAvailable,
         }))
       : [];
@@ -78,7 +79,11 @@ export function TableCreditProspects({
           currentData.map((row, rowIndex) => (
             <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
               {tableConfig.headers.map((header, colIndex) => (
-                <Td key={colIndex} align="center">
+                <Td
+                  key={colIndex}
+                  align="center"
+                  type={header.action ? "custom" : "text"}
+                >
                   {header.action ? (
                     <Stack justifyContent="space-between" gap="8px">
                       <Icon

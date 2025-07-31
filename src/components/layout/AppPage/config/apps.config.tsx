@@ -36,9 +36,9 @@ const useNavigationConfig = () => {
           subtitle: "Inicio",
           links: [
             {
-              path: "/credit/simulate-credit",
+              path: "/credit",
               label: "Crédito",
-              id: "/credit/simulate-credit",
+              id: "credit",
               icon: <MdOutlineCreditCard />,
             },
           ],

@@ -41,6 +41,7 @@ import { addCreditProduct } from "@services/prospect/addCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
@@ -77,13 +78,15 @@ export function CreditProspect(props: ICreditProspectProps) {
     showPrint = true,
   } = props;
 
+  const { customerData } = useContext(CustomerContext);
+  const customerPublicCode: string = customerData.publicCode;
+
   const { businessUnitSigla } = useContext(AppContext);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
-  const { customerPublicCode } = useParams();
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const [openModal, setOpenModal] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -400,6 +403,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   useEffect(() => {
     const fetchCreditLimit = async () => {
       try {
+        console.log("ojo---> ", customerPublicCode);
         const result = await getCreditLimit(
           businessUnitPublicCode,
           customerPublicCode!,

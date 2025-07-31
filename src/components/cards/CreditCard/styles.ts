@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+
 interface Props {
   $width?: string;
+  $isDisabled?: boolean;
 }
 
-export const StyledCreditCard = styled.div<Props>`
+export const StyledCreditCard = styled(Link)<Props>`
   width: ${({ $width }) => $width ?? "194px"};
   display: flex;
   flex-direction: column;
@@ -14,4 +17,7 @@ export const StyledCreditCard = styled.div<Props>`
   transition:
     box-shadow 0.2s,
     transform 0.2s;
+  text-decoration: none;
+  opacity: ${({ $isDisabled }) => ($isDisabled ? 0.5 : 1)};
+  pointer-events: ${({ $isDisabled }) => ($isDisabled ? "none" : "auto")};
 `;

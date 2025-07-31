@@ -15,7 +15,7 @@ const useNavConfig = () => {
             id: "credit",
             label: "Crédito",
             icon: <MdOutlineCreditCard />,
-            path: "/credit/simulate-credit",
+            path: "/credit",
             isActive: location.pathname.startsWith("/credit"),
           },
         },

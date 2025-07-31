@@ -13,7 +13,7 @@ import {
 
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
-import { TableCreditProspects } from "@pages/prospect/components/TableCreditProspects";
+import { TableCreditProspects } from "@pages/creditProspects/components/TableCreditProspects";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
@@ -108,7 +108,11 @@ export function CreditProspects() {
               placeholder={dataCreditProspects.keyWord}
               type="search"
             />
-            <Button iconBefore={<MdAdd />}>
+            <Button
+              iconBefore={<MdAdd />}
+              type="link"
+              path="../simulate-credit"
+            >
               {dataCreditProspects.simulate}
             </Button>
           </Stack>

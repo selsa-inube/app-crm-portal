@@ -1,4 +1,5 @@
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
+import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 
 interface IPortal {
   abbreviatedName: string;
@@ -80,6 +81,8 @@ interface IAppContext {
   setBusinessUnitsToTheStaff: React.Dispatch<
     React.SetStateAction<IBusinessUnitsPortalStaff[]>
   >;
+  setOptionStaffData: React.Dispatch<React.SetStateAction<IOptionStaff[]>>;
+  optionStaffData?: IOptionStaff[];
 }
 
 export type { ICRMPortalData, IAppContext, IBusinessUnit };
