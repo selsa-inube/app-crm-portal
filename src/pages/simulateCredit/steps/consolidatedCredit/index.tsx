@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { Stack, Text, Divider } from "@inubekit/inubekit";
+import { Stack, Text, Divider, Grid } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
-import { CardGray } from "@components/cards/CardGray";
 import { CardConsolidatedCredit } from "@pages/simulateCredit/components/CardConsolidatedCredit";
 import { currencyFormat } from "@utils/formatData/currency";
-import { mockConsolidatedCredit } from "@mocks/add-prospect/consolidates-credit/consolidatedcredit.mock";
+import {
+  IPayment,
+  paymentOptionValues,
+} from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";
@@ -14,24 +16,25 @@ interface IConsolidatedCreditProps {
   initialValues: {
     totalCollected: number;
     selectedValues: Record<string, number>;
-    title: string;
-    code: string;
-    label: string;
-    value: number;
+    selectedLabels: Record<string, string>;
   };
   isMobile: boolean;
   onChange?: (
     items: {
-      title: string;
-      code: string;
-      label: string;
-      value: number;
+      borrowerIdentificationNumber: string;
+      borrowerIdentificationType: string;
+      consolidatedAmount: number;
+      consolidatedAmountType: string;
+      creditProductCode: string;
+      estimatedDateOfConsolidation: string;
+      lineOfCreditDescription: string;
     }[],
   ) => void;
+  data?: IPayment[];
 }
 
 export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
-  const { initialValues, isMobile, onChange } = props;
+  const { initialValues, isMobile, onChange, data } = props;
 
   const [totalCollected, setTotalCollected] = useState(
     initialValues.totalCollected,
@@ -44,21 +47,31 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     initialValues.selectedValues || {},
   );
 
-  const debtorData = mockConsolidatedCredit[0];
+  const consolidatedCredit = data;
 
   const buildSelectedArray = () => {
-    return debtorData.data_card
+    return (consolidatedCredit ?? [])
       .filter(
         (creditData) =>
-          selectedValues[creditData.consolidated_credit_id] &&
-          selectedLabels[creditData.consolidated_credit_code],
+          selectedValues[creditData.id] && selectedLabels[creditData.id],
       )
-      .map((creditData) => ({
-        title: creditData.consolidated_credit_title,
-        code: creditData.consolidated_credit_code,
-        label: selectedLabels[creditData.consolidated_credit_code],
-        value: selectedValues[creditData.consolidated_credit_id],
-      }));
+      .map((creditData) => {
+        const selectedValue = selectedValues[creditData.id];
+        const selectedLabel = selectedLabels[creditData.id];
+        const estimatedDate =
+          creditData.options.find((opt) => opt.date)?.date?.toISOString() ??
+          new Date().toISOString();
+
+        return {
+          borrowerIdentificationNumber: "debtorData?.identificationNumber",
+          borrowerIdentificationType: "debtorData?.identificationType",
+          consolidatedAmount: selectedValue,
+          consolidatedAmountType: selectedLabel,
+          creditProductCode: creditData.id,
+          estimatedDateOfConsolidation: estimatedDate,
+          lineOfCreditDescription: creditData.title,
+        };
+      });
   };
 
   const handleUpdateTotal = (
@@ -69,13 +82,21 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     id?: string,
   ) => {
     setTotalCollected((prevTotal) => prevTotal - oldValue + newValue);
+
     if (label && code && id) {
+      setSelectedLabels((prev) => ({ ...prev, [code]: label }));
+      setSelectedValues((prev) => ({ ...prev, [id]: newValue }));
+    }
+
+    if (!label && code && id) {
       setSelectedLabels((prev) => {
-        const updated = { ...prev, [code]: label };
+        const updated = { ...prev };
+        delete updated[code];
         return updated;
       });
       setSelectedValues((prev) => {
-        const updated = { ...prev, [id]: newValue };
+        const updated = { ...prev };
+        delete updated[id];
         return updated;
       });
     }
@@ -91,79 +112,80 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     <Fieldset heightFieldset="100%">
       <Stack direction="column" gap="24px" padding="16px">
         <Stack
-          justifyContent="space-between"
-          alignItems={isMobile ? "initial" : "end"}
-          direction={isMobile ? "column" : "row"}
+          direction="column"
+          alignItems="flex-end"
+          margin={isMobile ? "10px 0px 0px 0px" : "0px"}
         >
-          {!isMobile && (
-            <Stack direction="column">
-              <Text type="body" size="small" weight="bold" appearance="gray">
-                {dataConsolidated.debtor}
-              </Text>
-              <Text type="title" size="medium">
-                {debtorData.name}
-              </Text>
-            </Stack>
-          )}
-          {isMobile && (
-            <CardGray
-              label={dataConsolidated.debtor}
-              placeHolder={debtorData.name}
-            />
-          )}
-          <Stack
-            direction="column"
-            alignItems="center"
-            margin={isMobile ? "10px 0px 0px 0px" : "0px"}
-          >
-            <Text
-              type="headline"
-              size="large"
-              weight="bold"
-              appearance="primary"
-            >
-              {currencyFormat(totalCollected / 3)}
-            </Text>
-            <Text type="body" size="small" appearance="gray">
-              {dataConsolidated.totalvalue}
-            </Text>
-          </Stack>
+          <Text type="headline" size="large" weight="bold" appearance="primary">
+            {currencyFormat(totalCollected)}
+          </Text>
+          <Text type="body" size="small" appearance="gray">
+            {dataConsolidated.totalvalue}
+          </Text>
         </Stack>
         <Divider />
         <StyledCards>
           <Stack
             gap="16px"
-            wrap="wrap"
             justifyContent={isMobile ? "center" : "initial"}
             margin={isMobile ? "10px 0px" : "10px 5px"}
+            direction="column"
+            height="450px"
           >
-            {debtorData.data_card.map((creditData) => (
-              <CardConsolidatedCredit
-                key={creditData.consolidated_credit_id}
-                title={creditData.consolidated_credit_title}
-                code={creditData.consolidated_credit_code}
-                expiredValue={creditData.expired_value}
-                nextDueDate={creditData.next_due_date}
-                fullPayment={creditData.full_payment}
-                date={new Date(creditData.date)}
-                onUpdateTotal={(oldValue, newValue, label) =>
-                  handleUpdateTotal(
-                    oldValue,
-                    newValue,
-                    label,
-                    creditData.consolidated_credit_code,
-                    creditData.consolidated_credit_id,
-                  )
-                }
-                arrears={creditData.arrears === "Y"}
-                initialValue={
-                  initialValues.selectedValues[
-                    creditData.consolidated_credit_id
-                  ]
-                }
-                isMobile={isMobile}
-              />
-            ))}
+            <Grid
+              templateColumns={`repeat(3, minmax(262px, 1fr))`}
+              gap={isMobile ? "16px" : "24px"}
+              autoRows="auto"
+            >
+              {data?.map((creditData) => (
+                <CardConsolidatedCredit
+                  key={creditData.id}
+                  title={creditData.title}
+                  code={creditData.id}
+                  expiredValue={
+                    creditData.options.find(
+                      (option) =>
+                        option.label === paymentOptionValues.EXPIREDVALUE,
+                    )?.value ?? 0
+                  }
+                  nextDueDate={
+                    creditData.options.find(
+                      (option) =>
+                        option.label === paymentOptionValues.NEXTVALUE,
+                    )?.value ?? 0
+                  }
+                  fullPayment={
+                    creditData.options.find(
+                      (option) =>
+                        option.label === paymentOptionValues.TOTALVALUE,
+                    )?.value ?? 0
+                  }
+                  description={
+                    creditData.options.find(
+                      (option) =>
+                        option.description === paymentOptionValues.INMEDIATE,
+                    )?.description ?? ""
+                  }
+                  date={
+                    creditData.options.find((option) => option.date)?.date ??
+                    new Date()
+                  }
+                  onUpdateTotal={(oldValue, newValue, label) =>
+                    handleUpdateTotal(
+                      oldValue,
+                      newValue,
+                      label,
+                      creditData.id,
+                      creditData.id,
+                    )
+                  }
+                  tags={creditData.tags}
+                  initialValue={initialValues.selectedValues[creditData.id]}
+                  isMobile={isMobile}
+                  allowCustomValue={creditData.allowCustomValue}
+                />
+              ))}
+            </Grid>
           </Stack>
         </StyledCards>
       </Stack>

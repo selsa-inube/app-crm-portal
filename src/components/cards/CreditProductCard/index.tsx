@@ -1,4 +1,4 @@
-import { Schedule } from "@services/enums";
+import { Schedule } from "@services/enum/schedule";
 
 import { CreditProductCardUI } from "./interface";
 

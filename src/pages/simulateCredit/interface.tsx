@@ -17,11 +17,14 @@ import { useNavigate } from "react-router-dom";
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { IPaymentChannel } from "@services/types";
+import { IPaymentChannel, IObligations } from "@services/creditRequest/types";
 import { PaymentCapacityAnalysis } from "@components/modals/PaymentCapacityAnalysis";
-import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
-import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
+import {
+  IIncomeSources,
+  IPaymentCapacityResponse,
+} from "@services/creditLimit/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -118,11 +121,13 @@ interface SimulateCreditUIProps {
   totalIncome: number;
   creditLineTerms?: ICreditLineTerms;
   clientPortfolio: IObligations;
+  obligationPayments: IPayment[];
   assistedButtonText: string;
   isAlertIncome: boolean;
   isAlertObligation: boolean;
   codeError: number | null;
   addToFix: string[];
+  paymentCapacity?: IPaymentCapacityResponse | null;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -163,6 +168,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     totalIncome,
     creditLineTerms,
     clientPortfolio,
+    obligationPayments,
     currentStep,
     assistedButtonText,
     isAlertIncome,
@@ -171,6 +177,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     addToFix,
     formState,
     setFormState,
+    paymentCapacity,
   } = props;
 
   return (
@@ -469,6 +476,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       onChange={(items) =>
                         handleFormDataChange("consolidatedCreditArray", items)
                       }
+                      data={obligationPayments}
                     />
                   )}
               </Stack>
@@ -515,6 +523,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 <PaymentCapacityAnalysis
                   isMobile={isMobile}
                   handleClose={() => setIsCapacityAnalysisModal(false)}
+                  paymentCapacity={paymentCapacity}
                 />
               )}
               {isCapacityAnalysisWarning && (

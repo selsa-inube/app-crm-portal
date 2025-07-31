@@ -6,12 +6,12 @@ import { MdAdd, MdCached } from "react-icons/md";
 import { action } from "@storybook/addon-actions";
 
 import {
-  Schedule,
+  AmortizationType,
   CreditLine,
   PaymentMethod,
-  AmortizationType,
   RateType,
-} from "@services/enums";
+} from "@services/enum/prospectProduct";
+import { Schedule } from "@services/enum/schedule";
 
 import { props, parameters } from "./props";
 import { EditProductModal, EditProductModalProps } from "..";

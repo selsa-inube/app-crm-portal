@@ -16,8 +16,24 @@ function capitalizeFirstLetter(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
+const capitalizeText = (text: string) => {
+  const textWithoutSpaces = text.trim();
+  return (
+    textWithoutSpaces.trim().charAt(0).toUpperCase() +
+    textWithoutSpaces.slice(1).toLowerCase()
+  );
+};
+
+const capitalizeEachWord = (text: string) =>
+  text
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
 export {
   truncateTextToMaxLength,
   capitalizeFirstLetterEachWord,
   capitalizeFirstLetter,
+  capitalizeText,
+  capitalizeEachWord,
 };

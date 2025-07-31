@@ -14,9 +14,9 @@ import {
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableCreditProspects } from "@pages/prospect/components/TableCreditProspects";
-import { getProspectsByCustomerCode } from "@services/prospects/ProspectsByCustomerCode";
+import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
 import { AppContext } from "@context/AppContext";
-import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";
+import { IProspect } from "@services/prospect/types";
 
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
@@ -75,7 +75,6 @@ export function CreditProspects() {
     if (customerData?.publicCode && businessUnitPublicCode) {
       fetchData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessUnitPublicCode, customerData?.publicCode]);
 
   return (

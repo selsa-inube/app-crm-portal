@@ -5,7 +5,7 @@ import {
 } from "@config/environment";
 
 import { mapExtraordinaryInstallmentsEntity } from "./mappers";
-import { IExtraordinaryInstallments } from "../types/extraordInaryInstallments";
+import { IExtraordinaryInstallments } from "../types";
 
 export const removeExtraordinaryInstallments = async (
   extraordinaryInstallments: IExtraordinaryInstallments,
@@ -46,7 +46,7 @@ export const removeExtraordinaryInstallments = async (
 
       if (!res.ok) {
         throw {
-          message: "Ha ocurrido un error: ",
+          message: "Error al eliminar cuotas extraordinarias. : ",
           status: res.status,
           data,
         };

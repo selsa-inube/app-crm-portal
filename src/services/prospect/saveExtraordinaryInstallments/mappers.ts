@@ -1,4 +1,4 @@
-import { IExtraordinaryInstallments } from "../types/extraordInaryInstallments";
+import { IExtraordinaryInstallments } from "../types";
 
 const mapExtraordinaryInstallmentsEntity = (
   data: IExtraordinaryInstallments,

@@ -25,9 +25,9 @@ import {
 } from "@pages/applyForCredit/steps/disbursementGeneral/config";
 import { GeneralInformationForm } from "@pages/applyForCredit/components/GeneralInformationForm";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
-import { getAllInternalAccounts } from "@services/integrationInternalAccounts";
-import { IProspectSummaryById } from "@src/services/prospects/ProspectSummaryById/types";
+import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
+import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
+import { IProspectSummaryById } from "@services/prospect/types";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;

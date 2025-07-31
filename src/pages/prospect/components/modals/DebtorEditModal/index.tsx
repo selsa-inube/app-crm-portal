@@ -4,12 +4,9 @@ import { Stack, Tabs, useFlag } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
-import {
-  IBorrower,
-  IBorrowerProperty,
-  IIncomeSources,
-} from "@src/services/creditLimit/getIncomeSources/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
+import { IBorrower, IBorrowerProperty } from "@services/prospect/types";
+import { IIncomeSources } from "@services/creditLimit/types";
 
 import { dataEditDebtor, dataTabs, dataReport } from "./config";
 import { DataDebtor } from "./dataDebtor";

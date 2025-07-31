@@ -10,10 +10,13 @@ import {
   Date,
 } from "@inubekit/inubekit";
 
-import { IProspect } from "@services/prospects/types";
 import { paymentMethodOptionsMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { TableExtraordinaryInstallmentProps } from "@pages/prospect/components/TableExtraordinaryInstallment";
-import { IExtraordinaryInstallments } from "@services/prospect/types/extraordInaryInstallments";
+
+import {
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@services/prospect/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { handleFormSubmit } from "@utils/handleFormSubmit";
 import {

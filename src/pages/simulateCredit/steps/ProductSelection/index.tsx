@@ -7,7 +7,7 @@ import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
-import { IIncomeSources } from "@src/services/creditLimit/getIncomeSources/types";
+import { IIncomeSources } from "@services/creditLimit/types";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { electionData } from "./config";

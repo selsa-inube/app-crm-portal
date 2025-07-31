@@ -4,7 +4,7 @@ import { MdInfoOutline } from "react-icons/md";
 import { Text, Stack, Icon, Textfield, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { patchShareCreditProspect } from "@services/iProspect/shareCreditProspect";
+import { patchShareCreditProspect } from "@services/prospect/shareCreditProspect";
 import { pdfConverter } from "@utils/encrypt/encrypt";
 
 import { dataShareModal } from "./config";

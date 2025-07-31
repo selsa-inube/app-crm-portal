@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 
-import { IProspect } from "@services/prospects/types";
-import { IExtraordinaryInstallments } from "@services/prospect/types/extraordInaryInstallments";
+import {
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@services/prospect/types";
 import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
-import { removeExtraordinaryInstallment } from "./utils";
 
+import { removeExtraordinaryInstallment } from "./utils";
 import {
   headersTableExtraordinaryInstallment,
   rowsVisbleMobile,

@@ -22,15 +22,15 @@ import {
   paymentMethodOptionsMock,
 } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { AppContext } from "@context/AppContext";
-import {
-  IExtraordinaryInstallment,
-  IExtraordinaryInstallments,
-} from "@services/prospect/types/extraordInaryInstallments";
-import { IProspect } from "@services/prospects/types";
 
 import { dataAddSeriesModal } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
 import { TextLabels } from "../ExtraordinaryPaymentModal/config";
+import {
+  IExtraordinaryInstallment,
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@src/services/prospect/types";
 
 export interface AddSeriesModalProps {
   installmentState?: {
@@ -112,7 +112,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         setAddModal(selected);
         setInstallmentState((prev) => ({
           ...prev,
-          installmentDate: dateString || selected.installmentDate,
+          installmentDate: new Date(selected.installmentDate).toISOString(),
         }));
       } else if (setInstallmentState) {
         setInstallmentState((prev) => ({
