@@ -3,14 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
-import { getSearchProspectByCode } from "@src/services/prospect/SearchAllProspects";
+import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import {
   IProspect,
   IExtraordinaryInstallments,
 } from "@services/prospect/types";
 import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@src/services/businessUnitRules/EvaluteRuleByBusinessUnit";
+import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";

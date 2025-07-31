@@ -24,7 +24,7 @@ import {
   IPaymentCapacityResponse,
 } from "@services/creditLimit/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import { IPayment } from "@src/services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
+import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";

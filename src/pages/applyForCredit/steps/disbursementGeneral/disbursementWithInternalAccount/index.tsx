@@ -25,8 +25,8 @@ import {
 } from "@pages/applyForCredit/steps/disbursementGeneral/config";
 import { GeneralInformationForm } from "@pages/applyForCredit/components/GeneralInformationForm";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { getSearchCustomerByCode } from "@src/services/customer/SearchCustomerCatalogByCode";
-import { getAllInternalAccounts } from "@src/services/cardSavingProducts/SearchAllCardSavingProducts";
+import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
+import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { IProspectSummaryById } from "@services/prospect/types";
 
 interface IDisbursementWithInternalAccountProps {

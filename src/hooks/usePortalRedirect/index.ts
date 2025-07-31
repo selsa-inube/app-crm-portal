@@ -3,8 +3,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
 import { IBusinessManagers } from "@services/businessManager/types";
-import { getStaffPortalsByBusinessManager } from "@src/services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager";
-import { getBusinessManagers } from "@src/services/businessManager/SearchByIdBusinessManager";
+import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager";
+import { getBusinessManagers } from "@services/businessManager/SearchByIdBusinessManager";
 import { decrypt, encrypt } from "@utils/encrypt/encrypt";
 
 const usePortalLogic = () => {

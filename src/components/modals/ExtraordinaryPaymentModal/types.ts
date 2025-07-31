@@ -1,9 +1,9 @@
 interface IExtraordinaryPayment {
   id: number | string;
   datePayment: string;
-  amount?: number;
   value: number;
   paymentMethod: string;
+  amount?: number;
   frequency?: string;
 }
 interface IHeaders {

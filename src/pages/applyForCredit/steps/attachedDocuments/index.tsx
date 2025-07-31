@@ -7,7 +7,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@src/services/businessUnitRules/EvaluteRuleByBusinessUnit";
+import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 
 import { ruleConfig } from "../../config/configRules";
 import { evaluateRule } from "../../evaluateRule";

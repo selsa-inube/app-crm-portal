@@ -7,7 +7,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import {
   IPayment,
   paymentOptionValues,
-} from "@src/services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
+} from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";

@@ -5,10 +5,10 @@ import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { postSubmitCredit } from "@services/creditRequest/submitCredit";
-import { postBusinessUnitRules } from "@src/services/businessUnitRules/EvaluteRuleByBusinessUnit";
+import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { getMonthsElapsed } from "@utils/formatData/currency";
-import { getSearchProspectByCode } from "@src/services/prospect/SearchAllProspects";
-import { getSearchProspectSummaryById } from "@src/services/prospect/GetProspectSummaryById";
+import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
+import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { MessagingPlatform } from "@services/enum/messagingPlatform";
 

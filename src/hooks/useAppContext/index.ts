@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { IStaffPortalByBusinessManager } from "@services/staff/types";
+import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
 import { IBusinessManagers } from "@services/businessManager/types";
 import {
   validateBusinessManagers,
@@ -9,7 +9,7 @@ import {
 } from "@context/AppContext/utils";
 import { ICRMPortalData } from "@context/AppContext/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import { getStaff } from "@src/services/staff/SearchAllStaff";
+import { getStaff } from "@services/staff/SearchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 
 interface IBusinessUnits {

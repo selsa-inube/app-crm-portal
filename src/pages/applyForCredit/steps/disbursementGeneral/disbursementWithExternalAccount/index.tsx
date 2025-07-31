@@ -31,7 +31,7 @@ import {
 } from "@pages/applyForCredit/types";
 import { getAllBancks } from "@services/bank/SearchAllBank";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { getSearchCustomerByCode } from "@src/services/customer/SearchCustomerCatalogByCode";
+import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;
