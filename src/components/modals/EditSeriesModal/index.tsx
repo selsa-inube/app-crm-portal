@@ -12,7 +12,6 @@ import {
 
 import { paymentMethodOptionsMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { TableExtraordinaryInstallmentProps } from "@pages/prospect/components/TableExtraordinaryInstallment";
-
 import {
   IExtraordinaryInstallments,
   IProspect,

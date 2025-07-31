@@ -22,15 +22,15 @@ import {
   paymentMethodOptionsMock,
 } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { AppContext } from "@context/AppContext";
-
-import { dataAddSeriesModal } from "./config";
-import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
-import { TextLabels } from "../ExtraordinaryPaymentModal/config";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
   IProspect,
-} from "@src/services/prospect/types";
+} from "@services/prospect/types";
+
+import { dataAddSeriesModal } from "./config";
+import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
+import { TextLabels } from "../ExtraordinaryPaymentModal/config";
 
 export interface AddSeriesModalProps {
   installmentState?: {

@@ -4,15 +4,14 @@ import { Stack, Icon, useMediaQuery, Button } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment";
-
-import { AddSeriesModal } from "@components/modals/AddSeriesModal";
-
-import { TextLabels } from "./config";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
   IProspect,
-} from "@src/services/prospect/types";
+} from "@services/prospect/types";
+import { AddSeriesModal } from "@components/modals/AddSeriesModal";
+
+import { TextLabels } from "./config";
 
 export interface ExtraordinaryPaymentModalProps {
   businessUnitPublicCode: string;

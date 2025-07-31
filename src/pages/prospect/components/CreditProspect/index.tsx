@@ -17,7 +17,6 @@ import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
-
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
 import {
   incomeOptions,
@@ -41,13 +40,13 @@ import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
+import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect } from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
-import { ExtraordinaryPaymentModal } from "@src/components/modals/ExtraordinaryPaymentModal";
 
 interface ICreditProspectProps {
   showMenu: () => void;
