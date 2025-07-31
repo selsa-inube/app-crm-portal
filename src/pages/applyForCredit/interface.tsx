@@ -21,7 +21,7 @@ import { disbursemenTabs } from "@pages/applyForCredit/steps/disbursementGeneral
 import { GeneralHeader } from "@pages/simulateCredit/components/GeneralHeader";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
+import { IProspectSummaryById } from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";

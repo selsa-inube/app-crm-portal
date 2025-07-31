@@ -4,12 +4,12 @@ import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
-import { postSubmitCredit } from "@services/submitCredit";
-import { postBusinessUnitRules } from "@services/businessUnitRules";
+import { postSubmitCredit } from "@services/creditRequest/submitCredit";
+import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { getMonthsElapsed } from "@utils/formatData/currency";
-import { getSearchProspectByCode } from "@services/prospects/AllProspects";
-import { getSearchProspectSummaryById } from "@services/prospects/ProspectSummaryById";
-import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
+import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
+import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
+import { IProspectSummaryById } from "@services/prospect/types";
 import { MessagingPlatform } from "@services/enum/messagingPlatform";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";

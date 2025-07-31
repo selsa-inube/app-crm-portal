@@ -6,7 +6,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import {
   EPaymentOptionType,
   IPaymentOption,
-} from "@services/creditLimit/getCreditPayments/types";
+} from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { CustomValueModal } from "@pages/addProspect/components/CustomValueModal";
 import { IApplyPayOption } from "@pages/addProspect/components/CustomValueModal/utils";
 

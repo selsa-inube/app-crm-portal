@@ -12,7 +12,7 @@ import {
   Pagination,
 } from "@inubekit/inubekit";
 
-import { IProspect } from "@services/prospects/ProspectsByCustomerCode/types";
+import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/moneyDestinationTranslations";
 
 import { usePagination } from "./utils";

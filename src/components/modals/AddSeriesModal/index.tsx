@@ -25,8 +25,8 @@ import { AppContext } from "@context/AppContext";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
-} from "@services/iProspect/saveExtraordinaryInstallments/types";
-import { IProspect } from "@services/prospects/types";
+  IProspect,
+} from "@services/prospect/types";
 
 import { dataAddSeriesModal } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
@@ -114,7 +114,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         setAddModal(selected);
         setInstallmentState((prev) => ({
           ...prev,
-          installmentDate: isoDate || selected.installmentDate,
+          installmentDate:
+            isoDate || new Date(selected.installmentDate).toISOString(),
         }));
       } else if (setInstallmentState) {
         setInstallmentState((prev) => ({

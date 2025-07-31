@@ -3,9 +3,9 @@ import { useFlag, Stack, Icon, Tag, Text, Spinner } from "@inubekit/inubekit";
 import { MdCheckCircleOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 
 import { ICustomerData } from "@context/CustomerContext/types";
-import { IProspect } from "@services/prospects/types";
-import { patchValidateRequirements } from "@services/validateRequirements";
-import { IValidateRequirement } from "@services/validateRequirements/types";
+import { IProspect } from "@services/prospect/types";
+import { patchValidateRequirements } from "@services/requirement/validateRequirements";
+import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { TableBoard } from "@components/data/TableBoard";
 import { Fieldset } from "@components/data/Fieldset";

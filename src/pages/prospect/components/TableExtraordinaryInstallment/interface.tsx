@@ -16,9 +16,11 @@ import { ActionMobile } from "@components/feedback/ActionMobile";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { EditSeriesModal } from "@components/modals/EditSeriesModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
+import {
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@services/prospect/types";
 import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
-import { IProspect } from "@services/prospects/types";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";

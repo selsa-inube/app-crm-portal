@@ -8,7 +8,7 @@ import {
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
-import { Schedule } from "@services/enums";
+import { Schedule } from "@services/enum/schedule";
 import { IOptions } from "@components/navigation/MenuProspect/types";
 
 export const titlesCommercialManagementAccordion = [

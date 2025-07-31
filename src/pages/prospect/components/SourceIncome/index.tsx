@@ -9,14 +9,14 @@ import {
   currencyFormat,
   parseCurrencyString,
 } from "@utils/formatData/currency";
-import { IIncome } from "@services/types";
-import { IIncomeSources } from "@services/creditLimit/getIncomeSources/types";
+import { IIncomeSources } from "@services/creditLimit/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ICustomerData } from "@context/CustomerContext/types";
 
 import { IncomeEmployment, IncomeCapital, MicroBusinesses } from "./config";
 import { StyledContainer } from "./styles";
 import { dataReport } from "../TableObligationsFinancial/config";
+import { IIncome } from "./types";
 
 interface ISourceIncomeProps {
   openModal?: (state: boolean) => void;

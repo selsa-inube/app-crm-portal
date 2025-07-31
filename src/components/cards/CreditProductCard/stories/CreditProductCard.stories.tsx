@@ -2,7 +2,7 @@ import { StoryFn, Meta } from "@storybook/react";
 import { BrowserRouter } from "react-router-dom";
 import { action } from "@storybook/addon-actions";
 
-import { Schedule } from "@services/enums";
+import { Schedule } from "@services/enum/schedule";
 
 import { CreditProductCard, CreditProductCardProps } from "..";
 import { props } from "./props";
