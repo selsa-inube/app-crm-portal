@@ -3,7 +3,7 @@ import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
 import { getIncomeSourcesById } from "@services/creditLimit/getIncomeSources";
 import { IIncomeSources } from "@services/creditLimit/types";
-import { getSearchCustomerByCode } from "@services/customer/AllCustomers";
+import { getSearchCustomerByCode } from "@src/services/customer/SearchCustomerCatalogByCode";
 import { getAge } from "@utils/formatData/currency";
 import { getAllPropertyValues } from "@utils/mappingData/mappings";
 

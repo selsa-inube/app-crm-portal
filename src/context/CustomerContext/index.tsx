@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 
-import { getSearchCustomerByCode } from "@services/customer/AllCustomers";
+import { getSearchCustomerByCode } from "@src/services/customer/SearchCustomerCatalogByCode";
 import { AppContext } from "@context/AppContext";
 
 import { ICustomerContext, ICustomerData, initialCustomerData } from "./types";

@@ -6,14 +6,14 @@ import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules";
+import { postBusinessUnitRules } from "@src/services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { postSimulateCredit } from "@services/prospect/simulateCredit";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
 import { IObligations } from "@services/creditRequest/types";
-import { getCreditPayments } from "@services/portfolioObligation/getCreditPayments";
-import { IPayment } from "@services/portfolioObligation/getCreditPayments/types";
+import { getCreditPayments } from "@src/services/portfolioObligation/SearchAllPortfolioObligationPayment";
+import { IPayment } from "@src/services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import {
   IPaymentCapacity,
   IPaymentCapacityResponse,

@@ -1,4 +1,4 @@
-import { IMoneyDestination } from "./types";
+import { IMoneyDestination } from "../types";
 
 const mapMoneyDestinationToEntity = (
   data: Record<string, string | number | object>,

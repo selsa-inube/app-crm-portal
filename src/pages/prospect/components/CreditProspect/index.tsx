@@ -39,7 +39,7 @@ import {
 } from "@services/prospect/types";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
-import { getSearchProspectById } from "@services/prospect/searchProspectById";
+import { getSearchProspectById } from "@src/services/prospect/SearchByIdProspect";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";

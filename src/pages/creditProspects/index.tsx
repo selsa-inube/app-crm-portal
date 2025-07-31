@@ -14,7 +14,7 @@ import {
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableCreditProspects } from "@pages/prospect/components/TableCreditProspects";
-import { getProspectsByCustomerCode } from "@services/prospect/ProspectsByCustomerCode";
+import { getProspectsByCustomerCode } from "@src/services/prospect/SearchAllProspectsByCustomerCode";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 

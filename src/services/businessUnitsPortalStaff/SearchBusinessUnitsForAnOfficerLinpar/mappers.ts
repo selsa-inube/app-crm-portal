@@ -1,4 +1,4 @@
-import { IBusinessUnitsPortalStaff } from "./types";
+import { IBusinessUnitsPortalStaff } from "../types";
 
 const mapBusinessUnitsPortalStaffToEntity = (
   resend: Record<string, string | number | object>,

@@ -13,14 +13,14 @@ import {
   ICreditProduct,
   IProspectSummaryById,
 } from "@services/prospect/types";
-import { getSearchProspectSummaryById } from "@services/prospect/ProspectSummaryById";
+import { getSearchProspectSummaryById } from "@src/services/prospect/GetProspectSummaryById";
 import { AppContext } from "@context/AppContext";
 import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { Schedule } from "@services/enum/schedule";
-import { getAllDeductibleExpensesById } from "@services/prospect/deductibleExpenses";
+import { getAllDeductibleExpensesById } from "@src/services/prospect/SearchAllDeductibleExpensesById";
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
-import { getSearchProspectById } from "@services/prospect/searchProspectById";
+import { getSearchProspectById } from "@src/services/prospect/SearchByIdProspect";
 
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";

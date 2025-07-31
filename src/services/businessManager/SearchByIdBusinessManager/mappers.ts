@@ -1,4 +1,4 @@
-import { IBusinessManagers } from "./types";
+import { IBusinessManagers } from "../types";
 
 const mapResendApiToEntity = (
   resend: Record<string, string | number | object>,

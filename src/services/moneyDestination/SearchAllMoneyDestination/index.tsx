@@ -3,7 +3,7 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IMoneyDestination } from "./types";
+import { IMoneyDestination } from "../types";
 import { mapMoneyDestinationToEntity } from "./mappers";
 
 const getMoneyDestinations = async (

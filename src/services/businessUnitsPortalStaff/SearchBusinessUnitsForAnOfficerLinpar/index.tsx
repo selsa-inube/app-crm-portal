@@ -1,6 +1,6 @@
 import { environment } from "@config/environment";
 
-import { IBusinessUnitsPortalStaff } from "./types";
+import { IBusinessUnitsPortalStaff } from "../types";
 import { mapBusinessUnitsPortalStaffToEntity } from "./mappers";
 
 const getBusinessUnitsPortalStaff = async (

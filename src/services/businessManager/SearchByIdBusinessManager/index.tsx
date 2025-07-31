@@ -4,7 +4,7 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IBusinessManagers } from "./types";
+import { IBusinessManagers } from "../types";
 import { mapResendApiToEntity } from "./mappers";
 
 const getBusinessManagers = async (

@@ -1,6 +1,6 @@
 import { environment } from "@config/environment";
 
-import { IBusinessUnitRules } from "./types";
+import { IBusinessUnitRules } from "../types";
 
 const postBusinessUnitRules = async (
   businessUnitPublicCode: string,
