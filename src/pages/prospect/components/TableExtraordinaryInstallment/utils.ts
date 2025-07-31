@@ -1,5 +1,4 @@
 import { removeExtraordinaryInstallments } from "@services/prospect/removeExtraordinaryInstallments";
-import { updateExtraordinaryInstallments } from "@services/prospect/updateExtraordinaryInstallments";
 import { IExtraordinaryInstallments } from "@services/prospect/types";
 
 const removeExtraordinaryInstallment = (
@@ -12,14 +11,4 @@ const removeExtraordinaryInstallment = (
   );
 };
 
-const updateExtraordinaryInstallment = (
-  businessUnitPublicCode: string,
-  extraordinaryInstallments: IExtraordinaryInstallments,
-) => {
-  return updateExtraordinaryInstallments(
-    extraordinaryInstallments,
-    businessUnitPublicCode,
-  );
-};
-
-export { removeExtraordinaryInstallment, updateExtraordinaryInstallment };
+export { removeExtraordinaryInstallment };

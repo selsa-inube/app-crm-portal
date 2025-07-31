@@ -2,12 +2,13 @@ import { useState } from "react";
 import { StoryFn, Meta } from "@storybook/react";
 import { Button } from "@inubekit/inubekit";
 
-import { AddSeriesModal, AddSeriesModalProps } from "../index";
-import { props, parameters } from "./props";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
 } from "@services/prospect/types";
+
+import { AddSeriesModal, AddSeriesModalProps } from "../index";
+import { props, parameters } from "./props";
 
 const story: Meta<typeof AddSeriesModal> = {
   component: AddSeriesModal,

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useMediaQuery } from "@inubekit/inubekit";
+import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 
 import {
-  IProspect,
   IExtraordinaryInstallments,
+  IProspect,
 } from "@services/prospect/types";
+import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
 
+import { removeExtraordinaryInstallment } from "./utils";
 import {
   headersTableExtraordinaryInstallment,
   rowsVisbleMobile,
@@ -84,22 +86,7 @@ export const TableExtraordinaryInstallment = (
   } = props;
 
   const headers = headersTableExtraordinaryInstallment;
-  const [extraordinaryInstallments, setExtraordinaryInstallments] = useState<
-    TableExtraordinaryInstallmentProps[]
-  >([]);
-  const [selectedDebtor, setSelectedDebtor] =
-    useState<TableExtraordinaryInstallmentProps>({});
-
-  const handleEdit = (debtor: TableExtraordinaryInstallmentProps) => {
-    setSelectedDebtor(debtor);
-    setIsOpenModalEdit(true);
-  };
-  const [loading, setLoading] = useState(true);
-  const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
-  const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
-
   const isMobile = useMediaQuery("(max-width:880px)");
-
   const visbleHeaders = isMobile
     ? headers.filter((header) => rowsVisbleMobile.includes(header.key))
     : headers;
@@ -107,24 +94,90 @@ export const TableExtraordinaryInstallment = (
     ? rowsActions.filter((action) => rowsVisbleMobile.includes(action.key))
     : rowsActions;
 
+  const [extraordinaryInstallments, setExtraordinaryInstallments] = useState<
+    TableExtraordinaryInstallmentProps[]
+  >([]);
+  const [selectedDebtor, setSelectedDebtor] =
+    useState<TableExtraordinaryInstallmentProps>({});
+  const [loading, setLoading] = useState(true);
+  const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
+  const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
+  const paginationProps = usePagination(extraordinaryInstallments);
+  const { addFlag } = useFlag();
+
+  const itemIdentifiersForUpdate: IExtraordinaryInstallments = {
+    creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
+    extraordinaryInstallments:
+      prospectData?.creditProducts[0]?.extraordinaryInstallments
+        ?.filter((installment) => {
+          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${installment.installmentDate},${installment.paymentChannelAbbreviatedName}`;
+          return expectedId === selectedDebtor?.id;
+        })
+        ?.map((installment) => ({
+          installmentDate:
+            typeof installment.installmentDate === "string"
+              ? installment.installmentDate
+              : new Date(installment.installmentDate).toISOString(),
+          installmentAmount: Number(installment.installmentAmount),
+          paymentChannelAbbreviatedName: String(
+            installment.paymentChannelAbbreviatedName,
+          ),
+        })) || [],
+    prospectId: prospectData?.prospectId || "",
+  };
+
   useEffect(() => {
     if (prospectData?.creditProducts) {
-      const extraordinaryInstallmentsUpdate = prospectData.creditProducts
-        .flatMap((product) =>
+      const extraordinaryInstallmentsFlat = prospectData.creditProducts.flatMap(
+        (product) =>
           Array.isArray(product.extraordinaryInstallments)
             ? product.extraordinaryInstallments.map((installment) => ({
-                id: `${product.creditProductCode},${installment.installmentDate}`,
+                id: `${product.creditProductCode},${installment.installmentDate},${installment.paymentChannelAbbreviatedName}`,
                 datePayment: installment.installmentDate,
                 value: installment.installmentAmount,
                 paymentMethod: installment.paymentChannelAbbreviatedName,
+                creditProductCode: product.creditProductCode,
               }))
             : [],
-        )
-        .reverse();
+      );
+      const installmentsByUniqueKey = extraordinaryInstallmentsFlat.reduce(
+        (
+          installmentsAccumulator: Record<
+            string,
+            TableExtraordinaryInstallmentProps
+          >,
+          currentInstallment,
+        ) => {
+          const uniqueKey = `${currentInstallment.creditProductCode}_${currentInstallment.datePayment}_${currentInstallment.paymentMethod}`;
+
+          if (installmentsAccumulator[uniqueKey]) {
+            installmentsAccumulator[uniqueKey].value =
+              (installmentsAccumulator[uniqueKey].value as number) +
+              (currentInstallment.value as number);
+          } else {
+            installmentsAccumulator[uniqueKey] = { ...currentInstallment };
+          }
+
+          return installmentsAccumulator;
+        },
+        {},
+      );
+
+      const extraordinaryInstallmentsUpdate = Object.values(
+        installmentsByUniqueKey,
+      ).reverse() as TableExtraordinaryInstallmentProps[];
+
       setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
     setLoading(false);
   }, [prospectData, refreshKey]);
+
+  useEffect(() => {
+    if (extraordinary && Array.isArray(extraordinary)) {
+      setExtraordinaryInstallments(extraordinary);
+      setLoading(false);
+    }
+  }, [extraordinary]);
 
   const handleUpdateData = async (
     updatedDebtor: TableExtraordinaryInstallmentProps,
@@ -145,12 +198,39 @@ export const TableExtraordinaryInstallment = (
     }
   };
 
-  useEffect(() => {
-    if (extraordinary && Array.isArray(extraordinary)) {
-      setExtraordinaryInstallments(extraordinary);
-      setLoading(false);
+  const handleDeleteAction = async () => {
+    if (handleDelete && selectedDebtor.id) {
+      handleDelete(selectedDebtor.id as string);
+      setIsOpenModalDelete(false);
+    } else if (service) {
+      try {
+        await removeExtraordinaryInstallment(
+          businessUnitPublicCode ?? "",
+          itemIdentifiersForUpdate,
+        );
+
+        setSentData?.(itemIdentifiersForUpdate);
+        setIsOpenModalDelete(false);
+        handleClose?.();
+      } catch (error: unknown) {
+        const err = error as {
+          message?: string;
+          status?: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + (err?.message || "") + (err?.data?.description || "");
+
+        addFlag({
+          title: TextLabels.titleError,
+          description,
+          appearance: "danger",
+          duration: 5000,
+        });
+      }
     }
-  }, [extraordinary]);
+  };
 
   return (
     <TableExtraordinaryInstallmentUI
@@ -166,14 +246,15 @@ export const TableExtraordinaryInstallment = (
       prospectData={prospectData}
       setIsOpenModalDelete={setIsOpenModalDelete}
       setIsOpenModalEdit={setIsOpenModalEdit}
-      handleEdit={handleEdit}
       handleUpdate={handleUpdateData}
-      usePagination={usePagination}
+      usePagination={paginationProps}
       setSentData={setSentData ?? (() => {})}
       handleClose={handleClose}
       setSelectedDebtor={setSelectedDebtor}
       handleDelete={handleDelete}
       service={service}
+      itemIdentifiersForUpdate={itemIdentifiersForUpdate}
+      handleDeleteAction={handleDeleteAction}
     />
   );
 };

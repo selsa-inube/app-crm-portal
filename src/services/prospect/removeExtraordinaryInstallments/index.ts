@@ -1,50 +1,70 @@
-import { environment } from "@config/environment";
-import { IExtraordinaryInstallments } from "../types";
-import { mapExtraordinaryInstallmentsEntity } from "./mappers";
+import {
+  environment,
+  fetchTimeoutServices,
+  maxRetriesServices,
+} from "@config/environment";
 
-const removeExtraordinaryInstallments = async (
+import { mapExtraordinaryInstallmentsEntity } from "./mappers";
+import { IExtraordinaryInstallments } from "../types";
+
+export const removeExtraordinaryInstallments = async (
   extraordinaryInstallments: IExtraordinaryInstallments,
   businessUnitPublicCode: string,
 ): Promise<IExtraordinaryInstallments | undefined> => {
-  const requestUrl = `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`;
+  const maxRetries = maxRetriesServices;
+  const fetchTimeout = fetchTimeoutServices;
 
-  try {
-    const options: RequestInit = {
-      method: "PATCH",
-      headers: {
-        "X-Action": "RemoveExtraordinaryInstallments",
-        "X-Business-Unit": businessUnitPublicCode,
-        "Content-type": "application/json; charset=UTF-8",
-      },
-      body: JSON.stringify(
-        mapExtraordinaryInstallmentsEntity(extraordinaryInstallments),
-      ),
-    };
-
-    const res = await fetch(requestUrl, options);
-
-    if (res.status === 204) {
-      return;
-    }
-
-    let data;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      data = await res.json();
-    } catch (error) {
-      throw new Error("Failed to parse response JSON");
-    }
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+      const options: RequestInit = {
+        method: "PATCH",
+        headers: {
+          "X-Action": "RemoveExtraordinaryInstallments",
+          "X-Business-Unit": businessUnitPublicCode,
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify(
+          mapExtraordinaryInstallmentsEntity(extraordinaryInstallments),
+        ),
+        signal: controller.signal,
+      };
 
-    if (!res.ok) {
-      const errorMessage = `Error al eliminar cuotas extraordinarias. Status: ${
-        res.status
-      }, Data: ${JSON.stringify(data)}`;
-      throw new Error(errorMessage);
+      const res = await fetch(
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
+        options,
+      );
+
+      clearTimeout(timeoutId);
+
+      if (res.status === 204) {
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw {
+          message: "Error al eliminar cuotas extraordinarias. : ",
+          status: res.status,
+          data,
+        };
+      }
+
+      return data;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
+        throw new Error(
+          "Todos los intentos fallaron. No se pudo eliminar los Pagos Extras.",
+        );
+      }
     }
-    return data;
-  } catch (error) {
-    console.error("Failed to delete extraordinary installments:", error);
-    throw error;
   }
 };
-
-export { removeExtraordinaryInstallments };

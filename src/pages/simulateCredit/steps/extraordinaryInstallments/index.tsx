@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { MdOutlineAdd } from "react-icons/md";
 import { Stack, Icon, Button } from "@inubekit/inubekit";
 
@@ -25,22 +25,31 @@ export function ExtraordinaryInstallments(
 
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const isInitialMount = useRef(true);
+
+  const initialInstallmentState = {
+    installmentAmount: 0,
+    installmentDate: "",
+    paymentChannelAbbreviatedName: "",
+  };
+
+  const [installmentState, setInstallmentState] = useState(
+    initialInstallmentState,
+  );
 
   const toggleAddSeriesModal = () => {
     setAddSeriesModalOpen(!isAddSeriesModalOpen);
     setRefreshKey((prevKey) => prevKey + 1);
+    if (!isAddSeriesModalOpen) {
+      setInstallmentState(initialInstallmentState);
+    }
   };
 
   const handleCloseModal = () => {
     setAddSeriesModalOpen(false);
     setRefreshKey((prevKey) => prevKey + 1);
+    setInstallmentState(initialInstallmentState);
   };
-
-  const [installmentState, setInstallmentState] = useState({
-    installmentAmount: 0,
-    installmentDate: "",
-    paymentChannelAbbreviatedName: "",
-  });
 
   const [extraordinary, setExtraordinary] = useState<
     TableExtraordinaryInstallmentProps[]
@@ -50,23 +59,53 @@ export function ExtraordinaryInstallments(
     setExtraordinary(initialValues || []);
   }, [initialValues]);
 
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    const timeoutId = setTimeout(() => {
+      handleOnChange(extraordinary);
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [extraordinary, handleOnChange]);
+
   const handleSubmit = (installment: {
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
   }) => {
     const { installmentDate, paymentChannelAbbreviatedName } = installment;
 
-    const newPayment: TableExtraordinaryInstallmentProps = {
-      id: `${paymentChannelAbbreviatedName},${installmentDate},${Date.now()}`,
-      datePayment: installmentDate,
-      value: installmentState.installmentAmount,
-      paymentMethod: paymentChannelAbbreviatedName,
-    };
-
     setExtraordinary((prev) => {
-      const exists = prev.some((p) => p.id === newPayment.id);
-      const updated = !exists ? [...prev, newPayment] : prev;
-      handleOnChange(updated);
+      const existingIndex = prev.findIndex(
+        (item) =>
+          item.datePayment === installmentDate &&
+          item.paymentMethod === paymentChannelAbbreviatedName,
+      );
+
+      let updated: TableExtraordinaryInstallmentProps[];
+      if (existingIndex !== -1) {
+        updated = prev.map((item, index) =>
+          index === existingIndex
+            ? {
+                ...item,
+                value:
+                  (Number(item.value) || 0) +
+                  installmentState.installmentAmount,
+              }
+            : item,
+        );
+      } else {
+        const newPayment: TableExtraordinaryInstallmentProps = {
+          id: `${paymentChannelAbbreviatedName},${installmentDate},${Date.now()}`,
+          datePayment: installmentDate,
+          value: installmentState.installmentAmount,
+          paymentMethod: paymentChannelAbbreviatedName,
+        };
+        updated = [...prev, newPayment];
+      }
+
       return updated;
     });
 
@@ -76,17 +115,6 @@ export function ExtraordinaryInstallments(
   const handleDelete = (id: string) => {
     setExtraordinary((prev) => {
       const updated = prev.filter((item) => item.id !== id);
-      handleOnChange(updated);
-      return updated;
-    });
-  };
-
-  const handleUpdate = (updatedDebtor: TableExtraordinaryInstallmentProps) => {
-    setExtraordinary((prev) => {
-      const updated = prev.map((item) =>
-        item.id === updatedDebtor.id ? updatedDebtor : item,
-      );
-      handleOnChange(updated);
       return updated;
     });
   };
@@ -117,7 +145,6 @@ export function ExtraordinaryInstallments(
               extraordinary={extraordinary}
               service={false}
               handleDelete={handleDelete}
-              handleUpdate={handleUpdate}
             />
           </Stack>
         </Stack>

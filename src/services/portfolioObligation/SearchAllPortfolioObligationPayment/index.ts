@@ -20,7 +20,7 @@ const getCreditPayments = async (
       const queryParams = new URLSearchParams({
         customerCode: userIdentification,
       });
-      console.log("en getCreditPayments--> ", businessUnitPublicCode);
+      console.log(businessUnitPublicCode);
       const options: RequestInit = {
         method: "GET",
         headers: {
