@@ -618,12 +618,15 @@ export function SimulateCredit() {
     (step: { number: number }) => step.number === currentStep,
   );
   const handleNextStep = () => {
+    const alwaysShowSourcesIncome = stepsAddProspect.sourcesIncome.id;
+
     const dynamicSteps = [
       formData.togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       formData.togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       formData.togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
+      alwaysShowSourcesIncome,
       formData.togglesState[1]
         ? stepsAddProspect.obligationsFinancial.id
         : undefined,
