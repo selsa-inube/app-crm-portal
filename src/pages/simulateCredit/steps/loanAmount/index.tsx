@@ -25,7 +25,7 @@ import {
 import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { BaseModal } from "@components/modals/baseModal";
-import { IPayment } from "@services/creditLimit/getCreditPayments/types";
+import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 
 import { dataAmount, dataModalDisableLoanAmount } from "./config";
 
