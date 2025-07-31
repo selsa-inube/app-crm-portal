@@ -359,8 +359,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         onToggleChange: (index: number) => {
                           const newToggles = [...formData.togglesState];
                           newToggles[index] = !newToggles[index];
-                          console.log(index, " Toggles State: ", newToggles);
-
                           handleFormDataChange("togglesState", newToggles);
                         },
                       }}
@@ -474,6 +472,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       requestValue={requestValue}
                       setRequestValue={setRequestValue}
+                      obligationPayments={obligationPayments}
                     />
                   )}
                 {currentStepsNumber &&
