@@ -1,6 +1,8 @@
 import { Formik, Field, Form } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { MdInfoOutline } from "react-icons/md";
+import { Icon } from "@inubekit/inubekit";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
@@ -22,8 +24,10 @@ import {
 } from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
 import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/types";
+import { BaseModal } from "@components/modals/baseModal";
+import { IPayment } from "@services/creditLimit/getCreditPayments/types";
 
-import { dataAmount } from "./config";
+import { dataAmount, dataModalDisableLoanAmount } from "./config";
 
 export interface ILoanAmountProps {
   initialValues: {
@@ -40,6 +44,7 @@ export interface ILoanAmountProps {
   >;
   handleOnChange: (newData: Partial<ILoanAmountProps["initialValues"]>) => void;
   onFormValid: (isValid: boolean) => void;
+  obligationPayments: IPayment[] | undefined;
 }
 
 export function LoanAmount(props: ILoanAmountProps) {
@@ -50,6 +55,7 @@ export function LoanAmount(props: ILoanAmountProps) {
     onFormValid,
     requestValue,
     setRequestValue,
+    obligationPayments,
   } = props;
   const { id } = useParams();
   const loanId = parseInt(id || "0", 10);
@@ -59,6 +65,7 @@ export function LoanAmount(props: ILoanAmountProps) {
     dataAmount[
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
     get("mockRequest_value")
@@ -78,6 +85,13 @@ export function LoanAmount(props: ILoanAmountProps) {
     periodicity: Yup.string(),
     payAmount: Yup.string(),
   });
+
+  const userHaveObligationPayments =
+    obligationPayments && obligationPayments.length > 0;
+
+  const handleCloseModalToggleState = () => {
+    setShowInfoModal(false);
+  };
 
   return (
     <Fieldset hasOverflow>
@@ -147,7 +161,21 @@ export function LoanAmount(props: ILoanAmountProps) {
                       handleOnChange({ toggleChecked: checked });
                     }}
                     checked={values.toggleChecked}
+                    disabled={!userHaveObligationPayments}
                   />
+                  {!userHaveObligationPayments && (
+                    <Stack margin="2px 0">
+                      <Icon
+                        icon={<MdInfoOutline />}
+                        appearance="primary"
+                        size="16px"
+                        onClick={() => {
+                          setShowInfoModal(true);
+                        }}
+                        cursorHover
+                      />
+                    </Stack>
+                  )}
                   <Text
                     type="label"
                     size="large"
@@ -239,6 +267,19 @@ export function LoanAmount(props: ILoanAmountProps) {
                 )}
               </Stack>
             </Stack>
+            {showInfoModal && (
+              <BaseModal
+                title={dataModalDisableLoanAmount.title}
+                nextButton={dataModalDisableLoanAmount.understood}
+                handleNext={handleCloseModalToggleState}
+                handleClose={handleCloseModalToggleState}
+                width={isMobile ? "280px" : "450px"}
+              >
+                <Stack>
+                  <Text>{dataModalDisableLoanAmount.description}</Text>
+                </Stack>
+              </BaseModal>
+            )}
           </Form>
         )}
       </Formik>

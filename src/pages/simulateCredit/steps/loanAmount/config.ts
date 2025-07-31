@@ -11,3 +11,9 @@ export const dataAmount = {
   creditText: "Cupo disponible sin garantía por línea de crédito",
   placeholderValue: "Valor que espera recibir",
 };
+
+export const dataModalDisableLoanAmount = {
+  title: "Información",
+  description: "El cliente no cuenta con obligaciones de cartera.",
+  understood: "Entendido",
+};
