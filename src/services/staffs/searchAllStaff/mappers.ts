@@ -1,4 +1,4 @@
-import { IStaff, IStaffByBusinessUnitAndRole } from "../types";
+import { IStaff, IStaffByBusinessUnitAndRole } from "./types";
 
 const mapStaffToEntity = (
   data: Record<string, string | number | object>,

@@ -104,7 +104,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
-  const { customerPublicCode, prospectCode } = useParams();
+  const { prospectCode } = useParams();
 
   const handleTabChange = (tabId: string) => {
     setIsSelected(tabId);
@@ -115,7 +115,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     setIsModalOpen(true);
   };
   const handleHome = () => {
-    navigate(`/credit/edit-prospect/${customerPublicCode}/${prospectCode}`);
+    navigate(`/credit/prospects/${prospectCode}`);
   };
 
   return (

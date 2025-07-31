@@ -25,53 +25,52 @@ export const OptionStaffPortal: IOptionStaffPortalItem[] = [
   {
     id: "Crédito",
     icon: getIconByName("MdOutlineAccountBalance"),
-    descriptionUse: "Manage your credit options",
+    descriptionUse: "Gestiona tus opciones de crédito",
     url: "/credit",
     subOptions: [
       {
-        id: "Simulaciones de crédito",
+        id: "Prospectos de crédito",
         icon: getIconByName("MdOutlineAttachMoney"),
-        descriptionUse:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        url: "/credit/simulations",
+        descriptionUse: "Gestiona los prospectos de crédito del cliente.",
+        url: "/credit/prospects",
       },
       {
         id: "Solicitudes de crédito",
         icon: getIconByName("MdMoneyOff"),
         descriptionUse:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        url: "/credit/simulaciones-2",
+        url: "/credit/prospects-2",
       },
     ],
   },
   {
     id: "Ahorros",
     icon: getIconByName("MdOutlineSavings"),
-    descriptionUse: "Manage your savings options",
+    descriptionUse: "Gestiona tus opciones de ahorro",
     url: "/",
   },
   {
     id: "Pagos",
     icon: getIconByName("MdOutlinePayments"),
-    descriptionUse: "Manage your payment options",
+    descriptionUse: "Gestiona tus opciones de pago",
     url: "/",
   },
   {
     id: "Tarjetas",
     icon: getIconByName("MdCreditCard"),
-    descriptionUse: "Manage your card options",
+    descriptionUse: "Gestiona tus opciones de tarjeta",
     url: "/",
   },
   {
     id: "Auxilios",
     icon: getIconByName("MdOutlineSupport"),
-    descriptionUse: "Manage your support options",
+    descriptionUse: "Gestiona tus opciones de auxilios",
     url: "/",
   },
   {
     id: "Transferencias",
     icon: getIconByName("MdCompareArrows"),
-    descriptionUse: "Manage your transfer options",
+    descriptionUse: "Gestiona tus opciones de transferencia",
     url: "/",
   },
 ];

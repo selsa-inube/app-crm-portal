@@ -44,7 +44,7 @@ export const useCreditCards = (): CreditCardCfg[] => {
       icon: <MdOutlineAttachMoney />,
       title: "Prospectos de crédito",
       subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      onClick: () => navigate("/credit/simulations"),
+      onClick: () => navigate("/credit/prospects"),
     },
     {
       key: "advance",

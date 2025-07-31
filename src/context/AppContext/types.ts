@@ -76,13 +76,13 @@ interface IAppContext {
   eventData: ICRMPortalData;
   businessUnitSigla: string;
   businessUnitsToTheStaff: IBusinessUnitsPortalStaff[];
-  optionStaffData?: IOptionStaff[];
   setEventData: React.Dispatch<React.SetStateAction<ICRMPortalData>>;
   setBusinessUnitSigla: React.Dispatch<React.SetStateAction<string>>;
   setBusinessUnitsToTheStaff: React.Dispatch<
     React.SetStateAction<IBusinessUnitsPortalStaff[]>
   >;
   setOptionStaffData: React.Dispatch<React.SetStateAction<IOptionStaff[]>>;
+  optionStaffData?: IOptionStaff[];
 }
 
 export type { ICRMPortalData, IAppContext, IBusinessUnit };

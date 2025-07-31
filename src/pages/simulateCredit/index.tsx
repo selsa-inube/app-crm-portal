@@ -730,7 +730,7 @@ export function SimulateCredit() {
       const prospectCode = response.prospectCode;
 
       setTimeout(() => {
-        navigate(`/credit/simulations/${prospectCode}`);
+        navigate(`/credit/prospects/${prospectCode}`);
       }, 1000);
     } catch (error) {
       handleFlag(error);

@@ -16,7 +16,6 @@ import {
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";

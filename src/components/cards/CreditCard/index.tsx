@@ -2,7 +2,7 @@ import { Icon, Stack, Text } from "@inubekit/inubekit";
 import { FC, ReactNode } from "react";
 import { StyledCreditCard } from "./styles";
 
-interface Props {
+interface IOptionsCard {
   icon: ReactNode;
   title: string;
   subtitle: string;
@@ -11,7 +11,7 @@ interface Props {
   isDisabled?: boolean;
 }
 
-export const CreditCard: FC<Props> = ({
+export const CreditCard: FC<IOptionsCard> = ({
   icon,
   title,
   subtitle,

@@ -1,6 +1,6 @@
 import { environment } from "@config/environment";
 
-import { IStaff } from "../types";
+import { IStaff } from "./types";
 import { mapStaffToEntity } from "./mappers";
 
 const getStaff = async (): Promise<IStaff[]> => {

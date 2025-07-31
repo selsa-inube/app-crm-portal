@@ -14,8 +14,8 @@ function CreditRoutes() {
       <Route path="/" element={<AppPage />}>
         <Route path="/" element={<Credit />} />
         <Route path="/simulate-credit" element={<SimulateCredit />} />
-        <Route path="/simulations" element={<CreditProspects />} />
-        <Route path="/simulations/:prospectCode" element={<Simulations />} />
+        <Route path="/prospects" element={<CreditProspects />} />
+        <Route path="/prospects/:prospectCode" element={<Simulations />} />
         <Route
           path="/apply-for-credit/:prospectCode"
           element={<ApplyForCredit />}
