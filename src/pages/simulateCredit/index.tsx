@@ -775,6 +775,7 @@ export function SimulateCredit() {
       }));
     }
   }, [clientPortfolio]);
+
   return (
     <>
       <SimulateCreditUI

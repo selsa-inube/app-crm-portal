@@ -149,6 +149,7 @@ export function ProductSelection(props: IProductSelectionProps) {
   useEffect(() => {
     setFullRules(allRules);
   }, [choiceMoneyDestination]);
+
   const filteredQuestions = allQuestions.filter(({ key }) => {
     if (
       key === "includeExtraordinaryInstallments" &&
@@ -184,6 +185,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     (creditLimitData?.PeriodicSalary ?? 0) +
     (creditLimitData?.PersonalBusinessUtilities ?? 0) +
     (creditLimitData?.ProfessionalFees ?? 0);
+
   return (
     <Formik
       initialValues={initialValues}
