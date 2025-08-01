@@ -20,12 +20,13 @@ import {
   IPaymentCapacityResponse,
 } from "@services/creditLimit/getBorrowePaymentCapacity/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
-import { getUnmetRequirementsAmount } from "@src/services/requirement/getUnmetRequirementsAmount";
-import { IUnmetRequirementsAmount } from "@src/services/requirement/getUnmetRequirementsAmount/types";
+import { getUnmetRequirementsAmount } from "@services/requirement/getUnmetRequirementsAmount";
+import { IUnmetRequirementsAmount } from "@services/requirement/getUnmetRequirementsAmount/types";
 import { IBorrower } from "@services/types";
 import { IConsolidatedCredit } from "@services/types";
 import { ICreditProductProspect } from "@services/types";
 import { IBorrowerProperty } from "@services/types";
+import { Schedule } from "@services/enums";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -34,7 +35,6 @@ import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
 import { textAddCongfig } from "./config/addConfig";
 import { tittleOptions } from "./steps/financialObligations/config/config";
-import { Schedule } from "@services/enums";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
