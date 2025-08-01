@@ -23,6 +23,7 @@ export const TableFinancialObligations = (
     showActions,
     showButtons,
     formState,
+    onFormValid,
   } = props;
   const [loading] = useState(false);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
@@ -31,7 +32,7 @@ export const TableFinancialObligations = (
   const [extraDebtors, setExtraDebtors] = useState<
     ITableFinancialObligationsProps[]
   >([]);
-
+  console.log("extraDebtors: ", extraDebtors);
   const formik = useFormik<{
     obligations: IObligations | null;
   }>({
@@ -44,6 +45,16 @@ export const TableFinancialObligations = (
   useEffect(() => {
     handleOnChange(formik.values);
   }, []);
+
+  useEffect(() => {
+    if (onFormValid) {
+      if (extraDebtors.length) {
+        onFormValid(true);
+      } else {
+        onFormValid(false);
+      }
+    }
+  }, [extraDebtors]);
 
   const handleEdit = (debtor: ITableFinancialObligationsProps) => {
     let balance = "";

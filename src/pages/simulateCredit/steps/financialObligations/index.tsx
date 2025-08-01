@@ -43,6 +43,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
     formState,
     handleOnChange,
     initialValues,
+    onFormValid,
   } = props;
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -65,6 +66,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
           initialValues={initialValues}
           handleOnChange={handleOnChange}
           formState={formState}
+          onFormValid={onFormValid}
         />
       </Stack>
     </Fieldset>

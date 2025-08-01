@@ -109,6 +109,23 @@ export function ProductSelection(props: IProductSelectionProps) {
   };
   const isQuestionDisabled = (key: string) => {
     if (
+      key === "includeAditionalBorrowers" &&
+      allRules.AdditionalBorrowersAllowedGP.every((value) => value !== "Y") &&
+      generalToggleChecked
+    ) {
+      return true;
+    }
+    if (
+      key === "includeExtraordinaryInstallments" &&
+      allRules.IncludeExtraordinaryInstallments.every(
+        (value) => value !== "Y",
+      ) &&
+      generalToggleChecked
+    ) {
+      return true;
+    }
+
+    if (
       key === "includeAditionalBorrowers" ||
       key === "includeExtraordinaryInstallments"
     ) {
@@ -120,6 +137,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     if (key === "updateIncomeSources" || key === "updateFinancialObligations") {
       return !shouldShowIncomeUpdate;
     }
+
     return false;
   };
 
@@ -150,24 +168,6 @@ export function ProductSelection(props: IProductSelectionProps) {
     if (
       key === "updateFinancialObligations" &&
       fullRules.FinancialObligationsUpdateRequired.includes("Y")
-    ) {
-      return false;
-    }
-
-    if (
-      key === "includeAditionalBorrowers" &&
-      allRules.AdditionalBorrowersAllowedGP.every((value) => value !== "Y") &&
-      generalToggleChecked
-    ) {
-      return false;
-    }
-
-    if (
-      key === "includeExtraordinaryInstallments" &&
-      allRules.IncludeExtraordinaryInstallments.every(
-        (value) => value !== "Y",
-      ) &&
-      generalToggleChecked
     ) {
       return false;
     }

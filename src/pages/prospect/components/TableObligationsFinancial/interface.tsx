@@ -75,6 +75,7 @@ export interface ITableFinancialObligationsProps {
     term: string;
     idUser: string;
   };
+  onFormValid?: (value: boolean) => void;
 }
 
 export interface IDataInformationItem {
