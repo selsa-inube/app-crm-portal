@@ -66,7 +66,6 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
           initialValues={initialValues}
           handleOnChange={handleOnChange}
           formState={formState}
-          onFormValid={onFormValid}
         />
       </Stack>
     </Fieldset>

@@ -617,32 +617,18 @@ export function SimulateCredit() {
   const currentStepsNumber = steps.find(
     (step: { number: number }) => step.number === currentStep,
   );
-  const showStepFinancialObligations = (handleBack: boolean = false) => {
-    const isToggleChecked = formData.togglesState[1];
-    const isToggleExtraBorrowersChecked = formData.togglesState[2];
-    let idStep: number | undefined = stepsAddProspect.obligationsFinancial.id;
 
-    if (
-      totalObligations != undefined &&
-      isToggleChecked &&
-      isToggleExtraBorrowersChecked &&
-      !handleBack
-    ) {
-      idStep = undefined;
-    }
-
-    return idStep;
-  };
   const handleNextStep = () => {
     const alwaysShowSourcesIncome = stepsAddProspect.sourcesIncome.id;
     const dynamicSteps = [
-      formData.togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       formData.togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      formData.togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       alwaysShowSourcesIncome,
-      showStepFinancialObligations(),
+      formData.togglesState[1]
+        ? stepsAddProspect.obligationsFinancial.id
+        : undefined,
+      formData.togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
       formData.loanAmountState.toggleChecked
@@ -693,13 +679,15 @@ export function SimulateCredit() {
   const handlePreviousStep = () => {
     const alwaysShowSourcesIncome = stepsAddProspect.sourcesIncome.id;
     const dynamicSteps = [
-      formData.togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       formData.togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       formData.togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       alwaysShowSourcesIncome,
-      showStepFinancialObligations(),
+      formData.togglesState[1]
+        ? stepsAddProspect.obligationsFinancial.id
+        : undefined,
+      formData.togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
       formData.loanAmountState.toggleChecked
