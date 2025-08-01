@@ -4,7 +4,7 @@ import { Stack, useMediaQuery } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { dataReport } from "@pages/prospect/components/TableObligationsFinancial/config";
-import { IProspect } from "@services/prospects/types";
+import { IProspect } from "@services/prospect/types";
 
 export interface ReportCreditsModalProps {
   handleClose: () => void;

@@ -21,7 +21,7 @@ import { disbursemenTabs } from "@pages/applyForCredit/steps/disbursementGeneral
 import { GeneralHeader } from "@pages/simulateCredit/components/GeneralHeader";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import { IProspectSummaryById } from "@services/prospects/ProspectSummaryById/types";
+import { IProspectSummaryById } from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
@@ -104,7 +104,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
-  const { customerPublicCode, prospectCode } = useParams();
+  const { prospectCode } = useParams();
 
   const handleTabChange = (tabId: string) => {
     setIsSelected(tabId);
@@ -115,7 +115,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     setIsModalOpen(true);
   };
   const handleHome = () => {
-    navigate(`/credit/edit-prospect/${customerPublicCode}/${prospectCode}`);
+    navigate(`/credit/prospects/${prospectCode}`);
   };
 
   return (

@@ -4,7 +4,7 @@ import { Stack } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
-import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { IObligations } from "@services/creditRequest/types";
 
 interface IObligationsFinancialProps {
   isMobile: boolean;

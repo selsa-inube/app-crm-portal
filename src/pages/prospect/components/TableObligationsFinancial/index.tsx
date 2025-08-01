@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import localforage from "localforage";
 import { useMediaQuery } from "@inubekit/inubekit";
 import { FormikValues, useFormik } from "formik";
+
 import { currencyFormat } from "@utils/formatData/currency";
-import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { IObligations } from "@services/creditRequest/types";
 
 import { convertObligationsToProperties, headers } from "./config";
 import {

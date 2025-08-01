@@ -1,30 +1,29 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineMicNone } from "react-icons/md";
-import { Autocomplete, Button, Icon, Stack, Text } from "@inubekit/inubekit";
+import { IOption, useMediaQuery } from "@inubekit/inubekit";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-import { getCustomerCatalog } from "@services/customerCatalog";
-import { Fieldset } from "@components/data/Fieldset";
-import { BaseModal } from "@components/modals/baseModal";
+import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 
-import { homeData } from "./config";
-import { StyledMic, StyledAutomatic } from "./styles";
+import { CustomerUI } from "./interface";
 
 export function Customer() {
   const [isShowModal, setIsShowModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [justStartedListening, setJustStartedListening] = useState(false);
-  const [options, setOptions] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
+  const [options, setOptions] = useState<IOption[]>([]);
+  const [showError, setShowError] = useState(false);
+  const [noResultsFound, setNoResultsFound] = useState(false);
+  const [pendingTranscript, setPendingTranscript] = useState("");
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
 
   const selectRef = useRef<HTMLDivElement | null>(null);
+
+  const isMobile = useMediaQuery("(max-width:880px)");
 
   const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
@@ -32,17 +31,20 @@ export function Customer() {
   const handleStartListening = () => {
     resetTranscript();
     setJustStartedListening(true);
+    setNoResultsFound(false);
     SpeechRecognition.startListening({ continuous: false, language: "es-ES" });
   };
 
   const handleCloseModal = () => {
     SpeechRecognition.stopListening();
     setIsShowModal(false);
+    setNoResultsFound(false);
   };
 
   const handleSearch = async (value: string) => {
     if (value.length < 3) {
       setOptions([]);
+      setNoResultsFound(false);
       return;
     }
 
@@ -60,6 +62,8 @@ export function Customer() {
         value: item.publicCode,
       }));
       setOptions(mappedOptions);
+      setNoResultsFound(false);
+      setIsShowModal(false);
 
       setTimeout(() => {
         const clickable = selectRef.current?.querySelector("input");
@@ -72,12 +76,23 @@ export function Customer() {
       }, 50);
     } else {
       setOptions([]);
+      setNoResultsFound(true);
+    }
+  };
+
+  const handleChangeAutocomplete = (_: unknown, value: string | null) => {
+    const upperValue = value?.toUpperCase() || "";
+    setInputValue(upperValue);
+    setShowError(false);
+    if (!value) {
+      setOptions([]);
     }
   };
 
   useEffect(() => {
     if (inputValue.trim() === "") {
       setOptions([]);
+      setNoResultsFound(false);
       return;
     }
     handleSearch(inputValue);
@@ -86,9 +101,7 @@ export function Customer() {
   useEffect(() => {
     const recognition = SpeechRecognition.getRecognition();
     if (recognition) {
-      recognition.onend = () => {
-        setIsShowModal(false);
-      };
+      recognition.onend = () => {};
     }
 
     return () => {
@@ -108,101 +121,51 @@ export function Customer() {
         .replace(/\s{2,}/g, " ")
         .trim();
 
-      setOptions([]);
-      setInputValue(cleanedTranscript);
+      setPendingTranscript(cleanedTranscript);
       setJustStartedListening(false);
+
+      const timer = setTimeout(() => {
+        setInputValue(cleanedTranscript);
+      }, 800);
+
+      return () => clearTimeout(timer);
     }
   }, [transcript]);
 
   const navigate = useNavigate();
 
   const handleSubmit = () => {
+    const isValidOption = options.some(
+      (option) => option.value === inputValue || option.label === inputValue,
+    );
+
+    if (!isValidOption) {
+      setShowError(true);
+      return;
+    }
+
+    setShowError(false);
     setCustomerPublicCodeState(inputValue);
     navigate(`/home`);
   };
 
   return (
-    <Stack width="100%" justifyContent="center" margin="50px 0">
-      <Fieldset width="600px" hasOverflow>
-        <Stack direction="column" gap="8px">
-          <Text type="headline" size="large">
-            {homeData.selectClient}
-          </Text>
-          <Text type="body" size="large" appearance="gray">
-            {homeData.text}
-          </Text>
-          <Fieldset hasOverflow>
-            <Stack alignItems="center" gap="6px">
-              <StyledAutomatic ref={selectRef}>
-                <Autocomplete
-                  id="clientSelect"
-                  name="clientSelect"
-                  fullwidth
-                  placeholder={homeData.selectClient}
-                  options={options}
-                  value={inputValue}
-                  onChange={(_, value) => {
-                    const upperValue = value?.toUpperCase() || "";
-                    setInputValue(upperValue);
-                    if (!value) {
-                      setOptions([]);
-                    }
-                  }}
-                />
-              </StyledAutomatic>
-              <Icon
-                icon={<MdOutlineMicNone />}
-                size="28px"
-                appearance="primary"
-                cursorHover
-                onClick={() => {
-                  setIsShowModal(true);
-                  handleStartListening();
-                }}
-              />
-              <Button onClick={handleSubmit}>{homeData.continue}</Button>
-            </Stack>
-          </Fieldset>
-        </Stack>
-      </Fieldset>
-      {isShowModal &&
-        (browserSupportsSpeechRecognition ? (
-          <BaseModal
-            title={homeData.search}
-            width="450px"
-            handleClose={handleCloseModal}
-          >
-            <Stack direction="column" gap="24px">
-              <Text type="title" size="large">
-                {justStartedListening || !inputValue.trim()
-                  ? homeData.listening
-                  : inputValue}
-              </Text>
-              <Stack justifyContent="center">
-                <StyledMic>
-                  <Icon
-                    icon={<MdOutlineMicNone />}
-                    size="58px"
-                    appearance="primary"
-                    shape="circle"
-                    variant="filled"
-                    spacing="compact"
-                    cursorHover
-                    onClick={handleStartListening}
-                  />
-                </StyledMic>
-              </Stack>
-            </Stack>
-          </BaseModal>
-        ) : (
-          <BaseModal
-            title={homeData.search}
-            width="450px"
-            handleClose={handleCloseModal}
-          >
-            <Text>{homeData.noSupport}</Text>
-          </BaseModal>
-        ))}
-    </Stack>
+    <CustomerUI
+      isMobile={isMobile}
+      isShowModal={isShowModal}
+      inputValue={inputValue}
+      justStartedListening={justStartedListening}
+      options={options}
+      showError={showError}
+      noResultsFound={noResultsFound}
+      pendingTranscript={pendingTranscript}
+      selectRef={selectRef}
+      browserSupportsSpeechRecognition={browserSupportsSpeechRecognition}
+      handleStartListening={handleStartListening}
+      handleCloseModal={handleCloseModal}
+      handleChangeAutocomplete={handleChangeAutocomplete}
+      setIsShowModal={setIsShowModal}
+      handleSubmit={handleSubmit}
+    />
   );
 }

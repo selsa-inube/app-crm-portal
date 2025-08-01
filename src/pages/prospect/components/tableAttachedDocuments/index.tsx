@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  MdAttachFile,
-  MdOutlineFileDownload,
-  MdOutlineHighlightOff,
-} from "react-icons/md";
+import { MdAttachFile, MdOutlineRemoveRedEye } from "react-icons/md";
 import {
   Pagination,
   Table,
@@ -19,6 +15,7 @@ import {
   SkeletonIcon,
   useFlag,
   Tag,
+  Stack,
 } from "@inubekit/inubekit";
 
 import { ListModal } from "@components/modals/ListModal";
@@ -49,12 +46,8 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
   const [loading, setLoading] = useState(true);
   const [showAttachment, setShowAttachments] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [seeAttachment, setSeeAttachments] = useState(false);
   const [rowIdToDelete, setRowIdToDelete] = useState<string | null>(null);
-
-  const handleOpenDeleteModal = (rowId: string) => {
-    setRowIdToDelete(rowId);
-    setShowDeleteModal(true);
-  };
 
   const handleConfirmDelete = () => {
     if (rowIdToDelete) {
@@ -84,9 +77,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
   }, []);
 
   const visibleHeaders = isMobile
-    ? headers.filter((header) =>
-        ["borrower", "attach", "download", "remove"].includes(header.key),
-      )
+    ? headers.filter((header) => ["borrower", "actions"].includes(header.key))
     : headers;
 
   const { addFlag } = useFlag();
@@ -105,6 +96,11 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     setShowAttachments(true);
   };
 
+  const handleSeeAttachment = (rowId: string) => {
+    setCurrentRowId(rowId);
+    setSeeAttachments(true);
+  };
+
   const handleSetUploadedFiles = (
     files: { id: string; name: string; file: File }[] | null,
   ) => {
@@ -114,22 +110,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
         [currentRowId]: files || [],
       });
     }
-  };
-
-  const handleDownloadFile = (rowId: string) => {
-    const files = uploadedFilesByRow[rowId];
-    if (!files || files.length === 0) return;
-
-    files.forEach((fileData) => {
-      const url = URL.createObjectURL(fileData.file);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileData.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    });
   };
 
   const handleRemoveAllFiles = (rowId: string) => {
@@ -207,17 +187,33 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                         }
                       >
                         {(() => {
-                          if (header.key === "attach") {
+                          if (header.key === "actions") {
                             return (
-                              <Icon
-                                icon={<MdAttachFile />}
-                                appearance="dark"
-                                size="16px"
-                                cursorHover
-                                onClick={() =>
-                                  handleOpenAttachment(rowIndex.toString())
-                                }
-                              />
+                              <Stack justifyContent="space-around">
+                                <Icon
+                                  icon={<MdAttachFile />}
+                                  appearance="primary"
+                                  size="16px"
+                                  cursorHover
+                                  onClick={() =>
+                                    handleOpenAttachment(rowIndex.toString())
+                                  }
+                                />
+                                <Icon
+                                  icon={<MdOutlineRemoveRedEye />}
+                                  appearance="dark"
+                                  size="16px"
+                                  cursorHover
+                                  onClick={() =>
+                                    handleSeeAttachment(rowIndex.toString())
+                                  }
+                                  disabled={
+                                    !uploadedFilesByRow[rowIndex.toString()] ||
+                                    uploadedFilesByRow[rowIndex.toString()]
+                                      .length === 0
+                                  }
+                                />
+                              </Stack>
                             );
                           }
                           if (header.key === "attached") {
@@ -235,38 +231,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                           }
                           return cellData;
                         })()}
-                        {header.key === "download" && (
-                          <Icon
-                            icon={<MdOutlineFileDownload />}
-                            appearance="dark"
-                            size="16px"
-                            cursorHover
-                            disabled={
-                              !uploadedFilesByRow[rowIndex.toString()] ||
-                              uploadedFilesByRow[rowIndex.toString()].length ===
-                                0
-                            }
-                            onClick={() =>
-                              handleDownloadFile(rowIndex.toString())
-                            }
-                          />
-                        )}
-                        {header.key === "remove" && (
-                          <Icon
-                            icon={<MdOutlineHighlightOff />}
-                            appearance="danger"
-                            size="16px"
-                            cursorHover
-                            disabled={
-                              !uploadedFilesByRow[rowIndex.toString()] ||
-                              uploadedFilesByRow[rowIndex.toString()].length ===
-                                0
-                            }
-                            onClick={() =>
-                              handleOpenDeleteModal(rowIndex.toString())
-                            }
-                          />
-                        )}
                       </Td>
                     );
                   })}
@@ -305,6 +269,21 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           }
           setUploadedFiles={handleSetUploadedFiles}
           onlyDocumentReceived={true}
+        />
+      )}
+      {seeAttachment && (
+        <ListModal
+          title="Ver adjuntos"
+          handleClose={() => setSeeAttachments(false)}
+          isViewing={true}
+          buttonLabel="Cerrar"
+          dataDocument={
+            currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
+          }
+          uploadedFiles={
+            currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
+          }
+          setUploadedFiles={handleSetUploadedFiles}
         />
       )}
       {showDeleteModal && (

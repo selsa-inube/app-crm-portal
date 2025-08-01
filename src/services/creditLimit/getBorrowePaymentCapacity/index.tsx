@@ -5,7 +5,7 @@ import {
 } from "@config/environment";
 
 import { mapPaymentCapacityResponse } from "./mapper";
-import { IPaymentCapacity, IPaymentCapacityResponse } from "./types";
+import { IPaymentCapacity, IPaymentCapacityResponse } from "../types";
 
 const getBorrowerPaymentCapacityById = async (
   businessUnitPublicCode: string,

@@ -1,8 +1,8 @@
 import { RefObject } from "react";
 
 import { ICRMPortalData } from "@context/AppContext/types";
-import { ICardInteractiveBox } from "@mocks/home/mockData";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
+import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 
 interface ICardData {
   id: string;
@@ -49,7 +49,7 @@ interface IHomeUIProps {
   handleLogoClick: (businessUnit: IBusinessUnitsPortalStaff) => void;
   dataHeader: IDataHeader;
   loading: boolean;
-  mockData: ICardInteractiveBox[];
+  dataOptions: IOptionStaff[];
 }
 
 export type { IHome, ICardData, IBusinessUnitsPortalStaffs, IHomeUIProps };

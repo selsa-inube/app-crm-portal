@@ -1,4 +1,4 @@
-import { RowData } from "@pages/prospect/components/TableCreditProspects/types";
+import { RowData } from "@pages/creditProspects/components/TableCreditProspects/types";
 
 export const dataSimulations: RowData[] = [
   {

@@ -4,12 +4,12 @@ import { Stack, Icon, useMediaQuery, Button } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment";
-import { IProspect } from "@services/prospects/types";
-import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 import {
   IExtraordinaryInstallment,
   IExtraordinaryInstallments,
-} from "@services/iProspect/saveExtraordinaryInstallments/types";
+  IProspect,
+} from "@services/prospect/types";
+import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 
 import { TextLabels } from "./config";
 
@@ -43,6 +43,11 @@ export const ExtraordinaryPaymentModal = (
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const openAddSeriesModal = () => {
+    setInstallmentState({
+      installmentAmount: 0,
+      installmentDate: "",
+      paymentChannelAbbreviatedName: "",
+    });
     setAddSeriesModalOpen(true);
   };
   const [seriesModal, setSeriesModal] = useState<IExtraordinaryInstallment[]>(

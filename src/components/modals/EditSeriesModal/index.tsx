@@ -8,14 +8,14 @@ import {
   inube,
   useMediaQuery,
   Date,
-  useFlag,
 } from "@inubekit/inubekit";
 
-import { updateExtraordinaryInstallment } from "@pages/prospect/components/TableExtraordinaryInstallment/utils";
-import { IProspect } from "@services/prospects/types";
 import { paymentMethodOptionsMock } from "@mocks/prospect/extraordinaryInstallment.mock";
 import { TableExtraordinaryInstallmentProps } from "@pages/prospect/components/TableExtraordinaryInstallment";
-import { IExtraordinaryInstallments } from "@services/iProspect/updateExtraordinaryInstallments/types";
+import {
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@services/prospect/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { handleFormSubmit } from "@utils/handleFormSubmit";
 import {
@@ -24,7 +24,6 @@ import {
 } from "@utils/formatData/currency";
 
 import { dataEditSeriesModal } from "./config";
-import { TextLabels } from "../ExtraordinaryPaymentModal/config";
 
 export interface EditSeriesModalProps {
   handleClose: () => void;
@@ -45,14 +44,10 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
     handleClose,
     onSubmit,
     selectedDebtor,
-    setSentData,
-    businessUnitPublicCode,
-    prospectData,
     service = true,
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
-  const { addFlag } = useFlag();
 
   const getInitialValues = (
     selectedDebtor: TableExtraordinaryInstallmentProps,
@@ -79,47 +74,6 @@ export function EditSeriesModal(props: EditSeriesModalProps) {
       await handleFormSubmit(formik.values, onConfirm);
       handleClose();
       return;
-    }
-    const {
-      installmentAmount,
-      installmentDate,
-      paymentChannelAbbreviatedName,
-    } = formik.values;
-
-    const data: IExtraordinaryInstallments = {
-      creditProductCode:
-        prospectData?.creditProducts?.[0]?.creditProductCode || "",
-      prospectId: prospectData?.prospectId || "",
-      extraordinaryInstallments: [
-        {
-          installmentAmount: parseCurrencyString(installmentAmount.toString()),
-          installmentDate: installmentDate.toString(),
-          paymentChannelAbbreviatedName:
-            paymentChannelAbbreviatedName.toString(),
-        },
-      ],
-    };
-
-    try {
-      await updateExtraordinaryInstallment(businessUnitPublicCode, data);
-      setSentData?.(data);
-      handleClose();
-    } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status?: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description =
-        code + (err?.message || "") + (err?.data?.description || "");
-
-      addFlag({
-        title: TextLabels.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
     }
   };
 

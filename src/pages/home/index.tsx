@@ -3,8 +3,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
-import { mockData } from "@mocks/home/mockData";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
+import { useAppContext } from "@hooks/useAppContext";
 
 import { HomeUI } from "./interface";
 
@@ -28,9 +28,12 @@ const Home = () => {
   const businessUnitChangeRef = useRef<HTMLDivElement>(null);
 
   const dataHeader = {
-    name: customerData?.generalAttributeClientNaturalPersons?.[0]?.firstNames,
-    status: customerData?.generalAttributeClientNaturalPersons?.[0]?.dateBirth,
+    name: customerData.fullName,
+    status:
+      customerData?.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
+
+  const { optionStaffData } = useAppContext();
 
   const handleLogoClick = (businessUnit: IBusinessUnitsPortalStaff) => {
     const selectJSON = JSON.stringify(businessUnit);
@@ -62,7 +65,7 @@ const Home = () => {
       handleLogoClick={handleLogoClick}
       dataHeader={dataHeader}
       loading={loading}
-      mockData={mockData}
+      dataOptions={optionStaffData}
     />
   );
 };

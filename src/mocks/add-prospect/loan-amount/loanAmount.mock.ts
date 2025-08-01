@@ -1,4 +1,7 @@
-import { ILoanAmount } from "@services/types";
+interface ILoanAmount {
+  id: number;
+  choice: string;
+}
 
 export const loanAmount: ILoanAmount[] = [
   { id: 101, choice: "expectToReceive" },

@@ -1,4 +1,4 @@
-import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { IObligations } from "@services/creditRequest/types";
 import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
 
 export const titleButtonTextAssited = {
