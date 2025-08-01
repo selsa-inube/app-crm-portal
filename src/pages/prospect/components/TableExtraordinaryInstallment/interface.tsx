@@ -9,21 +9,19 @@ import {
   Th,
   Thead,
   Tr,
-  useFlag,
 } from "@inubekit/inubekit";
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { DeleteModal } from "@components/modals/DeleteModal";
-import { EditSeriesModal } from "@components/modals/EditSeriesModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
-import { IExtraordinaryInstallments } from "@services/iProspect/saveExtraordinaryInstallments/types";
-import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
-import { IProspect } from "@services/prospects/types";
+import {
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@services/prospect/types";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";
 import { Detail } from "./Detail";
-import { removeExtraordinaryInstallment } from "./utils";
 
 interface ITableExtraordinaryInstallmentProps {
   loading: boolean;
@@ -43,11 +41,10 @@ interface ITableExtraordinaryInstallmentProps {
   service: boolean;
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
-  handleEdit: (row: TableExtraordinaryInstallmentProps) => void;
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
-  usePagination: (data: TableExtraordinaryInstallmentProps[]) => {
+  usePagination: {
     totalRecords: number;
     handleStartPage: () => void;
     handlePrevPage: () => void;
@@ -65,6 +62,8 @@ interface ITableExtraordinaryInstallmentProps {
     React.SetStateAction<TableExtraordinaryInstallmentProps>
   >;
   handleDelete?: (id: string) => void;
+  itemIdentifiersForUpdate: IExtraordinaryInstallments;
+  handleDeleteAction: () => Promise<void>;
 }
 
 export function TableExtraordinaryInstallmentUI(
@@ -76,21 +75,11 @@ export function TableExtraordinaryInstallmentUI(
     visbleActions,
     extraordinaryInstallments,
     isMobile,
-    selectedDebtor,
     isOpenModalDelete,
-    isOpenModalEdit,
-    prospectData,
-    businessUnitPublicCode,
-    service,
     setIsOpenModalDelete,
-    setIsOpenModalEdit,
-    handleEdit,
-    handleUpdate,
     usePagination,
-    handleClose,
-    setSentData,
     setSelectedDebtor,
-    handleDelete,
+    handleDeleteAction,
   } = props;
 
   const {
@@ -102,63 +91,7 @@ export function TableExtraordinaryInstallmentUI(
     handlePrevPage,
     handleNextPage,
     handleEndPage,
-  } = usePagination(extraordinaryInstallments);
-
-  const { addFlag } = useFlag();
-  const initialValues: IExtraordinaryInstallments = {
-    creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
-    extraordinaryInstallments:
-      prospectData?.creditProducts[0]?.extraordinaryInstallments
-        ?.filter((ins) => {
-          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${ins.installmentDate}`;
-          return expectedId === selectedDebtor?.id;
-        })
-        ?.map((installment) => ({
-          installmentDate:
-            typeof installment.installmentDate === "string"
-              ? installment.installmentDate
-              : new Date(installment.installmentDate).toISOString(),
-          installmentAmount: Number(installment.installmentAmount),
-          paymentChannelAbbreviatedName: String(
-            installment.paymentChannelAbbreviatedName,
-          ),
-        })) || [],
-    prospectId: prospectData?.prospectId || "",
-  };
-
-  const handleDeleteAction = async () => {
-    if (handleDelete && selectedDebtor.id) {
-      handleDelete(selectedDebtor.id as string);
-      setIsOpenModalDelete(false);
-    } else if (service) {
-      try {
-        await removeExtraordinaryInstallment(
-          businessUnitPublicCode,
-          initialValues,
-        );
-
-        setSentData?.(initialValues);
-        setIsOpenModalDelete(false);
-        handleClose?.();
-      } catch (error: unknown) {
-        const err = error as {
-          message?: string;
-          status?: number;
-          data?: { description?: string; code?: string };
-        };
-        const code = err?.data?.code ? `[${err.data.code}] ` : "";
-        const description =
-          code + (err?.message || "") + (err?.data?.description || "");
-
-        addFlag({
-          title: TextLabels.titleError,
-          description,
-          appearance: "danger",
-          duration: 5000,
-        });
-      }
-    }
-  };
+  } = usePagination;
 
   return (
     <Table>
@@ -236,7 +169,6 @@ export function TableExtraordinaryInstallmentUI(
                   <Td key={action.key} type="custom">
                     {isMobile ? (
                       <ActionMobile
-                        handleEdit={() => handleEdit(row)}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
@@ -244,7 +176,6 @@ export function TableExtraordinaryInstallmentUI(
                       />
                     ) : (
                       <Detail
-                        handleEdit={() => handleEdit(row)}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
@@ -305,30 +236,6 @@ export function TableExtraordinaryInstallmentUI(
           handleClose={() => setIsOpenModalDelete(false)}
           handleDelete={handleDeleteAction}
           TextDelete={dataTableExtraordinaryInstallment.content}
-        />
-      )}
-      {isOpenModalEdit && (
-        <EditSeriesModal
-          handleClose={() => setIsOpenModalEdit(false)}
-          onSubmit={() => setIsOpenModalEdit(false)}
-          onConfirm={async (values) => {
-            if (!service) {
-              const updatedDebtor = {
-                ...selectedDebtor,
-                value: values.installmentAmount,
-                paymentMethod: values.paymentChannelAbbreviatedName,
-                datePayment: values.installmentDate,
-              };
-              await handleUpdate(updatedDebtor);
-              return;
-            }
-            await handleUpdate(values);
-          }}
-          prospectData={prospectData}
-          selectedDebtor={selectedDebtor}
-          setSentData={setSentData}
-          businessUnitPublicCode={businessUnitPublicCode}
-          service={service}
         />
       )}
     </Table>

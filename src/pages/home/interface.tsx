@@ -6,6 +6,8 @@ import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { InteractiveBox } from "@components/cards/interactiveBox";
 import { useNavigationConfig } from "@components/layout/AppPage/config/apps.config";
 import { userMenu } from "@config/menuMainConfiguration";
+import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+import { OptionStaffPortal } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import {
@@ -20,6 +22,15 @@ import {
 } from "./styles";
 import { IHomeUIProps } from "./types";
 import { homeTitleConfig } from "./config/home.config";
+
+export interface IEnhancedOption {
+  id: string;
+  abbreviatedName: string;
+  descriptionUse: string;
+  icon: React.ReactNode;
+  url: string;
+  isDisabled: boolean;
+}
 
 const HomeUI = (props: IHomeUIProps) => {
   const {
@@ -37,13 +48,36 @@ const HomeUI = (props: IHomeUIProps) => {
     handleLogoClick,
     dataHeader,
     loading,
-    mockData,
+    dataOptions,
   } = props;
 
   const renderLogo = (imgUrl: string) => (
     <StyledContentImg to="/">
       <StyledLogo src={imgUrl} />
     </StyledContentImg>
+  );
+
+  const mergeStaffOptions = (
+    backendOptions: IOptionStaff[],
+  ): IEnhancedOption[] => {
+    return OptionStaffPortal.map((configItem) => {
+      const match = backendOptions.find(
+        (opt) => opt.publicCode === configItem.id,
+      );
+
+      return {
+        id: configItem.id,
+        abbreviatedName: match?.abbreviatedName || configItem.id,
+        descriptionUse: match?.descriptionUse || configItem.descriptionUse,
+        icon: configItem.icon,
+        url: configItem.url,
+        isDisabled: !match,
+      };
+    });
+  };
+
+  const options = mergeStaffOptions(
+    Array.isArray(dataOptions) ? dataOptions : [dataOptions],
   );
 
   return (
@@ -118,17 +152,16 @@ const HomeUI = (props: IHomeUIProps) => {
               {loading ? (
                 <>
                   <InteractiveBox isLoading />
-                  <InteractiveBox isLoading />
                 </>
               ) : (
-                mockData.map((item) => (
+                options.map((item, index) => (
                   <InteractiveBox
-                    key={item.id}
-                    label={item.label}
-                    description={item.description}
-                    icon={item.icon()}
+                    key={index}
+                    label={item.abbreviatedName}
+                    description={item.descriptionUse}
+                    icon={item.icon}
                     url={item.url}
-                    isDisabled={item.id !== "1"}
+                    isDisabled={item.isDisabled}
                   />
                 ))
               )}

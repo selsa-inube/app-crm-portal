@@ -16,8 +16,8 @@ export const submitCreditApplicationConfig = {
       isActive: false,
     },
     {
-      path: "/prospects",
-      label: "prospectos",
+      path: "/credit/prospects",
+      label: "Prospectos de crédito",
       id: "/prospectos",
       isActive: false,
     },

@@ -29,9 +29,9 @@ import {
   IDisbursementGeneral,
   IOptionsSelect,
 } from "@pages/applyForCredit/types";
-import { getAllBancks } from "@services/banckAccount";
+import { getAllBancks } from "@services/bank/SearchAllBank";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
+import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;

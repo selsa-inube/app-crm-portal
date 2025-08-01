@@ -1,17 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { IStaffPortalByBusinessManager } from "@services/staffPortal/types";
-import { IBusinessManagers } from "@services/businessManager/types";
 
+import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
+import { IBusinessManagers } from "@services/businessManager/types";
 import {
   validateBusinessManagers,
   validateConsultation,
 } from "@context/AppContext/utils";
 import { ICRMPortalData } from "@context/AppContext/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import { getStaff } from "@services/staffs";
-
+import { getStaff } from "@services/staff/SearchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
+import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -25,18 +26,22 @@ function useAppContext() {
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
+
   const [businessManagers, setBusinessManagers] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
+
   const [businessUnitSigla, setBusinessUnitSigla] = useState(
     localStorage.getItem("businessUnitSigla") || "",
   );
+
   const [businessUnitsToTheStaff, setBusinessUnitsToTheStaff] = useState<
     IBusinessUnitsPortalStaff[]
   >(() => {
     const savedBusinessUnits = localStorage.getItem("businessUnitsToTheStaff");
     return savedBusinessUnits ? JSON.parse(savedBusinessUnits) : [];
   });
+  const [optionStaffData, setOptionStaffData] = useState<IOptionStaff[]>([]);
 
   const portalId = localStorage.getItem("portalCode");
   let portalCode = "";
@@ -185,6 +190,35 @@ function useAppContext() {
   }, []);
 
   useEffect(() => {
+    const fetchOptionStaff = async () => {
+      try {
+        if (
+          !eventData?.portal?.publicCode ||
+          !eventData?.businessUnit?.businessUnitPublicCode ||
+          !user?.email
+        ) {
+          return;
+        }
+
+        const result = await getSearchOptionForStaff(
+          eventData.portal.publicCode,
+          eventData.businessUnit.businessUnitPublicCode,
+          user.email.substring(0, 20),
+        );
+        setOptionStaffData(result);
+      } catch (error) {
+        console.error("Error fetching option staff:", error);
+      }
+    };
+
+    fetchOptionStaff();
+  }, [
+    eventData?.portal?.publicCode,
+    eventData?.businessUnit?.businessUnitPublicCode,
+    user?.email,
+  ]);
+
+  useEffect(() => {
     if (!portalCode) return;
     const portalDataFiltered = portalData.filter(
       (data) => data.staffPortalId === portalCode,
@@ -262,14 +296,17 @@ function useAppContext() {
       eventData,
       businessUnitSigla,
       businessUnitsToTheStaff,
+      optionStaffData,
       setEventData,
       setBusinessUnitSigla,
       setBusinessUnitsToTheStaff,
+      setOptionStaffData,
     }),
     [
       eventData,
       businessUnitSigla,
       businessUnitsToTheStaff,
+      optionStaffData,
       setEventData,
       setBusinessUnitSigla,
       setBusinessUnitsToTheStaff,

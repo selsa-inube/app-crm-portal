@@ -5,7 +5,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-import { getCustomerCatalog } from "@services/customerCatalog";
+import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 
 import { CustomerUI } from "./interface";

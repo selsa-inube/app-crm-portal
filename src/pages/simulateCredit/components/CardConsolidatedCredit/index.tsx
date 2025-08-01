@@ -6,9 +6,9 @@ import { currencyFormat } from "@utils/formatData/currency";
 import {
   EPaymentOptionType,
   IPaymentOption,
-} from "@services/creditLimit/getCreditPayments/types";
-import { CustomValueModal } from "@pages/addProspect/components/CustomValueModal";
-import { IApplyPayOption } from "@pages/addProspect/components/CustomValueModal/utils";
+} from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
+import { CustomValueModal } from "@pages/simulateCredit/components/CustomValueModal";
+import { IApplyPayOption } from "@pages/simulateCredit/components/CustomValueModal/utils";
 
 import {
   StyledCardContainer,

@@ -1,4 +1,4 @@
-import { getBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff";
+import { getBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/SearchBusinessUnitsForAnOfficerLinpar";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 
 const validateBusinessUnits = async (

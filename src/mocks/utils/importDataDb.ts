@@ -1,4 +1,4 @@
-import { ICreditRequest } from "@services/types";
+import { ICreditRequest } from "@services/creditRequest/types";
 import { mockRequests as mockRequestsDefault } from "@mocks/requests/requests.mock";
 import { mockRequests as mockRequestsPresente } from "@mocks/requests/Presente/requests.mock";
 import { mockRequests as mockRequestsCooservunal } from "@mocks/requests/Cooservunal/requests.mock";

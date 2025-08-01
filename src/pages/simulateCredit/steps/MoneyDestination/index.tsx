@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
-import { getMoneyDestinations } from "@services/moneyDestination";
+import { getMoneyDestinations } from "@services/moneyDestination/SearchAllMoneyDestination";
 import { IMoneyDestination } from "@services/moneyDestination/types";
 import { AppContext } from "@context/AppContext";
 

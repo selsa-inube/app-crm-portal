@@ -1,4 +1,4 @@
-import { CreditRequest } from "@services/types";
+import { CreditRequest } from "../types";
 
 export const requirementsMock: CreditRequest[] = [
   {

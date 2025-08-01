@@ -6,7 +6,7 @@ import { Simulations } from "@pages/simulations";
 import { ApplyForCredit } from "@pages/applyForCredit";
 import { SimulateCredit } from "@pages/simulateCredit";
 import { CreditProspects } from "@pages/creditProspects";
-import { Credit } from "@pages/creditProspect";
+import { Credit } from "@pages/credit";
 
 function CreditRoutes() {
   return (
@@ -14,8 +14,8 @@ function CreditRoutes() {
       <Route path="/" element={<AppPage />}>
         <Route path="/" element={<Credit />} />
         <Route path="/simulate-credit" element={<SimulateCredit />} />
-        <Route path="/simulations" element={<CreditProspects />} />
-        <Route path="/simulations/:prospectCode" element={<Simulations />} />
+        <Route path="/prospects" element={<CreditProspects />} />
+        <Route path="/prospects/:prospectCode" element={<Simulations />} />
         <Route
           path="/apply-for-credit/:prospectCode"
           element={<ApplyForCredit />}

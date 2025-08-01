@@ -6,7 +6,6 @@ import {
   MdAdd,
   MdCached,
 } from "react-icons/md";
-
 import {
   Pagination,
   Table,
@@ -29,7 +28,7 @@ import { EditFinancialObligationModal } from "@components/modals/editFinancialOb
 import { NewPrice } from "@components/modals/ReportCreditsModal/components/newPrice";
 import { BaseModal } from "@components/modals/baseModal";
 import { FinancialObligationModal } from "@components/modals/financialObligationModal";
-import { IObligations } from "@services/creditLimit/getClientPortfolioObligations/types";
+import { IObligations } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { CardGray } from "@components/cards/CardGray";
 import { ListModal } from "@components/modals/ListModal";

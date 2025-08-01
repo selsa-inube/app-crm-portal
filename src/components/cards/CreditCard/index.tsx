@@ -2,22 +2,24 @@ import { Icon, Stack, Text } from "@inubekit/inubekit";
 import { FC, ReactNode } from "react";
 import { StyledCreditCard } from "./styles";
 
-interface Props {
+interface IOptionsCard {
   icon: ReactNode;
   title: string;
   subtitle: string;
-  onClick: () => void;
+  url?: string;
   width?: string;
+  isDisabled?: boolean;
 }
 
-export const CreditCard: FC<Props> = ({
+export const CreditCard: FC<IOptionsCard> = ({
   icon,
   title,
   subtitle,
-  onClick,
+  url,
   width,
+  isDisabled = false,
 }) => (
-  <StyledCreditCard onClick={onClick} $width={width}>
+  <StyledCreditCard to={url ?? ""} $width={width} $isDisabled={isDisabled}>
     <Stack
       direction="column"
       width={width ?? "194px"}
@@ -26,7 +28,7 @@ export const CreditCard: FC<Props> = ({
     >
       <Icon appearance="dark" icon={icon} size="30px" />
       <Stack direction="column" alignItems="center" gap="4px">
-        <Text type="title" size="medium">
+        <Text type="title" size="medium" weight="bold">
           {title}
         </Text>
         <Text type="title" size="small" appearance="gray" textAlign="center">

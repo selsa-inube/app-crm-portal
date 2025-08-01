@@ -17,7 +17,7 @@ import {
 } from "@inubekit/inubekit";
 
 import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
-import { saveDocument } from "@services/saveDocument";
+import { saveDocument } from "@services/creditRequest/saveDocument";
 import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";
 import { IDocumentUpload } from "@pages/applyForCredit/types";
