@@ -1,10 +1,10 @@
 export interface IBorrowerProperty {
-  propertyName: string;
-  propertyValue: string;
+  propertyName?: string;
+  propertyValue?: string;
 }
 
 export interface IBorrower {
-  borrowerName: string;
+  borrowerName?: string;
   borrowerType: string;
   borrowerIdentificationType: string;
   borrowerIdentificationNumber: string;

@@ -21,12 +21,7 @@ import {
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 import { getUnmetRequirementsAmount } from "@services/requirement/getUnmetRequirementsAmount";
-import { IUnmetRequirementsAmount } from "@services/requirement/getUnmetRequirementsAmount/types";
-import { IBorrower } from "@services/types";
-import { IConsolidatedCredit } from "@services/types";
-import { ICreditProductProspect } from "@services/types";
-import { IBorrowerProperty } from "@services/types";
-import { Schedule } from "@services/enums";
+import { Schedule } from "@services/enum/schedule";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -35,6 +30,12 @@ import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
 import { textAddCongfig } from "./config/addConfig";
 import { tittleOptions } from "./steps/financialObligations/config/config";
+import { IBorrowerPayload } from "./types";
+import {
+  ICreditProductProspect,
+  IConsolidatedCreditPayload,
+  IUnmetRequirementsAmountPayload,
+} from "./types";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -782,18 +783,22 @@ export function SimulateCredit() {
   }, [clientPortfolio]);
 
   const handleUnmetRequirements = async () => {
-    const borrowers: IBorrower[] = simulateData.borrowers.map((borrower) => ({
-      borrower_identification_number: borrower.borrowerIdentificationNumber,
-      borrower_identification_type: borrower.borrowerIdentificationType,
-      borrower_name: borrower.borrowerName,
-      borrower_properties: (borrower.borrowerProperties || []).map((prop) => ({
-        property_name: prop.propertyName as IBorrowerProperty["property_name"],
-        property_value: prop.propertyValue,
-      })),
-      borrower_type: borrower.borrowerType,
-    }));
+    const borrowers: IBorrowerPayload[] = simulateData.borrowers.map(
+      (borrower) => ({
+        borrower_identification_number: borrower.borrowerIdentificationNumber,
+        borrower_identification_type: borrower.borrowerIdentificationType,
+        borrower_name: borrower.borrowerName,
+        borrower_properties: (borrower.borrowerProperties || [])
+          .filter((prop) => typeof prop.propertyName === "string")
+          .map((prop) => ({
+            property_name: prop.propertyName,
+            property_value: prop.propertyValue,
+          })),
+        borrower_type: borrower.borrowerType,
+      }),
+    );
 
-    const consolidated_credits: IConsolidatedCredit[] = (
+    const consolidated_credits: IConsolidatedCreditPayload[] = (
       simulateData.consolidatedCredits || []
     ).map((credit) => ({
       borrower_identification_number: credit.borrowerIdentificationNumber,
@@ -825,7 +830,7 @@ export function SimulateCredit() {
         };
       });
 
-    const payload: IUnmetRequirementsAmount = {
+    const payload: IUnmetRequirementsAmountPayload = {
       clientIdentificationNumber: customerData.publicCode,
       prospect: {
         bond_value: 0,

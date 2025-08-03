@@ -1,4 +1,6 @@
 import { IObligations } from "@services/creditRequest/types";
+import { Schedule } from "@services/enum/schedule";
+
 import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
 
 export const titleButtonTextAssited = {
@@ -143,3 +145,57 @@ export type ICreditLineTerms = {
 };
 
 export type RuleValue = string | { value: string } | undefined;
+
+export interface ICreditProductProspect {
+  line_of_credit_abbreviated_name: string;
+  loan_amount: number;
+  loan_term: number;
+  interest_rate: number;
+  schedule: Schedule;
+  credit_product_code: string;
+  fixed_points: number;
+}
+export interface IBorrowerPayload {
+  borrower_identification_number: string;
+  borrower_identification_type: string;
+  borrower_name: string;
+  borrower_properties: {
+    property_name: string;
+    property_value: string;
+  }[];
+  borrower_type: string;
+}
+
+export interface IConsolidatedCreditPayload {
+  consolidated_amount: number;
+  consolidated_amount_type: string;
+  credit_product_code: string;
+  estimated_date_of_consolidation: string;
+  line_of_credit_description: string;
+}
+
+export interface IProspectPayload {
+  bond_value: number;
+  grace_period: number;
+  grace_period_type: string;
+  installment_limit: number;
+  money_destination_abbreviated_name: string;
+  preferred_payment_channel_abbreviated_name: string;
+  prospect_code: string;
+  prospect_id: string;
+  requested_amount: number;
+  selected_rate_type: string;
+  selected_regular_payment_schedule: string;
+  state: string;
+  term_limit: number;
+  time_of_creation: string;
+  borrowers: IBorrowerPayload[];
+  credit_products: ICreditProductProspect[];
+  consolidated_credits: IConsolidatedCreditPayload[];
+  outlay: [];
+}
+
+export interface IUnmetRequirementsAmountPayload {
+  clientIdentificationNumber: string;
+  prospect: IProspectPayload;
+}

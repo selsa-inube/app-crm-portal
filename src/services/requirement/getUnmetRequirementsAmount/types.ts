@@ -1,4 +1,4 @@
-import { IProspect } from "../../types";
+import { IProspect } from "@services/prospect/types";
 
 interface IValidateRequirement {
   unmetRequirementsAmount: number;

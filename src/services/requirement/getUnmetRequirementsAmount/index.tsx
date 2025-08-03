@@ -1,9 +1,10 @@
 import { environment, maxRetriesServices } from "@config/environment";
+import { IUnmetRequirementsAmountPayload } from "@pages/simulateCredit/types";
 
-import { IValidateRequirement, IUnmetRequirementsAmount } from "./types";
+import { IValidateRequirement } from "./types";
 
 const getUnmetRequirementsAmount = async (
-  validDataRequirements: IUnmetRequirementsAmount | null,
+  validDataRequirements: IUnmetRequirementsAmountPayload | null,
   businessUnitPublicCode: string,
 ): Promise<IValidateRequirement | undefined> => {
   const maxRetries = maxRetriesServices;
