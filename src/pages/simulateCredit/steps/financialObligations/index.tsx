@@ -43,7 +43,6 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
     formState,
     handleOnChange,
     initialValues,
-    onFormValid,
   } = props;
 
   const [refreshKey, setRefreshKey] = useState(0);
