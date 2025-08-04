@@ -123,14 +123,14 @@ export interface IFormData {
 
 export interface ICondition {
   condition: string;
-  value: string | number;
+  value: string | number | boolean;
 }
 
 export interface Irule {
   ruleName: string;
   conditions: ICondition[];
 }
-export type ContextData = Record<string, unknown>;
+export type ContextData = Record<string, number | boolean | string>;
 
 export type Rule = Irule;
 
@@ -198,4 +198,15 @@ export interface IProspectPayload {
 export interface IUnmetRequirementsAmountPayload {
   clientIdentificationNumber: string;
   prospect: IProspectPayload;
+}
+
+export interface IRuleData {
+  ruleName: string;
+  conditions: ICondition[];
+}
+
+export interface IRulesData {
+  LineOfCredit: string | number;
+  ClientType: string | number;
+  LoanAmount: string | number;
 }

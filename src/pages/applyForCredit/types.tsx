@@ -164,7 +164,7 @@ export interface IOptionsSelect {
 }
 export interface ICondition {
   condition: string;
-  value: string | number;
+  value: string | number | boolean;
 }
 
 export interface IDocumentUpload {
@@ -178,7 +178,7 @@ export interface Irule {
   conditions: ICondition[];
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ContextData = Record<string, any>;
+export type ContextData = Record<string, number | string | boolean>;
 
 export type Rule = Irule;
 

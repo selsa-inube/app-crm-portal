@@ -11,13 +11,10 @@ import {
 
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";
+import { FormikValues } from "formik";
 
 export interface IConsolidatedCreditProps {
-  initialValues: {
-    totalCollected: number;
-    selectedValues: Record<string, number>;
-    selectedLabels: Record<string, string>;
-  };
+  initialValues: FormikValues;
   isMobile: boolean;
   onChange?: (
     items: {
@@ -81,7 +78,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     code?: string,
     id?: string,
   ) => {
-    setTotalCollected((prevTotal) => prevTotal - oldValue + newValue);
+    setTotalCollected((prevTotal: number) => prevTotal - oldValue + newValue);
 
     if (label && code && id) {
       setSelectedLabels((prev) => ({ ...prev, [code]: label }));
