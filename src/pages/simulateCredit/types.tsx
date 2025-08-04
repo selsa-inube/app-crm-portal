@@ -107,6 +107,7 @@ export interface IFormData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   consolidatedCreditSelections: any;
   consolidatedCreditArray?: IConsolidatedCreditItem[];
+  numberOfUnmetRequirements: number;
 }
 
 export interface ICondition {
