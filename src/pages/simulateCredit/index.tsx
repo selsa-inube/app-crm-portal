@@ -20,6 +20,7 @@ import {
   IIncomeSources,
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
+import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -259,14 +260,10 @@ export function SimulateCredit() {
 
     if (!lineOfCreditRule) return;
 
-    const lineOfCreditValues = await evaluateRule(
-      lineOfCreditRule,
-      postBusinessUnitRules,
-      "value",
+    const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
       businessUnitPublicCode,
-      true,
+      formData.selectedDestination,
     );
-
     const lineNames = Array.isArray(lineOfCreditValues)
       ? lineOfCreditValues
           //eslint-disable-next-line @typescript-eslint/no-explicit-any
