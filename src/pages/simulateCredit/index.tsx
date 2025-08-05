@@ -619,16 +619,14 @@ export function SimulateCredit() {
   );
 
   const handleNextStep = () => {
-    const alwaysShowSourcesIncome = stepsAddProspect.sourcesIncome.id;
+    const { togglesState } = formData;
     const dynamicSteps = [
-      formData.togglesState[0]
+      togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      alwaysShowSourcesIncome,
-      formData.togglesState[1]
-        ? stepsAddProspect.obligationsFinancial.id
-        : undefined,
-      formData.togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
+      stepsAddProspect.sourcesIncome.id,
+      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
       formData.loanAmountState.toggleChecked
@@ -677,17 +675,15 @@ export function SimulateCredit() {
   };
 
   const handlePreviousStep = () => {
-    const alwaysShowSourcesIncome = stepsAddProspect.sourcesIncome.id;
+    const { togglesState } = formData;
     const dynamicSteps = [
-      formData.togglesState[0]
+      togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      formData.togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      alwaysShowSourcesIncome,
-      formData.togglesState[1]
-        ? stepsAddProspect.obligationsFinancial.id
-        : undefined,
-      formData.togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
+      togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
+      stepsAddProspect.sourcesIncome.id,
+      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
       formData.loanAmountState.toggleChecked
