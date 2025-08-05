@@ -1,6 +1,6 @@
 export interface IBorrowerProperty {
-  propertyName: string;
-  propertyValue: string;
+  propertyName?: string;
+  propertyValue?: string;
 }
 
 export interface IBorrower {

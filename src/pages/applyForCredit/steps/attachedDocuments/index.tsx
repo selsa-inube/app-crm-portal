@@ -84,7 +84,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
             if (Array.isArray(values) && values.length > 0) {
               for (const value of values) {
                 borrowerDocumentRules.push({
-                  borrower: borrower.borrowerName,
+                  borrower: borrower.borrowerName || "",
                   value: value,
                 });
               }

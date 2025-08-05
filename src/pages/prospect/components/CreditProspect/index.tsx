@@ -203,11 +203,21 @@ export function CreditProspect(props: ICreditProspectProps) {
     dataProspect.length > 0 ? dataProspect[0] : undefined;
 
   const borrowerOptions =
-    borrowersProspect?.borrowers?.map((borrower) => ({
-      id: crypto.randomUUID(),
-      label: borrower.borrowerName,
-      value: borrower.borrowerName,
-    })) ?? [];
+    borrowersProspect?.borrowers?.flatMap((borrower) => {
+      const name = borrower.borrowerName;
+
+      if (!name) {
+        return [];
+      }
+
+      return [
+        {
+          id: crypto.randomUUID(),
+          label: name,
+          value: name,
+        },
+      ];
+    }) ?? [];
 
   const handleChange = (_name: string, value: string) => {
     const index = borrowersProspect?.borrowers?.findIndex(
@@ -221,14 +231,15 @@ export function CreditProspect(props: ICreditProspectProps) {
   const handleIncomeSubmit = (updatedData: IIncomeSources) => {
     if (selectedBorrower) {
       const borrowerName = selectedBorrower.borrowerName;
-
-      setIncomeData((prev) => ({
-        ...prev,
-        [borrowerName]: {
-          ...updatedData,
-          edited: true,
-        },
-      }));
+      if (borrowerName) {
+        setIncomeData((prev) => ({
+          ...prev,
+          [borrowerName]: {
+            ...updatedData,
+            edited: true,
+          },
+        }));
+      }
 
       setDataProspect((prev) => {
         return prev.map((prospect) => {
@@ -237,6 +248,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               const updatedProperties = [
                 ...borrower.borrowerProperties.filter(
                   (prop) =>
+                    prop.propertyName &&
                     ![
                       "PeriodicSalary",
                       "OtherNonSalaryEmoluments",
@@ -323,69 +335,74 @@ export function CreditProspect(props: ICreditProspectProps) {
   useEffect(() => {
     if (selectedBorrower) {
       const borrowerName = selectedBorrower.borrowerName;
-      if (!incomeData[borrowerName]?.edited) {
-        setIncomeData((prev) => ({
-          ...prev,
-          [borrowerName]: {
-            identificationNumber: selectedBorrower.borrowerIdentificationNumber,
-            identificationType: selectedBorrower.borrowerIdentificationType,
-            name:
-              getPropertyValue(selectedBorrower.borrowerProperties, "name") ||
-              "",
-            surname:
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "surname",
-              ) || "",
-            Leases: parseFloat(
-              getPropertyValue(selectedBorrower.borrowerProperties, "Leases") ||
-                "0",
-            ),
-            Dividends: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "Dividends",
-              ) || "0",
-            ),
-            FinancialIncome: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "FinancialIncome",
-              ) || "0",
-            ),
-            PeriodicSalary: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "PeriodicSalary",
-              ) || "0",
-            ),
-            OtherNonSalaryEmoluments: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "OtherNonSalaryEmoluments",
-              ) || "0",
-            ),
-            PensionAllowances: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "PensionAllowances",
-              ) || "0",
-            ),
-            PersonalBusinessUtilities: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "PersonalBusinessUtilities",
-              ) || "0",
-            ),
-            ProfessionalFees: parseFloat(
-              getPropertyValue(
-                selectedBorrower.borrowerProperties,
-                "ProfessionalFees",
-              ) || "0",
-            ),
-            edited: false,
-          },
-        }));
+      if (borrowerName) {
+        if (!incomeData[borrowerName]?.edited) {
+          setIncomeData((prev) => ({
+            ...prev,
+            [borrowerName]: {
+              identificationNumber:
+                selectedBorrower.borrowerIdentificationNumber,
+              identificationType: selectedBorrower.borrowerIdentificationType,
+              name:
+                getPropertyValue(selectedBorrower.borrowerProperties, "name") ||
+                "",
+              surname:
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "surname",
+                ) || "",
+              Leases: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "Leases",
+                ) || "0",
+              ),
+              Dividends: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "Dividends",
+                ) || "0",
+              ),
+              FinancialIncome: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "FinancialIncome",
+                ) || "0",
+              ),
+              PeriodicSalary: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "PeriodicSalary",
+                ) || "0",
+              ),
+              OtherNonSalaryEmoluments: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "OtherNonSalaryEmoluments",
+                ) || "0",
+              ),
+              PensionAllowances: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "PensionAllowances",
+                ) || "0",
+              ),
+              PersonalBusinessUtilities: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "PersonalBusinessUtilities",
+                ) || "0",
+              ),
+              ProfessionalFees: parseFloat(
+                getPropertyValue(
+                  selectedBorrower.borrowerProperties,
+                  "ProfessionalFees",
+                ) || "0",
+              ),
+              edited: false,
+            },
+          }));
+        }
       }
     }
   }, [selectedBorrower]);
@@ -571,7 +588,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 id="borrower"
                 name="borrower"
                 options={borrowerOptions}
-                value={borrowerOptions[selectedIndex]?.value}
+                value={borrowerOptions[selectedIndex]?.value || ""}
                 onChange={handleChange}
                 size="compact"
               />

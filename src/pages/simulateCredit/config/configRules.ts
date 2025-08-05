@@ -1,10 +1,15 @@
+import { ContextData } from "@pages/applyForCredit/util";
+
 import { RuleBuilder } from "../types";
 
 export const ruleConfig: Record<string, RuleBuilder> = {
   LineOfCredit: (data) => ({
     ruleName: "LineOfCredit",
     conditions: [
-      { condition: "MoneyDestination", value: data.MoneyDestination },
+      {
+        condition: "MoneyDestination",
+        value: data.MoneyDestination,
+      },
       { condition: "ClientType", value: data.ClientType },
       {
         condition: "EmploymentContractTermType",
@@ -12,10 +17,13 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       },
     ],
   }),
-  PercentagePayableViaExtraInstallments: (data) => ({
+  PercentagePayableViaExtraInstallments: (data: ContextData) => ({
     ruleName: "PercentagePayableViaExtraInstallments",
     conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
+      {
+        condition: "LineOfCredit",
+        value: data.LineOfCredit,
+      },
       { condition: "ClientType", value: data.ClientType },
       {
         condition: "AffiliateSeniority",
@@ -23,32 +31,45 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       },
     ],
   }),
-  IncomeSourceUpdateAllowed: (data) => ({
+  IncomeSourceUpdateAllowed: (data: ContextData) => ({
     ruleName: "IncomeSourceUpdateAllowed",
     conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
+      {
+        condition: "LineOfCredit",
+        value: data.LineOfCredit,
+      },
       { condition: "ClientType", value: data.ClientType },
     ],
   }),
-  LoanAmountLimit: (data) => ({
+
+  LoanAmountLimit: (data: ContextData) => ({
     ruleName: "LoanAmountLimit",
     conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
+      {
+        condition: "LineOfCredit",
+        value: data.LineOfCredit,
+      },
       { condition: "ClientType", value: data.ClientType },
     ],
   }),
-  LoanTermLimit: (data) => ({
+  LoanTermLimit: (data: ContextData) => ({
     ruleName: "LoanTermLimit",
     conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
+      {
+        condition: "LineOfCredit",
+        value: data.LineOfCredit,
+      },
       { condition: "ClientType", value: data.ClientType },
       { condition: "LoanAmount", value: data.LoanAmount },
     ],
   }),
-  RiskFreeInterestRate: (data) => ({
+  RiskFreeInterestRate: (data: ContextData) => ({
     ruleName: "RiskFreeInterestRate",
     conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
+      {
+        condition: "LineOfCredit",
+        value: data.LineOfCredit,
+      },
       { condition: "LoanAmount", value: data.LoanAmount },
       { condition: "LoanTerm", value: data.LoanTerm },
     ],

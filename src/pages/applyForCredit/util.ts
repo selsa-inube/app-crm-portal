@@ -35,8 +35,8 @@ type RuleTemplate = {
   ruleName: string;
   conditions: { condition: string; valueKey: string }[];
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ContextData = Record<string, any>;
+
+export type ContextData = Record<string, number | string | boolean>;
 
 export function buildRule(template: RuleTemplate, contextData: ContextData) {
   return {

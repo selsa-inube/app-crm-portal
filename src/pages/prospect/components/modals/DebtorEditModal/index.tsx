@@ -114,18 +114,18 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     const seen = new Map<string, IBorrowerProperty>();
 
     original.forEach((prop) => {
-      if (duplicates.includes(prop.propertyName)) {
+      if (duplicates.includes(prop.propertyName || "")) {
         result.push(prop);
       } else {
-        seen.set(prop.propertyName, prop);
+        seen.set(prop.propertyName || "", prop);
       }
     });
 
     updates.forEach((prop) => {
-      if (duplicates.includes(prop.propertyName)) {
+      if (duplicates.includes(prop.propertyName || "")) {
         result.push(prop);
       } else {
-        seen.set(prop.propertyName, prop);
+        seen.set(prop.propertyName || "", prop);
       }
     });
 
