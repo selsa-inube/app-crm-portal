@@ -9,12 +9,13 @@ import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleBy
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
-import { IProspectSummaryById } from "@services/prospect/types";
+import { IProspect, IProspectSummaryById } from "@services/prospect/types";
 import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
+import { IDocumentsCredit } from "@services/creditRequest/types";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
-import { IFormData } from "./types";
+import { ICondition, IFormData, Irule } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
 import { dataSubmitApplication, tittleOptions } from "./config/config";
@@ -46,8 +47,26 @@ export function ApplyForCredit() {
   };
 
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [prospectData, setProspectData] = useState<Record<string, any>>({});
+  const [prospectData, setProspectData] = useState<IProspect>({
+    prospectId: "",
+    prospectCode: "",
+    state: "",
+    requestedAmount: 0,
+    installmentLimit: 0,
+    termLimit: 0,
+    timeOfCreation: new Date(),
+    selectedRegularPaymentSchedule: "",
+    selectedRateType: "",
+    preferredPaymentChannelAbbreviatedName: "",
+    gracePeriod: 0,
+    gracePeriodType: "",
+    moneyDestinationAbbreviatedName: "",
+    bondValue: 0,
+    borrowers: [],
+    consolidatedCredits: [],
+    creditProducts: [],
+    outlays: [],
+  });
 
   const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
     {},
@@ -84,9 +103,9 @@ export function ApplyForCredit() {
       client: false,
     },
     disbursementGeneral: {
-      amount: "",
+      amount: 0,
       Internal_account: {
-        amount: "",
+        amount: 0,
         accountNumber: "",
         description: "",
         name: "",
@@ -102,7 +121,7 @@ export function ApplyForCredit() {
         documentType: "",
       },
       External_account: {
-        amount: "",
+        amount: 0,
         check: false,
         toggle: true,
         description: "",
@@ -120,7 +139,7 @@ export function ApplyForCredit() {
         documentType: "",
       },
       Certified_check: {
-        amount: "",
+        amount: 0,
         check: false,
         toggle: true,
         description: "",
@@ -135,7 +154,7 @@ export function ApplyForCredit() {
         city: "",
       },
       Business_check: {
-        amount: "",
+        amount: 0,
         check: false,
         toggle: true,
         description: "",
@@ -150,7 +169,7 @@ export function ApplyForCredit() {
         city: "",
       },
       Cash: {
-        amount: "",
+        amount: 0,
         check: false,
         toggle: true,
         description: "",
@@ -175,12 +194,11 @@ export function ApplyForCredit() {
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
-      return (
-        raw
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((v: any) => (typeof v === "string" ? v : v?.value))
-          .filter(Boolean)
-      );
+      return raw
+        .map((v: string | { value: string }) =>
+          typeof v === "string" ? v : v?.value,
+        )
+        .filter(Boolean);
     },
     [valueRule],
   );
@@ -247,11 +265,11 @@ export function ApplyForCredit() {
   submitData.append("loanAmount", "2000000");
   submitData.append(
     "moneyDestinationAbreviatedName",
-    prospectData.money_destination_abbreviated_name,
+    prospectData.moneyDestinationAbbreviatedName,
   );
   submitData.append("moneyDestinationId", "13698");
-  submitData.append("prospectCode", prospectData.prospect_code);
-  submitData.append("prospectId", prospectData.prospect_id);
+  submitData.append("prospectCode", prospectData.prospectCode);
+  submitData.append("prospectId", prospectData.prospectId);
   submitData.append(
     "instantMessagingPlatforms",
     JSON.stringify([
@@ -264,8 +282,7 @@ export function ApplyForCredit() {
     ]),
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const metadataArray: any[] = [];
+  const metadataArray: IDocumentsCredit[] = [];
   Object.entries(attachedDocuments || {}).forEach(([, docsArray]) => {
     docsArray.forEach((doc) => {
       submitData.append("file", doc.file);
@@ -395,24 +412,24 @@ export function ApplyForCredit() {
     }
   }, [businessUnitPublicCode, customerPublicCode, prospectCode, prospectData]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cleanConditions = (rule: any) => {
+  const cleanConditions = (
+    rule: Irule | null | undefined,
+  ): Irule | null | undefined => {
     if (!rule) return rule;
 
     const cleaned = { ...rule };
 
     if (Array.isArray(cleaned.conditions)) {
       const hasValidCondition = cleaned.conditions.some(
-        (c: { value: unknown }) =>
+        (c: ICondition) =>
           c.value !== undefined && c.value !== null && c.value !== "",
       );
       if (!hasValidCondition) {
-        delete cleaned.conditions;
+        Reflect.deleteProperty(cleaned, "conditions");
       }
     }
     return cleaned;
   };
-
   const fetchValidationRules = useCallback(async () => {
     const rulesToCheck = [
       "ModeOfDisbursementType",
@@ -431,9 +448,11 @@ export function ApplyForCredit() {
             "value",
             businessUnitPublicCode,
           );
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          if (error?.response?.status === 400) notDefinedRules.push(ruleName);
+        } catch (error) {
+          const apiError = error as { response?: { status?: number } };
+          if (apiError?.response?.status === 400) {
+            notDefinedRules.push(ruleName);
+          }
         }
       }),
     );
@@ -499,7 +518,9 @@ export function ApplyForCredit() {
             );
             const extractedValues = Array.isArray(values)
               ? values
-                  .map((v) => (typeof v === "string" ? v : (v?.value ?? "")))
+                  .map((v) =>
+                    typeof v === "string" ? v : (v?.valuesAvailable ?? ""),
+                  )
                   .filter((val): val is string => val !== "")
               : [];
 
@@ -585,7 +606,7 @@ export function ApplyForCredit() {
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
-          prospectData?.prospectId,
+          prospectData.prospectId,
         );
         if (result) {
           setProspectSummaryData(result);
@@ -639,7 +660,7 @@ export function ApplyForCredit() {
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         isMobile={isMobile}
-        prospectData={prospectData}
+        prospectData={prospectData as IProspect}
         customerData={customerData}
         codeError={codeError}
         addToFix={addToFix}

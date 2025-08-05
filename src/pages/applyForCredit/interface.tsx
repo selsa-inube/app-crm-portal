@@ -21,10 +21,20 @@ import { disbursemenTabs } from "@pages/applyForCredit/steps/disbursementGeneral
 import { GeneralHeader } from "@pages/simulateCredit/components/GeneralHeader";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import { IProspectSummaryById } from "@services/prospect/types";
+import {
+  IProspect,
+  IProspectBorrower,
+  IProspectSummaryById,
+} from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
 
-import { IFormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
+import {
+  IBorrowerData,
+  IFormData,
+  IStep,
+  StepDetails,
+  titleButtonTextAssited,
+} from "./types";
 import {
   StyledArrowBack,
   StyledContainerAssisted,
@@ -67,8 +77,7 @@ interface ApplyForCreditUIProps {
   handleSubmitClick: () => void;
   handleSubmit: () => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  prospectData: any;
+  prospectData: IProspect;
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
@@ -246,9 +255,11 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     onFormValid={setIsCurrentFormValid}
                     initialValues={formData.borrowerData}
                     handleOnChange={(values) =>
-                      handleFormChange({ borrowerData: values })
+                      handleFormChange({
+                        borrowerData: values as IBorrowerData,
+                      })
                     }
-                    prospectData={prospectData}
+                    prospectData={prospectData as IProspectBorrower}
                     valueRule={getRuleByName("ValidationCoBorrower")}
                   />
                 )}
@@ -377,7 +388,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 <Text type="body" size="large">
                   {dataSubmitApplication.modals.fileDescription.replace(
                     "{numberProspectCode}",
-                    `${prospectData?.prospect_code}` || "",
+                    `${prospectData?.prospectCode}` || "",
                   )}
                 </Text>
               </BaseModal>
@@ -410,7 +421,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       {dataSubmitApplication.modals.filed}
                     </Text>
                     <Text type="body" size="large" weight="bold">
-                      {prospectData?.prospect_code}
+                      {prospectData?.prospectCode}
                     </Text>
                   </Stack>
                   <Text type="body" size="medium" appearance="gray">

@@ -4,17 +4,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Stack, Icon, Text, Checkbox } from "@inubekit/inubekit";
 
+import { currencyFormat } from "@utils/formatData/currency";
 import { Fieldset } from "@components/data/Fieldset";
 
 import { dataBail } from "./config";
 import { IBail } from "../../types";
-import { currencyFormat } from "@utils/formatData/currency";
+
 interface IBailProps {
   initialValues: IBail;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IBail) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any;
+  data: { bondValue: number };
 }
 
 export function Bail(props: IBailProps) {

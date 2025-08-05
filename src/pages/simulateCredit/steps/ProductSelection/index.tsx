@@ -11,7 +11,7 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { electionData } from "./config";
-import { ICreditLineTerms } from "../../types";
+import { ICreditLineTerms, IFormData } from "../../types";
 
 interface IProductSelectionProps {
   initialValues: {
@@ -25,7 +25,10 @@ interface IProductSelectionProps {
     onToggleChange: (index: number) => void;
   };
   onFormValid: (isValid: boolean) => void;
-  handleFormDataChange: (key: string, value: unknown) => void;
+  handleFormDataChange: (
+    field: keyof IFormData,
+    newValue: string | number | boolean | string[] | object | null | undefined,
+  ) => void;
   isMobile: boolean;
   choiceMoneyDestination: string;
   allRules: {

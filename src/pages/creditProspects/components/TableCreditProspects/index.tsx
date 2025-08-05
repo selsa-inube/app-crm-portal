@@ -46,8 +46,9 @@ export function TableCreditProspects({
           destination: getDestinationName(
             prospect.moneyDestinationAbbreviatedName,
           ),
+
           value: prospect.requestedAmount
-            ? currencyFormat(prospect.requestedAmount)
+            ? currencyFormat(Number(prospect?.requestedAmount))
             : tableConfig.messages.notAvailable,
         }))
       : [];

@@ -57,10 +57,10 @@ export interface IDebtorDetail {
   email: string;
   number: string;
   sex: string;
-  age: string;
+  age: string | number;
   relation: string;
+  debtorDetail?: Record<string, never>;
 }
-
 export interface IFormData {
   contactInformation: IContactInformation;
   propertyOffered: IPropertyOffered;
@@ -73,88 +73,39 @@ export interface IFormData {
   };
 }
 
+interface IPersonData {
+  amount: number;
+  check: boolean;
+  toggle: boolean;
+  description: string;
+  name: string;
+  lastName: string;
+  sex: string;
+  documentType: string;
+  identification: string;
+  birthdate: string;
+  phone: string;
+  mail: string;
+  city: string;
+}
+
+interface IInternalAccount extends IPersonData {
+  accountNumber: string;
+}
+
+interface IExternalAccount extends IPersonData {
+  bank: string;
+  accountType: string;
+  accountNumber: string;
+}
+
 export interface IDisbursementGeneral {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-  Internal_account: {
-    amount: string;
-    check: boolean;
-    toggle: boolean;
-    accountNumber: string;
-    description: string;
-    name: string;
-    lastName: string;
-    sex: string;
-    documentType: string;
-    identification: string;
-    birthdate: string;
-    phone: string;
-    mail: string;
-    city: string;
-  };
-  External_account: {
-    amount: string;
-    check: boolean;
-    toggle: boolean;
-    bank: string;
-    accountType: string;
-    accountNumber: string;
-    description: string;
-    name: string;
-    lastName: string;
-    sex: string;
-    documentType: string;
-    identification: string;
-    birthdate: string;
-    phone: string;
-    mail: string;
-    city: string;
-  };
-  Certified_check: {
-    amount: string;
-    check: boolean;
-    toggle: boolean;
-    description: string;
-    name: string;
-    lastName: string;
-    sex: string;
-    documentType: string;
-    identification: string;
-    birthdate: string;
-    phone: string;
-    mail: string;
-    city: string;
-  };
-  Business_check: {
-    amount: string;
-    check: boolean;
-    toggle: boolean;
-    description: string;
-    name: string;
-    lastName: string;
-    sex: string;
-    documentType: string;
-    identification: string;
-    birthdate: string;
-    phone: string;
-    mail: string;
-    city: string;
-  };
-  Cash: {
-    amount: string;
-    check: boolean;
-    toggle: boolean;
-    description: string;
-    name: string;
-    lastName: string;
-    sex: string;
-    documentType: string;
-    identification: string;
-    birthdate: string;
-    phone: string;
-    mail: string;
-    city: string;
-  };
+  amount: number;
+  Internal_account: IInternalAccount;
+  External_account: IExternalAccount;
+  Certified_check: IPersonData;
+  Business_check: IPersonData;
+  Cash: IPersonData;
 }
 
 export interface IOptionsSelect {
@@ -164,7 +115,7 @@ export interface IOptionsSelect {
 }
 export interface ICondition {
   condition: string;
-  value: string | number;
+  value: string | number | boolean;
 }
 
 export interface IDocumentUpload {
@@ -177,8 +128,8 @@ export interface Irule {
   ruleName: string;
   conditions: ICondition[];
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ContextData = Record<string, any>;
+
+export type ContextData = Record<string, number | string | boolean>;
 
 export type Rule = Irule;
 

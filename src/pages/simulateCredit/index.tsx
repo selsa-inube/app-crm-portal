@@ -20,6 +20,7 @@ import {
   IIncomeSources,
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
+import { IBorrower, IProspect } from "@services/prospect/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
@@ -133,11 +134,11 @@ export function SimulateCredit() {
     ],
   };
 
-  const simulateData = {
+  const simulateData: IProspect = {
     borrowers: [
       Object.keys(formData.borrowerData.borrowers).length === 0
         ? onlyBorrowerData
-        : formData.borrowerData.borrowers,
+        : (formData.borrowerData.borrowers as unknown as IBorrower),
     ],
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
@@ -160,9 +161,9 @@ export function SimulateCredit() {
     firstPaymentCycleDate: "2025-06-15T15:04:05Z",
     extraordinaryInstallments: Array.isArray(formData.extraordinaryInstallments)
       ? formData.extraordinaryInstallments.map((item) => ({
-          installmentAmount: item.value,
-          installmentDate: item.datePayment,
-          paymentChannelAbbreviatedName: item.paymentMethod,
+          installmentAmount: item.value as number,
+          installmentDate: item.datePayment as string | Date,
+          paymentChannelAbbreviatedName: item.paymentMethod as string,
         }))
       : [],
     installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
@@ -172,6 +173,15 @@ export function SimulateCredit() {
     selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
     requestedAmount: formData.loanAmountState.inputValue,
     termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
+    prospectId: "",
+    prospectCode: "",
+    state: "",
+    selectedRateType: "",
+    gracePeriod: 0,
+    gracePeriodType: "",
+    bondValue: 0,
+    creditProducts: [],
+    outlays: [],
   };
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -190,12 +200,11 @@ export function SimulateCredit() {
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
-      return (
-        raw
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((v: any) => (typeof v === "string" ? v : v?.value))
-          .filter(Boolean)
-      );
+      return raw
+        .map((v: string | { value: string }) =>
+          typeof v === "string" ? v : v?.value,
+        )
+        .filter(Boolean);
     },
     [valueRule],
   );
@@ -210,8 +219,7 @@ export function SimulateCredit() {
 
   type RuleEvaluationResult = {
     value: number | string;
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
+    [key: string]: string | number;
   };
 
   const getRuleValue = (input: unknown): number | string | null => {
@@ -267,11 +275,11 @@ export function SimulateCredit() {
       true,
     );
 
+    type LineOfCreditValue = string | { value: string } | null | undefined;
     const lineNames = Array.isArray(lineOfCreditValues)
-      ? lineOfCreditValues
-          //eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((v: any) => (typeof v === "string" ? v : v?.value || ""))
-          .filter(Boolean)
+      ? (lineOfCreditValues as LineOfCreditValue[])
+          .map((v) => (typeof v === "string" ? v : v?.value || ""))
+          .filter((name): name is string => Boolean(name))
       : [];
 
     const result: Record<
@@ -555,8 +563,7 @@ export function SimulateCredit() {
 
   const handleFormDataChange = (
     field: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    newValue: string | number | boolean | any[],
+    newValue: string | number | boolean | string[] | object | null | undefined,
   ) => {
     setFormData((prevState) => ({ ...prevState, [field]: newValue }));
   };
@@ -712,7 +719,7 @@ export function SimulateCredit() {
       ? titleButtonTextAssited.submitText
       : titleButtonTextAssited.goNextText;
 
-  const handleFlag = (error: unknown) => {
+  const handleFlag = (error: string) => {
     addFlag({
       title: textAddCongfig.errorPost,
       description: `${error}`,
@@ -727,13 +734,13 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         simulateData,
       );
-      const prospectCode = response.prospectCode;
+      const prospectCode = response?.prospectCode;
 
       setTimeout(() => {
         navigate(`/credit/prospects/${prospectCode}`);
       }, 1000);
     } catch (error) {
-      handleFlag(error);
+      handleFlag(error as string);
     }
   };
 
@@ -752,7 +759,7 @@ export function SimulateCredit() {
       );
       setCreditLimitData(result);
     } catch (error) {
-      handleFlag(error);
+      handleFlag(error as string);
     }
   };
 
@@ -800,7 +807,7 @@ export function SimulateCredit() {
         handleSubmitClick={handleSubmitClick}
         formData={formData}
         selectedProducts={selectedProducts}
-        prospectData={simulateData}
+        prospectData={simulateData as IProspect}
         setSelectedProducts={setSelectedProducts}
         setIsCapacityAnalysisModal={setIsCapacityAnalysisModal}
         isCapacityAnalysisModal={isCapacityAnalysisModal}

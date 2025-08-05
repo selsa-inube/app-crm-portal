@@ -10,6 +10,7 @@ import {
   Textarea,
   inube,
 } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import {
   currencyFormat,
@@ -28,8 +29,7 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 interface IDisbursementWithCheckEntityProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: any;
+  formik: FormikValues;
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;

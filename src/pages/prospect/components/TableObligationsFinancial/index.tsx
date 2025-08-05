@@ -37,7 +37,7 @@ export const TableFinancialObligations = (
     obligations: IObligations | null;
   }>({
     initialValues: {
-      obligations: initialValues,
+      obligations: initialValues as IObligations,
     },
     onSubmit: () => {},
   });
@@ -104,7 +104,7 @@ export const TableFinancialObligations = (
       ) {
         initialValues.obligations.obligations = [];
       }
-      const obligations = getDeepestObligations(initialValues);
+      const obligations = getDeepestObligations(initialValues as FormikValues);
 
       const obligationsConverted = Array.isArray(obligations)
         ? convertObligationsToProperties(obligations)
@@ -173,7 +173,7 @@ export const TableFinancialObligations = (
       handleUpdate={handleUpdate}
       showButtons={showButtons}
       formState={formState}
-      initialValues={initialValues}
+      initialValues={initialValues as IObligations}
       handleOnChange={handleOnChange}
       setRefreshKey={setRefreshKey}
     />

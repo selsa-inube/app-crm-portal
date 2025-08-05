@@ -69,10 +69,10 @@ export interface IListModalProps {
   handleClose: () => void;
   handleSubmit?: () => void;
   onSubmit?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setUploadedFiles?: React.Dispatch<React.SetStateAction<any>>;
+  setUploadedFiles?: (
+    files: { id: string; name: string; file: File }[] | null,
+  ) => void;
 }
-
 export const ListModal = (props: IListModalProps) => {
   const {
     title,
