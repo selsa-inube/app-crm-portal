@@ -177,7 +177,7 @@ export interface Irule {
   ruleName: string;
   conditions: ICondition[];
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export type ContextData = Record<string, number | string | boolean>;
 
 export type Rule = Irule;

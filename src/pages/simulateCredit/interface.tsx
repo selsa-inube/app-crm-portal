@@ -54,7 +54,6 @@ import {
   AlertIncome,
   AlertObligations,
 } from "./components/smallModals/modals";
-import { IConsolidatedCreditProps } from "./steps/consolidatedCredit";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -473,9 +472,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     stepsAddProspect.obligationsCollected.id &&
                   formData.loanAmountState.toggleChecked && (
                     <ConsolidatedCredit
-                      initialValues={
-                        formData.consolidatedCreditSelections as IConsolidatedCreditProps["initialValues"]
-                      }
+                      initialValues={formData.consolidatedCreditSelections}
                       isMobile={isMobile}
                       onChange={(items) =>
                         handleFormDataChange("consolidatedCreditArray", items)

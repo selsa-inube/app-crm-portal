@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Stack, Text, Divider, Grid } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { CardConsolidatedCredit } from "@pages/simulateCredit/components/CardConsolidatedCredit";
@@ -11,7 +12,6 @@ import {
 
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";
-import { FormikValues } from "formik";
 
 export interface IConsolidatedCreditProps {
   initialValues: FormikValues;
