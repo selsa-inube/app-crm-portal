@@ -88,7 +88,6 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               {selectData.term}
             </Text>
             <Text appearance="gray" size="medium">
-              HOLA
               {term} {selectData.months}
             </Text>
           </Stack>
