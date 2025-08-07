@@ -11,10 +11,10 @@ export const incomeModalConfig = {
     label: "Total fuentes de ingreso reportadas",
   },
   financialObligations: {
-    label: "(-) Obligaciones financieras reportadas",
+    label: "(+) Tope máximo para la línea de crédito",
   },
   subsistenceReserve: {
-    label: "(-) Reserva mínima de subsistencia",
+    label: "(-) Cartera vigente en la línea de crédito",
   },
   availableCommitments: {
     label: "Neto disponible para nuevos compromisos",
@@ -37,5 +37,5 @@ export const incomeModalConfig = {
       meses.
     </>
   ),
-  maxAmount: "Monto máximo",
+  maxAmount: "Monto máximo disponible para la línea de crédito",
 };

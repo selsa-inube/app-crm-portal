@@ -1,3 +1,4 @@
+//
 export const mockCreditLimit = [
   {
     creditLineTxt: "Libre inversión ",

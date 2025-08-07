@@ -6,7 +6,6 @@ import { PaymentCapacityInterface } from "./interface";
 export interface PaymentCapacityProps {
   handleClose: () => void;
   title: string;
-
   reportedIncomeSources: number;
   reportedFinancialObligations: number;
   subsistenceReserve: number;

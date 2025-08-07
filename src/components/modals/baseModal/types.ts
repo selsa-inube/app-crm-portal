@@ -6,3 +6,5 @@ type Appearance =
   | "help"
   | "gray"
   | "dark";
+
+type Variant = "filled" | "outlined";

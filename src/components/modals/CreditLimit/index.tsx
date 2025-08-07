@@ -1,4 +1,4 @@
-import { MdOutlineVisibility, MdInfoOutline, MdCached } from "react-icons/md";
+import { MdOutlineVisibility, MdInfoOutline } from "react-icons/md";
 import {
   Stack,
   Icon,
@@ -25,6 +25,7 @@ export interface ICreditLimitProps {
   availableLimitWithoutGuarantee: number;
   loading?: boolean;
   handleClose: () => void;
+  onOpenMaxLimitModal?: () => void;
   onOpenPaymentCapacityModal?: () => void;
   onOpenReciprocityModal?: () => void;
   onOpenFrcModal?: () => void;
@@ -34,17 +35,17 @@ export const CreditLimit = (props: ICreditLimitProps) => {
   const {
     title,
     loading,
-    handleClose,
-    onOpenPaymentCapacityModal,
-    onOpenReciprocityModal,
-    onOpenFrcModal,
     maxPaymentCapacity,
     maxReciprocity,
     maxDebtFRC,
     assignedLimit,
-    currentPortfolio,
     maxUsableLimit,
     availableLimitWithoutGuarantee,
+    handleClose,
+    onOpenMaxLimitModal,
+    onOpenPaymentCapacityModal,
+    onOpenReciprocityModal,
+    onOpenFrcModal,
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -52,11 +53,10 @@ export const CreditLimit = (props: ICreditLimitProps) => {
   return (
     <BaseModal
       title={title}
-      nextButton={creditLimitTexts.closeButton}
+      nextButton={creditLimitTexts.close}
       handleNext={handleClose}
       width={isMobile ? "280px" : "550px"}
       height={isMobile ? "auto" : "497px"}
-      iconBeforeNext={<MdCached />}
       handleBack={handleClose}
       finalDivider={true}
     >
@@ -87,7 +87,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                       cursorHover={true}
                       variant="filled"
                       shape="circle"
-                      onClick={onOpenPaymentCapacityModal}
+                      onClick={onOpenMaxLimitModal}
                     />
                   </Stack>
                 </Stack>
@@ -132,13 +132,37 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                   {loading ? (
                     <SkeletonLine width="70px" animated={true} />
                   ) : (
-                    <Text
-                      weight="bold"
-                      type="body"
-                      size="medium"
-                      appearance="dark"
-                    >
+                    <Text type="body" size="medium" appearance="dark">
                       {currencyFormat(maxDebtFRC, false)}
+                    </Text>
+                  )}
+                  <Stack margin="0px 0px 0px 5px">
+                    <Icon
+                      appearance="primary"
+                      icon={<MdOutlineVisibility />}
+                      size="16px"
+                      spacing="narrow"
+                      cursorHover
+                      variant="filled"
+                      shape="circle"
+                      onClick={onOpenPaymentCapacityModal}
+                    />
+                  </Stack>
+                </Stack>
+              </Stack>
+            </li>
+            <li>
+              <Stack justifyContent="space-between">
+                <Text appearance="dark" size="large" weight="bold" type="label">
+                  {creditLimitTexts.maxIndebtedness}
+                </Text>
+                <Stack alignItems="center">
+                  <Text appearance="success">$</Text>
+                  {loading ? (
+                    <SkeletonLine width="70px" animated={true} />
+                  ) : (
+                    <Text type="body" size="medium" appearance="dark">
+                      {currencyFormat(maxUsableLimit, false)}
                     </Text>
                   )}
                   <Stack margin="0px 0px 0px 5px">
@@ -183,7 +207,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
         <Divider />
         <Stack alignItems="center">
           <Icon
-            appearance="primary"
+            appearance="help"
             icon={<MdInfoOutline />}
             size="16px"
             spacing="narrow"
@@ -192,52 +216,13 @@ export const CreditLimit = (props: ICreditLimitProps) => {
             {creditLimitTexts.maxUsableQuote}
           </Text>
         </Stack>
-        <Stack direction="column" gap="12px">
-          <Stack justifyContent="space-between">
-            <Text weight="bold" type="label">
-              {creditLimitTexts.maxUsableLimit}
-            </Text>
-            <Stack alignItems="center">
-              <Text appearance="success">$</Text>
-              {loading ? (
-                <SkeletonLine width="70px" animated={true} />
-              ) : (
-                <Text type="body" size="medium" appearance="dark">
-                  {currencyFormat(maxUsableLimit, false)}
-                </Text>
-              )}
-            </Stack>
-          </Stack>
-          <Stack justifyContent="space-between">
-            <Text size="large" appearance="gray" weight="bold" type="label">
-              {creditLimitTexts.currentPortfolio}
-            </Text>
-            <Stack alignItems="center">
-              <Text appearance="success">$</Text>
-              {loading ? (
-                <SkeletonLine width="70px" animated={true} />
-              ) : (
-                <Text type="body" size="medium" appearance="dark">
-                  {currencyFormat(currentPortfolio, false)}
-                </Text>
-              )}
-            </Stack>
-          </Stack>
-        </Stack>
-        <Stack justifyContent="space-between" gap="2px">
-          <Text weight="bold" type="label">
-            {creditLimitTexts.availableLimitWithoutGuarantee}
+        <Stack direction="column" alignItems="center">
+          <Text type="headline" size="large" weight="bold" appearance="primary">
+            {currencyFormat(availableLimitWithoutGuarantee, true)}
           </Text>
-          <Stack justifyContent="space-between" alignItems="center">
-            <Text appearance="success">$</Text>
-            {loading ? (
-              <SkeletonLine width="70px" animated={true} />
-            ) : (
-              <Text weight="bold" type="body" size="medium" appearance="dark">
-                {currencyFormat(availableLimitWithoutGuarantee, false)}
-              </Text>
-            )}
-          </Stack>
+          <Text type="body" size="small">
+            Monto máximo utilizable
+          </Text>
         </Stack>
       </Stack>
     </BaseModal>

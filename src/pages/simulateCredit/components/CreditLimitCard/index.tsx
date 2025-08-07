@@ -80,8 +80,9 @@ export function CreditLimitCard(props: CreditLimitProps) {
       {creditModal && (
         <CreditLimit
           handleClose={() => setCreditModal(false)}
-          title="Origen de cupo"
+          title="Cupos utilizados"
           loading={loadingCredit}
+          onOpenMaxLimitModal={() => handleOpenModals("maxLimitModal")}
           onOpenPaymentCapacityModal={() => handleOpenModals("paymentCapacity")}
           onOpenReciprocityModal={() => handleOpenModals("reciprocityModal")}
           onOpenFrcModal={() => handleOpenModals("scoreModal")}
@@ -89,9 +90,9 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
-      {openModal === "paymentCapacity" && (
+      {openModal === "maxLimitModal" && (
         <PaymentCapacity
-          title="Cupo máx. capacidad de pago"
+          title="Tope máx. para Crédito vacacional"
           loading={loading}
           handleClose={() => setOpenModal(null)}
           {...paymentCapacityData}
@@ -107,9 +108,10 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
+      {openModal === "paymentCapacity" && <></>}
+
       {openModal === "scoreModal" && (
         <ScoreModal
-          title="Score Details"
           handleClose={() => setOpenModal(null)}
           subTitle="Your Financial Score"
           loading={loading}
