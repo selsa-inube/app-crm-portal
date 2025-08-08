@@ -171,7 +171,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                       "download",
                       "remove",
                       "attached",
-                      "actions",
+                      "actions"
                     ].includes(header.key);
                     console.log("customColumn: ", customColumn);
                     console.log("header ", header);
@@ -202,24 +202,20 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                                     handleOpenAttachment(rowIndex.toString())
                                   }
                                 />
-                                {
-                                  <Icon
-                                    icon={<MdEdit />}
-                                    appearance="dark"
-                                    size="16px"
-                                    cursorHover
-                                    onClick={() =>
-                                      handleSeeAttachment(rowIndex.toString())
-                                    }
-                                    disabled={
-                                      !uploadedFilesByRow[
-                                        rowIndex.toString()
-                                      ] ||
-                                      uploadedFilesByRow[rowIndex.toString()]
-                                        .length === 0
-                                    }
-                                  />
-                                }
+                                {<Icon
+                                  icon={<MdOutlineRemoveRedEye />}
+                                  appearance="dark"
+                                  size="16px"
+                                  cursorHover
+                                  onClick={() =>
+                                    handleSeeAttachment(rowIndex.toString())
+                                  }
+                                  disabled={
+                                    !uploadedFilesByRow[rowIndex.toString()] ||
+                                    uploadedFilesByRow[rowIndex.toString()]
+                                      .length === 0
+                                  }
+                                />}
                               </Stack>
                             );
                           }

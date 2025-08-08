@@ -10,8 +10,9 @@ const StyledFile = styled.div<IStyledFile>`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   border-radius: 8px;
-  padding: 12px;
+  padding: 12px 24px 12px 12px;
   ${({ $withBorder, theme }) =>
     $withBorder
       ? `
