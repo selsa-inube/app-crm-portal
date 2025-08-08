@@ -37,7 +37,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     customerData,
     prospectData,
   } = props;
-
+  console.log("customerData: ", customerData);
   const { businessUnitSigla } = useContext(AppContext);
   const [ruleValues, setRuleValues] = useState<IBorrowerDocumentRule[]>([]);
 

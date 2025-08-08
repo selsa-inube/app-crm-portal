@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MdAttachFile, MdOutlineRemoveRedEye } from "react-icons/md";
+import { MdAttachFile, MdOutlineRemoveRedEye, MdEdit } from "react-icons/md";
 import {
   Pagination,
   Table,
@@ -97,6 +97,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
   };
 
   const handleSeeAttachment = (rowId: string) => {
+    console.log("# show attachment", rowId);
     setCurrentRowId(rowId);
     setSeeAttachments(true);
   };
@@ -167,11 +168,13 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                     const cellData =
                       row[header.key as keyof { borrower: string }];
                     const customColumn = [
-                      "attach",
                       "download",
                       "remove",
                       "attached",
+                      "actions",
                     ].includes(header.key);
+                    console.log("customColumn: ", customColumn);
+                    console.log("header ", header);
                     return (
                       <Td
                         key={colIndex}
@@ -182,7 +185,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                           typeof header.action ||
                           (typeof cellData === "string" &&
                             cellData.includes("$"))
-                            ? "center"
+                            ? "left"
                             : "left"
                         }
                       >
@@ -199,34 +202,25 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                                     handleOpenAttachment(rowIndex.toString())
                                   }
                                 />
-                                <Icon
-                                  icon={<MdOutlineRemoveRedEye />}
-                                  appearance="dark"
-                                  size="16px"
-                                  cursorHover
-                                  onClick={() =>
-                                    handleSeeAttachment(rowIndex.toString())
-                                  }
-                                  disabled={
-                                    !uploadedFilesByRow[rowIndex.toString()] ||
-                                    uploadedFilesByRow[rowIndex.toString()]
-                                      .length === 0
-                                  }
-                                />
+                                {
+                                  <Icon
+                                    icon={<MdEdit />}
+                                    appearance="dark"
+                                    size="16px"
+                                    cursorHover
+                                    onClick={() =>
+                                      handleSeeAttachment(rowIndex.toString())
+                                    }
+                                    disabled={
+                                      !uploadedFilesByRow[
+                                        rowIndex.toString()
+                                      ] ||
+                                      uploadedFilesByRow[rowIndex.toString()]
+                                        .length === 0
+                                    }
+                                  />
+                                }
                               </Stack>
-                            );
-                          }
-                          if (header.key === "attached") {
-                            if (
-                              uploadedFilesByRow[rowIndex.toString()]?.length >
-                              0
-                            ) {
-                              return (
-                                <Tag label="Adjunto" appearance="success" />
-                              );
-                            }
-                            return (
-                              <Tag label="No adjunto" appearance="danger" />
                             );
                           }
                           return cellData;

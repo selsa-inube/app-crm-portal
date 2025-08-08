@@ -454,6 +454,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         customerPublicCode,
       );
+      console.log("customerPublicCode: ", customerPublicCode);
       setClientPortfolio(data);
     } catch (error: unknown) {
       const err = error as {
