@@ -18,8 +18,9 @@ import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { BaseModal } from "../baseModal";
-import { currentData, dataTabs, headers, paymentCapacityData } from "./config";
+import { dataTabs, headers, paymentCapacityData } from "./config";
 import { StyledTable } from "./styles";
+import { CurrentDataRow } from "./types";
 
 interface IPaymentCapacityModalProps {
   incomeSources: number;
@@ -28,6 +29,7 @@ interface IPaymentCapacityModalProps {
   lineOfCredit: number;
   maxValue: number;
   extraordinary: number;
+  extraordinaryQuotes?: CurrentDataRow[];
   handleClose: () => void;
 }
 
@@ -39,10 +41,16 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     lineOfCredit,
     maxValue,
     extraordinary,
+    extraordinaryQuotes,
     handleClose,
   } = props;
 
-  const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
+  const tabsToRender = extraordinaryQuotes
+    ? dataTabs
+    : dataTabs.filter((tab) => tab.id !== "extraordinary");
+
+  const [currentTab, setCurrentTab] = useState("ordinary");
+
   const onChange = (tabId: string) => {
     setCurrentTab(tabId);
   };
@@ -57,8 +65,12 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
       width="500px"
     >
       <Fieldset>
-        <Stack direction="column" gap="16px">
-          <Tabs selectedTab={currentTab} tabs={dataTabs} onChange={onChange} />
+        <Stack direction="column" gap="16px" padding="0px 8px">
+          <Tabs
+            selectedTab={currentTab}
+            tabs={tabsToRender}
+            onChange={onChange}
+          />
           {currentTab === "ordinary" && (
             <Stack direction="column" gap="16px">
               <Stack justifyContent="space-between">
@@ -125,67 +137,68 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
               </Stack>
             </Stack>
           )}
-          {currentTab === "extraordinary" && (
-            <StyledTable>
-              <Table tableLayout="auto">
-                <Thead>
-                  <Tr>
-                    {headers.map((header) => (
-                      <Th key={header.key} align="center">
-                        {header.label}
-                      </Th>
-                    ))}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {currentData.map((row, rowIndex) => (
-                    <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
-                      {headers.map((header, colIndex) => (
-                        <Td key={colIndex} align="center">
-                          {row[header.key]}
-                        </Td>
+          {currentTab === "extraordinary" &&
+            extraordinaryQuotes !== undefined && (
+              <StyledTable>
+                <Table tableLayout="auto">
+                  <Thead>
+                    <Tr>
+                      {headers.map((header) => (
+                        <Th key={header.key} align="center">
+                          {header.label}
+                        </Th>
                       ))}
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-              <Stack
-                direction="column"
-                alignItems="center"
-                gap="8px"
-                margin="8px 0 0 0"
-              >
-                <Text type="body" size="small">
-                  {paymentCapacityData.maxValueAmount}
-                </Text>
-                <Stack direction="column" alignItems="center">
-                  <Stack alignItems="center" gap="4px">
-                    <Text
-                      type="headline"
-                      size="small"
-                      weight="bold"
-                      appearance="gray"
-                    >
-                      {currencyFormat(maxValue, true)}
-                    </Text>
-                    <Icon
-                      appearance="primary"
-                      icon={<MdInfoOutline />}
-                      size="14px"
-                      spacing="narrow"
-                    />
-                  </Stack>
-                  <Text type="body" size="small" appearance="gray">
-                    {paymentCapacityData.maxAmountOridinary}
+                  </Thead>
+                  <Tbody>
+                    {extraordinaryQuotes.map((row, rowIndex) => (
+                      <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
+                        {headers.map((header, colIndex) => (
+                          <Td key={colIndex} align="center">
+                            {row[header.key]}
+                          </Td>
+                        ))}
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+                <Stack
+                  direction="column"
+                  alignItems="center"
+                  gap="8px"
+                  margin="8px 0 0 0"
+                >
+                  <Text type="body" size="small">
+                    {paymentCapacityData.maxValueAmount}
                   </Text>
+                  <Stack direction="column" alignItems="center">
+                    <Stack alignItems="center" gap="4px">
+                      <Text
+                        type="headline"
+                        size="small"
+                        weight="bold"
+                        appearance="gray"
+                      >
+                        {currencyFormat(maxValue, true)}
+                      </Text>
+                      <Icon
+                        appearance="primary"
+                        icon={<MdInfoOutline />}
+                        size="14px"
+                        spacing="narrow"
+                      />
+                    </Stack>
+                    <Text type="body" size="small" appearance="gray">
+                      {paymentCapacityData.maxAmountOridinary}
+                    </Text>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </StyledTable>
-          )}
+              </StyledTable>
+            )}
         </Stack>
       </Fieldset>
       <Fieldset>
-        <Stack direction="column" gap="6px">
+        <Stack direction="column" gap="6px" padding="0px 8px">
           <Stack alignItems="center">
             <Icon
               appearance="help"

@@ -1,5 +1,3 @@
-import { CurrentDataRow } from "./types";
-
 export const dataTabs = [
   { id: "ordinary", label: "Cuotas ordinarias" },
   { id: "extraordinary", label: "Cuotas extraordinarias" },
@@ -25,31 +23,3 @@ export const paymentCapacityData = {
     "Monto máximo sumando cuotas ordinarias y extraordinarias.",
   maxTotal: "Monto máximo total",
 };
-
-export const currentData: CurrentDataRow[] = [
-  {
-    concept: "Prima",
-    value: "$850.000",
-    date: "30/Jun/2025",
-  },
-  {
-    concept: "Prima",
-    value: "$850.000",
-    date: "30/Jun/2025",
-  },
-  {
-    concept: "Prima",
-    value: "$850.000",
-    date: "30/Jun/2025",
-  },
-  {
-    concept: "Prima",
-    value: "$850.000",
-    date: "30/Jun/2025",
-  },
-  {
-    concept: "Prima",
-    value: "$850.000",
-    date: "30/Jun/2025",
-  },
-];

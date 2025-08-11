@@ -1,9 +1,10 @@
+import { CurrentDataRow } from "@components/modals/PaymentCapacityModal/types";
+
 export interface ICreditLimitData {
   maxPaymentCapacity: number;
   maxReciprocity: number;
   maxDebtFRC: number;
   assignedLimit: number;
-  currentPortfolio: number;
   maxUsableLimit: number;
   availableLimitWithoutGuarantee: number;
 }
@@ -45,4 +46,5 @@ export interface IPaymentCapacityData {
   lineOfCredit: number;
   maxValue: number;
   extraordinary: number;
+  extraordinaryQuotes?: CurrentDataRow[];
 }

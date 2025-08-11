@@ -7,7 +7,6 @@ export const mockCreditLimit = [
       maxReciprocity: 24000000,
       maxDebtFRC: 21000000,
       assignedLimit: 0,
-      currentPortfolio: 1000000,
       maxUsableLimit: 21000000,
       availableLimitWithoutGuarantee: 20000000,
     },
@@ -45,6 +44,33 @@ export const mockCreditLimit = [
       lineOfCredit: 20,
       maxValue: 40000000,
       extraordinary: 44280000,
+      extraordinaryQuotes: [
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+      ],
     },
   },
   {
@@ -55,7 +81,6 @@ export const mockCreditLimit = [
       maxReciprocity: 40000000,
       maxDebtFRC: 45000000,
       assignedLimit: 0,
-      currentPortfolio: 10000000,
       maxUsableLimit: 20000000,
       availableLimitWithoutGuarantee: 15000000,
     },
