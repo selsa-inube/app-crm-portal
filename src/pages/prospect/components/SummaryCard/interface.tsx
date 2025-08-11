@@ -1,5 +1,5 @@
 import { MdOutlineMessage } from "react-icons/md";
-import { Stack, Icon, Text } from "@inubekit/inubekit";
+import { Stack, Icon, Text, Divider } from "@inubekit/inubekit";
 
 import {
   truncateTextToMaxLength,
@@ -10,7 +10,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { formatPrimaryDate } from "@utils/formatData/date";
 
 import { SummaryCardProps } from ".";
-import { StyledSummaryCard, StyledDivider, StyledLink } from "./styles";
+import { StyledSummaryCard, StyledLink } from "./styles";
 import { summaryData } from "./config";
 
 function SummaryCardUI(props: SummaryCardProps) {
@@ -57,7 +57,7 @@ function SummaryCardUI(props: SummaryCardProps) {
         </Text>
       </StyledLink>
       <Stack direction="column" padding="0px 8px">
-        <StyledDivider />
+        <Divider />
         <Stack gap="8px" justifyContent="flex-end" padding="8px 0px">
           <Icon icon={<MdOutlineMessage />} appearance="dark" size="20px" />
         </Stack>

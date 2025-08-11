@@ -22,12 +22,3 @@ export const StyledSummaryCard = styled.div`
     theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
 `;
-
-export const StyledDivider = styled.hr`
-  margin: 0;
-  width: 100%;
-  border: none;
-  border-top: 2px solid;
-  border-top-color: ${({ theme }) =>
-    theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
-`;

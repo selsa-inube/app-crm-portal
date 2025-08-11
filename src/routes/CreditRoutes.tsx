@@ -22,7 +22,6 @@ function CreditRoutes() {
           path="/apply-for-credit/:prospectCode"
           element={<ApplyForCredit />}
         />
-        {/* <Route path="/credit-applications" element={<CreditApplications />} /> */}
       </Route>
       <Route path="/*" element={<ErrorPage errorCode={404} />} />
     </Routes>
