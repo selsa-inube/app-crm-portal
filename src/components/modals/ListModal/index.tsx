@@ -1,4 +1,4 @@
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useContext, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
   MdClear,
@@ -57,14 +57,14 @@ export interface IListModalProps {
   buttonLabel: string;
   cancelButton?: string;
   appearanceCancel?:
-  | "primary"
-  | "success"
-  | "warning"
-  | "danger"
-  | "help"
-  | "dark"
-  | "gray"
-  | "light";
+    | "primary"
+    | "success"
+    | "warning"
+    | "danger"
+    | "help"
+    | "dark"
+    | "gray"
+    | "light";
   portalId?: string;
   content?: JSX.Element | JSX.Element[] | string;
   optionButtons?: IOptionButtons;
@@ -129,6 +129,14 @@ export const ListModal = (props: IListModalProps) => {
     url: string;
   }>({ name: "", url: "" });
   console.log("pendingFiles: ", pendingFiles);
+  console.log("uploadedFiles: ", uploadedFiles);
+
+  useEffect(() => {
+    if (pendingFiles.length === 1 && uploadedFiles?.length > 0) {
+      keepUploadedFiles();
+    }
+  }, [pendingFiles]);
+
   const dragCounter = useRef(0);
   const MAX_FILE_SIZE = 2.5 * 1024 * 1024;
 
@@ -204,8 +212,10 @@ export const ListModal = (props: IListModalProps) => {
     if (!setUploadedFiles) return;
 
     if (uploadMode === "local") {
-      console.log("Archivos guardados en estado:", uploadedFiles);
-      setUploadedFiles(pendingFiles);
+      if (pendingFiles.length > 0) {
+        setUploadedFiles(pendingFiles);
+      }
+
       handleClose();
       return;
     }
@@ -227,6 +237,8 @@ export const ListModal = (props: IListModalProps) => {
         optionFlags.description,
         optionFlags.appearance as FlagAppearance,
       );
+
+      setPendingFiles([]);
     } catch (error) {
       handleFlag(
         optionFlags.title,
@@ -266,7 +278,6 @@ export const ListModal = (props: IListModalProps) => {
             file,
           };
           setPendingFiles((prev) => [...prev, newFile]);
-
         } else {
           alert(listModalData.exceedSize);
         }
@@ -305,7 +316,7 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const handlePreview = (id: string, name: string, pendingFile?: File) => {
-    let fileData = uploadedFiles?.find((file) => file.id === id);
+    const fileData = uploadedFiles?.find((file) => file.id === id);
     let url;
 
     if (fileData?.file) {
@@ -323,16 +334,19 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const onDeleteOneFile = (id: string) => {
-    console.log("id to delete: ", id);
-    console.log("inicio uploadedFiles: ", uploadedFiles.filter((file: IFile) => file.id !== id));
     const filteredFiles = uploadedFiles.filter((file: IFile) => file.id !== id);
     setUploadedFiles(filteredFiles);
-      console.log("entro if delete ", uploadedFiles);
-    setPendingFiles((prev: IFile[]) => prev.filter((file: IFile) => file.id !== id));
-    console.log("Termino proceso de eliminacion ")
-    console.log("final uploadedFiles: ", uploadedFiles);
+    setPendingFiles((prev: IFile[]) =>
+      prev.filter((file: IFile) => file.id !== id),
+    );
+  };
 
-  }
+  const keepUploadedFiles = () => {
+    const mergedFiles = [...uploadedFiles, ...pendingFiles];
+
+    setUploadedFiles([]);
+    setPendingFiles(mergedFiles);
+  };
 
   return createPortal(
     <Blanket>
@@ -415,31 +429,36 @@ export const ListModal = (props: IListModalProps) => {
                     weight="bold"
                     appearance="gray"
                   >
-                  {listModalData.attachments}
+                    {listModalData.attachments}
                   </Text>
-                  <Grid templateColumns="auto auto" templateRows="repeat(60px)" autoRows="repeat(auto-fit, minmax(250px, 1fr))" gap="16px"> 
-                  {pendingFiles.map((file, index) => (
-                    <File
-                      key={file.id}
-                      id={file.id}
-                      index={index}
-                      name={file.name}
-                      size={formatFileSize(file.file.size)}
-                      onDelete={() => {
-                        onDeleteOneFile(file.id);
-                        if (fileInputRef.current) {
-                          fileInputRef.current.value = "";
-                        }
-                      }}
-                      uploadedFiles={uploadedFiles}
-                      setSelectedDocument={setSelectedDocument}
-                      setOpenViewer={setOpenViewer}
-                      isMobile={isMobile}
-                      handlePreview={handlePreview}
-                      fileInputRef={fileInputRef}
-                      pendingFiles={pendingFiles}
-                    />
-                  ))}
+                  <Grid
+                    templateColumns="auto auto"
+                    templateRows="repeat(60px)"
+                    autoRows="repeat(auto-fit, minmax(250px, 1fr))"
+                    gap="16px"
+                  >
+                    {pendingFiles.map((file, index) => (
+                      <File
+                        key={file.id}
+                        id={file.id}
+                        index={index}
+                        name={file.name}
+                        size={formatFileSize(file.file.size)}
+                        onDelete={() => {
+                          onDeleteOneFile(file.id);
+                          if (fileInputRef.current) {
+                            fileInputRef.current.value = "";
+                          }
+                        }}
+                        uploadedFiles={uploadedFiles}
+                        setSelectedDocument={setSelectedDocument}
+                        setOpenViewer={setOpenViewer}
+                        isMobile={isMobile}
+                        handlePreview={handlePreview}
+                        fileInputRef={fileInputRef}
+                        pendingFiles={pendingFiles}
+                      />
+                    ))}
                   </Grid>
                 </Stack>
               </>
@@ -457,26 +476,33 @@ export const ListModal = (props: IListModalProps) => {
                     >
                       {listModalData.attachments}
                     </Text>
-                    <Grid templateColumns="auto auto" templateRows="repeat(60px)" autoRows="repeat(auto-fit, minmax(250px, 1fr))" gap="16px"> 
-                    {uploadedFiles.map((file, index) => (
-                      <File
-                        key={file.id}
-                        index={index}
-                        id={file.id}
-                        name={file.name}
-                        size={
-                          file.file?.size ? formatFileSize(file.file.size) : "-"
-                        }
-                        onDelete={onDeleteOneFile}
-                        uploadedFiles={uploadedFiles}
-                        setSelectedDocument={setSelectedDocument}
-                        setOpenViewer={setOpenViewer}
-                        isMobile={isMobile}
-                        handlePreview={handlePreview}
-                        fileInputRef={fileInputRef}
-                        pendingFiles={pendingFiles}
-                      />
-                    ))}
+                    <Grid
+                      templateColumns="auto auto"
+                      templateRows="repeat(60px)"
+                      autoRows="repeat(auto-fit, minmax(250px, 1fr))"
+                      gap="16px"
+                    >
+                      {uploadedFiles.map((file, index) => (
+                        <File
+                          key={file.id}
+                          index={index}
+                          id={file.id}
+                          name={file.name}
+                          size={
+                            file.file?.size
+                              ? formatFileSize(file.file.size)
+                              : "-"
+                          }
+                          onDelete={onDeleteOneFile}
+                          uploadedFiles={uploadedFiles}
+                          setSelectedDocument={setSelectedDocument}
+                          setOpenViewer={setOpenViewer}
+                          isMobile={isMobile}
+                          handlePreview={handlePreview}
+                          fileInputRef={fileInputRef}
+                          pendingFiles={pendingFiles}
+                        />
+                      ))}
                     </Grid>
                   </Stack>
                 </>

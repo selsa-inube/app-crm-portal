@@ -491,6 +491,8 @@ export const TableFinancialObligationsUI = ({
             appearanceCancel="gray"
             buttonLabel={dataReport.restore}
             content={dataReport.descriptionModal}
+            uploadedFiles={[]}
+            setUploadedFiles={() => {}}
           />
         )}
       </Stack>
