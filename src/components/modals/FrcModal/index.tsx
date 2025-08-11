@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MdExpandMore, MdInfoOutline, MdQueryStats } from "react-icons/md";
 import {
   Stack,
@@ -10,10 +11,9 @@ import {
 
 import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
+import { Fieldset } from "@components/data/Fieldset";
 
 import { frcConfig } from "./FrcConfig";
-import { Fieldset } from "@src/components/data/Fieldset";
-import { useState } from "react";
 import { StyledExpanded } from "./styles";
 
 export interface ScoreModalProps {
@@ -27,6 +27,9 @@ export interface ScoreModalProps {
   economicActivity: number;
   monthlyIncome: number;
   maxIndebtedness: number;
+  incomeScore: number;
+  maxLimit: number;
+  totalPortafolio: number;
   loading?: boolean;
 }
 
@@ -40,6 +43,9 @@ export const ScoreModal = (props: ScoreModalProps) => {
     economicActivity,
     monthlyIncome,
     maxIndebtedness,
+    incomeScore,
+    maxLimit,
+    totalPortafolio,
     loading,
   } = props;
 
@@ -261,8 +267,8 @@ export const ScoreModal = (props: ScoreModalProps) => {
           {loading ? (
             <SkeletonLine width="70px" animated={true} />
           ) : (
-            <Text weight="bold" type="body" size="large">
-              4,67
+            <Text type="body" size="large">
+              x{incomeScore}
             </Text>
           )}
         </Stack>
@@ -276,7 +282,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
             {loading ? (
               <SkeletonLine width="70px" animated={true} />
             ) : (
-              <Text>{currencyFormat(monthlyIncome, false)}</Text>
+              <Text>{currencyFormat(maxLimit, false)}</Text>
             )}
           </Stack>
         </Stack>
@@ -284,13 +290,14 @@ export const ScoreModal = (props: ScoreModalProps) => {
           <Text weight="bold" size="large" type="label">
             {frcConfig.totalPortafolio}
           </Text>
-          {loading ? (
-            <SkeletonLine width="70px" animated={true} />
-          ) : (
-            <Text weight="bold" type="body" size="large">
-              4,67
-            </Text>
-          )}
+          <Stack>
+            <Text appearance="success">$</Text>
+            {loading ? (
+              <SkeletonLine width="70px" animated={true} />
+            ) : (
+              <Text>{currencyFormat(totalPortafolio, false)}</Text>
+            )}
+          </Stack>
         </Stack>
         <Fieldset>
           <Stack alignItems="center" direction="column" gap="8px">
@@ -328,10 +335,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
             handleNext={() => setShowInfoModal(false)}
             width={isMobile ? "290px" : "500px"}
           >
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-              nunc metus, volutpat molestie sagittis id, ullamcorper id diam.
-            </Text>
+            <Text>{frcConfig.loremIpsum}</Text>
           </BaseModal>
         )}
       </Stack>

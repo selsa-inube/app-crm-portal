@@ -4,13 +4,15 @@ import { Stack, Icon, Text, Divider } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
 import { CreditLimit } from "@components/modals/CreditLimit";
-import { PaymentCapacity } from "@components/modals/PaymentCapacityModal";
+import { MaxLimitModal } from "@components/modals/MaxLimitModal";
 import { ReciprocityModal } from "@components/modals/ReciprocityModal";
 import { ScoreModal } from "@components/modals/FrcModal";
+import { PaymentCapacityModal } from "@components/modals/PaymentCapacityModal";
 
 import { StyledContainer } from "./styles";
 import {
   ICreditLimitData,
+  IMaxLimitData,
   IPaymentCapacityData,
   IReciprocityData,
   IScoreData,
@@ -20,6 +22,7 @@ export interface CreditLimitProps {
   creditLine: number;
   creditLineTxt: string;
   creditLimitData: ICreditLimitData;
+  maxLimitData: IMaxLimitData;
   paymentCapacityData: IPaymentCapacityData;
   reciprocityData: IReciprocityData;
   scoreData: IScoreData;
@@ -30,6 +33,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
     creditLine,
     creditLineTxt,
     creditLimitData,
+    maxLimitData,
     paymentCapacityData,
     reciprocityData,
     scoreData,
@@ -91,11 +95,11 @@ export function CreditLimitCard(props: CreditLimitProps) {
       )}
 
       {openModal === "maxLimitModal" && (
-        <PaymentCapacity
+        <MaxLimitModal
           title="Tope máx. para Crédito vacacional"
           loading={loading}
           handleClose={() => setOpenModal(null)}
-          {...paymentCapacityData}
+          {...maxLimitData}
           iconVisible={true}
         />
       )}
@@ -108,7 +112,12 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
-      {openModal === "paymentCapacity" && <></>}
+      {openModal === "paymentCapacity" && (
+        <PaymentCapacityModal
+          handleClose={() => setOpenModal(null)}
+          {...paymentCapacityData}
+        />
+      )}
 
       {openModal === "scoreModal" && (
         <ScoreModal

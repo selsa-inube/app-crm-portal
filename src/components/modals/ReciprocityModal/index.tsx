@@ -16,6 +16,7 @@ export interface ReciprocityModalProps {
   balanceOfContributions: number;
   accordingToRegulation: number;
   assignedQuota: number;
+  numRegulations: number;
   loading?: boolean;
 }
 
@@ -25,6 +26,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
     balanceOfContributions,
     accordingToRegulation,
     assignedQuota,
+    numRegulations,
     loading,
   } = props;
 
@@ -63,7 +65,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
             </Stack>
           </Stack>
           <Stack justifyContent="space-between">
-            <Text type="label" size="large" weight="bold">
+            <Text type="label" size="large">
               {dataReciprocity.timesPossible}
             </Text>
             <Stack>
@@ -71,7 +73,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
                 <SkeletonLine width="70px" animated={true} />
               ) : (
                 <Text type="body" size="medium">
-                  {currencyFormat(accordingToRegulation, false)}
+                  x{currencyFormat(numRegulations, false)}
                 </Text>
               )}
             </Stack>
@@ -97,10 +99,13 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
             </Stack>
           </Stack>
           <Stack justifyContent="space-between">
-            <Text type="label" size="large" weight="bold">
+            <Text type="label" size="large">
               {dataReciprocity.currentPortafolio}
             </Text>
             <Stack>
+              <Text type="body" size="medium" appearance="success">
+                $
+              </Text>
               {loading ? (
                 <SkeletonLine width="70px" animated={true} />
               ) : (

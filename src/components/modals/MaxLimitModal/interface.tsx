@@ -3,12 +3,11 @@ import { Stack, Icon, Text, SkeletonLine } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
+import { Fieldset } from "@components/data/Fieldset";
 
 import { incomeModalConfig } from "./IcomeModalConfig";
-import { Fieldset } from "@src/components/data/Fieldset";
 
-interface PaymentCapacityInterfaceProps {
-  handleClose: () => void;
+interface IMaxLimitModalUIProps {
   loading: boolean;
   error: boolean;
   title: string;
@@ -20,13 +19,11 @@ interface PaymentCapacityInterfaceProps {
   maxVacationTerm: number;
   maxAmount: number;
   iconVisible?: boolean;
+  handleClose: () => void;
 }
 
-export const PaymentCapacityInterface = (
-  props: PaymentCapacityInterfaceProps,
-) => {
+export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
   const {
-    handleClose,
     loading,
     error,
     title,
@@ -35,6 +32,7 @@ export const PaymentCapacityInterface = (
     subsistenceReserve,
     maxAmount,
     iconVisible,
+    handleClose,
   } = props;
 
   return (
@@ -60,7 +58,7 @@ export const PaymentCapacityInterface = (
         <Stack direction="column" gap="24px">
           <Stack direction="column" gap="12px">
             <Stack justifyContent="space-between">
-              <Text appearance="gray" size="large" weight="bold" type="label">
+              <Text size="large" weight="bold" type="label">
                 {incomeModalConfig.financialObligations.label}
               </Text>
 

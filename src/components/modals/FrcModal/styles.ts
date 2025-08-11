@@ -5,6 +5,7 @@ interface IStyledExpandedProps {
 }
 
 export const StyledExpanded = styled.div<IStyledExpandedProps>`
+  display: flex;
   transform: ${({ $expanded }) =>
     $expanded ? "rotate(180deg)" : "rotate(0deg)"};
   transform-origin: center;
