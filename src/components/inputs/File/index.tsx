@@ -6,10 +6,16 @@ interface FileProps {
   withBorder?: boolean;
   name: string;
   size: string;
-  onDelete?: () => void;
+  onDelete: (id: string) => void;
   uploadedFiles: IDocumentUpload[],
   setSelectedDocument: React.Dispatch<React.SetStateAction<{ name: string; url: string }>>;
   setOpenViewer: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobile: boolean,
+  handlePreview: (id: string, name: string) => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
+  id: string;
+  pendingFiles: IDocumentUpload[];
+  index: number;
 }
 
 function File(props: FileProps) {
@@ -18,20 +24,13 @@ function File(props: FileProps) {
     name,
     size,
     onDelete,
-    uploadedFiles,
-    setSelectedDocument,
-    setOpenViewer } = props;
-
-  const handlePreview = (id: string, name: string) => {
-    const fileData = uploadedFiles?.find((file) => file.id === id);
-
-    if (!fileData || !fileData.file) return;
-
-    const url = URL.createObjectURL(fileData.file);
-
-    setSelectedDocument({ name, url });
-    setOpenViewer(true);
-  };
+    handlePreview,
+    isMobile,
+    fileInputRef,
+    id,
+    pendingFiles,
+    index
+  } = props;
 
   return (
     <FileUI
@@ -40,6 +39,11 @@ function File(props: FileProps) {
       size={size}
       onDelete={onDelete}
       handlePreview={handlePreview}
+      isMobile={isMobile}
+      fileInputRef={fileInputRef}
+      id={id}
+      pendingFiles={pendingFiles}
+      index={index}
     />
   );
 }

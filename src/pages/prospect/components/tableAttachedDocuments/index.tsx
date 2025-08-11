@@ -66,7 +66,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     firstEntryInPage,
     lastEntryInPage,
   } = usePagination(ruleValues);
-  const [currentRowId, setCurrentRowId] = useState<string | null>(null);
+  const [currentRowId, setCurrentRowId] = useState<string>('');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -255,7 +255,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           buttonLabel="Guardar"
           uploadMode="local"
           uploadedFiles={
-            currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
+            uploadedFilesByRow[currentRowId]
           }
           setUploadedFiles={handleSetUploadedFiles}
           onlyDocumentReceived={true}
@@ -274,6 +274,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
             currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
           }
           setUploadedFiles={handleSetUploadedFiles}
+          
         />
       )}
       {showDeleteModal && (

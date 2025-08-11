@@ -17,7 +17,7 @@ const StyledFile = styled.div<IStyledFile>`
     $withBorder
       ? `
           border: 1px solid ${theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
-          width: 243px;
+          width: 203px;
         `
       : "border: none;"}
 `;

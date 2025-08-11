@@ -14,6 +14,7 @@ import {
   Divider,
   Blanket,
   Button,
+  Grid,
 } from "@inubekit/inubekit";
 
 import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
@@ -44,19 +45,26 @@ export interface IOptionButtons {
   onClick?: () => void;
 }
 
+export interface IListdataProps {
+  data: { id: string; name: string }[] | null | undefined;
+  onDelete?: (id: string) => void;
+  icon?: React.ReactNode;
+  onPreview?: (id: string, name: string) => void;
+}
+
 export interface IListModalProps {
   title: string;
   buttonLabel: string;
   cancelButton?: string;
   appearanceCancel?:
-    | "primary"
-    | "success"
-    | "warning"
-    | "danger"
-    | "help"
-    | "dark"
-    | "gray"
-    | "light";
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "help"
+  | "dark"
+  | "gray"
+  | "light";
   portalId?: string;
   content?: JSX.Element | JSX.Element[] | string;
   optionButtons?: IOptionButtons;
@@ -64,13 +72,25 @@ export interface IListModalProps {
   id?: string;
   dataDocument?: { id: string; name: string }[];
   isViewing?: boolean;
-  uploadedFiles?: IDocumentUpload[];
+  uploadedFiles: IDocumentUpload[];
   onlyDocumentReceived?: boolean;
   handleClose: () => void;
   handleSubmit?: () => void;
   onSubmit?: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setUploadedFiles?: React.Dispatch<React.SetStateAction<any>>;
+  setUploadedFiles: React.Dispatch<React.SetStateAction<any>>;
+}
+
+interface IFile {
+  id: string;
+  name: string;
+  url: string;
+}
+
+interface IFilePending {
+  id: string;
+  name: string;
+  file: File;
 }
 
 export const ListModal = (props: IListModalProps) => {
@@ -113,8 +133,8 @@ export const ListModal = (props: IListModalProps) => {
   const [selectedDocument, setSelectedDocument] = useState<{
     name: string;
     url: string;
-  } | null>(null);
-
+  }>({ name: "", url: "" });
+  console.log("pendingFiles: ", pendingFiles);
   const dragCounter = useRef(0);
   const MAX_FILE_SIZE = 2.5 * 1024 * 1024;
 
@@ -124,22 +144,15 @@ export const ListModal = (props: IListModalProps) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
-
+    console.log("files other option: ", files);
     const newFiles = Array.from(files).map((file) => ({
       id: crypto.randomUUID(),
       name: file.name,
       file,
     }));
 
-    setPendingFiles(newFiles);
+    setPendingFiles((prev) => [...prev, ...newFiles]);
   };
-
-  interface IListdataProps {
-    data: { id: string; name: string }[] | null | undefined;
-    onDelete?: (id: string) => void;
-    icon?: React.ReactNode;
-    onPreview?: (id: string, name: string) => void;
-  }
 
   const Listdata = (props: IListdataProps) => {
     const { data, icon, onDelete, onPreview } = props;
@@ -214,8 +227,8 @@ export const ListModal = (props: IListModalProps) => {
         }
       }
 
-      setUploadedFiles([]);
-      setPendingFiles([]);
+      /* setUploadedFiles([]);
+      setPendingFiles([]); */
       handleClose();
       handleFlag(
         optionFlags.title,
@@ -252,7 +265,7 @@ export const ListModal = (props: IListModalProps) => {
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
-
+      console.log("How is save those files: ", e.dataTransfer.files);
       if (file.type === "application/pdf") {
         if (file.size <= MAX_FILE_SIZE) {
           const newFile = {
@@ -260,11 +273,8 @@ export const ListModal = (props: IListModalProps) => {
             name: file.name,
             file,
           };
-          if (onlyDocumentReceived) {
-            setPendingFiles([newFile]);
-          } else {
-            setPendingFiles((prev) => [...prev, newFile]);
-          }
+          setPendingFiles((prev) => [...prev, newFile]);
+
         } else {
           alert(listModalData.exceedSize);
         }
@@ -302,16 +312,32 @@ export const ListModal = (props: IListModalProps) => {
     }
   };
 
-  const handlePreview = (id: string, name: string) => {
-    const fileData = uploadedFiles?.find((file) => file.id === id);
+  const handlePreview = (id: string, name: string, pendingFile?: File) => {
+    let fileData = uploadedFiles?.find((file) => file.id === id);
+    let url;
 
-    if (!fileData || !fileData.file) return;
+    if (fileData?.file) {
+      url = URL.createObjectURL(fileData.file);
+    }
 
-    const url = URL.createObjectURL(fileData.file);
+    if (pendingFile) {
+      url = URL.createObjectURL(pendingFile);
+    }
+
+    if (!url) return;
 
     setSelectedDocument({ name, url });
     setOpenViewer(true);
   };
+
+  const onDeleteOneFile = (id: string) => {
+    console.log("id to delete: ", id);
+    setUploadedFiles((prev: IFile[]) => prev.filter((file: IFile) => file.id !== id));
+   
+      console.log("entro if delete ", uploadedFiles);
+      setPendingFiles((prev: IFilePending[]) => prev.filter((file: IFilePending) => file.id !== id));
+    console.log("Termino proceso de eliminacion ")
+  }
 
   return createPortal(
     <Blanket>
@@ -394,21 +420,32 @@ export const ListModal = (props: IListModalProps) => {
                     weight="bold"
                     appearance="gray"
                   >
-                    {listModalData.attachments}
+                  {listModalData.attachments}
                   </Text>
-                  {pendingFiles.map((file) => (
+                  <Grid templateColumns="auto auto" templateRows="repeat(60px)" autoRows="repeat(auto-fit, minmax(250px, 1fr))" gap="16px"> 
+                  {pendingFiles.map((file, index) => (
                     <File
                       key={file.id}
+                      id={file.id}
+                      index={index}
                       name={file.name}
                       size={formatFileSize(file.file.size)}
                       onDelete={() => {
-                        setPendingFiles([]);
+                        onDeleteOneFile(file.id);
                         if (fileInputRef.current) {
                           fileInputRef.current.value = "";
                         }
                       }}
+                      uploadedFiles={uploadedFiles}
+                      setSelectedDocument={setSelectedDocument}
+                      setOpenViewer={setOpenViewer}
+                      isMobile={isMobile}
+                      handlePreview={handlePreview}
+                      fileInputRef={fileInputRef}
+                      pendingFiles={pendingFiles}
                     />
                   ))}
+                  </Grid>
                 </Stack>
               </>
             ) : (
@@ -425,18 +462,30 @@ export const ListModal = (props: IListModalProps) => {
                     >
                       {listModalData.attachments}
                     </Text>
-                    {uploadedFiles.map((file) => (
+                    <Grid templateColumns="auto auto" templateRows="repeat(60px)" autoRows="repeat(auto-fit, minmax(250px, 1fr))" gap="16px"> 
+                    {uploadedFiles.map((file, index) => (
                       <File
                         key={file.id}
+                        index={index}
+                        id={file.id}
                         name={file.name}
                         size={
                           file.file?.size ? formatFileSize(file.file.size) : "-"
                         }
                         onDelete={() => {
-                          setUploadedFiles?.([]);
+                          console.log("primero delete")
+                          onDeleteOneFile(file.id);
                         }}
+                        uploadedFiles={uploadedFiles}
+                        setSelectedDocument={setSelectedDocument}
+                        setOpenViewer={setOpenViewer}
+                        isMobile={isMobile}
+                        handlePreview={handlePreview}
+                        fileInputRef={fileInputRef}
+                        pendingFiles={pendingFiles}
                       />
                     ))}
+                    </Grid>
                   </Stack>
                 </>
               )
@@ -471,7 +520,7 @@ export const ListModal = (props: IListModalProps) => {
             selectedFile={selectedDocument.url}
             handleClose={() => {
               setOpenViewer(false);
-              setSelectedDocument(null);
+              setSelectedDocument({ name: "", url: "" });
             }}
           />
         )}
