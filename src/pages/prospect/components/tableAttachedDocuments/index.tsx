@@ -105,6 +105,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
   const handleSetUploadedFiles = (
     files: { id: string; name: string; file: File }[] | null,
   ) => {
+    console.log("entró a una funcion externa ");
     if (currentRowId) {
       setUploadedFilesByRow({
         ...uploadedFilesByRow,
@@ -274,7 +275,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
             currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
           }
           setUploadedFiles={handleSetUploadedFiles}
-          
         />
       )}
       {showDeleteModal && (

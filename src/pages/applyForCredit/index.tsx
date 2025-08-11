@@ -267,6 +267,7 @@ export function ApplyForCredit() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const metadataArray: any[] = [];
   Object.entries(attachedDocuments || {}).forEach(([, docsArray]) => {
+    console.log("docsArray: ", docsArray);
     docsArray.forEach((doc) => {
       submitData.append("file", doc.file);
       metadataArray.push({

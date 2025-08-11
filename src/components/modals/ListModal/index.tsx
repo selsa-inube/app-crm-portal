@@ -84,12 +84,6 @@ export interface IListModalProps {
 interface IFile {
   id: string;
   name: string;
-  url: string;
-}
-
-interface IFilePending {
-  id: string;
-  name: string;
   file: File;
 }
 
@@ -227,8 +221,6 @@ export const ListModal = (props: IListModalProps) => {
         }
       }
 
-      /* setUploadedFiles([]);
-      setPendingFiles([]); */
       handleClose();
       handleFlag(
         optionFlags.title,
@@ -332,11 +324,14 @@ export const ListModal = (props: IListModalProps) => {
 
   const onDeleteOneFile = (id: string) => {
     console.log("id to delete: ", id);
-    setUploadedFiles((prev: IFile[]) => prev.filter((file: IFile) => file.id !== id));
-   
+    console.log("inicio uploadedFiles: ", uploadedFiles.filter((file: IFile) => file.id !== id));
+    const filteredFiles = uploadedFiles.filter((file: IFile) => file.id !== id);
+    setUploadedFiles(filteredFiles);
       console.log("entro if delete ", uploadedFiles);
-      setPendingFiles((prev: IFilePending[]) => prev.filter((file: IFilePending) => file.id !== id));
+    setPendingFiles((prev: IFile[]) => prev.filter((file: IFile) => file.id !== id));
     console.log("Termino proceso de eliminacion ")
+    console.log("final uploadedFiles: ", uploadedFiles);
+
   }
 
   return createPortal(
@@ -472,10 +467,7 @@ export const ListModal = (props: IListModalProps) => {
                         size={
                           file.file?.size ? formatFileSize(file.file.size) : "-"
                         }
-                        onDelete={() => {
-                          console.log("primero delete")
-                          onDeleteOneFile(file.id);
-                        }}
+                        onDelete={onDeleteOneFile}
                         uploadedFiles={uploadedFiles}
                         setSelectedDocument={setSelectedDocument}
                         setOpenViewer={setOpenViewer}
