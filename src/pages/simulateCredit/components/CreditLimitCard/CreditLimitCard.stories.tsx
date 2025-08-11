@@ -53,7 +53,7 @@ export const Default: Story = {
       maxUsableLimit: 20000000,
       availableLimitWithoutGuarantee: 15000000,
     },
-    paymentCapacityData: {
+    maxLimitData: {
       reportedIncomeSources: 2000000,
       reportedFinancialObligations: 6789000,
       subsistenceReserve: 2000000,
@@ -65,6 +65,7 @@ export const Default: Story = {
       balanceOfContributions: 40000000,
       accordingToRegulation: 2,
       assignedQuota: 1000000,
+      numRegulations: 3,
     },
     scoreData: {
       totalScore: 150,
@@ -75,6 +76,9 @@ export const Default: Story = {
       economicActivity: 118,
       monthlyIncome: 3000000,
       maxIndebtedness: 50000000,
+      incomeScore: 200,
+      maxLimit: 50000000,
+      totalPortafolio: 10000000,
     },
   },
 };
