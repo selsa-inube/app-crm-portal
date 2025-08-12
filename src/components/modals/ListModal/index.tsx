@@ -4,7 +4,6 @@ import {
   MdClear,
   MdOutlineCloudUpload,
   MdOutlineRemoveRedEye,
-  MdOutlineFileDownload,
 } from "react-icons/md";
 import {
   Stack,
@@ -17,7 +16,6 @@ import {
   Button,
   Grid,
   Flag,
-  FlagPortal,
 } from "@inubekit/inubekit";
 
 import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
@@ -133,8 +131,6 @@ export const ListModal = (props: IListModalProps) => {
     name: string;
     url: string;
   }>({ name: "", url: "" });
-  console.log("pendingFiles: ", pendingFiles);
-  console.log("uploadedFiles: ", uploadedFiles);
 
   useEffect(() => {
     if (pendingFiles.length === 1 && uploadedFiles?.length > 0) {
@@ -353,6 +349,10 @@ export const ListModal = (props: IListModalProps) => {
     setPendingFiles(mergedFiles);
   };
 
+  const handleCancel = () => {
+    setPendingFiles([]);
+    handleClose();
+  };
   return createPortal(
     <Blanket>
       <Grid gap="16px" padding="0px 0px 100px 0px">
@@ -518,7 +518,19 @@ export const ListModal = (props: IListModalProps) => {
                 )
               )}
               <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
-                <Button onClick={handleUpload} disabled={isDisabled()}>
+                <Button
+                  onClick={handleCancel}
+                  variant="outlined"
+                  appearance="gray"
+                  spacing="compact"
+                >
+                  {listModalData.buttonCancel}
+                </Button>
+                <Button
+                  onClick={handleUpload}
+                  disabled={isDisabled()}
+                  spacing="compact"
+                >
                   {buttonLabel}
                 </Button>
               </Stack>

@@ -182,13 +182,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                         width={customColumn ? "70px" : "auto"}
                         appearance={rowIndex % 2 === 0 ? "light" : "dark"}
                         type={customColumn ? "custom" : "text"}
-                        align={
-                          typeof header.action ||
-                          (typeof cellData === "string" &&
-                            cellData.includes("$"))
-                            ? "left"
-                            : "left"
-                        }
+                        align={"left"}
                       >
                         {(() => {
                           if (header.key === "actions") {

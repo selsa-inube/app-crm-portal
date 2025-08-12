@@ -8,4 +8,5 @@ export const listModalData = {
   attachments: "Archivos adjuntos",
   exceedSize: "El archivo supera el tamaño máximo permitido de 2.5MB.",
   onlypdf: "Solo se permiten archivos PDF.",
+  buttonCancel: "Cancelar",
 };
