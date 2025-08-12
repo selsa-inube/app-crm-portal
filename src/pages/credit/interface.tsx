@@ -67,7 +67,7 @@ const CreditUI = (props: ICreditUIProps) => {
     <>
       <Stack
         margin="20px auto"
-        width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
+        width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
         direction="column"
         gap="24px"
       >
