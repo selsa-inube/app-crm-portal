@@ -31,7 +31,6 @@ export function ApplyForCredit() {
     useState<IProspectSummaryById>();
 
   const customerPublicCode: string = customerData.publicCode;
-  console.log("customerPublicCode: ", customerPublicCode);
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -267,7 +266,6 @@ export function ApplyForCredit() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const metadataArray: any[] = [];
   Object.entries(attachedDocuments || {}).forEach(([, docsArray]) => {
-    console.log("docsArray: ", docsArray);
     docsArray.forEach((doc) => {
       submitData.append("file", doc.file);
       metadataArray.push({

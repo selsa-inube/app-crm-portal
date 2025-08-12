@@ -4,6 +4,7 @@ import {
   MdClear,
   MdOutlineCloudUpload,
   MdOutlineRemoveRedEye,
+  MdOutlineFileDownload,
 } from "react-icons/md";
 import {
   Stack,
@@ -15,6 +16,8 @@ import {
   Blanket,
   Button,
   Grid,
+  Flag,
+  FlagPortal,
 } from "@inubekit/inubekit";
 
 import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
@@ -107,6 +110,8 @@ export const ListModal = (props: IListModalProps) => {
     setUploadedFiles,
     id,
   } = props;
+
+  const [openFlag, setOpenFlag] = useState(false);
 
   const node = document.getElementById(portalId ?? "portal");
   if (!node) {
@@ -350,121 +355,77 @@ export const ListModal = (props: IListModalProps) => {
 
   return createPortal(
     <Blanket>
-      <StyledModal $smallScreen={isMobile}>
-        <Stack alignItems="center" justifyContent="space-between">
-          <Text type="headline" size="small">
-            {title}
-          </Text>
-          <StyledContainerClose onClick={handleClose}>
-            <Stack alignItems="center" gap="8px">
-              <Text>{listModalData.close}</Text>
-              <Icon
-                icon={<MdClear />}
-                size="24px"
-                cursorHover
-                appearance="dark"
-              />
-            </Stack>
-          </StyledContainerClose>
-        </Stack>
-        <Divider />
-        <StyledContainerContent $smallScreen={isMobile}>
-          {typeof content === "string" ? (
-            <Stack>
-              <Text>{content}</Text>
-            </Stack>
-          ) : (
-            <>
-              {isViewing && (
-                <StyledContainerContent $smallScreen={isMobile}>
-                  <Listdata
-                    data={isViewing ? (dataDocument ?? []) : uploadedFiles}
-                    icon={<MdOutlineRemoveRedEye />}
-                    onPreview={handlePreview}
-                  />
-                </StyledContainerContent>
-              )}
-            </>
-          )}
-        </StyledContainerContent>
-        {optionButtons ? (
-          <>
-            <StyledAttachContainer
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              $isDragging={isDragging}
-            >
-              <Icon
-                icon={<MdOutlineCloudUpload />}
-                appearance="gray"
-                size="32px"
-              />
-              <Stack direction="column" alignItems="center">
-                <Text>{listModalData.drag}</Text>
-                <Text>{listModalData.or}</Text>
-              </Stack>
-              <Button spacing="compact" onClick={handleBrowseClick}>
-                {listModalData.search}
-              </Button>
-              <input
-                type="file"
-                accept="application/pdf,.jpg,.jpeg,.png"
-                style={{ display: "none" }}
-                ref={fileInputRef}
-                onChange={handleFileChange}
-              />
-            </StyledAttachContainer>
-            <Text size="medium" appearance="gray">
-              {listModalData.maximum}
+      <Grid gap="16px" padding="0px 0px 100px 0px">
+        <StyledModal $smallScreen={isMobile}>
+          <Stack alignItems="center" justifyContent="space-between">
+            <Text type="headline" size="small">
+              {title}
             </Text>
-            {Array.isArray(pendingFiles) && pendingFiles.length > 0 ? (
-              <>
-                <Divider dashed />
-                <Stack direction="column" gap="24px">
-                  <Text
-                    type="title"
-                    size="medium"
-                    weight="bold"
-                    appearance="gray"
-                  >
-                    {listModalData.attachments}
-                  </Text>
-                  <Grid
-                    templateColumns="auto auto"
-                    templateRows="repeat(60px)"
-                    autoRows="repeat(auto-fit, minmax(250px, 1fr))"
-                    gap="16px"
-                  >
-                    {pendingFiles.map((file, index) => (
-                      <File
-                        key={file.id}
-                        id={file.id}
-                        index={index}
-                        name={file.name}
-                        size={formatFileSize(file.file.size)}
-                        onDelete={() => {
-                          onDeleteOneFile(file.id);
-                          if (fileInputRef.current) {
-                            fileInputRef.current.value = "";
-                          }
-                        }}
-                        uploadedFiles={uploadedFiles}
-                        setSelectedDocument={setSelectedDocument}
-                        setOpenViewer={setOpenViewer}
-                        isMobile={isMobile}
-                        handlePreview={handlePreview}
-                        fileInputRef={fileInputRef}
-                        pendingFiles={pendingFiles}
-                      />
-                    ))}
-                  </Grid>
-                </Stack>
-              </>
+            <StyledContainerClose onClick={handleClose}>
+              <Stack alignItems="center" gap="8px">
+                <Text>{listModalData.close}</Text>
+                <Icon
+                  icon={<MdClear />}
+                  size="24px"
+                  cursorHover
+                  appearance="dark"
+                />
+              </Stack>
+            </StyledContainerClose>
+          </Stack>
+          <Divider />
+          <StyledContainerContent $smallScreen={isMobile}>
+            {typeof content === "string" ? (
+              <Stack>
+                <Text>{content}</Text>
+              </Stack>
             ) : (
-              Array.isArray(uploadedFiles) &&
-              uploadedFiles.length > 0 && (
+              <>
+                {isViewing && (
+                  <StyledContainerContent $smallScreen={isMobile}>
+                    <Listdata
+                      data={isViewing ? (dataDocument ?? []) : uploadedFiles}
+                      icon={<MdOutlineRemoveRedEye />}
+                      onPreview={handlePreview}
+                    />
+                  </StyledContainerContent>
+                )}
+              </>
+            )}
+          </StyledContainerContent>
+          {optionButtons ? (
+            <>
+              <StyledAttachContainer
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                $isDragging={isDragging}
+              >
+                <Icon
+                  icon={<MdOutlineCloudUpload />}
+                  appearance="gray"
+                  size="32px"
+                />
+                <Stack direction="column" alignItems="center">
+                  <Text>{listModalData.drag}</Text>
+                  <Text>{listModalData.or}</Text>
+                </Stack>
+                <Button spacing="compact" onClick={handleBrowseClick}>
+                  {listModalData.search}
+                </Button>
+                <input
+                  type="file"
+                  accept="application/pdf,.jpg,.jpeg,.png"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
+              </StyledAttachContainer>
+              <Text size="medium" appearance="gray">
+                {listModalData.maximum}
+              </Text>
+              {Array.isArray(pendingFiles) && pendingFiles.length > 0 ? (
                 <>
                   <Divider dashed />
                   <Stack direction="column" gap="24px">
@@ -477,23 +438,25 @@ export const ListModal = (props: IListModalProps) => {
                       {listModalData.attachments}
                     </Text>
                     <Grid
-                      templateColumns="auto auto"
+                      templateColumns={isMobile ? "100%" : "auto auto"}
                       templateRows="repeat(60px)"
                       autoRows="repeat(auto-fit, minmax(250px, 1fr))"
                       gap="16px"
+                      alignItems="center"
                     >
-                      {uploadedFiles.map((file, index) => (
+                      {pendingFiles.map((file, index) => (
                         <File
                           key={file.id}
-                          index={index}
                           id={file.id}
+                          index={index}
                           name={file.name}
-                          size={
-                            file.file?.size
-                              ? formatFileSize(file.file.size)
-                              : "-"
-                          }
-                          onDelete={onDeleteOneFile}
+                          size={formatFileSize(file.file.size)}
+                          onDelete={() => {
+                            onDeleteOneFile(file.id);
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = "";
+                            }
+                          }}
                           uploadedFiles={uploadedFiles}
                           setSelectedDocument={setSelectedDocument}
                           setOpenViewer={setOpenViewer}
@@ -501,48 +464,105 @@ export const ListModal = (props: IListModalProps) => {
                           handlePreview={handlePreview}
                           fileInputRef={fileInputRef}
                           pendingFiles={pendingFiles}
+                          setOpenFlag={setOpenFlag}
                         />
                       ))}
                     </Grid>
                   </Stack>
                 </>
-              )
-            )}
+              ) : (
+                Array.isArray(uploadedFiles) &&
+                uploadedFiles.length > 0 && (
+                  <>
+                    <Divider dashed />
+                    <Stack direction="column" gap="24px">
+                      <Text
+                        type="title"
+                        size="medium"
+                        weight="bold"
+                        appearance="gray"
+                      >
+                        {listModalData.attachments}
+                      </Text>
+                      <Grid
+                        templateColumns={isMobile ? "100%" : "auto auto"}
+                        templateRows="repeat(60px)"
+                        autoRows="repeat(auto-fit, minmax(250px, 1fr))"
+                        gap="16px"
+                      >
+                        {uploadedFiles.map((file, index) => (
+                          <File
+                            key={file.id}
+                            index={index}
+                            id={file.id}
+                            name={file.name}
+                            size={
+                              file.file?.size
+                                ? formatFileSize(file.file.size)
+                                : "-"
+                            }
+                            onDelete={onDeleteOneFile}
+                            uploadedFiles={uploadedFiles}
+                            setSelectedDocument={setSelectedDocument}
+                            setOpenViewer={setOpenViewer}
+                            isMobile={isMobile}
+                            handlePreview={handlePreview}
+                            fileInputRef={fileInputRef}
+                            pendingFiles={pendingFiles}
+                            setOpenFlag={setOpenFlag}
+                          />
+                        ))}
+                      </Grid>
+                    </Stack>
+                  </>
+                )
+              )}
+              <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
+                <Button onClick={handleUpload} disabled={isDisabled()}>
+                  {buttonLabel}
+                </Button>
+              </Stack>
+            </>
+          ) : (
             <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
-              <Button onClick={handleUpload} disabled={isDisabled()}>
-                {buttonLabel}
-              </Button>
+              <Button onClick={handleClose}>{buttonLabel}</Button>
             </Stack>
-          </>
-        ) : (
-          <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
-            <Button onClick={handleClose}>{buttonLabel}</Button>
-          </Stack>
-        )}
-        {cancelButton && optionButtons && (
-          <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
-            <Button
-              variant="outlined"
-              onClick={handleSubmit}
-              spacing="wide"
-              appearance={appearanceCancel}
-            >
-              {cancelButton}
-            </Button>
-            <Button onClick={onSubmit ?? handleClose}>{buttonLabel}</Button>
-          </Stack>
-        )}
-        {openViewer && selectedDocument && (
-          <DocumentViewer
-            title={selectedDocument.name}
-            selectedFile={selectedDocument.url}
-            handleClose={() => {
-              setOpenViewer(false);
-              setSelectedDocument({ name: "", url: "" });
-            }}
+          )}
+          {cancelButton && optionButtons && (
+            <Stack justifyContent="flex-end" margin="16px 0 0 0" gap="16px">
+              <Button
+                variant="outlined"
+                onClick={handleSubmit}
+                spacing="wide"
+                appearance={appearanceCancel}
+              >
+                {cancelButton}
+              </Button>
+              <Button onClick={onSubmit ?? handleClose}>{buttonLabel}</Button>
+            </Stack>
+          )}
+          {openViewer && selectedDocument && (
+            <DocumentViewer
+              title={selectedDocument.name}
+              selectedFile={selectedDocument.url}
+              handleClose={() => {
+                setOpenViewer(false);
+                setSelectedDocument({ name: "", url: "" });
+              }}
+            />
+          )}
+        </StyledModal>
+        {openFlag && (
+          <Flag
+            key={"flag"}
+            title="Archivo descargado"
+            description="Archivo descargado exitosamente."
+            appearance="success"
+            duration={10000}
+            id="flag"
           />
         )}
-      </StyledModal>
+      </Grid>
     </Blanket>,
     node,
   );

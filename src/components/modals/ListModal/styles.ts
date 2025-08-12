@@ -22,7 +22,7 @@ export const StyledItem = styled.li`
 export const StyledModal = styled.div<IStyledModal>`
   display: flex;
   flex-direction: column;
-  width: ${({ $smallScreen }) => ($smallScreen ? "290px" : "510px")};
+  width: ${({ $smallScreen }) => ($smallScreen ? "370px" : "510px")};
   background-color: ${({ theme }) =>
     theme.palette?.neutral?.N0 || inube.palette.neutral.N0};
   padding: ${({ $smallScreen }) => ($smallScreen ? "16px" : "24px")};

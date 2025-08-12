@@ -1,5 +1,10 @@
 import { Icon, Stack, Text } from "@inubekit/inubekit";
-import { MdOutlineDescription, MdOutlineDelete, MdOutlineRemoveRedEye } from "react-icons/md";
+import {
+  MdOutlineDescription,
+  MdOutlineDelete,
+  MdOutlineRemoveRedEye,
+  MdOutlineFileDownload,
+} from "react-icons/md";
 
 import { IDocumentUpload } from "@pages/applyForCredit/types";
 
@@ -19,7 +24,7 @@ interface FileUIProps {
   id: string;
   pendingFiles: IDocumentUpload[];
   index: number;
-
+  handleDownloadWithFetch: () => void;
 }
 
 function FileUI(props: FileUIProps) {
@@ -32,14 +37,16 @@ function FileUI(props: FileUIProps) {
     handlePreview,
     fileInputRef,
     pendingFiles,
-    index
+    index,
+    isMobile,
+    handleDownloadWithFetch,
   } = props;
 
   return (
-    <StyledFile $withBorder={withBorder}>
+    <StyledFile $withBorder={withBorder} isMobile={isMobile}>
       <Stack gap="8px" alignItems="center">
         <Icon icon={<MdOutlineDescription />} appearance="dark" size="20px" />
-        <Stack direction="column" width="130px">
+        <Stack direction="column" width={isMobile ? "160px" : "130px"}>
           <Text type="label" size="medium" weight="bold" ellipsis>
             {name}
           </Text>
@@ -48,30 +55,32 @@ function FileUI(props: FileUIProps) {
           </Text>
         </Stack>
       </Stack>
-      <Stack
-        direction="row"
-        gap="8px"
-      >
-        <Icon
-          icon={<MdOutlineRemoveRedEye />}
-          cursorHover
-          appearance="dark"
-          size="20px"
-          onClick={
-            () => {
-              console.log(id,"  from onclickfiles upladed nombre:", name );
-              console.log("index: ", index);
-              console.log("fileInputRef: ", pendingFiles);
+      <Stack direction="row" gap="8px">
+        {isMobile ? (
+          <Icon
+            icon={<MdOutlineFileDownload />}
+            cursorHover
+            appearance="dark"
+            size="20px"
+            onClick={handleDownloadWithFetch}
+          />
+        ) : (
+          <Icon
+            icon={<MdOutlineRemoveRedEye />}
+            cursorHover
+            appearance="dark"
+            size="20px"
+            onClick={() => {
               handlePreview(id, name, pendingFiles[index]?.file);
-            }
-          }
-        />
+            }}
+          />
+        )}
         <Icon
           icon={<MdOutlineDelete />}
           cursorHover
           appearance="danger"
           size="20px"
-          onClick={ () => {
+          onClick={() => {
             onDelete(id);
           }}
         />

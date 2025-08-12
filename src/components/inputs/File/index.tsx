@@ -7,15 +7,18 @@ interface FileProps {
   name: string;
   size: string;
   onDelete: (id: string) => void;
-  uploadedFiles: IDocumentUpload[],
-  setSelectedDocument: React.Dispatch<React.SetStateAction<{ name: string; url: string }>>;
+  uploadedFiles: IDocumentUpload[];
+  setSelectedDocument: React.Dispatch<
+    React.SetStateAction<{ name: string; url: string }>
+  >;
   setOpenViewer: React.Dispatch<React.SetStateAction<boolean>>;
-  isMobile: boolean,
+  isMobile: boolean;
   handlePreview: (id: string, name: string) => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
   id: string;
   pendingFiles: IDocumentUpload[];
   index: number;
+  setOpenFlag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function File(props: FileProps) {
@@ -29,8 +32,24 @@ function File(props: FileProps) {
     fileInputRef,
     id,
     pendingFiles,
-    index
+    index,
+    setOpenFlag,
   } = props;
+
+  const handleDownloadWithFetch = () => {
+    const url = URL.createObjectURL(pendingFiles[index].file);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = pendingFiles[index].name;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    setOpenFlag(true);
+    setTimeout(() => {
+      setOpenFlag(false);
+    }, 10000);
+  };
 
   return (
     <FileUI
@@ -44,6 +63,7 @@ function File(props: FileProps) {
       id={id}
       pendingFiles={pendingFiles}
       index={index}
+      handleDownloadWithFetch={handleDownloadWithFetch}
     />
   );
 }

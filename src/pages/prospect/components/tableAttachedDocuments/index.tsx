@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MdAttachFile, MdOutlineRemoveRedEye, MdEdit } from "react-icons/md";
+import { MdAttachFile, MdOutlineEdit } from "react-icons/md";
 import {
   Pagination,
   Table,
@@ -14,7 +14,6 @@ import {
   SkeletonLine,
   SkeletonIcon,
   useFlag,
-  Tag,
   Stack,
 } from "@inubekit/inubekit";
 
@@ -66,7 +65,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     firstEntryInPage,
     lastEntryInPage,
   } = usePagination(ruleValues);
-  const [currentRowId, setCurrentRowId] = useState<string>('');
+  const [currentRowId, setCurrentRowId] = useState<string>("");
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -96,16 +95,9 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     setShowAttachments(true);
   };
 
-  const handleSeeAttachment = (rowId: string) => {
-    console.log("# show attachment", rowId);
-    setCurrentRowId(rowId);
-    setSeeAttachments(true);
-  };
-
   const handleSetUploadedFiles = (
     files: { id: string; name: string; file: File }[] | null,
   ) => {
-    console.log("entró a una funcion externa ");
     if (currentRowId) {
       setUploadedFilesByRow({
         ...uploadedFilesByRow,
@@ -119,6 +111,16 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     delete updated[rowId];
     setUploadedFilesByRow(updated);
     handleFlag();
+  };
+
+  const iconToShowOnActions = (rowIndex: number) => {
+    const hasNoFiles = uploadedFilesByRow[rowIndex];
+
+    return hasNoFiles === undefined || hasNoFiles.length === 0 ? (
+      <MdAttachFile />
+    ) : (
+      <MdOutlineEdit />
+    );
   };
 
   return (
@@ -172,10 +174,8 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                       "download",
                       "remove",
                       "attached",
-                      "actions"
+                      "actions",
                     ].includes(header.key);
-                    console.log("customColumn: ", customColumn);
-                    console.log("header ", header);
                     return (
                       <Td
                         key={colIndex}
@@ -195,7 +195,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                             return (
                               <Stack justifyContent="space-around">
                                 <Icon
-                                  icon={<MdAttachFile />}
+                                  icon={iconToShowOnActions(rowIndex)}
                                   appearance="primary"
                                   size="16px"
                                   cursorHover
@@ -203,20 +203,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                                     handleOpenAttachment(rowIndex.toString())
                                   }
                                 />
-                                {<Icon
-                                  icon={<MdOutlineRemoveRedEye />}
-                                  appearance="dark"
-                                  size="16px"
-                                  cursorHover
-                                  onClick={() =>
-                                    handleSeeAttachment(rowIndex.toString())
-                                  }
-                                  disabled={
-                                    !uploadedFilesByRow[rowIndex.toString()] ||
-                                    uploadedFilesByRow[rowIndex.toString()]
-                                      .length === 0
-                                  }
-                                />}
                               </Stack>
                             );
                           }
@@ -253,11 +239,9 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           title="Adjuntar"
           handleClose={() => setShowAttachments(false)}
           optionButtons={optionButtons}
-          buttonLabel="Guardar"
+          buttonLabel="Adjuntar"
           uploadMode="local"
-          uploadedFiles={
-            uploadedFilesByRow[currentRowId]
-          }
+          uploadedFiles={uploadedFilesByRow[currentRowId]}
           setUploadedFiles={handleSetUploadedFiles}
           onlyDocumentReceived={true}
         />
