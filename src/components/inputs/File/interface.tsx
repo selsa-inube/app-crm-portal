@@ -35,7 +35,6 @@ function FileUI(props: FileUIProps) {
     size,
     onDelete,
     handlePreview,
-    fileInputRef,
     pendingFiles,
     index,
     isMobile,
