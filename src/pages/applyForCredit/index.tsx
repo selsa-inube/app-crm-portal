@@ -215,7 +215,7 @@ export function ApplyForCredit() {
       });
   }, [valueRule, hasBorrowers, bondValue]);
 
-  const [currentStep, setCurrentStep] = useState<number>(steps[0]?.id || 1);
+  const [currentStep, setCurrentStep] = useState<number>(8);
 
   const {
     contactInformation,
@@ -381,16 +381,16 @@ export function ApplyForCredit() {
       );
 
       if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
-        setCodeError(1011);
+        //setCodeError(1011);
         return;
       }
 
       if (prospect.state !== "Created") {
-        setCodeError(1012);
+        //setCodeError(1012);
         return;
       }
     } catch (error) {
-      setCodeError(1010);
+      //setCodeError(1010);
     }
   }, [businessUnitPublicCode, customerPublicCode, prospectCode, prospectData]);
 
@@ -506,7 +506,7 @@ export function ApplyForCredit() {
               ruleName === "ModeOfDisbursementType" &&
               extractedValues.length === 0
             ) {
-              setCodeError(1014);
+              //setCodeError(1014);
               setAddToFix([ruleName]);
               return;
             }
@@ -518,7 +518,7 @@ export function ApplyForCredit() {
             });
           } catch (error: unknown) {
             if (ruleName === "ModeOfDisbursementType") {
-              setCodeError(1014);
+              //setCodeError(1014);
               setAddToFix([ruleName]);
               return;
             }
