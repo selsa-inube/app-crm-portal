@@ -243,7 +243,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     };
 
     fetchIncomeData();
-  }, [borrowerId, businessUnitPublicCode, isAutoCompleted]); // Fix: Add missing dependencies
+  }, [borrowerId, businessUnitPublicCode, isAutoCompleted]);
 
   useEffect(() => {
     if (!isAutoCompleted) {
@@ -258,7 +258,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           }) as IIncomeSources,
       );
     }
-  }, [formData.personalInfo, isAutoCompleted]); // Fix: Add missing dependency
+  }, [formData.personalInfo, isAutoCompleted]);
 
   const isMobile = useMediaQuery("(max-width:880px)");
 

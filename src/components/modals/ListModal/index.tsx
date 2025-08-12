@@ -44,6 +44,12 @@ export interface IOptionButtons {
   onClick?: () => void;
 }
 
+export interface IUploadedFile {
+  id: string;
+  name: string;
+  file: File;
+}
+export type SetUploadedFiles = (files: IUploadedFile[] | null) => void;
 export interface IListModalProps {
   title: string;
   buttonLabel: string;
@@ -69,9 +75,7 @@ export interface IListModalProps {
   handleClose: () => void;
   handleSubmit?: () => void;
   onSubmit?: () => void;
-  setUploadedFiles?: (
-    files: { id: string; name: string; file: File }[] | null,
-  ) => void;
+  setUploadedFiles?: SetUploadedFiles;
 }
 export const ListModal = (props: IListModalProps) => {
   const {
