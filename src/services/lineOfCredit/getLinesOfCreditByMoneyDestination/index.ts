@@ -9,7 +9,7 @@ import { ILinesOfCreditByMoneyDestination } from "../types";
 const getLinesOfCreditByMoneyDestination = async (
   businessUnitPublicCode: string,
   moneyDestinationAbbreviatedName: string,
-): Promise<ILinesOfCreditByMoneyDestination> => {
+): Promise<ILinesOfCreditByMoneyDestination | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -35,16 +35,14 @@ const getLinesOfCreditByMoneyDestination = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error(
-          `No hay líneas de crédito disponibles para el destino de dinero ${moneyDestinationAbbreviatedName}.`,
-        );
+        return null;
       }
 
       const data = await res.json();
 
       if (!res.ok) {
         throw {
-          message: `Error al obtener las líneas de crédito para el destino de dinero ${moneyDestinationAbbreviatedName}.`,
+          message: "Ha ocurrido un error: ",
           status: res.status,
           data,
         };
@@ -52,8 +50,13 @@ const getLinesOfCreditByMoneyDestination = async (
 
       return data as ILinesOfCreditByMoneyDestination;
     } catch (error) {
-      console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
         throw new Error(
           `Todos los intentos fallaron. No se pudo obtener las líneas de crédito para el destino de dinero ${moneyDestinationAbbreviatedName}.`,
         );
@@ -61,9 +64,7 @@ const getLinesOfCreditByMoneyDestination = async (
     }
   }
 
-  throw new Error(
-    `No se pudo obtener las líneas de crédito para el destino de dinero ${moneyDestinationAbbreviatedName}, después de varios intentos.`,
-  );
+  return null;
 };
 
 export { getLinesOfCreditByMoneyDestination };
