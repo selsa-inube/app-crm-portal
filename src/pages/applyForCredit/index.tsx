@@ -647,6 +647,7 @@ export function ApplyForCredit() {
         prospectSummaryData={prospectSummaryData}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
+        businessUnitPublicCode={businessUnitPublicCode}
       />
     </>
   );

@@ -22,7 +22,7 @@ const getCreditLimit = async (
         method: "GET",
         headers: {
           "X-Action": "SearchClientIncomeSourcesById",
-          "X-Business-Unit": "fondecom",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,

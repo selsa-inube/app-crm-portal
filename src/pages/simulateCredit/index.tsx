@@ -825,6 +825,7 @@ export function SimulateCredit() {
         formState={formState}
         setFormState={setFormState}
         paymentCapacity={paymentCapacity}
+        businessUnitPublicCode={businessUnitPublicCode}
       />
       {showConsultingModal && <Consulting />}
     </>

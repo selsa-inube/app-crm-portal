@@ -127,6 +127,7 @@ interface SimulateCreditUIProps {
   isAlertObligation: boolean;
   codeError: number | null;
   addToFix: string[];
+  businessUnitPublicCode: string;
   paymentCapacity?: IPaymentCapacityResponse | null;
 }
 
@@ -178,6 +179,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     formState,
     setFormState,
     paymentCapacity,
+    businessUnitPublicCode,
   } = props;
 
   return (
@@ -323,6 +325,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       prospectData={prospectData}
                       customerData={customerData}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -502,6 +505,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   isMobile={isMobile}
                   prospectData={prospectData}
                   customerData={customerData}
+                  businessUnitPublicCode={businessUnitPublicCode}
                 />
               )}
               {isCreditLimitModalOpen && (

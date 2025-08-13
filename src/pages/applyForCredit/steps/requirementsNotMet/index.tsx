@@ -15,10 +15,12 @@ interface IRequirementsNotMetProps {
   isMobile: boolean;
   customerData: ICustomerData;
   prospectData: IProspect;
+  businessUnitPublicCode: string;
 }
 
 export function RequirementsNotMet(props: IRequirementsNotMetProps) {
-  const { isMobile, customerData, prospectData } = props;
+  const { isMobile, customerData, prospectData, businessUnitPublicCode } =
+    props;
 
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
@@ -36,7 +38,10 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
-        const data = await patchValidateRequirements(payload);
+        const data = await patchValidateRequirements(
+          payload,
+          businessUnitPublicCode,
+        );
         if (data) {
           setValidateRequirements(data);
         }

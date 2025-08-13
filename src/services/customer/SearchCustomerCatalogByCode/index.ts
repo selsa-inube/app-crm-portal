@@ -26,14 +26,12 @@ const getSearchCustomerByCode = async (
         method: "GET",
         headers: {
           "X-Action": "SearchAllCustomerCatalog",
-          "X-Business-Unit": "fondecom",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
       };
 
-      // The console.log is requied due to the fondecom business unit
-      console.log(businessUnitPublicCode);
       const res = await fetch(
         `${environment.VITE_ICLIENT_QUERY_PROCESS_SERVICE}/customers?${queryParams.toString()}`,
         options,
