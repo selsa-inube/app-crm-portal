@@ -271,16 +271,6 @@ export const TableFinancialObligationsUI = ({
     </Tr>
   );
 
-  const renderNoDataRow = () => (
-    <Tr>
-      <Td colSpan={visibleHeaders.length} align="center" type="custom">
-        <Text size="large" type="label" appearance="gray" textAlign="center">
-          {dataReport.noData}
-        </Text>
-      </Td>
-    </Tr>
-  );
-
   const renderDataRows = () =>
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     paddedCurrentData.map((prop: any, rowIndex: number) => {
@@ -429,11 +419,31 @@ export const TableFinancialObligationsUI = ({
           <Tr>{renderHeaders()}</Tr>
         </Thead>
         <Tbody>
-          {loading
-            ? renderLoadingRow()
-            : extraDebtors.length === 0
-              ? renderNoDataRow()
-              : renderDataRows()}
+          {loading ? (
+            renderLoadingRow()
+          ) : extraDebtors.length === 0 ? (
+            <Tr border="left">
+              <Td colSpan={visibleHeaders.length} align="center" type="custom">
+                <Stack
+                  gap="16px"
+                  direction="column"
+                  height="250px"
+                  justifyContent="center"
+                >
+                  <Text
+                    size="large"
+                    type="label"
+                    appearance="gray"
+                    textAlign="center"
+                  >
+                    {dataReport.noData}
+                  </Text>
+                </Stack>
+              </Td>
+            </Tr>
+          ) : (
+            renderDataRows()
+          )}
         </Tbody>
         {!loading && dataInformation.length > 0 && (
           <Tfoot>
