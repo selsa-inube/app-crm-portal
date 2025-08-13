@@ -65,7 +65,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
             </Stack>
           </Stack>
           <Stack justifyContent="space-between">
-            <Text type="label" size="large">
+            <Text type="label" size="large" appearance="gray">
               {dataReciprocity.timesPossible}
             </Text>
             <Stack>
@@ -99,7 +99,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
             </Stack>
           </Stack>
           <Stack justifyContent="space-between">
-            <Text type="label" size="large">
+            <Text type="label" size="large" appearance="gray">
               {dataReciprocity.currentPortafolio}
             </Text>
             <Stack>

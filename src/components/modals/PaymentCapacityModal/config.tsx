@@ -14,8 +14,12 @@ export const paymentCapacityData = {
   subsistenceReserve: "(-) Reserva mínima de subsistencia",
   newPromises: "(=) Neto disponible para nuevos compromisos",
   lineOfCredit: "(*) Plazo máx. en *Nombre línea de crédito*",
-  maxValue:
-    "Monto máximo calculado para una cuota de 2.000.000 y plazo de 20 meses.",
+  maxValue: (
+    <>
+      Monto máximo calculado para una cuota de <strong>2.000.000</strong> y
+      plazo de <strong>20</strong> meses.
+    </>
+  ),
   maxValueDescription: "Monto máximo con cuotas ordinarias",
   maxValueAmount: "Monto máximo calculado para un plazo de 24 meses.",
   maxAmountOridinary: "Monto máximo con cuotas ordinarias",

@@ -23,6 +23,7 @@ import { StyledTable } from "./styles";
 import { CurrentDataRow } from "./types";
 
 interface IPaymentCapacityModalProps {
+  isMobile: boolean;
   incomeSources: number;
   subsistenceReserve: number;
   newPromises: number;
@@ -35,6 +36,7 @@ interface IPaymentCapacityModalProps {
 
 export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
   const {
+    isMobile,
     incomeSources,
     subsistenceReserve,
     newPromises,
@@ -62,7 +64,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
       variantNext="outlined"
       handleClose={handleClose}
       handleNext={handleClose}
-      width="500px"
+      width={isMobile ? "290px" : "500px"}
     >
       <Fieldset>
         <Stack direction="column" gap="16px" padding="0px 8px">
@@ -85,7 +87,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                 </Stack>
               </Stack>
               <Stack justifyContent="space-between">
-                <Text type="body" size="medium">
+                <Text type="body" size="medium" appearance="gray">
                   {paymentCapacityData.subsistenceReserve}
                 </Text>
                 <Stack alignItems="center" gap="4px">
@@ -108,7 +110,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                 </Stack>
               </Stack>
               <Stack justifyContent="space-between">
-                <Text type="body" size="medium">
+                <Text type="body" size="medium" appearance="gray">
                   {paymentCapacityData.lineOfCredit}
                 </Text>
                 <Stack alignItems="center" gap="4px">

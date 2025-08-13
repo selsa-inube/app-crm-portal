@@ -1,4 +1,4 @@
-import { MdOutlineVisibility, MdErrorOutline } from "react-icons/md";
+import { MdErrorOutline } from "react-icons/md";
 import { Stack, Icon, Text, SkeletonLine } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
@@ -18,7 +18,6 @@ interface IMaxLimitModalUIProps {
   availableForNewCommitments: number;
   maxVacationTerm: number;
   maxAmount: number;
-  iconVisible?: boolean;
   handleClose: () => void;
 }
 
@@ -31,7 +30,6 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
     reportedFinancialObligations,
     subsistenceReserve,
     maxAmount,
-    iconVisible,
     handleClose,
   } = props;
 
@@ -61,7 +59,6 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
               <Text size="large" weight="bold" type="label">
                 {incomeModalConfig.financialObligations.label}
               </Text>
-
               <Stack alignItems="center">
                 <Text appearance="success">$</Text>
                 {loading ? (
@@ -71,19 +68,6 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                     {currencyFormat(reportedFinancialObligations, false)}
                   </Text>
                 )}
-                <Stack margin="0px 0px 0px 6px">
-                  {!iconVisible && (
-                    <Icon
-                      appearance="primary"
-                      icon={<MdOutlineVisibility />}
-                      size="16px"
-                      spacing="narrow"
-                      cursorHover
-                      variant="filled"
-                      shape="circle"
-                    />
-                  )}
-                </Stack>
               </Stack>
             </Stack>
             <Stack justifyContent="space-between">

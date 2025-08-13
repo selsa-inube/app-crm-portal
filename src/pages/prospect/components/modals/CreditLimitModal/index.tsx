@@ -63,6 +63,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
               paymentCapacityData={item.paymentCapacityData}
               reciprocityData={item.reciprocityData}
               scoreData={item.scoreData}
+              isMobile={isMobile}
             />
           ))}
         </Stack>

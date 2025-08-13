@@ -25,7 +25,6 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
     availableForNewCommitments,
     maxVacationTerm,
     maxAmount,
-    iconVisible,
     loading = false,
     handleClose,
   } = props;
@@ -53,7 +52,6 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
       availableForNewCommitments={availableForNewCommitments}
       maxVacationTerm={maxVacationTerm}
       maxAmount={maxAmount}
-      iconVisible={iconVisible}
     />
   );
 };

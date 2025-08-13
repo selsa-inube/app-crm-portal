@@ -26,6 +26,7 @@ export interface CreditLimitProps {
   paymentCapacityData: IPaymentCapacityData;
   reciprocityData: IReciprocityData;
   scoreData: IScoreData;
+  isMobile: boolean;
 }
 
 export function CreditLimitCard(props: CreditLimitProps) {
@@ -37,6 +38,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
     paymentCapacityData,
     reciprocityData,
     scoreData,
+    isMobile,
   } = props;
 
   const [creditModal, setCreditModal] = useState(false);
@@ -114,6 +116,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
 
       {openModal === "paymentCapacity" && (
         <PaymentCapacityModal
+          isMobile={isMobile}
           handleClose={() => setOpenModal(null)}
           {...paymentCapacityData}
         />
