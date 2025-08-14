@@ -372,6 +372,15 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         IncomeSourceUpdateAllowed: getRuleByName(
                           "IncomeSourceUpdateAllowed",
                         ),
+                        FinancialObligationsUpdateRequired: getRuleByName(
+                          "FinancialObligationsUpdateRequired",
+                        ),
+                        AdditionalBorrowersAllowedGP: getRuleByName(
+                          "AdditionalBorrowersAllowedGP",
+                        ),
+                        IncludeExtraordinaryInstallments: getRuleByName(
+                          "IncludeExtraordinaryInstallments",
+                        ),
                       }}
                       creditLineTerms={creditLineTerms!}
                       creditLimitData={creditLimitData!}
