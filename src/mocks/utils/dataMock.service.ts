@@ -1,18 +1,21 @@
-import localforage from "localforage";
 import { ICreditProduct } from "@services/prospect/types";
 
 export async function intializedData<T>(option: string, data: T[]) {
+  option = `crmPortal-${option}`;
+
   try {
-    await localforage.setItem(option, data);
+    localStorage.setItem(option, JSON.stringify(data));
   } catch (error) {
     return error;
   }
 }
 
 export async function get<T = unknown>(option: string) {
+  option = `crmPortal-${option}`;
+
   await fakeNetwork();
   try {
-    const optionsData = await localforage.getItem(option);
+    const optionsData = localStorage.getItem(option);
 
     return optionsData as T;
   } catch (error) {
@@ -77,7 +80,7 @@ export async function updateActive(props: functionActiveById) {
         data[indexData][field] = editData[field];
       }
 
-      await localforage.setItem(nameDB, data);
+      localStorage.setItem(nameDB, JSON.stringify(data));
     } else {
       throw new Error("data structure not valid, must be an object list");
     }
@@ -94,16 +97,19 @@ async function fakeNetwork() {
 
 export async function addItem<T>(option: string, newItem: T) {
   await fakeNetwork();
+
+  option = `crmPortal-${option}`;
+
   try {
-    const data = await localforage.getItem<T[]>(option);
-    const updatedData = Array.isArray(data) ? data : [];
+    const rawData: string | null = localStorage.getItem(option);
+    const updatedData: T[] = rawData ? JSON.parse(rawData) : [];
     const newTrace = {
       ...newItem,
       trace_id: crypto.randomUUID(),
     };
 
     updatedData.push(newTrace as T);
-    await localforage.setItem(option, updatedData);
+    localStorage.setItem(option, JSON.stringify(updatedData));
     return newTrace;
   } catch (error) {
     return "Failed to add item: " + error;

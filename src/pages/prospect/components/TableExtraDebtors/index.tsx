@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import localforage from "localforage";
 import { MdCached, MdDeleteOutline, MdOutlineEdit } from "react-icons/md";
 import {
   Pagination,
@@ -64,13 +63,14 @@ export function TableExtraDebtors(props: ExtraDebtor) {
   }, []);
 
   useEffect(() => {
-    const loadExtraDebtors = async () => {
-      const storedData =
-        (await localforage.getItem<ExtraDebtor[]>("extra_debtors")) || [];
-      setExtraDebtors(storedData);
-    };
+    const rawDataString = localStorage.getItem("crmPortal-extra_debtors");
+    let storedData: ExtraDebtor[] = [];
 
-    loadExtraDebtors();
+    if (rawDataString) {
+      storedData = JSON.parse(rawDataString);
+    }
+
+    setExtraDebtors(storedData);
   }, [refreshKey]);
 
   const isMobile = useMediaQuery("(max-width:880px)");

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import localforage from "localforage";
 import { useMediaQuery } from "@inubekit/inubekit";
 import { FormikValues, useFormik } from "formik";
 
@@ -129,7 +128,10 @@ export const TableFinancialObligations = (
       const updatedDebtors = extraDebtors.filter((debtor) => debtor.id !== id);
       setExtraDebtors(updatedDebtors);
 
-      await localforage.setItem("financial_obligation", updatedDebtors);
+      localStorage.setItem(
+        "crmPortal-financial_obligation",
+        JSON.stringify(updatedDebtors),
+      );
 
       console.log(`Debtor with ID ${id} deleted successfully.`);
     } catch (error) {
@@ -145,7 +147,12 @@ export const TableFinancialObligations = (
         debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
       );
       setExtraDebtors(updatedDebtors);
-      await localforage.setItem("financial_obligation", updatedDebtors);
+
+      localStorage.setItem(
+        "crmPortal-financial_obligation",
+        JSON.stringify(updatedDebtors),
+      );
+
       setIsModalOpenEdit(false);
     } catch (error) {
       console.error("Error updating debtor:", error);

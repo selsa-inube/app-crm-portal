@@ -1,6 +1,5 @@
 import { Formik, FormikValues } from "formik";
 import * as Yup from "yup";
-import localforage from "localforage";
 import { Select, Stack, Textfield, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
@@ -50,21 +49,29 @@ function ExtraDebtorModal(props: ExtraDebtorModalProps) {
 
   const handleConfirm = async (values: FormikValues) => {
     try {
-      const storedData =
-        (await localforage.getItem<ExtraDebtor[]>("extra_debtors")) || [];
+      const rawDataString = localStorage.getItem("crmPortal-extra_debtors");
+      let storedData: ExtraDebtor[] = [];
+
+      if (rawDataString) {
+        storedData = JSON.parse(rawDataString);
+      }
 
       if (values.id) {
         const updatedData = storedData.map((debtor) =>
           debtor.id === values.id ? { ...debtor, ...values } : debtor,
         );
-        await localforage.setItem("extra_debtors", updatedData);
+
+        localStorage.setItem(
+          "crmPortal-extra_debtors",
+          JSON.stringify(updatedData),
+        );
       } else {
-        await addItem("extra_debtors", { id: crypto.randomUUID(), ...values });
+        addItem("extra_debtors", { id: crypto.randomUUID(), ...values });
       }
 
       onCloseModal();
     } catch (error) {
-      console.error("Error updating data in localforage:", error);
+      console.error("Error updating data in local storage:", error);
     }
   };
 

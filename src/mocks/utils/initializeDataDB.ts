@@ -1,5 +1,3 @@
-import localforage from "localforage";
-
 import { intializedData } from "@mocks/utils/dataMock.service";
 import { themes } from "@mocks/design/themes";
 import { mockRequests as mockRequestsDefault } from "@mocks/requests/requests.mock";
@@ -20,6 +18,7 @@ import { mockPaymentChannel } from "@mocks/add-prospect/payment-channel/paymentc
 import { mockExtraDebtors } from "@mocks/add-prospect/extra-debtors/extradebtors.mock";
 import { mockFinancialObligation } from "@mocks/add-prospect/financial-obligation/financialobligation.mock";
 
+import { localStorageKeys } from "./config";
 import {
   mockRequests,
   mockAnalyst,
@@ -32,7 +31,7 @@ import {
 } from "./importDataDb";
 
 export function initializeDataDB(company: string) {
-  localforage.clear();
+  clearLocalStorage();
 
   intializedData<(typeof themes)[number]>("themes", themes);
   intializedData<(typeof mockRequestsDefault)[number]>(
@@ -80,4 +79,24 @@ export function initializeDataDB(company: string) {
   intializedData("mockRequest_value", mockPaymentChannel);
   intializedData("financial_obligation", mockFinancialObligation);
   intializedData("extra_debtors", mockExtraDebtors);
+}
+
+function clearLocalStorage() {
+  const keysToRemove = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+
+    if (!key) {
+      return;
+    }
+
+    if (key.startsWith(localStorageKeys.app_prefix)) {
+      keysToRemove.push(key);
+    }
+  }
+  console.log("keysToRemove: ", keysToRemove);
+  keysToRemove.forEach((key) => {
+    localStorage.removeItem(key);
+  });
 }

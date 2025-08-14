@@ -1,5 +1,4 @@
 import { Formik, FormikValues } from "formik";
-import localforage from "localforage";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { Icon, Grid, useMediaQuery, Textfield } from "@inubekit/inubekit";
@@ -44,22 +43,31 @@ function EditFinancialObligationModal(
   });
 
   const handleFormSubmit = async (values: FormikValues) => {
-    const storedData =
-      (await localforage.getItem<ITableFinancialObligationsProps[]>(
-        "financial_obligation",
-      )) || [];
+    const rawDataString = localStorage.getItem(
+      "crmPortal-financial_obligation",
+    );
+    let storedData: ITableFinancialObligationsProps[] = [];
+
+    if (rawDataString) {
+      storedData = JSON.parse(rawDataString);
+    }
 
     if (values.id) {
       const updatedData = storedData.map((item) =>
         item.id === values.id ? { ...item, ...values } : item,
       );
-      await localforage.setItem("financial_obligation", updatedData);
+
+      localStorage.setItem(
+        "crmPortal-financial_obligation",
+        JSON.stringify(updatedData),
+      );
     } else {
       const newItem = { ...values, id: Date.now() };
-      await localforage.setItem("financial_obligation", [
-        ...storedData,
-        newItem,
-      ]);
+
+      localStorage.setItem(
+        "crmPortal-financial_obligation",
+        JSON.stringify([...storedData, newItem]),
+      );
     }
 
     onConfirm(values);

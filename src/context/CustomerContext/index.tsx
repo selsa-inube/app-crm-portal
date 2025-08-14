@@ -19,7 +19,7 @@ export function CustomerContextProvider({
 }: ICustomerContextProviderProps) {
   const getInitialPublicCode = () => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("customerPublicCodeState") || "";
+      return localStorage.getItem("crmPortal-customerPublicCodeState") || "";
     }
     return "";
   };
@@ -82,9 +82,12 @@ export function CustomerContextProvider({
 
   useEffect(() => {
     if (customerPublicCodeState) {
-      localStorage.setItem("customerPublicCodeState", customerPublicCodeState);
+      localStorage.setItem(
+        "crmPortal-customerPublicCodeState",
+        customerPublicCodeState,
+      );
     } else {
-      localStorage.removeItem("customerPublicCodeState");
+      localStorage.removeItem("crmPortal-customerPublicCodeState");
     }
   }, [customerPublicCodeState]);
 
