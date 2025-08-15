@@ -625,6 +625,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             isMobile={isMobile}
             prospectId={prospectData?.prospectId || ""}
             pdf={pdfProspect}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
       </Stack>

@@ -38,6 +38,7 @@ interface SimulationsUIProps {
   showCreditRequest: boolean;
   dataPrint: React.RefObject<HTMLDivElement>;
   pdfProspect: string | null;
+  businessUnitPublicCode: string;
   setShowShareModal: (value: boolean) => void;
   setShowMenu: (value: boolean) => void;
   handleSubmitClick: () => void;
@@ -71,6 +72,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     showCreditRequest,
     dataPrint,
     pdfProspect,
+    businessUnitPublicCode,
     setShowShareModal,
     setShowMenu,
     setRequestValue,
@@ -309,6 +311,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                       handleClose={() => setShowShareModal(false)}
                       prospectId={dataProspect?.prospectId || ""}
                       pdf={pdfProspect}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 </Stack>
