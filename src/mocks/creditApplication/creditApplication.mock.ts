@@ -1,7 +1,7 @@
 export const mockCreditApplication = [
   {
-    prospectId: "68531b2426ac1368108249f5",
-    prospectCode: "SC-000000318",
+    creditRequestId: "68531b2426ac1368108249f5",
+    creditRequestCode: "SC-000000318",
     timeOfCreation: "2025-06-18T20:01:40.81Z",
     selectedRegularPaymentSchedule:
       "Aceptación por parte del cliente de la propuesta.",
@@ -11,8 +11,8 @@ export const mockCreditApplication = [
     value: 10000000,
   },
   {
-    prospectId: "68531c8726ac1368108249f8",
-    prospectCode: "SC-000000324",
+    creditRequestId: "68531c8726ac1368108249f8",
+    creditRequestCode: "SC-000000324",
     timeOfCreation: "2025-06-18T20:07:35.22Z",
     selectedRegularPaymentSchedule:
       "Aceptación por parte del cliente de la propuesta.",

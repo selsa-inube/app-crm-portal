@@ -67,16 +67,16 @@ export function CreditApplications() {
             </Button>
           </Stack>
           <Stack wrap="wrap" gap="20px">
-            {mockCreditApplication.map((prospect) => (
+            {mockCreditApplication.map((creditRequest) => (
               <SummaryCard
-                key={prospect.prospectId}
-                rad={prospect.prospectCode}
-                date={prospect.timeOfCreation}
-                name={prospect.preferredPaymentChannelAbbreviatedName}
-                destination={prospect.moneyDestinationAbbreviatedName}
-                value={prospect.value}
-                toDo={prospect.selectedRegularPaymentSchedule}
-                path={`/credit/apply-for-credit/${prospect.prospectCode}`}
+                key={creditRequest.creditRequestId}
+                rad={creditRequest.creditRequestCode}
+                date={creditRequest.timeOfCreation}
+                name={creditRequest.preferredPaymentChannelAbbreviatedName}
+                destination={creditRequest.moneyDestinationAbbreviatedName}
+                value={creditRequest.value}
+                toDo={creditRequest.selectedRegularPaymentSchedule}
+                path={`https://crediboard.inube.online/extended-card/${creditRequest.creditRequestCode}`}
               />
             ))}
           </Stack>
