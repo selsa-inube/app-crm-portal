@@ -22,6 +22,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
 import { IBorrowerDocumentRule } from "@pages/applyForCredit/steps/attachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { IFile } from "@components/modals/ListModal";
 
 import { headers, dataReport } from "./config";
 import { usePagination } from "./utils";
@@ -29,12 +30,10 @@ import { usePagination } from "./utils";
 interface ITableAttachedDocumentsProps {
   isMobile: boolean;
   uploadedFilesByRow: {
-    [key: string]: { id: string; name: string; file: File }[];
+    [key: string]: IFile[];
   };
   customerData: ICustomerData;
-  setUploadedFilesByRow: (files: {
-    [key: string]: { id: string; name: string; file: File }[];
-  }) => void;
+  setUploadedFilesByRow: (files: { [key: string]: IFile[] }) => void;
   ruleValues: IBorrowerDocumentRule[];
 }
 
@@ -47,6 +46,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [seeAttachment, setSeeAttachments] = useState(false);
   const [rowIdToDelete, setRowIdToDelete] = useState<string | null>(null);
+  const [deletedFiles, setDeletedFiles] = useState<IFile[]>([]);
 
   const handleConfirmDelete = () => {
     if (rowIdToDelete) {
@@ -95,9 +95,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     setShowAttachments(true);
   };
 
-  const handleSetUploadedFiles = (
-    files: { id: string; name: string; file: File }[] | null,
-  ) => {
+  const handleSetUploadedFiles = (files: IFile[]) => {
     if (currentRowId) {
       setUploadedFilesByRow({
         ...uploadedFilesByRow,
@@ -121,6 +119,16 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     ) : (
       <MdOutlineEdit />
     );
+  };
+
+  const getTitleToModal = (rowId: string) => {
+    const rowIdParsed = parseInt(rowId);
+
+    if (Number.isNaN(rowIdParsed)) {
+      return "Adjuntar";
+    }
+
+    return ruleValues[rowIdParsed].value;
   };
 
   return (
@@ -230,7 +238,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
       )}
       {showAttachment && (
         <ListModal
-          title="Adjuntar"
+          title={getTitleToModal(currentRowId)}
           handleClose={() => setShowAttachments(false)}
           optionButtons={optionButtons}
           buttonLabel="Adjuntar"
@@ -238,11 +246,13 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           uploadedFiles={uploadedFilesByRow[currentRowId]}
           setUploadedFiles={handleSetUploadedFiles}
           onlyDocumentReceived={true}
+          deletedFiles={deletedFiles}
+          setDeletedFiles={setDeletedFiles}
         />
       )}
       {seeAttachment && (
         <ListModal
-          title="Ver adjuntos"
+          title={getTitleToModal(currentRowId)}
           handleClose={() => setSeeAttachments(false)}
           isViewing={true}
           buttonLabel="Cerrar"
@@ -253,6 +263,8 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
             currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
           }
           setUploadedFiles={handleSetUploadedFiles}
+          deletedFiles={deletedFiles}
+          setDeletedFiles={setDeletedFiles}
         />
       )}
       {showDeleteModal && (

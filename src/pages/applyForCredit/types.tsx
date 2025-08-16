@@ -167,12 +167,6 @@ export interface ICondition {
   value: string | number;
 }
 
-export interface IDocumentUpload {
-  id: string;
-  name: string;
-  file: File;
-}
-
 export interface Irule {
   ruleName: string;
   conditions: ICondition[];

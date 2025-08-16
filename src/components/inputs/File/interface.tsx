@@ -1,4 +1,4 @@
-import { Icon, Stack, Text } from "@inubekit/inubekit";
+import { Icon, Stack, Text, Spinner } from "@inubekit/inubekit";
 import {
   MdOutlineDescription,
   MdOutlineDelete,
@@ -6,7 +6,7 @@ import {
   MdOutlineFileDownload,
 } from "react-icons/md";
 
-import { IDocumentUpload } from "@pages/applyForCredit/types";
+import { IFile } from "@components/modals/ListModal";
 
 import { StyledFile } from "./styles";
 
@@ -14,17 +14,18 @@ interface FileUIProps {
   withBorder?: boolean;
   name: string;
   size: string;
+  isMobile: boolean;
+  id: string;
+  index: number;
+  spinnerLoading: boolean;
+  pendingFiles: IFile[];
+  fileInputRef: React.RefObject<HTMLInputElement>;
   onDelete: (id: string) => void;
+  handleDownloadWithFetch: () => void;
   handlePreview: (id: string, name: string, pendingFile?: File) => void;
   dataDocument?: { id: string; name: string }[];
-  uploadedFiles?: IDocumentUpload[];
+  uploadedFiles?: IFile[];
   isViewing?: boolean;
-  isMobile: boolean;
-  fileInputRef: React.RefObject<HTMLInputElement>;
-  id: string;
-  pendingFiles: IDocumentUpload[];
-  index: number;
-  handleDownloadWithFetch: () => void;
 }
 
 function FileUI(props: FileUIProps) {
@@ -39,10 +40,15 @@ function FileUI(props: FileUIProps) {
     index,
     isMobile,
     handleDownloadWithFetch,
+    spinnerLoading,
   } = props;
 
   return (
-    <StyledFile $withBorder={withBorder} isMobile={isMobile}>
+    <StyledFile
+      $withBorder={withBorder}
+      isMobile={isMobile}
+      spinnerLoading={spinnerLoading}
+    >
       <Stack gap="8px" alignItems="center">
         <Icon icon={<MdOutlineDescription />} appearance="dark" size="20px" />
         <Stack direction="column" width={isMobile ? "160px" : "130px"}>
@@ -54,35 +60,41 @@ function FileUI(props: FileUIProps) {
           </Text>
         </Stack>
       </Stack>
-      <Stack direction="row" gap="8px">
-        {isMobile ? (
-          <Icon
-            icon={<MdOutlineFileDownload />}
-            cursorHover
-            appearance="dark"
-            size="20px"
-            onClick={handleDownloadWithFetch}
-          />
+      <Stack direction="row" gap="8px" width="40px">
+        {!spinnerLoading ? (
+          <>
+            {isMobile ? (
+              <Icon
+                icon={<MdOutlineFileDownload />}
+                cursorHover
+                appearance="dark"
+                size="20px"
+                onClick={handleDownloadWithFetch}
+              />
+            ) : (
+              <Icon
+                icon={<MdOutlineRemoveRedEye />}
+                cursorHover
+                appearance="dark"
+                size="20px"
+                onClick={() => {
+                  handlePreview(id, name, pendingFiles[index]?.file);
+                }}
+              />
+            )}
+            <Icon
+              icon={<MdOutlineDelete />}
+              cursorHover
+              appearance="danger"
+              size="20px"
+              onClick={() => {
+                onDelete(id);
+              }}
+            />
+          </>
         ) : (
-          <Icon
-            icon={<MdOutlineRemoveRedEye />}
-            cursorHover
-            appearance="dark"
-            size="20px"
-            onClick={() => {
-              handlePreview(id, name, pendingFiles[index]?.file);
-            }}
-          />
+          <Spinner size="small" />
         )}
-        <Icon
-          icon={<MdOutlineDelete />}
-          cursorHover
-          appearance="danger"
-          size="20px"
-          onClick={() => {
-            onDelete(id);
-          }}
-        />
       </Stack>
     </StyledFile>
   );
