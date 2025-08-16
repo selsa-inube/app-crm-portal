@@ -53,8 +53,6 @@ export interface IListModalProps {
   uploadedFiles: IFile[];
   handleClose: () => void;
   setUploadedFiles: (files: IFile[]) => void;
-  deletedFiles: IFile[];
-  setDeletedFiles: React.Dispatch<React.SetStateAction<IFile[]>>;
   onlyDocumentReceived?: boolean;
   nameRuleValue?: string;
   handleSubmit?: () => void;
@@ -82,9 +80,9 @@ export interface IFile {
   id: string;
   name: string;
   file: File;
-  wasAlreadyAttached: boolean;
-  selectedToDelete: boolean;
-  justUploaded: boolean;
+  wasAlreadyAttached?: boolean;
+  selectedToDelete?: boolean;
+  justUploaded?: boolean;
 }
 
 export const ListModal = (props: IListModalProps) => {
@@ -551,7 +549,7 @@ export const ListModal = (props: IListModalProps) => {
                               fileInputRef={fileInputRef}
                               pendingFiles={pendingFiles}
                               setOpenFlag={setOpenFlag}
-                              isPendingFiles={file.justUploaded}
+                              isPendingFiles={file.justUploaded || false}
                               openFlag={openFlag}
                             />
                           ),
@@ -601,7 +599,7 @@ export const ListModal = (props: IListModalProps) => {
                                 fileInputRef={fileInputRef}
                                 pendingFiles={pendingFiles}
                                 setOpenFlag={setOpenFlag}
-                                isPendingFiles={file.justUploaded}
+                                isPendingFiles={file.justUploaded || false}
                                 openFlag={openFlag}
                               />
                             ),

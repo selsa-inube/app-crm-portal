@@ -1,3 +1,5 @@
+import { IFile } from "@components/modals/ListModal";
+
 export const titleButtonTextAssited = {
   goBackText: "Anterior",
   goNextText: "Siguiente",
@@ -69,7 +71,7 @@ export interface IFormData {
   bail: IBail;
   disbursementGeneral: IDisbursementGeneral;
   attachedDocuments?: {
-    [key: string]: { id: string; name: string; file: File }[];
+    [key: string]: IFile[];
   };
 }
 

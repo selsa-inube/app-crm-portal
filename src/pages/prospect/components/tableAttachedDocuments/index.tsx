@@ -46,7 +46,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [seeAttachment, setSeeAttachments] = useState(false);
   const [rowIdToDelete, setRowIdToDelete] = useState<string | null>(null);
-  const [deletedFiles, setDeletedFiles] = useState<IFile[]>([]);
 
   const handleConfirmDelete = () => {
     if (rowIdToDelete) {
@@ -246,8 +245,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           uploadedFiles={uploadedFilesByRow[currentRowId]}
           setUploadedFiles={handleSetUploadedFiles}
           onlyDocumentReceived={true}
-          deletedFiles={deletedFiles}
-          setDeletedFiles={setDeletedFiles}
         />
       )}
       {seeAttachment && (
@@ -263,8 +260,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
             currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
           }
           setUploadedFiles={handleSetUploadedFiles}
-          deletedFiles={deletedFiles}
-          setDeletedFiles={setDeletedFiles}
         />
       )}
       {showDeleteModal && (

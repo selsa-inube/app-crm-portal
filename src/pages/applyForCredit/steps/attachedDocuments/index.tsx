@@ -21,14 +21,7 @@ export interface IBorrowerDocumentRule {
 interface IAttachedDocumentsProps {
   isMobile: boolean;
   initialValues: {
-    [key: string]: {
-      id: string;
-      name: string;
-      file: File;
-      wasAlreadyAttached: boolean;
-      selectedToDelete: boolean;
-      justUploaded: boolean;
-    }[];
+    [key: string]: IFile[];
   };
   handleOnChange: (files: {
     [key: string]: IFile[] | { id: string; name: string; file: File }[];
