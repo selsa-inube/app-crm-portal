@@ -3,8 +3,13 @@ import { environment } from "@config/environment";
 import { IStaff } from "../types";
 import { mapStaffToEntity } from "./mappers";
 
-const getStaff = async (): Promise<IStaff[]> => {
-  const requestUrl = `${environment.IVITE_IPORTAL_STAFF_QUERY_PROCESS_SERVICE}/staffs`;
+const getStaff = async (
+  identificationDocumentNumber: string,
+): Promise<IStaff[]> => {
+  const queryParams = new URLSearchParams({
+    identificationDocumentNumber: identificationDocumentNumber.substring(0, 20),
+  });
+  const requestUrl = `${environment.IVITE_IPORTAL_STAFF_QUERY_PROCESS_SERVICE}/staffs?${queryParams.toString()}`;
 
   try {
     const options: RequestInit = {

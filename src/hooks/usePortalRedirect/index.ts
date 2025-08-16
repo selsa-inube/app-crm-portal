@@ -14,7 +14,6 @@ const usePortalLogic = () => {
     useState<IBusinessManagers | null>(null);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
   const rawPortalCode = useMemo(() => {
@@ -47,7 +46,7 @@ const usePortalLogic = () => {
       }
 
       try {
-        const portals = await getStaffPortalsByBusinessManager();
+        const portals = await getStaffPortalsByBusinessManager(rawPortalCode);
         const match = portals.find(
           (p) => p.staffPortalId?.trim() === rawPortalCode,
         );

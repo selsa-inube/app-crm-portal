@@ -48,7 +48,6 @@ function useAppContext() {
   if (portalId) {
     portalCode = decrypt(portalId);
   }
-
   let businessUnit: IBusinessUnits | null = null;
   try {
     businessUnit = JSON.parse(businessUnitSigla || "{}") as IBusinessUnits;
@@ -80,14 +79,13 @@ function useAppContext() {
   useEffect(() => {
     const fetchStaffData = async () => {
       try {
-        const staffData = await getStaff();
+        const userIdentifier = user?.email?.substring(0, 20);
+        if (!userIdentifier) return;
+        const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
         const matchedStaff = staffData.find(
-          (staff) =>
-            staff.identificationDocumentNumber ===
-            user?.email?.substring(0, 20),
+          (staff) => staff.identificationDocumentNumber === userIdentifier,
         );
-
         if (matchedStaff) {
           const userPermissions = getUserPermissions(matchedStaff);
           setEventData((prev) => ({
@@ -184,7 +182,7 @@ function useAppContext() {
   });
 
   useEffect(() => {
-    validateConsultation().then((data) => {
+    validateConsultation(portalCode).then((data) => {
       setPortalData(data);
     });
   }, []);
