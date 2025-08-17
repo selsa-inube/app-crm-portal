@@ -8,6 +8,7 @@ import LabelData from "./Config/config";
 interface IUnfulfilledRequirementsProps {
   requirement: string;
   causeNonCompliance: string;
+  hasError?: boolean;
   title?: string;
   isMobile?: boolean;
 }
