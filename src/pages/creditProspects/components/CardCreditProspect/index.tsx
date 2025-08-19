@@ -1,6 +1,4 @@
 import { Stack, Icon, Text, Divider } from "@inubekit/inubekit";
-import { IconType } from "react-icons";
-import * as Icons from "react-icons/md";
 import {
   MdOutlineDelete,
   MdOutlineEdit,
@@ -9,6 +7,7 @@ import {
 } from "react-icons/md";
 
 import { CardGray } from "@components/cards/CardGray";
+import { IconText } from "@pages/prospect/components/IconText";
 import { currencyFormat } from "@utils/formatData/currency";
 import { capitalizeFirstLetter } from "@utils/formatData/text";
 import { formatPrimaryDate } from "@utils/formatData/date";
@@ -47,20 +46,13 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
     handleDelete = () => {},
   } = props;
 
-  const getIconComponent = (iconName: string): IconType | null => {
-    const IconComponent = (Icons as Record<string, IconType>)[iconName];
-    return IconComponent || null;
-  };
-
-  const IconComponent = getIconComponent(iconTitle);
-
   return (
     <StyledContainer $isMobile={isMobile}>
       <Stack direction="column" padding="10px 16px" gap="12px">
         <Stack justifyContent="space-between">
           <Stack gap="12px">
             <Icon
-              icon={IconComponent && <IconComponent />}
+              icon={<IconText icon={iconTitle} />}
               appearance="dark"
               size="24px"
             />
