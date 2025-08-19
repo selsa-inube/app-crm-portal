@@ -46,8 +46,8 @@ function FileUI(props: FileUIProps) {
   return (
     <StyledFile
       $withBorder={withBorder}
-      isMobile={isMobile}
-      spinnerLoading={spinnerLoading}
+      $isMobile={isMobile}
+      $spinnerLoading={spinnerLoading}
     >
       <Stack gap="8px" alignItems="center">
         <Icon icon={<MdOutlineDescription />} appearance="dark" size="20px" />
