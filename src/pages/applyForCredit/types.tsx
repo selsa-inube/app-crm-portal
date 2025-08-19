@@ -71,6 +71,7 @@ export interface IFormData {
   attachedDocuments?: {
     [key: string]: { id: string; name: string; file: File }[];
   };
+  observations: { relevantObservations: string };
 }
 
 export interface IDisbursementGeneral {

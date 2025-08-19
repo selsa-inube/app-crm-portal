@@ -48,4 +48,10 @@ export const stepsFilingApplication = {
     name: "Listado de documentos adjuntos",
     description: "Adjunte los documentos solicitados a continuación.",
   },
+  observations: {
+    id: 9,
+    number: 9,
+    name: "Observaciones",
+    description: "Registre observaciones.",
+  },
 };
