@@ -1,8 +1,10 @@
 export const dataReciprocity = {
-  maxReciprocityQuota: "Cupo máx. por reciprocidad",
+  maxReciprocityQuota: "Monto máx. según reciprocidad",
   close: "Cerrar",
-  contributionsBalance: "Saldo de aportes y ahorros permanentes",
-  timesPossible: "No. de veces posible según reglamento",
-  assignedQuota: "Cupo asignado",
+  contributionsBalance: "(+) Saldo de aportes y ahorros permanentes",
+  timesPossible: "(x) No. de veces posible según reglamento",
+  assignedQuota: "(=) Cupo asignado",
+  currentPortafolio: "(-) Cartera descubierta vigente",
   loading: "Cargando...",
+  mount: "Monto máximo disponible según reciprocidad",
 };

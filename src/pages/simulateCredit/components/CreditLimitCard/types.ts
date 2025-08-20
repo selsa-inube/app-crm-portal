@@ -1,14 +1,15 @@
+import { CurrentDataRow } from "@components/modals/PaymentCapacityModal/types";
+
 export interface ICreditLimitData {
   maxPaymentCapacity: number;
   maxReciprocity: number;
   maxDebtFRC: number;
   assignedLimit: number;
-  currentPortfolio: number;
   maxUsableLimit: number;
   availableLimitWithoutGuarantee: number;
 }
 
-export interface IPaymentCapacityData {
+export interface IMaxLimitData {
   reportedIncomeSources: number;
   reportedFinancialObligations: number;
   subsistenceReserve: number;
@@ -21,6 +22,7 @@ export interface IReciprocityData {
   balanceOfContributions: number;
   accordingToRegulation: number;
   assignedQuota: number;
+  numRegulations: number;
 }
 
 export interface IScoreData {
@@ -32,4 +34,17 @@ export interface IScoreData {
   economicActivity: number;
   monthlyIncome: number;
   maxIndebtedness: number;
+  incomeScore: number;
+  maxLimit: number;
+  totalPortafolio: number;
+}
+
+export interface IPaymentCapacityData {
+  incomeSources: number;
+  subsistenceReserve: number;
+  newPromises: number;
+  lineOfCredit: number;
+  maxValue: number;
+  extraordinary: number;
+  extraordinaryQuotes?: CurrentDataRow[];
 }

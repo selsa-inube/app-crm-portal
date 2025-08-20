@@ -32,6 +32,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
         console.error("Error fetching money destinations data:", error.message);
       });
   }, []);
+
   return (
     <BaseModal
       title={dataCreditLimitModal.title}
@@ -46,7 +47,6 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
         <Text appearance="gray" type="body" size="medium" weight="normal">
           {dataCreditLimitModal.creditText}
         </Text>
-
         <Stack
           direction={isMobile ? "column" : "row"}
           gap="24px"
@@ -58,14 +58,15 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
               key={index}
               creditLineTxt={item.creditLineTxt}
               creditLine={item.creditLine}
-              creditLimitData={item.CreditLimitdata}
+              creditLimitData={item.creditLimitdata}
+              maxLimitData={item.maxLimitData}
               paymentCapacityData={item.paymentCapacityData}
               reciprocityData={item.reciprocityData}
               scoreData={item.scoreData}
+              isMobile={isMobile}
             />
           ))}
         </Stack>
-
         <Text appearance="gray" type="body" size="medium" weight="normal">
           <Text
             as="span"
