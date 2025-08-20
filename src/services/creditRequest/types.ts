@@ -138,3 +138,8 @@ export interface IPaymentChannel {
   label: string;
   value: string;
 }
+
+export type CreditRequestParams = {
+  creditRequestCode?: string;
+  clientIdentificationNumber?: string;
+};
