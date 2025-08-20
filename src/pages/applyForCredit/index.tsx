@@ -31,7 +31,6 @@ export function ApplyForCredit() {
     useState<IProspectSummaryById>();
 
   const customerPublicCode: string = customerData.publicCode;
-
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -216,7 +215,7 @@ export function ApplyForCredit() {
       });
   }, [valueRule, hasBorrowers, bondValue]);
 
-  const [currentStep, setCurrentStep] = useState<number>(steps[0]?.id || 1);
+  const [currentStep, setCurrentStep] = useState<number>(8);
 
   const {
     contactInformation,

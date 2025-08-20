@@ -29,6 +29,8 @@ const Template: StoryObj<CardValuesProps> = {
             handleClose={handleCloseModal}
             buttonLabel="Cerrar"
             content={<div>Contenido del modal</div>}
+            uploadedFiles={[]}
+            setUploadedFiles={() => {}}
           />
         )}
       </>
