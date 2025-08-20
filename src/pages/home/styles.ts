@@ -67,7 +67,7 @@ const StyledContainerCards = styled.div<IStyledContainer>`
 
   & > * {
     flex: 1 1 calc(25% - 24px);
-    min-width: 250px;
+    min-width: 279px;
     max-width: calc(25% - 24px);
   }
 `;
