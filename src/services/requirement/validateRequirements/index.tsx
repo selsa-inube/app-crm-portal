@@ -4,11 +4,13 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IValidateRequirement } from "../types";
+import {
+  IPatchValidateRequirementsPayload,
+  IValidateRequirement,
+} from "../types";
 
 export const patchValidateRequirements = async (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  validataRequirements: any | null,
+  validataRequirements: IPatchValidateRequirementsPayload,
 ): Promise<IValidateRequirement[] | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;

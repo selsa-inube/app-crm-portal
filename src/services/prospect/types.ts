@@ -81,14 +81,23 @@ export interface IOutlay {
   date: Date;
   amount: number;
 }
+export interface ISimulateLineOfCredit {
+  lineOfCreditAbbreviatedName: string;
+}
+export interface ISimulateExtraordinaryInstallment {
+  installmentAmount: number;
+  installmentDate: string | Date;
+  paymentChannelAbbreviatedName: string;
+}
+
 export interface IProspect {
   prospectId: string;
   prospectCode: string;
   state: string;
-  requestedAmount: number;
-  installmentLimit: number;
-  termLimit: number;
-  timeOfCreation: Date;
+  requestedAmount: number | string;
+  installmentLimit: number | string;
+  termLimit: number | string;
+  timeOfCreation?: Date;
   selectedRegularPaymentSchedule: string;
   selectedRateType: string;
   preferredPaymentChannelAbbreviatedName: string;
@@ -103,6 +112,9 @@ export interface IProspect {
   clientManagerObservation: string;
   borrowers: IBorrower[];
   consolidatedCredits: IConsolidatedCredit[];
+  linesOfCredit?: ISimulateLineOfCredit[];
+  firstPaymentCycleDate?: string;
+  extraordinaryInstallments?: ISimulateExtraordinaryInstallment[];
   creditProducts: ICreditProduct[];
   outlays: IOutlay[];
 }

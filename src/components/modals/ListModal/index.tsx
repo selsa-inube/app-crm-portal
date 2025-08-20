@@ -39,6 +39,12 @@ export interface IOptionButtons {
   fullwidth?: boolean;
   onClick?: () => void;
 }
+export interface IUploadedFile {
+  id: string;
+  name: string;
+  file: File;
+}
+export type SetUploadedFiles = (files: IUploadedFile[] | null) => void;
 
 export interface IListdataProps {
   data: { id: string; name: string }[] | null | undefined;
@@ -84,7 +90,6 @@ export interface IFile {
   selectedToDelete?: boolean;
   justUploaded?: boolean;
 }
-
 export const ListModal = (props: IListModalProps) => {
   const {
     title,

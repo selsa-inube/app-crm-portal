@@ -62,7 +62,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
           showActions
           showButtons={false}
           clientPortfolio={clientPortfolio}
-          initialValues={initialValues}
+          initialValues={initialValues as IObligations}
           handleOnChange={handleOnChange}
           formState={formState}
         />

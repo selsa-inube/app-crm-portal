@@ -1,13 +1,14 @@
 import { Stack } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import { CardGray } from "@components/cards/CardGray";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 
 import { dataDebtor } from "./config";
+
 interface IDataDebtor {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues: any;
+  initialValues: FormikValues;
 }
 
 export function DataDebtor(props: IDataDebtor) {

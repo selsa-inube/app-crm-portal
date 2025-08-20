@@ -3,16 +3,15 @@ import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
+import { IIncomeSources } from "@services/creditLimit/types";
 
 import { dataIncomeModal } from "./config";
 
 interface IncomeModalProps {
   handleClose: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (data: any) => void;
+  onSubmit: (updatedData: IIncomeSources) => void;
   openModal?: (state: boolean) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues?: any;
+  initialValues?: IIncomeSources;
   disabled?: boolean;
 }
 
@@ -21,8 +20,7 @@ export function IncomeModal(props: IncomeModalProps) {
 
   const [formData, setFormData] = useState(initialValues);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDataChange = (newData: any) => {
+  const handleDataChange = (newData: IIncomeSources) => {
     setFormData(newData);
   };
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -30,7 +28,7 @@ export function IncomeModal(props: IncomeModalProps) {
   const { addFlag } = useFlag();
 
   const handleSubmit = () => {
-    onSubmit(formData);
+    onSubmit(formData as IIncomeSources);
     handleClose();
     addFlag({
       title: `${dataIncomeModal.flagTittle}`,

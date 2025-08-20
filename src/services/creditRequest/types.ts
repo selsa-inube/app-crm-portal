@@ -49,11 +49,11 @@ export interface ICreditRequest {
 
 export interface IDocumentsCredit {
   abbreviatedName: string;
-  creditRequestId: string;
-  documentCode: string;
-  documentId: string;
-  fileName: string;
   transactionOperation: "Insert";
+  creditRequestId?: string;
+  documentCode?: string;
+  documentId?: string;
+  fileName?: string;
 }
 
 export interface IMortgagesCredit {
@@ -120,13 +120,10 @@ export interface ISubmitCredit {
   clientName: string;
   clientPhoneNumber: string;
   clientType: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  documents?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  guarantees: any;
+  documents?: IDocumentsCredit[];
+  guarantees: IGuaranteesCredit[];
   loanAmount: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  modesOfDisbursement: any;
+  modesOfDisbursement: IModesOfDisbursementCredit[];
   moneyDestinationAbreviatedName: string;
   moneyDestinationId: string;
   prospectId?: string;

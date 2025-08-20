@@ -1,4 +1,5 @@
 import { Stack } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
@@ -8,8 +9,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { dataIncomeDebtor } from "./config";
 
 interface IIncomeDebtor {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues: any;
+  initialValues: FormikValues | undefined;
 }
 
 const incomeFields = [
@@ -29,6 +29,22 @@ const incomeFields = [
 
 export function IncomeDebtor(props: IIncomeDebtor) {
   const { initialValues } = props;
+  if (!initialValues || !initialValues.borrowerProperties) {
+    return (
+      <Fieldset>
+        <Stack direction="column" padding="10px 16px" gap="16px">
+          {incomeFields.map((field, index) => (
+            <CardGray
+              key={index}
+              label={field.label}
+              placeHolder={currencyFormat(0)}
+              apparencePlaceHolder="gray"
+            />
+          ))}
+        </Stack>
+      </Fieldset>
+    );
+  }
 
   return (
     <Fieldset>

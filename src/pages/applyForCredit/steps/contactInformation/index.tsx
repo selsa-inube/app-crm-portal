@@ -139,7 +139,7 @@ export function ContactInformation(props: IContactInformationProps) {
           message={dataContactInformation.failedEmail}
           fullwidth
         />
-        <FieldsetInube legend="Móvil">
+        <FieldsetInube legend="Móvil" type="body" size="medium">
           <Stack wrap="wrap" width="100%" gap="16px">
             <Stack width={isMobile ? "100%" : "40%"}>
               <Phonefield

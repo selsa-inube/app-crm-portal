@@ -12,6 +12,7 @@ import {
   Textfield,
   inube,
 } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import {
   currencyFormat,
@@ -32,8 +33,7 @@ import { IProspectSummaryById } from "@services/prospect/types";
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: any;
+  formik: FormikValues;
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;
@@ -238,7 +238,7 @@ export function DisbursementWithInternalAccount(
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
 
         const hasData = customer?.publicCode && data;
-
+        console.log("hasData", customer);
         if (hasData && customer.publicCode !== customerData?.publicCode) {
           setCurrentIdentification(identification);
           formik.setFieldValue(
