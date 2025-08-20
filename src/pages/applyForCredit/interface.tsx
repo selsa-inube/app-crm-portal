@@ -39,6 +39,7 @@ import { VehicleOffered } from "./steps/vehicleOffered";
 import { Bail } from "./steps/bail";
 import { AttachedDocuments } from "./steps/attachedDocuments";
 import { DisbursementGeneral } from "./steps/disbursementGeneral";
+import { Observations } from "./steps/observations";
 import { submitCreditApplicationConfig } from "./config/submitCreditApplication.config";
 import { dataSubmitApplication } from "./config/config";
 import { titlesModal } from "../simulations/config";
@@ -289,20 +290,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 )}
               {currentStepsNumber &&
                 currentStepsNumber.id ===
-                  stepsFilingApplication.attachedDocuments.id &&
-                customerData && (
-                  <AttachedDocuments
-                    isMobile={isMobile}
-                    initialValues={formData.attachedDocuments || {}}
-                    handleOnChange={(newDocs) =>
-                      handleFormChange({ attachedDocuments: newDocs })
-                    }
-                    customerData={customerData}
-                    prospectData={prospectData}
-                  />
-                )}
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
                   stepsFilingApplication.disbursement.id &&
                 customerData && (
                   <DisbursementGeneral
@@ -319,6 +306,33 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     identificationNumber={customerData?.publicCode || ""}
                     rule={getRuleByName("ModeOfDisbursementType")}
                     prospectSummaryData={prospectSummaryData}
+                  />
+                )}
+              {currentStepsNumber &&
+                currentStepsNumber.id ===
+                  stepsFilingApplication.attachedDocuments.id &&
+                customerData && (
+                  <AttachedDocuments
+                    isMobile={isMobile}
+                    initialValues={formData.attachedDocuments || {}}
+                    handleOnChange={(newDocs) =>
+                      handleFormChange({ attachedDocuments: newDocs })
+                    }
+                    customerData={customerData}
+                    prospectData={prospectData}
+                  />
+                )}
+              {currentStepsNumber &&
+                currentStepsNumber.id ===
+                  stepsFilingApplication.observations.id &&
+                customerData && (
+                  <Observations
+                    initialValues={formData.observations}
+                    isMobile={isMobile}
+                    handleOnChange={(newData) =>
+                      handleFormChange({ observations: newData })
+                    }
+                    onFormValid={setIsCurrentFormValid}
                   />
                 )}
               <Stack

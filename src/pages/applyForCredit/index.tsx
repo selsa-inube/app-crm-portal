@@ -165,6 +165,7 @@ export function ApplyForCredit() {
       },
     },
     attachedDocuments: {},
+    observations: { relevantObservations: "" },
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
