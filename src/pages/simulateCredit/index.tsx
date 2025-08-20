@@ -21,6 +21,7 @@ import {
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
+import { mocksRules } from "@mocks/businessRules";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
