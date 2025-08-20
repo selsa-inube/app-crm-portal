@@ -27,6 +27,12 @@ const mapProspectEntity = (
     moneyDestinationAbbreviatedName:
       data.moneyDestinationAbbreviatedName as string,
     bondValue: data.bondValue as number,
+    creditScore: data.creditScore as string,
+    modifyJustification: data.modifyJustification as string,
+    clientManagerIdentificationNumber:
+      data.clientManagerIdentificationNumber as string,
+    clientManagerName: data.clientManagerName as string,
+    clientManagerObservation: data.clientManagerObservation as string,
     borrowers: data.borrowers as IBorrower[],
     consolidatedCredits: data.consolidatedCredits as IConsolidatedCredit[],
     creditProducts: data.creditProducts as ICreditProduct[],

@@ -32,7 +32,6 @@ export const TableFinancialObligations = (
   const [extraDebtors, setExtraDebtors] = useState<
     ITableFinancialObligationsProps[]
   >([]);
-
   const formik = useFormik<{
     obligations: IObligations | null;
   }>({

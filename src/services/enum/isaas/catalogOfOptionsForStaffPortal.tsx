@@ -37,40 +37,9 @@ export const OptionStaffPortal: IOptionStaffPortalItem[] = [
       {
         id: "Solicitudes de crédito",
         icon: getIconByName("MdMoneyOff"),
-        descriptionUse:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        url: "/credit/prospects-2",
+        descriptionUse: "Gestiona las solicitudes de crédito del cliente.",
+        url: "/credit/credit-requests",
       },
     ],
-  },
-  {
-    id: "Ahorros",
-    icon: getIconByName("MdOutlineSavings"),
-    descriptionUse: "Gestiona tus opciones de ahorro",
-    url: "/",
-  },
-  {
-    id: "Pagos",
-    icon: getIconByName("MdOutlinePayments"),
-    descriptionUse: "Gestiona tus opciones de pago",
-    url: "/",
-  },
-  {
-    id: "Tarjetas",
-    icon: getIconByName("MdCreditCard"),
-    descriptionUse: "Gestiona tus opciones de tarjeta",
-    url: "/",
-  },
-  {
-    id: "Auxilios",
-    icon: getIconByName("MdOutlineSupport"),
-    descriptionUse: "Gestiona tus opciones de auxilios",
-    url: "/",
-  },
-  {
-    id: "Transferencias",
-    icon: getIconByName("MdCompareArrows"),
-    descriptionUse: "Gestiona tus opciones de transferencia",
-    url: "/",
   },
 ];

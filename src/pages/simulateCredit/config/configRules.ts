@@ -53,4 +53,25 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       { condition: "LoanTerm", value: data.LoanTerm },
     ],
   }),
+  FinancialObligationsUpdateRequired: (data) => ({
+    ruleName: "FinancialObligationsUpdateRequired",
+    conditions: [
+      { condition: "LineOfCredit", value: data.LineOfCredit },
+      { condition: "ClientType", value: data.ClientType },
+    ],
+  }),
+  AdditionalBorrowersAllowedGP: (data) => ({
+    ruleName: "AdditionalBorrowersAllowedGP",
+    conditions: [
+      { condition: "LineOfCredit", value: data.LineOfCredit },
+      { condition: "ClientType", value: data.ClientType },
+    ],
+  }),
+  IncludeExtraordinaryInstallments: (data) => ({
+    ruleName: "IncludeExtraordinaryInstallments",
+    conditions: [
+      { condition: "LineOfCredit", value: data.LineOfCredit },
+      { condition: "ClientType", value: data.ClientType },
+    ],
+  }),
 };
