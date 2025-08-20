@@ -67,7 +67,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     };
 
     handleSubmit();
-  }, [customerData, prospectData]);
+  }, []);
 
   const entries = validateRequirements.map((item, idx) => ({
     id: `${item.requirementName}-${idx}`,
