@@ -133,7 +133,6 @@ export function SimulateCredit() {
       },
     ],
   };
-
   const simulateData = {
     borrowers: [
       Object.keys(formData.borrowerData.borrowers).length === 0
@@ -179,7 +178,6 @@ export function SimulateCredit() {
   const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
     {},
   );
-
   const [creditLineTerms, setCreditLineTerms] = useState<{
     [lineName: string]: {
       LoanAmountLimit: number;
@@ -187,7 +185,6 @@ export function SimulateCredit() {
       RiskFreeInterestRate: number;
     };
   }>({});
-
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
@@ -230,6 +227,12 @@ export function SimulateCredit() {
     return typeof input === "string" || typeof input === "number"
       ? input
       : null;
+  };
+
+  const setFinancialObligationsUpdateRequired = () => {
+    const newToggles = [...formData.togglesState];
+    newToggles[1] = true;
+    handleFormDataChange("togglesState", newToggles);
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
@@ -397,6 +400,9 @@ export function SimulateCredit() {
     const rulesToValidate = [
       "PercentagePayableViaExtraInstallments",
       "IncomeSourceUpdateAllowed",
+      "FinancialObligationsUpdateRequired",
+      "AdditionalBorrowersAllowedGP",
+      "IncludeExtraordinaryInstallments",
     ];
 
     const ruleResults: { [ruleName: string]: string[] } = {};
@@ -409,15 +415,26 @@ export function SimulateCredit() {
           rulesToValidate.map(async (ruleName) => {
             const rule = ruleConfig[ruleName]?.(productData);
             if (!rule) return;
-
-            const result = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            );
-
+            let result;
+            if (
+              rule.ruleName === "FinancialObligationsUpdateRequired" ||
+              rule.ruleName === "AdditionalBorrowersAllowedGP" ||
+              rule.ruleName === "IncludeExtraordinaryInstallments"
+            ) {
+              result = mocksRules(
+                rule,
+                formData.generalToggleChecked,
+                formData.selectedProducts,
+              );
+            } else {
+              result = await evaluateRule(
+                rule,
+                postBusinessUnitRules,
+                "value",
+                businessUnitPublicCode,
+                true,
+              );
+            }
             const normalizedResult = normalizeValues(result);
 
             normalizedResult.forEach((value) => {
@@ -433,6 +450,14 @@ export function SimulateCredit() {
         );
       }),
     );
+
+    if (
+      ruleResults.FinancialObligationsUpdateRequired &&
+      !formData.togglesState[1]
+    ) {
+      ruleResults.FinancialObligationsUpdateRequired.includes("Y") &&
+        setFinancialObligationsUpdateRequired();
+    }
 
     setValueRule(ruleResults);
   }, [
@@ -590,31 +615,17 @@ export function SimulateCredit() {
   );
 
   const handleNextStep = () => {
-    const { togglesState, loanAmountState } = formData;
-
-    const isInExtraBorrowersStep =
-      currentStep === stepsAddProspect.extraBorrowers.id;
-
-    const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === undefined;
-
+    const { togglesState } = formData;
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...[
-        !(isInExtraBorrowersStep && totalIncome !== 0) && showSourcesIncome
-          ? stepsAddProspect.sourcesIncome.id
-          : undefined,
-        !(isInExtraBorrowersStep && totalObligations !== undefined) &&
-        showObligations
-          ? stepsAddProspect.obligationsFinancial.id
-          : undefined,
-      ],
+      stepsAddProspect.sourcesIncome.id,
+      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
-      loanAmountState.toggleChecked
+      formData.loanAmountState.toggleChecked
         ? stepsAddProspect.obligationsCollected.id
         : undefined,
     ].filter((step): step is number => step !== undefined);
@@ -623,7 +634,7 @@ export function SimulateCredit() {
 
     if (
       currentStep === stepsAddProspect.loanAmount.id &&
-      !loanAmountState.toggleChecked
+      !formData.loanAmountState.toggleChecked
     ) {
       handleSubmitClick();
       return;
@@ -636,10 +647,6 @@ export function SimulateCredit() {
       totalIncome === 0
     ) {
       setIsAlertIncome(true);
-      return;
-    }
-    if (currentStep === stepsAddProspect.sourcesIncome.id) {
-      setCurrentStep(stepsAddProspect.obligationsFinancial.id);
       return;
     }
     if (
@@ -665,29 +672,19 @@ export function SimulateCredit() {
 
   const handlePreviousStep = () => {
     const { togglesState } = formData;
-
-    const nextStepWouldBeExtraBorrowers =
-      currentStep === stepsAddProspect.loanConditions.id && togglesState[3];
-
-    const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === undefined;
-
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...[
-        !(nextStepWouldBeExtraBorrowers && totalIncome !== 0) &&
-        showSourcesIncome
-          ? stepsAddProspect.sourcesIncome.id
-          : undefined,
-        !(nextStepWouldBeExtraBorrowers && totalObligations !== undefined) &&
-        showObligations
-          ? stepsAddProspect.obligationsFinancial.id
-          : undefined,
-      ],
+      stepsAddProspect.sourcesIncome.id,
+      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
+      stepsAddProspect.loanAmount.id,
+      formData.loanAmountState.toggleChecked
+        ? stepsAddProspect.obligationsCollected.id
+        : undefined,
     ].filter((step): step is number => step !== undefined);
 
     const currentStepIndex = dynamicSteps.indexOf(currentStep);

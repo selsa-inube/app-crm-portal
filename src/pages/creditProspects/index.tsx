@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdAdd, MdArrowBack } from "react-icons/md";
 import {
   Breadcrumbs,
@@ -6,6 +7,7 @@ import {
   Icon,
   Input,
   Stack,
+  Tag,
   Text,
   useFlag,
   useMediaQuery,
@@ -13,14 +15,17 @@ import {
 
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
-import { TableCreditProspects } from "@pages/creditProspects/components/TableCreditProspects";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
+import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
+import { BaseModal } from "@components/modals/baseModal";
+import { CardGray } from "@components/cards/CardGray";
 
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
+import { CardCreditProspect } from "./components/CardCreditProspect";
 
 export function CreditProspects() {
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -39,6 +44,15 @@ export function CreditProspects() {
   const [prospectSummaryData, setProspectSummaryData] = useState<IProspect[]>(
     [],
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [selectedProspect, setSelectedProspect] = useState<IProspect | null>(
+    null,
+  );
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -100,25 +114,130 @@ export function CreditProspects() {
         </Stack>
       </StyledArrowBack>
       <Fieldset>
-        <Stack direction="column" gap="20px">
-          <Stack justifyContent="space-between" alignItems="center">
+        <Stack direction="column" gap="20px" padding="8px 16px">
+          <Stack
+            justifyContent="space-between"
+            alignItems="center"
+            direction={isMobile ? "column" : "row"}
+            gap="8px"
+          >
             <Input
               id="keyWord"
               label="Buscar"
               placeholder={dataCreditProspects.keyWord}
               type="search"
+              fullwidth={isMobile}
             />
             <Button
               iconBefore={<MdAdd />}
               type="link"
               path="../simulate-credit"
+              fullwidth={isMobile}
             >
               {dataCreditProspects.simulate}
             </Button>
           </Stack>
-          <TableCreditProspects prospectData={prospectSummaryData} />
+          <Stack
+            wrap="wrap"
+            gap="20px"
+            justifyContent={isMobile ? "center" : "flex-start"}
+          >
+            {prospectSummaryData.map((prospect) => (
+              <CardCreditProspect
+                key={prospect.prospectId}
+                title={
+                  MoneyDestinationTranslations.find(
+                    (item) =>
+                      item.Code === prospect.moneyDestinationAbbreviatedName,
+                  )?.Name || prospect.moneyDestinationAbbreviatedName
+                }
+                borrower={prospect.borrowers[0].borrowerName}
+                numProspect={prospect.prospectCode}
+                date={prospect.timeOfCreation}
+                value={prospect.requestedAmount}
+                iconTitle={
+                  MoneyDestinationTranslations.find(
+                    (item) =>
+                      item.Code === prospect.moneyDestinationAbbreviatedName,
+                  )?.Value || "DM_ENUM_EMONEYDESTINATION"
+                }
+                isMobile={isMobile}
+                hasMessage={true}
+                handleMessage={() => {
+                  setSelectedProspect(prospect);
+                  setShowMessageModal(true);
+                }}
+                handleSend={() => setShowConfirmModal(true)}
+                handleEdit={() =>
+                  navigate(`/credit/prospects/${prospect.prospectCode}`)
+                }
+                handleDelete={() => setShowDeleteModal(true)}
+              />
+            ))}
+          </Stack>
         </Stack>
       </Fieldset>
+      {showMessageModal && (
+        <BaseModal
+          title={dataCreditProspects.messageTitle}
+          handleClose={() => setShowMessageModal(false)}
+          handleNext={() => setShowMessageModal(false)}
+          nextButton={dataCreditProspects.understand}
+          width={isMobile ? "300px" : "500px"}
+        >
+          <Stack direction="column" gap="16px">
+            <CardGray
+              label={dataCreditProspects.moneyDesination}
+              placeHolder={
+                <Tag
+                  label={
+                    MoneyDestinationTranslations.find(
+                      (item) =>
+                        item.Code ===
+                        selectedProspect?.moneyDestinationAbbreviatedName,
+                    )?.Name ||
+                    selectedProspect?.moneyDestinationAbbreviatedName ||
+                    ""
+                  }
+                  appearance="gray"
+                />
+              }
+              apparencePlaceHolder="gray"
+              placeHolderTag={true}
+            />
+            <CardGray
+              label={dataCreditProspects.observationProspect}
+              placeHolder={
+                selectedProspect?.selectedRegularPaymentSchedule || ""
+              }
+              apparencePlaceHolder="gray"
+            />
+          </Stack>
+        </BaseModal>
+      )}
+      {showConfirmModal && (
+        <BaseModal
+          title={dataCreditProspects.confirmTitle}
+          handleBack={() => setShowConfirmModal(false)}
+          backButton="Cancelar"
+          nextButton="Confirmar"
+          width={isMobile ? "300px" : "500px"}
+        >
+          <Text>{dataCreditProspects.confirmDescription}</Text>
+        </BaseModal>
+      )}
+      {showDeleteModal && (
+        <BaseModal
+          title={dataCreditProspects.deleteTitle}
+          handleBack={() => setShowDeleteModal(false)}
+          backButton="Cancelar"
+          nextButton="Eliminar"
+          apparenceNext="danger"
+          width={isMobile ? "300px" : "500px"}
+        >
+          <Text>{dataCreditProspects.deleteDescription}</Text>
+        </BaseModal>
+      )}
     </Stack>
   );
 }

@@ -1,6 +1,6 @@
-import { IconType } from "react-icons";
-import * as Icons from "react-icons/md";
 import { Stack, Icon, Text, Grid } from "@inubekit/inubekit";
+
+import { IconText } from "@pages/prospect/components/IconText";
 
 import { StyledMoneyDestinationCard, StyledRadio } from "./styles";
 
@@ -14,14 +14,8 @@ interface MoneyDestinationCardProps {
   handleChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-const getIconComponent = (iconName: string): IconType | null => {
-  const IconComponent = (Icons as Record<string, IconType>)[iconName];
-  return IconComponent || null;
-};
-
 function MoneyDestinationCard(props: MoneyDestinationCardProps) {
   const { id, name, value, label, icon, isSelected, handleChange } = props;
-  const IconComponent = getIconComponent(icon);
 
   return (
     <StyledMoneyDestinationCard>
@@ -42,11 +36,7 @@ function MoneyDestinationCard(props: MoneyDestinationCardProps) {
           checked={isSelected}
         />
         <Stack gap="12px">
-          <Icon
-            appearance="dark"
-            icon={IconComponent && <IconComponent />}
-            size="20px"
-          />
+          <Icon appearance="dark" icon={<IconText icon={icon} />} size="20px" />
           <Text size="medium">{label}</Text>
         </Stack>
       </Grid>
