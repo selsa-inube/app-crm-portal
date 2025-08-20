@@ -23,18 +23,20 @@ export interface IConsolidatedCredit {
 
 export interface IOrdinaryInstallmentsForPrincipal {
   numberOfInstallments: number;
-  schedule: string;
+  installmentFrequency: string;
   installmentAmountForCapital: number;
   installmentAmount: number;
   gradientRate: number;
   gradientValue: number;
-  gradientSchedule: string;
+  gradientFrequency: string;
   firstGradientDate: Date;
   paymentChannelAbbreviatedName: string;
+  humanChannelPaymentDay: number;
 }
 
 export interface IInstallmentsForInterest {
-  schedule: string;
+  humanChannelPaymentDay: number;
+  installmentFrequency: string;
   paymentChannelAbbreviatedName: string;
 }
 
@@ -43,6 +45,7 @@ export interface IExtraordinaryInstallment {
   installmentDate: Date | string;
   installmentAmount: number;
   paymentChannelAbbreviatedName: string;
+  humanChannelPaymentDay?: number;
 }
 
 export interface IExtraordinaryInstallments {
@@ -55,6 +58,7 @@ export interface IAcquiredCashFlow {
   amount: string;
   date: Date;
   paymentChannelAbbreviatedName: string;
+  humanChannelPaymentDay: number;
   flowNumber: number;
 }
 
@@ -62,10 +66,11 @@ export interface ICreditProduct {
   creditProductCode: string;
   loanAmount: number;
   lineOfCreditAbbreviatedName: string;
+  installmentFrequency: string;
+  interestRateDueType: string;
   interestRate: number;
   fixedPoints: number;
   loanTerm: number;
-  schedule: string;
   ordinaryInstallmentsForPrincipal: IOrdinaryInstallmentsForPrincipal[];
   installmentsForInterest: IInstallmentsForInterest[];
   extraordinaryInstallments: IExtraordinaryInstallment[];
@@ -100,6 +105,11 @@ export interface IProspect {
   gracePeriodType: string;
   moneyDestinationAbbreviatedName: string;
   bondValue: number;
+  creditScore: string;
+  modifyJustification: string;
+  clientManagerIdentificationNumber: string;
+  clientManagerName: string;
+  clientManagerObservation: string;
   borrowers: IBorrower[];
   consolidatedCredits: IConsolidatedCredit[];
   linesOfCredit?: ISimulateLineOfCredit[];

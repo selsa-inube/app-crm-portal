@@ -13,7 +13,12 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ICustomerData } from "@context/CustomerContext/types";
 
-import { IncomeEmployment, IncomeCapital, MicroBusinesses } from "./config";
+import {
+  IncomeEmployment,
+  IncomeCapital,
+  MicroBusinesses,
+  getInitialValues,
+} from "./config";
 import { StyledContainer } from "./styles";
 import { dataReport } from "../TableObligationsFinancial/config";
 import { IIncome } from "./types";
@@ -36,7 +41,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     disabled,
     showEdit = true,
     data,
-    customerData,
+    customerData = {} as ICustomerData,
   } = props;
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
@@ -44,28 +49,38 @@ export function SourceIncome(props: ISourceIncomeProps) {
   const isMobile = useMediaQuery("(max-width:880px)");
   const [dataValues, setDataValues] = useState<IIncome | null>(null);
   useEffect(() => {
-    if (data) {
+    if (data && Object.keys(data).length > 0) {
+      const sourceData = data as IIncomeSources;
       const values: IIncome = {
         borrower_id: customerData?.publicCode ?? "",
         borrower: customerData?.fullName ?? "",
         capital: [
-          (data.FinancialIncome ?? 0).toString(),
-          (data.Dividends ?? 0).toString(),
-          (data.Leases ?? 0).toString(),
+          (sourceData.FinancialIncome ?? 0).toString(),
+          (sourceData.Dividends ?? 0).toString(),
+          (sourceData.Leases ?? 0).toString(),
         ],
         employment: [
-          (data.PeriodicSalary ?? 0).toString(),
-          (data.OtherNonSalaryEmoluments ?? 0).toString(),
-          (data.PensionAllowances ?? 0).toString(),
+          (sourceData.PeriodicSalary ?? 0).toString(),
+          (sourceData.OtherNonSalaryEmoluments ?? 0).toString(),
+          (sourceData.PensionAllowances ?? 0).toString(),
         ],
         businesses: [
-          (data.ProfessionalFees ?? 0).toString(),
-          (data.PersonalBusinessUtilities ?? 0).toString(),
+          (sourceData.ProfessionalFees ?? 0).toString(),
+          (sourceData.PersonalBusinessUtilities ?? 0).toString(),
         ],
       };
+
       setDataValues(values);
       setBorrowerIncome(values);
+
       initialValuesRef.current = values;
+    } else {
+      const defaultValues = getInitialValues(customerData);
+
+      setDataValues(defaultValues);
+      setBorrowerIncome(defaultValues);
+
+      initialValuesRef.current = defaultValues;
     }
   }, [data]);
 

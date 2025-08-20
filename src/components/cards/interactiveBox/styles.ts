@@ -4,7 +4,6 @@ import { inube } from "@inubekit/inubekit";
 
 interface IStyledInteractiveBox {
   $isMobile: boolean;
-  $smallScreen?: boolean;
   $isDisabled?: boolean;
 }
 
@@ -12,12 +11,12 @@ const StyledInteractiveBox = styled(Link)<IStyledInteractiveBox>`
   box-sizing: border-box;
   padding: 12px 24px;
 
-  width: ${(props) => (props.$smallScreen ? "100%" : "305px")};
-  min-height: ${(props) => (props.$smallScreen ? "auto" : "100px")};
+  width: ${($isMobile) => ($isMobile ? "100%" : "305px")};
+  min-height: ${($isMobile) => ($isMobile ? "auto" : "100px")};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: ${({ $smallScreen }) => ($smallScreen ? "8px" : 0)};
+  gap: ${({ $isMobile }) => ($isMobile ? "8px" : 0)};
   border-radius: 8px;
   text-decoration: none;
   color: ${({ theme }) =>
@@ -44,7 +43,7 @@ const StyledInteractiveBox = styled(Link)<IStyledInteractiveBox>`
   }
 
   div {
-    gap: ${({ $smallScreen }) => ($smallScreen ? "4px" : "12px")};
+    gap: ${({ $isMobile }) => ($isMobile ? "4px" : "12px")};
   }
 `;
 

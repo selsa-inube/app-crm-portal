@@ -32,7 +32,6 @@ export function ApplyForCredit() {
     useState<IProspectSummaryById>();
 
   const customerPublicCode: string = customerData.publicCode;
-
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -62,6 +61,11 @@ export function ApplyForCredit() {
     gracePeriodType: "",
     moneyDestinationAbbreviatedName: "",
     bondValue: 0,
+    creditScore: "",
+    modifyJustification: "",
+    clientManagerIdentificationNumber: "",
+    clientManagerName: "",
+    clientManagerObservation: "",
     borrowers: [],
     consolidatedCredits: [],
     creditProducts: [],
@@ -185,6 +189,7 @@ export function ApplyForCredit() {
       },
     },
     attachedDocuments: {},
+    observations: { relevantObservations: "" },
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -234,7 +239,7 @@ export function ApplyForCredit() {
       });
   }, [valueRule, hasBorrowers, bondValue]);
 
-  const [currentStep, setCurrentStep] = useState<number>(steps[0]?.id || 1);
+  const [currentStep, setCurrentStep] = useState<number>(8);
 
   const {
     contactInformation,

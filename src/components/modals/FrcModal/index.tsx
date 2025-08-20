@@ -1,4 +1,5 @@
-import { MdQueryStats } from "react-icons/md";
+import { useState } from "react";
+import { MdExpandMore, MdInfoOutline, MdQueryStats } from "react-icons/md";
 import {
   Stack,
   Icon,
@@ -10,12 +11,13 @@ import {
 
 import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
+import { Fieldset } from "@components/data/Fieldset";
 
 import { frcConfig } from "./FrcConfig";
+import { StyledExpanded } from "./styles";
 
 export interface ScoreModalProps {
   handleClose: () => void;
-  title: string;
   subTitle: string;
   totalScore: number;
   seniority: number;
@@ -25,13 +27,15 @@ export interface ScoreModalProps {
   economicActivity: number;
   monthlyIncome: number;
   maxIndebtedness: number;
+  incomeScore: number;
+  maxLimit: number;
+  totalPortafolio: number;
   loading?: boolean;
 }
 
 export const ScoreModal = (props: ScoreModalProps) => {
   const {
     handleClose,
-    totalScore,
     seniority,
     centralRisk,
     employmentStability,
@@ -39,10 +43,15 @@ export const ScoreModal = (props: ScoreModalProps) => {
     economicActivity,
     monthlyIncome,
     maxIndebtedness,
+    incomeScore,
+    maxLimit,
+    totalPortafolio,
     loading,
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <BaseModal
@@ -50,133 +59,194 @@ export const ScoreModal = (props: ScoreModalProps) => {
       nextButton={frcConfig.closeBtn}
       handleNext={handleClose}
       handleClose={handleClose}
-      width={isMobile ? "287px" : "450px"}
-      finalDivider={true}
+      variantNext="outlined"
+      width={isMobile ? "290px" : "500px"}
     >
       <Stack direction="column" gap="16px">
         <Stack direction="column" gap="12px">
-          <Stack gap="8px" alignItems="center">
-            <Icon
-              appearance="primary"
-              icon={<MdQueryStats />}
-              disabled={false}
-              size="34px"
-            />
-            <Text appearance="primary" size="large" type="title">
-              {frcConfig.subTitle}
-            </Text>
-          </Stack>
-          <Divider />
-          <Stack justifyContent="space-between" alignItems="center">
-            <Text appearance="dark" size="large" weight="bold" type="label">
-              {frcConfig.totalScoreLabel}
-            </Text>
-            {loading ? (
-              <SkeletonLine width="70px" animated={true} />
-            ) : (
-              <Stack>
-                <Text
-                  appearance="primary"
-                  weight="bold"
-                  type="body"
-                  size="large"
-                >
-                  {totalScore}
-                </Text>
-                <Text weight="bold" type="body" size="large">
+          <Stack alignItems="center" justifyContent="space-between">
+            <Stack gap="8px">
+              <Icon
+                appearance="primary"
+                icon={<MdQueryStats />}
+                disabled={false}
+                size="34px"
+              />
+              <Text appearance="primary" size="large" type="title">
+                {frcConfig.subTitle}
+              </Text>
+            </Stack>
+            <Stack alignItems="center">
+              <Text
+                type="body"
+                weight="bold"
+                size="medium"
+                appearance="primary"
+              >
+                {frcConfig.scoreLabel}
+              </Text>
+              {loading ? (
+                <SkeletonLine width="70px" animated={true} />
+              ) : (
+                <Text type="body" size="medium">
                   {frcConfig.totalScoreMax}
                 </Text>
-              </Stack>
-            )}
+              )}
+              <StyledExpanded $expanded={isExpanded}>
+                <Icon
+                  icon={<MdExpandMore />}
+                  appearance="primary"
+                  cursorHover
+                  onClick={() => setIsExpanded((prev) => !prev)}
+                />
+              </StyledExpanded>
+            </Stack>
           </Stack>
           <Divider />
-          <Stack justifyContent="space-between" alignItems="center">
-            <Text weight="bold" size="large" type="label">
-              {frcConfig.seniorityLabel}
-            </Text>
-            {loading ? (
-              <SkeletonLine width="70px" animated={true} />
-            ) : (
-              <Stack>
-                <Text appearance="primary" weight="bold" size="large">
-                  {seniority}
+          {isExpanded && (
+            <>
+              <Stack justifyContent="space-between" alignItems="center">
+                <Text weight="bold" size="large" type="label">
+                  {frcConfig.intercept}
                 </Text>
-                <Text weight="bold" type="body" size="large">
-                  {frcConfig.seniorityMax}
-                </Text>
+                {loading ? (
+                  <SkeletonLine width="70px" animated={true} />
+                ) : (
+                  <Stack gap="6px">
+                    <Text appearance="primary" weight="bold" size="large">
+                      {seniority}
+                    </Text>
+                    <Stack margin="4px 0 0 0">
+                      <Icon
+                        icon={<MdInfoOutline />}
+                        appearance="primary"
+                        size="14px"
+                        onClick={() => setShowInfoModal(true)}
+                        cursorHover
+                      />
+                    </Stack>
+                  </Stack>
+                )}
               </Stack>
-            )}
-          </Stack>
-          <Stack justifyContent="space-between" alignItems="center">
-            <Text weight="bold" size="large" type="label">
-              {frcConfig.centralRiskLabel}
-            </Text>
-            {loading ? (
-              <SkeletonLine width="70px" animated={true} />
-            ) : (
-              <Stack>
-                <Text appearance="primary" weight="bold" size="large">
-                  {centralRisk}
+              <Stack justifyContent="space-between" alignItems="center">
+                <Text weight="bold" size="large" type="label">
+                  {frcConfig.seniorityLabel}
                 </Text>
-                <Text weight="bold" type="body" size="large">
-                  {frcConfig.centralRiskMax}
-                </Text>
+                {loading ? (
+                  <SkeletonLine width="70px" animated={true} />
+                ) : (
+                  <Stack gap="6px">
+                    <Text appearance="primary" weight="bold" size="large">
+                      {seniority}
+                    </Text>
+                    <Stack margin="4px 0 0 0">
+                      <Icon
+                        icon={<MdInfoOutline />}
+                        appearance="primary"
+                        size="14px"
+                        onClick={() => setShowInfoModal(true)}
+                        cursorHover
+                      />
+                    </Stack>
+                  </Stack>
+                )}
               </Stack>
-            )}
-          </Stack>
-          <Stack justifyContent="space-between" alignItems="center">
-            <Text weight="bold" size="large" type="label">
-              {frcConfig.employmentStabilityLabel}
-            </Text>
-            {loading ? (
-              <SkeletonLine width="70px" animated={true} />
-            ) : (
-              <Stack>
-                <Text appearance="primary" weight="bold" size="large">
-                  {employmentStability}
+              <Stack justifyContent="space-between" alignItems="center">
+                <Text weight="bold" size="large" type="label">
+                  {frcConfig.centralRiskLabel}
                 </Text>
-                <Text weight="bold" type="body" size="large">
-                  {frcConfig.employmentStabilityMax}
-                </Text>
+                {loading ? (
+                  <SkeletonLine width="70px" animated={true} />
+                ) : (
+                  <Stack gap="6px">
+                    <Text appearance="primary" weight="bold" size="large">
+                      {centralRisk}
+                    </Text>
+                    <Stack margin="4px 0 0 0">
+                      <Icon
+                        icon={<MdInfoOutline />}
+                        appearance="primary"
+                        size="14px"
+                        onClick={() => setShowInfoModal(true)}
+                        cursorHover
+                      />
+                    </Stack>
+                  </Stack>
+                )}
               </Stack>
-            )}
-          </Stack>
-          <Stack justifyContent="space-between" alignItems="center">
-            <Text weight="bold" size="large" type="label">
-              {frcConfig.maritalStatusLabel}
-            </Text>
-            {loading ? (
-              <SkeletonLine width="70px" animated={true} />
-            ) : (
-              <Stack>
-                <Text appearance="primary" weight="bold" size="large">
-                  {maritalStatus}
+              <Stack justifyContent="space-between" alignItems="center">
+                <Text weight="bold" size="large" type="label">
+                  {frcConfig.employmentStabilityLabel}
                 </Text>
-                <Text weight="bold" type="body" size="large">
-                  {frcConfig.maritalStatusMax}
-                </Text>
+                {loading ? (
+                  <SkeletonLine width="70px" animated={true} />
+                ) : (
+                  <Stack gap="6px">
+                    <Text appearance="primary" weight="bold" size="large">
+                      {employmentStability}
+                    </Text>
+                    <Stack margin="4px 0 0 0">
+                      <Icon
+                        icon={<MdInfoOutline />}
+                        appearance="primary"
+                        size="14px"
+                        onClick={() => setShowInfoModal(true)}
+                        cursorHover
+                      />
+                    </Stack>
+                  </Stack>
+                )}
               </Stack>
-            )}
-          </Stack>
-          <Stack justifyContent="space-between" alignItems="center">
-            <Text weight="bold" size="large" type="label">
-              {frcConfig.economicActivityLabel}
-            </Text>
-            {loading ? (
-              <SkeletonLine width="70px" animated={true} />
-            ) : (
-              <Stack>
-                <Text appearance="primary" weight="bold" size="large">
-                  {economicActivity}
+              <Stack justifyContent="space-between" alignItems="center">
+                <Text weight="bold" size="large" type="label">
+                  {frcConfig.maritalStatusLabel}
                 </Text>
-                <Text weight="bold" type="body" size="large">
-                  {frcConfig.economicActivityMax}
-                </Text>
+                {loading ? (
+                  <SkeletonLine width="70px" animated={true} />
+                ) : (
+                  <Stack gap="6px">
+                    <Text appearance="primary" weight="bold" size="large">
+                      {maritalStatus}
+                    </Text>
+                    <Stack margin="4px 0 0 0">
+                      <Icon
+                        icon={<MdInfoOutline />}
+                        appearance="primary"
+                        size="14px"
+                        onClick={() => setShowInfoModal(true)}
+                        cursorHover
+                      />
+                    </Stack>
+                  </Stack>
+                )}
               </Stack>
-            )}
-          </Stack>
+              <Stack justifyContent="space-between" alignItems="center">
+                <Text weight="bold" size="large" type="label">
+                  {frcConfig.economicActivityLabel}
+                </Text>
+                {loading ? (
+                  <SkeletonLine width="70px" animated={true} />
+                ) : (
+                  <Stack gap="6px">
+                    <Text appearance="primary" weight="bold" size="large">
+                      {economicActivity}
+                    </Text>
+                    <Stack margin="4px 0 0 0">
+                      <Icon
+                        icon={<MdInfoOutline />}
+                        appearance="primary"
+                        size="14px"
+                        onClick={() => setShowInfoModal(true)}
+                        cursorHover
+                      />
+                    </Stack>
+                  </Stack>
+                )}
+              </Stack>
+            </>
+          )}
         </Stack>
-        <Divider />
+        <Divider dashed />
         <Stack justifyContent="space-between">
           <Text weight="bold" size="large" type="label">
             {frcConfig.incomesLabel}
@@ -197,38 +267,77 @@ export const ScoreModal = (props: ScoreModalProps) => {
           {loading ? (
             <SkeletonLine width="70px" animated={true} />
           ) : (
-            <Text weight="bold" type="body" size="large">
-              4,67
+            <Text type="body" size="large">
+              x{incomeScore}
             </Text>
           )}
         </Stack>
-        <Divider />
-        <Stack alignItems="center" direction="column" gap="8px">
-          {loading ? (
-            <Text
-              appearance="primary"
-              weight="bold"
-              type="headline"
-              size="large"
-            >
-              {frcConfig.loading}
-            </Text>
-          ) : (
-            <Text
-              appearance="primary"
-              weight="bold"
-              type="headline"
-              size="large"
-            >
-              ${currencyFormat(maxIndebtedness, false)}
-            </Text>
-          )}
+        <Divider dashed />
+        <Stack justifyContent="space-between">
+          <Text weight="bold" size="large" type="label">
+            {frcConfig.maxLimit}
+          </Text>
           <Stack>
-            <Text appearance="gray" size="small" textAlign="center">
-              {frcConfig.maxIndebtedness}
-            </Text>
+            <Text appearance="success">$</Text>
+            {loading ? (
+              <SkeletonLine width="70px" animated={true} />
+            ) : (
+              <Text>{currencyFormat(maxLimit, false)}</Text>
+            )}
           </Stack>
         </Stack>
+        <Stack justifyContent="space-between" alignItems="center">
+          <Text weight="bold" size="large" type="label">
+            {frcConfig.totalPortafolio}
+          </Text>
+          <Stack>
+            <Text appearance="success">$</Text>
+            {loading ? (
+              <SkeletonLine width="70px" animated={true} />
+            ) : (
+              <Text>{currencyFormat(totalPortafolio, false)}</Text>
+            )}
+          </Stack>
+        </Stack>
+        <Fieldset>
+          <Stack alignItems="center" direction="column" gap="8px">
+            {loading ? (
+              <Text
+                appearance="primary"
+                weight="bold"
+                type="headline"
+                size="large"
+              >
+                {frcConfig.loading}
+              </Text>
+            ) : (
+              <Text
+                appearance="primary"
+                weight="bold"
+                type="headline"
+                size="large"
+              >
+                ${currencyFormat(maxIndebtedness, false)}
+              </Text>
+            )}
+            <Stack>
+              <Text appearance="gray" size="small" textAlign="center">
+                {frcConfig.maxIndebtedness}
+              </Text>
+            </Stack>
+          </Stack>
+        </Fieldset>
+        {showInfoModal && (
+          <BaseModal
+            title="Información"
+            nextButton="Entendido"
+            handleClose={() => setShowInfoModal(false)}
+            handleNext={() => setShowInfoModal(false)}
+            width={isMobile ? "290px" : "500px"}
+          >
+            <Text>{frcConfig.loremIpsum}</Text>
+          </BaseModal>
+        )}
       </Stack>
     </BaseModal>
   );

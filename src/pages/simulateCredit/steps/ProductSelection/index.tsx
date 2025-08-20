@@ -34,6 +34,9 @@ interface IProductSelectionProps {
   allRules: {
     PercentagePayableViaExtraInstallments: string[];
     IncomeSourceUpdateAllowed: string[];
+    FinancialObligationsUpdateRequired: string[];
+    AdditionalBorrowersAllowedGP: string[];
+    IncludeExtraordinaryInstallments: string[];
   };
   creditLimitData?: IIncomeSources;
   creditLineTerms: ICreditLineTerms;
@@ -55,7 +58,6 @@ export function ProductSelection(props: IProductSelectionProps) {
     creditLimitData,
     creditLineTerms,
   } = props;
-
   const validationSchema = Yup.object().shape({
     selectedProducts: Yup.array().when("generalToggleChecked", {
       is: (value: boolean) => value === false,
@@ -97,13 +99,48 @@ export function ProductSelection(props: IProductSelectionProps) {
     (allRules.IncomeSourceUpdateAllowed || []).length > 0 &&
     allRules.IncomeSourceUpdateAllowed.every((value) => value === "Y");
 
+  const validateIfQuestionIsIntoRules = (key: string) => {
+    if (
+      (key === "includeAditionalBorrowers" &&
+        !allRules.AdditionalBorrowersAllowedGP.includes("Y")) ||
+      (!allRules.IncludeExtraordinaryInstallments.includes("Y") &&
+        !generalToggleChecked)
+    ) {
+      return false;
+    }
+    return true;
+  };
   const isQuestionDisabled = (key: string) => {
+    if (
+      key === "includeAditionalBorrowers" &&
+      allRules.AdditionalBorrowersAllowedGP.every((value) => value !== "Y") &&
+      generalToggleChecked
+    ) {
+      return true;
+    }
+    if (
+      key === "includeExtraordinaryInstallments" &&
+      allRules.IncludeExtraordinaryInstallments.every(
+        (value) => value !== "Y",
+      ) &&
+      generalToggleChecked
+    ) {
+      return true;
+    }
+
+    if (
+      key === "includeAditionalBorrowers" ||
+      key === "includeExtraordinaryInstallments"
+    ) {
+      return !validateIfQuestionIsIntoRules(key);
+    }
     if (key === "includeExtraordinaryInstallments") {
       return !shouldShowPrograming;
     }
     if (key === "updateIncomeSources" || key === "updateFinancialObligations") {
       return !shouldShowIncomeUpdate;
     }
+
     return false;
   };
 
@@ -112,7 +149,6 @@ export function ProductSelection(props: IProductSelectionProps) {
   );
 
   const [fullRules, setFullRules] = useState(allRules);
-
   useEffect(() => {
     setFullRules(allRules);
   }, [choiceMoneyDestination]);
@@ -132,6 +168,14 @@ export function ProductSelection(props: IProductSelectionProps) {
     ) {
       return false;
     }
+
+    if (
+      key === "updateFinancialObligations" &&
+      fullRules.FinancialObligationsUpdateRequired.includes("Y")
+    ) {
+      return false;
+    }
+
     return true;
   });
 

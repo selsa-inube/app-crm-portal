@@ -15,8 +15,7 @@ export const headers: {
 }[] = [
   { label: "Deudor", key: "borrower" },
   { label: "Documento solicitado", key: "value" },
-  { label: "Adjunto", key: "attached" },
-  { label: "Acciones", key: "actions", action: true },
+  { label: "Adjuntar", key: "actions", action: true },
 ];
 
 export const dataReport = {
