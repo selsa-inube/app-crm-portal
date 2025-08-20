@@ -472,6 +472,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       requestValue={requestValue}
                       setRequestValue={setRequestValue}
+                      obligationPayments={obligationPayments}
                     />
                   )}
                 {currentStepsNumber &&

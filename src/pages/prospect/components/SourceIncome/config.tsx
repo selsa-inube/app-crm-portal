@@ -1,4 +1,7 @@
 import { IncomeCard } from "@components/cards/IncomeCard";
+import { ICustomerData } from "@context/CustomerContext/types";
+
+import { IIncome } from "./types";
 
 interface IncomeProps {
   values: string[];
@@ -76,4 +79,14 @@ function MicroBusinesses({
   );
 }
 
-export { IncomeCapital, IncomeEmployment, MicroBusinesses };
+function getInitialValues(customerData: ICustomerData) {
+  return {
+    borrower_id: customerData?.publicCode ?? "",
+    borrower: customerData?.fullName ?? "",
+    capital: ["0", "0", "0"],
+    employment: ["0", "0", "0"],
+    businesses: ["0", "0"],
+  } as IIncome;
+}
+
+export { IncomeCapital, IncomeEmployment, MicroBusinesses, getInitialValues };
