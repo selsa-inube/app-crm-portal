@@ -8,8 +8,8 @@ import { CardProductSelection } from "@pages/simulateCredit/components/CardProdu
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
 
+import { ICreditLineTerms, IServicesProductSelection } from "../../types";
 import { electionData } from "./config";
-import { ICreditLineTerms } from "../../types";
 
 interface IProductSelectionProps {
   initialValues: {
@@ -26,11 +26,7 @@ interface IProductSelectionProps {
   handleFormDataChange: (key: string, value: unknown) => void;
   isMobile: boolean;
   choiceMoneyDestination: string;
-  allRules: {
-    FinancialObligationsUpdateRequired: string[];
-    AdditionalBorrowersAllowedGP: string[];
-    IncludeExtraordinaryInstallments: string[];
-  };
+  servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
 }
 
@@ -45,7 +41,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     onFormValid,
     handleFormDataChange,
     isMobile,
-    allRules,
+    servicesQuestion,
     choiceMoneyDestination,
     creditLineTerms,
   } = props;
@@ -86,9 +82,9 @@ export function ProductSelection(props: IProductSelectionProps) {
     ([key, question], index) => ({ key, question, index }),
   );
 
-  const [fullRules, setFullRules] = useState(allRules);
+  const [fullRules, setFullRules] = useState(servicesQuestion);
   useEffect(() => {
-    setFullRules(allRules);
+    setFullRules(servicesQuestion);
   }, [choiceMoneyDestination]);
 
   const getQuestionState = (values: string[]) => {
@@ -104,13 +100,13 @@ export function ProductSelection(props: IProductSelectionProps) {
     let state = "hidden";
 
     if (key === "includeExtraordinaryInstallments") {
-      state = getQuestionState(fullRules.IncludeExtraordinaryInstallments);
+      state = getQuestionState(fullRules.extraInstallement);
     }
     if (key === "updateFinancialObligations") {
-      state = getQuestionState(fullRules.FinancialObligationsUpdateRequired);
+      state = getQuestionState(fullRules.financialObligation);
     }
     if (key === "includeAditionalBorrowers") {
-      state = getQuestionState(fullRules.AdditionalBorrowersAllowedGP);
+      state = getQuestionState(fullRules.aditionalBorrowers);
     }
 
     return state !== "hidden";
@@ -118,21 +114,13 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   const isQuestionDisabled = (key: string) => {
     if (key === "includeExtraordinaryInstallments") {
-      return (
-        getQuestionState(fullRules.IncludeExtraordinaryInstallments) ===
-        "disabled"
-      );
+      return getQuestionState(fullRules.extraInstallement) === "disabled";
     }
     if (key === "updateFinancialObligations") {
-      return (
-        getQuestionState(fullRules.FinancialObligationsUpdateRequired) ===
-        "disabled"
-      );
+      return getQuestionState(fullRules.financialObligation) === "disabled";
     }
     if (key === "includeAditionalBorrowers") {
-      return (
-        getQuestionState(fullRules.AdditionalBorrowersAllowedGP) === "disabled"
-      );
+      return getQuestionState(fullRules.aditionalBorrowers) === "disabled";
     }
     return false;
   };

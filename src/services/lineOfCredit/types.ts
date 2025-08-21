@@ -17,6 +17,14 @@ export interface ILinesOfCreditByMoneyDestination {
   conditions: ICondition[];
 }
 
-export interface ILinesOfCreditByMoneyDestinationResponse {
+export interface IAdditionalBorrowersAllowedResponse {
   additionalBorowersAllowed: string;
+}
+
+export interface IExtraInstallmentsAllowedResponse {
+  extraInstallmentsAllowed: string;
+}
+
+export interface IFinancialObligationsUpdateResponse {
+  financialObligationsUpdateRequired: string;
 }

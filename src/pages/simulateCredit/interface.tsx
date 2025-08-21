@@ -35,6 +35,7 @@ import {
   StepDetails,
   titleButtonTextAssited,
   ICreditLineTerms,
+  IServicesProductSelection,
 } from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
@@ -122,6 +123,7 @@ interface SimulateCreditUIProps {
   isAlertIncome: boolean;
   codeError: number | null;
   addToFix: string[];
+  servicesProductSelection: IServicesProductSelection;
   paymentCapacity?: IPaymentCapacityResponse | null;
 }
 
@@ -167,6 +169,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     isAlertIncome,
     codeError,
     addToFix,
+    servicesProductSelection,
     formState,
     setFormState,
     paymentCapacity,
@@ -357,15 +360,13 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       onFormValid={setIsCurrentFormValid}
                       isMobile={isMobile}
                       choiceMoneyDestination={formData.selectedDestination}
-                      allRules={{
-                        FinancialObligationsUpdateRequired: [
-                          "Y",
-                          "Y",
-                          "Y",
-                          "Y",
-                        ],
-                        AdditionalBorrowersAllowedGP: ["Y"],
-                        IncludeExtraordinaryInstallments: ["Y"],
+                      servicesQuestion={{
+                        financialObligation:
+                          servicesProductSelection.financialObligation,
+                        aditionalBorrowers:
+                          servicesProductSelection.aditionalBorrowers,
+                        extraInstallement:
+                          servicesProductSelection.extraInstallement,
                       }}
                       creditLineTerms={creditLineTerms!}
                     />

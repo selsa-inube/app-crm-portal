@@ -4,13 +4,13 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { ILinesOfCreditByMoneyDestinationResponse } from "../types";
+import { IFinancialObligationsUpdateResponse } from "../types";
 
 export const getFinancialObligationsUpdate = async (
   businessUnitPublicCode: string,
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
-): Promise<ILinesOfCreditByMoneyDestinationResponse | null> => {
+): Promise<IFinancialObligationsUpdateResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {

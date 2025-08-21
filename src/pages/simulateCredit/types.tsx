@@ -114,6 +114,12 @@ export interface ICondition {
   value: string | number;
 }
 
+export interface IServicesProductSelection {
+  financialObligation: string[];
+  aditionalBorrowers: string[];
+  extraInstallement: string[];
+}
+
 export interface Irule {
   ruleName: string;
   conditions: ICondition[];

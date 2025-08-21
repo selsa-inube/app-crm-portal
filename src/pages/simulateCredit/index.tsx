@@ -21,9 +21,16 @@ import {
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
+import { getFinancialObligationsUpdate } from "@services/lineOfCredit/getFinancialObligationsUpdate";
+import { getAdditionalBorrowersAllowed } from "@services/lineOfCredit/getAdditionalBorrowersAllowed";
+import { getExtraInstallmentsAllowed } from "@services/lineOfCredit/getExtraInstallmentsAllowed";
 
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData, titleButtonTextAssited } from "./types";
+import {
+  IFormData,
+  IServicesProductSelection,
+  titleButtonTextAssited,
+} from "./types";
 import { SimulateCreditUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
@@ -55,6 +62,15 @@ export function SimulateCredit() {
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
   );
+  const [servicesProductSelection, setServicesProductSelection] = useState<{
+    financialObligation: string[];
+    aditionalBorrowers: string[];
+    extraInstallement: string[];
+  } | null>({
+    financialObligation: [""],
+    aditionalBorrowers: [""],
+    extraInstallement: [""],
+  });
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
@@ -316,6 +332,65 @@ export function SimulateCredit() {
     formData.selectedProducts,
   ]);
 
+  const fetchRulesByProducts = useCallback(async () => {
+    if (!formData.selectedProducts || formData.selectedProducts.length === 0)
+      return;
+
+    try {
+      const results = await Promise.all(
+        formData.selectedProducts.map(async (product) => {
+          const [financial, borrowers, extra] = await Promise.all([
+            getFinancialObligationsUpdate(
+              businessUnitPublicCode,
+              product,
+              customerData.publicCode,
+            ),
+            getAdditionalBorrowersAllowed(
+              businessUnitPublicCode,
+              product,
+              customerData.publicCode,
+            ),
+            getExtraInstallmentsAllowed(
+              businessUnitPublicCode,
+              product,
+              customerData.publicCode,
+            ),
+          ]);
+
+          return {
+            product,
+            financialObligation:
+              financial?.financialObligationsUpdateRequired ?? "N",
+            aditionalBorrowers: borrowers?.additionalBorowersAllowed ?? "N",
+            extraInstallement: extra?.extraInstallmentsAllowed ?? "N",
+          };
+        }),
+      );
+
+      setServicesProductSelection({
+        financialObligation: results.map(
+          (result) => result.financialObligation,
+        ),
+        aditionalBorrowers: results.map((result) => result.aditionalBorrowers),
+        extraInstallement: results.map((result) => result.extraInstallement),
+      });
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      addFlag({
+        title: tittleOptions.titleError,
+        description,
+        appearance: "danger",
+        duration: 5000,
+      });
+    }
+  }, [formData.selectedProducts]);
+
   const fetchDataClientPortfolio = async () => {
     if (!customerPublicCode) {
       return;
@@ -488,13 +563,13 @@ export function SimulateCredit() {
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
     }
-    // if (
-    //   currentStep === stepsAddProspect.sourcesIncome.id &&
-    //   totalIncome === 0
-    // ) {
-    //   setIsAlertIncome(true);
-    //   return;
-    // }
+    if (
+      currentStep === stepsAddProspect.sourcesIncome.id &&
+      totalIncome === 0
+    ) {
+      setIsAlertIncome(true);
+      return;
+    }
     if (currentStep === stepsAddProspect.productSelection.id) {
       setCurrentStep(dynamicSteps[0]);
     } else if (
@@ -607,7 +682,9 @@ export function SimulateCredit() {
     }
   }, [clientPortfolio]);
 
-  // console.log("formData", formData);
+  useEffect(() => {
+    fetchRulesByProducts();
+  }, [formData.selectedProducts, fetchRulesByProducts]);
 
   return (
     <>
@@ -655,6 +732,9 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
+        servicesProductSelection={
+          servicesProductSelection as IServicesProductSelection
+        }
         paymentCapacity={paymentCapacity}
       />
       {showConsultingModal && <Consulting />}
