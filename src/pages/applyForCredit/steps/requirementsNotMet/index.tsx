@@ -39,8 +39,8 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
       setIsLoading(true);
       try {
         const data = await patchValidateRequirements(
-          payload,
           businessUnitPublicCode,
+          payload,
         );
         if (data) {
           setValidateRequirements(data);

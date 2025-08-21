@@ -58,8 +58,8 @@ export function RequirementsModal(props: IRequirementsModalProps) {
       setIsLoading(true);
       try {
         const data = await patchValidateRequirements(
-          payload,
           businessUnitPublicCode,
+          payload,
         );
         if (data) {
           setValidateRequirements(data);
