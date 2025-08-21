@@ -14,10 +14,12 @@ export interface IShareCreditModalProps {
   isMobile: boolean;
   prospectId: string;
   pdf: string | null;
+  businessUnitPublicCode: string;
 }
 
 export function ShareCreditModal(props: IShareCreditModalProps) {
-  const { handleClose, isMobile, prospectId, pdf } = props;
+  const { handleClose, isMobile, prospectId, pdf, businessUnitPublicCode } =
+    props;
 
   const initialValues = {
     name: "",
@@ -64,7 +66,7 @@ export function ShareCreditModal(props: IShareCreditModalProps) {
     };
 
     try {
-      await patchShareCreditProspect("text", payload);
+      await patchShareCreditProspect(businessUnitPublicCode, payload);
       handleClose();
       handleFlag(false);
     } catch (error) {

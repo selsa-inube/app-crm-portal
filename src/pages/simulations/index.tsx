@@ -269,6 +269,7 @@ export function Simulations() {
       requestValue={requestValue}
       sentData={sentData}
       setSentData={setSentData}
+      businessUnitPublicCode={businessUnitPublicCode}
     />
   );
 }

@@ -23,10 +23,17 @@ export interface IRequirementsModalProps {
   isMobile: boolean;
   customerData: ICustomerData;
   prospectData: IProspect;
+  businessUnitPublicCode: string;
 }
 
 export function RequirementsModal(props: IRequirementsModalProps) {
-  const { isMobile, customerData, prospectData, handleClose } = props;
+  const {
+    isMobile,
+    customerData,
+    prospectData,
+    handleClose,
+    businessUnitPublicCode,
+  } = props;
 
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
@@ -50,7 +57,10 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
-        const data = await patchValidateRequirements(payload);
+        const data = await patchValidateRequirements(
+          businessUnitPublicCode,
+          payload,
+        );
         if (data) {
           setValidateRequirements(data);
         }

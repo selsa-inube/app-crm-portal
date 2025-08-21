@@ -4,6 +4,7 @@ import { IOption, useMediaQuery } from "@inubekit/inubekit";
 
 import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
 
 import { CustomerUI } from "./interface";
 
@@ -11,13 +12,12 @@ export function Customer() {
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
-
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
-
   const selectRef = useRef<HTMLDivElement | null>(null);
-
+  const { businessUnitSigla } = useContext(AppContext);
   const isMobile = useMediaQuery("(max-width:880px)");
-
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
   const handleSearch = async (value: string) => {
     if (value.length < 3) {
       setOptions([]);
@@ -26,9 +26,9 @@ export function Customer() {
 
     let response = null;
     if (/^\d+$/.test(value)) {
-      response = await getCustomerCatalog("test", "", value);
+      response = await getCustomerCatalog(businessUnitPublicCode, "", value);
     } else if (/^[A-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
-      response = await getCustomerCatalog("test", value, "");
+      response = await getCustomerCatalog(businessUnitPublicCode, value, "");
     }
 
     if (response && Array.isArray(response) && response.length > 0) {

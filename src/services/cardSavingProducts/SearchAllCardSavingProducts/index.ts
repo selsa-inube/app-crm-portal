@@ -25,7 +25,7 @@ const getAllInternalAccounts = async (
         method: "GET",
         headers: {
           "X-Action": "SearchAllCardSavingProducts",
-          "X-Business-Unit": "fondecom",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
@@ -42,9 +42,7 @@ const getAllInternalAccounts = async (
         throw new Error("No hay datos disponibles.");
       }
 
-      console.log(businessUnitPublicCode);
       const data = await res.json();
-
       if (!res.ok) {
         throw {
           message: "Error al obtener los datos de las cuentas internas.",

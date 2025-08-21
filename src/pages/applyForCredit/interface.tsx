@@ -77,6 +77,7 @@ interface ApplyForCreditUIProps {
   handlePreviousStep: () => void;
   handleSubmitClick: () => void;
   handleSubmit: () => void;
+  businessUnitPublicCode: string;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   prospectData: IProspect;
   customerData?: ICustomerData;
@@ -111,6 +112,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     customerData,
     codeError,
     addToFix,
+    businessUnitPublicCode,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -232,6 +234,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     isMobile={isMobile}
                     customerData={customerData}
                     prospectData={prospectData}
+                    businessUnitPublicCode={businessUnitPublicCode}
                   />
                 )}
               {currentStepsNumber &&

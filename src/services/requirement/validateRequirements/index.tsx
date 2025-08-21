@@ -10,6 +10,7 @@ import {
 } from "../types";
 
 export const patchValidateRequirements = async (
+  businessUnitPublicCode: string,
   validataRequirements: IPatchValidateRequirementsPayload,
 ): Promise<IValidateRequirement[] | undefined> => {
   const maxRetries = maxRetriesServices;
@@ -24,7 +25,7 @@ export const patchValidateRequirements = async (
         method: "PATCH",
         headers: {
           "X-Action": "ValidateRequirements",
-          "X-Business-Unit": "fondecom",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         body: JSON.stringify(validataRequirements),
