@@ -21,12 +21,12 @@ export const getFinancialObligationsUpdate = async (
         method: "GET",
         headers: {
           "X-Action": "FinancialObligationsUpdateRequired",
-          "X-Business-Unit": "test",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
       };
-      console.log(businessUnitPublicCode);
+
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/financial-obligation-update/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}`,
         options,

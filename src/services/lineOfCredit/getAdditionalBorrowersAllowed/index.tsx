@@ -21,12 +21,12 @@ export const getAdditionalBorrowersAllowed = async (
         method: "GET",
         headers: {
           "X-Action": "AdditionalBorrowersAllowed",
-          "X-Business-Unit": "test",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
       };
-      console.log(businessUnitPublicCode);
+
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/additional-borrowers-allowed/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}`,
         options,
