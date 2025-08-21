@@ -5,7 +5,7 @@ interface ICondition {
   valueUse: string;
 }
 
-interface ILinesOfCreditByMoneyDestination {
+export interface ILinesOfCreditByMoneyDestination {
   name: string;
   dataType: string;
   value: string;
@@ -17,4 +17,6 @@ interface ILinesOfCreditByMoneyDestination {
   conditions: ICondition[];
 }
 
-export type { ILinesOfCreditByMoneyDestination };
+export interface ILinesOfCreditByMoneyDestinationResponse {
+  additionalBorowersAllowed: string;
+}

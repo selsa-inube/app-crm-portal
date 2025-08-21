@@ -21,10 +21,9 @@ import {
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
-import { mocksRules } from "@mocks/businessRules";
 
 import { stepsAddProspect } from "./config/addProspect.config";
-import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
+import { IFormData, titleButtonTextAssited } from "./types";
 import { SimulateCreditUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
@@ -38,7 +37,6 @@ export function SimulateCredit() {
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isAlertIncome, setIsAlertIncome] = useState(false);
-  const [isAlertObligation, setIsAlertObligation] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
   const [isCreditLimitWarning, setIsCreditLimitWarning] = useState(false);
@@ -176,9 +174,6 @@ export function SimulateCredit() {
   };
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
-    {},
-  );
   const [creditLineTerms, setCreditLineTerms] = useState<{
     [lineName: string]: {
       LoanAmountLimit: number;
@@ -186,26 +181,6 @@ export function SimulateCredit() {
       RiskFreeInterestRate: number;
     };
   }>({});
-  const getRuleByName = useCallback(
-    (ruleName: string) => {
-      const raw = valueRule?.[ruleName] || [];
-      return (
-        raw
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((v: any) => (typeof v === "string" ? v : v?.value))
-          .filter(Boolean)
-      );
-    },
-    [valueRule],
-  );
-
-  const getAllDataRuleByName = useCallback(
-    (ruleName: string) => {
-      const raw = valueRule?.[ruleName] || [];
-      return raw;
-    },
-    [valueRule],
-  );
 
   type RuleEvaluationResult = {
     value: number | string;
@@ -228,12 +203,6 @@ export function SimulateCredit() {
     return typeof input === "string" || typeof input === "number"
       ? input
       : null;
-  };
-
-  const setFinancialObligationsUpdateRequired = () => {
-    const newToggles = [...formData.togglesState];
-    newToggles[1] = true;
-    handleFormDataChange("togglesState", newToggles);
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
@@ -347,127 +316,6 @@ export function SimulateCredit() {
     formData.selectedProducts,
   ]);
 
-  const fetchCreditLinePermissions = useCallback(async () => {
-    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    if (!clientInfo?.associateType) return;
-
-    const baseDataRules = {
-      MoneyDestination: formData.selectedDestination,
-      ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      EmploymentContractTermType:
-        clientInfo.employmentType?.substring(0, 2) || "",
-      AffiliateSeniority: getMonthsElapsed(
-        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-        0,
-      ),
-    };
-
-    const normalizeValues = (values: RuleValue[] | RuleValue): string[] => {
-      if (Array.isArray(values)) {
-        return values
-          .map((v) => {
-            if (typeof v === "string") return v;
-            if (v && typeof v === "object" && "value" in v) return v.value;
-            return "";
-          })
-          .filter(Boolean);
-      }
-
-      if (typeof values === "string") return [values];
-      if (values && typeof values === "object" && "value" in values)
-        return [values.value];
-      return [];
-    };
-
-    let linesToProcess: string[] = [];
-
-    if (formData.selectedProducts && formData.selectedProducts.length > 0) {
-      linesToProcess = [...formData.selectedProducts];
-    } else {
-      const lineOfCreditRule = ruleConfig["LineOfCredit"]?.(baseDataRules);
-      const lineOfCreditValues: RuleValue[] | RuleValue = lineOfCreditRule
-        ? await evaluateRule(
-            lineOfCreditRule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            true,
-          )
-        : [];
-
-      linesToProcess = normalizeValues(lineOfCreditValues);
-    }
-
-    const rulesToValidate = [
-      "PercentagePayableViaExtraInstallments",
-      "IncomeSourceUpdateAllowed",
-      "FinancialObligationsUpdateRequired",
-      "AdditionalBorrowersAllowedGP",
-      "IncludeExtraordinaryInstallments",
-    ];
-
-    const ruleResults: { [ruleName: string]: string[] } = {};
-
-    await Promise.all(
-      linesToProcess.map(async (lineOfCredit) => {
-        const productData = { ...baseDataRules, LineOfCredit: lineOfCredit };
-
-        await Promise.all(
-          rulesToValidate.map(async (ruleName) => {
-            const rule = ruleConfig[ruleName]?.(productData);
-            if (!rule) return;
-            let result;
-            if (
-              rule.ruleName === "FinancialObligationsUpdateRequired" ||
-              rule.ruleName === "AdditionalBorrowersAllowedGP" ||
-              rule.ruleName === "IncludeExtraordinaryInstallments"
-            ) {
-              result = mocksRules(
-                rule,
-                formData.generalToggleChecked,
-                formData.selectedProducts,
-              );
-            } else {
-              result = await evaluateRule(
-                rule,
-                postBusinessUnitRules,
-                "value",
-                businessUnitPublicCode,
-                true,
-              );
-            }
-            const normalizedResult = normalizeValues(result);
-
-            normalizedResult.forEach((value) => {
-              if (value) {
-                if (!ruleResults[ruleName]) {
-                  ruleResults[ruleName] = [value];
-                } else if (!ruleResults[ruleName].includes(value)) {
-                  ruleResults[ruleName].push(value);
-                }
-              }
-            });
-          }),
-        );
-      }),
-    );
-
-    if (
-      ruleResults.FinancialObligationsUpdateRequired &&
-      !formData.togglesState[1]
-    ) {
-      ruleResults.FinancialObligationsUpdateRequired.includes("Y") &&
-        setFinancialObligationsUpdateRequired();
-    }
-
-    setValueRule(ruleResults);
-  }, [
-    customerData,
-    businessUnitPublicCode,
-    formData.selectedDestination,
-    formData.selectedProducts,
-  ]);
-
   const fetchDataClientPortfolio = async () => {
     if (!customerPublicCode) {
       return;
@@ -565,7 +413,6 @@ export function SimulateCredit() {
   useEffect(() => {
     if (customerData) {
       fetchCreditLineTerms();
-      fetchCreditLinePermissions();
     }
   }, [customerData, fetchCreditLineTerms]);
 
@@ -593,8 +440,6 @@ export function SimulateCredit() {
     (creditLimitData?.PeriodicSalary ?? 0) +
     (creditLimitData?.PersonalBusinessUtilities ?? 0) +
     (creditLimitData?.ProfessionalFees ?? 0);
-
-  const totalObligations = clientPortfolio?.obligations;
 
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -643,20 +488,13 @@ export function SimulateCredit() {
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
     }
-    if (
-      currentStep === stepsAddProspect.sourcesIncome.id &&
-      totalIncome === 0
-    ) {
-      setIsAlertIncome(true);
-      return;
-    }
-    if (
-      currentStep === stepsAddProspect.obligationsFinancial.id &&
-      totalObligations === undefined
-    ) {
-      setIsAlertObligation(true);
-      return;
-    }
+    // if (
+    //   currentStep === stepsAddProspect.sourcesIncome.id &&
+    //   totalIncome === 0
+    // ) {
+    //   setIsAlertIncome(true);
+    //   return;
+    // }
     if (currentStep === stepsAddProspect.productSelection.id) {
       setCurrentStep(dynamicSteps[0]);
     } else if (
@@ -769,6 +607,8 @@ export function SimulateCredit() {
     }
   }, [clientPortfolio]);
 
+  // console.log("formData", formData);
+
   return (
     <>
       <SimulateCreditUI
@@ -785,8 +625,6 @@ export function SimulateCredit() {
         setIsCurrentFormValid={setIsCurrentFormValid}
         handleNextStep={handleNextStep}
         handlePreviousStep={handlePreviousStep}
-        getAllDataRuleByName={getAllDataRuleByName}
-        getRuleByName={getRuleByName}
         setCurrentStep={setCurrentStep}
         setIsCreditLimitWarning={setIsCreditLimitWarning}
         isCreditLimitWarning={isCreditLimitWarning}
@@ -811,9 +649,7 @@ export function SimulateCredit() {
         obligationPayments={obligationPayment as IPayment[]}
         assistedButtonText={assistedButtonText}
         isAlertIncome={isAlertIncome}
-        isAlertObligation={isAlertObligation}
         setIsAlertIncome={setIsAlertIncome}
-        setIsAlertObligation={setIsAlertObligation}
         codeError={codeError}
         addToFix={addToFix}
         navigate={navigate}
