@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { FormikValues } from "formik";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   Stack,
@@ -24,11 +25,11 @@ import { GeneralInformationForm } from "@pages/applyForCredit/components/General
 import { IDisbursementGeneral } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
+
 interface IDisbursementWithCashProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: any;
+  formik: FormikValues;
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;

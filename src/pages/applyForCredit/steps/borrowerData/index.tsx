@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { MdAdd } from "react-icons/md";
-import { useFormik } from "formik";
+import { FormikValues, useFormik } from "formik";
 import { Stack, Button } from "@inubekit/inubekit";
 
 import { CardBorrower } from "@components/cards/CardBorrower";
@@ -15,8 +15,8 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { IBorrowerProperty } from "@services/creditLimit/types";
-import { IBorrowerData } from "@pages/applyForCredit/types";
-import { IProspectBorrower } from "@services/prospect/types";
+import { IBorrowerData, IDebtorDetail } from "@pages/applyForCredit/types";
+import { IProspect, IProspectBorrower } from "@services/prospect/types";
 
 import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
@@ -24,8 +24,7 @@ import { borrowerData } from "./config";
 
 interface borrowersProps {
   onFormValid: (isValid: boolean) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleOnChange: (values: any) => void;
+  handleOnChange: (values: IProspect | FormikValues) => void;
   onUpdate?: (updatedBorrower: Borrower) => void;
   prospectData: IProspectBorrower;
   initialValues: IBorrowerData;
@@ -33,7 +32,7 @@ interface borrowersProps {
   valueRule: string[];
 }
 
-interface Borrower {
+export interface Borrower {
   borrowerIdentificationNumber: string;
   borrowerIdentificationType: string;
   borrowerName: string;
@@ -52,8 +51,7 @@ export function Borrowers(props: borrowersProps) {
   const [isModalEdit, setIsModalEdit] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isModalDelete, setIsModalDelete] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [selectedBorrower, setSelectedBorrower] = useState<any>(null);
+  const [selectedBorrower, setSelectedBorrower] = useState<IDebtorDetail>();
 
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -98,14 +96,12 @@ export function Borrowers(props: borrowersProps) {
         <StyledContainer>
           <Stack wrap="wrap" gap="16px">
             {formik.values.borrowers
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .filter((item: any) =>
+              .filter((item: FormikValues) =>
                 valueRule.includes("Codeudor")
                   ? item.borrowerType !== "MainBorrower"
                   : true,
               )
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .map((item: any, index: number) => (
+              .map((item: FormikValues, index: number) => (
                 <CardBorrower
                   key={index}
                   title={
@@ -146,7 +142,7 @@ export function Borrowers(props: borrowersProps) {
                     false,
                   )}
                   handleView={() => {
-                    setSelectedBorrower(item);
+                    setSelectedBorrower(item as IDebtorDetail);
                     setIsModalView(true);
                     setIsModalView(true);
                   }}
@@ -178,7 +174,7 @@ export function Borrowers(props: borrowersProps) {
                     : dataSubmitApplication.borrowers.borrowerLabel
                 }
                 businessUnitPublicCode={businessUnitPublicCode}
-                prospectData={prospectData}
+                prospectData={prospectData as IProspect}
                 onAddBorrower={(newBorrower) => {
                   const updatedBorrowers = [
                     ...formik.values.borrowers,

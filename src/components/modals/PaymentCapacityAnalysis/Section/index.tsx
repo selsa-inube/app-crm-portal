@@ -41,7 +41,7 @@ const FieldsetSection = (props: IFieldsetSection) => {
   const { legend, items, isMobile } = props;
 
   return (
-    <Fieldset legend={legend} type="body" size={isMobile ? "small" : "medium"}>
+    <Fieldset legend={legend} type="body" size="medium">
       <Stack direction="column" width="100%" gap="8px">
         <Stack justifyContent="space-between">
           <Text type="body" size={isMobile ? "small" : "medium"}>

@@ -21,6 +21,10 @@ import {
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 
+import { IBorrower, IProspect } from "@services/prospect/types";
+import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
+import { mocksRules } from "@mocks/businessRules";
+
 import { stepsAddProspect } from "./config/addProspect.config";
 import { IFormData, RuleValue, titleButtonTextAssited } from "./types";
 import { SimulateCreditUI } from "./interface";
@@ -132,12 +136,11 @@ export function SimulateCredit() {
       },
     ],
   };
-
-  const simulateData = {
+  const simulateData: IProspect = {
     borrowers: [
       Object.keys(formData.borrowerData.borrowers).length === 0
         ? onlyBorrowerData
-        : formData.borrowerData.borrowers,
+        : (formData.borrowerData.borrowers as unknown as IBorrower),
     ],
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
@@ -160,9 +163,9 @@ export function SimulateCredit() {
     firstPaymentCycleDate: "2025-06-15T15:04:05Z",
     extraordinaryInstallments: Array.isArray(formData.extraordinaryInstallments)
       ? formData.extraordinaryInstallments.map((item) => ({
-          installmentAmount: item.value,
-          installmentDate: item.datePayment,
-          paymentChannelAbbreviatedName: item.paymentMethod,
+          installmentAmount: item.value as number,
+          installmentDate: item.datePayment as string | Date,
+          paymentChannelAbbreviatedName: item.paymentMethod as string,
         }))
       : [],
     installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
@@ -172,13 +175,26 @@ export function SimulateCredit() {
     selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
     requestedAmount: formData.loanAmountState.inputValue,
     termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
+    prospectId: "",
+    prospectCode: "",
+    state: "",
+    selectedRateType: "",
+    gracePeriod: 0,
+    gracePeriodType: "",
+    bondValue: 0,
+    creditProducts: [],
+    outlays: [],
+    creditScore: "",
+    modifyJustification: "",
+    clientManagerIdentificationNumber: "",
+    clientManagerName: "",
+    clientManagerObservation: "",
   };
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
     {},
   );
-
   const [creditLineTerms, setCreditLineTerms] = useState<{
     [lineName: string]: {
       LoanAmountLimit: number;
@@ -186,16 +202,14 @@ export function SimulateCredit() {
       RiskFreeInterestRate: number;
     };
   }>({});
-
   const getRuleByName = useCallback(
     (ruleName: string) => {
       const raw = valueRule?.[ruleName] || [];
-      return (
-        raw
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((v: any) => (typeof v === "string" ? v : v?.value))
-          .filter(Boolean)
-      );
+      return raw
+        .map((v: string | { value: string }) =>
+          typeof v === "string" ? v : v?.value,
+        )
+        .filter(Boolean);
     },
     [valueRule],
   );
@@ -210,8 +224,7 @@ export function SimulateCredit() {
 
   type RuleEvaluationResult = {
     value: number | string;
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
+    [key: string]: string | number;
   };
 
   const getRuleValue = (input: unknown): number | string | null => {
@@ -229,6 +242,12 @@ export function SimulateCredit() {
     return typeof input === "string" || typeof input === "number"
       ? input
       : null;
+  };
+
+  const setFinancialObligationsUpdateRequired = () => {
+    const newToggles = [...formData.togglesState];
+    newToggles[1] = true;
+    handleFormDataChange("togglesState", newToggles);
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
@@ -259,19 +278,16 @@ export function SimulateCredit() {
 
     if (!lineOfCreditRule) return;
 
-    const lineOfCreditValues = await evaluateRule(
-      lineOfCreditRule,
-      postBusinessUnitRules,
-      "value",
+    const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
       businessUnitPublicCode,
-      true,
+      formData.selectedDestination,
     );
 
+    type LineOfCreditValue = string | { value: string } | null | undefined;
     const lineNames = Array.isArray(lineOfCreditValues)
-      ? lineOfCreditValues
-          //eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((v: any) => (typeof v === "string" ? v : v?.value || ""))
-          .filter(Boolean)
+      ? (lineOfCreditValues as LineOfCreditValue[])
+          .map((v) => (typeof v === "string" ? v : v?.value || ""))
+          .filter((name): name is string => Boolean(name))
       : [];
 
     const result: Record<
@@ -400,6 +416,9 @@ export function SimulateCredit() {
     const rulesToValidate = [
       "PercentagePayableViaExtraInstallments",
       "IncomeSourceUpdateAllowed",
+      "FinancialObligationsUpdateRequired",
+      "AdditionalBorrowersAllowedGP",
+      "IncludeExtraordinaryInstallments",
     ];
 
     const ruleResults: { [ruleName: string]: string[] } = {};
@@ -412,15 +431,26 @@ export function SimulateCredit() {
           rulesToValidate.map(async (ruleName) => {
             const rule = ruleConfig[ruleName]?.(productData);
             if (!rule) return;
-
-            const result = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            );
-
+            let result;
+            if (
+              rule.ruleName === "FinancialObligationsUpdateRequired" ||
+              rule.ruleName === "AdditionalBorrowersAllowedGP" ||
+              rule.ruleName === "IncludeExtraordinaryInstallments"
+            ) {
+              result = mocksRules(
+                rule,
+                formData.generalToggleChecked,
+                formData.selectedProducts,
+              );
+            } else {
+              result = await evaluateRule(
+                rule,
+                postBusinessUnitRules,
+                "value",
+                businessUnitPublicCode,
+                true,
+              );
+            }
             const normalizedResult = normalizeValues(result);
 
             normalizedResult.forEach((value) => {
@@ -436,6 +466,14 @@ export function SimulateCredit() {
         );
       }),
     );
+
+    if (
+      ruleResults.FinancialObligationsUpdateRequired &&
+      !formData.togglesState[1]
+    ) {
+      ruleResults.FinancialObligationsUpdateRequired.includes("Y") &&
+        setFinancialObligationsUpdateRequired();
+    }
 
     setValueRule(ruleResults);
   }, [
@@ -555,8 +593,7 @@ export function SimulateCredit() {
 
   const handleFormDataChange = (
     field: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    newValue: string | number | boolean | any[],
+    newValue: string | number | boolean | string[] | object | null | undefined,
   ) => {
     setFormData((prevState) => ({ ...prevState, [field]: newValue }));
   };
@@ -593,31 +630,17 @@ export function SimulateCredit() {
   );
 
   const handleNextStep = () => {
-    const { togglesState, loanAmountState } = formData;
-
-    const isInExtraBorrowersStep =
-      currentStep === stepsAddProspect.extraBorrowers.id;
-
-    const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === undefined;
-
+    const { togglesState } = formData;
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
-      togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...[
-        !(isInExtraBorrowersStep && totalIncome !== 0) && showSourcesIncome
-          ? stepsAddProspect.sourcesIncome.id
-          : undefined,
-        !(isInExtraBorrowersStep && totalObligations !== undefined) &&
-        showObligations
-          ? stepsAddProspect.obligationsFinancial.id
-          : undefined,
-      ],
+      stepsAddProspect.sourcesIncome.id,
+      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
-      loanAmountState.toggleChecked
+      formData.loanAmountState.toggleChecked
         ? stepsAddProspect.obligationsCollected.id
         : undefined,
     ].filter((step): step is number => step !== undefined);
@@ -626,7 +649,7 @@ export function SimulateCredit() {
 
     if (
       currentStep === stepsAddProspect.loanAmount.id &&
-      !loanAmountState.toggleChecked
+      !formData.loanAmountState.toggleChecked
     ) {
       handleSubmitClick();
       return;
@@ -639,10 +662,6 @@ export function SimulateCredit() {
       totalIncome === 0
     ) {
       setIsAlertIncome(true);
-      return;
-    }
-    if (currentStep === stepsAddProspect.sourcesIncome.id) {
-      setCurrentStep(stepsAddProspect.obligationsFinancial.id);
       return;
     }
     if (
@@ -668,29 +687,19 @@ export function SimulateCredit() {
 
   const handlePreviousStep = () => {
     const { togglesState } = formData;
-
-    const nextStepWouldBeExtraBorrowers =
-      currentStep === stepsAddProspect.loanConditions.id && togglesState[3];
-
-    const showSourcesIncome = togglesState[1] || totalIncome === 0;
-    const showObligations = togglesState[2] || totalObligations === undefined;
-
     const dynamicSteps = [
       togglesState[0]
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
-      ...[
-        !(nextStepWouldBeExtraBorrowers && totalIncome !== 0) &&
-        showSourcesIncome
-          ? stepsAddProspect.sourcesIncome.id
-          : undefined,
-        !(nextStepWouldBeExtraBorrowers && totalObligations !== undefined) &&
-        showObligations
-          ? stepsAddProspect.obligationsFinancial.id
-          : undefined,
-      ],
+      stepsAddProspect.sourcesIncome.id,
+      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
+      stepsAddProspect.loanAmount.id,
+      formData.loanAmountState.toggleChecked
+        ? stepsAddProspect.obligationsCollected.id
+        : undefined,
     ].filter((step): step is number => step !== undefined);
 
     const currentStepIndex = dynamicSteps.indexOf(currentStep);
@@ -712,7 +721,7 @@ export function SimulateCredit() {
       ? titleButtonTextAssited.submitText
       : titleButtonTextAssited.goNextText;
 
-  const handleFlag = (error: unknown) => {
+  const handleFlag = (error: string) => {
     addFlag({
       title: textAddCongfig.errorPost,
       description: `${error}`,
@@ -727,13 +736,13 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         simulateData,
       );
-      const prospectCode = response.prospectCode;
+      const prospectCode = response?.prospectCode;
 
       setTimeout(() => {
         navigate(`/credit/prospects/${prospectCode}`);
       }, 1000);
     } catch (error) {
-      handleFlag(error);
+      handleFlag(error as string);
     }
   };
 
@@ -752,7 +761,7 @@ export function SimulateCredit() {
       );
       setCreditLimitData(result);
     } catch (error) {
-      handleFlag(error);
+      handleFlag(error as string);
     }
   };
 
@@ -800,7 +809,7 @@ export function SimulateCredit() {
         handleSubmitClick={handleSubmitClick}
         formData={formData}
         selectedProducts={selectedProducts}
-        prospectData={simulateData}
+        prospectData={simulateData as IProspect}
         setSelectedProducts={setSelectedProducts}
         setIsCapacityAnalysisModal={setIsCapacityAnalysisModal}
         isCapacityAnalysisModal={isCapacityAnalysisModal}

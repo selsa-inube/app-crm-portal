@@ -2,10 +2,6 @@ import { ArgTypes } from "@storybook/react";
 import { ScoreModalProps } from "..";
 
 export const scoreModalArgs: Partial<ArgTypes<ScoreModalProps>> = {
-  title: {
-    control: { type: "text" },
-    description: "The title of the modal",
-  },
   totalScore: {
     control: { type: "number" },
     description: "Total score displayed in the modal",

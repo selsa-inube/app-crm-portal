@@ -1,0 +1,30 @@
+export const addConfig = {
+  id: 1,
+  title: "Solicitudes de crédito",
+  route: "/credit",
+  crumbs: [
+    {
+      path: "/home",
+      label: "Inicio",
+      id: "/home",
+      isActive: true,
+    },
+    {
+      path: "/credit",
+      label: "Crédito",
+      id: "/credito",
+      isActive: false,
+    },
+    {
+      path: "/credit/applications",
+      label: "Solicitudes de crédito",
+      id: "/prospectos",
+      isActive: false,
+    },
+  ],
+};
+
+export const dataCreditProspects = {
+  applyCredit: "Solicitar crédito",
+  keyWord: "Palabra clave",
+};

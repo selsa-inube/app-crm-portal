@@ -10,7 +10,7 @@ import {
 import { Stack, Icon, Button, Select, useFlag } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
-import { PaymentCapacity } from "@components/modals/PaymentCapacityModal";
+import { MaxLimitModal } from "@components/modals/MaxLimitModal";
 import { ReciprocityModal } from "@components/modals/ReciprocityModal";
 import { ScoreModal } from "@components/modals/FrcModal";
 import { EditProductModal } from "@components/modals/ProspectProductModal";
@@ -509,7 +509,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         )}
         {openModal === "paymentCapacity" && (
-          <PaymentCapacity
+          <MaxLimitModal
             title="Cupo máx. capacidad de pago"
             handleClose={() => setOpenModal(null)}
             reportedIncomeSources={2000000}
@@ -526,11 +526,11 @@ export function CreditProspect(props: ICreditProspectProps) {
             balanceOfContributions={4000000}
             accordingToRegulation={2}
             assignedQuota={1000000}
+            numRegulations={2}
           />
         )}
         {openModal === "scoreModal" && (
           <ScoreModal
-            title="Score Details"
             handleClose={() => setOpenModal(null)}
             subTitle="Your Financial Score"
             totalScore={150}
@@ -541,6 +541,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             economicActivity={118}
             monthlyIncome={3000000}
             maxIndebtedness={50000000}
+            incomeScore={5.56}
+            maxLimit={22000000}
+            totalPortafolio={1000000}
           />
         )}
         {currentModal === "editProductModal" && (

@@ -231,7 +231,7 @@ export const CardCommercialManagement = (
               periodicFee={
                 entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
               }
-              schedule={entry.schedule as Schedule}
+              schedule={entry.lineOfCreditAbbreviatedName as Schedule}
               onEdit={() => {
                 setSelectedProduct(entry);
                 setModalHistory((prev) => [...prev, "editProductModal"]);
@@ -284,7 +284,7 @@ export const CardCommercialManagement = (
             paymentMethod:
               selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
                 ?.paymentChannelAbbreviatedName || "",
-            paymentCycle: selectedProduct.schedule || "",
+            paymentCycle: selectedProduct.lineOfCreditAbbreviatedName || "",
             firstPaymentCycle: "",
             termInMonths: selectedProduct.loanTerm || 0,
             amortizationType: "",

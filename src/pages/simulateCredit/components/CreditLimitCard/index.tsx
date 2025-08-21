@@ -4,13 +4,15 @@ import { Stack, Icon, Text, Divider } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
 import { CreditLimit } from "@components/modals/CreditLimit";
-import { PaymentCapacity } from "@components/modals/PaymentCapacityModal";
+import { MaxLimitModal } from "@components/modals/MaxLimitModal";
 import { ReciprocityModal } from "@components/modals/ReciprocityModal";
 import { ScoreModal } from "@components/modals/FrcModal";
+import { PaymentCapacityModal } from "@components/modals/PaymentCapacityModal";
 
 import { StyledContainer } from "./styles";
 import {
   ICreditLimitData,
+  IMaxLimitData,
   IPaymentCapacityData,
   IReciprocityData,
   IScoreData,
@@ -20,9 +22,11 @@ export interface CreditLimitProps {
   creditLine: number;
   creditLineTxt: string;
   creditLimitData: ICreditLimitData;
+  maxLimitData: IMaxLimitData;
   paymentCapacityData: IPaymentCapacityData;
   reciprocityData: IReciprocityData;
   scoreData: IScoreData;
+  isMobile: boolean;
 }
 
 export function CreditLimitCard(props: CreditLimitProps) {
@@ -30,9 +34,11 @@ export function CreditLimitCard(props: CreditLimitProps) {
     creditLine,
     creditLineTxt,
     creditLimitData,
+    maxLimitData,
     paymentCapacityData,
     reciprocityData,
     scoreData,
+    isMobile,
   } = props;
 
   const [creditModal, setCreditModal] = useState(false);
@@ -80,8 +86,9 @@ export function CreditLimitCard(props: CreditLimitProps) {
       {creditModal && (
         <CreditLimit
           handleClose={() => setCreditModal(false)}
-          title="Origen de cupo"
+          title="Cupos utilizados"
           loading={loadingCredit}
+          onOpenMaxLimitModal={() => handleOpenModals("maxLimitModal")}
           onOpenPaymentCapacityModal={() => handleOpenModals("paymentCapacity")}
           onOpenReciprocityModal={() => handleOpenModals("reciprocityModal")}
           onOpenFrcModal={() => handleOpenModals("scoreModal")}
@@ -89,12 +96,12 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
-      {openModal === "paymentCapacity" && (
-        <PaymentCapacity
-          title="Cupo máx. capacidad de pago"
+      {openModal === "maxLimitModal" && (
+        <MaxLimitModal
+          title="Tope máx. para Crédito vacacional"
           loading={loading}
           handleClose={() => setOpenModal(null)}
-          {...paymentCapacityData}
+          {...maxLimitData}
           iconVisible={true}
         />
       )}
@@ -107,9 +114,16 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
+      {openModal === "paymentCapacity" && (
+        <PaymentCapacityModal
+          isMobile={isMobile}
+          handleClose={() => setOpenModal(null)}
+          {...paymentCapacityData}
+        />
+      )}
+
       {openModal === "scoreModal" && (
         <ScoreModal
-          title="Score Details"
           handleClose={() => setOpenModal(null)}
           subTitle="Your Financial Score"
           loading={loading}

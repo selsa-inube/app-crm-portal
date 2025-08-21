@@ -14,9 +14,12 @@ import { StyledCards } from "./style";
 
 interface IConsolidatedCreditProps {
   initialValues: {
+    title: string;
+    code: string;
+    label: string;
+    value: number;
     totalCollected: number;
     selectedValues: Record<string, number>;
-    selectedLabels: Record<string, string>;
   };
   isMobile: boolean;
   onChange?: (

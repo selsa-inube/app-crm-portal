@@ -1,5 +1,10 @@
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
+
+interface IStyledArrowBack {
+  $isMobile: boolean;
+}
+
 export const StyledHeaderContainer = styled.div`
   position: relative;
 `;
@@ -11,9 +16,9 @@ export const StyledLogo = styled.img`
   max-width: 120px;
 `;
 
-export const StyledArrowBack = styled.div`
+export const StyledArrowBack = styled.div<IStyledArrowBack>`
   cursor: pointer;
-  width: 500px;
+  width: ${($isMobile) => ($isMobile ? "100px" : "500px")};
 `;
 
 export const StyledCreditCard = styled.div`

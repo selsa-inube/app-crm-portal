@@ -5,7 +5,7 @@ import { Stack, Tabs } from "@inubekit/inubekit";
 import { Fieldset } from "@components/data/Fieldset";
 import { AppContext } from "@context/AppContext";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { IProspectSummaryById } from "@services/prospect/types";
+import { IProspect, IProspectSummaryById } from "@services/prospect/types";
 
 import { DisbursementWithInternalAccount } from "./disbursementWithInternalAccount/index";
 import { DisbursementWithExternalAccount } from "./disbursementWithExternalAccount";
@@ -13,18 +13,16 @@ import { DisbursementWithCheckEntity } from "./disbursementWithCheckEntity";
 import { DisbursementWithCheckManagement } from "./DisbursementWithCheckManagement";
 import { DisbursementWithCash } from "./DisbursementWithCash";
 import { disbursemenTabs } from "./config";
+import { IDisbursementGeneral } from "../../types";
 
 interface IDisbursementGeneralProps {
   isMobile: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any;
+  initialValues: IDisbursementGeneral;
+  data: IProspect;
   isSelected: string;
   identificationNumber: string;
   onFormValid: (isValid: boolean) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleOnChange: (values: any) => void;
+  handleOnChange: (values: IDisbursementGeneral) => void;
   handleTabChange: (id: string) => void;
   rule?: string[];
   customerData?: ICustomerData;
@@ -72,7 +70,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   }, [formik.values, handleOnChange]);
 
   const getTotalAmount = useCallback(() => {
-    const disbursementForms = [
+    const disbursementForms: (keyof IDisbursementGeneral)[] = [
       "Internal_account",
       "External_account",
       "Certified_check",
@@ -81,7 +79,13 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     ];
 
     return disbursementForms.reduce((total, key) => {
-      const amount = formik.values[key]?.amount || 0;
+      const disbursementData = formik.values[key];
+      const amount =
+        disbursementData &&
+        typeof disbursementData === "object" &&
+        "amount" in disbursementData
+          ? disbursementData.amount || 0
+          : 0;
       return total + Number(amount);
     }, 0);
   }, [formik.values]);
@@ -103,17 +107,10 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
         formik.values.External_account.accountType !== ""
       : true;
 
-    const isBankValid = formik.values.Bank?.amount
-      ? formik.values.Bank.bank !== "" &&
-        formik.values.Bank.accountNumber !== "" &&
-        formik.values.Bank.accountType !== ""
-      : true;
-
     const isValid =
       totalAmount === initialValues.amount &&
       isInternalValid &&
-      isExternalValid &&
-      isBankValid;
+      isExternalValid;
 
     onFormValid(isValid);
   }, [
@@ -127,9 +124,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     formik.values.External_account?.bank,
     formik.values.External_account?.accountNumber,
     formik.values.External_account?.accountType,
-    formik.values.Bank?.bank,
-    formik.values.Bank?.accountNumber,
-    formik.values.Bank?.accountType,
+    formik.values.External_account?.bank,
   ]);
 
   const fetchTabs = useCallback(() => {
@@ -177,7 +172,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   };
 
   const isAmountReadOnly = validTabs.length === 1;
-
+  console.log(initialValues);
   return (
     <Fieldset>
       <Stack

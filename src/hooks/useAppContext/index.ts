@@ -56,10 +56,8 @@ function useAppContext() {
     console.error("Error parsing businessUnitSigla: ", error);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getUserPermissions = (IStaff: any) => {
-    const isAdmon =
-      IStaff.identificationDocumentNumber === "elyerogo@gmail.com";
+  const getUserPermissions = (identificationDocumentNumber: string) => {
+    const isAdmon = identificationDocumentNumber === "elyerogo@gmail.com";
     return {
       canReject: isAdmon,
       canCancel: isAdmon,
@@ -89,7 +87,9 @@ function useAppContext() {
         );
 
         if (matchedStaff) {
-          const userPermissions = getUserPermissions(matchedStaff);
+          const userPermissions = getUserPermissions(
+            matchedStaff.identificationDocumentNumber,
+          );
           setEventData((prev) => ({
             ...prev,
             user: {

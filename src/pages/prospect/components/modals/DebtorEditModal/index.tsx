@@ -3,6 +3,7 @@ import { Stack, Tabs, useFlag } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
+import { Borrower } from "@pages/applyForCredit/steps/borrowerData";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { IBorrower, IBorrowerProperty } from "@services/prospect/types";
@@ -15,8 +16,8 @@ interface IDebtorEditModalProps {
   handleClose: () => void;
   isMobile: boolean;
   initialValues: IBorrower;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdate?: any;
+  onUpdate?: (updatedBorrower: Borrower) => void;
+  currentBorrowerIndex?: number | null;
 }
 
 export function DebtorEditModal(props: IDebtorEditModalProps) {
@@ -132,6 +133,22 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     return [...result, ...Array.from(seen.values())];
   };
 
+  const convertIBorrowerToBorrower = (iBorrower: IBorrower): Borrower => {
+    return {
+      borrowerIdentificationNumber: iBorrower.borrowerIdentificationNumber,
+      borrowerIdentificationType: iBorrower.borrowerIdentificationType,
+      borrowerName: iBorrower.borrowerName || "",
+      borrowerType: iBorrower.borrowerType,
+      borrowerProperties: iBorrower.borrowerProperties.reduce(
+        (acc, prop) => {
+          acc[prop.propertyName] = prop;
+          return acc;
+        },
+        {} as { [key: string]: IBorrowerProperty },
+      ),
+    };
+  };
+
   const handleSave = () => {
     if (!initialValues || !incomeData) return;
 
@@ -144,8 +161,8 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
         updatedProps,
       ),
     };
-
-    onUpdate?.(updatedBorrower);
+    const convertedBorrower = convertIBorrowerToBorrower(updatedBorrower);
+    onUpdate?.(convertedBorrower);
     handleFlag();
     handleClose();
   };

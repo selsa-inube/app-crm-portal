@@ -34,8 +34,9 @@ export interface Ipermissions {
   canChangeUsers: boolean;
   canApprove: boolean;
   canSubmitProspect: boolean;
+  identificationDocumentNumber?: string;
 }
-interface IStaff {
+export interface IStaff {
   biologicalSex: string;
   birthDay: string;
   businessManagerCode: string;

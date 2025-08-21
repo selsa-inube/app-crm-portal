@@ -1,6 +1,10 @@
 import styled from "styled-components";
 
-export const StyledArrowBack = styled.div`
+interface IStyledArrowBack {
+  $isMobile: boolean;
+}
+
+export const StyledArrowBack = styled.div<IStyledArrowBack>`
   cursor: pointer;
-  width: 500px;
+  width: ${($isMobile) => ($isMobile ? "100px" : "500px")};
 `;

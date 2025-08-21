@@ -6,6 +6,7 @@ import {
   Phonefield,
   Stack,
 } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import { disbursemenOptionAccount } from "@pages/applyForCredit/steps/disbursementGeneral/config";
 import {
@@ -16,8 +17,7 @@ import {
 import { ICustomerData } from "@context/CustomerContext/types";
 
 interface IGeneralInformationFormProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: any;
+  formik: FormikValues;
   isMobile: boolean;
   optionNameForm: string;
   isReadOnly?: boolean;

@@ -1,24 +1,24 @@
+import { IBusinessUnitRules } from "@services/businessUnitRules/types";
 import { Rule } from "./types";
 
-export function removeDuplicates<T>(arr: T[], key: string): T[] {
-  const seen = new Set();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return arr.filter((item: any) => {
+export function removeDuplicates<T, K extends keyof T>(arr: T[], key: K): T[] {
+  const seen = new Set<T[K]>();
+  return arr.filter((item) => {
     const val = item[key];
     if (seen.has(val)) return false;
     seen.add(val);
     return true;
   });
 }
-
 export async function evaluateRule(
   rule: Rule,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  endpoint: (business: string, data: Rule) => Promise<any>,
+  endpoint: (
+    business: string,
+    data: Rule,
+  ) => Promise<IBusinessUnitRules | undefined>,
   uniqueKey: string,
   business: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any[]> {
+): Promise<IBusinessUnitRules[]> {
   const response = await endpoint(business, rule);
 
   if (!response || !Array.isArray(response) || response.length === 0) {

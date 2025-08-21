@@ -28,6 +28,7 @@ export interface IBaseModalProps {
   iconBeforeback?: React.JSX.Element;
   iconAfterback?: React.JSX.Element;
   apparenceNext?: Appearance;
+  variantNext?: Variant;
   nextButton?: string;
   backButton?: string;
   initialDivider?: boolean;
@@ -52,6 +53,7 @@ export function BaseModal(props: IBaseModalProps) {
     iconBeforeback,
     iconAfterback,
     apparenceNext = "primary",
+    variantNext = "filled",
     backButton = "",
     initialDivider = true,
     finalDivider = false,
@@ -122,6 +124,7 @@ export function BaseModal(props: IBaseModalProps) {
                 iconAfter={iconAfterNext}
                 iconBefore={iconBeforeNext}
                 appearance={apparenceNext}
+                variant={variantNext}
               >
                 {nextButton}
               </Button>
