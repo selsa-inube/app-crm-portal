@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
 import { IBusinessManagers } from "@services/businessManager/types";
@@ -13,6 +12,7 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -81,38 +81,33 @@ function useAppContext() {
         if (!userIdentifier) return;
         const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
-        const matchedStaff = staffData.find(
-          (staff) => staff.identificationDocumentNumber === userIdentifier,
+        const userPermissions = getUserPermissions(
+          staffData[0].identificationDocumentNumber,
         );
-        if (matchedStaff) {
-          const userPermissions = getUserPermissions(
-            matchedStaff.identificationDocumentNumber,
-          );
-          setEventData((prev) => ({
-            ...prev,
-            user: {
-              ...prev.user,
-              staff: {
-                biologicalSex: matchedStaff.biologicalSex,
-                birthDay: matchedStaff.birthDay,
-                businessManagerCode: matchedStaff.businessManagerCode,
-                identificationDocumentNumber:
-                  matchedStaff.identificationDocumentNumber,
-                identificationTypeNaturalPerson:
-                  matchedStaff.identificationTypeNaturalPerson,
-                missionName: matchedStaff.missionName,
-                principalEmail: matchedStaff.principalEmail,
-                principalPhone: matchedStaff.principalPhone,
-                staffByBusinessUnitAndRole:
-                  matchedStaff.staffByBusinessUnitAndRole,
-                staffId: matchedStaff.staffId,
-                staffName: matchedStaff.staffName,
-                userAccount: matchedStaff.userAccount,
-                useCases: userPermissions,
-              },
+        setEventData((prev) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            staff: {
+              biologicalSex: staffData[0].biologicalSex,
+              birthDay: staffData[0].birthDay,
+              businessManagerCode: staffData[0].businessManagerCode,
+              identificationDocumentNumber:
+                staffData[0].identificationDocumentNumber,
+              identificationTypeNaturalPerson:
+                staffData[0].identificationTypeNaturalPerson,
+              missionName: staffData[0].missionName,
+              principalEmail: staffData[0].principalEmail,
+              principalPhone: staffData[0].principalPhone,
+              staffByBusinessUnitAndRole:
+                staffData[0].staffByBusinessUnitAndRole,
+              staffId: staffData[0].staffId,
+              staffName: staffData[0].staffName,
+              userAccount: staffData[0].userAccount,
+              useCases: userPermissions,
             },
-          }));
-        }
+          },
+        }));
       } catch (error) {
         console.error("Error fetching staff data:", error);
       }
