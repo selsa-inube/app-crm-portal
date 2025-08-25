@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MdAdd, MdArrowBack } from "react-icons/md";
 import {
   Breadcrumbs,
@@ -7,12 +7,16 @@ import {
   Input,
   Stack,
   Text,
+  useFlag,
   useMediaQuery,
 } from "@inubekit/inubekit";
 
+import { ICreditRequest } from "@services/creditRequest/types";
+import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
+import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
-import { mockCreditApplication } from "@mocks/creditApplication/creditApplication.mock";
+import { environment } from "@config/environment";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -20,14 +24,60 @@ import { StyledArrowBack } from "./styles";
 import { addConfig, dataCreditProspects } from "./config";
 
 export function CreditApplications() {
-  const isMobile = useMediaQuery("(max-width:880px)");
-
+  const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
+    [],
+  );
   const { customerData } = useContext(CustomerContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
+
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const { userAccount } =
+    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
+
+  const isMobile = useMediaQuery("(max-width:880px)");
+  const { addFlag } = useFlag();
+
   const dataHeader = {
     name: customerData.fullName,
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
+
+  useEffect(() => {
+    if (!customerData.publicCode) return;
+
+    const fetchCreditRequest = async () => {
+      try {
+        const creditData = await getCreditRequestByCode(
+          businessUnitPublicCode,
+          userAccount,
+          {
+            clientIdentificationNumber: customerData.publicCode,
+          },
+        );
+        setCreditRequestData(creditData);
+      } catch (error: unknown) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+        addFlag({
+          title: dataCreditProspects.titleError,
+          description,
+          appearance: "danger",
+          duration: 5000,
+        });
+      }
+    };
+
+    fetchCreditRequest();
+  }, [customerData.publicCode]);
 
   return (
     <Stack
@@ -67,16 +117,17 @@ export function CreditApplications() {
             </Button>
           </Stack>
           <Stack wrap="wrap" gap="20px">
-            {mockCreditApplication.map((creditRequest) => (
+            {creditRequestData.map((creditRequest) => (
               <SummaryCard
                 key={creditRequest.creditRequestId}
                 rad={creditRequest.creditRequestCode}
-                date={creditRequest.timeOfCreation}
-                name={creditRequest.preferredPaymentChannelAbbreviatedName}
-                destination={creditRequest.moneyDestinationAbbreviatedName}
-                value={creditRequest.value}
-                toDo={creditRequest.selectedRegularPaymentSchedule}
-                path={`https://crediboard.inube.online/extended-card/${creditRequest.creditRequestCode}`}
+                date={creditRequest.creditRequestDateOfCreation}
+                name={creditRequest.clientName}
+                destination={creditRequest.moneyDestinationAbreviatedName}
+                value={creditRequest.loanAmount}
+                toDo={creditRequest.taskToBeDone}
+                hasMessage={creditRequest.unreadNovelties === "Y"}
+                path={`${environment.VITE_CREDIBOARD_URL}/extended-card/${creditRequest.creditRequestCode}`}
               />
             ))}
           </Stack>

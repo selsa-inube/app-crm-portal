@@ -42,6 +42,9 @@ export function Simulations() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
+  const { userAccount } =
+    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
+
   const data = dataProspect;
   const [sentData, setSentData] = useState<IExtraordinaryInstallments | null>(
     null,
@@ -58,10 +61,15 @@ export function Simulations() {
   const hasPermitSubmit = !!eventData.user.staff.useCases.canSubmitProspect;
 
   const fetchValidateCreditRequest = useCallback(async () => {
+    if (!prospectCode) return;
+
     try {
       const result = await getCreditRequestByCode(
         businessUnitPublicCode,
-        prospectCode!,
+        userAccount,
+        {
+          creditRequestCode: prospectCode!,
+        },
       );
 
       const creditData = Array.isArray(result) ? result[0] : result;

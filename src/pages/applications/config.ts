@@ -27,4 +27,5 @@ export const addConfig = {
 export const dataCreditProspects = {
   applyCredit: "Solicitar crédito",
   keyWord: "Palabra clave",
+  titleError: "Lamentamos los inconvenientes",
 };

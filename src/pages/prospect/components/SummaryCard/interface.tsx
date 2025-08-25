@@ -14,8 +14,17 @@ import { StyledSummaryCard, StyledLink } from "./styles";
 import { summaryData } from "./config";
 
 function SummaryCardUI(props: SummaryCardProps) {
-  const { rad, date, name, destination, value, toDo, path, onCardClick } =
-    props;
+  const {
+    rad,
+    date,
+    name,
+    destination,
+    value,
+    toDo,
+    path,
+    hasMessage,
+    onCardClick,
+  } = props;
   return (
     <StyledSummaryCard>
       <StyledLink to={path} onClick={onCardClick}>
@@ -59,7 +68,11 @@ function SummaryCardUI(props: SummaryCardProps) {
       <Stack direction="column" padding="0px 8px">
         <Divider />
         <Stack gap="8px" justifyContent="flex-end" padding="8px 0px">
-          <Icon icon={<MdOutlineMessage />} appearance="dark" size="20px" />
+          {hasMessage ? (
+            <Icon icon={<MdOutlineMessage />} appearance="dark" size="20px" />
+          ) : (
+            <Stack height="20px" />
+          )}
         </Stack>
       </Stack>
     </StyledSummaryCard>
