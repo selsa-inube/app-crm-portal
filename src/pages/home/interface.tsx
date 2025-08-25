@@ -120,14 +120,14 @@ const HomeUI = (props: IHomeUIProps) => {
 
       <Stack
         direction="column"
-        width={isMobile ? "-webkit-fill-available" : "min(100%)"}
+        width={isMobile ? "calc(100% - 20px)" : "min(100% - 20px, 1064px)"}
         margin="0 auto"
       >
         <Stack
           direction="column"
           alignItems={isMobile ? "normal" : "center"}
           margin="20px 0px"
-          padding="64px"
+          padding={isMobile ? "64px 20px" : "64px"}
         >
           <Stack gap="24px" direction="column" height="100%" width="100%">
             <StyledGeneralHeader>
@@ -138,7 +138,6 @@ const HomeUI = (props: IHomeUIProps) => {
                 profileImageUrl="…"
               />
             </StyledGeneralHeader>
-
             <StyledTitle $smallScreen={smallScreen}>
               <Title
                 title={homeTitleConfig(username).title}
@@ -147,11 +146,10 @@ const HomeUI = (props: IHomeUIProps) => {
                 sizeTitle={homeTitleConfig(username).sizeTitle}
               />
             </StyledTitle>
-
             <StyledContainerCards $smallScreen={smallScreen}>
               {loading ? (
                 <>
-                  <InteractiveBox isLoading />
+                  <InteractiveBox isMobile={smallScreen} isLoading />
                 </>
               ) : (
                 options.map((item, index) => (
@@ -162,6 +160,7 @@ const HomeUI = (props: IHomeUIProps) => {
                     icon={item.icon}
                     url={item.url}
                     isDisabled={item.isDisabled}
+                    isMobile={smallScreen}
                   />
                 ))
               )}

@@ -9,7 +9,7 @@ import {
 } from "@context/AppContext/utils";
 import { ICRMPortalData } from "@context/AppContext/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import { getStaff } from "@services/staff/SearchAllStaff";
+import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
@@ -55,10 +55,8 @@ function useAppContext() {
     console.error("Error parsing businessUnitSigla: ", error);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getUserPermissions = (IStaff: any) => {
-    const isAdmon =
-      IStaff.identificationDocumentNumber === "elyerogo@gmail.com";
+  const getUserPermissions = (identificationDocumentNumber: string) => {
+    const isAdmon = identificationDocumentNumber === "elyerogo@gmail.com";
     return {
       canReject: isAdmon,
       canCancel: isAdmon,
@@ -87,7 +85,9 @@ function useAppContext() {
           (staff) => staff.identificationDocumentNumber === userIdentifier,
         );
         if (matchedStaff) {
-          const userPermissions = getUserPermissions(matchedStaff);
+          const userPermissions = getUserPermissions(
+            matchedStaff.identificationDocumentNumber,
+          );
           setEventData((prev) => ({
             ...prev,
             user: {

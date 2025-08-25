@@ -43,8 +43,7 @@ export interface ITableFinancialObligationsProps {
   propertyValue?: string;
   balance?: string;
   fee?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues?: any;
+  initialValues?: FormikValues | undefined;
   refreshKey?: number;
   setRefreshKey?: React.Dispatch<React.SetStateAction<number>>;
   showActions?: boolean;
@@ -83,6 +82,7 @@ export interface IDataInformationItem {
   fee?: number;
   propertyName?: string;
   propertyValue?: string | string[];
+  __isPadding?: boolean;
 }
 
 interface UIProps {
@@ -127,8 +127,7 @@ interface UIProps {
         idUser: string;
       }
     | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues: any;
+  initialValues: FormikValues;
   handleOnChange: (values: FormikValues) => void;
   setRefreshKey: React.Dispatch<React.SetStateAction<number>> | undefined;
 }
@@ -178,12 +177,28 @@ export const TableFinancialObligationsUI = ({
     }
     return 0;
   };
+
   const [openModal, setOpenModal] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const { customerData } = useContext(CustomerContext);
+
   const handleCloseModal = () => {
     setOpenModal(false);
     setRefreshKey?.((prevKey) => prevKey + 1);
+  };
+
+  const mapToTableFinancialObligationsProps = (
+    item: IDataInformationItem,
+  ): ITableFinancialObligationsProps => {
+    return {
+      id: item.id,
+      type: item.type,
+      propertyValue: Array.isArray(item.propertyValue)
+        ? item.propertyValue.join(",")
+        : item.propertyValue,
+      balance: item.balance?.toString(),
+      fee: item.fee?.toString(),
+    };
   };
 
   function insertInDeepestObligations<T extends { obligations?: FormikValues }>(
@@ -270,19 +285,8 @@ export const TableFinancialObligationsUI = ({
     </Tr>
   );
 
-  const renderNoDataRow = () => (
-    <Tr>
-      <Td colSpan={visibleHeaders.length} align="center" type="custom">
-        <Text size="large" type="label" appearance="gray" textAlign="center">
-          {dataReport.noData}
-        </Text>
-      </Td>
-    </Tr>
-  );
-
   const renderDataRows = () =>
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    paddedCurrentData.map((prop: any, rowIndex: number) => {
+    paddedCurrentData.map((prop: IDataInformationItem, rowIndex: number) => {
       if (prop.__isPadding) {
         return (
           <Tr key={prop.id}>
@@ -298,8 +302,7 @@ export const TableFinancialObligationsUI = ({
       let values: string[] = [];
 
       if (typeof prop.propertyValue === "string") {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        values = prop.propertyValue.split(",").map((val: any) => val.trim());
+        values = prop.propertyValue.split(",").map((val: string) => val.trim());
       } else if (Array.isArray(prop.propertyValue)) {
         values = prop.propertyValue.map(String);
       } else {
@@ -338,7 +341,9 @@ export const TableFinancialObligationsUI = ({
                       icon={<MdOutlineEdit />}
                       appearance="dark"
                       size="16px"
-                      onClick={() => handleEdit(prop)}
+                      onClick={() =>
+                        handleEdit(mapToTableFinancialObligationsProps(prop))
+                      }
                       cursorHover
                     />
                     {!showOnlyEdit && (
@@ -428,11 +433,31 @@ export const TableFinancialObligationsUI = ({
           <Tr>{renderHeaders()}</Tr>
         </Thead>
         <Tbody>
-          {loading
-            ? renderLoadingRow()
-            : extraDebtors.length === 0
-              ? renderNoDataRow()
-              : renderDataRows()}
+          {loading ? (
+            renderLoadingRow()
+          ) : extraDebtors.length === 0 ? (
+            <Tr border="left">
+              <Td colSpan={visibleHeaders.length} align="center" type="custom">
+                <Stack
+                  gap="16px"
+                  direction="column"
+                  height="250px"
+                  justifyContent="center"
+                >
+                  <Text
+                    size="large"
+                    type="label"
+                    appearance="gray"
+                    textAlign="center"
+                  >
+                    {dataReport.noData}
+                  </Text>
+                </Stack>
+              </Td>
+            </Tr>
+          ) : (
+            renderDataRows()
+          )}
         </Tbody>
         {!loading && dataInformation.length > 0 && (
           <Tfoot>
@@ -491,6 +516,8 @@ export const TableFinancialObligationsUI = ({
             appearanceCancel="gray"
             buttonLabel={dataReport.restore}
             content={dataReport.descriptionModal}
+            uploadedFiles={[]}
+            setUploadedFiles={() => {}}
           />
         )}
       </Stack>

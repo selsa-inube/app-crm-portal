@@ -2,16 +2,15 @@ export const mockCreditLimit = [
   {
     creditLineTxt: "Libre inversión ",
     creditLine: 20000000,
-    CreditLimitdata: {
+    creditLimitdata: {
       maxPaymentCapacity: 22000000,
       maxReciprocity: 24000000,
       maxDebtFRC: 21000000,
       assignedLimit: 0,
-      currentPortfolio: 1000000,
       maxUsableLimit: 21000000,
       availableLimitWithoutGuarantee: 20000000,
     },
-    paymentCapacityData: {
+    maxLimitData: {
       reportedIncomeSources: 4500000,
       reportedFinancialObligations: 1200000,
       subsistenceReserve: 2250000,
@@ -21,8 +20,9 @@ export const mockCreditLimit = [
     },
     reciprocityData: {
       balanceOfContributions: 60000000,
-      accordingToRegulation: 6,
+      accordingToRegulation: 10000000,
       assignedQuota: 29000000,
+      numRegulations: 2,
     },
     scoreData: {
       totalScore: 70,
@@ -33,21 +33,58 @@ export const mockCreditLimit = [
       economicActivity: 120,
       monthlyIncome: 4500000,
       maxIndebtedness: 21000000,
+      incomeScore: 5.56,
+      maxLimit: 22000000,
+      totalPortafolio: 1000000,
+    },
+    paymentCapacityData: {
+      incomeSources: 4500000,
+      subsistenceReserve: 2500000,
+      newPromises: 2000000,
+      lineOfCredit: 20,
+      maxValue: 40000000,
+      extraordinary: 44280000,
+      extraordinaryQuotes: [
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+        {
+          concept: "Prima",
+          value: "$850.000",
+          date: "30/Jun/2025",
+        },
+      ],
     },
   },
   {
     creditLineTxt: "Hogar",
     creditLine: 12000000,
-    CreditLimitdata: {
+    creditLimitdata: {
       maxPaymentCapacity: 50000000,
       maxReciprocity: 40000000,
       maxDebtFRC: 45000000,
       assignedLimit: 0,
-      currentPortfolio: 10000000,
       maxUsableLimit: 20000000,
       availableLimitWithoutGuarantee: 15000000,
     },
-    paymentCapacityData: {
+    maxLimitData: {
       reportedIncomeSources: 2000000,
       reportedFinancialObligations: 6789000,
       subsistenceReserve: 2000000,
@@ -59,6 +96,7 @@ export const mockCreditLimit = [
       balanceOfContributions: 50000000,
       accordingToRegulation: 3,
       assignedQuota: 2000000,
+      numRegulations: 2,
     },
     scoreData: {
       totalScore: 150,
@@ -69,6 +107,17 @@ export const mockCreditLimit = [
       economicActivity: 118,
       monthlyIncome: 3000000,
       maxIndebtedness: 50000000,
+      incomeScore: 5.56,
+      maxLimit: 22000000,
+      totalPortafolio: 1000000,
+    },
+    paymentCapacityData: {
+      incomeSources: 4500000,
+      subsistenceReserve: 2500000,
+      newPromises: 2000000,
+      lineOfCredit: 20,
+      maxValue: 40000000,
+      extraordinary: 44280000,
     },
   },
 ];

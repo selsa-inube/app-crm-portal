@@ -15,15 +15,18 @@ interface IRequirementsNotMetProps {
   isMobile: boolean;
   customerData: ICustomerData;
   prospectData: IProspect;
+  businessUnitPublicCode: string;
 }
 
 export function RequirementsNotMet(props: IRequirementsNotMetProps) {
-  const { isMobile, customerData, prospectData } = props;
+  const { isMobile, customerData, prospectData, businessUnitPublicCode } =
+    props;
 
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const { addFlag } = useFlag();
 
   useEffect(() => {
@@ -37,11 +40,15 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
-        const data = await patchValidateRequirements(payload);
+        const data = await patchValidateRequirements(
+          businessUnitPublicCode,
+          payload,
+        );
         if (data) {
           setValidateRequirements(data);
         }
       } catch (error) {
+        setHasError(true);
         addFlag({
           title: dataError.titleError,
           description: dataError.descriptionError,
@@ -54,7 +61,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     };
 
     handleSubmit();
-  }, [customerData, prospectData]);
+  }, []);
 
   return (
     <Fieldset>
@@ -89,6 +96,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
               causeNonCompliance={
                 requirementData.descriptionEvaluationRequirement
               }
+              hasError={hasError}
             />
           ))}
         </Stack>

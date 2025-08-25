@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { useParams } from "react-router-dom";
-import { useFormik } from "formik";
+import { FormikValues, useFormik } from "formik";
 import { Stack, Grid, Button } from "@inubekit/inubekit";
 
 import { CardBorrower } from "@components/cards/CardBorrower";
@@ -15,17 +15,18 @@ import { mockGuaranteeBorrower } from "@mocks/guarantee/offeredguarantee.mock";
 import { dataSubmitApplication } from "@pages/applyForCredit/config/config";
 import { choiceBorrowers } from "@mocks/filing-application/choice-borrowers/choiceborrowers.mock";
 import { MockDataDebtor } from "@mocks/filing-application/add-borrower/addborrower.mock";
+import { IBorrower, IProspect } from "@services/prospect/types";
+import { IDebtorDetail } from "@pages/applyForCredit/types";
 
 import { dataExtraDebtors } from "./config";
 
 interface IExtraDebtorsProps {
   isMobile: boolean;
   onFormValid: (isValid: boolean) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleOnChange: (values: any) => void;
+  initialValues: IDebtorDetail;
+  handleOnChange: (values: FormikValues) => void;
 }
+
 export function ExtraDebtors(props: IExtraDebtorsProps) {
   const { handleOnChange, initialValues, isMobile } = props;
 
@@ -60,7 +61,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
       {
         name: string;
         id: string;
-        debtorDetail: Record<string, string | number>;
+        debtorDetail: IDebtorDetail;
       }
     >,
   );
@@ -69,6 +70,17 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     initialValues: {
       ...initialValues,
       initialBorrowers,
+      debtorDetail: initialValues.debtorDetail || {
+        document: "",
+        documentNumber: "",
+        name: "",
+        lastName: "",
+        email: "",
+        number: "",
+        sex: "",
+        age: "",
+        relation: "",
+      },
     },
     validateOnMount: true,
     onSubmit: () => {},
@@ -82,6 +94,13 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
   const [isModalView, setIsModalView] = useState(false);
   const [isModalEdit, setIsModalEdit] = useState(false);
   const [isModalDelete, setIsModalDelete] = useState(false);
+  const [selectedDebtorDetail, setSelectedDebtorDetail] =
+    useState<IDebtorDetail | null>(null);
+  const [selectedBorrowerForEdit, setSelectedBorrowerForEdit] =
+    useState<IBorrower | null>(null);
+  const [currentBorrowerIndex, setCurrentBorrowerIndex] = useState<
+    number | null
+  >(null);
 
   const { id } = useParams();
   const userId = parseInt(id || "0", 10);
@@ -122,14 +141,33 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               obligations={item.obligations}
               isMobile={isMobile}
               handleView={() => {
-                setIsModalView(true);
-                formik.setFieldValue(
-                  "debtorDetail",
-                  initialBorrowers[`borrower${index + 1}`].debtorDetail,
-                );
+                const borrowerData = initialBorrowers[`borrower${index + 1}`];
+                if (borrowerData) {
+                  setSelectedDebtorDetail(borrowerData.debtorDetail);
+                  setIsModalView(true);
+                }
               }}
-              handleEdit={() => setIsModalEdit(true)}
-              handleDelete={() => setIsModalDelete(true)}
+              handleEdit={() => {
+                const borrowerData = initialBorrowers[`borrower${index + 1}`];
+                if (borrowerData) {
+                  const borrowerForEdit: IBorrower = {
+                    ...borrowerData.debtorDetail,
+                    id: borrowerData.id,
+                    borrowerName: "",
+                    borrowerType: "",
+                    borrowerIdentificationType: "",
+                    borrowerIdentificationNumber: "",
+                    borrowerProperties: [],
+                  } as IBorrower;
+                  setSelectedBorrowerForEdit(borrowerForEdit);
+                  setCurrentBorrowerIndex(index);
+                  setIsModalEdit(true);
+                }
+              }}
+              handleDelete={() => {
+                setCurrentBorrowerIndex(index);
+                setIsModalDelete(true);
+              }}
             />
           ))}
           <NewCardBorrower
@@ -137,33 +175,47 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
             title={data.borrowerLabel}
             isMobile={isMobile}
           />
+
           {isModalAdd && (
             <DebtorAddModal
               onSubmit={() => setIsModalAdd(false)}
               handleClose={() => setIsModalAdd(false)}
               title={data.addButton}
               onAddBorrower={() => {}}
-              prospectData={{}}
+              prospectData={{} as IProspect}
             />
           )}
-          {isModalView && (
+
+          {isModalView && selectedDebtorDetail && (
             <DebtorDetailsModal
-              handleClose={() => setIsModalView(false)}
+              handleClose={() => {
+                setIsModalView(false);
+                setSelectedDebtorDetail(null);
+              }}
               isMobile={isMobile}
-              initialValues={formik.values.debtorDetail}
+              initialValues={selectedDebtorDetail}
             />
           )}
+
           {isModalDelete && (
             <DeleteModal
-              handleClose={() => setIsModalDelete(false)}
+              handleClose={() => {
+                setIsModalDelete(false);
+                setCurrentBorrowerIndex(null);
+              }}
               TextDelete={dataExtraDebtors.Delete}
             />
           )}
-          {isModalEdit && (
+          {isModalEdit && selectedBorrowerForEdit && (
             <DebtorEditModal
-              handleClose={() => setIsModalEdit(false)}
+              handleClose={() => {
+                setIsModalEdit(false);
+                setSelectedBorrowerForEdit(null);
+                setCurrentBorrowerIndex(null);
+              }}
               isMobile={isMobile}
-              initialValues={formik.values.debtorDetail}
+              initialValues={selectedBorrowerForEdit}
+              currentBorrowerIndex={currentBorrowerIndex}
             />
           )}
         </Grid>

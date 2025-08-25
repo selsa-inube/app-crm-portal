@@ -22,10 +22,6 @@ export const props: Partial<ArgTypes<ICreditLimitProps>> = {
     control: { type: "number" },
     description: "Assigned credit limit",
   },
-  currentPortfolio: {
-    control: { type: "number" },
-    description: "Current portfolio balance",
-  },
   maxUsableLimit: {
     control: { type: "number" },
     description: "Maximum usable limit",

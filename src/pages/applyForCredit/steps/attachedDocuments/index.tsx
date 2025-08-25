@@ -8,6 +8,7 @@ import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
+import { IFile } from "@components/modals/ListModal";
 
 import { ruleConfig } from "../../config/configRules";
 import { evaluateRule } from "../../evaluateRule";
@@ -20,10 +21,10 @@ export interface IBorrowerDocumentRule {
 interface IAttachedDocumentsProps {
   isMobile: boolean;
   initialValues: {
-    [key: string]: { id: string; name: string; file: File }[];
+    [key: string]: IFile[];
   };
   handleOnChange: (files: {
-    [key: string]: { id: string; name: string; file: File }[];
+    [key: string]: IFile[] | { id: string; name: string; file: File }[];
   }) => void;
   customerData: ICustomerData;
   prospectData: IProspect;
@@ -85,7 +86,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
               for (const value of values) {
                 borrowerDocumentRules.push({
                   borrower: borrower.borrowerName,
-                  value: value,
+                  value: String(value),
                 });
               }
             }

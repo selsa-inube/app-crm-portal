@@ -1,11 +1,10 @@
 import { environment } from "@config/environment";
+import { IProspect } from "../types";
 
 const postSimulateCredit = async (
   businessUnitPublicCode: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  simulateData: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any | undefined> => {
+  simulateData: IProspect,
+): Promise<IProspect | undefined> => {
   const requestUrl = `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`;
 
   try {

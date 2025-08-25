@@ -39,7 +39,6 @@ Default.args = {
   maxReciprocity: 40000000,
   maxDebtFRC: 45000000,
   assignedLimit: 0,
-  currentPortfolio: 10000000,
   maxUsableLimit: 20000000,
   availableLimitWithoutGuarantee: 15000000,
 };

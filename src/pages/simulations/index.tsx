@@ -18,6 +18,7 @@ import { generatePDF } from "@utils/pdf/generetePDF";
 import { ruleConfig } from "../applyForCredit/config/configRules";
 import { evaluateRule } from "../applyForCredit/evaluateRule";
 import { SimulationsUI } from "./interface";
+import { ICondition, Irule } from "../simulateCredit/types";
 
 export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
@@ -84,19 +85,20 @@ export function Simulations() {
     navigate(`/credit/apply-for-credit/${prospectCode}`);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cleanConditions = (rule: any) => {
+  const cleanConditions = (
+    rule: Irule | null | undefined,
+  ): Irule | null | undefined => {
     if (!rule) return rule;
 
     const cleaned = { ...rule };
 
     if (Array.isArray(cleaned.conditions)) {
       const hasValidCondition = cleaned.conditions.some(
-        (c: { value: unknown }) =>
+        (c: ICondition) =>
           c.value !== undefined && c.value !== null && c.value !== "",
       );
       if (!hasValidCondition) {
-        delete cleaned.conditions;
+        Reflect.deleteProperty(cleaned, "conditions");
       }
     }
     return cleaned;
@@ -142,9 +144,11 @@ export function Simulations() {
             "value",
             businessUnitPublicCode,
           );
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          if (error?.response?.status === 400) notDefinedRules.push(ruleName);
+        } catch (error) {
+          const errorResponse = error as { response?: { status: number } };
+          if (errorResponse.response?.status === 400) {
+            notDefinedRules.push(ruleName);
+          }
         }
       }),
     );
@@ -196,7 +200,9 @@ export function Simulations() {
 
             const extractedValues = Array.isArray(values)
               ? values
-                  .map((v) => (typeof v === "string" ? v : (v?.value ?? "")))
+                  .map((v) =>
+                    typeof v === "string" ? v : (v?.valuesAvailable ?? ""),
+                  )
                   .filter((val): val is string => val !== "")
               : [];
 
@@ -213,8 +219,7 @@ export function Simulations() {
               ...valueRuleRef.current,
               [ruleName]: extractedValues,
             };
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } catch (error: any) {
+          } catch (error) {
             console.error(
               `Error evaluando ${ruleName} para producto`,
               product,
@@ -264,6 +269,7 @@ export function Simulations() {
       requestValue={requestValue}
       sentData={sentData}
       setSentData={setSentData}
+      businessUnitPublicCode={businessUnitPublicCode}
     />
   );
 }

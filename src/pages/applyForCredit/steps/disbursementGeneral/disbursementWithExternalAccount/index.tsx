@@ -13,6 +13,7 @@ import {
   Checkbox,
   inube,
 } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import { typeAccount } from "@mocks/filing-application/disbursement-general/disbursementgeneral.mock";
 import {
@@ -36,8 +37,7 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: any;
+  formik: FormikValues;
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;

@@ -27,4 +27,14 @@ export const addConfig = {
 export const dataCreditProspects = {
   simulate: "Simular crédito",
   keyWord: "Palabra clave",
+  messageTitle: "Observaciones",
+  understand: "Entendido",
+  moneyDesination: "Destino del dinero",
+  observationProspect: "Observaciones del prospecto",
+  confirmTitle: "Confirmación de prospecto",
+  confirmDescription: "¿Realmente deseas confirmar este prospecto de crédito?",
+  deleteTitle: "Eliminar prospecto",
+  deleteDescription: "¿Realmente deseas eliminar este prospecto de crédito?",
+  confirm: "Confirmar",
+  cancel: "Cancelar",
 };

@@ -32,9 +32,9 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
               <MoneyDestinationCard
                 key={destination.moneyDestinationId}
                 id={destination.moneyDestinationId}
-                name={translation?.Name ?? destination.abbreviatedName}
+                name={destination.abbreviatedName}
                 value={translation?.Description ?? destination.descriptionUse}
-                label={translation?.Name ?? destination.abbreviatedName}
+                label={destination.abbreviatedName}
                 icon={translation?.Value ?? destination.iconReference}
                 handleChange={() => handleChange(destination.abbreviatedName)}
                 isSelected={selectedDestination === destination.abbreviatedName}

@@ -23,7 +23,7 @@ const getBorrowerPaymentCapacityById = async (
         method: "POST",
         headers: {
           "X-Action": "GetBorrowerPaymentCapacityByIdentificationNumber",
-          "X-Business-Unit": "fondecom", //businessUnitPublicCode,
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         body: JSON.stringify(data),

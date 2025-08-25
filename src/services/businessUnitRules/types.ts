@@ -1,9 +1,10 @@
 interface ICondition {
   condition: string;
-  value: string | number;
+  value: string | number | boolean;
 }
 
 export interface IBusinessUnitRules {
   ruleName: string;
   conditions: ICondition[];
+  valuesAvailable?: string;
 }

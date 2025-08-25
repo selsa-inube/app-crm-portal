@@ -30,6 +30,6 @@ const environment = {
 };
 
 const maxRetriesServices = 5;
-const fetchTimeoutServices = 3000;
+const fetchTimeoutServices = 10000;
 
 export { environment, fetchTimeoutServices, maxRetriesServices };

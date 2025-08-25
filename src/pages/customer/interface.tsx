@@ -1,8 +1,4 @@
-import {
-  MdOutlineArrowForward,
-  MdOutlineMicNone,
-  MdReportProblem,
-} from "react-icons/md";
+import { MdOutlineArrowForward, MdReportProblem } from "react-icons/md";
 import {
   Autocomplete,
   Button,
@@ -13,45 +9,28 @@ import {
 } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
-import { BaseModal } from "@components/modals/baseModal";
 
 import { homeData } from "./config";
-import { StyledAutomatic, StyledMic } from "./styles";
+import { StyledAutomatic } from "./styles";
 
 interface ICustomerUI {
   isMobile: boolean;
-  isShowModal: boolean;
   inputValue: string;
-  justStartedListening: boolean;
   options: IOption[];
   showError: boolean;
-  noResultsFound: boolean;
-  pendingTranscript: string;
   selectRef: React.RefObject<HTMLDivElement>;
-  browserSupportsSpeechRecognition: boolean;
-  handleStartListening: () => void;
-  handleCloseModal: () => void;
   handleChangeAutocomplete: (event: unknown, value: string | null) => void;
-  setIsShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleSubmit: () => void;
 }
 
 export function CustomerUI(props: ICustomerUI) {
   const {
     isMobile,
-    isShowModal,
     inputValue,
-    justStartedListening,
     options,
     showError,
-    noResultsFound,
-    pendingTranscript,
     selectRef,
-    browserSupportsSpeechRecognition,
-    handleStartListening,
-    handleCloseModal,
     handleChangeAutocomplete,
-    setIsShowModal,
     handleSubmit,
   } = props;
 
@@ -98,16 +77,6 @@ export function CustomerUI(props: ICustomerUI) {
                   </Stack>
                 )}
               </StyledAutomatic>
-              <Icon
-                icon={<MdOutlineMicNone />}
-                size="28px"
-                appearance="primary"
-                cursorHover
-                onClick={() => {
-                  setIsShowModal(true);
-                  handleStartListening();
-                }}
-              />
               {isMobile ? (
                 <Icon
                   icon={<MdOutlineArrowForward />}
@@ -124,67 +93,6 @@ export function CustomerUI(props: ICustomerUI) {
           </Fieldset>
         </Stack>
       </Fieldset>
-      {isShowModal &&
-        (browserSupportsSpeechRecognition ? (
-          <BaseModal
-            title={homeData.search}
-            width={isMobile ? "300px" : "450px"}
-            handleClose={handleCloseModal}
-          >
-            <Stack direction="column" gap="24px">
-              {noResultsFound ? (
-                <>
-                  <Text type="title" size="large">
-                    {homeData.notFound}
-                  </Text>
-                  <Stack justifyContent="center">
-                    <Icon
-                      icon={<MdOutlineMicNone />}
-                      size="58px"
-                      appearance="gray"
-                      shape="circle"
-                      spacing="compact"
-                      cursorHover
-                      onClick={handleStartListening}
-                    />
-                  </Stack>
-                </>
-              ) : (
-                <>
-                  <Text type="title" size="large">
-                    {justStartedListening ||
-                    (!pendingTranscript && !inputValue.trim())
-                      ? homeData.listening
-                      : pendingTranscript || inputValue}
-                  </Text>
-
-                  <Stack justifyContent="center">
-                    <StyledMic>
-                      <Icon
-                        icon={<MdOutlineMicNone />}
-                        size="58px"
-                        appearance="primary"
-                        shape="circle"
-                        variant="filled"
-                        spacing="compact"
-                        cursorHover
-                        onClick={handleStartListening}
-                      />
-                    </StyledMic>
-                  </Stack>
-                </>
-              )}
-            </Stack>
-          </BaseModal>
-        ) : (
-          <BaseModal
-            title={homeData.search}
-            width={isMobile ? "300px" : "450px"}
-            handleClose={handleCloseModal}
-          >
-            <Text>{homeData.noSupport}</Text>
-          </BaseModal>
-        ))}
     </Stack>
   );
 }

@@ -1,11 +1,12 @@
 import { Stack, Textfield } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 
 import { DataEditBorrower } from "./config";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function DataDebtor(initialValues: any) {
+
+export function DataDebtor(initialValues: FormikValues) {
   const { data } = initialValues;
 
   return (
