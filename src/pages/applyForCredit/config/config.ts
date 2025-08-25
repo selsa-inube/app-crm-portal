@@ -33,4 +33,5 @@ export const tittleOptions = {
   textButtonNext: "Entendido",
   titleError: "¡Uy, algo ha salido mal!",
   descriptionError: "No se han podido guardar los cambios.",
+  errorSubmit: "El radicado no se ha podido enviar correctamente.",
 };

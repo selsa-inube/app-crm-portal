@@ -37,4 +37,5 @@ export const dataCreditProspects = {
   deleteDescription: "¿Realmente deseas eliminar este prospecto de crédito?",
   confirm: "Confirmar",
   cancel: "Cancelar",
+  errorCreditProspect: "No se han podido cargar los prospectos de credito.",
 };

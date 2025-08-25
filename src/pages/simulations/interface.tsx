@@ -9,6 +9,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { ShareCreditModal } from "@components/modals/ShareCreditModal";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { BaseModal } from "@components/modals/baseModal";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import {
   IProspect,
   IExtraordinaryInstallments,
@@ -39,6 +40,9 @@ interface SimulationsUIProps {
   dataPrint: React.RefObject<HTMLDivElement>;
   pdfProspect: string | null;
   businessUnitPublicCode: string;
+  showErrorModal: boolean;
+  messageError: string;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowShareModal: (value: boolean) => void;
   setShowMenu: (value: boolean) => void;
   handleSubmitClick: () => void;
@@ -73,6 +77,9 @@ export function SimulationsUI(props: SimulationsUIProps) {
     dataPrint,
     pdfProspect,
     businessUnitPublicCode,
+    showErrorModal,
+    messageError,
+    setShowErrorModal,
     setShowShareModal,
     setShowMenu,
     setRequestValue,
@@ -373,6 +380,13 @@ export function SimulationsUI(props: SimulationsUIProps) {
             </Stack>
           </Stack>
         </Stack>
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
+        />
       )}
     </div>
   );

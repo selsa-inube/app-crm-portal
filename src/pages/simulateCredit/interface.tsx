@@ -24,6 +24,7 @@ import {
   IPaymentCapacityResponse,
 } from "@services/creditLimit/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IProspect } from "@services/prospect/types";
 
@@ -97,6 +98,7 @@ interface SimulateCreditUIProps {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   handleSubmitClick: () => void;
   setSelectedProducts: React.Dispatch<React.SetStateAction<string[]>>;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormDataChange: (
     field: keyof IFormData,
     newValue: string | number | boolean | string[] | object | null | undefined,
@@ -131,6 +133,8 @@ interface SimulateCreditUIProps {
   codeError: number | null;
   addToFix: string[];
   businessUnitPublicCode: string;
+  showErrorModal: boolean;
+  messageError: string;
   paymentCapacity?: IPaymentCapacityResponse | null;
 }
 
@@ -149,6 +153,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     handleNextStep,
     handlePreviousStep,
     handleSubmitClick,
+    setShowErrorModal,
     handleFormDataChange,
     setSelectedProducts,
     getRuleByName,
@@ -182,6 +187,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     formState,
     setFormState,
     paymentCapacity,
+    showErrorModal,
+    messageError,
     businessUnitPublicCode,
   } = props;
 
@@ -563,6 +570,13 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsAlertObligation(false)}
                   handleClose={() => setIsAlertObligation(false)}
                   isMobile={isMobile}
+                />
+              )}
+              {showErrorModal && (
+                <ErrorModal
+                  handleClose={() => setShowErrorModal(false)}
+                  isMobile={isMobile}
+                  message={messageError}
                 />
               )}
             </Stack>
