@@ -48,6 +48,9 @@ export function SourceIncome(props: ISourceIncomeProps) {
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const [dataValues, setDataValues] = useState<IIncome | null>(null);
+  const initialValuesRef = useRef<IIncome | null>(null);
+  const isInitializedRef = useRef(false);
+
   useEffect(() => {
     if (data && Object.keys(data).length > 0) {
       const sourceData = data as IIncomeSources;
@@ -72,19 +75,20 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
       setDataValues(values);
       setBorrowerIncome(values);
-
-      initialValuesRef.current = values;
+      if (!isInitializedRef.current) {
+        initialValuesRef.current = JSON.parse(JSON.stringify(values));
+        isInitializedRef.current = true;
+      }
     } else {
       const defaultValues = getInitialValues(customerData);
-
       setDataValues(defaultValues);
       setBorrowerIncome(defaultValues);
-
-      initialValuesRef.current = defaultValues;
+      if (!isInitializedRef.current) {
+        initialValuesRef.current = JSON.parse(JSON.stringify(defaultValues));
+        isInitializedRef.current = true;
+      }
     }
-  }, [data]);
-
-  const initialValuesRef = useRef<IIncome | null>(dataValues);
+  }, [data, customerData]);
 
   const totalSum = () => {
     const sumCapital =
@@ -108,7 +112,12 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
   const handleRestore = () => {
     if (initialValuesRef.current) {
-      setBorrowerIncome(initialValuesRef.current);
+      const restoredValues = JSON.parse(
+        JSON.stringify(initialValuesRef.current),
+      );
+      setBorrowerIncome(restoredValues);
+      const mappedData = mapToIncomeSources(restoredValues);
+      onDataChange?.(mappedData);
     }
     setIsOpenModal(false);
   };
@@ -119,9 +128,9 @@ export function SourceIncome(props: ISourceIncomeProps) {
       identificationType: "",
       name: values.borrower.split(" ")[0] || "",
       surname: values.borrower.split(" ").slice(1).join(" ") || "",
-      Leases: parseCurrencyString(values.capital[0] || "0"),
+      Leases: parseCurrencyString(values.capital[2] || "0"),
       Dividends: parseCurrencyString(values.capital[1] || "0"),
-      FinancialIncome: parseCurrencyString(values.capital[2] || "0"),
+      FinancialIncome: parseCurrencyString(values.capital[0] || "0"),
       PeriodicSalary: parseCurrencyString(values.employment[0] || "0"),
       OtherNonSalaryEmoluments: parseCurrencyString(
         values.employment[1] || "0",
@@ -157,6 +166,11 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
       return updated;
     });
+  };
+
+  const handleModalSubmit = (updatedData: IIncomeSources) => {
+    onDataChange?.(updatedData);
+    setIsOpenEditModal(false);
   };
 
   return (
@@ -278,8 +292,10 @@ export function SourceIncome(props: ISourceIncomeProps) {
         <IncomeModal
           handleClose={() => setIsOpenEditModal(false)}
           disabled={false}
-          onSubmit={() => {}}
+          onSubmit={handleModalSubmit}
           initialValues={data}
+          customerData={customerData}
+          dataValues={dataValues}
         />
       )}
     </StyledContainer>

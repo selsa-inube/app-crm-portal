@@ -121,6 +121,20 @@ export function SimulateCredit() {
       totalCollected: 0,
       selectedValues: {},
     },
+    sourcesOfIncomeState: {
+      Dividends: 0,
+      FinancialIncome: 0,
+      Leases: 0,
+      OtherNonSalaryEmoluments: 0,
+      PensionAllowances: 0,
+      PeriodicSalary: 0,
+      PersonalBusinessUtilities: 0,
+      ProfessionalFees: 0,
+      identificationNumber: "",
+      identificationType: "",
+      name: "",
+      surname: "",
+    },
   });
 
   const onlyBorrowerData = {

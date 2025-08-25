@@ -36,6 +36,7 @@ import {
   StepDetails,
   titleButtonTextAssited,
   ICreditLineTerms,
+  ISourcesOfIncomeState,
 } from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
@@ -427,6 +428,15 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       customerData={customerData}
                       creditLimitData={creditLimitData}
+                      initialValues={formData.sourcesOfIncomeState}
+                      handleOnChange={(
+                        newState: Partial<ISourcesOfIncomeState>,
+                      ) =>
+                        handleFormDataChange("sourcesOfIncomeState", {
+                          ...formData.sourcesOfIncomeState,
+                          ...newState,
+                        })
+                      }
                     />
                   )}
                 {currentStepsNumber &&
