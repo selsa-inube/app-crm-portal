@@ -5,7 +5,7 @@ import { IBusinessUnitRules } from "../types";
 const postBusinessUnitRules = async (
   businessUnitPublicCode: string,
   submitData: IBusinessUnitRules,
-): Promise<IBusinessUnitRules | undefined> => {
+): Promise<IBusinessUnitRules> => {
   const requestUrl = `${environment.ICOREBANKING_API_URL_PERSISTENCE}/business-unit-rules`;
 
   try {
@@ -22,7 +22,7 @@ const postBusinessUnitRules = async (
     const res = await fetch(requestUrl, options);
 
     if (res.status === 204) {
-      return;
+      return {} as IBusinessUnitRules;
     }
 
     let data;

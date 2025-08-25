@@ -2,13 +2,13 @@ import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Button } from "@inubekit/inubekit";
 
-import { PaymentCapacity } from "..";
+import { MaxLimitModal } from "..";
 import { PaymentCapacityProps } from "..";
 import { props } from "./props";
 
-const meta: Meta<typeof PaymentCapacity> = {
-  title: "components/modals/PaymentCapacityModal",
-  component: PaymentCapacity,
+const meta: Meta<typeof MaxLimitModal> = {
+  title: "components/modals/MaxLimitModal",
+  component: MaxLimitModal,
   argTypes: props,
 };
 
@@ -24,7 +24,7 @@ export const Default: Story = (args: PaymentCapacityProps) => {
       <Button onClick={() => setShowModal(true)}>Abrir Modal</Button>
       {showModal && (
         <>
-          <PaymentCapacity {...args} handleClose={() => setShowModal(false)} />
+          <MaxLimitModal {...args} handleClose={() => setShowModal(false)} />
         </>
       )}
     </>

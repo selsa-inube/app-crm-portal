@@ -16,6 +16,7 @@ export interface ReciprocityModalProps {
   balanceOfContributions: number;
   accordingToRegulation: number;
   assignedQuota: number;
+  numRegulations: number;
   loading?: boolean;
 }
 
@@ -25,6 +26,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
     balanceOfContributions,
     accordingToRegulation,
     assignedQuota,
+    numRegulations,
     loading,
   } = props;
 
@@ -36,7 +38,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
       nextButton={dataReciprocity.close}
       handleNext={handleClose}
       handleBack={handleClose}
-      finalDivider={true}
+      variantNext="outlined"
       width={isMobile ? "290px" : "auto"}
     >
       <Stack
@@ -63,10 +65,47 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
             </Stack>
           </Stack>
           <Stack justifyContent="space-between">
-            <Text type="label" size="large" weight="bold">
+            <Text type="label" size="large" appearance="gray">
               {dataReciprocity.timesPossible}
             </Text>
             <Stack>
+              {loading ? (
+                <SkeletonLine width="70px" animated={true} />
+              ) : (
+                <Text type="body" size="medium">
+                  x{currencyFormat(numRegulations, false)}
+                </Text>
+              )}
+            </Stack>
+          </Stack>
+        </Stack>
+        <Divider dashed />
+        <Stack direction="column" justifyContent="space-between" gap="12px">
+          <Stack justifyContent="space-between">
+            <Text type="label" size="large" weight="bold">
+              {dataReciprocity.assignedQuota}
+            </Text>
+            <Stack>
+              <Text type="body" size="medium" appearance="success">
+                $
+              </Text>
+              {loading ? (
+                <SkeletonLine width="70px" animated={true} />
+              ) : (
+                <Text type="body" size="medium">
+                  {currencyFormat(balanceOfContributions, false)}
+                </Text>
+              )}
+            </Stack>
+          </Stack>
+          <Stack justifyContent="space-between">
+            <Text type="label" size="large" appearance="gray">
+              {dataReciprocity.currentPortafolio}
+            </Text>
+            <Stack>
+              <Text type="body" size="medium" appearance="success">
+                $
+              </Text>
               {loading ? (
                 <SkeletonLine width="70px" animated={true} />
               ) : (
@@ -100,7 +139,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
           )}
           <Stack>
             <Text appearance="gray" size="small" textAlign="center">
-              {dataReciprocity.assignedQuota}
+              {dataReciprocity.mount}
             </Text>
           </Stack>
         </Stack>

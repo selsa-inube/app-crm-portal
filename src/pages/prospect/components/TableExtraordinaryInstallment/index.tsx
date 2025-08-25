@@ -16,7 +16,7 @@ import {
 import { TableExtraordinaryInstallmentUI } from "./interface";
 
 export interface TableExtraordinaryInstallmentProps {
-  [key: string]: unknown;
+  [key: string]: unknown | string | number;
   prospectData?: IProspect;
   refreshKey?: number;
   businessUnitPublicCode?: string;

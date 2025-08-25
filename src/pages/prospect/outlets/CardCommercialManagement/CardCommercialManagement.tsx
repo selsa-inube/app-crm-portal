@@ -74,7 +74,7 @@ export const CardCommercialManagement = (
   const handleDelete = async () => {
     if (!prospectData || !prospectProducts.length) return;
     try {
-      await RemoveCreditProduct("test", {
+      await RemoveCreditProduct(businessUnitPublicCode, {
         creditProductCode: selectedProductId,
         prospectId: prospectData.prospectId,
       });

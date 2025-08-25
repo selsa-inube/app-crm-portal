@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MdAttachFile, MdOutlineRemoveRedEye } from "react-icons/md";
+import { MdAttachFile, MdOutlineEdit } from "react-icons/md";
 import {
   Pagination,
   Table,
@@ -14,7 +14,6 @@ import {
   SkeletonLine,
   SkeletonIcon,
   useFlag,
-  Tag,
   Stack,
 } from "@inubekit/inubekit";
 
@@ -23,6 +22,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { optionButtons } from "@pages/prospect/outlets/financialReporting/config";
 import { IBorrowerDocumentRule } from "@pages/applyForCredit/steps/attachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { IFile } from "@components/modals/ListModal";
 
 import { headers, dataReport } from "./config";
 import { usePagination } from "./utils";
@@ -30,12 +30,10 @@ import { usePagination } from "./utils";
 interface ITableAttachedDocumentsProps {
   isMobile: boolean;
   uploadedFilesByRow: {
-    [key: string]: { id: string; name: string; file: File }[];
+    [key: string]: IFile[];
   };
   customerData: ICustomerData;
-  setUploadedFilesByRow: (files: {
-    [key: string]: { id: string; name: string; file: File }[];
-  }) => void;
+  setUploadedFilesByRow: (files: { [key: string]: IFile[] }) => void;
   ruleValues: IBorrowerDocumentRule[];
 }
 
@@ -66,7 +64,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     firstEntryInPage,
     lastEntryInPage,
   } = usePagination(ruleValues);
-  const [currentRowId, setCurrentRowId] = useState<string | null>(null);
+  const [currentRowId, setCurrentRowId] = useState<string>("");
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -96,14 +94,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     setShowAttachments(true);
   };
 
-  const handleSeeAttachment = (rowId: string) => {
-    setCurrentRowId(rowId);
-    setSeeAttachments(true);
-  };
-
-  const handleSetUploadedFiles = (
-    files: { id: string; name: string; file: File }[] | null,
-  ) => {
+  const handleSetUploadedFiles = (files: IFile[]) => {
     if (currentRowId) {
       setUploadedFilesByRow({
         ...uploadedFilesByRow,
@@ -117,6 +108,26 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     delete updated[rowId];
     setUploadedFilesByRow(updated);
     handleFlag();
+  };
+
+  const iconToShowOnActions = (rowIndex: number) => {
+    const hasNoFiles = uploadedFilesByRow[rowIndex];
+
+    return hasNoFiles === undefined || hasNoFiles.length === 0 ? (
+      <MdAttachFile />
+    ) : (
+      <MdOutlineEdit />
+    );
+  };
+
+  const getTitleToModal = (rowId: string) => {
+    const rowIdParsed = parseInt(rowId);
+
+    if (Number.isNaN(rowIdParsed)) {
+      return "Adjuntar";
+    }
+
+    return ruleValues[rowIdParsed].value;
   };
 
   return (
@@ -167,10 +178,10 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                     const cellData =
                       row[header.key as keyof { borrower: string }];
                     const customColumn = [
-                      "attach",
                       "download",
                       "remove",
                       "attached",
+                      "actions",
                     ].includes(header.key);
                     return (
                       <Td
@@ -178,20 +189,14 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                         width={customColumn ? "70px" : "auto"}
                         appearance={rowIndex % 2 === 0 ? "light" : "dark"}
                         type={customColumn ? "custom" : "text"}
-                        align={
-                          typeof header.action ||
-                          (typeof cellData === "string" &&
-                            cellData.includes("$"))
-                            ? "center"
-                            : "left"
-                        }
+                        align={"left"}
                       >
                         {(() => {
                           if (header.key === "actions") {
                             return (
                               <Stack justifyContent="space-around">
                                 <Icon
-                                  icon={<MdAttachFile />}
+                                  icon={iconToShowOnActions(rowIndex)}
                                   appearance="primary"
                                   size="16px"
                                   cursorHover
@@ -199,34 +204,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                                     handleOpenAttachment(rowIndex.toString())
                                   }
                                 />
-                                <Icon
-                                  icon={<MdOutlineRemoveRedEye />}
-                                  appearance="dark"
-                                  size="16px"
-                                  cursorHover
-                                  onClick={() =>
-                                    handleSeeAttachment(rowIndex.toString())
-                                  }
-                                  disabled={
-                                    !uploadedFilesByRow[rowIndex.toString()] ||
-                                    uploadedFilesByRow[rowIndex.toString()]
-                                      .length === 0
-                                  }
-                                />
                               </Stack>
-                            );
-                          }
-                          if (header.key === "attached") {
-                            if (
-                              uploadedFilesByRow[rowIndex.toString()]?.length >
-                              0
-                            ) {
-                              return (
-                                <Tag label="Adjunto" appearance="success" />
-                              );
-                            }
-                            return (
-                              <Tag label="No adjunto" appearance="danger" />
                             );
                           }
                           return cellData;
@@ -259,21 +237,19 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
       )}
       {showAttachment && (
         <ListModal
-          title="Adjuntar"
+          title={getTitleToModal(currentRowId)}
           handleClose={() => setShowAttachments(false)}
           optionButtons={optionButtons}
-          buttonLabel="Guardar"
+          buttonLabel="Adjuntar"
           uploadMode="local"
-          uploadedFiles={
-            currentRowId ? uploadedFilesByRow[currentRowId] || [] : []
-          }
+          uploadedFiles={uploadedFilesByRow[currentRowId]}
           setUploadedFiles={handleSetUploadedFiles}
           onlyDocumentReceived={true}
         />
       )}
       {seeAttachment && (
         <ListModal
-          title="Ver adjuntos"
+          title={getTitleToModal(currentRowId)}
           handleClose={() => setSeeAttachments(false)}
           isViewing={true}
           buttonLabel="Cerrar"

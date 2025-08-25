@@ -25,6 +25,7 @@ import {
 } from "@services/creditLimit/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
+import { IProspect } from "@services/prospect/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -54,6 +55,7 @@ import {
   AlertCreditLimit,
   AlertIncome,
 } from "./components/smallModals/modals";
+import { IDebtorDetail } from "../applyForCredit/types";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -94,8 +96,10 @@ interface SimulateCreditUIProps {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   handleSubmitClick: () => void;
   setSelectedProducts: React.Dispatch<React.SetStateAction<string[]>>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleFormDataChange: (field: string, newValue: any) => void;
+  handleFormDataChange: (
+    field: keyof IFormData,
+    newValue: string | number | boolean | string[] | object | null | undefined,
+  ) => void;
   navigate: ReturnType<typeof useNavigate>;
   currentStep: number;
   customerData: ICustomerData;
@@ -112,8 +116,7 @@ interface SimulateCreditUIProps {
   isMobile: boolean;
   isTablet: boolean;
   currentStepsNumber?: StepDetails;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  prospectData: any;
+  prospectData: IProspect | undefined;
   creditLimitData?: IIncomeSources;
   totalIncome: number;
   creditLineTerms?: ICreditLineTerms;
@@ -123,6 +126,7 @@ interface SimulateCreditUIProps {
   isAlertIncome: boolean;
   codeError: number | null;
   addToFix: string[];
+  businessUnitPublicCode: string;
   servicesProductSelection: IServicesProductSelection;
   paymentCapacity?: IPaymentCapacityResponse | null;
 }
@@ -173,6 +177,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     formState,
     setFormState,
     paymentCapacity,
+    businessUnitPublicCode,
   } = props;
 
   return (
@@ -186,7 +191,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
       ) : (
         <Stack
           direction="column"
-          width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
+          width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
           margin="0 auto"
         >
           <Stack
@@ -316,8 +321,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     stepsAddProspect.generalInformation.id && (
                     <RequirementsNotMet
                       isMobile={isMobile}
-                      prospectData={prospectData}
+                      prospectData={prospectData as IProspect}
                       customerData={customerData}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -389,7 +395,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   currentStepsNumber.id ===
                     stepsAddProspect.extraBorrowers.id && (
                     <ExtraDebtors
-                      initialValues={formData.borrowerData}
+                      initialValues={
+                        formData.borrowerData as unknown as IDebtorDetail
+                      }
                       onFormValid={setIsCurrentFormValid}
                       handleOnChange={(newDestination) =>
                         handleFormDataChange("borrowerData", newDestination)
@@ -457,6 +465,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       requestValue={requestValue}
                       setRequestValue={setRequestValue}
+                      obligationPayments={obligationPayments}
                     />
                   )}
                 {currentStepsNumber &&
@@ -494,8 +503,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 <RequirementsModal
                   handleClose={() => setIsModalOpenRequirements(false)}
                   isMobile={isMobile}
-                  prospectData={prospectData}
+                  prospectData={prospectData as IProspect}
                   customerData={customerData}
+                  businessUnitPublicCode={businessUnitPublicCode}
                 />
               )}
               {isCreditLimitModalOpen && (

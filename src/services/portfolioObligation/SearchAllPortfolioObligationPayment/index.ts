@@ -25,7 +25,7 @@ const getCreditPayments = async (
         method: "GET",
         headers: {
           "X-Action": "SearchAllPortfolioObligationPayment",
-          "X-Business-Unit": "fondecom", // businessUnitPublicCode,
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
       };

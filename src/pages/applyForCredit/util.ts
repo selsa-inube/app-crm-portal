@@ -1,5 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getTotalFinancialObligations = (properties: any[]) => {
+import { IBorrowerProperty } from "@services/creditLimit/types";
+export const getTotalFinancialObligations = (
+  properties: IBorrowerProperty[],
+) => {
   return properties
     .filter((prop) => prop.propertyName === "FinancialObligation")
     .reduce((total, prop) => {
@@ -35,8 +37,7 @@ type RuleTemplate = {
   ruleName: string;
   conditions: { condition: string; valueKey: string }[];
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ContextData = Record<string, any>;
+type ContextData = Record<string, number | string>;
 
 export function buildRule(template: RuleTemplate, contextData: ContextData) {
   return {

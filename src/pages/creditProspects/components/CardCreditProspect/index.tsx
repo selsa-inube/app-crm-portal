@@ -19,8 +19,8 @@ export interface ICardCreditProspectProps {
   title: string;
   borrower: string;
   numProspect: string;
-  date: Date;
-  value: number;
+  date: Date | undefined;
+  value: number | string;
   isMobile: boolean;
   iconTitle: string;
   hasMessage?: boolean;
@@ -85,13 +85,13 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
           <CardGray
             label={cardCreditData.date}
             placeHolder={capitalizeFirstLetter(
-              formatPrimaryDate(new Date(date)),
+              formatPrimaryDate(new Date(date as Date)),
             )}
             apparencePlaceHolder="gray"
           />
           <CardGray
             label={cardCreditData.value}
-            placeHolder={value === 0 ? "$ 0" : currencyFormat(value)}
+            placeHolder={value === 0 ? "$ 0" : currencyFormat(value as number)}
             apparencePlaceHolder="gray"
           />
         </Stack>

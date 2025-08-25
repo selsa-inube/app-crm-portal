@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { FormikValues } from "formik";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   Stack,
@@ -28,8 +29,7 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 interface IDisbursementWithCheckManagementProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: any;
+  formik: FormikValues;
   optionNameForm: string;
   identificationNumber: string;
   businessUnitPublicCode: string;

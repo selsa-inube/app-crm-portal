@@ -20,12 +20,11 @@ export const getCustomerCatalog = async (
         method: "GET",
         headers: {
           "X-Action": "SearchAllCustomerCatalog",
-          "X-Business-Unit": "fondecom",
+          "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
         signal: controller.signal,
       };
-      console.log(businessUnitPublicCode);
       const res = await fetch(
         `${environment.VITE_ICLIENT_QUERY_PROCESS_SERVICE}/customers/?fullName=lk.${fullName}lkp.&publicCode=lk.${publicCode}lkp.`,
         options,

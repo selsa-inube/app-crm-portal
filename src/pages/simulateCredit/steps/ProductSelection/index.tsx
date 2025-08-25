@@ -8,7 +8,11 @@ import { CardProductSelection } from "@pages/simulateCredit/components/CardProdu
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
 
-import { ICreditLineTerms, IServicesProductSelection } from "../../types";
+import {
+  ICreditLineTerms,
+  IServicesProductSelection,
+  IFormData,
+} from "../../types";
 import { electionData } from "./config";
 
 interface IProductSelectionProps {
@@ -23,7 +27,10 @@ interface IProductSelectionProps {
     onToggleChange: (index: number) => void;
   };
   onFormValid: (isValid: boolean) => void;
-  handleFormDataChange: (key: string, value: unknown) => void;
+  handleFormDataChange: (
+    field: keyof IFormData,
+    newValue: string | number | boolean | string[] | object | null | undefined,
+  ) => void;
   isMobile: boolean;
   choiceMoneyDestination: string;
   servicesQuestion: IServicesProductSelection;

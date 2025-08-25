@@ -1,5 +1,6 @@
 import { EconomicActivity, MaritalStatus } from "@services/enum/marital";
 import { Schedule } from "@services/enum/schedule";
+import { IProperty } from "@pages/prospect/components/TableObligationsFinancial/types";
 
 export const getMaritalStatusInSpanish = (
   status: keyof typeof MaritalStatus,
@@ -39,21 +40,18 @@ export const getScheduleInSpanish = (schedule: Schedule): string => {
 };
 
 export const getPropertyValue = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties: any[] | undefined,
+  properties: IProperty[],
   propertyName: string,
 ): string => {
   if (!Array.isArray(properties)) return "";
   return (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    properties.find((prop: any) => prop.propertyName === propertyName)
+    properties.find((prop: IProperty) => prop.propertyName === propertyName)
       ?.propertyValue || ""
   );
 };
 
 export const getAllPropertyValues = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties: any[],
+  properties: IProperty[],
   propertyName: string,
 ) => {
   return properties
