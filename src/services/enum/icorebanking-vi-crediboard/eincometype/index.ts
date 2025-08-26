@@ -1,0 +1,58 @@
+export const IncomeTypes = [
+  {
+    Code: "PeriodicSalary",
+    Description: "Periodic salary",
+    DescriptionEs: "Salario mensual",
+    Type: "Employment income",
+    TypeEs: "Rentas de trabajo",
+  },
+  {
+    Code: "OtherNonSalaryEmoluments",
+    Description: "Other non-salary emoluments",
+    DescriptionEs: "Otros pagos mensuales",
+    Type: "Employment income",
+    TypeEs: "Rentas de trabajo",
+  },
+  {
+    Code: "PensionAllowances",
+    Description: "Pension allowances",
+    DescriptionEs: "Mesadas pensionales",
+    Type: "Employment income",
+    TypeEs: "Rentas de trabajo",
+  },
+  {
+    Code: "Leases",
+    Description: "Leases",
+    DescriptionEs: "Arrendamientos",
+    Type: "Capital income",
+    TypeEs: "Rentas de capital",
+  },
+  {
+    Code: "Dividends",
+    Description: "Dividends",
+    DescriptionEs: "Dividendos o participaciones",
+    Type: "Capital income",
+    TypeEs: "Rentas de capital",
+  },
+  {
+    Code: "FinancialIncome",
+    Description: "Financial income",
+    DescriptionEs: "Rendimientos financieros",
+    Type: "Capital income",
+    TypeEs: "Rentas de capital",
+  },
+  {
+    Code: "ProfessionalFees",
+    Description: "Professional fees",
+    DescriptionEs: "Honorarios profesionales",
+    Type: "Professional fees",
+    TypeEs: "Otros ingresos variables",
+  },
+  {
+    Code: "PersonalBusinessUtilities",
+    Description: "Personal business utilities",
+    DescriptionEs: "Ganancias en micronegocios",
+    Type: "Earnings from ventures or micro-businesses",
+    TypeEs: "Otros ingresos variables",
+  },
+];

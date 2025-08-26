@@ -30,7 +30,7 @@ const environment = {
     .VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE,
 };
 
-const maxRetriesServices = 5;
-const fetchTimeoutServices = 10000;
+const maxRetriesServices = 1;
+const fetchTimeoutServices = 50000;
 
 export { environment, fetchTimeoutServices, maxRetriesServices };
