@@ -12,24 +12,6 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       },
     ],
   }),
-  PercentagePayableViaExtraInstallments: (data) => ({
-    ruleName: "PercentagePayableViaExtraInstallments",
-    conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
-      { condition: "ClientType", value: data.ClientType },
-      {
-        condition: "AffiliateSeniority",
-        value: data.AffiliateSeniority,
-      },
-    ],
-  }),
-  IncomeSourceUpdateAllowed: (data) => ({
-    ruleName: "IncomeSourceUpdateAllowed",
-    conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
-      { condition: "ClientType", value: data.ClientType },
-    ],
-  }),
   LoanAmountLimit: (data) => ({
     ruleName: "LoanAmountLimit",
     conditions: [
@@ -51,27 +33,6 @@ export const ruleConfig: Record<string, RuleBuilder> = {
       { condition: "LineOfCredit", value: data.LineOfCredit },
       { condition: "LoanAmount", value: data.LoanAmount },
       { condition: "LoanTerm", value: data.LoanTerm },
-    ],
-  }),
-  FinancialObligationsUpdateRequired: (data) => ({
-    ruleName: "FinancialObligationsUpdateRequired",
-    conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
-      { condition: "ClientType", value: data.ClientType },
-    ],
-  }),
-  AdditionalBorrowersAllowedGP: (data) => ({
-    ruleName: "AdditionalBorrowersAllowedGP",
-    conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
-      { condition: "ClientType", value: data.ClientType },
-    ],
-  }),
-  IncludeExtraordinaryInstallments: (data) => ({
-    ruleName: "IncludeExtraordinaryInstallments",
-    conditions: [
-      { condition: "LineOfCredit", value: data.LineOfCredit },
-      { condition: "ClientType", value: data.ClientType },
     ],
   }),
 };

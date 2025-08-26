@@ -11,10 +11,11 @@ export const textModals = {
   errorPost: "Error al crear la solicitud de crédito",
   titleAlert: "Alerta",
   descriptionIncome:
-    "Aún no has registrado ningún valor de ingresos, es obligatorio que lo hagas para poder atender tu solicitud.",
-  includeIncome: "Por favor incluye tus ingresos mensuales.",
+    "Aún no se ha registrado ningún valor de ingresos, esta información es requerida para tramitar la solicitud.",
+  includeIncome: "Por favor registre los ingresos mensuales del cliente.",
   descriptionObligation:
-    "Aún no has registrado ningún valor de obligaciones financieras, es obligatorio que lo hagas para poder atender tu solicitud.",
-  includeObligation: "Por favor incluye tus obligaciones mensuales.",
+    "Aún no se ha registrado ningún valor de obligaciones financieras.",
+  includeObligation:
+    "Por favor registre las obligaciones financieras del cliente.",
   understood: "Entendido",
 };

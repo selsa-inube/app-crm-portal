@@ -7,12 +7,14 @@ import {
 import { IStaffPortalByBusinessManager } from "../types";
 import { mapResendApiToEntities } from "./mappers";
 
-const getStaffPortalsByBusinessManager = async (): Promise<
-  IStaffPortalByBusinessManager[]
-> => {
+const getStaffPortalsByBusinessManager = async (
+  staffPortalId: string,
+): Promise<IStaffPortalByBusinessManager[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
+  const queryParams = new URLSearchParams({
+    staffPortalId: staffPortalId,
+  });
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
@@ -26,7 +28,7 @@ const getStaffPortalsByBusinessManager = async (): Promise<
       };
 
       const res = await fetch(
-        `${environment.IVITE_ISAAS_QUERY_PROCESS_SERVICE}/staff-portals-by-business-manager`,
+        `${environment.IVITE_ISAAS_QUERY_PROCESS_SERVICE}/staff-portals-by-business-manager?${queryParams.toString()}`,
         options,
       );
 

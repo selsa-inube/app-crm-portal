@@ -4,54 +4,38 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { CreditRequestParams, ICreditRequest } from "../types";
-import { mapCreditRequestToEntities } from "./mapper";
+import { IExtraInstallmentsAllowedResponse } from "../types";
 
-export const getCreditRequestByCode = async (
+export const getExtraInstallmentsAllowed = async (
   businessUnitPublicCode: string,
-  userAccount: string,
-  params: CreditRequestParams,
-): Promise<ICreditRequest[]> => {
+  lineOfCreditAbbreviatedName: string,
+  clientIdentificationNumber: string,
+): Promise<IExtraInstallmentsAllowedResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-      const queryParams = new URLSearchParams();
-
-      if (params.creditRequestCode) {
-        queryParams.set("creditRequestCode", params.creditRequestCode);
-      }
-
-      if (params.clientIdentificationNumber) {
-        queryParams.set(
-          "clientIdentificationNumber",
-          params.clientIdentificationNumber,
-        );
-      }
-
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "SearchAllCreditRequestsInProgress",
+          "X-Action": "GetExtraInstallmentsAllowed",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          "x-user-name": userAccount,
         },
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests?${queryParams.toString()}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/extra-installments-allowed/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return [];
+        return null;
       }
 
       const data = await res.json();
@@ -64,11 +48,7 @@ export const getCreditRequestByCode = async (
         };
       }
 
-      const normalizedCredit = Array.isArray(data)
-        ? mapCreditRequestToEntities(data)
-        : [];
-
-      return normalizedCredit;
+      return data;
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {
@@ -78,11 +58,11 @@ export const getCreditRequestByCode = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudieron obtener los procesos de consulta.",
+          "Todos los intentos fallaron. No se pudo obtener la linea de abonos extra.",
         );
       }
     }
   }
 
-  return [];
+  return null;
 };
