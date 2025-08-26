@@ -11,10 +11,10 @@ const validateBusinessManagers = async (
   return newData;
 };
 
-const validateConsultation = async (): Promise<
-  IStaffPortalByBusinessManager[]
-> => {
-  const newData = await getStaffPortalsByBusinessManager();
+const validateConsultation = async (
+  staffPortalId: string,
+): Promise<IStaffPortalByBusinessManager[]> => {
+  const newData = await getStaffPortalsByBusinessManager(staffPortalId);
   return newData;
 };
 
