@@ -14,7 +14,7 @@ import { dataSubmitApplication } from "@pages/applyForCredit/config/config";
 import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { IBorrowerProperty } from "@services/creditLimit/types";
+import { IBorrower, IBorrowerProperty } from "@services/creditLimit/types";
 import { IBorrowerData, IDebtorDetail } from "@pages/applyForCredit/types";
 import { IProspect, IProspectBorrower } from "@services/prospect/types";
 
@@ -144,7 +144,6 @@ export function Borrowers(props: borrowersProps) {
                   handleView={() => {
                     setSelectedBorrower(item as IDebtorDetail);
                     setIsModalView(true);
-                    setIsModalView(true);
                   }}
                   isMobile={isMobile}
                   handleEdit={() => {
@@ -213,7 +212,7 @@ export function Borrowers(props: borrowersProps) {
                     formik.values.borrowers[editIndex].borrowerProperties,
                   ),
                 }}
-                onUpdate={(updatedBorrower: Borrower) => {
+                onUpdate={(updatedBorrower: IBorrower) => {
                   const updatedBorrowers = formik.values.borrowers.map(
                     (b, i) =>
                       i === editIndex ? { ...b, ...updatedBorrower } : b,

@@ -5,27 +5,20 @@ import { CardGray } from "@components/cards/CardGray";
 import { Fieldset } from "@components/data/Fieldset";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { currencyFormat } from "@utils/formatData/currency";
-
-import { dataIncomeDebtor } from "./config";
+import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
 
 interface IIncomeDebtor {
   initialValues: FormikValues | undefined;
 }
+const uniqueTypes = Array.from(new Set(IncomeTypes.map((src) => src.TypeEs)));
 
-const incomeFields = [
-  {
-    label: dataIncomeDebtor.work,
-    keys: ["PeriodicSalary", "OtherNonSalaryEmoluments", "PensionAllowances"],
-  },
-  {
-    label: dataIncomeDebtor.capital,
-    keys: ["FinancialIncome", "Leases", "Dividends"],
-  },
-  {
-    label: dataIncomeDebtor.variables,
-    keys: ["ProfessionalFees", "PersonalBusinessUtilities"],
-  },
-];
+const incomeFields = uniqueTypes.map((typeEs) => {
+  const items = IncomeTypes.filter((src) => src.TypeEs === typeEs);
+  return {
+    label: typeEs,
+    keys: items.map((src) => src.Code),
+  };
+});
 
 export function IncomeDebtor(props: IIncomeDebtor) {
   const { initialValues } = props;

@@ -12,6 +12,7 @@ import {
 import { IIncomeSources } from "@services/creditLimit/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
 
 import {
   IncomeEmployment,
@@ -48,31 +49,51 @@ export function SourceIncome(props: ISourceIncomeProps) {
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const [dataValues, setDataValues] = useState<IIncome | null>(null);
+
+  const groupMapping: Record<
+    string,
+    keyof Omit<IIncome, "borrower_id" | "borrower">
+  > = {
+    "Employment income": "employment",
+    "Capital income": "capital",
+    "Professional fees": "businesses",
+    "Earnings from ventures or micro-businesses": "businesses",
+  };
+
+  function buildIncomeValues(
+    sourceData: IIncomeSources,
+    IncomeTypes: { Code: string; Type: string }[],
+  ): IIncome {
+    const values: IIncome = {
+      borrower_id: sourceData?.identificationNumber ?? ".....",
+      borrower: sourceData?.name ?? "",
+      employment: [],
+      capital: [],
+      businesses: [],
+    };
+
+    for (const item of IncomeTypes) {
+      const groupKey = groupMapping[item.Type];
+      if (!groupKey) continue;
+
+      const amount = (
+        sourceData[item.Code as keyof IIncomeSources] ?? 0
+      ).toString();
+      if (values[groupKey]) {
+        (values[groupKey] as unknown as string[]).push(amount);
+      }
+    }
+
+    return values;
+  }
+
   useEffect(() => {
     if (data && Object.keys(data).length > 0) {
       const sourceData = data as IIncomeSources;
-      const values: IIncome = {
-        borrower_id: customerData?.publicCode ?? "",
-        borrower: customerData?.fullName ?? "",
-        capital: [
-          (sourceData.FinancialIncome ?? 0).toString(),
-          (sourceData.Dividends ?? 0).toString(),
-          (sourceData.Leases ?? 0).toString(),
-        ],
-        employment: [
-          (sourceData.PeriodicSalary ?? 0).toString(),
-          (sourceData.OtherNonSalaryEmoluments ?? 0).toString(),
-          (sourceData.PensionAllowances ?? 0).toString(),
-        ],
-        businesses: [
-          (sourceData.ProfessionalFees ?? 0).toString(),
-          (sourceData.PersonalBusinessUtilities ?? 0).toString(),
-        ],
-      };
+      const values = buildIncomeValues(sourceData, IncomeTypes);
 
       setDataValues(values);
       setBorrowerIncome(values);
-
       initialValuesRef.current = values;
     } else {
       const defaultValues = getInitialValues(customerData);

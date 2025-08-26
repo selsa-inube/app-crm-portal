@@ -239,7 +239,7 @@ export function ApplyForCredit() {
       });
   }, [valueRule, hasBorrowers, bondValue]);
 
-  const [currentStep, setCurrentStep] = useState<number>(8);
+  const [currentStep, setCurrentStep] = useState<number>(1);
 
   const {
     contactInformation,
