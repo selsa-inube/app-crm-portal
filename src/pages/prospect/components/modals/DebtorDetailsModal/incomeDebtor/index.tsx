@@ -10,13 +10,15 @@ import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincomety
 interface IIncomeDebtor {
   initialValues: FormikValues | undefined;
 }
-const uniqueTypes = Array.from(new Set(IncomeTypes.map((src) => src.TypeEs)));
+const uniqueTypes = Array.from(
+  new Set(IncomeTypes.map((source) => source.TypeEs)),
+);
 
 const incomeFields = uniqueTypes.map((typeEs) => {
-  const items = IncomeTypes.filter((src) => src.TypeEs === typeEs);
+  const items = IncomeTypes.filter((source) => source.TypeEs === typeEs);
   return {
     label: typeEs,
-    keys: items.map((src) => src.Code),
+    keys: items.map((source) => source.Code),
   };
 });
 

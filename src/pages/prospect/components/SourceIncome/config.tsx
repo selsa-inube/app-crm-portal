@@ -23,8 +23,10 @@ function IncomeCapital({
   return (
     <IncomeCard
       title={capitalSources[0]?.TypeEs ?? ""}
-      labels={capitalSources.map((src) => src.DescriptionEs ?? "")}
-      placeholders={capitalSources.map((src) => `${src.DescriptionEs}/mes`)}
+      labels={capitalSources.map((source) => source.DescriptionEs ?? "")}
+      placeholders={capitalSources.map(
+        (source) => `${source.DescriptionEs}/mes`,
+      )}
       values={values}
       ShowSupport={ShowSupport}
       disabled={disabled}
@@ -46,8 +48,10 @@ function IncomeEmployment({
   return (
     <IncomeCard
       title={employmentSources[0]?.TypeEs ?? ""}
-      labels={employmentSources.map((src) => src.DescriptionEs ?? "")}
-      placeholders={employmentSources.map((src) => `${src.DescriptionEs}/mes`)}
+      labels={employmentSources.map((source) => source.DescriptionEs ?? "")}
+      placeholders={employmentSources.map(
+        (source) => `${source.DescriptionEs}/mes`,
+      )}
       values={values}
       ShowSupport={ShowSupport}
       disabled={disabled}
@@ -70,8 +74,10 @@ function MicroBusinesses({
   return (
     <IncomeCard
       title={variableSources[0]?.TypeEs ?? ""}
-      labels={variableSources.map((src) => src.DescriptionEs ?? "")}
-      placeholders={variableSources.map((src) => `${src.DescriptionEs}/mes`)}
+      labels={variableSources.map((source) => source.DescriptionEs ?? "")}
+      placeholders={variableSources.map(
+        (source) => `${source.DescriptionEs}/mes`,
+      )}
       values={values}
       ShowSupport={ShowSupport}
       disabled={disabled}
