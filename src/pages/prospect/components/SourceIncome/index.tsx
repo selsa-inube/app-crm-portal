@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdCached, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Grid, useMediaQuery, Button } from "@inubekit/inubekit";
 
@@ -32,6 +32,8 @@ interface ISourceIncomeProps {
   data?: IIncomeSources;
   customerData?: ICustomerData;
   showEdit?: boolean;
+  initialDataForRestore?: IIncomeSources | null;
+  onRestore?: () => void;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -43,7 +45,10 @@ export function SourceIncome(props: ISourceIncomeProps) {
     showEdit = true,
     data,
     customerData = {} as ICustomerData,
+    initialDataForRestore,
+    onRestore,
   } = props;
+
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
@@ -94,18 +99,13 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
       setDataValues(values);
       setBorrowerIncome(values);
-      initialValuesRef.current = values;
     } else {
       const defaultValues = getInitialValues(customerData);
 
       setDataValues(defaultValues);
       setBorrowerIncome(defaultValues);
-
-      initialValuesRef.current = defaultValues;
     }
   }, [data]);
-
-  const initialValuesRef = useRef<IIncome | null>(dataValues);
 
   const totalSum = () => {
     const sumCapital =
@@ -128,8 +128,18 @@ export function SourceIncome(props: ISourceIncomeProps) {
   };
 
   const handleRestore = () => {
-    if (initialValuesRef.current) {
-      setBorrowerIncome(initialValuesRef.current);
+    if (onRestore) {
+      // Usar la función que viene del hook
+      onRestore();
+    } else if (initialDataForRestore) {
+      // Fallback para compatibilidad hacia atrás
+      const restoredValues = buildIncomeValues(
+        initialDataForRestore,
+        IncomeTypes,
+      );
+      setBorrowerIncome(restoredValues);
+      setDataValues(restoredValues);
+      onDataChange?.(initialDataForRestore);
     }
     setIsOpenModal(false);
   };
@@ -178,6 +188,14 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
       return updated;
     });
+  };
+
+  const handleEditModalSubmit = (updatedData: IIncomeSources) => {
+    const updatedIncomeValues = buildIncomeValues(updatedData, IncomeTypes);
+    setBorrowerIncome(updatedIncomeValues);
+    setDataValues(updatedIncomeValues);
+    onDataChange?.(updatedData);
+    setIsOpenEditModal(false);
   };
 
   return (
@@ -237,6 +255,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                 iconBefore={<MdCached />}
                 fullwidth={isMobile}
                 onClick={() => setIsOpenModal(true)}
+                disabled={!initialDataForRestore && !onRestore}
               >
                 {incomeCardData.restore}
               </Button>
@@ -299,8 +318,10 @@ export function SourceIncome(props: ISourceIncomeProps) {
         <IncomeModal
           handleClose={() => setIsOpenEditModal(false)}
           disabled={false}
-          onSubmit={() => {}}
+          onSubmit={handleEditModalSubmit}
           initialValues={data}
+          dataValues={dataValues}
+          customerData={customerData}
         />
       )}
     </StyledContainer>

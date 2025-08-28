@@ -135,6 +135,20 @@ export function SimulateCredit() {
       totalCollected: 0,
       selectedValues: {},
     },
+    sourcesOfIncome: {
+      Dividends: 0,
+      FinancialIncome: 0,
+      Leases: 0,
+      OtherNonSalaryEmoluments: 0,
+      PensionAllowances: 0,
+      PeriodicSalary: 0,
+      PersonalBusinessUtilities: 0,
+      ProfessionalFees: 0,
+      identificationNumber: "",
+      identificationType: "",
+      name: "",
+      surname: "",
+    },
   });
 
   const onlyBorrowerData = {
@@ -671,14 +685,13 @@ export function SimulateCredit() {
     try {
       const result = await getCreditLimit(
         businessUnitPublicCode,
-        customerPublicCode!,
+        customerPublicCode,
       );
       setCreditLimitData(result);
     } catch (error) {
       handleFlag(error as string);
     }
   };
-
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
       fetchCreditLimit();
