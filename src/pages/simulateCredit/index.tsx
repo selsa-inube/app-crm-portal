@@ -142,7 +142,7 @@ export function SimulateCredit() {
       customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
     borrowerIdentificationNumber: customerData.publicCode,
     borrowerType: "MainBorrower",
-    borrowerName: "Lenis Poveda", // borrar en un futuro
+    borrowerName: "Lenis Poveda",
     borrowerProperties: [
       {
         propertyName: "PeriodicSalary",
@@ -167,14 +167,14 @@ export function SimulateCredit() {
             consolidatedAmount: item.consolidatedAmount,
             consolidatedAmountType: item.consolidatedAmountType,
             creditProductCode: item.creditProductCode,
-            estimatedDateOfConsolidation: item.estimatedDateOfConsolidation, // borrar en un futuro
+            estimatedDateOfConsolidation: item.estimatedDateOfConsolidation,
             lineOfCreditDescription: item.lineOfCreditDescription,
           }))
         : [],
     linesOfCredit: formData.selectedProducts.map((product) => ({
       lineOfCreditAbbreviatedName: product,
     })),
-    firstPaymentCycleDate: "2025-06-15T15:04:05Z",
+    firstPaymentCycleDate: new Date().toISOString().split("T")[0],
     extraordinaryInstallments: Array.isArray(formData.extraordinaryInstallments)
       ? formData.extraordinaryInstallments.map((item) => ({
           installmentAmount: item.value as number,
@@ -578,13 +578,13 @@ export function SimulateCredit() {
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
     }
-    if (
-      currentStep === stepsAddProspect.sourcesIncome.id &&
-      totalIncome === 0
-    ) {
-      setIsAlertIncome(true);
-      return;
-    }
+    // if (
+    //   currentStep === stepsAddProspect.sourcesIncome.id &&
+    //   totalIncome === 0
+    // ) {
+    //   setIsAlertIncome(true);
+    //   return;
+    // }
     if (currentStep === stepsAddProspect.productSelection.id) {
       setCurrentStep(dynamicSteps[0]);
     } else if (
@@ -700,6 +700,8 @@ export function SimulateCredit() {
   useEffect(() => {
     fetchRulesByProducts();
   }, [formData.selectedProducts, fetchRulesByProducts]);
+
+  console.log(formData, "form");
 
   return (
     <>

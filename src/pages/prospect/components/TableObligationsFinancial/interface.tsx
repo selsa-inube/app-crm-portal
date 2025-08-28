@@ -22,6 +22,7 @@ import {
   SkeletonIcon,
   Button,
   Divider,
+  Select,
 } from "@inubekit/inubekit";
 
 import { EditFinancialObligationModal } from "@components/modals/editFinancialObligationModal";
@@ -130,6 +131,10 @@ interface UIProps {
   initialValues: FormikValues;
   handleOnChange: (values: FormikValues) => void;
   setRefreshKey: React.Dispatch<React.SetStateAction<number>> | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setSelectedDebtor: any;
+  selectedBorrowerIndex: number;
+  setSelectedBorrowerIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const TableFinancialObligationsUI = ({
@@ -148,6 +153,9 @@ export const TableFinancialObligationsUI = ({
   initialValues,
   handleOnChange,
   setRefreshKey,
+  setSelectedDebtor,
+  selectedBorrowerIndex,
+  setSelectedBorrowerIndex,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -182,6 +190,14 @@ export const TableFinancialObligationsUI = ({
   const [isOpenModal, setIsOpenModal] = useState(false);
   const { customerData } = useContext(CustomerContext);
 
+  const borrowerOptions =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    initialValues?.[0]?.borrowers?.map((b: any, index: number) => ({
+      id: String(index),
+      value: String(index),
+      label: b.borrowerName,
+    })) || [];
+
   const handleCloseModal = () => {
     setOpenModal(false);
     setRefreshKey?.((prevKey) => prevKey + 1);
@@ -201,26 +217,6 @@ export const TableFinancialObligationsUI = ({
     };
   };
 
-  function insertInDeepestObligations<T extends { obligations?: FormikValues }>(
-    o: T,
-    newItem: FormikValues,
-  ): T {
-    if (!o.obligations || typeof o.obligations !== "object") {
-      return o;
-    }
-
-    if (Array.isArray(o.obligations)) {
-      return {
-        ...o,
-        obligations: [...o.obligations, newItem],
-      };
-    }
-    return {
-      ...o,
-      obligations: insertInDeepestObligations(o.obligations, newItem),
-    };
-  }
-
   const handleConfirm = (values: FormikValues) => {
     const newObligation = {
       obligationNumber: values.idUser || "",
@@ -232,15 +228,14 @@ export const TableFinancialObligationsUI = ({
       duesPaid: values.feePaid || "",
       outstandingDues: values.term || "",
     };
-    const updatedObligations = insertInDeepestObligations(
-      initialValues.obligations,
-      newObligation,
-    );
 
-    const updatedInitialValues = {
-      ...initialValues,
-      obligations: updatedObligations,
-    };
+    const currentObligations = Array.isArray(initialValues)
+      ? initialValues
+      : initialValues
+        ? [initialValues]
+        : [];
+
+    const updatedInitialValues = [...currentObligations, newObligation];
 
     handleOnChange(updatedInitialValues);
     setOpenModal(false);
@@ -352,10 +347,10 @@ export const TableFinancialObligationsUI = ({
                         appearance="danger"
                         size="16px"
                         onClick={() => {
-                          if (selectedDebtor) {
-                            handleDelete(selectedDebtor.id as string);
-                            setIsDeleteModal(false);
-                          }
+                          setSelectedDebtor(
+                            mapToTableFinancialObligationsProps(prop),
+                          );
+                          setIsDeleteModal(true);
                         }}
                         cursorHover
                       />
@@ -387,19 +382,55 @@ export const TableFinancialObligationsUI = ({
           direction={isMobile ? "column" : "row"}
         >
           {!isMobile && (
-            <Text size="medium" type="title" appearance="dark">
-              {customerData?.fullName}
-            </Text>
-          )}
-          {isMobile && (
-            <Stack padding="0px 0px 10px 0px">
-              <CardGray
-                label={dataReport.title}
-                placeHolder={customerData?.fullName}
-                isMobile={true}
-              />
+            <Stack>
+              {initialValues?.[0]?.borrowers?.length > 1 ? (
+                <Select
+                  name="borrower"
+                  id="borrower"
+                  label="Deudor"
+                  placeholder="Selecciona un deudor"
+                  options={borrowerOptions}
+                  value={String(selectedBorrowerIndex)}
+                  onChange={(name, value) =>
+                    setSelectedBorrowerIndex(Number(value))
+                  }
+                  size="wide"
+                  fullwidth={isMobile}
+                />
+              ) : (
+                <Text size="medium" type="title" appearance="dark">
+                  {customerData?.fullName}
+                </Text>
+              )}
             </Stack>
           )}
+
+          {isMobile && (
+            <Stack padding="0px 0px 10px 0px">
+              {initialValues?.[0]?.borrowers?.length > 1 ? (
+                <Select
+                  name="borrower"
+                  id="borrower"
+                  label="Deudor"
+                  placeholder="Selecciona un deudor"
+                  options={borrowerOptions}
+                  value={String(selectedBorrowerIndex)}
+                  onChange={(name, value) =>
+                    setSelectedBorrowerIndex(Number(value))
+                  }
+                  size="wide"
+                  fullwidth={isMobile}
+                />
+              ) : (
+                <CardGray
+                  label={dataReport.title}
+                  placeHolder={customerData?.fullName}
+                  isMobile={true}
+                />
+              )}
+            </Stack>
+          )}
+
           <Stack
             justifyContent="end"
             gap="16px"

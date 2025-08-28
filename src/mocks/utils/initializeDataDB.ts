@@ -18,7 +18,6 @@ import { credit_behavior } from "@mocks/creditProfileInfo/creditBehavior.mock";
 import { mockDecisions } from "@mocks/financialReporting/to-do/decisions.mock";
 import { mockPaymentChannel } from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
 import { mockExtraDebtors } from "@mocks/add-prospect/extra-debtors/extradebtors.mock";
-import { mockFinancialObligation } from "@mocks/add-prospect/financial-obligation/financialobligation.mock";
 
 import {
   mockRequests,
@@ -78,6 +77,5 @@ export function initializeDataDB(company: string) {
   intializedData("requirements", requirementsMock("Presente"));
   intializedData("decisions", mockDecisions);
   intializedData("mockRequest_value", mockPaymentChannel);
-  intializedData("financial_obligation", mockFinancialObligation);
   intializedData("extra_debtors", mockExtraDebtors);
 }
