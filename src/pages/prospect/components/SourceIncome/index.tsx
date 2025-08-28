@@ -129,10 +129,8 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
   const handleRestore = () => {
     if (onRestore) {
-      // Usar la función que viene del hook
       onRestore();
     } else if (initialDataForRestore) {
-      // Fallback para compatibilidad hacia atrás
       const restoredValues = buildIncomeValues(
         initialDataForRestore,
         IncomeTypes,
