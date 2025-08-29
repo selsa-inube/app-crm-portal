@@ -52,6 +52,7 @@ function AppPage(props: IAppPage) {
 
   const { eventData, businessUnitsToTheStaff, setBusinessUnitSigla } =
     useContext(AppContext);
+  const user = "username";
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [collapse, setCollapse] = useState(false);
@@ -144,7 +145,7 @@ function AppPage(props: IAppPage) {
               logoURL={renderLogo(eventData.businessUnit.urlLogo)}
               navigation={useNavigationConfig()}
               user={{
-                username: eventData.user.userName,
+                username: user ?? "Nombre de usuario",
                 breakpoint: "848px",
                 client: eventData.businessUnit.abbreviatedName,
               }}

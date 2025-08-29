@@ -13,7 +13,6 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@auth0/auth0-react": "^2.2.4",
     "@inubekit/inubekit": "^5.2.0",
     "@types/yup": "^0.32.0",
     "crypto-js": "^4.2.0",

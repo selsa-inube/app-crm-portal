@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
 import { IBusinessManagers } from "@services/businessManager/types";
 import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager";
 import { getBusinessManagers } from "@services/businessManager/SearchByIdBusinessManager";
 import { decrypt, encrypt } from "@utils/encrypt/encrypt";
+import { useIAuth } from "@src/context/authContext";
 
 const usePortalLogic = () => {
   const [portalData, setPortalData] =
@@ -14,7 +14,7 @@ const usePortalLogic = () => {
     useState<IBusinessManagers | null>(null);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, isLoading } = useIAuth();
 
   const rawPortalCode = useMemo(() => {
     const urlCode = new URLSearchParams(window.location.search)

@@ -12,7 +12,7 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useIAuth } from "@context/authContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -22,7 +22,7 @@ interface IBusinessUnits {
 }
 
 function useAppContext() {
-  const { user } = useAuth0();
+  const { user } = useIAuth();
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
@@ -77,7 +77,7 @@ function useAppContext() {
   useEffect(() => {
     const fetchStaffData = async () => {
       try {
-        const userIdentifier = user?.email?.substring(0, 20);
+        const userIdentifier = user?.username;
         if (!userIdentifier) return;
         const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
@@ -113,10 +113,10 @@ function useAppContext() {
       }
     };
 
-    if (user?.email) {
+    if (user?.username) {
       fetchStaffData();
     }
-  }, [user?.email]);
+  }, [user?.username]);
 
   const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
@@ -138,8 +138,8 @@ function useAppContext() {
       urlLogo: businessUnit?.urlLogo || "",
     },
     user: {
-      userAccount: user?.email || "",
-      userName: user?.name || "",
+      userAccount: user?.username || "",
+      userName: user?.username || "",
       staff: {
         biologicalSex: "",
         birthDay: "",
@@ -188,7 +188,7 @@ function useAppContext() {
         if (
           !eventData?.portal?.publicCode ||
           !eventData?.businessUnit?.businessUnitPublicCode ||
-          !user?.email
+          !user?.username
         ) {
           return;
         }
@@ -196,7 +196,7 @@ function useAppContext() {
         const result = await getSearchOptionForStaff(
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
-          user.email.substring(0, 20),
+          "ossalincon422@gmail.",
         );
         setOptionStaffData(result);
       } catch (error) {
@@ -208,7 +208,7 @@ function useAppContext() {
   }, [
     eventData?.portal?.publicCode,
     eventData?.businessUnit?.businessUnitPublicCode,
-    user?.email,
+    user?.username,
   ]);
 
   useEffect(() => {

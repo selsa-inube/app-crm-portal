@@ -10,12 +10,12 @@ const useLogin = () => {
   const { eventData, setBusinessUnitsToTheStaff } = useContext(AppContext);
   const [hasError, setHasError] = useState(false);
   const [codeError, setCodeError] = useState<number>();
-
+  console.log(eventData.portal.publicCode);
   useEffect(() => {
     if (eventData.portal.publicCode) {
       validateBusinessUnits(
         eventData.portal.publicCode,
-        eventData.user.userAccount.substring(0, 20),
+        "ossalincon422@gmail.",
       ).then((data) => {
         setBusinessUnitsToTheStaff(data);
         if (!setBusinessUnitsToTheStaff) {
@@ -30,7 +30,7 @@ const useLogin = () => {
     }
   }, [
     eventData.portal.publicCode,
-    eventData.user.userAccount,
+    "ossalincon422@gmail.",
     hasError,
     setBusinessUnitsToTheStaff,
   ]);
@@ -41,9 +41,9 @@ const useLogin = () => {
       location.pathname === "/login/" ||
       location.pathname === "/"
     ) {
-      navigate(`/login/${eventData.user.userAccount}/checking-credentials/`);
+      navigate(`/login/ossalincon422@gmail./checking-credentials/`);
     }
-  }, [location, navigate, eventData.user.userAccount]);
+  }, [location, navigate, "ossalincon422@gmail."]);
 
   return { eventData, codeError, hasError };
 };

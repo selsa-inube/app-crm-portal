@@ -57,7 +57,13 @@ interface IUser {
   userName: string;
   staff: IStaff;
 }
-
+export interface IUsers {
+  username: string;
+  id: string;
+  company: string;
+  urlImgPerfil: string;
+  nickname: string;
+}
 interface IBusinessUnit {
   businessUnitPublicCode: string;
   abbreviatedName: string;

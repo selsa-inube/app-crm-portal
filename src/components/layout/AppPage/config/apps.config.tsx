@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useIAuth } from "@src/context/authContext";
 import { MdLogout, MdOutlineCreditCard, MdVpnKey } from "react-icons/md";
 
 const appsConfig = [
@@ -25,7 +25,7 @@ const appsConfig = [
   },
 ];
 const useNavigationConfig = () => {
-  const { logout } = useAuth0();
+  const { logout } = useIAuth();
 
   const navigation = {
     nav: {

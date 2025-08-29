@@ -1,11 +1,11 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+
 import { FlagProvider } from "@inubekit/inubekit";
 
 import { AppContext, AppContextProvider } from "@context/AppContext";
@@ -14,7 +14,6 @@ import { ErrorPage } from "@components/layout/ErrorPage";
 import { AppPage } from "@components/layout/AppPage";
 import { GlobalStyles } from "@styles/global";
 import { Login } from "@pages/login";
-import { environment } from "@config/environment";
 import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
 import { CreditRoutes } from "@routes/CreditRoutes";
@@ -22,12 +21,20 @@ import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { Home } from "@pages/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { CustomerRoutes } from "@routes/customer";
+import { useIAuth } from "./context/authContext";
 
 function LogOut() {
-  localStorage.clear();
-  const { logout } = useAuth0();
-  logout({ logoutParams: { returnTo: environment.GOOGLE_REDIRECT_URI } });
-  return <AppPage />;
+  const { logout } = useIAuth();
+  useEffect(() => {
+    localStorage.clear();
+    logout({
+      logoutParams: {
+        returnTo: `${window.location.origin}/error`,
+      },
+    });
+  }, [logout]);
+
+  return <LoadingAppUI />;
 }
 
 function FirstPage() {
