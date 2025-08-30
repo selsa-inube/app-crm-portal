@@ -41,7 +41,7 @@ const useLogin = () => {
       location.pathname === "/login/" ||
       location.pathname === "/"
     ) {
-      navigate(`/login/ossalincon422@gmail./checking-credentials/`);
+      navigate(`/login/username/checking-credentials/`);
     }
   }, [location, navigate, "ossalincon422@gmail."]);
 
