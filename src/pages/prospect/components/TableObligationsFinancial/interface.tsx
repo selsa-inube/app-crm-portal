@@ -38,6 +38,7 @@ import { CustomerContext } from "@context/CustomerContext";
 
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
+import { IBorrowerDataFinancial } from "./types";
 
 export interface ITableFinancialObligationsProps {
   type?: string;
@@ -134,9 +135,13 @@ interface UIProps {
   services?: boolean;
   handleOnChange: (values: FormikValues) => void;
   setRefreshKey: React.Dispatch<React.SetStateAction<number>> | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setSelectedDebtor: any;
+  setSelectedDebtor:
+    | React.Dispatch<
+        React.SetStateAction<ITableFinancialObligationsProps | null>
+      >
+    | undefined;
   selectedBorrowerIndex: number;
+  businessUnitPublicCode: string;
   setSelectedBorrowerIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -159,6 +164,7 @@ export const TableFinancialObligationsUI = ({
   setRefreshKey,
   setSelectedDebtor,
   selectedBorrowerIndex,
+  businessUnitPublicCode,
   setSelectedBorrowerIndex,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -195,12 +201,13 @@ export const TableFinancialObligationsUI = ({
   const { customerData } = useContext(CustomerContext);
 
   const borrowerOptions =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    initialValues?.[0]?.borrowers?.map((b: any, index: number) => ({
-      id: String(index),
-      value: String(index),
-      label: b.borrowerName,
-    })) || [];
+    initialValues?.[0]?.borrowers?.map(
+      (b: IBorrowerDataFinancial, index: number) => ({
+        id: String(index),
+        value: String(index),
+        label: b.borrowerName,
+      }),
+    ) || [];
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -250,12 +257,12 @@ export const TableFinancialObligationsUI = ({
           borrowers: updatedBorrowers,
         };
 
-        await updateProspect("fondecom", prospectData);
+        await updateProspect(businessUnitPublicCode, prospectData);
 
         setRefreshKey?.((prev) => prev + 1);
         setOpenModal(false);
       } catch (error) {
-        console.error("Error al agregar la obligación:", error);
+        console.log(error);
       }
     } else {
       const newObligation = {
@@ -388,7 +395,7 @@ export const TableFinancialObligationsUI = ({
                         appearance="danger"
                         size="16px"
                         onClick={() => {
-                          setSelectedDebtor(
+                          setSelectedDebtor?.(
                             mapToTableFinancialObligationsProps(prop),
                           );
                           setIsDeleteModal(true);

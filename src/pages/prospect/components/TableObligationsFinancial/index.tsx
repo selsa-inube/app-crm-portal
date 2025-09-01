@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 import { FormikValues, useFormik } from "formik";
 
+import { AppContext } from "@context/AppContext";
 import { currencyFormat } from "@utils/formatData/currency";
-import { IObligations } from "@services/creditRequest/types";
 import { updateProspect } from "@services/prospect/updateProspect";
 
 import { convertObligationsToProperties, headers } from "./config";
@@ -11,7 +11,7 @@ import {
   ITableFinancialObligationsProps,
   TableFinancialObligationsUI,
 } from "./interface";
-import { IProperty } from "./types";
+import { IProperty, IObligations } from "./types";
 
 export const TableFinancialObligations = (
   props: ITableFinancialObligationsProps,
@@ -34,6 +34,10 @@ export const TableFinancialObligations = (
     ITableFinancialObligationsProps[]
   >([]);
   const [selectedBorrowerIndex, setSelectedBorrowerIndex] = useState<number>(0);
+
+  const { businessUnitSigla } = useContext(AppContext);
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const formik = useFormik({
     initialValues: initialValues as IObligations,
@@ -125,8 +129,7 @@ export const TableFinancialObligations = (
       const selectedBorrower = borrowers[selectedBorrowerIndex];
 
       const updatedProperties = selectedBorrower.borrowerProperties.filter(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (prop: any) =>
+        (prop: IProperty) =>
           !(
             prop.propertyName === "FinancialObligation" &&
             prop.propertyValue === id
@@ -147,9 +150,9 @@ export const TableFinancialObligations = (
       };
 
       try {
-        await updateProspect("fondecom", updatedInitialValues);
+        await updateProspect(businessUnitPublicCode, updatedInitialValues);
       } catch (error) {
-        console.error("Error al actualizar el prospecto:", error);
+        console.log(error);
       }
 
       setRefreshKey?.((prev) => prev + 1);
@@ -158,12 +161,7 @@ export const TableFinancialObligations = (
         const obligationNumberFromRow =
           typeof id === "string" ? id.split(",")[5]?.trim() : undefined;
 
-        if (!obligationNumberFromRow) {
-          console.warn(
-            "No se pudo obtener obligationNumber desde propertyValue para eliminar en local.",
-          );
-          return;
-        }
+        if (!obligationNumberFromRow) return;
 
         const currentObligations = Array.isArray(initialValues)
           ? [...initialValues]
@@ -172,14 +170,14 @@ export const TableFinancialObligations = (
             : [];
 
         const updatedInitialValues = currentObligations.filter(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (ob: any) => String(ob.obligationNumber) !== obligationNumberFromRow,
+          (obligation: IObligations) =>
+            String(obligation.obligationNumber) !== obligationNumberFromRow,
         );
 
         handleOnChange(updatedInitialValues);
         setRefreshKey?.((prev) => prev + 1);
       } catch (error) {
-        console.error("Error al eliminar localmente la obligación:", error);
+        console.log(error);
       }
     }
   };
@@ -193,8 +191,7 @@ export const TableFinancialObligations = (
         const selectedBorrower = borrowers[selectedBorrowerIndex];
 
         const obligationIndex = selectedBorrower.borrowerProperties.findIndex(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (prop: any) =>
+          (prop: IProperty) =>
             prop.propertyName === "FinancialObligation" &&
             prop.propertyValue === selectedDebtor?.propertyValue,
         );
@@ -229,11 +226,11 @@ export const TableFinancialObligations = (
           borrowers: updatedBorrowers,
         };
 
-        await updateProspect("fondecom", updatedInitialValues);
+        await updateProspect(businessUnitPublicCode, updatedInitialValues);
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
       } catch (error) {
-        console.error("Error al editar la obligación:", error);
+        console.log(error);
       }
     } else {
       try {
@@ -244,14 +241,10 @@ export const TableFinancialObligations = (
             : [];
 
         const obligationIndex = currentObligations.findIndex(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (ob: any) =>
-            ob.obligationNumber ===
+          (obligation: IObligations) =>
+            obligation.obligationNumber ===
             updatedDebtor.propertyValue?.split(",")[5].trim(),
         );
-
-        console.log(currentObligations, "cu");
-        console.log(updatedDebtor, "up");
 
         if (obligationIndex === -1) return;
 
@@ -272,7 +265,7 @@ export const TableFinancialObligations = (
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
       } catch (error) {
-        console.error("Error al editar localmente la obligación:", error);
+        console.log(error);
       }
     }
   };
@@ -316,6 +309,7 @@ export const TableFinancialObligations = (
       setRefreshKey={setRefreshKey}
       setSelectedDebtor={setSelectedDebtor}
       selectedBorrowerIndex={selectedBorrowerIndex}
+      businessUnitPublicCode={businessUnitPublicCode}
       setSelectedBorrowerIndex={setSelectedBorrowerIndex}
     />
   );
