@@ -375,6 +375,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           servicesProductSelection.extraInstallement,
                       }}
                       creditLineTerms={creditLineTerms!}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 {currentStepsNumber &&
