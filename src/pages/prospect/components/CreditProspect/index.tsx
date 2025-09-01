@@ -403,7 +403,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   useEffect(() => {
     const fetchCreditLimit = async () => {
       try {
-        console.log("ojo---> ", customerPublicCode);
         const result = await getCreditLimit(
           businessUnitPublicCode,
           customerPublicCode!,
@@ -415,8 +414,11 @@ export function CreditProspect(props: ICreditProspectProps) {
         return null;
       }
     };
-    fetchCreditLimit();
+    if (customerPublicCode) {
+      fetchCreditLimit();
+    }
   }, []);
+
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">

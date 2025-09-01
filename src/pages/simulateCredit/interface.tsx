@@ -37,6 +37,7 @@ import {
   StepDetails,
   titleButtonTextAssited,
   ICreditLineTerms,
+  IServicesProductSelection,
 } from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
@@ -54,7 +55,6 @@ import {
   AlertCapacityAnalysis,
   AlertCreditLimit,
   AlertIncome,
-  AlertObligations,
 } from "./components/smallModals/modals";
 import { IDebtorDetail } from "../applyForCredit/types";
 
@@ -66,7 +66,6 @@ interface SimulateCreditUIProps {
   setIsCapacityAnalysisModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsCapacityAnalysisWarning: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAlertIncome: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsAlertObligation: React.Dispatch<React.SetStateAction<boolean>>;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -103,8 +102,6 @@ interface SimulateCreditUIProps {
     field: keyof IFormData,
     newValue: string | number | boolean | string[] | object | null | undefined,
   ) => void;
-  getRuleByName: (name: string) => string[];
-  getAllDataRuleByName: (name: string) => string[];
   navigate: ReturnType<typeof useNavigate>;
   currentStep: number;
   customerData: ICustomerData;
@@ -129,12 +126,12 @@ interface SimulateCreditUIProps {
   obligationPayments: IPayment[];
   assistedButtonText: string;
   isAlertIncome: boolean;
-  isAlertObligation: boolean;
   codeError: number | null;
   addToFix: string[];
   businessUnitPublicCode: string;
   showErrorModal: boolean;
   messageError: string;
+  servicesProductSelection: IServicesProductSelection;
   paymentCapacity?: IPaymentCapacityResponse | null;
 }
 
@@ -147,7 +144,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setIsCapacityAnalysisModal,
     setIsCapacityAnalysisWarning,
     setIsAlertIncome,
-    setIsAlertObligation,
     setRequestValue,
     requestValue,
     handleNextStep,
@@ -156,7 +152,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setShowErrorModal,
     handleFormDataChange,
     setSelectedProducts,
-    getRuleByName,
     navigate,
     currentStepsNumber,
     customerData,
@@ -181,9 +176,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     currentStep,
     assistedButtonText,
     isAlertIncome,
-    isAlertObligation,
     codeError,
     addToFix,
+    servicesProductSelection,
     formState,
     setFormState,
     paymentCapacity,
@@ -378,25 +373,15 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       onFormValid={setIsCurrentFormValid}
                       isMobile={isMobile}
                       choiceMoneyDestination={formData.selectedDestination}
-                      allRules={{
-                        PercentagePayableViaExtraInstallments: getRuleByName(
-                          "PercentagePayableViaExtraInstallments",
-                        ),
-                        IncomeSourceUpdateAllowed: getRuleByName(
-                          "IncomeSourceUpdateAllowed",
-                        ),
-                        FinancialObligationsUpdateRequired: getRuleByName(
-                          "FinancialObligationsUpdateRequired",
-                        ),
-                        AdditionalBorrowersAllowedGP: getRuleByName(
-                          "AdditionalBorrowersAllowedGP",
-                        ),
-                        IncludeExtraordinaryInstallments: getRuleByName(
-                          "IncludeExtraordinaryInstallments",
-                        ),
+                      servicesQuestion={{
+                        financialObligation:
+                          servicesProductSelection.financialObligation,
+                        aditionalBorrowers:
+                          servicesProductSelection.aditionalBorrowers,
+                        extraInstallement:
+                          servicesProductSelection.extraInstallement,
                       }}
                       creditLineTerms={creditLineTerms!}
-                      creditLimitData={creditLimitData!}
                     />
                   )}
                 {currentStepsNumber &&
@@ -562,13 +547,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 <AlertIncome
                   handleNext={() => setIsAlertIncome(false)}
                   handleClose={() => setIsAlertIncome(false)}
-                  isMobile={isMobile}
-                />
-              )}
-              {isAlertObligation && (
-                <AlertObligations
-                  handleNext={() => setIsAlertObligation(false)}
-                  handleClose={() => setIsAlertObligation(false)}
                   isMobile={isMobile}
                 />
               )}

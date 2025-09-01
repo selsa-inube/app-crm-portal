@@ -12,6 +12,7 @@ const environment = {
   AUTH0_DOMAIN: import.meta.env.VITE_AUTH0_DOMAIN,
   TEMP_BUSINESS_UNIT: "test",
 
+  VITE_CREDIBOARD_URL: import.meta.env.VITE_CREDIBOARD_URL,
   ICOREBANKING_API_URL_QUERY: import.meta.env.VITE_ICOREBANKING_API_URL_QUERY,
   ICOREBANKING_API_URL_PERSISTENCE: import.meta.env
     .VITE_ICOREBANKING_API_URL_PERSISTENCE,
@@ -29,7 +30,7 @@ const environment = {
     .VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE,
 };
 
-const maxRetriesServices = 5;
-const fetchTimeoutServices = 10000;
+const maxRetriesServices = 1;
+const fetchTimeoutServices = 50000;
 
 export { environment, fetchTimeoutServices, maxRetriesServices };

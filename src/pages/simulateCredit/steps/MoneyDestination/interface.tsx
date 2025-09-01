@@ -4,7 +4,7 @@ import { IMoneyDestination } from "@services/moneyDestination/types";
 import { MoneyDestinationCard } from "@components/cards/MoneyDestinationCard";
 import { Fieldset } from "@components/data/Fieldset";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
-import { ErrorModal } from "@src/components/modals/ErrorModal";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 interface MoneyDestinationUIProps {
   destinations: IMoneyDestination[] | undefined;

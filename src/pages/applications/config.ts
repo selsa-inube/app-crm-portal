@@ -28,4 +28,5 @@ export const dataCreditProspects = {
   applyCredit: "Solicitar crédito",
   keyWord: "Palabra clave",
   errorCreditRequest: "No se han podido cargar las solicitudes de credito.",
+  titleError: "Lamentamos los inconvenientes",
 };

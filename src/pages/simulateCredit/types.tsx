@@ -120,6 +120,12 @@ export interface ICondition {
   value: string | number | boolean;
 }
 
+export interface IServicesProductSelection {
+  financialObligation: string[];
+  aditionalBorrowers: string[];
+  extraInstallement: string[];
+}
+
 export interface Irule {
   ruleName: string;
   conditions: ICondition[];

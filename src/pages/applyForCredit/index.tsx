@@ -241,7 +241,9 @@ export function ApplyForCredit() {
       });
   }, [valueRule, hasBorrowers, bondValue]);
 
-  const [currentStep, setCurrentStep] = useState<number>(8);
+  const [currentStep, setCurrentStep] = useState<number>(
+    stepsFilingApplication.generalInformation.id,
+  );
 
   const {
     contactInformation,
@@ -253,7 +255,7 @@ export function ApplyForCredit() {
 
   const submitData = new FormData();
   submitData.append("clientEmail", contactInformation.email);
-  submitData.append("clientId", "33333");
+  submitData.append("clientId", customerData.customerId);
   submitData.append(
     "clientIdentificationNumber",
     contactInformation.documentNumber,
@@ -269,12 +271,11 @@ export function ApplyForCredit() {
     customerData?.generalAttributeClientNaturalPersons?.[0].associateType,
   );
   submitData.append("justification", "Radicación con éxito");
-  submitData.append("loanAmount", "2000000");
+  submitData.append("loanAmount", prospectData.requestedAmount.toString());
   submitData.append(
     "moneyDestinationAbreviatedName",
     prospectData.moneyDestinationAbbreviatedName,
   );
-  submitData.append("moneyDestinationId", "13698");
   submitData.append("prospectCode", prospectData.prospectCode);
   submitData.append("prospectId", prospectData.prospectId);
   submitData.append(
@@ -337,14 +338,13 @@ export function ApplyForCredit() {
   const disbursements = Object.entries(disbursementGeneral)
     .filter(([, value]) => value.amount && value.amount !== "")
     .map(([key, value]) => ({
-      accountBankCode: "100",
+      accountBankCode: value.bankid || "",
       accountBankName: value.bank,
       accountNumber: value.accountNumber,
       accountType: value.accountType,
       disbursementAmount: value.amount,
       disbursementDate: new Date().toISOString().split("T")[0],
       isInTheNameOfBorrower: value.toggle ? "Y" : "N",
-      modeOfDisbursementCode: "<>",
       modeOfDisbursementType: key,
       observation: value.description || "",
       payeeBiologicalSex: value.sex === "man" ? "M" : "F",
@@ -354,7 +354,7 @@ export function ApplyForCredit() {
       payeeIdentificationNumber: value.identification,
       payeeIdentificationType: value.documentType,
       payeeName: value.name,
-      payeePersonType: "N",
+      payeePersonType: "Natural_person",
       payeePhoneNumber: value.phone || "none",
       payeeSurname: value.lastName || "none",
       transactionOperation: "Insert",

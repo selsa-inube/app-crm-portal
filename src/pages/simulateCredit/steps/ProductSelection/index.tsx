@@ -7,11 +7,13 @@ import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
-import { IIncomeSources } from "@services/creditLimit/types";
-import { currencyFormat } from "@utils/formatData/currency";
 
+import {
+  ICreditLineTerms,
+  IServicesProductSelection,
+  IFormData,
+} from "../../types";
 import { electionData } from "./config";
-import { ICreditLineTerms, IFormData } from "../../types";
 
 interface IProductSelectionProps {
   initialValues: {
@@ -31,14 +33,7 @@ interface IProductSelectionProps {
   ) => void;
   isMobile: boolean;
   choiceMoneyDestination: string;
-  allRules: {
-    PercentagePayableViaExtraInstallments: string[];
-    IncomeSourceUpdateAllowed: string[];
-    FinancialObligationsUpdateRequired: string[];
-    AdditionalBorrowersAllowedGP: string[];
-    IncludeExtraordinaryInstallments: string[];
-  };
-  creditLimitData?: IIncomeSources;
+  servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
 }
 
@@ -53,9 +48,8 @@ export function ProductSelection(props: IProductSelectionProps) {
     onFormValid,
     handleFormDataChange,
     isMobile,
-    allRules,
+    servicesQuestion,
     choiceMoneyDestination,
-    creditLimitData,
     creditLineTerms,
   } = props;
   const validationSchema = Yup.object().shape({
@@ -91,103 +85,52 @@ export function ProductSelection(props: IProductSelectionProps) {
     }
   }, [generalToggleChecked]);
 
-  const shouldShowPrograming = (
-    allRules.PercentagePayableViaExtraInstallments || []
-  ).some((value) => Number(value) > 0);
-
-  const shouldShowIncomeUpdate =
-    (allRules.IncomeSourceUpdateAllowed || []).length > 0 &&
-    allRules.IncomeSourceUpdateAllowed.every((value) => value === "Y");
-
-  const validateIfQuestionIsIntoRules = (key: string) => {
-    if (
-      (key === "includeAditionalBorrowers" &&
-        !allRules.AdditionalBorrowersAllowedGP.includes("Y")) ||
-      (!allRules.IncludeExtraordinaryInstallments.includes("Y") &&
-        !generalToggleChecked)
-    ) {
-      return false;
-    }
-    return true;
-  };
-  const isQuestionDisabled = (key: string) => {
-    if (
-      key === "includeAditionalBorrowers" &&
-      allRules.AdditionalBorrowersAllowedGP.every((value) => value !== "Y") &&
-      generalToggleChecked
-    ) {
-      return true;
-    }
-    if (
-      key === "includeExtraordinaryInstallments" &&
-      allRules.IncludeExtraordinaryInstallments.every(
-        (value) => value !== "Y",
-      ) &&
-      generalToggleChecked
-    ) {
-      return true;
-    }
-
-    if (
-      key === "includeAditionalBorrowers" ||
-      key === "includeExtraordinaryInstallments"
-    ) {
-      return !validateIfQuestionIsIntoRules(key);
-    }
-    if (key === "includeExtraordinaryInstallments") {
-      return !shouldShowPrograming;
-    }
-    if (key === "updateIncomeSources" || key === "updateFinancialObligations") {
-      return !shouldShowIncomeUpdate;
-    }
-
-    return false;
-  };
-
   const allQuestions = Object.entries(electionData.questions).map(
     ([key, question], index) => ({ key, question, index }),
   );
 
-  const [fullRules, setFullRules] = useState(allRules);
+  const [fullRules, setFullRules] = useState(servicesQuestion);
   useEffect(() => {
-    setFullRules(allRules);
+    setFullRules(servicesQuestion);
   }, [choiceMoneyDestination]);
 
+  const getQuestionState = (values: string[]) => {
+    const hasY = values.includes("Y");
+    const hasN = values.includes("N");
+
+    if (hasY && !hasN) return "enabled";
+    if (hasY && hasN) return "disabled";
+    return "hidden";
+  };
+
   const filteredQuestions = allQuestions.filter(({ key }) => {
-    if (
-      key === "includeExtraordinaryInstallments" &&
-      fullRules.PercentagePayableViaExtraInstallments.every(
-        (value) => Number(value) <= 0,
-      )
-    ) {
-      return false;
+    let state = "hidden";
+
+    if (key === "includeExtraordinaryInstallments") {
+      state = getQuestionState(fullRules.extraInstallement);
     }
-    if (
-      (key === "updateIncomeSources" || key === "updateFinancialObligations") &&
-      fullRules.IncomeSourceUpdateAllowed.every((value) => value !== "Y")
-    ) {
-      return false;
+    if (key === "updateFinancialObligations") {
+      state = getQuestionState(fullRules.financialObligation);
+    }
+    if (key === "includeAditionalBorrowers") {
+      state = getQuestionState(fullRules.aditionalBorrowers);
     }
 
-    if (
-      key === "updateFinancialObligations" &&
-      fullRules.FinancialObligationsUpdateRequired.includes("Y")
-    ) {
-      return false;
-    }
-
-    return true;
+    return state !== "hidden";
   });
 
-  const totalIncome =
-    (creditLimitData?.Dividends ?? 0) +
-    (creditLimitData?.FinancialIncome ?? 0) +
-    (creditLimitData?.Leases ?? 0) +
-    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
-    (creditLimitData?.PensionAllowances ?? 0) +
-    (creditLimitData?.PeriodicSalary ?? 0) +
-    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
-    (creditLimitData?.ProfessionalFees ?? 0);
+  const isQuestionDisabled = (key: string) => {
+    if (key === "includeExtraordinaryInstallments") {
+      return getQuestionState(fullRules.extraInstallement) === "disabled";
+    }
+    if (key === "updateFinancialObligations") {
+      return getQuestionState(fullRules.financialObligation) === "disabled";
+    }
+    if (key === "includeAditionalBorrowers") {
+      return getQuestionState(fullRules.aditionalBorrowers) === "disabled";
+    }
+    return false;
+  };
 
   return (
     <Formik
@@ -289,12 +232,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                       size="medium"
                       appearance={isQuestionDisabled(key) ? "gray" : "dark"}
                     >
-                      {key === "updateIncomeSources"
-                        ? question.replace(
-                            "$valor",
-                            `${currencyFormat(totalIncome)}`,
-                          )
-                        : question}
+                      {question}
                     </Text>
                     <Stack gap="8px">
                       <Stack>

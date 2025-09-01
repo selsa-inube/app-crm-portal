@@ -11,10 +11,13 @@ import {
   useMediaQuery,
 } from "@inubekit/inubekit";
 
+import { ICreditRequest } from "@services/creditRequest/types";
+import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
+import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import { mockCreditApplication } from "@mocks/creditApplication/creditApplication.mock";
+import { environment } from "@config/environment";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -25,9 +28,20 @@ export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
 
+  const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
+    [],
+  );
+  const { customerData } = useContext(CustomerContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
+
+  const businessUnitPublicCode: string =
+    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const { userAccount } =
+    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
+
   const isMobile = useMediaQuery("(max-width:880px)");
 
-  const { customerData } = useContext(CustomerContext);
   const dataHeader = {
     name: customerData.fullName,
     status:
@@ -36,18 +50,27 @@ export function CreditApplications() {
 
   const navigate = useNavigate();
 
-  const pruebaError = () => {
-    //borrar cuando se integre el servicio
-    setCodeError(1022);
-    setAddToFix([dataCreditProspects.errorCreditRequest]);
-  };
-
   useEffect(() => {
-    //borrar cuando se integre el servicio
-    if (!customerData?.publicCode) {
-      pruebaError();
-    }
-  }, [customerData]);
+    if (!customerData.publicCode) return;
+
+    const fetchCreditRequest = async () => {
+      try {
+        const creditData = await getCreditRequestByCode(
+          businessUnitPublicCode,
+          userAccount,
+          {
+            clientIdentificationNumber: customerData.publicCode,
+          },
+        );
+        setCreditRequestData(creditData);
+      } catch {
+        setCodeError(1022);
+        setAddToFix([dataCreditProspects.errorCreditRequest]);
+      }
+    };
+
+    fetchCreditRequest();
+  }, [customerData.publicCode]);
 
   return (
     <>
@@ -95,16 +118,17 @@ export function CreditApplications() {
                 </Button>
               </Stack>
               <Stack wrap="wrap" gap="20px">
-                {mockCreditApplication.map((creditRequest) => (
+                {creditRequestData.map((creditRequest) => (
                   <SummaryCard
                     key={creditRequest.creditRequestId}
                     rad={creditRequest.creditRequestCode}
-                    date={creditRequest.timeOfCreation}
-                    name={creditRequest.preferredPaymentChannelAbbreviatedName}
-                    destination={creditRequest.moneyDestinationAbbreviatedName}
-                    value={creditRequest.value}
-                    toDo={creditRequest.selectedRegularPaymentSchedule}
-                    path={`https://crediboard.inube.online/extended-card/${creditRequest.creditRequestCode}`}
+                    date={creditRequest.creditRequestDateOfCreation}
+                    name={creditRequest.clientName}
+                    destination={creditRequest.moneyDestinationAbreviatedName}
+                    value={creditRequest.loanAmount}
+                    toDo={creditRequest.taskToBeDone}
+                    hasMessage={creditRequest.unreadNovelties === "Y"}
+                    path={`${environment.VITE_CREDIBOARD_URL}/extended-card/${creditRequest.creditRequestCode}`}
                   />
                 ))}
               </Stack>
