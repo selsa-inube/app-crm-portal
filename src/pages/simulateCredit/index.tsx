@@ -701,8 +701,6 @@ export function SimulateCredit() {
     fetchRulesByProducts();
   }, [formData.selectedProducts, fetchRulesByProducts]);
 
-  console.log(formData, "form");
-
   return (
     <>
       <SimulateCreditUI

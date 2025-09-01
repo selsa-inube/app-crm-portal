@@ -1,11 +1,9 @@
-import { Formik, FormikValues } from "formik";
-import localforage from "localforage";
+import { FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { Icon, Grid, useMediaQuery, Textfield } from "@inubekit/inubekit";
-import { ITableFinancialObligationsProps } from "@pages/prospect/components/TableObligationsFinancial/interface";
-import { BaseModal } from "@components/modals/baseModal";
 
+import { BaseModal } from "@components/modals/baseModal";
 import {
   handleChangeWithCurrency,
   validateCurrencyField,
@@ -23,19 +21,15 @@ interface IEditFinancialObligationModalProps {
   iconAfter?: React.JSX.Element;
 }
 
-function EditFinancialObligationModal(
-  props: IEditFinancialObligationModalProps,
-) {
-  const {
-    onCloseModal,
-    onConfirm,
-    title,
-    confirmButtonText,
-    initialValues,
-    iconBefore,
-    iconAfter,
-  } = props;
-
+function EditFinancialObligationModal({
+  onCloseModal,
+  onConfirm,
+  title,
+  confirmButtonText,
+  initialValues,
+  iconBefore,
+  iconAfter,
+}: IEditFinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
 
   const validationSchema = Yup.object({
@@ -43,98 +37,75 @@ function EditFinancialObligationModal(
     balance: Yup.number().required(""),
   });
 
-  const handleFormSubmit = async (values: FormikValues) => {
-    const storedData =
-      (await localforage.getItem<ITableFinancialObligationsProps[]>(
-        "financial_obligation",
-      )) || [];
-
-    if (values.id) {
-      const updatedData = storedData.map((item) =>
-        item.id === values.id ? { ...item, ...values } : item,
-      );
-      await localforage.setItem("financial_obligation", updatedData);
-    } else {
-      const newItem = { ...values, id: Date.now() };
-      await localforage.setItem("financial_obligation", [
-        ...storedData,
-        newItem,
-      ]);
-    }
-
-    onConfirm(values);
-  };
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    validateOnMount: true,
+    onSubmit: async (values, helpers) => {
+      onConfirm(values);
+      helpers.setSubmitting(false);
+      onCloseModal();
+    },
+  });
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={async (values, formikHelpers) => {
-        await handleFormSubmit(values);
-        formikHelpers.setSubmitting(false);
-        onCloseModal();
-      }}
+    <BaseModal
+      title={title}
+      backButton={dataInputs.cancel}
+      nextButton={confirmButtonText}
+      handleBack={onCloseModal}
+      handleNext={formik.submitForm}
+      disabledNext={!formik.dirty || !formik.isValid}
+      iconAfterNext={iconAfter}
+      iconBeforeNext={iconBefore}
+      finalDivider={true}
+      width={isMobile ? "300px" : "410px"}
+      height={isMobile ? "298px" : "auto"}
     >
-      {(formik) => (
-        <BaseModal
-          title={title}
-          backButton={dataInputs.cancel}
-          nextButton={confirmButtonText}
-          handleBack={onCloseModal}
-          handleNext={formik.submitForm}
-          disabledNext={!formik.dirty || !formik.isValid}
-          iconAfterNext={iconAfter}
-          iconBeforeNext={iconBefore}
-          finalDivider={true}
-          width={isMobile ? "300px" : "410px"}
-          height={isMobile ? "298px" : "auto"}
-        >
-          <Grid
-            templateColumns="1fr"
-            autoRows="auto"
-            gap="20px"
-            width={isMobile ? "280px" : "100%"}
-          >
-            <Textfield
-              label={dataInputs.labelFee}
-              name="fee"
-              id="fee"
-              iconBefore={
-                <Icon
-                  icon={<MdOutlineAttachMoney />}
-                  appearance="dark"
-                  size="20px"
-                />
-              }
-              placeholder={dataInputs.palaceHolderFee}
-              value={validateCurrencyField("fee", formik, false, "")}
-              size="compact"
-              onBlur={formik.handleBlur}
-              onChange={(e) => handleChangeWithCurrency(formik, e)}
-              fullwidth
+      <Grid
+        templateColumns="1fr"
+        autoRows="auto"
+        gap="20px"
+        width={isMobile ? "280px" : "100%"}
+      >
+        <Textfield
+          label={dataInputs.labelFee}
+          name="fee"
+          id="fee"
+          iconBefore={
+            <Icon
+              icon={<MdOutlineAttachMoney />}
+              appearance="dark"
+              size="20px"
             />
-            <Textfield
-              label={dataInputs.labelBalance}
-              name="balance"
-              id="balance"
-              iconBefore={
-                <Icon
-                  icon={<MdOutlineAttachMoney />}
-                  appearance="dark"
-                  size="20px"
-                />
-              }
-              placeholder={dataInputs.palaceHolderBalance}
-              value={validateCurrencyField("balance", formik, false, "")}
-              size="compact"
-              onBlur={formik.handleBlur}
-              onChange={(e) => handleChangeWithCurrency(formik, e)}
-              fullwidth
+          }
+          placeholder={dataInputs.palaceHolderFee}
+          value={validateCurrencyField("fee", formik, false, "")}
+          size="compact"
+          onBlur={formik.handleBlur}
+          onChange={(e) => handleChangeWithCurrency(formik, e)}
+          fullwidth
+        />
+        <Textfield
+          label={dataInputs.labelBalance}
+          name="balance"
+          id="balance"
+          iconBefore={
+            <Icon
+              icon={<MdOutlineAttachMoney />}
+              appearance="dark"
+              size="20px"
             />
-          </Grid>
-        </BaseModal>
-      )}
-    </Formik>
+          }
+          placeholder={dataInputs.palaceHolderBalance}
+          value={validateCurrencyField("balance", formik, false, "")}
+          size="compact"
+          onBlur={formik.handleBlur}
+          onChange={(e) => handleChangeWithCurrency(formik, e)}
+          fullwidth
+        />
+      </Grid>
+    </BaseModal>
   );
 }
 

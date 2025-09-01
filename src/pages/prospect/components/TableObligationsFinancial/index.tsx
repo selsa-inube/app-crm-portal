@@ -4,6 +4,7 @@ import { FormikValues, useFormik } from "formik";
 
 import { currencyFormat } from "@utils/formatData/currency";
 import { IObligations } from "@services/creditRequest/types";
+import { updateProspect } from "@services/prospect/updateProspect";
 
 import { convertObligationsToProperties, headers } from "./config";
 import {
@@ -23,6 +24,7 @@ export const TableFinancialObligations = (
     showActions,
     showButtons,
     formState,
+    services = true,
   } = props;
   const [loading] = useState(false);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
@@ -117,9 +119,163 @@ export const TableFinancialObligations = (
     }
   }, [refreshKey, initialValues]);
 
-  const handleDelete = async () => {};
+  const handleDelete = async (id: string) => {
+    if (services) {
+      const borrowers = initialValues?.[0]?.borrowers || [];
+      const selectedBorrower = borrowers[selectedBorrowerIndex];
 
-  const handleUpdate = async () => {};
+      const updatedProperties = selectedBorrower.borrowerProperties.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (prop: any) =>
+          !(
+            prop.propertyName === "FinancialObligation" &&
+            prop.propertyValue === id
+          ),
+      );
+
+      const updatedBorrower = {
+        ...selectedBorrower,
+        borrowerProperties: updatedProperties,
+      };
+
+      const updatedBorrowers = [...borrowers];
+      updatedBorrowers[selectedBorrowerIndex] = updatedBorrower;
+
+      const updatedInitialValues = {
+        ...initialValues?.[0],
+        borrowers: updatedBorrowers,
+      };
+
+      try {
+        await updateProspect("fondecom", updatedInitialValues);
+      } catch (error) {
+        console.error("Error al actualizar el prospecto:", error);
+      }
+
+      setRefreshKey?.((prev) => prev + 1);
+    } else {
+      try {
+        const obligationNumberFromRow =
+          typeof id === "string" ? id.split(",")[5]?.trim() : undefined;
+
+        if (!obligationNumberFromRow) {
+          console.warn(
+            "No se pudo obtener obligationNumber desde propertyValue para eliminar en local.",
+          );
+          return;
+        }
+
+        const currentObligations = Array.isArray(initialValues)
+          ? [...initialValues]
+          : initialValues
+            ? [initialValues]
+            : [];
+
+        const updatedInitialValues = currentObligations.filter(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (ob: any) => String(ob.obligationNumber) !== obligationNumberFromRow,
+        );
+
+        handleOnChange(updatedInitialValues);
+        setRefreshKey?.((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error al eliminar localmente la obligación:", error);
+      }
+    }
+  };
+
+  const handleUpdate = async (
+    updatedDebtor: ITableFinancialObligationsProps,
+  ) => {
+    if (services) {
+      try {
+        const borrowers = initialValues?.[0]?.borrowers || [];
+        const selectedBorrower = borrowers[selectedBorrowerIndex];
+
+        const obligationIndex = selectedBorrower.borrowerProperties.findIndex(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (prop: any) =>
+            prop.propertyName === "FinancialObligation" &&
+            prop.propertyValue === selectedDebtor?.propertyValue,
+        );
+
+        if (obligationIndex === -1) return;
+
+        const originalValues = selectedDebtor?.propertyValue
+          ? selectedDebtor.propertyValue.split(",").map((v: string) => v.trim())
+          : [];
+
+        originalValues[1] = updatedDebtor.balance || originalValues[1];
+        originalValues[2] = updatedDebtor.fee || originalValues[2];
+
+        const newPropertyValue = originalValues.join(", ");
+
+        const updatedProperties = [...selectedBorrower.borrowerProperties];
+        updatedProperties[obligationIndex] = {
+          ...updatedProperties[obligationIndex],
+          propertyValue: newPropertyValue,
+        };
+
+        const updatedBorrower = {
+          ...selectedBorrower,
+          borrowerProperties: updatedProperties,
+        };
+
+        const updatedBorrowers = [...borrowers];
+        updatedBorrowers[selectedBorrowerIndex] = updatedBorrower;
+
+        const updatedInitialValues = {
+          ...initialValues?.[0],
+          borrowers: updatedBorrowers,
+        };
+
+        await updateProspect("fondecom", updatedInitialValues);
+        setRefreshKey?.((prev) => prev + 1);
+        setIsModalOpenEdit(false);
+      } catch (error) {
+        console.error("Error al editar la obligación:", error);
+      }
+    } else {
+      try {
+        const currentObligations = Array.isArray(initialValues)
+          ? [...initialValues]
+          : initialValues
+            ? [initialValues]
+            : [];
+
+        const obligationIndex = currentObligations.findIndex(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (ob: any) =>
+            ob.obligationNumber ===
+            updatedDebtor.propertyValue?.split(",")[5].trim(),
+        );
+
+        console.log(currentObligations, "cu");
+        console.log(updatedDebtor, "up");
+
+        if (obligationIndex === -1) return;
+
+        const updatedObligation = {
+          ...currentObligations[obligationIndex],
+          balanceObligationTotal:
+            updatedDebtor.balance ||
+            currentObligations[obligationIndex].balanceObligationTotal,
+          nextPaymentValueTotal:
+            updatedDebtor.fee ||
+            currentObligations[obligationIndex].nextPaymentValueTotal,
+        };
+
+        const updatedInitialValues = [...currentObligations];
+        updatedInitialValues[obligationIndex] = updatedObligation;
+
+        handleOnChange(updatedInitialValues);
+        setRefreshKey?.((prev) => prev + 1);
+        setIsModalOpenEdit(false);
+      } catch (error) {
+        console.error("Error al editar localmente la obligación:", error);
+      }
+    }
+  };
 
   useEffect(() => {
     if (
@@ -154,6 +310,7 @@ export const TableFinancialObligations = (
       handleUpdate={handleUpdate}
       showButtons={showButtons}
       formState={formState}
+      services={services}
       initialValues={initialValues as IObligations}
       handleOnChange={handleOnChange}
       setRefreshKey={setRefreshKey}

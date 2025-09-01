@@ -29,6 +29,7 @@ import { EditFinancialObligationModal } from "@components/modals/editFinancialOb
 import { NewPrice } from "@components/modals/ReportCreditsModal/components/newPrice";
 import { BaseModal } from "@components/modals/baseModal";
 import { FinancialObligationModal } from "@components/modals/financialObligationModal";
+import { updateProspect } from "@services/prospect/updateProspect";
 import { IObligations } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { CardGray } from "@components/cards/CardGray";
@@ -63,6 +64,7 @@ export interface ITableFinancialObligationsProps {
     }>
   >;
   clientPortfolio?: IObligations;
+  services?: boolean;
   handleOnChange?: (values: FormikValues) => void;
   formState?: {
     type: string;
@@ -129,6 +131,7 @@ interface UIProps {
       }
     | undefined;
   initialValues: FormikValues;
+  services?: boolean;
   handleOnChange: (values: FormikValues) => void;
   setRefreshKey: React.Dispatch<React.SetStateAction<number>> | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -147,6 +150,7 @@ export const TableFinancialObligationsUI = ({
   isModalOpenEdit,
   setIsModalOpenEdit,
   showOnlyEdit,
+  services = true,
   handleEdit,
   handleDelete,
   handleUpdate,
@@ -217,29 +221,66 @@ export const TableFinancialObligationsUI = ({
     };
   };
 
-  const handleConfirm = (values: FormikValues) => {
-    const newObligation = {
-      obligationNumber: values.idUser || "",
-      productName: values.type || "",
-      paymentMethodName: values.payment || "",
-      balanceObligationTotal: values.balance || 0,
-      nextPaymentValueTotal: values.fee || 0,
-      entity: values.entity || "",
-      duesPaid: values.feePaid || "",
-      outstandingDues: values.term || "",
-    };
+  const handleConfirm = async (values: FormikValues) => {
+    if (services) {
+      try {
+        const selectedBorrower =
+          initialValues?.[0]?.borrowers?.[selectedBorrowerIndex];
 
-    const currentObligations = Array.isArray(initialValues)
-      ? initialValues
-      : initialValues
-        ? [initialValues]
-        : [];
+        const newFinancialObligation = {
+          propertyName: "FinancialObligation",
+          propertyValue: `${values.type}, ${values.balance}, ${values.fee}, ${values.entity}, ${values.payment}, ${values.idUser}, ${values.feePaid}, ${values.term}`,
+        };
 
-    const updatedInitialValues = [...currentObligations, newObligation];
+        const updatedProperties = [
+          ...selectedBorrower.borrowerProperties,
+          newFinancialObligation,
+        ];
 
-    handleOnChange(updatedInitialValues);
-    setOpenModal(false);
-    setRefreshKey?.((prev) => prev + 1);
+        const updatedBorrower = {
+          ...selectedBorrower,
+          borrowerProperties: updatedProperties,
+        };
+
+        const updatedBorrowers = [...initialValues[0].borrowers];
+        updatedBorrowers[selectedBorrowerIndex] = updatedBorrower;
+
+        const prospectData = {
+          ...initialValues[0],
+          borrowers: updatedBorrowers,
+        };
+
+        await updateProspect("fondecom", prospectData);
+
+        setRefreshKey?.((prev) => prev + 1);
+        setOpenModal(false);
+      } catch (error) {
+        console.error("Error al agregar la obligación:", error);
+      }
+    } else {
+      const newObligation = {
+        obligationNumber: values.idUser || "",
+        productName: values.type || "",
+        paymentMethodName: values.payment || "",
+        balanceObligationTotal: values.balance || 0,
+        nextPaymentValueTotal: values.fee || 0,
+        entity: values.entity || "",
+        duesPaid: values.feePaid || "",
+        outstandingDues: values.term || "",
+      };
+
+      const currentObligations = Array.isArray(initialValues)
+        ? initialValues
+        : initialValues
+          ? [initialValues]
+          : [];
+
+      const updatedInitialValues = [...currentObligations, newObligation];
+
+      handleOnChange(updatedInitialValues);
+      setOpenModal(false);
+      setRefreshKey?.((prev) => prev + 1);
+    }
   };
 
   const totalBalance = dataInformation.reduce(
@@ -391,7 +432,7 @@ export const TableFinancialObligationsUI = ({
                   placeholder="Selecciona un deudor"
                   options={borrowerOptions}
                   value={String(selectedBorrowerIndex)}
-                  onChange={(name, value) =>
+                  onChange={(_, value) =>
                     setSelectedBorrowerIndex(Number(value))
                   }
                   size="wide"
@@ -415,7 +456,7 @@ export const TableFinancialObligationsUI = ({
                   placeholder="Selecciona un deudor"
                   options={borrowerOptions}
                   value={String(selectedBorrowerIndex)}
-                  onChange={(name, value) =>
+                  onChange={(_, value) =>
                     setSelectedBorrowerIndex(Number(value))
                   }
                   size="wide"
@@ -524,10 +565,8 @@ export const TableFinancialObligationsUI = ({
             nextButton={dataReport.delete}
             backButton={dataReport.cancel}
             handleNext={() => {
-              if (selectedDebtor) {
-                handleDelete(selectedDebtor.id as string);
-                setIsDeleteModal(false);
-              }
+              handleDelete(selectedDebtor?.propertyValue ?? "");
+              setIsDeleteModal(false);
             }}
             handleClose={() => setIsDeleteModal(false)}
           >
