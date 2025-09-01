@@ -367,7 +367,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       choiceMoneyDestination={formData.selectedDestination}
                       servicesQuestion={{
-                        financialObligation: ["Y"],
+                        financialObligation:
+                          servicesProductSelection.financialObligation,
                         aditionalBorrowers:
                           servicesProductSelection.aditionalBorrowers,
                         extraInstallement:

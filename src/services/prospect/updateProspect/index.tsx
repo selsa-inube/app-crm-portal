@@ -60,7 +60,7 @@ export const updateProspect = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener el portafolio de obligaciones.",
+          "Todos los intentos fallaron. No se pudo obtener los datos del prospecto.",
         );
       }
     }

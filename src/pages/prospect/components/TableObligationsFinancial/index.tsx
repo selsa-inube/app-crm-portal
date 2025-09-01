@@ -90,8 +90,7 @@ export const TableFinancialObligations = (
 
       const getObligationsFromInitialValues = (
         initial: FormikValues | undefined,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ): any[] => {
+      ): IObligations[] => {
         if (!initial) return [];
 
         if (Array.isArray(initial)) {

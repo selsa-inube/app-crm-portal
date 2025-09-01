@@ -578,13 +578,13 @@ export function SimulateCredit() {
     if (currentStep === stepsAddProspect.loanConditions.id) {
       showConsultingForFiveSeconds();
     }
-    // if (
-    //   currentStep === stepsAddProspect.sourcesIncome.id &&
-    //   totalIncome === 0
-    // ) {
-    //   setIsAlertIncome(true);
-    //   return;
-    // }
+    if (
+      currentStep === stepsAddProspect.sourcesIncome.id &&
+      totalIncome === 0
+    ) {
+      setIsAlertIncome(true);
+      return;
+    }
     if (currentStep === stepsAddProspect.productSelection.id) {
       setCurrentStep(dynamicSteps[0]);
     } else if (
