@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 import { useAppContext } from "@hooks/useAppContext";
 import { CustomerContext } from "@context/CustomerContext";
@@ -16,11 +17,14 @@ const Credit = () => {
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
 
+  const navigate = useNavigate();
+
   return (
     <CreditUI
       isMobile={isMobile}
       dataOptions={optionStaffData}
       dataHeader={dataHeader}
+      navigate={navigate}
     />
   );
 };

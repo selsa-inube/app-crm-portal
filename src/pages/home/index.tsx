@@ -14,7 +14,6 @@ const Home = () => {
   const { customerData } = useContext(CustomerContext);
 
   const smallScreen = useMediaQuery("(max-width: 532px)");
-  const isTablet = useMediaQuery("(max-width: 1024px)");
   const isMobile = useMediaQuery("(max-width: 880px)");
   const username = eventData.user.userName.split(" ")[0];
 
@@ -24,7 +23,6 @@ const Home = () => {
   );
   const [loading, setLoading] = useState(true);
 
-  const collapseMenuRef = useRef<HTMLDivElement>(null);
   const businessUnitChangeRef = useRef<HTMLDivElement>(null);
 
   const dataHeader = {
@@ -52,13 +50,9 @@ const Home = () => {
   return (
     <HomeUI
       smallScreen={smallScreen}
-      isTablet={isTablet}
       isMobile={isMobile}
       username={username}
-      eventData={eventData}
       collapse={collapse}
-      setCollapse={setCollapse}
-      collapseMenuRef={collapseMenuRef}
       businessUnitChangeRef={businessUnitChangeRef}
       businessUnitsToTheStaff={businessUnitsToTheStaff}
       selectedClient={selectedClient}

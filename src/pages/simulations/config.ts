@@ -1,3 +1,35 @@
+export const addConfig = {
+  id: 1,
+  title: "Prospectos de crédito",
+  route: "/credit/prospects",
+  crumbs: [
+    {
+      path: "/home",
+      label: "Inicio",
+      id: "/home",
+      isActive: true,
+    },
+    {
+      path: "/credit",
+      label: "Crédito",
+      id: "/credito",
+      isActive: false,
+    },
+    {
+      path: "/credit/prospects",
+      label: "Prospectos de crédito",
+      id: "/prospectos",
+      isActive: false,
+    },
+    {
+      path: `/credit/prospects/prospectCode`,
+      label: "Prospectos de crédito",
+      id: "/prospectosId",
+      isActive: false,
+    },
+  ],
+};
+
 export const dataEditProspect = {
   creditProspect: "Prospecto de crédito",
   destination: "Destino",
