@@ -1,14 +1,14 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from "react-router-dom";
-
 import { FlagProvider } from "@inubekit/inubekit";
 
 import { AppContext, AppContextProvider } from "@context/AppContext";
+import { useIAuth } from "@context/authContext";
 import { usePortalLogic } from "@hooks/usePortalRedirect";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { AppPage } from "@components/layout/AppPage";
@@ -21,17 +21,23 @@ import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { Home } from "@pages/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { CustomerRoutes } from "@routes/customer";
-import { useIAuth } from "./context/authContext";
 
 function LogOut() {
   const { logout } = useIAuth();
+  const hasLoggedOut = useRef(false);
+
   useEffect(() => {
-    localStorage.clear();
-    logout({
-      logoutParams: {
-        returnTo: `${window.location.origin}/error`,
-      },
-    });
+    if (!hasLoggedOut.current) {
+      hasLoggedOut.current = true;
+      localStorage.clear();
+      sessionStorage.clear();
+
+      logout({
+        logoutParams: {
+          returnTo: `${window.location.origin}/logout`,
+        },
+      });
+    }
   }, [logout]);
 
   return <LoadingAppUI />;

@@ -145,7 +145,7 @@ function AppPage(props: IAppPage) {
               logoURL={renderLogo(eventData.businessUnit.urlLogo)}
               navigation={useNavigationConfig()}
               user={{
-                username: user ?? "Nombre de usuario",
+                username: user,
                 breakpoint: "848px",
                 client: eventData.businessUnit.abbreviatedName,
               }}

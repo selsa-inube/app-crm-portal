@@ -4,7 +4,7 @@ const AUTH_REDIRECT_URI: string = import.meta.env
 const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 
 const environment = {
-  REDIRECT_URI: IS_PRODUCTION ? AUTH_REDIRECT_URI : window.location.origin,
+  REDIRECT_URI: !IS_PRODUCTION ? window.location.origin : AUTH_REDIRECT_URI,
   GOOGLE_REDIRECT_URI: !IS_PRODUCTION
     ? window.location.origin
     : GOOGLE_REDIRECT_URI,
