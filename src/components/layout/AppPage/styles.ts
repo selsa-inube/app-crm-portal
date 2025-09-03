@@ -32,6 +32,7 @@ export const StyledLogo = styled.img`
 `;
 
 export const StyledHeaderContainer = styled.div`
+  z-index: 2;
   position: relative;
 `;
 
