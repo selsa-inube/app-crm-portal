@@ -211,12 +211,14 @@ function AppPage(props: IAppPage) {
             height={isTablet ? "81vh" : "92vh"}
           >
             {!isTablet && showNav && (
-              <Nav
-                navigation={navConfig}
-                actions={actions}
-                collapse={true}
-                footerLogo={eventData.businessManager.urlLogo}
-              />
+              <div style={{ pointerEvents: "auto" }}>
+                <Nav
+                  navigation={navConfig}
+                  actions={actions}
+                  collapse={true}
+                  footerLogo={eventData.businessManager.urlLogo}
+                />
+              </div>
             )}
             <StyledMain>
               <Outlet />

@@ -10,9 +10,11 @@ interface IStyledCollapseIcon {
 export const StyledAppPage = styled.div`
   display: inherit;
   box-sizing: border-box;
+  pointer-events: none;
 `;
 
 export const StyledContainer = styled.div`
+  pointer-events: none;
   display: inherit;
   overflow: hidden;
 `;
@@ -21,6 +23,8 @@ export const StyledMain = styled.main`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  z-index: -4;
+  pointer-events: auto;
 `;
 
 export const StyledContentImg = styled(Link)`
@@ -32,6 +36,7 @@ export const StyledLogo = styled.img`
 `;
 
 export const StyledHeaderContainer = styled.div`
+  pointer-events: auto;
   position: relative;
 `;
 
@@ -47,6 +52,7 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
   left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
+  pointer-events: auto;
 `;
 
 export const StyledMenuContainer = styled.div`
