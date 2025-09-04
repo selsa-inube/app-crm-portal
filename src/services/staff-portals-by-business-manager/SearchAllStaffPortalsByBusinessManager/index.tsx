@@ -15,7 +15,7 @@ const getStaffPortalsByBusinessManager = async (
 
   const queryParams = new URLSearchParams({
     staffPortalId,
-    staffPortalCatalogCode: environment.ENV_STAFF_PORTAL_CATALOG_CODE,
+    staffPortalCatalogCode: environment.VITE_ENV_STAFF_PORTAL_CATALOG_CODE,
   });
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
