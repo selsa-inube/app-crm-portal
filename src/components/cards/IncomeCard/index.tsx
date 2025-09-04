@@ -1,6 +1,5 @@
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { useState, useEffect } from "react";
 import {
   Stack,
   Icon,
@@ -12,9 +11,7 @@ import {
 
 import {
   currencyFormat,
-  handleChangeWithCurrency,
   parseCurrencyString,
-  validateCurrencyField,
 } from "@utils/formatData/currency";
 
 import { StyledContainer, StyledTextField, StyledSupport } from "./styles";
@@ -42,21 +39,28 @@ export function IncomeCard(props: IIncomeCardProps) {
     onValueChange,
   } = props;
 
-  const validationSchema = Yup.object({ field: Yup.number().required() });
+  const [fieldValues, setFieldValues] = useState<string[]>([]);
 
-  const formik = useFormik({
-    initialValues: values.reduce(
-      (acc, val, index) => {
-        acc[`field${index}`] = currencyFormat(parseCurrencyString(val));
-        return acc;
-      },
-      {} as Record<string, string>,
-    ),
-    validationSchema,
-    validateOnMount: true,
-    onSubmit: () => {},
-    enableReinitialize: true,
-  });
+  useEffect(() => {
+    const formattedValues = values.map((val) =>
+      currencyFormat(parseCurrencyString(val || "0")),
+    );
+    setFieldValues(formattedValues);
+  }, [values]);
+
+  const handleFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    const newValue = event.target.value;
+    const newValues = [...fieldValues];
+    newValues[index] = newValue;
+    setFieldValues(newValues);
+
+    if (onValueChange) {
+      onValueChange(index, newValue);
+    }
+  };
 
   return (
     <StyledContainer>
@@ -85,17 +89,9 @@ export function IncomeCard(props: IIncomeCardProps) {
                       <Textfield
                         name={`field${index}`}
                         id={`field${index}`}
-                        placeholder={placeholders[index]}
-                        value={validateCurrencyField(
-                          `field${index}`,
-                          formik,
-                          true,
-                          "",
-                        )}
-                        onChange={(event) => {
-                          handleChangeWithCurrency(formik, event);
-                          onValueChange?.(index, event.target.value);
-                        }}
+                        placeholder={placeholders[index] || ""}
+                        value={fieldValues[index] || ""}
+                        onChange={(event) => handleFieldChange(event, index)}
                         size="compact"
                         disabled={disabled}
                         fullwidth
@@ -110,12 +106,7 @@ export function IncomeCard(props: IIncomeCardProps) {
                 <CardGray
                   key={index}
                   label={label}
-                  placeHolder={validateCurrencyField(
-                    `field${index}`,
-                    formik,
-                    true,
-                    "",
-                  )}
+                  placeHolder={fieldValues[index] || ""}
                 />
               ))}
             </Stack>

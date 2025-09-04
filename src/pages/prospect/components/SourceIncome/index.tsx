@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MdCached, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Grid, useMediaQuery, Button } from "@inubekit/inubekit";
 
@@ -54,6 +54,8 @@ export function SourceIncome(props: ISourceIncomeProps) {
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const [dataValues, setDataValues] = useState<IIncome | null>(null);
+  const [pendingDataChange, setPendingDataChange] =
+    useState<IIncomeSources | null>(null);
 
   const groupMapping: Record<
     string,
@@ -107,6 +109,13 @@ export function SourceIncome(props: ISourceIncomeProps) {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (pendingDataChange && onDataChange) {
+      onDataChange(pendingDataChange);
+      setPendingDataChange(null);
+    }
+  }, [pendingDataChange, onDataChange]);
+
   const totalSum = () => {
     const sumCapital =
       borrowerIncome?.capital.reduce(
@@ -137,7 +146,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
       );
       setBorrowerIncome(restoredValues);
       setDataValues(restoredValues);
-      onDataChange?.(initialDataForRestore);
+      setPendingDataChange(initialDataForRestore);
     }
     setIsOpenModal(false);
   };
@@ -163,36 +172,38 @@ export function SourceIncome(props: ISourceIncomeProps) {
     };
   }
 
-  const handleIncomeChange = (
-    category: "employment" | "capital" | "businesses",
-    index: number,
-    newValue: string,
-  ) => {
-    const cleanedValue = parseCurrencyString(newValue);
-    const cleanedString = cleanedValue.toString();
+  const handleIncomeChange = useCallback(
+    (
+      category: "employment" | "capital" | "businesses",
+      index: number,
+      newValue: string,
+    ) => {
+      const cleanedValue = parseCurrencyString(newValue);
+      const cleanedString = cleanedValue.toString();
 
-    setBorrowerIncome((prev) => {
-      if (!prev) return null;
+      setBorrowerIncome((prev) => {
+        if (!prev) return null;
 
-      const updated = {
-        ...prev,
-        [category]: prev[category].map((val, i) =>
-          i === index ? cleanedString : val,
-        ),
-      };
+        const updated = {
+          ...prev,
+          [category]: prev[category].map((val, i) =>
+            i === index ? cleanedString : val,
+          ),
+        };
+        const mappedBack: IIncomeSources = mapToIncomeSources(updated);
+        setPendingDataChange(mappedBack);
 
-      const mappedBack: IIncomeSources = mapToIncomeSources(updated);
-      onDataChange?.(mappedBack);
-
-      return updated;
-    });
-  };
+        return updated;
+      });
+    },
+    [],
+  );
 
   const handleEditModalSubmit = (updatedData: IIncomeSources) => {
     const updatedIncomeValues = buildIncomeValues(updatedData, IncomeTypes);
     setBorrowerIncome(updatedIncomeValues);
     setDataValues(updatedIncomeValues);
-    onDataChange?.(updatedData);
+    setPendingDataChange(updatedData);
     setIsOpenEditModal(false);
   };
 

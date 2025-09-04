@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Stack } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
@@ -17,12 +17,13 @@ interface ISourcesOfIncomeProps {
   handleOnChange: (newState: Partial<ISourcesOfIncomeState>) => void;
 }
 
-export function SourcesOfIncome(props: ISourcesOfIncomeProps) {
-  const { customerData, creditLimitData, initialValues, handleOnChange } =
-    props;
-
+export function SourcesOfIncome({
+  customerData,
+  creditLimitData,
+  initialValues,
+  handleOnChange,
+}: ISourcesOfIncomeProps) {
   const [localData, setLocalData] = useState<IIncomeSources | null>(null);
-  const hasInitialized = useRef(false);
 
   const { restoreData } = useRestoreIncomeData({
     onSuccess: (refreshedData) => {
@@ -30,28 +31,18 @@ export function SourcesOfIncome(props: ISourcesOfIncomeProps) {
       handleOnChange(refreshedData);
     },
   });
+  const hasValidData = (data?: ISourcesOfIncomeState) =>
+    !!data &&
+    Object.values(data).some((value) => typeof value === "number" && value > 0);
 
   useEffect(() => {
-    if (creditLimitData && !hasInitialized.current) {
-      const hasValidData =
-        initialValues &&
-        Object.values(initialValues).some(
-          (value) =>
-            value !== "" &&
-            value !== 0 &&
-            value !== null &&
-            value !== undefined,
-        );
-
-      setLocalData(
-        hasValidData
-          ? (initialValues as unknown as IIncomeSources)
-          : creditLimitData,
-      );
-
-      hasInitialized.current = true;
+    if (hasValidData(initialValues)) {
+      setLocalData(initialValues as unknown as IIncomeSources);
+    } else if (creditLimitData) {
+      setLocalData(creditLimitData);
+      handleOnChange(creditLimitData);
     }
-  }, [creditLimitData, initialValues]);
+  }, [creditLimitData, initialValues, handleOnChange]);
 
   const handleSourceIncomeChange = (newData: IIncomeSources) => {
     setLocalData(newData);
@@ -62,12 +53,12 @@ export function SourcesOfIncome(props: ISourcesOfIncomeProps) {
     <Fieldset>
       <Stack direction="column" gap="16px">
         <SourceIncome
-          data={localData || ({} as IIncomeSources)}
+          data={localData || (initialValues as IIncomeSources)}
           customerData={customerData}
           onDataChange={handleSourceIncomeChange}
           onRestore={restoreData}
-          showEdit={true}
-          disabled={true}
+          showEdit
+          disabled
         />
       </Stack>
     </Fieldset>
