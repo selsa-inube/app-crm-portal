@@ -9,7 +9,11 @@ import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleBy
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
-import { IProspect, IProspectSummaryById } from "@services/prospect/types";
+import {
+  IBorrower,
+  IProspect,
+  IProspectSummaryById,
+} from "@services/prospect/types";
 import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
 import { IDocumentsCredit } from "@services/creditRequest/types";
 
@@ -252,6 +256,24 @@ export function ApplyForCredit() {
   } = formData;
 
   const submitData = new FormData();
+
+  const borrowersArray = Array.isArray(formData.borrowerData.borrowers)
+    ? formData.borrowerData.borrowers
+    : [];
+
+  const borrowers = borrowersArray.map((borrower: IBorrower) => ({
+    borrowerIdentificationNumber: borrower.borrowerIdentificationNumber,
+    borrowerIdentificationType: borrower.borrowerIdentificationType,
+    borrowerName: borrower.borrowerName,
+    borrowerProperties: borrower.borrowerProperties.map((prop) => ({
+      propertyName: prop.propertyName,
+      propertyValue: prop.propertyValue,
+    })),
+    borrowerType: borrower.borrowerType,
+  }));
+
+  submitData.append("borrowers", JSON.stringify(borrowers));
+
   submitData.append("clientEmail", contactInformation.email);
   submitData.append("clientId", customerData.customerId);
   submitData.append(
@@ -268,21 +290,25 @@ export function ApplyForCredit() {
     "clientType",
     customerData?.generalAttributeClientNaturalPersons?.[0].associateType,
   );
-  submitData.append("justification", "Radicación con éxito");
+  submitData.append(
+    "justification",
+    formData.observations.relevantObservations,
+  );
   submitData.append("loanAmount", prospectData.requestedAmount.toString());
   submitData.append(
-    "moneyDestinationAbreviatedName",
+    "moneyDestinationAbbreviatedName",
     prospectData.moneyDestinationAbbreviatedName,
   );
   submitData.append("prospectCode", prospectData.prospectCode);
   submitData.append("prospectId", prospectData.prospectId);
+
   submitData.append(
     "instantMessagingPlatforms",
     JSON.stringify([
       {
         instantMessagingPlatformName: MessagingPlatform[0].Value,
-        propertyName: formData.contactInformation.whatsAppPhone.toString(),
-        propertyValue: `+57${formData.contactInformation.whatsAppPhone}`, // modificar cuando se actualice el input phone
+        propertyName: "+57",
+        propertyValue: `+57${formData.contactInformation.whatsAppPhone}`,
         transactionOperation: "Insert",
       },
     ]),
@@ -294,14 +320,18 @@ export function ApplyForCredit() {
       submitData.append("file", doc.file);
       metadataArray.push({
         abbreviatedName: doc.name.split(".").slice(0, -1).join("."),
+        documentCode: doc.id.slice(0, 10),
+        documentId: doc.id.slice(0, 10),
+        fileName: doc.name,
+        requirementReference: doc.name,
         transactionOperation: "Insert",
       });
     });
   });
+
   submitData.append("documents", JSON.stringify(metadataArray));
 
   const guarantees = [];
-
   if (getRuleByName("ValidationGuarantee")?.includes("Mortgage")) {
     guarantees.push({
       guaranteeType: "mortgage",
@@ -336,10 +366,10 @@ export function ApplyForCredit() {
   const disbursements = Object.entries(disbursementGeneral)
     .filter(([, value]) => value.amount && value.amount !== "")
     .map(([key, value]) => ({
-      accountBankCode: value.bankid || "",
-      accountBankName: value.bank,
+      accountBankCode: value.bank || businessUnitPublicCode,
+      accountBankName: value.bank || businessUnitPublicCode,
       accountNumber: value.accountNumber,
-      accountType: value.accountType,
+      accountType: value.accountType || "CH",
       disbursementAmount: value.amount,
       disbursementDate: new Date().toISOString().split("T")[0],
       isInTheNameOfBorrower: value.toggle ? "Y" : "N",
@@ -361,6 +391,10 @@ export function ApplyForCredit() {
 
   const handleSubmit = async () => {
     try {
+      for (const [key, value] of submitData.entries()) {
+        console.log(`FormData -> ${key}:`, value);
+      }
+
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         userAccount,
@@ -374,6 +408,12 @@ export function ApplyForCredit() {
       handleFlag();
     }
   };
+
+  submitData.forEach((value, key) => {
+    console.log(key, value);
+  });
+  console.log(formData, "form");
+  console.log(prospectData, "prospect");
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { addFlag } = useFlag();

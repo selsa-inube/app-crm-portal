@@ -13,7 +13,7 @@ const postSubmitCredit = async (
     const options: RequestInit = {
       method: "POST",
       headers: {
-        "X-Action": "SubmitCreditApplication",
+        "X-Action": "ApplyForCredit",
         "X-Business-Unit": businessUnitPublicCode,
         "X-User-Name": userAccount,
       },
