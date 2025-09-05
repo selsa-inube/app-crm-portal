@@ -391,10 +391,6 @@ export function ApplyForCredit() {
 
   const handleSubmit = async () => {
     try {
-      for (const [key, value] of submitData.entries()) {
-        console.log(`FormData -> ${key}:`, value);
-      }
-
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         userAccount,
@@ -408,12 +404,6 @@ export function ApplyForCredit() {
       handleFlag();
     }
   };
-
-  submitData.forEach((value, key) => {
-    console.log(key, value);
-  });
-  console.log(formData, "form");
-  console.log(prospectData, "prospect");
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { addFlag } = useFlag();
