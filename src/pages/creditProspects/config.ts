@@ -28,7 +28,6 @@ export const dataCreditProspects = {
   simulate: "Simular crédito",
   keyWord: "Palabra clave",
   messageTitle: "Observaciones",
-  understand: "Entendido",
   moneyDesination: "Destino del dinero",
   observationProspect: "Observaciones del prospecto",
   confirmTitle: "Confirmación de prospecto",
@@ -38,4 +37,7 @@ export const dataCreditProspects = {
   confirm: "Confirmar",
   cancel: "Cancelar",
   errorCreditProspect: "No se han podido cargar los prospectos de credito.",
+  close: "Cerrar",
+  modify: "Modificar observaciones",
+  preanalysis: "Comentarios del pre-análisis",
 };

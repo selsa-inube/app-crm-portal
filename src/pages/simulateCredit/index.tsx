@@ -26,6 +26,8 @@ import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLi
 import { getFinancialObligationsUpdate } from "@services/lineOfCredit/getFinancialObligationsUpdate";
 import { getAdditionalBorrowersAllowed } from "@services/lineOfCredit/getAdditionalBorrowersAllowed";
 import { getExtraInstallmentsAllowed } from "@services/lineOfCredit/getExtraInstallmentsAllowed";
+import { patchValidateRequirements } from "@services/requirement/validateRequirements";
+import { IValidateRequirement } from "@services/requirement/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import {
@@ -64,6 +66,10 @@ export function SimulateCredit() {
   );
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [validateRequirements, setValidateRequirements] = useState<
+    IValidateRequirement[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -668,6 +674,33 @@ export function SimulateCredit() {
   }, [currentStep]);
 
   useEffect(() => {
+    if (!customerData?.customerId || !simulateData) return;
+
+    const payload = {
+      clientIdentificationNumber: customerData.customerId,
+      prospect: { ...simulateData },
+    };
+
+    const handleSubmit = async () => {
+      try {
+        const data = await patchValidateRequirements(
+          businessUnitPublicCode,
+          payload,
+        );
+        if (data) {
+          setValidateRequirements(data);
+        }
+      } catch (error) {
+        setShowErrorModal(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    handleSubmit();
+  }, [customerData, simulateData]);
+
+  useEffect(() => {
     if (clientPortfolio) {
       setFormData((prevState) => ({
         ...prevState,
@@ -722,6 +755,8 @@ export function SimulateCredit() {
         assistedButtonText={assistedButtonText}
         isAlertIncome={isAlertIncome}
         setIsAlertIncome={setIsAlertIncome}
+        validateRequirements={validateRequirements}
+        isLoading={isLoading}
         codeError={codeError}
         addToFix={addToFix}
         navigate={navigate}

@@ -1,7 +1,6 @@
 export const MoneyDestinationTranslations = [
   {
     Code: "New_homes",
-    Name: "Vivienda nueva",
     Value: "MdOutlineRealEstateAgent",
     Description: "Purchase of a home, lot or mortgage payment.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION",
@@ -9,7 +8,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Housing_repair",
-    Name: "Reparación de vivienda",
     Value: "MdOutlineBuild",
     Description: "Construction, remodeling or home repairs.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_HOUSING_REPAIR",
@@ -17,7 +15,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Education",
-    Name: "Educación",
     Value: "MdOutlineSchool",
     Description: "Education and purchase of related equipment and supplies.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_EDUCATION",
@@ -25,7 +22,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Vehicle",
-    Name: "Vehículos",
     Value: "MdOutlineDirectionsCar",
     Description: "Purchase of vehicle, motorcycle or bicycle.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_VEHICLE",
@@ -33,7 +29,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Assets_services",
-    Name: "Activos y servicios",
     Value: "MdOutlineFavoriteBorder",
     Description: "Purchase of goods and services in CONVENIOS.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_ASSETS_SERVICES",
@@ -42,7 +37,6 @@ export const MoneyDestinationTranslations = [
 
   {
     Code: "Insurance_services",
-    Name: "Seguros y servicios",
     Value: "MdOutlineVolunteerActivism",
     Description: "Purchase of insurance and services in CONVENIOS.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_INSURANCE_SERVICES",
@@ -50,7 +44,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Entrepreneurship",
-    Name: "Emprendimiento",
     Value: "MdOutlineLightbulb",
     Description: "Investing in ventures.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_ENTREPRENEURSHIP",
@@ -58,7 +51,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Holidays",
-    Name: "Vacaciones",
     Value: "MdOutlineBeachAccess",
     Description: "Travel or vacation expenses.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_HOLIDAYS",
@@ -66,7 +58,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Contingency_a_quota",
-    Name: "Contingencia a una cuota",
     Value: "MdOutline1xMobiledata",
     Description: "One installment for unforeseen expenses.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_CONTINGENCY_A_QUOTA",
@@ -75,7 +66,6 @@ export const MoneyDestinationTranslations = [
 
   {
     Code: "Second_home",
-    Name: "Segunda vivienda",
     Value: "MdOutlineAddHomeWork",
     Description: "Investing in a 2nd Immuble.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_SECOND_HOME",
@@ -83,7 +73,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Excursions",
-    Name: "Excursiones",
     Value: "MdOutlineTravelExplore",
     Description: "Participate in excursions or trips.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_EXCURSIONS",
@@ -91,7 +80,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Purchase_portfolio_outside_entities",
-    Name: "Compra de cartera a entidades externas",
     Value: "MdOutlineAssuredWorkload",
     Description: "To pay own credits in other financial entities.",
     I18nAttribute:
@@ -100,7 +88,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Calamity_domestic",
-    Name: "Calamidad domestica",
     Value: "MdOutlinePersonalInjury",
     Description: "Expenses for domestic calamity.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_CALAMITY_DOMESTIC",
@@ -108,7 +95,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Personal_family",
-    Name: "Personal y familia",
     Value: "MdOutlineDiversity1",
     Description: "Other personal and family needs.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_PERSONAL_FAMILY",
@@ -116,7 +102,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Internal_card",
-    Name: "Tarjeta interna",
     Value: "MdOutlineCreditCard",
     Description: "Consumption with credit cards.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_INTERNAL_CARD",
@@ -124,7 +109,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Free_investment",
-    Name: "Libre Inversión",
     Value: "MdOutlinePayments",
     Description: "Free investment credit.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_FREE_INVESTMENT",
@@ -132,7 +116,6 @@ export const MoneyDestinationTranslations = [
   },
   {
     Code: "Sale_loan_flows",
-    Name: "Venta de flujos de crédito",
     Value: "MdOutlineHandshak",
     Description: "Sale of benefit flows.",
     I18nAttribute: "DM_ENUM_EMONEYDESTINATION_SALE_LOAN_FLOWS",

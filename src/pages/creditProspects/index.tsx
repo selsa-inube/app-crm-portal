@@ -9,6 +9,7 @@ import {
   Stack,
   Tag,
   Text,
+  Textarea,
   useMediaQuery,
 } from "@inubekit/inubekit";
 
@@ -46,11 +47,15 @@ export function CreditProspects() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
+  const [showEditMessageModal, setShowEditMessageModal] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<IProspect | null>(
     null,
   );
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [commentsByProspectId, setCommentsByProspectId] = useState<
+    Record<string, string>
+  >({});
 
   const navigate = useNavigate();
 
@@ -100,7 +105,10 @@ export function CreditProspects() {
             profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
           />
           <Breadcrumbs crumbs={addConfig.crumbs} />
-          <StyledArrowBack $isMobile={isMobile}>
+          <StyledArrowBack
+            $isMobile={isMobile}
+            onClick={() => navigate(addConfig.route)}
+          >
             <Stack gap="8px" alignItems="center" width="100%">
               <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
               <Text type="title" size={isMobile ? "small" : "large"}>
@@ -145,7 +153,7 @@ export function CreditProspects() {
                         (item) =>
                           item.Code ===
                           prospect.moneyDestinationAbbreviatedName,
-                      )?.Name || prospect.moneyDestinationAbbreviatedName
+                      )?.Code || prospect.moneyDestinationAbbreviatedName
                     }
                     borrower={prospect.borrowers[0].borrowerName}
                     numProspect={prospect.prospectCode}
@@ -178,8 +186,19 @@ export function CreditProspects() {
             <BaseModal
               title={dataCreditProspects.messageTitle}
               handleClose={() => setShowMessageModal(false)}
-              handleNext={() => setShowMessageModal(false)}
-              nextButton={dataCreditProspects.understand}
+              handleNext={() => {
+                if (selectedProspect) {
+                  setCommentsByProspectId((prev) => ({
+                    ...prev,
+                    [selectedProspect.prospectId]:
+                      selectedProspect.selectedRegularPaymentSchedule || "",
+                  }));
+                }
+                setShowEditMessageModal(true);
+                setShowMessageModal(false);
+              }}
+              nextButton={dataCreditProspects.modify}
+              backButton={dataCreditProspects.close}
               width={isMobile ? "300px" : "500px"}
             >
               <Stack direction="column" gap="16px">
@@ -192,7 +211,7 @@ export function CreditProspects() {
                           (item) =>
                             item.Code ===
                             selectedProspect?.moneyDestinationAbbreviatedName,
-                        )?.Name ||
+                        )?.Code ||
                         selectedProspect?.moneyDestinationAbbreviatedName ||
                         ""
                       }
@@ -205,11 +224,49 @@ export function CreditProspects() {
                 <CardGray
                   label={dataCreditProspects.observationProspect}
                   placeHolder={
-                    selectedProspect?.selectedRegularPaymentSchedule || ""
+                    commentsByProspectId[selectedProspect?.prospectId || ""] ||
+                    selectedProspect?.selectedRegularPaymentSchedule ||
+                    ""
                   }
                   apparencePlaceHolder="gray"
                 />
               </Stack>
+            </BaseModal>
+          )}
+          {showEditMessageModal && (
+            <BaseModal
+              title={dataCreditProspects.messageTitle}
+              handleClose={() => setShowEditMessageModal(false)}
+              handleNext={() => {
+                if (selectedProspect) {
+                  setSelectedProspect((prev) => ({
+                    ...prev!,
+                    selectedRegularPaymentSchedule:
+                      commentsByProspectId[selectedProspect.prospectId] || "",
+                  }));
+                }
+
+                setShowEditMessageModal(false);
+                setShowMessageModal(true);
+              }}
+              nextButton={dataCreditProspects.modify}
+              backButton={dataCreditProspects.close}
+              width={isMobile ? "300px" : "500px"}
+            >
+              <Textarea
+                id="comments"
+                label={dataCreditProspects.preanalysis}
+                value={
+                  commentsByProspectId[selectedProspect?.prospectId || ""] || ""
+                }
+                onChange={(e) =>
+                  setCommentsByProspectId((prev) => ({
+                    ...prev,
+                    [selectedProspect?.prospectId || ""]: e.target.value,
+                  }))
+                }
+                maxLength={120}
+              />
             </BaseModal>
           )}
           {showConfirmModal && (

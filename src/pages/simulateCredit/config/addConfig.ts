@@ -1,7 +1,7 @@
 export const addConfig = {
   id: 1,
-  title: "Simular crédito",
-  route: "/credit",
+  title: "Prospectos de crédito",
+  route: "/credit/prospects",
   crumbs: [
     {
       path: "/home",
@@ -29,6 +29,7 @@ export const addConfig = {
     },
   ],
 };
+
 export const textAddCongfig = {
   buttonQuotas: "Cupos",
   buttonPaymentCapacity: "Cap. de pago",
