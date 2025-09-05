@@ -26,6 +26,7 @@ import {
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IProspect } from "@services/prospect/types";
+import { IValidateRequirement } from "@services/requirement/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -115,6 +116,8 @@ interface SimulateCreditUIProps {
   selectedProducts: string[];
   isMobile: boolean;
   isTablet: boolean;
+  validateRequirements: IValidateRequirement[];
+  isLoading: boolean;
   currentStepsNumber?: StepDetails;
   prospectData: IProspect | undefined;
   creditLimitData?: IIncomeSources;
@@ -168,6 +171,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     creditLineTerms,
     clientPortfolio,
     obligationPayments,
+    validateRequirements,
+    isLoading,
     currentStep,
     assistedButtonText,
     isAlertIncome,
@@ -208,7 +213,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
-                <StyledArrowBack>
+                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
                   <Stack gap="8px" alignItems="center" width="100%">
                     <Icon
                       icon={<MdArrowBack />}
@@ -292,6 +297,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       />
                       <ButtonRequirements
                         onClick={() => setIsModalOpenRequirements(true)}
+                        dataCount={validateRequirements.length}
                       />
                     </>
                   )}
@@ -503,9 +509,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 <RequirementsModal
                   handleClose={() => setIsModalOpenRequirements(false)}
                   isMobile={isMobile}
-                  prospectData={prospectData as IProspect}
-                  customerData={customerData}
-                  businessUnitPublicCode={businessUnitPublicCode}
+                  isLoading={isLoading}
+                  validateRequirements={validateRequirements}
                 />
               )}
               {isCreditLimitModalOpen && (

@@ -6,6 +6,11 @@ export const StyledPrint = styled.div`
   }
 `;
 
+export const StyledArrowBack = styled.div`
+  cursor: pointer;
+  width: 500px;
+`;
+
 export const StyledMarginPrint = styled.div`
   @media print {
     @page {

@@ -1,23 +1,16 @@
-import { MdOutlineChevronRight } from "react-icons/md";
-import { Header, Icon, Stack } from "@inubekit/inubekit";
+import { Stack } from "@inubekit/inubekit";
 
 import { Title } from "@components/layout/Title";
 import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { InteractiveBox } from "@components/cards/interactiveBox";
-import { useNavigationConfig } from "@components/layout/AppPage/config/apps.config";
-import { userMenu } from "@config/menuMainConfiguration";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { OptionStaffPortal } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import {
   StyledCollapse,
-  StyledCollapseIcon,
   StyledContainerCards,
-  StyledContentImg,
   StyledGeneralHeader,
-  StyledHeaderContainer,
-  StyledLogo,
   StyledTitle,
 } from "./styles";
 import { IHomeUIProps } from "./types";
@@ -35,13 +28,9 @@ export interface IEnhancedOption {
 const HomeUI = (props: IHomeUIProps) => {
   const {
     smallScreen,
-    isTablet,
     isMobile,
     username,
-    eventData,
     collapse,
-    setCollapse,
-    collapseMenuRef,
     businessUnitChangeRef,
     businessUnitsToTheStaff,
     selectedClient,
@@ -50,12 +39,6 @@ const HomeUI = (props: IHomeUIProps) => {
     loading,
     dataOptions,
   } = props;
-
-  const renderLogo = (imgUrl: string) => (
-    <StyledContentImg to="/">
-      <StyledLogo src={imgUrl} />
-    </StyledContentImg>
-  );
 
   const mergeStaffOptions = (
     backendOptions: IOptionStaff[],
@@ -82,32 +65,6 @@ const HomeUI = (props: IHomeUIProps) => {
 
   return (
     <>
-      <StyledHeaderContainer>
-        <Header
-          logoURL={renderLogo(eventData.businessUnit.urlLogo)}
-          navigation={useNavigationConfig()}
-          user={{
-            username: eventData.user.userName,
-            breakpoint: "848px",
-            client: eventData.businessUnit.abbreviatedName,
-          }}
-          menu={userMenu}
-        />
-        <StyledCollapseIcon
-          $collapse={collapse}
-          onClick={() => setCollapse(!collapse)}
-          $isTablet={isTablet}
-          ref={collapseMenuRef}
-        >
-          <Icon
-            icon={<MdOutlineChevronRight />}
-            appearance="primary"
-            size="24px"
-            cursorHover
-          />
-        </StyledCollapseIcon>
-      </StyledHeaderContainer>
-
       {collapse && (
         <StyledCollapse ref={businessUnitChangeRef}>
           <BusinessUnitChange

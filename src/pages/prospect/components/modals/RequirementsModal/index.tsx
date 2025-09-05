@@ -1,10 +1,7 @@
-import { useEffect, useState } from "react";
-import { useFlag, Stack, Icon, Tag, Text, Spinner } from "@inubekit/inubekit";
+import { useState } from "react";
+import { Stack, Icon, Tag, Text, Spinner } from "@inubekit/inubekit";
 import { MdCheckCircleOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 
-import { ICustomerData } from "@context/CustomerContext/types";
-import { IProspect } from "@services/prospect/types";
-import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { TableBoard } from "@components/data/TableBoard";
@@ -21,63 +18,17 @@ import {
 export interface IRequirementsModalProps {
   handleClose: () => void;
   isMobile: boolean;
-  customerData: ICustomerData;
-  prospectData: IProspect;
-  businessUnitPublicCode: string;
+  validateRequirements: IValidateRequirement[];
+  isLoading: boolean;
 }
 
 export function RequirementsModal(props: IRequirementsModalProps) {
-  const {
-    isMobile,
-    customerData,
-    prospectData,
-    handleClose,
-    businessUnitPublicCode,
-  } = props;
+  const { isMobile, validateRequirements, isLoading, handleClose } = props;
 
-  const [validateRequirements, setValidateRequirements] = useState<
-    IValidateRequirement[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [modalData, setModalData] = useState<{
     evaluation: string;
     description: string;
   } | null>(null);
-
-  const { addFlag } = useFlag();
-
-  useEffect(() => {
-    if (!customerData?.customerId || !prospectData) return;
-
-    const payload = {
-      clientIdentificationNumber: customerData.customerId,
-      prospect: { ...prospectData },
-    };
-
-    const handleSubmit = async () => {
-      setIsLoading(true);
-      try {
-        const data = await patchValidateRequirements(
-          businessUnitPublicCode,
-          payload,
-        );
-        if (data) {
-          setValidateRequirements(data);
-        }
-      } catch (error) {
-        addFlag({
-          title: dataError.titleError,
-          description: dataError.descriptionError,
-          appearance: "danger",
-          duration: 5000,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    handleSubmit();
-  }, []);
 
   const entries = validateRequirements.map((item, idx) => ({
     id: `${item.requirementName}-${idx}`,

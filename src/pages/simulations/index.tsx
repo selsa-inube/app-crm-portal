@@ -278,6 +278,7 @@ export function Simulations() {
       sentData={sentData}
       setSentData={setSentData}
       businessUnitPublicCode={businessUnitPublicCode}
+      navigate={navigate}
     />
   );
 }
