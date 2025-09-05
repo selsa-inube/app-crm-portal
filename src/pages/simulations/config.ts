@@ -36,6 +36,8 @@ export const dataEditProspect = {
   value: "Valor solicitado/giro",
   delete: "Eliminar prospecto",
   confirm: "Confirmar solicitud",
+  errorCredit: "Error al obtener las solicitudes de crédito",
+  errorProspect: "Error al obtener el prospecto",
 };
 
 export const titlesModal = {

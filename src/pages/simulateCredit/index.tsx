@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMediaQuery, useFlag } from "@inubekit/inubekit";
+import { useMediaQuery } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
@@ -38,8 +38,6 @@ import {
 import { SimulateCreditUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
-import { textAddCongfig } from "./config/addConfig";
-import { tittleOptions } from "./steps/financialObligations/config/config";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -66,6 +64,8 @@ export function SimulateCredit() {
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
   );
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
   >([]);
@@ -82,7 +82,6 @@ export function SimulateCredit() {
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
-  const { addFlag } = useFlag();
 
   const steps = Object.values(stepsAddProspect);
   const navigate = useNavigate();
@@ -404,12 +403,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   }, [formData.selectedProducts]);
 
@@ -431,12 +426,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -471,12 +462,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -498,12 +485,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -642,12 +625,8 @@ export function SimulateCredit() {
       : titleButtonTextAssited.goNextText;
 
   const handleFlag = (error: string) => {
-    addFlag({
-      title: textAddCongfig.errorPost,
-      description: `${error}`,
-      appearance: "danger",
-      duration: 5000,
-    });
+    setShowErrorModal(true);
+    setMessageError(error);
   };
 
   const handleSubmitClick = async () => {
@@ -712,7 +691,7 @@ export function SimulateCredit() {
           setValidateRequirements(data);
         }
       } catch (error) {
-        console.log(error);
+        setShowErrorModal(true);
       } finally {
         setIsLoading(false);
       }
@@ -769,6 +748,7 @@ export function SimulateCredit() {
         totalIncome={totalIncome}
         isCapacityAnalysisWarning={isCapacityAnalysisWarning}
         setIsCapacityAnalysisWarning={setIsCapacityAnalysisWarning}
+        setShowErrorModal={setShowErrorModal}
         creditLineTerms={creditLineTerms}
         clientPortfolio={clientPortfolio as IObligations}
         obligationPayments={obligationPayment as IPayment[]}
@@ -786,6 +766,8 @@ export function SimulateCredit() {
           servicesProductSelection as IServicesProductSelection
         }
         paymentCapacity={paymentCapacity}
+        showErrorModal={showErrorModal}
+        messageError={messageError}
         businessUnitPublicCode={businessUnitPublicCode}
       />
       {showConsultingModal && <Consulting />}
