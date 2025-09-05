@@ -13,6 +13,7 @@ import {
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { DeleteModal } from "@components/modals/DeleteModal";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import {
   IExtraordinaryInstallments,
@@ -39,6 +40,9 @@ interface ITableExtraordinaryInstallmentProps {
   prospectData: IProspect | undefined;
   businessUnitPublicCode: string;
   service: boolean;
+  showErrorModal: boolean;
+  messageError: string;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
   handleUpdate: (
@@ -76,8 +80,11 @@ export function TableExtraordinaryInstallmentUI(
     extraordinaryInstallments,
     isMobile,
     isOpenModalDelete,
-    setIsOpenModalDelete,
     usePagination,
+    showErrorModal,
+    messageError,
+    setShowErrorModal,
+    setIsOpenModalDelete,
     setSelectedDebtor,
     handleDeleteAction,
   } = props;
@@ -236,6 +243,13 @@ export function TableExtraordinaryInstallmentUI(
           handleClose={() => setIsOpenModalDelete(false)}
           handleDelete={handleDeleteAction}
           TextDelete={dataTableExtraordinaryInstallment.content}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
         />
       )}
     </Table>

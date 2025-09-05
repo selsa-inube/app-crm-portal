@@ -209,7 +209,7 @@ function AppPage(props: IAppPage) {
           <Grid
             templateColumns={!isTablet ? (showNav ? "auto 1fr" : "1fr") : "1fr"}
             alignContent="unset"
-            height={isTablet ? "81vh" : "92vh"}
+            height={isTablet ? "81vh" : "89.5vh"}
           >
             {!isTablet && showNav && (
               <Nav
@@ -223,11 +223,9 @@ function AppPage(props: IAppPage) {
               <Outlet />
             </StyledMain>
           </Grid>
-          {isTablet && (
-            <StyledFooter>
-              {renderLogo(eventData.businessManager.urlBrand)}
-            </StyledFooter>
-          )}
+          <StyledFooter $nav={showNav}>
+            {renderLogo(eventData.businessManager.urlBrand)}
+          </StyledFooter>
         </StyledContainer>
       </Grid>
     </StyledAppPage>

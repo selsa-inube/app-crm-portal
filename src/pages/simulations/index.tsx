@@ -19,6 +19,7 @@ import { ruleConfig } from "../applyForCredit/config/configRules";
 import { evaluateRule } from "../applyForCredit/evaluateRule";
 import { SimulationsUI } from "./interface";
 import { ICondition, Irule } from "../simulateCredit/types";
+import { dataEditProspect } from "./config";
 
 export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
@@ -30,6 +31,8 @@ export function Simulations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showCreditRequest, setShowCreditRequest] = useState(false);
   const [pdfProspect, setPdfProspect] = useState<string | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { prospectCode } = useParams();
@@ -77,7 +80,8 @@ export function Simulations() {
       dataCreditRef.current = creditData;
       return creditData;
     } catch (error) {
-      console.error("Error al obtener las solicitudes de crédito:", error);
+      setShowErrorModal(true);
+      setMessageError(`${dataEditProspect.errorCredit}:, ${error}`);
       return null;
     }
   }, [businessUnitPublicCode, prospectCode]);
@@ -121,7 +125,8 @@ export function Simulations() {
         );
         setDataProspect(Array.isArray(result) ? result[0] : result);
       } catch (error) {
-        console.error("Error al obtener el prospecto:", error);
+        setShowErrorModal(true);
+        setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
       }
     };
 
@@ -266,6 +271,9 @@ export function Simulations() {
       showCreditRequest={showCreditRequest}
       dataPrint={dataPrint}
       pdfProspect={pdfProspect}
+      showErrorModal={showErrorModal}
+      messageError={messageError}
+      setShowErrorModal={setShowErrorModal}
       setShowShareModal={setShowShareModal}
       setShowMenu={setShowMenu}
       handleSubmitClick={handleSubmitClick}
@@ -278,6 +286,7 @@ export function Simulations() {
       sentData={sentData}
       setSentData={setSentData}
       businessUnitPublicCode={businessUnitPublicCode}
+      navigate={navigate}
     />
   );
 }

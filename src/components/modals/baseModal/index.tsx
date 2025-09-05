@@ -71,6 +71,8 @@ export function BaseModal(props: IBaseModalProps) {
   }
 
   const node = getOrCreatePortalNode(portalId ?? "portal");
+  node.style.position = "relative";
+  node.style.zIndex = "3";
 
   return createPortal(
     <Blanket>
