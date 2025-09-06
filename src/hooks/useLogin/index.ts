@@ -10,19 +10,21 @@ const useLogin = () => {
   const { eventData, setBusinessUnitsToTheStaff } = useContext(AppContext);
   const [hasError, setHasError] = useState(false);
   const [codeError, setCodeError] = useState<number>();
-  console.log(eventData.portal.publicCode);
+  const userIdentifier =
+    eventData?.user.staff?.identificationDocumentNumber ||
+    "ossalincon422@gmail.";
+
   useEffect(() => {
     if (eventData.portal.publicCode) {
-      validateBusinessUnits(
-        eventData.portal.publicCode,
-        "ossalincon422@gmail.",
-      ).then((data) => {
-        setBusinessUnitsToTheStaff(data);
-        if (!setBusinessUnitsToTheStaff) {
-          setHasError(true);
-          return;
-        }
-      });
+      validateBusinessUnits(eventData.portal.publicCode, userIdentifier).then(
+        (data) => {
+          setBusinessUnitsToTheStaff(data);
+          if (!setBusinessUnitsToTheStaff) {
+            setHasError(true);
+            return;
+          }
+        },
+      );
       if (hasError) {
         setCodeError(1003);
         return;
@@ -30,7 +32,7 @@ const useLogin = () => {
     }
   }, [
     eventData.portal.publicCode,
-    "ossalincon422@gmail.",
+    userIdentifier,
     hasError,
     setBusinessUnitsToTheStaff,
   ]);
@@ -41,9 +43,9 @@ const useLogin = () => {
       location.pathname === "/login/" ||
       location.pathname === "/"
     ) {
-      navigate(`/login/username/checking-credentials/`);
+      navigate(`/login/${eventData.user.userAccount}/checking-credentials/`);
     }
-  }, [location, navigate, "ossalincon422@gmail."]);
+  }, [location, navigate, userIdentifier]);
 
   return { eventData, codeError, hasError };
 };

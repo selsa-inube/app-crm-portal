@@ -56,6 +56,7 @@ export interface IStaff {
 interface IUser {
   userAccount: string;
   userName: string;
+  identificationDocumentNumber?: string;
   staff: IStaff;
 }
 export interface IUsers {

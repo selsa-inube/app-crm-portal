@@ -191,6 +191,9 @@ function useAppContext() {
       setPortalData(data);
     });
   }, []);
+  const userIdentifier =
+    eventData?.user?.staff?.identificationDocumentNumber ||
+    "ossalincon422@gmail.";
 
   useEffect(() => {
     const fetchOptionStaff = async () => {
@@ -206,7 +209,7 @@ function useAppContext() {
         const result = await getSearchOptionForStaff(
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
-          "ossalincon422@gmail.",
+          userIdentifier,
         );
         setOptionStaffData(result);
       } catch (error) {
