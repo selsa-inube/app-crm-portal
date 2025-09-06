@@ -44,7 +44,6 @@ const getBusinessManagers = async (
           `Error al obtener los datos: ${res.status}, Detalles: ${JSON.stringify(data)}`,
         );
       }
-
       return Array.isArray(data) && data.length > 0
         ? mapBusinessManagerApiToEntity(data[0])
         : ({} as IBusinessManagers);

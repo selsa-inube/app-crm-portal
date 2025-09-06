@@ -12,7 +12,7 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
-import { useIAuth } from "@src/context/AuthContext/useAuthContext";
+import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -250,7 +250,7 @@ function useAppContext() {
         ...prev.portal,
         abbreviatedName: portalDataFiltered?.abbreviatedName || "",
         staffPortalCatalogId: portalDataFiltered?.staffPortalId || "",
-        businessManagerId: portalDataFiltered?.staffPortalId || "",
+        businessManagerId: portalDataFiltered?.businessManagerCode || "",
         publicCode: portalDataFiltered?.publicCode || "",
       },
       businessManager: {

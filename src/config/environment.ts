@@ -29,6 +29,8 @@ const environment = {
   ORIGINATOR_ID: import.meta.env.VITE_ORIGINATOR_ID as string,
   IAUTH_URL: import.meta.env.VITE_IAUTH_URL as string,
   IAUTH_API_URL: import.meta.env.VITE_IAUTH_API_URL as string,
+  VITE_ENV_STAFF_PORTAL_CATALOG_CODE: import.meta.env
+    .VITE_ENV_STAFF_PORTAL_CATALOG_CODE,
 };
 
 const maxRetriesServices = 1;

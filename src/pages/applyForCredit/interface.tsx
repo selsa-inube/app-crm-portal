@@ -21,6 +21,7 @@ import { disbursemenTabs } from "@pages/applyForCredit/steps/disbursementGeneral
 import { GeneralHeader } from "@pages/simulateCredit/components/GeneralHeader";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import {
   IProspect,
   IProspectBorrower,
@@ -77,9 +78,12 @@ interface ApplyForCreditUIProps {
   handlePreviousStep: () => void;
   handleSubmitClick: () => void;
   handleSubmit: () => void;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   businessUnitPublicCode: string;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   prospectData: IProspect;
+  showErrorModal: boolean;
+  messageError: string;
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
@@ -106,9 +110,12 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     handlePreviousStep,
     handleSubmitClick,
     handleSubmit,
+    setShowErrorModal,
     prospectSummaryData,
     setIsCurrentFormValid,
     prospectData,
+    showErrorModal,
+    messageError,
     customerData,
     codeError,
     addToFix,
@@ -448,6 +455,13 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
               </BaseModal>
             )}
           </Stack>
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => setShowErrorModal(false)}
+              isMobile={isMobile}
+              message={messageError}
+            />
+          )}
         </Stack>
       )}
     </>

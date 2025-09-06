@@ -18,6 +18,8 @@ interface IMoneyDestinationProps {
 function MoneyDestination(props: IMoneyDestinationProps) {
   const { initialValues, isTablet, handleOnChange, onFormValid } = props;
 
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
   const { businessUnitSigla } = useContext(AppContext);
 
   const businessUnitPublicCode: string =
@@ -34,7 +36,10 @@ function MoneyDestination(props: IMoneyDestinationProps) {
         }
       })
       .catch((error) => {
-        console.error("Error fetching money destinations data:", error.message);
+        setShowErrorModal(true);
+        setMessageError(
+          `Error fetching money destinations data:, ${error.message}`,
+        );
       });
   }, [businessUnitPublicCode]);
 
@@ -65,6 +70,9 @@ function MoneyDestination(props: IMoneyDestinationProps) {
             handleOnChange(value);
             onFormValid(Boolean(value));
           }}
+          setShowErrorModal={setShowErrorModal}
+          showErrorModal={showErrorModal}
+          messageError={messageError}
         />
       )}
     </Formik>

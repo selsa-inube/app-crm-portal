@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMediaQuery, useFlag } from "@inubekit/inubekit";
+import { useMediaQuery } from "@inubekit/inubekit";
 
 import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
@@ -26,6 +26,8 @@ import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLi
 import { getFinancialObligationsUpdate } from "@services/lineOfCredit/getFinancialObligationsUpdate";
 import { getAdditionalBorrowersAllowed } from "@services/lineOfCredit/getAdditionalBorrowersAllowed";
 import { getExtraInstallmentsAllowed } from "@services/lineOfCredit/getExtraInstallmentsAllowed";
+import { patchValidateRequirements } from "@services/requirement/validateRequirements";
+import { IValidateRequirement } from "@services/requirement/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import {
@@ -36,8 +38,6 @@ import {
 import { SimulateCreditUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
-import { textAddCongfig } from "./config/addConfig";
-import { tittleOptions } from "./steps/financialObligations/config/config";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -64,6 +64,12 @@ export function SimulateCredit() {
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
   );
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
+  const [validateRequirements, setValidateRequirements] = useState<
+    IValidateRequirement[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -76,7 +82,6 @@ export function SimulateCredit() {
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
-  const { addFlag } = useFlag();
 
   const steps = Object.values(stepsAddProspect);
   const navigate = useNavigate();
@@ -398,12 +403,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   }, [formData.selectedProducts]);
 
@@ -425,12 +426,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -465,12 +462,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -492,12 +485,8 @@ export function SimulateCredit() {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.titleError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -636,12 +625,8 @@ export function SimulateCredit() {
       : titleButtonTextAssited.goNextText;
 
   const handleFlag = (error: string) => {
-    addFlag({
-      title: textAddCongfig.errorPost,
-      description: `${error}`,
-      appearance: "danger",
-      duration: 5000,
-    });
+    setShowErrorModal(true);
+    setMessageError(error);
   };
 
   const handleSubmitClick = async () => {
@@ -687,6 +672,33 @@ export function SimulateCredit() {
       fetchCapacityAnalysis();
     }
   }, [currentStep]);
+
+  useEffect(() => {
+    if (!customerData?.customerId || !simulateData) return;
+
+    const payload = {
+      clientIdentificationNumber: customerData.customerId,
+      prospect: { ...simulateData },
+    };
+
+    const handleSubmit = async () => {
+      try {
+        const data = await patchValidateRequirements(
+          businessUnitPublicCode,
+          payload,
+        );
+        if (data) {
+          setValidateRequirements(data);
+        }
+      } catch (error) {
+        setShowErrorModal(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    handleSubmit();
+  }, [customerData, simulateData]);
 
   useEffect(() => {
     if (clientPortfolio) {
@@ -736,12 +748,15 @@ export function SimulateCredit() {
         totalIncome={totalIncome}
         isCapacityAnalysisWarning={isCapacityAnalysisWarning}
         setIsCapacityAnalysisWarning={setIsCapacityAnalysisWarning}
+        setShowErrorModal={setShowErrorModal}
         creditLineTerms={creditLineTerms}
         clientPortfolio={clientPortfolio as IObligations}
         obligationPayments={obligationPayment as IPayment[]}
         assistedButtonText={assistedButtonText}
         isAlertIncome={isAlertIncome}
         setIsAlertIncome={setIsAlertIncome}
+        validateRequirements={validateRequirements}
+        isLoading={isLoading}
         codeError={codeError}
         addToFix={addToFix}
         navigate={navigate}
@@ -751,6 +766,8 @@ export function SimulateCredit() {
           servicesProductSelection as IServicesProductSelection
         }
         paymentCapacity={paymentCapacity}
+        showErrorModal={showErrorModal}
+        messageError={messageError}
         businessUnitPublicCode={businessUnitPublicCode}
       />
       {showConsultingModal && <Consulting />}

@@ -18,7 +18,7 @@ import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
 import { CreditRoutes } from "@routes/CreditRoutes";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
-import { Home } from "@pages/home";
+import { HomeRoutes } from "@routes/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { useIAuth } from "@context/AuthContext/useAuthContext";
 import { IUsers } from "@context/AppContext/types";
@@ -63,7 +63,7 @@ const router = createBrowserRouter(
       />
       <Route path="login/*" element={<LoginRoutes />} />
       <Route path="credit/*" element={<CreditRoutes />} />
-      <Route path="home/*" element={<Home />} />
+      <Route path="home/*" element={<HomeRoutes />} />
       <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
