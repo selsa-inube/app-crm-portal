@@ -1,5 +1,6 @@
-import { useIAuth } from "@src/context/authContext";
 import { MdLogout, MdOutlineCreditCard, MdVpnKey } from "react-icons/md";
+
+import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 const appsConfig = [
   {

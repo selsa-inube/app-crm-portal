@@ -12,6 +12,7 @@ interface IBusinessManager {
   abbreviatedName: string;
   urlBrand: string;
   urlLogo: string;
+  businessManagerId?: string;
 }
 
 interface IStaffByBusinessUnitAndRole {

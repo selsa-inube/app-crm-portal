@@ -12,7 +12,7 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
-import { useIAuth } from "@context/authContext";
+import { useIAuth } from "@src/context/AuthContext/useAuthContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -26,15 +26,12 @@ function useAppContext() {
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
-
   const [businessManagers, setBusinessManagers] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
-
   const [businessUnitSigla, setBusinessUnitSigla] = useState(
     localStorage.getItem("businessUnitSigla") || "",
   );
-
   const [businessUnitsToTheStaff, setBusinessUnitsToTheStaff] = useState<
     IBusinessUnitsPortalStaff[]
   >(() => {
@@ -73,7 +70,19 @@ function useAppContext() {
       canSubmitProspect: isAdmon,
     };
   };
-
+  useEffect(() => {
+    if (user) {
+      setEventData((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          userAccount: user.username || "",
+          userName: user.nickname || "",
+          identificationDocumentNumber: user.id || "",
+        },
+      }));
+    }
+  }, [user]);
   useEffect(() => {
     const fetchStaffData = async () => {
       try {
@@ -130,6 +139,7 @@ function useAppContext() {
       abbreviatedName: "",
       urlBrand: "",
       urlLogo: "",
+      businessManagerId: "",
     },
     businessUnit: {
       businessUnitPublicCode: businessUnit?.businessUnitPublicCode || "",
@@ -139,7 +149,7 @@ function useAppContext() {
     },
     user: {
       userAccount: user?.username || "",
-      userName: user?.username || "",
+      userName: user?.nickname || "",
       staff: {
         biologicalSex: "",
         birthDay: "",
@@ -216,9 +226,10 @@ function useAppContext() {
     const portalDataFiltered = portalData.filter(
       (data) => data.staffPortalId === portalCode,
     );
+
     const foundBusiness = portalDataFiltered.find(
       (bussines) => bussines,
-    )?.businessManagerId;
+    )?.businessManagerCode;
 
     if (portalDataFiltered.length > 0 && foundBusiness) {
       validateBusinessManagers(foundBusiness).then((data) => {
@@ -239,7 +250,7 @@ function useAppContext() {
         ...prev.portal,
         abbreviatedName: portalDataFiltered?.abbreviatedName || "",
         staffPortalCatalogId: portalDataFiltered?.staffPortalId || "",
-        businessManagerId: portalDataFiltered?.businessManagerId || "",
+        businessManagerId: portalDataFiltered?.staffPortalId || "",
         publicCode: portalDataFiltered?.publicCode || "",
       },
       businessManager: {
@@ -248,6 +259,7 @@ function useAppContext() {
         abbreviatedName: businessManagers.abbreviatedName || "",
         urlBrand: businessManagers.urlBrand || "",
         urlLogo: businessManagers.urlLogo || "",
+        businessManagerId: businessManagers.id || "",
       },
     }));
   }, [businessManagers, portalData, portalCode]);

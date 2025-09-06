@@ -5,10 +5,10 @@ import {
 } from "@config/environment";
 
 import { IBusinessManagers } from "../types";
-import { mapResendApiToEntity } from "./mappers";
+import { mapBusinessManagerApiToEntity } from "./mappers";
 
 const getBusinessManagers = async (
-  businessManagerId: string,
+  businessManagerCode: string,
 ): Promise<IBusinessManagers> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -21,13 +21,13 @@ const getBusinessManagers = async (
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "SearchByIdBusinessManager",
+          "X-Action": "SearchAllBusinessManager",
           "Content-type": "application/json; charset=UTF-8",
         },
       };
 
       const res = await fetch(
-        `${environment.IVITE_ISAAS_QUERY_PROCESS_SERVICE}/business-managers/${businessManagerId}`,
+        `${environment.IVITE_ISAAS_QUERY_PROCESS_SERVICE}/business-managers?${businessManagerCode}`,
         options,
       );
 
@@ -45,7 +45,9 @@ const getBusinessManagers = async (
         );
       }
 
-      return mapResendApiToEntity(data);
+      return Array.isArray(data) && data.length > 0
+        ? mapBusinessManagerApiToEntity(data[0])
+        : ({} as IBusinessManagers);
     } catch (error) {
       if (attempt === maxRetries) {
         throw new Error(

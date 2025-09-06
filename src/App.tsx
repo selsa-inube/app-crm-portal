@@ -6,9 +6,9 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { FlagProvider } from "@inubekit/inubekit";
+import { jwtDecode } from "jwt-decode";
 
 import { AppContext, AppContextProvider } from "@context/AppContext";
-import { useIAuth } from "@context/authContext";
 import { usePortalLogic } from "@hooks/usePortalRedirect";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { AppPage } from "@components/layout/AppPage";
@@ -20,7 +20,11 @@ import { CreditRoutes } from "@routes/CreditRoutes";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { Home } from "@pages/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
+import { useIAuth } from "@context/AuthContext/useAuthContext";
+import { IUsers } from "@context/AppContext/types";
 import { CustomerRoutes } from "@routes/customer";
+
+import { usePostUserAccountsData } from "./hooks/usePostUserAccountsData";
 
 function LogOut() {
   const { logout } = useIAuth();
@@ -67,8 +71,35 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  const { codeError, loading } = usePortalLogic();
+  const { codeError, loading, businessManager } = usePortalLogic();
+  const { setUser } = useIAuth();
 
+  const { data: userAccountsData } = usePostUserAccountsData(
+    businessManager.clientId,
+    businessManager.clientSecret,
+  );
+
+  useEffect(() => {
+    if (userAccountsData?.idToken) {
+      const decoded = jwtDecode<{
+        identificationNumber: string;
+        names: string;
+        surNames: string;
+        userAccount: string;
+        consumerApplicationCode: string;
+      }>(userAccountsData.idToken);
+
+      const mappedUser: IUsers = {
+        id: decoded.identificationNumber,
+        username: `${decoded.names} ${decoded.surNames}`,
+        nickname: decoded.userAccount,
+        company: decoded.consumerApplicationCode,
+        urlImgPerfil: "",
+      };
+
+      setUser(mappedUser);
+    }
+  }, [userAccountsData, setUser]);
   if (loading) {
     return <LoadingAppUI />;
   }

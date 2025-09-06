@@ -5,13 +5,14 @@ import { IBusinessManagers } from "@services/businessManager/types";
 import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager";
 import { getBusinessManagers } from "@services/businessManager/SearchByIdBusinessManager";
 import { decrypt, encrypt } from "@utils/encrypt/encrypt";
-import { useIAuth } from "@src/context/authContext";
+import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 const usePortalLogic = () => {
   const [portalData, setPortalData] =
     useState<IStaffPortalByBusinessManager | null>(null);
-  const [businessManager, setBusinessManager] =
-    useState<IBusinessManagers | null>(null);
+  const [businessManager, setBusinessManager] = useState<IBusinessManagers>(
+    {} as IBusinessManagers,
+  );
   const [codeError, setCodeError] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const { loginWithRedirect, isAuthenticated, isLoading } = useIAuth();
@@ -53,11 +54,9 @@ const usePortalLogic = () => {
           setLoading(false);
           return;
         }
-
         setPortalData(portalData);
-        const { businessManagerId } = portalData;
-
-        if (!businessManagerId) {
+        const { businessManagerCode } = portalData;
+        if (!businessManagerCode) {
           setCodeError(1002);
           setLoading(false);
           return;
@@ -68,7 +67,7 @@ const usePortalLogic = () => {
           return;
         }
 
-        const manager = await getBusinessManagers(businessManagerId);
+        const manager = await getBusinessManagers(businessManagerCode);
         setBusinessManager(manager);
         setLoading(false);
       } catch (error) {
