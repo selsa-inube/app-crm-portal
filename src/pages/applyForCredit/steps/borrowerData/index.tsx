@@ -151,7 +151,7 @@ export function Borrowers(props: borrowersProps) {
                     setIsModalEdit(true);
                   }}
                   handleDelete={() => setIsModalDelete(true)}
-                  // showIcons={valueRule?.includes("Codeudor")}
+                  showIcons={valueRule?.includes("Codeudor")}
                 />
               ))}
             <NewCardBorrower

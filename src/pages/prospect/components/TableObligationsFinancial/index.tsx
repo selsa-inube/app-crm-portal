@@ -21,6 +21,7 @@ export const TableFinancialObligations = (
     initialValues,
     handleOnChange = () => {},
     setRefreshKey,
+    onProspectUpdated,
     showActions,
     showButtons,
     formState,
@@ -155,6 +156,7 @@ export const TableFinancialObligations = (
       }
 
       setRefreshKey?.((prev) => prev + 1);
+      onProspectUpdated?.();
     } else {
       try {
         const obligationNumberFromRow =
@@ -198,7 +200,9 @@ export const TableFinancialObligations = (
         if (obligationIndex === -1) return;
 
         const originalValues = selectedDebtor?.propertyValue
-          ? selectedDebtor.propertyValue.split(",").map((v: string) => v.trim())
+          ? selectedDebtor.propertyValue
+              .split(",")
+              .map((value: string) => value.trim())
           : [];
 
         originalValues[1] = updatedDebtor.balance || originalValues[1];
@@ -228,6 +232,7 @@ export const TableFinancialObligations = (
         await updateProspect(businessUnitPublicCode, updatedInitialValues);
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
+        onProspectUpdated?.();
       } catch (error) {
         console.log(error);
       }
@@ -310,6 +315,7 @@ export const TableFinancialObligations = (
       selectedBorrowerIndex={selectedBorrowerIndex}
       businessUnitPublicCode={businessUnitPublicCode}
       setSelectedBorrowerIndex={setSelectedBorrowerIndex}
+      onProspectUpdated={onProspectUpdated}
     />
   );
 };

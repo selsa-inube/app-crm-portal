@@ -52,6 +52,7 @@ export interface ITableFinancialObligationsProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  onProspectUpdated?: () => void;
   setFormState?: React.Dispatch<
     React.SetStateAction<{
       type: string;
@@ -97,6 +98,7 @@ interface UIProps {
   visibleHeaders: { key: string; label: string; action?: boolean }[];
   isModalOpenEdit: boolean;
   setIsModalOpenEdit: (value: boolean) => void;
+  onProspectUpdated?: () => void;
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
@@ -154,6 +156,7 @@ export const TableFinancialObligationsUI = ({
   isMobile,
   isModalOpenEdit,
   setIsModalOpenEdit,
+  onProspectUpdated,
   showOnlyEdit,
   services = true,
   handleEdit,
@@ -202,10 +205,10 @@ export const TableFinancialObligationsUI = ({
 
   const borrowerOptions =
     initialValues?.[0]?.borrowers?.map(
-      (b: IBorrowerDataFinancial, index: number) => ({
+      (borrower: IBorrowerDataFinancial, index: number) => ({
         id: String(index),
         value: String(index),
-        label: b.borrowerName,
+        label: borrower.borrowerName,
       }),
     ) || [];
 
@@ -261,6 +264,7 @@ export const TableFinancialObligationsUI = ({
 
         setRefreshKey?.((prev) => prev + 1);
         setOpenModal(false);
+        onProspectUpdated?.();
       } catch (error) {
         console.log(error);
       }
