@@ -12,13 +12,17 @@ const getStaffPortalsByBusinessManager = async (
 ): Promise<IStaffPortalByBusinessManager[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
+
   const queryParams = new URLSearchParams({
-    staffPortalId: staffPortalId,
+    staffPortalId,
+    staffPortalCatalogCode: environment.VITE_ENV_STAFF_PORTAL_CATALOG_CODE,
   });
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+
       const options: RequestInit = {
         method: "GET",
         headers: {
@@ -44,11 +48,7 @@ const getStaffPortalsByBusinessManager = async (
         throw new Error(`Error al obtener los datos: ${res.status}`);
       }
 
-      const normalizedUser = Array.isArray(data)
-        ? mapResendApiToEntities(data)
-        : [];
-
-      return normalizedUser;
+      return Array.isArray(data) ? mapResendApiToEntities(data) : [];
     } catch (error) {
       if (attempt === maxRetries) {
         throw new Error(

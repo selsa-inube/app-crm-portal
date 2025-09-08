@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdAdd, MdArrowBack } from "react-icons/md";
 import {
   Breadcrumbs,
@@ -7,7 +8,6 @@ import {
   Input,
   Stack,
   Text,
-  useFlag,
   useMediaQuery,
 } from "@inubekit/inubekit";
 
@@ -16,6 +16,7 @@ import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequest
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
+import { ErrorPage } from "@components/layout/ErrorPage";
 import { environment } from "@config/environment";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
@@ -24,6 +25,9 @@ import { StyledArrowBack } from "./styles";
 import { addConfig, dataCreditProspects } from "./config";
 
 export function CreditApplications() {
+  const [codeError, setCodeError] = useState<number | null>(null);
+  const [addToFix, setAddToFix] = useState<string[]>([]);
+
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
   );
@@ -37,13 +41,14 @@ export function CreditApplications() {
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { addFlag } = useFlag();
 
   const dataHeader = {
     name: customerData.fullName,
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!customerData.publicCode) return;
@@ -58,21 +63,9 @@ export function CreditApplications() {
           },
         );
         setCreditRequestData(creditData);
-      } catch (error: unknown) {
-        const err = error as {
-          message?: string;
-          status: number;
-          data?: { description?: string; code?: string };
-        };
-        const code = err?.data?.code ? `[${err.data.code}] ` : "";
-        const description =
-          code + err?.message + (err?.data?.description || "");
-        addFlag({
-          title: dataCreditProspects.titleError,
-          description,
-          appearance: "danger",
-          duration: 5000,
-        });
+      } catch {
+        setCodeError(1022);
+        setAddToFix([dataCreditProspects.errorCreditRequest]);
       }
     };
 
@@ -80,59 +73,69 @@ export function CreditApplications() {
   }, [customerData.publicCode]);
 
   return (
-    <Stack
-      margin="20px auto"
-      width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
-      direction="column"
-      gap="24px"
-    >
-      <GeneralHeader
-        descriptionStatus={dataHeader.status}
-        name={dataHeader.name}
-        profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
-      />
-      <Breadcrumbs crumbs={addConfig.crumbs} />
-      <StyledArrowBack>
-        <Stack gap="8px" alignItems="center" width="100%">
-          <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
-          <Text type="title" size={isMobile ? "small" : "large"}>
-            {addConfig.title}
-          </Text>
+    <>
+      {codeError ? (
+        <ErrorPage
+          onClick={() => navigate("/home")}
+          errorCode={codeError}
+          addToFix={addToFix}
+        />
+      ) : (
+        <Stack
+          margin="20px auto"
+          width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
+          direction="column"
+          gap="24px"
+        >
+          <GeneralHeader
+            descriptionStatus={dataHeader.status}
+            name={dataHeader.name}
+            profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
+          />
+          <Breadcrumbs crumbs={addConfig.crumbs} />
+          <StyledArrowBack onClick={() => navigate(addConfig.route)}>
+            <Stack gap="8px" alignItems="center" width="100%">
+              <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
+              <Text type="title" size={isMobile ? "small" : "large"}>
+                {addConfig.title}
+              </Text>
+            </Stack>
+          </StyledArrowBack>
+          <Fieldset>
+            <Stack direction="column" gap="20px" padding="8px 16px">
+              <Stack justifyContent="space-between" alignItems="center">
+                <Input
+                  id="keyWord"
+                  placeholder={dataCreditProspects.keyWord}
+                  type="search"
+                />
+                <Button
+                  iconBefore={<MdAdd />}
+                  type="link"
+                  path="../simulate-credit"
+                >
+                  {dataCreditProspects.applyCredit}
+                </Button>
+              </Stack>
+              <Stack wrap="wrap" gap="20px">
+                {creditRequestData.map((creditRequest) => (
+                  <SummaryCard
+                    key={creditRequest.creditRequestId}
+                    rad={creditRequest.creditRequestCode}
+                    date={creditRequest.creditRequestDateOfCreation}
+                    name={creditRequest.clientName}
+                    destination={creditRequest.moneyDestinationAbreviatedName}
+                    value={creditRequest.loanAmount}
+                    toDo={creditRequest.taskToBeDone}
+                    hasMessage={creditRequest.unreadNovelties === "Y"}
+                    path={`${environment.VITE_CREDIBOARD_URL}/extended-card/${creditRequest.creditRequestCode}`}
+                  />
+                ))}
+              </Stack>
+            </Stack>
+          </Fieldset>
         </Stack>
-      </StyledArrowBack>
-      <Fieldset>
-        <Stack direction="column" gap="20px" padding="8px 16px">
-          <Stack justifyContent="space-between" alignItems="center">
-            <Input
-              id="keyWord"
-              placeholder={dataCreditProspects.keyWord}
-              type="search"
-            />
-            <Button
-              iconBefore={<MdAdd />}
-              type="link"
-              path="../simulate-credit"
-            >
-              {dataCreditProspects.applyCredit}
-            </Button>
-          </Stack>
-          <Stack wrap="wrap" gap="20px">
-            {creditRequestData.map((creditRequest) => (
-              <SummaryCard
-                key={creditRequest.creditRequestId}
-                rad={creditRequest.creditRequestCode}
-                date={creditRequest.creditRequestDateOfCreation}
-                name={creditRequest.clientName}
-                destination={creditRequest.moneyDestinationAbreviatedName}
-                value={creditRequest.loanAmount}
-                toDo={creditRequest.taskToBeDone}
-                hasMessage={creditRequest.unreadNovelties === "Y"}
-                path={`${environment.VITE_CREDIBOARD_URL}/extended-card/${creditRequest.creditRequestCode}`}
-              />
-            ))}
-          </Stack>
-        </Stack>
-      </Fieldset>
-    </Stack>
+      )}
+    </>
   );
 }

@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 
 interface ICreditUIProps {
@@ -7,5 +9,6 @@ interface ICreditUIProps {
     name: string;
     status: string;
   };
+  navigate: ReturnType<typeof useNavigate>;
 }
 export type { ICreditUIProps };

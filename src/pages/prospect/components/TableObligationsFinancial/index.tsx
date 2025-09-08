@@ -35,6 +35,8 @@ export const TableFinancialObligations = (
     ITableFinancialObligationsProps[]
   >([]);
   const [selectedBorrowerIndex, setSelectedBorrowerIndex] = useState<number>(0);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -152,9 +154,9 @@ export const TableFinancialObligations = (
       try {
         await updateProspect(businessUnitPublicCode, updatedInitialValues);
       } catch (error) {
-        console.log(error);
+        setShowErrorModal(true);
+        setMessageError(`${error}`);
       }
-
       setRefreshKey?.((prev) => prev + 1);
       onProspectUpdated?.();
     } else {
@@ -178,7 +180,8 @@ export const TableFinancialObligations = (
         handleOnChange(updatedInitialValues);
         setRefreshKey?.((prev) => prev + 1);
       } catch (error) {
-        console.log(error);
+        setShowErrorModal(true);
+        setMessageError(`${error}`);
       }
     }
   };
@@ -234,7 +237,8 @@ export const TableFinancialObligations = (
         setIsModalOpenEdit(false);
         onProspectUpdated?.();
       } catch (error) {
-        console.log(error);
+        setShowErrorModal(true);
+        setMessageError(`${error}`);
       }
     } else {
       try {
@@ -269,7 +273,8 @@ export const TableFinancialObligations = (
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
       } catch (error) {
-        console.log(error);
+        setShowErrorModal(true);
+        setMessageError(`${error}`);
       }
     }
   };
@@ -316,6 +321,10 @@ export const TableFinancialObligations = (
       businessUnitPublicCode={businessUnitPublicCode}
       setSelectedBorrowerIndex={setSelectedBorrowerIndex}
       onProspectUpdated={onProspectUpdated}
+      setShowErrorModal={setShowErrorModal}
+      setMessageError={setMessageError}
+      showErrorModal={showErrorModal}
+      messageError={messageError}
     />
   );
 };

@@ -39,6 +39,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
 import { IBorrowerDataFinancial } from "./types";
+import { ErrorModal } from "@src/components/modals/ErrorModal";
 
 export interface ITableFinancialObligationsProps {
   type?: string;
@@ -99,6 +100,7 @@ interface UIProps {
   isModalOpenEdit: boolean;
   setIsModalOpenEdit: (value: boolean) => void;
   onProspectUpdated?: () => void;
+  showErrorModal: boolean;
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
@@ -121,6 +123,8 @@ interface UIProps {
   handleUpdate: (
     updatedDebtor: ITableFinancialObligationsProps,
   ) => Promise<void>;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
   formState:
     | {
         type: string;
@@ -144,6 +148,7 @@ interface UIProps {
     | undefined;
   selectedBorrowerIndex: number;
   businessUnitPublicCode: string;
+  messageError: string;
   setSelectedBorrowerIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -168,7 +173,11 @@ export const TableFinancialObligationsUI = ({
   setSelectedDebtor,
   selectedBorrowerIndex,
   businessUnitPublicCode,
+  showErrorModal,
+  messageError,
+  setMessageError,
   setSelectedBorrowerIndex,
+  setShowErrorModal,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -266,7 +275,8 @@ export const TableFinancialObligationsUI = ({
         setOpenModal(false);
         onProspectUpdated?.();
       } catch (error) {
-        console.log(error);
+        setShowErrorModal(true);
+        setMessageError(`${error}`);
       }
     } else {
       const newObligation = {
@@ -608,6 +618,13 @@ export const TableFinancialObligationsUI = ({
           onCloseModal={handleCloseModal}
           onConfirm={handleConfirm}
           confirmButtonText="Agregar"
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
         />
       )}
       <Stack
