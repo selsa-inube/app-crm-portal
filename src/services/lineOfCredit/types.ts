@@ -20,11 +20,7 @@ export interface ILinesOfCreditByMoneyDestination {
 export interface IAdditionalBorrowersAllowedResponse {
   additionalBorowersAllowed: string;
 }
-export interface ICreditLineGeneralTerms {
-  interestRate: number;
-  loanMaxAmount: number;
-  loanMaxTerm: number;
-}
+
 export interface IExtraInstallmentsAllowedResponse {
   extraInstallmentsAllowed: string;
 }

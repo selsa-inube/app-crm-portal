@@ -7,7 +7,6 @@ import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
-import { getCreditLineGeneralTerms } from "@services/lineOfCredit/getCreditLineGeneralTerms";
 
 import {
   ICreditLineTerms,
@@ -36,9 +35,6 @@ interface IProductSelectionProps {
   choiceMoneyDestination: string;
   servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
-  businessUnitPublicCode: string;
-  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -53,13 +49,9 @@ export function ProductSelection(props: IProductSelectionProps) {
     handleFormDataChange,
     isMobile,
     servicesQuestion,
-    setMessageError,
     choiceMoneyDestination,
     creditLineTerms,
-    businessUnitPublicCode,
-    setShowErrorModal,
   } = props;
-
   const validationSchema = Yup.object().shape({
     selectedProducts: Yup.array().when("generalToggleChecked", {
       is: (value: boolean) => value === false,
@@ -76,74 +68,6 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [currentDisabledQuestion, setCurrentDisabledQuestion] = useState("");
-  const [processedCreditLineTerms, setProcessedCreditLineTerms] =
-    useState<ICreditLineTerms>(creditLineTerms);
-
-  const fetchCreditLineGeneralTerms = async (creditType: string) => {
-    try {
-      const result = await getCreditLineGeneralTerms(
-        businessUnitPublicCode,
-        creditType,
-      );
-
-      return result;
-    } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
-      setShowErrorModal(true);
-      setMessageError(description);
-    }
-  };
-
-  const updateTermsWithServiceData = async () => {
-    if (Object.keys(creditLineTerms).length > 0) {
-      const creditTypes = Object.keys(creditLineTerms);
-      const termsPromises = creditTypes.map(async (creditType) => {
-        const terms = await fetchCreditLineGeneralTerms(creditType);
-        return { creditType, terms };
-      });
-
-      try {
-        const results = await Promise.all(termsPromises);
-        const updatedTerms: ICreditLineTerms = {};
-
-        results.forEach(({ creditType, terms }) => {
-          if (terms) {
-            updatedTerms[creditType] = {
-              LoanAmountLimit: terms.loanMaxAmount,
-              LoanTermLimit: terms.loanMaxTerm,
-              RiskFreeInterestRate: terms.interestRate,
-            };
-          } else {
-            updatedTerms[creditType] = creditLineTerms[creditType];
-          }
-        });
-
-        setProcessedCreditLineTerms(updatedTerms);
-      } catch (error: unknown) {
-        const err = error as {
-          message?: string;
-          status: number;
-          data?: { description?: string; code?: string };
-        };
-        const code = err?.data?.code ? `[${err.data.code}] ` : "";
-        const description =
-          code + err?.message + (err?.data?.description || "");
-        setShowErrorModal(true);
-        setMessageError(description);
-        setProcessedCreditLineTerms(creditLineTerms);
-      }
-    }
-  };
-
-  useEffect(() => {
-    updateTermsWithServiceData();
-  }, [Object.keys(creditLineTerms).join(",")]);
 
   useEffect(() => {
     const isValid = generalToggleChecked || selectedProducts.length > 0;
@@ -152,14 +76,14 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   useEffect(() => {
     if (generalToggleChecked) {
-      const allProductValues = Object.keys(processedCreditLineTerms);
+      const allProductValues = Object.keys(creditLineTerms);
       setSelectedProducts(allProductValues);
       handleFormDataChange("selectedProducts", allProductValues);
     } else {
       setSelectedProducts([]);
       handleFormDataChange("selectedProducts", []);
     }
-  }, [generalToggleChecked, processedCreditLineTerms]);
+  }, [generalToggleChecked]);
 
   const allQuestions = Object.entries(electionData.questions).map(
     ([key, question], index) => ({ key, question, index }),
@@ -253,22 +177,20 @@ export function ProductSelection(props: IProductSelectionProps) {
                   padding={isMobile ? "0px 6px" : "0px 12px"}
                   wrap="wrap"
                 >
-                  {Object.keys(processedCreditLineTerms).length > 0 ? (
-                    Object.entries(processedCreditLineTerms).map(
+                  {Object.keys(creditLineTerms).length > 0 ? (
+                    Object.entries(creditLineTerms).map(
                       ([lineName, terms], index) => (
                         <Stack key={index} direction="column">
                           <CardProductSelection
                             key={lineName}
+                            amount={terms.LoanAmountLimit}
+                            rate={terms.RiskFreeInterestRate}
+                            term={terms.LoanTermLimit}
                             description={lineName}
                             disabled={generalToggleChecked}
                             isSelected={values.selectedProducts.includes(
                               lineName,
                             )}
-                            creditTerms={{
-                              LoanAmountLimit: terms.LoanAmountLimit,
-                              LoanTermLimit: terms.LoanTermLimit,
-                              RiskFreeInterestRate: terms.RiskFreeInterestRate,
-                            }}
                             onSelect={() => {
                               const newSelected =
                                 values.selectedProducts.includes(lineName)

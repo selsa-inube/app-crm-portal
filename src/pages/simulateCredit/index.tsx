@@ -769,7 +769,6 @@ export function SimulateCredit() {
         showErrorModal={showErrorModal}
         messageError={messageError}
         businessUnitPublicCode={businessUnitPublicCode}
-        setMessageError={setMessageError}
       />
       {showConsultingModal && <Consulting />}
     </>

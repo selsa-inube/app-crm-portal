@@ -12,7 +12,7 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -22,19 +22,16 @@ interface IBusinessUnits {
 }
 
 function useAppContext() {
-  const { user } = useAuth0();
+  const { user } = useIAuth();
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
-
   const [businessManagers, setBusinessManagers] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
-
   const [businessUnitSigla, setBusinessUnitSigla] = useState(
     localStorage.getItem("businessUnitSigla") || "",
   );
-
   const [businessUnitsToTheStaff, setBusinessUnitsToTheStaff] = useState<
     IBusinessUnitsPortalStaff[]
   >(() => {
@@ -73,11 +70,23 @@ function useAppContext() {
       canSubmitProspect: isAdmon,
     };
   };
-
+  useEffect(() => {
+    if (user) {
+      setEventData((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          userAccount: user.username || "",
+          userName: user.nickname || "",
+          identificationDocumentNumber: user.id || "",
+        },
+      }));
+    }
+  }, [user]);
   useEffect(() => {
     const fetchStaffData = async () => {
       try {
-        const userIdentifier = user?.email?.substring(0, 20);
+        const userIdentifier = user?.username;
         if (!userIdentifier) return;
         const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
@@ -113,10 +122,10 @@ function useAppContext() {
       }
     };
 
-    if (user?.email) {
+    if (user?.username) {
       fetchStaffData();
     }
-  }, [user?.email]);
+  }, [user?.username]);
 
   const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
@@ -130,6 +139,7 @@ function useAppContext() {
       abbreviatedName: "",
       urlBrand: "",
       urlLogo: "",
+      businessManagerId: "",
     },
     businessUnit: {
       businessUnitPublicCode: businessUnit?.businessUnitPublicCode || "",
@@ -138,8 +148,8 @@ function useAppContext() {
       urlLogo: businessUnit?.urlLogo || "",
     },
     user: {
-      userAccount: user?.email || "",
-      userName: user?.name || "",
+      userAccount: user?.username || "",
+      userName: user?.nickname || "",
       staff: {
         biologicalSex: "",
         birthDay: "",
@@ -181,6 +191,7 @@ function useAppContext() {
       setPortalData(data);
     });
   }, []);
+  const userIdentifier = eventData?.user?.identificationDocumentNumber;
 
   useEffect(() => {
     const fetchOptionStaff = async () => {
@@ -188,7 +199,7 @@ function useAppContext() {
         if (
           !eventData?.portal?.publicCode ||
           !eventData?.businessUnit?.businessUnitPublicCode ||
-          !user?.email
+          !user?.username
         ) {
           return;
         }
@@ -196,7 +207,7 @@ function useAppContext() {
         const result = await getSearchOptionForStaff(
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
-          user.email.substring(0, 20),
+          userIdentifier || "",
         );
         setOptionStaffData(result);
       } catch (error) {
@@ -208,7 +219,7 @@ function useAppContext() {
   }, [
     eventData?.portal?.publicCode,
     eventData?.businessUnit?.businessUnitPublicCode,
-    user?.email,
+    user?.username,
   ]);
 
   useEffect(() => {
@@ -216,6 +227,7 @@ function useAppContext() {
     const portalDataFiltered = portalData.filter(
       (data) => data.staffPortalId === portalCode,
     );
+
     const foundBusiness = portalDataFiltered.find(
       (bussines) => bussines,
     )?.businessManagerCode;
@@ -248,6 +260,7 @@ function useAppContext() {
         abbreviatedName: businessManagers.abbreviatedName || "",
         urlBrand: businessManagers.urlBrand || "",
         urlLogo: businessManagers.urlLogo || "",
+        businessManagerId: businessManagers.id || "",
       },
     }));
   }, [businessManagers, portalData, portalCode]);

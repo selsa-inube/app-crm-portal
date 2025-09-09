@@ -5,7 +5,7 @@ import {
 } from "@config/environment";
 
 import { IBusinessManagers } from "../types";
-import { mapResendApiToEntity } from "./mappers";
+import { mapBusinessManagerApiToEntity } from "./mappers";
 
 const getBusinessManagers = async (
   businessManagerCode: string,
@@ -44,9 +44,8 @@ const getBusinessManagers = async (
           `Error al obtener los datos: ${res.status}, Detalles: ${JSON.stringify(data)}`,
         );
       }
-
       return Array.isArray(data) && data.length > 0
-        ? mapResendApiToEntity(data[0])
+        ? mapBusinessManagerApiToEntity(data[0])
         : ({} as IBusinessManagers);
     } catch (error) {
       if (attempt === maxRetries) {
