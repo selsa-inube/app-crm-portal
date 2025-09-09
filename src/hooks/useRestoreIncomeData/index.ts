@@ -6,14 +6,18 @@ import { AppContext } from "@context/AppContext";
 
 interface UseRestoreIncomeDataProps {
   onSuccess?: (data: IIncomeSources) => void;
+  setShowErrorModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError?: (message: string) => void;
   onError?: (error: unknown) => void;
 }
 
 export function useRestoreIncomeData({
   onSuccess,
-  onError,
+  setShowErrorModal,
+  setMessageError,
 }: UseRestoreIncomeDataProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
+
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla } = useContext(AppContext);
   const customerPublicCode: string = customerData.publicCode;
@@ -29,10 +33,16 @@ export function useRestoreIncomeData({
       );
       onSuccess?.(refreshedData);
       return refreshedData;
-    } catch (error) {
-      console.error("Error al refrescar datos de ingresos:", error);
-      onError?.(error);
-      throw error;
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      setShowErrorModal?.(true);
+      setMessageError?.(description);
     } finally {
       setIsLoading(false);
     }

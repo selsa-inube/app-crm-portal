@@ -71,6 +71,7 @@ interface ICreditProspectProps {
   >;
   onProspectUpdate?: (prospect: IProspect) => void;
 }
+
 export function CreditProspect(props: ICreditProspectProps) {
   const {
     prospectData,
@@ -105,8 +106,12 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [pdfProspect, setPdfProspect] = useState<string | null>(null);
+  const [currentIncomeModalData, setCurrentIncomeModalData] = useState<
+    IIncomeSources | undefined
+  >();
   const { addFlag } = useFlag();
   const dataPrint = useRef<HTMLDivElement>(null);
+
   const fetchCreditLimitData = async () => {
     if (!customerPublicCode) return;
 
@@ -118,14 +123,14 @@ export function CreditProspect(props: ICreditProspectProps) {
         customerPublicCode,
       );
       setCreditLimitData(result);
+      setCurrentIncomeModalData(result);
     } catch (error) {
       console.error("Error al obtener las solicitudes de crédito:", error);
-      return null;
+      setCreditLimitError("Error al cargar los datos");
     } finally {
       setIsLoadingCreditLimit(false);
     }
   };
-
   const handleOpenModal = (modalName: string) => {
     if (modalName === "IncomeModal") {
       fetchCreditLimitData();
@@ -243,10 +248,12 @@ export function CreditProspect(props: ICreditProspectProps) {
     );
     setSelectedIndex(index ?? 0);
   };
-
   const selectedBorrower = borrowersProspect?.borrowers?.[selectedIndex];
 
   const handleIncomeSubmit = (updatedData: IIncomeSources) => {
+    setCurrentIncomeModalData({ ...updatedData });
+    setCreditLimitData({ ...updatedData });
+
     if (selectedBorrower) {
       const borrowerName = selectedBorrower.borrowerName;
 
@@ -540,6 +547,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             numRegulations={2}
           />
         )}
+
         {openModal === "scoreModal" && (
           <ScoreModal
             handleClose={() => setOpenModal(null)}
@@ -614,7 +622,6 @@ export function CreditProspect(props: ICreditProspectProps) {
                   />
                   <Button
                     onClick={() => {
-                      handleCloseModal();
                       setOpenModal("IncomeModalEdit");
                     }}
                   >
@@ -634,12 +641,17 @@ export function CreditProspect(props: ICreditProspectProps) {
             )}
           </BaseModal>
         )}
-        {openModal === "IncomeModalEdit" && creditLimitData && (
+        {openModal === "IncomeModalEdit" && currentIncomeModalData && (
           <IncomeModal
-            handleClose={() => setOpenModal(null)}
-            initialValues={creditLimitData}
+            handleClose={() => {
+              setOpenModal(null);
+            }}
+            initialValues={currentIncomeModalData}
             onSubmit={handleIncomeSubmit}
             customerData={customerData}
+            borrowerOptions={borrowerOptions}
+            selectedIndex={selectedIndex}
+            creditLimitData={creditLimitData}
           />
         )}
 
@@ -652,6 +664,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             prospectData={prospectData ? [prospectData] : undefined}
           />
         )}
+
         {currentModal === "extraPayments" && (
           <ExtraordinaryPaymentModal
             handleClose={handleCloseModal}
@@ -661,6 +674,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
+
         {showShareModal && (
           <ShareCreditModal
             handleClose={() => setShowShareModal(false)}

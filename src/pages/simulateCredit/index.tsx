@@ -673,8 +673,16 @@ export function SimulateCredit() {
         customerPublicCode,
       );
       setCreditLimitData(result);
-    } catch (error) {
-      handleFlag(error as string);
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      setShowErrorModal?.(true);
+      setMessageError?.(description);
     }
   };
   useEffect(() => {

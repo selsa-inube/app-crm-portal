@@ -34,6 +34,14 @@ interface ISourceIncomeProps {
   showEdit?: boolean;
   initialDataForRestore?: IIncomeSources | null;
   onRestore?: () => void;
+  borrowerOptions?: {
+    id: `${string}-${string}-${string}-${string}-${string}`;
+    label: string;
+    value: string;
+  }[];
+  selectedIndex?: number | undefined;
+  showErrorModal?: boolean;
+  messageError?: string;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -44,8 +52,10 @@ export function SourceIncome(props: ISourceIncomeProps) {
     disabled,
     showEdit = true,
     data,
+    selectedIndex,
     customerData = {} as ICustomerData,
     initialDataForRestore,
+    borrowerOptions,
     onRestore,
   } = props;
 
@@ -228,7 +238,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                   {incomeCardData.borrower}
                 </Text>
                 <Text type="title" size="medium">
-                  {customerData?.fullName}
+                  {borrowerOptions?.[selectedIndex || 0]?.value}
                 </Text>
               </Stack>
             )}
@@ -331,6 +341,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
           initialValues={data}
           dataValues={dataValues}
           customerData={customerData}
+          borrowerOptions={borrowerOptions}
         />
       )}
     </StyledContainer>
