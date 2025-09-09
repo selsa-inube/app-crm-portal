@@ -69,7 +69,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
             </Text>
             <Text appearance="gray" size="medium">
               <Text as="span" appearance="primary" size="small" weight="bold">
-                ${" "}
+                {selectData.currencySymbol}{" "}
               </Text>
               {currencyFormat(amount, false)}
             </Text>
@@ -84,7 +84,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               {selectData.rate}
             </Text>
             <Text appearance="gray" size="medium">
-              {rate}% M.V
+              {rate} {selectData.percentageMV}
             </Text>
           </Stack>
           <Stack justifyContent="space-between">

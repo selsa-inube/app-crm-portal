@@ -133,6 +133,7 @@ interface SimulateCreditUIProps {
   addToFix: string[];
   businessUnitPublicCode: string;
   showErrorModal: boolean;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
   messageError: string;
   servicesProductSelection: IServicesProductSelection;
   paymentCapacity?: IPaymentCapacityResponse | null;
@@ -153,6 +154,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     handlePreviousStep,
     handleSubmitClick,
     setShowErrorModal,
+    setMessageError,
     handleFormDataChange,
     setSelectedProducts,
     navigate,
@@ -363,6 +365,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         togglesState: formData.togglesState,
                       }}
                       handleFormDataChange={handleFormDataChange}
+                      businessUnitPublicCode={businessUnitPublicCode}
                       handleOnChange={{
                         setSelectedProducts,
                         onGeneralToggleChange: () =>
@@ -388,6 +391,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           servicesProductSelection.extraInstallement,
                       }}
                       creditLineTerms={creditLineTerms!}
+                      setShowErrorModal={setShowErrorModal}
+                      setMessageError={setMessageError}
                     />
                   )}
                 {currentStepsNumber &&

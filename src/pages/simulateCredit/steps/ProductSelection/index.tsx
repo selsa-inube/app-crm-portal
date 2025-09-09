@@ -7,6 +7,7 @@ import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
+import { getCreditLineGeneralTerms } from "@services/lineOfCredit/getCreditLineGeneralTerms";
 
 import {
   ICreditLineTerms,
@@ -14,8 +15,6 @@ import {
   IFormData,
 } from "../../types";
 import { electionData } from "./config";
-import { ICreditLineGeneralTerms } from "@src/services/lineOfCredit/types";
-import { getCreditLineGeneralTerms } from "@src/services/lineOfCredit/getCreditLineGeneralTerms";
 
 interface IProductSelectionProps {
   initialValues: {
@@ -38,6 +37,8 @@ interface IProductSelectionProps {
   servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
   businessUnitPublicCode: string;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -52,9 +53,11 @@ export function ProductSelection(props: IProductSelectionProps) {
     handleFormDataChange,
     isMobile,
     servicesQuestion,
+    setMessageError,
     choiceMoneyDestination,
     creditLineTerms,
     businessUnitPublicCode,
+    setShowErrorModal,
   } = props;
 
   const validationSchema = Yup.object().shape({
@@ -73,11 +76,8 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [currentDisabledQuestion, setCurrentDisabledQuestion] = useState("");
-  const [realCreditLineTerms, setRealCreditLineTerms] =
+  const [processedCreditLineTerms, setProcessedCreditLineTerms] =
     useState<ICreditLineTerms>(creditLineTerms);
-  const [creditLineGeneralTerms, setCreditLineGeneralTerms] = useState<{
-    [key: string]: ICreditLineGeneralTerms;
-  }>({});
 
   const fetchCreditLineGeneralTerms = async (creditType: string) => {
     try {
@@ -85,75 +85,65 @@ export function ProductSelection(props: IProductSelectionProps) {
         businessUnitPublicCode,
         creditType,
       );
+
       return result;
-    } catch (error) {
-      return null;
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
-  const fetchAllCreditLineTerms = async () => {
-    const creditTypes = Object.keys(creditLineTerms);
-    const termsPromises = creditTypes.map(async (creditType) => {
-      const terms = await fetchCreditLineGeneralTerms(creditType);
-      return { creditType, terms };
-    });
-
-    try {
-      const results = await Promise.all(termsPromises);
-      const termsMap: { [key: string]: ICreditLineGeneralTerms } = {};
-
-      results.forEach(({ creditType, terms }) => {
-        if (terms) {
-          termsMap[creditType] = terms;
-        }
+  const updateTermsWithServiceData = async () => {
+    if (Object.keys(creditLineTerms).length > 0) {
+      const creditTypes = Object.keys(creditLineTerms);
+      const termsPromises = creditTypes.map(async (creditType) => {
+        const terms = await fetchCreditLineGeneralTerms(creditType);
+        return { creditType, terms };
       });
 
-      setCreditLineGeneralTerms(termsMap);
-      return termsMap;
-    } catch (error) {
-      return {};
+      try {
+        const results = await Promise.all(termsPromises);
+        const updatedTerms: ICreditLineTerms = {};
+
+        results.forEach(({ creditType, terms }) => {
+          if (terms) {
+            updatedTerms[creditType] = {
+              LoanAmountLimit: terms.loanMaxAmount,
+              LoanTermLimit: terms.loanMaxTerm,
+              RiskFreeInterestRate: terms.interestRate,
+            };
+          } else {
+            updatedTerms[creditType] = creditLineTerms[creditType];
+          }
+        });
+
+        setProcessedCreditLineTerms(updatedTerms);
+      } catch (error: unknown) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+        setShowErrorModal(true);
+        setMessageError(description);
+        setProcessedCreditLineTerms(creditLineTerms);
+      }
     }
   };
 
   useEffect(() => {
-    const updateTermsWithServiceData = async () => {
-      if (Object.keys(creditLineTerms).length > 0) {
-        let serviceData = creditLineGeneralTerms;
-
-        if (Object.keys(serviceData).length === 0) {
-          serviceData = await fetchAllCreditLineTerms();
-        }
-
-        if (Object.keys(serviceData).length > 0) {
-          const updatedTerms: ICreditLineTerms = {};
-          Object.keys(creditLineTerms).forEach((lineName) => {
-            const creditTerms = serviceData[lineName];
-            if (creditTerms) {
-              updatedTerms[lineName] = {
-                LoanAmountLimit: creditTerms.loanMaxAmount,
-                LoanTermLimit: creditTerms.loanMaxTerm,
-                RiskFreeInterestRate: creditTerms.interestRate,
-              };
-            } else {
-              updatedTerms[lineName] = creditLineTerms[lineName];
-            }
-          });
-          setRealCreditLineTerms(updatedTerms);
-        }
-      }
-    };
-
     updateTermsWithServiceData();
   }, [Object.keys(creditLineTerms).join(",")]);
-
-  useEffect(() => {
-    if (
-      Object.keys(creditLineGeneralTerms).length === 0 &&
-      Object.keys(creditLineTerms).length > 0
-    ) {
-      fetchAllCreditLineTerms();
-    }
-  }, [creditLineTerms]);
 
   useEffect(() => {
     const isValid = generalToggleChecked || selectedProducts.length > 0;
@@ -162,14 +152,14 @@ export function ProductSelection(props: IProductSelectionProps) {
 
   useEffect(() => {
     if (generalToggleChecked) {
-      const allProductValues = Object.keys(realCreditLineTerms);
+      const allProductValues = Object.keys(processedCreditLineTerms);
       setSelectedProducts(allProductValues);
       handleFormDataChange("selectedProducts", allProductValues);
     } else {
       setSelectedProducts([]);
       handleFormDataChange("selectedProducts", []);
     }
-  }, [generalToggleChecked, realCreditLineTerms]);
+  }, [generalToggleChecked, processedCreditLineTerms]);
 
   const allQuestions = Object.entries(electionData.questions).map(
     ([key, question], index) => ({ key, question, index }),
@@ -263,8 +253,8 @@ export function ProductSelection(props: IProductSelectionProps) {
                   padding={isMobile ? "0px 6px" : "0px 12px"}
                   wrap="wrap"
                 >
-                  {Object.keys(realCreditLineTerms).length > 0 ? (
-                    Object.entries(realCreditLineTerms).map(
+                  {Object.keys(processedCreditLineTerms).length > 0 ? (
+                    Object.entries(processedCreditLineTerms).map(
                       ([lineName, terms], index) => (
                         <Stack key={index} direction="column">
                           <CardProductSelection
