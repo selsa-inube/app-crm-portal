@@ -4,7 +4,6 @@ import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { selectData } from "./config";
-
 export interface ICardProductSelectionProps {
   amount?: number;
   rate?: number;
@@ -13,18 +12,28 @@ export interface ICardProductSelectionProps {
   disabled?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
+  creditTerms?: {
+    LoanAmountLimit: number;
+    LoanTermLimit: number;
+    RiskFreeInterestRate: number;
+  };
 }
 
 export function CardProductSelection(props: ICardProductSelectionProps) {
   const {
-    amount = 10000000,
-    rate = 1,
-    term = 12,
+    amount: defaultAmount = 10000000,
+    rate: defaultRate = 1,
+    term: defaultTerm = 12,
     description,
     disabled,
     onSelect,
     isSelected,
+    creditTerms,
   } = props;
+
+  const amount = creditTerms?.LoanAmountLimit || defaultAmount;
+  const rate = creditTerms?.RiskFreeInterestRate || defaultRate;
+  const term = creditTerms?.LoanTermLimit || defaultTerm;
 
   return (
     <Stack width="455px" direction="column">
@@ -60,7 +69,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
             </Text>
             <Text appearance="gray" size="medium">
               <Text as="span" appearance="primary" size="small" weight="bold">
-                ${" "}
+                {selectData.currencySymbol}{" "}
               </Text>
               {currencyFormat(amount, false)}
             </Text>
@@ -75,7 +84,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               {selectData.rate}
             </Text>
             <Text appearance="gray" size="medium">
-              {rate} % M.V
+              {rate} {selectData.percentageMV}
             </Text>
           </Stack>
           <Stack justifyContent="space-between">

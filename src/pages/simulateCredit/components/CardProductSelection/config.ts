@@ -3,4 +3,6 @@ export const selectData = {
   rate: "Tasa máx.",
   term: "Plazo máx.",
   months: "meses",
+  percentageMV: "% M.V",
+  currencySymbol: "$",
 };
