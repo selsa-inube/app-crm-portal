@@ -1,6 +1,5 @@
 const IS_PRODUCTION = import.meta.env.PROD;
-const AUTH_REDIRECT_URI: string = import.meta.env
-  .VITE_AUTH_REDIRECT_URI as string;
+const AUTH_REDIRECT_URI: string = import.meta.env.VITE_CALLBACK_URL as string;
 const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 const secretKeyPortalId = import.meta.env.VITE_SECRET_KEY_PORTAL_ID as string;
 const environment = {
