@@ -29,7 +29,12 @@ import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-cre
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
-import { StyledArrowBack, StyledMarginPrint, StyledPrint } from "./styles";
+import {
+  StyledArrowBack,
+  StyledMarginPrint,
+  StyledPrint,
+  StyledScrollPrint,
+} from "./styles";
 import { addConfig, dataEditProspect, titlesModal } from "./config";
 import { IDataHeader } from "./types";
 
@@ -135,31 +140,37 @@ export function SimulationsUI(props: SimulationsUIProps) {
             margin="20px 0px"
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
-              <GeneralHeader
-                buttonText="Agregar vinculación"
-                descriptionStatus={dataHeader.status}
-                name={dataHeader.name}
-                profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
-              />
-              <Breadcrumbs
-                crumbs={[
-                  ...addConfig.crumbs.slice(0, 3),
-                  {
-                    path: `/credit/prospects/${prospectCode}`,
-                    label: `Prospecto #${prospectCode}`,
-                    id: `/prospectos/${prospectCode}`,
-                    isActive: false,
-                  },
-                ]}
-              />
-              <StyledArrowBack onClick={() => navigate(addConfig.route)}>
-                <Stack gap="8px" alignItems="center" width="100%">
-                  <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
-                  <Text type="title" size={isMobile ? "small" : "large"}>
-                    {addConfig.title}
-                  </Text>
-                </Stack>
-              </StyledArrowBack>
+              <StyledPrint>
+                <GeneralHeader
+                  buttonText="Agregar vinculación"
+                  descriptionStatus={dataHeader.status}
+                  name={dataHeader.name}
+                  profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
+                />
+                <Breadcrumbs
+                  crumbs={[
+                    ...addConfig.crumbs.slice(0, 3),
+                    {
+                      path: `/credit/prospects/${prospectCode}`,
+                      label: `Prospecto #${prospectCode}`,
+                      id: `/prospectos/${prospectCode}`,
+                      isActive: false,
+                    },
+                  ]}
+                />
+                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
+                  <Stack gap="8px" alignItems="center" width="100%">
+                    <Icon
+                      icon={<MdArrowBack />}
+                      appearance="dark"
+                      size="20px"
+                    />
+                    <Text type="title" size={isMobile ? "small" : "large"}>
+                      {addConfig.title}
+                    </Text>
+                  </Stack>
+                </StyledArrowBack>
+              </StyledPrint>
               <StyledMarginPrint>
                 <Stack>
                   <Stack
@@ -293,19 +304,21 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         </Stack>
                       </Stack>
                     </Fieldset>
-                    <Fieldset>
-                      <CreditProspect
-                        isMobile={isMobile}
-                        showMenu={() => setShowMenu(false)}
-                        showPrint={true}
-                        isPrint={true}
-                        prospectData={dataProspect!}
-                        sentData={sentData}
-                        setSentData={setSentData}
-                        setRequestValue={setRequestValue}
-                        onProspectUpdate={setProspectData}
-                      />
-                    </Fieldset>
+                    <StyledScrollPrint>
+                      <Fieldset>
+                        <CreditProspect
+                          isMobile={isMobile}
+                          showMenu={() => setShowMenu(false)}
+                          showPrint={true}
+                          isPrint={true}
+                          prospectData={dataProspect!}
+                          sentData={sentData}
+                          setSentData={setSentData}
+                          setRequestValue={setRequestValue}
+                          onProspectUpdate={setProspectData}
+                        />
+                      </Fieldset>
+                    </StyledScrollPrint>
                     <StyledPrint>
                       <Stack
                         gap="20px"

@@ -698,7 +698,9 @@ export function SimulateCredit() {
     };
 
     handleSubmit();
-  }, [customerData, simulateData]);
+  }, [customerData, currentStep]);
+
+  console.log("simulateData", simulateData);
 
   useEffect(() => {
     if (clientPortfolio) {
