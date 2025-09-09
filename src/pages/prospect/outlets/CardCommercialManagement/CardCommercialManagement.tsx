@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { FormikValues } from "formik";
-import { Stack, Divider, useMediaQuery, useFlag } from "@inubekit/inubekit";
+import { Stack, Divider, useMediaQuery } from "@inubekit/inubekit";
 
 import { CreditProductCard } from "@components/cards/CreditProductCard";
 import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCard";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { CardValues } from "@components/cards/cardValues";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ConsolidatedCredits } from "@pages/prospect/components/modals/ConsolidatedCreditModal";
@@ -42,7 +43,6 @@ export const CardCommercialManagement = (
     [],
   );
 
-  const { addFlag } = useFlag();
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -52,7 +52,8 @@ export const CardCommercialManagement = (
   const [selectedProduct, setSelectedProduct] = useState<ICreditProduct | null>(
     null,
   );
-
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
   const [selectedProductId, setSelectedProductId] = useState("");
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>();
@@ -104,12 +105,8 @@ export const CardCommercialManagement = (
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.descriptionError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -145,12 +142,8 @@ export const CardCommercialManagement = (
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      addFlag({
-        title: tittleOptions.descriptionError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -170,12 +163,8 @@ export const CardCommercialManagement = (
           setProspectSummaryData(result);
         }
       } catch (error) {
-        addFlag({
-          title: tittleOptions.titleError,
-          description: tittleOptions.descriptionError,
-          appearance: "danger",
-          duration: 5000,
-        });
+        setShowErrorModal(true);
+        setMessageError(tittleOptions.descriptionError);
       }
     };
     if (prospectData) {
@@ -194,12 +183,8 @@ export const CardCommercialManagement = (
         );
         setDeductibleExpenses(data);
       } catch (error) {
-        addFlag({
-          title: tittleOptions.deductibleExpensesErrorTitle,
-          description: `${error}`,
-          appearance: "danger",
-          duration: 5000,
-        });
+        setShowErrorModal(true);
+        setMessageError(`${error}`);
       } finally {
         setIsLoading(false);
       }
@@ -305,6 +290,13 @@ export const CardCommercialManagement = (
           initialValues={deductibleExpenses}
           loading={isLoading}
           isMobile={isMobile}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
         />
       )}
     </div>

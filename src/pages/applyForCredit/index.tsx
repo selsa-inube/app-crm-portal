@@ -1,6 +1,6 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { useFlag, useMediaQuery } from "@inubekit/inubekit";
+import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
@@ -30,6 +30,8 @@ export function ApplyForCredit() {
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>();
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const customerPublicCode: string = customerData.publicCode;
   const { userAccount } =
@@ -376,15 +378,10 @@ export function ApplyForCredit() {
   };
 
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { addFlag } = useFlag();
 
   const handleFlag = () => {
-    addFlag({
-      title: "Error al enviar el radicado",
-      description: "El radicado no se ha podido enviar correctamente.",
-      appearance: "danger",
-      duration: 5000,
-    });
+    setShowErrorModal(true);
+    setMessageError(tittleOptions.errorSubmit);
   };
 
   const fetchProspectData = useCallback(async () => {
@@ -617,12 +614,8 @@ export function ApplyForCredit() {
           setProspectSummaryData(result);
         }
       } catch (error) {
-        addFlag({
-          title: tittleOptions.titleError,
-          description: JSON.stringify(error),
-          appearance: "danger",
-          duration: 6000,
-        });
+        setShowErrorModal(true);
+        setMessageError(JSON.stringify(error));
       }
     };
 
@@ -664,6 +657,7 @@ export function ApplyForCredit() {
         currentStepsNumber={currentStepsNumber}
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
+        setShowErrorModal={setShowErrorModal}
         isMobile={isMobile}
         prospectData={prospectData as IProspect}
         customerData={customerData}
@@ -672,6 +666,8 @@ export function ApplyForCredit() {
         getRuleByName={getRuleByName}
         prospectSummaryData={prospectSummaryData}
         isModalOpen={isModalOpen}
+        showErrorModal={showErrorModal}
+        messageError={messageError}
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
       />

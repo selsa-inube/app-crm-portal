@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 export const addConfig = {
   id: 1,
-  title: "Crédito",
-  route: "/",
+  title: "Inicio",
+  route: "/home",
   crumbs: [
     {
       path: "/home",

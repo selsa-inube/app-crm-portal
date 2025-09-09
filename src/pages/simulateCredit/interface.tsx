@@ -24,8 +24,10 @@ import {
   IPaymentCapacityResponse,
 } from "@services/creditLimit/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IProspect } from "@services/prospect/types";
+import { IValidateRequirement } from "@services/requirement/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -97,6 +99,7 @@ interface SimulateCreditUIProps {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   handleSubmitClick: () => void;
   setSelectedProducts: React.Dispatch<React.SetStateAction<string[]>>;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormDataChange: (
     field: keyof IFormData,
     newValue: string | number | boolean | string[] | object | null | undefined,
@@ -116,6 +119,8 @@ interface SimulateCreditUIProps {
   selectedProducts: string[];
   isMobile: boolean;
   isTablet: boolean;
+  validateRequirements: IValidateRequirement[];
+  isLoading: boolean;
   currentStepsNumber?: StepDetails;
   prospectData: IProspect | undefined;
   creditLimitData?: IIncomeSources;
@@ -128,6 +133,9 @@ interface SimulateCreditUIProps {
   codeError: number | null;
   addToFix: string[];
   businessUnitPublicCode: string;
+  showErrorModal: boolean;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  messageError: string;
   servicesProductSelection: IServicesProductSelection;
   paymentCapacity?: IPaymentCapacityResponse | null;
 }
@@ -146,6 +154,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     handleNextStep,
     handlePreviousStep,
     handleSubmitClick,
+    setShowErrorModal,
+    setMessageError,
     handleFormDataChange,
     setSelectedProducts,
     navigate,
@@ -169,6 +179,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     creditLineTerms,
     clientPortfolio,
     obligationPayments,
+    validateRequirements,
+    isLoading,
     currentStep,
     assistedButtonText,
     isAlertIncome,
@@ -178,6 +190,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     formState,
     setFormState,
     paymentCapacity,
+    showErrorModal,
+    messageError,
     businessUnitPublicCode,
   } = props;
 
@@ -209,7 +223,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
-                <StyledArrowBack>
+                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
                   <Stack gap="8px" alignItems="center" width="100%">
                     <Icon
                       icon={<MdArrowBack />}
@@ -293,6 +307,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       />
                       <ButtonRequirements
                         onClick={() => setIsModalOpenRequirements(true)}
+                        dataCount={validateRequirements.length}
                       />
                     </>
                   )}
@@ -351,6 +366,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         togglesState: formData.togglesState,
                       }}
                       handleFormDataChange={handleFormDataChange}
+                      businessUnitPublicCode={businessUnitPublicCode}
                       handleOnChange={{
                         setSelectedProducts,
                         onGeneralToggleChange: () =>
@@ -376,6 +392,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           servicesProductSelection.extraInstallement,
                       }}
                       creditLineTerms={creditLineTerms!}
+                      setShowErrorModal={setShowErrorModal}
+                      setMessageError={setMessageError}
                     />
                   )}
                 {currentStepsNumber &&
@@ -513,9 +531,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 <RequirementsModal
                   handleClose={() => setIsModalOpenRequirements(false)}
                   isMobile={isMobile}
-                  prospectData={prospectData as IProspect}
-                  customerData={customerData}
-                  businessUnitPublicCode={businessUnitPublicCode}
+                  isLoading={isLoading}
+                  validateRequirements={validateRequirements}
                 />
               )}
               {isCreditLimitModalOpen && (
@@ -551,6 +568,13 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsAlertIncome(false)}
                   handleClose={() => setIsAlertIncome(false)}
                   isMobile={isMobile}
+                />
+              )}
+              {showErrorModal && (
+                <ErrorModal
+                  handleClose={() => setShowErrorModal(false)}
+                  isMobile={isMobile}
+                  message={messageError}
                 />
               )}
             </Stack>

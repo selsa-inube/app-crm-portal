@@ -36,13 +36,9 @@ interface IDataHeader {
 
 interface IHomeUIProps {
   smallScreen: boolean;
-  isTablet: boolean;
   isMobile: boolean;
   username: string;
-  eventData: ICRMPortalData;
   collapse: boolean;
-  setCollapse: React.Dispatch<React.SetStateAction<boolean>>;
-  collapseMenuRef: RefObject<HTMLDivElement>;
   businessUnitChangeRef: RefObject<HTMLDivElement>;
   businessUnitsToTheStaff: IBusinessUnitsPortalStaff[];
   selectedClient: string;
