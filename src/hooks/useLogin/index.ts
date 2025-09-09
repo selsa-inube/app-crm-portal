@@ -10,21 +10,20 @@ const useLogin = () => {
   const { eventData, setBusinessUnitsToTheStaff } = useContext(AppContext);
   const [hasError, setHasError] = useState(false);
   const [codeError, setCodeError] = useState<number>();
-  const userIdentifier =
-    eventData?.user.staff?.identificationDocumentNumber ||
-    "ossalincon422@gmail.";
+  const userIdentifier = eventData?.user?.identificationDocumentNumber;
 
   useEffect(() => {
     if (eventData.portal.publicCode) {
-      validateBusinessUnits(eventData.portal.publicCode, userIdentifier).then(
-        (data) => {
-          setBusinessUnitsToTheStaff(data);
-          if (!setBusinessUnitsToTheStaff) {
-            setHasError(true);
-            return;
-          }
-        },
-      );
+      validateBusinessUnits(
+        eventData.portal.publicCode,
+        userIdentifier || "",
+      ).then((data) => {
+        setBusinessUnitsToTheStaff(data);
+        if (!setBusinessUnitsToTheStaff) {
+          setHasError(true);
+          return;
+        }
+      });
       if (hasError) {
         setCodeError(1003);
         return;
