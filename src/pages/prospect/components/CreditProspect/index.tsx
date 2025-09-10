@@ -70,6 +70,7 @@ interface ICreditProspectProps {
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
   onProspectUpdate?: (prospect: IProspect) => void;
+  onProspectUpdated?: () => void;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -80,6 +81,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     onProspectUpdate,
     sentData,
     setSentData,
+    onProspectUpdated,
     isMobile,
     isPrint = false,
     showPrint = true,
@@ -662,6 +664,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onChange={onChanges}
             debtor={form.borrower}
             prospectData={prospectData ? [prospectData] : undefined}
+            onProspectUpdate={onProspectUpdated}
           />
         )}
 

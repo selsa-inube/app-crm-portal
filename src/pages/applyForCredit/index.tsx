@@ -284,7 +284,7 @@ export function ApplyForCredit() {
       {
         instantMessagingPlatformName: MessagingPlatform[0].Value,
         propertyName: formData.contactInformation.whatsAppPhone.toString(),
-        propertyValue: `+57${formData.contactInformation.whatsAppPhone}`, // modificar cuando se actualice el input phone
+        propertyValue: `+57${formData.contactInformation.whatsAppPhone}`,
         transactionOperation: "Insert",
       },
     ]),
@@ -355,8 +355,8 @@ export function ApplyForCredit() {
       payeeIdentificationType: value.documentType,
       payeeName: value.name,
       payeePersonType: "Natural_person",
-      payeePhoneNumber: value.phone || "none",
-      payeeSurname: value.lastName || "none",
+      payeePhoneNumber: value.phone || "",
+      payeeSurname: value.lastName || "",
       transactionOperation: "Insert",
     }));
   submitData.append("modesOfDisbursement", JSON.stringify(disbursements));

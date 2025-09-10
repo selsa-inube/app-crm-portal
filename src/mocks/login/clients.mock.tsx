@@ -3,30 +3,6 @@ import corbanca from "@assets/mocks_images/corbanca.png";
 import fondecom from "@assets/mocks_images/fondecom.png";
 
 const clientsDataMock = [
-  // {
-  //   id: 1,
-  //   name: "Fondo de Empleados y Trabajadores de la Universidad del Valle",
-  //   sigla: "Fonvalle",
-  //   logo: "https://res.cloudinary.com/wfercanas/image/upload/w_500/v1671482962/linpar/fetrabuv_tqqhyo.png",
-  // },
-  // {
-  //   id: 2,
-  //   name: "Cooperativa de los Trabajadores de Instituto de Seguros Sociales",
-  //   sigla: "Cooptraiss",
-  //   logo: "https://res.cloudinary.com/wfercanas/image/upload/w_500/v1671482962/linpar/cooptraiss_hu62an",
-  // },
-  // {
-  //   id: 3,
-  //   name: "Crediflores Cooperativa de Ahorro y Crédito",
-  //   sigla: "Crediflores",
-  //   logo: "https://res.cloudinary.com/wfercanas/image/upload/w_500/v1671482962/linpar/crediflores_yysoem.png",
-  // },
-  // {
-  //   id: 4,
-  //   name: "Fondoccidente Fondo de Empleados",
-  //   sigla: "Fondoccidente",
-  //   logo: "https://res.cloudinary.com/wfercanas/image/upload/w_500/v1671482962/linpar/fondoccidente_psx5fp",
-  // },
   {
     id: "151615",
     name: "Presente Fondo de Empleados Grupo Éxito",
@@ -51,13 +27,6 @@ const clientsDataMock = [
     sigla: "Fondecom",
     logo: fondecom,
   },
-
-  // {
-  //   id: 8,
-  //   name: "Fondo de Empleados y Trabajadores de la Universidad del Valle",
-  //   sigla: "Fonvalle",
-  //   logo: "https://res.cloudinary.com/wfercanas/image/upload/w_500/v1671482962/linpar/fetrabuv_tqqhyo.png",
-  // },
 ];
 
 export { clientsDataMock };

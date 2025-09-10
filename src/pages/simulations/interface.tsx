@@ -68,6 +68,7 @@ interface SimulationsUIProps {
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
+  onProspectUpdated?: () => void;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -101,6 +102,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     setSentData,
     setShowCreditRequest,
     setProspectData,
+    onProspectUpdated,
   } = props;
 
   const getTotalLoanAmount = (data: IProspect | undefined): number => {
@@ -304,6 +306,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         setSentData={setSentData}
                         setRequestValue={setRequestValue}
                         onProspectUpdate={setProspectData}
+                        onProspectUpdated={onProspectUpdated}
                       />
                     </Fieldset>
                     <StyledPrint>
