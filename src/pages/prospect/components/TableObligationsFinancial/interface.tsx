@@ -53,7 +53,7 @@ export interface ITableFinancialObligationsProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
-  onProspectUpdated?: () => void;
+  onProspectUpdate?: () => void;
   setFormState?: React.Dispatch<
     React.SetStateAction<{
       type: string;
@@ -94,12 +94,12 @@ export interface IDataInformationItem {
 interface UIProps {
   dataInformation: IDataInformationItem[];
   extraDebtors: ITableFinancialObligationsProps[];
-  selectedDebtor: ITableFinancialObligationsProps | null;
+  selectedBorrower: ITableFinancialObligationsProps | null;
   loading: boolean;
   visibleHeaders: { key: string; label: string; action?: boolean }[];
   isModalOpenEdit: boolean;
   setIsModalOpenEdit: (value: boolean) => void;
-  onProspectUpdated?: () => void;
+  onProspectUpdate?: () => void;
   showErrorModal: boolean;
   showActions?: boolean;
   showOnlyEdit?: boolean;
@@ -141,7 +141,7 @@ interface UIProps {
   services?: boolean;
   handleOnChange: (values: FormikValues) => void;
   setRefreshKey: React.Dispatch<React.SetStateAction<number>> | undefined;
-  setSelectedDebtor:
+  setSelectedBorrower:
     | React.Dispatch<
         React.SetStateAction<ITableFinancialObligationsProps | null>
       >
@@ -156,12 +156,12 @@ export const TableFinancialObligationsUI = ({
   dataInformation,
   extraDebtors,
   loading,
-  selectedDebtor,
+  selectedBorrower,
   visibleHeaders,
   isMobile,
   isModalOpenEdit,
   setIsModalOpenEdit,
-  onProspectUpdated,
+  onProspectUpdate,
   showOnlyEdit,
   services = true,
   handleEdit,
@@ -170,7 +170,7 @@ export const TableFinancialObligationsUI = ({
   initialValues,
   handleOnChange,
   setRefreshKey,
-  setSelectedDebtor,
+  setSelectedBorrower,
   selectedBorrowerIndex,
   businessUnitPublicCode,
   showErrorModal,
@@ -273,7 +273,7 @@ export const TableFinancialObligationsUI = ({
 
         setRefreshKey?.((prev) => prev + 1);
         setOpenModal(false);
-        onProspectUpdated?.();
+        onProspectUpdate?.();
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);
@@ -409,7 +409,7 @@ export const TableFinancialObligationsUI = ({
                         appearance="danger"
                         size="16px"
                         onClick={() => {
-                          setSelectedDebtor?.(
+                          setSelectedBorrower?.(
                             mapToTableFinancialObligationsProps(prop),
                           );
                           setIsDeleteModal(true);
@@ -569,14 +569,14 @@ export const TableFinancialObligationsUI = ({
             </Tr>
           </Tfoot>
         )}
-        {isModalOpenEdit && selectedDebtor && (
+        {isModalOpenEdit && selectedBorrower && (
           <EditFinancialObligationModal
-            title={`${dataReport.edit} ${selectedDebtor.type || ""}`}
+            title={`${dataReport.edit} ${selectedBorrower.type || ""}`}
             onCloseModal={() => setIsModalOpenEdit(false)}
             onConfirm={async (updatedDebtor) => {
               await handleUpdate(updatedDebtor);
             }}
-            initialValues={selectedDebtor}
+            initialValues={selectedBorrower}
             confirmButtonText={dataReport.save}
           />
         )}
@@ -586,7 +586,7 @@ export const TableFinancialObligationsUI = ({
             nextButton={dataReport.delete}
             backButton={dataReport.cancel}
             handleNext={() => {
-              handleDelete(selectedDebtor?.propertyValue ?? "");
+              handleDelete(selectedBorrower?.propertyValue ?? "");
               setIsDeleteModal(false);
             }}
             handleClose={() => setIsDeleteModal(false)}

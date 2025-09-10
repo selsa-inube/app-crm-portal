@@ -108,7 +108,7 @@ function FinancialObligationModal({
             name="type"
             id="type"
             size="compact"
-            placeholder={dataInputs.palaceHolderSelect}
+            placeholder={dataInputs.placeHolderSelect}
             options={obligationTypeOptions}
             onBlur={formik.handleBlur}
             onChange={(name, value) => formik.setFieldValue(name, value)}
@@ -120,7 +120,7 @@ function FinancialObligationModal({
             name="entity"
             id="entity"
             size="compact"
-            placeholder={dataInputs.palaceHolderSelect}
+            placeholder={dataInputs.placeHolderSelect}
             options={entityOptions}
             onBlur={formik.handleBlur}
             onChange={(name, value) => formik.setFieldValue(name, value)}
@@ -138,7 +138,7 @@ function FinancialObligationModal({
                 size="20px"
               />
             }
-            placeholder={dataInputs.palaceHolderFee}
+            placeholder={dataInputs.placeHolderFee}
             value={validateCurrencyField("fee", formik, false, "")}
             size="compact"
             onBlur={formik.handleBlur}
@@ -156,7 +156,7 @@ function FinancialObligationModal({
                 size="20px"
               />
             }
-            placeholder={dataInputs.palaceHolderBalance}
+            placeholder={dataInputs.placeHolderBalance}
             value={validateCurrencyField("balance", formik, false, "")}
             size="compact"
             onBlur={formik.handleBlur}
@@ -168,7 +168,7 @@ function FinancialObligationModal({
             name="payment"
             id="payment"
             size="compact"
-            placeholder={dataInputs.palaceHolderSelect}
+            placeholder={dataInputs.placeHolderSelect}
             options={meansPaymentOptions}
             onBlur={formik.handleBlur}
             onChange={(name, value) => formik.setFieldValue(name, value)}
@@ -182,7 +182,7 @@ function FinancialObligationModal({
             iconBefore={
               <Icon icon={<MdOutlineTag />} appearance="dark" size="20px" />
             }
-            placeholder={dataInputs.palaceHolderId}
+            placeholder={dataInputs.placeHolderId}
             value={formik.values.idUser}
             size="compact"
             onBlur={formik.handleBlur}

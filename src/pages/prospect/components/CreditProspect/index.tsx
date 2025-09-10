@@ -615,7 +615,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onChange={onChanges}
             debtor={form.borrower}
             prospectData={prospectData ? [prospectData] : undefined}
-            onProspectUpdated={onProspectUpdated}
+            onProspectUpdate={onProspectUpdated}
           />
         )}
         {currentModal === "extraPayments" && (

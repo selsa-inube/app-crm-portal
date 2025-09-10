@@ -12,12 +12,12 @@ export interface ReportCreditsModalProps {
   options: { id: string; label: string; value: string }[];
   debtor: string;
   prospectData?: IProspect[];
-  onProspectUpdated?: () => void;
+  onProspectUpdate?: () => void;
 }
 
 export function ReportCreditsModal({
   handleClose,
-  onProspectUpdated,
+  onProspectUpdate,
   prospectData,
 }: ReportCreditsModalProps) {
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ export function ReportCreditsModal({
             <TableFinancialObligations
               showActions
               initialValues={prospectData}
-              onProspectUpdated={onProspectUpdated}
+              onProspectUpdate={onProspectUpdate}
             />
           </>
         )}

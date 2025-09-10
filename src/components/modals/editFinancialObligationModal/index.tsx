@@ -79,7 +79,7 @@ function EditFinancialObligationModal({
               size="20px"
             />
           }
-          placeholder={dataInputs.palaceHolderFee}
+          placeholder={dataInputs.placeHolderFee}
           value={validateCurrencyField("fee", formik, false, "")}
           size="compact"
           onBlur={formik.handleBlur}

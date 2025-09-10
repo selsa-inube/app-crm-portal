@@ -21,7 +21,7 @@ export const TableFinancialObligations = (
     initialValues,
     handleOnChange = () => {},
     setRefreshKey,
-    onProspectUpdated,
+    onProspectUpdate,
     showActions,
     showButtons,
     formState,
@@ -29,7 +29,7 @@ export const TableFinancialObligations = (
   } = props;
   const [loading] = useState(false);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
-  const [selectedDebtor, setSelectedDebtor] =
+  const [selectedBorrower, setSelectedBorrower] =
     useState<ITableFinancialObligationsProps | null>(null);
   const [extraDebtors, setExtraDebtors] = useState<
     ITableFinancialObligationsProps[]
@@ -61,7 +61,7 @@ export const TableFinancialObligations = (
       fee = currencyFormat(Number(values[2]?.trim() || 0), false);
     }
 
-    setSelectedDebtor({
+    setSelectedBorrower({
       ...debtor,
       balance,
       fee,
@@ -100,9 +100,9 @@ export const TableFinancialObligations = (
           return initial;
         }
 
-        const maybeObligations = initial?.obligations?.obligations;
-
-        return Array.isArray(maybeObligations) ? maybeObligations : [];
+        return Array.isArray(initial?.obligations?.obligations)
+          ? initial?.obligations?.obligations
+          : [];
       };
 
       const obligations = getObligationsFromInitialValues(initialValues);
@@ -158,7 +158,7 @@ export const TableFinancialObligations = (
         setMessageError(`${error}`);
       }
       setRefreshKey?.((prev) => prev + 1);
-      onProspectUpdated?.();
+      onProspectUpdate?.();
     } else {
       try {
         const obligationNumberFromRow =
@@ -197,13 +197,13 @@ export const TableFinancialObligations = (
         const obligationIndex = selectedBorrower.borrowerProperties.findIndex(
           (prop: IProperty) =>
             prop.propertyName === "FinancialObligation" &&
-            prop.propertyValue === selectedDebtor?.propertyValue,
+            prop.propertyValue === selectedBorrower?.propertyValue,
         );
 
         if (obligationIndex === -1) return;
 
-        const originalValues = selectedDebtor?.propertyValue
-          ? selectedDebtor.propertyValue
+        const originalValues = selectedBorrower?.propertyValue
+          ? selectedBorrower.propertyValue
               .split(",")
               .map((value: string) => value.trim())
           : [];
@@ -235,7 +235,7 @@ export const TableFinancialObligations = (
         await updateProspect(businessUnitPublicCode, updatedInitialValues);
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
-        onProspectUpdated?.();
+        onProspectUpdate?.();
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);
@@ -304,7 +304,7 @@ export const TableFinancialObligations = (
       loading={loading}
       visibleHeaders={visibleHeaders}
       isMobile={isMobile}
-      selectedDebtor={selectedDebtor}
+      selectedBorrower={selectedBorrower}
       isModalOpenEdit={isModalOpenEdit}
       setIsModalOpenEdit={setIsModalOpenEdit}
       handleEdit={handleEdit}
@@ -316,11 +316,11 @@ export const TableFinancialObligations = (
       initialValues={initialValues as IObligations}
       handleOnChange={handleOnChange}
       setRefreshKey={setRefreshKey}
-      setSelectedDebtor={setSelectedDebtor}
+      setSelectedBorrower={setSelectedBorrower}
       selectedBorrowerIndex={selectedBorrowerIndex}
       businessUnitPublicCode={businessUnitPublicCode}
       setSelectedBorrowerIndex={setSelectedBorrowerIndex}
-      onProspectUpdated={onProspectUpdated}
+      onProspectUpdate={onProspectUpdate}
       setShowErrorModal={setShowErrorModal}
       setMessageError={setMessageError}
       showErrorModal={showErrorModal}
