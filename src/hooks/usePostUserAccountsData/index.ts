@@ -4,7 +4,7 @@ import { useHeaders } from "@hooks/useHeaders";
 import { postUserAccountsData } from "@services/userAccounts";
 import { IPostUserAccountsResponse } from "@services/userAccounts/types";
 
-import { useSignOut } from "../useSignOut";
+// import { useSignOut } from "../useSignOut";
 
 const USER_ACCOUNTS_CACHE_KEY = "userAccountsData";
 const USER_ACCOUNTS_TIMESTAMP_KEY = "userAccountsTimestamp";
