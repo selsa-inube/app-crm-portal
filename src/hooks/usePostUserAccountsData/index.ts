@@ -109,7 +109,7 @@ export const usePostUserAccountsData = (
         setCodeError(1006);
 
         clearCache();
-        signOut("/error?code=1006");
+        // signOut("/error?code=1006");
         throw errorInstance;
       } finally {
         setIsLoading(false);
@@ -151,7 +151,7 @@ export const usePostUserAccountsData = (
           err instanceof Error ? err : new Error(String(err));
         setError(errorInstance);
         setCodeError(1006);
-        signOut("/error?code=1006");
+        // signOut("/error?code=1006");
         throw errorInstance;
       } finally {
         setIsLoading(false);
