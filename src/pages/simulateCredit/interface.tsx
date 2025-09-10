@@ -39,6 +39,7 @@ import {
   titleButtonTextAssited,
   ICreditLineTerms,
   IServicesProductSelection,
+  ISourcesOfIncomeState,
 } from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
@@ -422,6 +423,15 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   currentStepsNumber.id ===
                     stepsAddProspect.sourcesIncome.id && (
                     <SourcesOfIncome
+                      initialValues={formData.sourcesOfIncome}
+                      handleOnChange={(
+                        newState: Partial<ISourcesOfIncomeState>,
+                      ) =>
+                        handleFormDataChange("sourcesOfIncome", {
+                          ...formData.sourcesOfIncome,
+                          ...newState,
+                        })
+                      }
                       isMobile={isMobile}
                       customerData={customerData}
                       creditLimitData={creditLimitData}

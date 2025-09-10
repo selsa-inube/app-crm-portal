@@ -1,4 +1,4 @@
-import { environment } from "@config/environment";
+// import { environment } from "@config/environment";
 import { decrypt } from "@utils/encrypt/encrypt";
 
 import { IPostUserAccountsResponse } from "./types";
@@ -17,12 +17,8 @@ export async function postUserAccountsData(
     const decryptedClientSecret = decrypt(clientSecret);
     const credentials = `${decryptedClientId}:${decryptedClientSecret}`;
     const base64Credentials = btoa(credentials);
-
-    const baseApiUrl = import.meta.env.DEV
-      ? "/api/user-accounts"
-      : `${environment.IAUTH_API_URL}/user-accounts`;
-
-    const apiUrl = `${baseApiUrl}?authorizationValue=${encodeURIComponent(ac)}`;
+    // const apiUrl = `${environment.IAUTH_API_URL}/user-accounts?authorizationValue=${encodeURIComponent(ac)}`;
+    const apiUrl = `https://four.external.iauth.persistence.process.inube.dev/api/user-accounts?authorizationValue=${encodeURIComponent(ac)}`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
