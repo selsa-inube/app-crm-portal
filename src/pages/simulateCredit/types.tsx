@@ -80,7 +80,20 @@ export interface IConsolidatedCreditItem {
   consolidatedAmountType: string;
   estimatedDateOfConsolidation: Date;
 }
-
+export interface ISourcesOfIncomeState {
+  Dividends: number;
+  FinancialIncome: number;
+  Leases: number;
+  OtherNonSalaryEmoluments: number;
+  PensionAllowances: number;
+  PeriodicSalary: number;
+  PersonalBusinessUtilities: number;
+  ProfessionalFees: number;
+  identificationNumber: string;
+  identificationType: string;
+  name: string;
+  surname: string;
+}
 export interface IFormData {
   selectedDestination: string;
   selectedProducts: string[];
@@ -113,6 +126,7 @@ export interface IFormData {
     selectedValues: Record<string, number>;
   };
   consolidatedCreditArray?: IConsolidatedCreditItem[];
+  sourcesOfIncome: ISourcesOfIncomeState;
 }
 
 export interface ICondition {
