@@ -247,12 +247,6 @@ export const PaymentCapacityAnalysis = (
       gray: true,
     },
     {
-      label: DataCapacityAnalysis.currentObligations,
-      value: "0",
-      gray: true,
-      showIcon: true,
-    },
-    {
       label: DataCapacityAnalysis.paymentCapacity,
       value: currencyFormat(generalPayment ?? 0, false) || "0",
       bold: true,
