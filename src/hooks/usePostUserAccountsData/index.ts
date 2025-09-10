@@ -21,7 +21,7 @@ export const usePostUserAccountsData = (
   const [codeError, setCodeError] = useState<number | undefined>(undefined);
 
   const { getHeaders } = useHeaders();
-  const { signOut } = useSignOut();
+  // const { signOut } = useSignOut();
 
   const isCacheValid = (): boolean => {
     const timestamp = localStorage.getItem(USER_ACCOUNTS_TIMESTAMP_KEY);
