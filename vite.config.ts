@@ -9,18 +9,6 @@ export default defineConfig({
   server: {
     open: true,
     port: 3000,
-    proxy: {
-      "/api": {
-        target: "https://four.external.iauth.persistence.process.inube.dev",
-        changeOrigin: true,
-        secure: true,
-        headers: {
-          Connection: "keep-alive",
-        },
-        rewrite: (path) =>
-          path.replace(/^\/api/, "/iauth-persistence-process-service/api"),
-      },
-    },
   },
   resolve: {
     alias: {

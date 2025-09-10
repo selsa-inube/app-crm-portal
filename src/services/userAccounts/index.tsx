@@ -17,12 +17,7 @@ export async function postUserAccountsData(
     const decryptedClientSecret = decrypt(clientSecret);
     const credentials = `${decryptedClientId}:${decryptedClientSecret}`;
     const base64Credentials = btoa(credentials);
-
-    const baseApiUrl = import.meta.env.DEV
-      ? "/api/user-accounts"
-      : `${environment.IAUTH_API_URL}/user-accounts`;
-
-    const apiUrl = `${baseApiUrl}?authorizationValue=${encodeURIComponent(ac)}`;
+    const apiUrl = `${environment.IAUTH_API_URL}/user-accounts?authorizationValue=${encodeURIComponent(ac)}`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
