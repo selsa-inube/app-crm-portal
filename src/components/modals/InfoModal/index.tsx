@@ -1,8 +1,8 @@
 import { MdCheck, MdClose, MdRemove } from "react-icons/md";
 import { Stack, Icon } from "@inubekit/inubekit";
 
-import { StyledContainer, StyledUl } from "./styles";
 import { InfoItemComponent } from "./interface";
+import { StyledContainer, StyledUl } from "./styles";
 
 export interface InfoItem {
   icon: JSX.Element;

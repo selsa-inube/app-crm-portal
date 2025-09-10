@@ -57,6 +57,7 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
   left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
+  z-index: 2;
 `;
 
 export const StyledMenuContainer = styled.div`
