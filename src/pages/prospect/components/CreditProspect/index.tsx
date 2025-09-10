@@ -17,7 +17,6 @@ import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
-import { ShareCreditModal } from "@components/modals/ShareCreditModal";
 import {
   incomeOptions,
   menuOptions,
@@ -42,9 +41,10 @@ import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
-import { dataCreditProspect } from "./config";
+import { dataCreditProspect, labelsAndValuesShare } from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
@@ -89,14 +89,14 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const [openModal, setOpenModal] = useState<string | null>(null);
-  const [showShareModal, setShowShareModal] = useState(false);
   const [dataProspect, setDataProspect] = useState<IProspect[]>([]);
   const [incomeData, setIncomeData] = useState<Record<string, IIncomeSources>>(
     {},
   );
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const [pdfProspect, setPdfProspect] = useState<string | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const { addFlag } = useFlag();
 
@@ -390,15 +390,32 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [selectedBorrower]);
 
-  useEffect(() => {
-    const fetchPDF = async () => {
-      const pdfData = await generatePDF(dataPrint, "");
-      if (pdfData) {
-        setPdfProspect(pdfData);
+  const generateAndSharePdf = async () => {
+    try {
+      const pdfBlob = await generatePDF(
+        dataCommercialManagementRef,
+        labelsAndValuesShare.titleOnPdf,
+        labelsAndValuesShare.titleOnPdf,
+        { top: 10, bottom: 10, left: 10, right: 10 },
+        true,
+      );
+
+      if (pdfBlob) {
+        const pdfFile = new File([pdfBlob], labelsAndValuesShare.fileName, {
+          type: "application/pdf",
+        });
+
+        await navigator.share({
+          files: [pdfFile],
+          title: labelsAndValuesShare.titleOnPdf,
+          text: labelsAndValuesShare.text,
+        });
       }
-    };
-    fetchPDF();
-  }, []);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(labelsAndValuesShare.error);
+    }
+  };
 
   useEffect(() => {
     const fetchCreditLimit = async () => {
@@ -476,7 +493,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                       icon={<MdOutlineShare />}
                       appearance="primary"
                       size="24px"
-                      onClick={() => setShowShareModal(true)}
+                      onClick={async () => await generateAndSharePdf()}
                       cursorHover
                     />
                     <StyledVerticalDivider />
@@ -624,13 +641,11 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
-        {showShareModal && (
-          <ShareCreditModal
-            handleClose={() => setShowShareModal(false)}
+        {showErrorModal && (
+          <ErrorModal
+            handleClose={() => setShowErrorModal(false)}
             isMobile={isMobile}
-            prospectId={prospectData?.prospectId || ""}
-            pdf={pdfProspect}
-            businessUnitPublicCode={businessUnitPublicCode}
+            message={messageError}
           />
         )}
       </Stack>

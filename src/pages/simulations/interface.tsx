@@ -15,7 +15,6 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { Fieldset } from "@components/data/Fieldset";
-import { ShareCreditModal } from "@components/modals/ShareCreditModal";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { BaseModal } from "@components/modals/baseModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
@@ -45,20 +44,16 @@ interface SimulationsUIProps {
   data: IProspect | undefined;
   dataProspect: IProspect | undefined;
   showMenu: boolean;
-  showShareModal: boolean;
   codeError: number | null;
   addToFix: string[];
   hasPermitSubmit: boolean;
   isModalOpen: boolean;
   showCreditRequest: boolean;
   dataPrint: React.RefObject<HTMLDivElement>;
-  pdfProspect: string | null;
-  businessUnitPublicCode: string;
   showErrorModal: boolean;
   messageError: string;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
-  setShowShareModal: (value: boolean) => void;
   setShowMenu: (value: boolean) => void;
   handleSubmitClick: () => void;
   handleInfo: () => void;
@@ -73,6 +68,7 @@ interface SimulationsUIProps {
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
+  generateAndSharePdf: () => void;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -83,20 +79,16 @@ export function SimulationsUI(props: SimulationsUIProps) {
     data,
     dataProspect,
     showMenu,
-    showShareModal,
     codeError,
     addToFix,
     hasPermitSubmit,
     isModalOpen,
     showCreditRequest,
     dataPrint,
-    pdfProspect,
-    businessUnitPublicCode,
     showErrorModal,
     messageError,
     setShowErrorModal,
     navigate,
-    setShowShareModal,
     setShowMenu,
     setRequestValue,
     handleSubmitClick,
@@ -106,6 +98,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     setSentData,
     setShowCreditRequest,
     setProspectData,
+    generateAndSharePdf,
   } = props;
 
   const getTotalLoanAmount = (data: IProspect | undefined): number => {
@@ -214,7 +207,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               appearance="primary"
                               size="20px"
                               cursorHover
-                              onClick={() => setShowShareModal(true)}
+                              onClick={() => generateAndSharePdf()}
                             />
                           </StyledPrint>
                         </Stack>
@@ -355,15 +348,6 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     </StyledPrint>
                   </Stack>
                   {showMenu && <Stack></Stack>}
-                  {showShareModal && (
-                    <ShareCreditModal
-                      isMobile={isMobile}
-                      handleClose={() => setShowShareModal(false)}
-                      prospectId={dataProspect?.prospectId || ""}
-                      pdf={pdfProspect}
-                      businessUnitPublicCode={businessUnitPublicCode}
-                    />
-                  )}
                 </Stack>
               </StyledMarginPrint>
               {isModalOpen && (
