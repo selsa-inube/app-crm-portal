@@ -17,6 +17,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
+import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
@@ -58,6 +59,32 @@ export function CreditProspects() {
   >({});
 
   const navigate = useNavigate();
+
+  const handleDeleteProspect = async () => {
+    if (!selectedProspect) return;
+
+    try {
+      await RemoveProspect(businessUnitPublicCode, {
+        removeProspectsRequest: [
+          {
+            prospectId: selectedProspect.prospectId,
+          },
+        ],
+      });
+
+      setProspectSummaryData((prev) =>
+        prev.filter(
+          (prospect) => prospect.prospectId !== selectedProspect.prospectId,
+        ),
+      );
+
+      setShowDeleteModal(false);
+      setSelectedProspect(null);
+    } catch (error) {
+      setCodeError(1022);
+      setAddToFix([dataCreditProspects.errorRemoveProspect]);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -176,7 +203,10 @@ export function CreditProspects() {
                     handleEdit={() =>
                       navigate(`/credit/prospects/${prospect.prospectCode}`)
                     }
-                    handleDelete={() => setShowDeleteModal(true)}
+                    handleDelete={() => {
+                      setSelectedProspect(prospect);
+                      setShowDeleteModal(true);
+                    }}
                   />
                 ))}
               </Stack>
@@ -284,6 +314,7 @@ export function CreditProspects() {
             <BaseModal
               title={dataCreditProspects.deleteTitle}
               handleBack={() => setShowDeleteModal(false)}
+              handleNext={handleDeleteProspect}
               backButton="Cancelar"
               nextButton="Eliminar"
               apparenceNext="danger"
