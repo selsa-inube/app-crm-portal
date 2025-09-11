@@ -56,6 +56,7 @@ export function CreditProspects() {
   const [commentsByProspectId, setCommentsByProspectId] = useState<
     Record<string, string>
   >({});
+  const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
 
@@ -82,6 +83,33 @@ export function CreditProspects() {
       fetchData();
     }
   }, [businessUnitPublicCode, customerData?.publicCode]);
+
+  const filteredProspects = prospectSummaryData.filter((prospect) => {
+    const borrowerName =
+      prospect.borrowers[0]?.borrowerName?.toLowerCase() || "";
+    const prospectCode = prospect.prospectCode?.toLowerCase() || "";
+    const creationDate = prospect.timeOfCreation
+      ? new Date(prospect.timeOfCreation)
+          .toLocaleDateString("es-CO", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+          .toLowerCase()
+      : "";
+    const requestedAmount = String(
+      prospect.requestedAmount || "",
+    ).toLowerCase();
+
+    const term = searchTerm.toLowerCase();
+
+    return (
+      borrowerName.includes(term) ||
+      prospectCode.includes(term) ||
+      creationDate.includes(term) ||
+      requestedAmount.includes(term)
+    );
+  });
 
   return (
     <>
@@ -130,6 +158,8 @@ export function CreditProspects() {
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
                   fullwidth={isMobile}
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
                 />
                 <Button
                   iconBefore={<MdAdd />}
@@ -145,7 +175,7 @@ export function CreditProspects() {
                 gap="20px"
                 justifyContent={isMobile ? "center" : "flex-start"}
               >
-                {prospectSummaryData.map((prospect) => (
+                {filteredProspects.map((prospect) => (
                   <CardCreditProspect
                     key={prospect.prospectId}
                     title={
