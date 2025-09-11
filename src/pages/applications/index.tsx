@@ -65,7 +65,6 @@ export function CreditApplications() {
             textInSearch: search,
           },
         );
-        console.log(creditData);
         setCreditRequestData(creditData);
       } catch {
         setCodeError(1022);
@@ -77,7 +76,6 @@ export function CreditApplications() {
   }, [customerData.publicCode, search]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     setSearch(e.target.value);
   };
 
