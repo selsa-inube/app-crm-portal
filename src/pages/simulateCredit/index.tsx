@@ -721,8 +721,6 @@ export function SimulateCredit() {
     handleSubmit();
   }, [customerData, currentStep]);
 
-  console.log("simulateData", simulateData);
-
   useEffect(() => {
     if (clientPortfolio) {
       setFormData((prevState) => ({
