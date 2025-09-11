@@ -33,7 +33,7 @@ interface BusinessUnitsUIProps {
   handleSubmit: () => void;
 }
 
-function NoResultsMessage({ search }: { search: string }) {
+export function NoResultsMessage({ search }: { search: string }) {
   return (
     <StyledNoResults>
       <Text size="medium">No se encontraron resultados para "{search}".</Text>

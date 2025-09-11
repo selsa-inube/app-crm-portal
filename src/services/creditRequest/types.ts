@@ -139,4 +139,5 @@ export interface IPaymentChannel {
 export type CreditRequestParams = {
   creditRequestCode?: string;
   clientIdentificationNumber?: string;
+  textInSearch?: string;
 };
