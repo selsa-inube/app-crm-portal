@@ -114,21 +114,21 @@ export function Simulations() {
     return cleaned;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getSearchProspectByCode(
-          businessUnitPublicCode,
-          prospectCode!,
-        );
-        setDataProspect(Array.isArray(result) ? result[0] : result);
-      } catch (error) {
-        setShowErrorModal(true);
-        setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
-      }
-    };
+  const fetchProspectData = async () => {
+    try {
+      const result = await getSearchProspectByCode(
+        businessUnitPublicCode,
+        prospectCode!,
+      );
+      setDataProspect(Array.isArray(result) ? result[0] : result);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchProspectData();
   }, [businessUnitPublicCode, sentData]);
 
   const generateAndSharePdf = async () => {
@@ -297,6 +297,7 @@ export function Simulations() {
       requestValue={requestValue}
       sentData={sentData}
       setSentData={setSentData}
+      onProspectUpdated={fetchProspectData}
       navigate={navigate}
       generateAndSharePdf={generateAndSharePdf}
     />

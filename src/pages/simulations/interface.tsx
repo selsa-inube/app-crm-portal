@@ -69,6 +69,7 @@ interface SimulationsUIProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   generateAndSharePdf: () => void;
+  onProspectUpdated?: () => void;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -99,6 +100,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     setShowCreditRequest,
     setProspectData,
     generateAndSharePdf,
+    onProspectUpdated,
   } = props;
 
   const getTotalLoanAmount = (data: IProspect | undefined): number => {
@@ -309,6 +311,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           setSentData={setSentData}
                           setRequestValue={setRequestValue}
                           onProspectUpdate={setProspectData}
+                          onProspectUpdated={onProspectUpdated}
                         />
                       </Fieldset>
                     </StyledScrollPrint>

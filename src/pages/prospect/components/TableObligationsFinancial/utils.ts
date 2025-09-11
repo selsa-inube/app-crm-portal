@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { IDataInformationItem } from "./interface";
-//import { mockFinancialObligation } from "@mocks/add-prospect/financial-obligation/financialobligation.mock";
 
 export const usePagination = (data: IDataInformationItem[]) => {
   const [currentPage, setCurrentPage] = useState(0);

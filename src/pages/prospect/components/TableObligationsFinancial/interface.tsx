@@ -22,12 +22,14 @@ import {
   SkeletonIcon,
   Button,
   Divider,
+  Select,
 } from "@inubekit/inubekit";
 
 import { EditFinancialObligationModal } from "@components/modals/editFinancialObligationModal";
 import { NewPrice } from "@components/modals/ReportCreditsModal/components/newPrice";
 import { BaseModal } from "@components/modals/baseModal";
 import { FinancialObligationModal } from "@components/modals/financialObligationModal";
+import { updateProspect } from "@services/prospect/updateProspect";
 import { IObligations } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { CardGray } from "@components/cards/CardGray";
@@ -36,6 +38,8 @@ import { CustomerContext } from "@context/CustomerContext";
 
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
+import { IBorrowerDataFinancial } from "./types";
+import { ErrorModal } from "@src/components/modals/ErrorModal";
 
 export interface ITableFinancialObligationsProps {
   type?: string;
@@ -49,6 +53,7 @@ export interface ITableFinancialObligationsProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  onProspectUpdate?: () => void;
   setFormState?: React.Dispatch<
     React.SetStateAction<{
       type: string;
@@ -62,6 +67,7 @@ export interface ITableFinancialObligationsProps {
     }>
   >;
   clientPortfolio?: IObligations;
+  services?: boolean;
   handleOnChange?: (values: FormikValues) => void;
   formState?: {
     type: string;
@@ -88,11 +94,13 @@ export interface IDataInformationItem {
 interface UIProps {
   dataInformation: IDataInformationItem[];
   extraDebtors: ITableFinancialObligationsProps[];
-  selectedDebtor: ITableFinancialObligationsProps | null;
+  selectedBorrower: ITableFinancialObligationsProps | null;
   loading: boolean;
   visibleHeaders: { key: string; label: string; action?: boolean }[];
   isModalOpenEdit: boolean;
   setIsModalOpenEdit: (value: boolean) => void;
+  onProspectUpdate?: () => void;
+  showErrorModal: boolean;
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
@@ -115,6 +123,8 @@ interface UIProps {
   handleUpdate: (
     updatedDebtor: ITableFinancialObligationsProps,
   ) => Promise<void>;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
   formState:
     | {
         type: string;
@@ -128,26 +138,46 @@ interface UIProps {
       }
     | undefined;
   initialValues: FormikValues;
+  services?: boolean;
   handleOnChange: (values: FormikValues) => void;
   setRefreshKey: React.Dispatch<React.SetStateAction<number>> | undefined;
+  setSelectedBorrower:
+    | React.Dispatch<
+        React.SetStateAction<ITableFinancialObligationsProps | null>
+      >
+    | undefined;
+  selectedBorrowerIndex: number;
+  businessUnitPublicCode: string;
+  messageError: string;
+  setSelectedBorrowerIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const TableFinancialObligationsUI = ({
   dataInformation,
   extraDebtors,
   loading,
-  selectedDebtor,
+  selectedBorrower,
   visibleHeaders,
   isMobile,
   isModalOpenEdit,
   setIsModalOpenEdit,
+  onProspectUpdate,
   showOnlyEdit,
+  services = true,
   handleEdit,
   handleDelete,
   handleUpdate,
   initialValues,
   handleOnChange,
   setRefreshKey,
+  setSelectedBorrower,
+  selectedBorrowerIndex,
+  businessUnitPublicCode,
+  showErrorModal,
+  messageError,
+  setMessageError,
+  setSelectedBorrowerIndex,
+  setShowErrorModal,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -182,6 +212,15 @@ export const TableFinancialObligationsUI = ({
   const [isOpenModal, setIsOpenModal] = useState(false);
   const { customerData } = useContext(CustomerContext);
 
+  const borrowerOptions =
+    initialValues?.[0]?.borrowers?.map(
+      (borrower: IBorrowerDataFinancial, index: number) => ({
+        id: String(index),
+        value: String(index),
+        label: borrower.borrowerName,
+      }),
+    ) || [];
+
   const handleCloseModal = () => {
     setOpenModal(false);
     setRefreshKey?.((prevKey) => prevKey + 1);
@@ -201,50 +240,68 @@ export const TableFinancialObligationsUI = ({
     };
   };
 
-  function insertInDeepestObligations<T extends { obligations?: FormikValues }>(
-    o: T,
-    newItem: FormikValues,
-  ): T {
-    if (!o.obligations || typeof o.obligations !== "object") {
-      return o;
-    }
+  const handleConfirm = async (values: FormikValues) => {
+    if (services) {
+      try {
+        const selectedBorrower =
+          initialValues?.[0]?.borrowers?.[selectedBorrowerIndex];
 
-    if (Array.isArray(o.obligations)) {
-      return {
-        ...o,
-        obligations: [...o.obligations, newItem],
+        const newFinancialObligation = {
+          propertyName: "FinancialObligation",
+          propertyValue: `${values.type}, ${values.balance}, ${values.fee}, ${values.entity}, ${values.payment}, ${values.idUser}, ${values.feePaid}, ${values.term}`,
+        };
+
+        const updatedProperties = [
+          ...selectedBorrower.borrowerProperties,
+          newFinancialObligation,
+        ];
+
+        const updatedBorrower = {
+          ...selectedBorrower,
+          borrowerProperties: updatedProperties,
+        };
+
+        const updatedBorrowers = [...initialValues[0].borrowers];
+        updatedBorrowers[selectedBorrowerIndex] = updatedBorrower;
+
+        const prospectData = {
+          ...initialValues[0],
+          borrowers: updatedBorrowers,
+        };
+
+        await updateProspect(businessUnitPublicCode, prospectData);
+
+        setRefreshKey?.((prev) => prev + 1);
+        setOpenModal(false);
+        onProspectUpdate?.();
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError(`${error}`);
+      }
+    } else {
+      const newObligation = {
+        obligationNumber: values.idUser || "",
+        productName: values.type || "",
+        paymentMethodName: values.payment || "",
+        balanceObligationTotal: values.balance || 0,
+        nextPaymentValueTotal: values.fee || 0,
+        entity: values.entity || "",
+        duesPaid: values.feePaid || "",
+        outstandingDues: values.term || "",
       };
+
+      const currentObligations = Array.isArray(initialValues)
+        ? initialValues
+        : initialValues
+          ? [initialValues]
+          : [];
+
+      const updatedInitialValues = [...currentObligations, newObligation];
+
+      handleOnChange(updatedInitialValues);
+      setOpenModal(false);
+      setRefreshKey?.((prev) => prev + 1);
     }
-    return {
-      ...o,
-      obligations: insertInDeepestObligations(o.obligations, newItem),
-    };
-  }
-
-  const handleConfirm = (values: FormikValues) => {
-    const newObligation = {
-      obligationNumber: values.idUser || "",
-      productName: values.type || "",
-      paymentMethodName: values.payment || "",
-      balanceObligationTotal: values.balance || 0,
-      nextPaymentValueTotal: values.fee || 0,
-      entity: values.entity || "",
-      duesPaid: values.feePaid || "",
-      outstandingDues: values.term || "",
-    };
-    const updatedObligations = insertInDeepestObligations(
-      initialValues.obligations,
-      newObligation,
-    );
-
-    const updatedInitialValues = {
-      ...initialValues,
-      obligations: updatedObligations,
-    };
-
-    handleOnChange(updatedInitialValues);
-    setOpenModal(false);
-    setRefreshKey?.((prev) => prev + 1);
   };
 
   const totalBalance = dataInformation.reduce(
@@ -352,10 +409,10 @@ export const TableFinancialObligationsUI = ({
                         appearance="danger"
                         size="16px"
                         onClick={() => {
-                          if (selectedDebtor) {
-                            handleDelete(selectedDebtor.id as string);
-                            setIsDeleteModal(false);
-                          }
+                          setSelectedBorrower?.(
+                            mapToTableFinancialObligationsProps(prop),
+                          );
+                          setIsDeleteModal(true);
                         }}
                         cursorHover
                       />
@@ -387,19 +444,55 @@ export const TableFinancialObligationsUI = ({
           direction={isMobile ? "column" : "row"}
         >
           {!isMobile && (
-            <Text size="medium" type="title" appearance="dark">
-              {customerData?.fullName}
-            </Text>
-          )}
-          {isMobile && (
-            <Stack padding="0px 0px 10px 0px">
-              <CardGray
-                label={dataReport.title}
-                placeHolder={customerData?.fullName}
-                isMobile={true}
-              />
+            <Stack>
+              {initialValues?.[0]?.borrowers?.length > 1 ? (
+                <Select
+                  name="borrower"
+                  id="borrower"
+                  label="Deudor"
+                  placeholder="Selecciona un deudor"
+                  options={borrowerOptions}
+                  value={String(selectedBorrowerIndex)}
+                  onChange={(_, value) =>
+                    setSelectedBorrowerIndex(Number(value))
+                  }
+                  size="wide"
+                  fullwidth={isMobile}
+                />
+              ) : (
+                <Text size="medium" type="title" appearance="dark">
+                  {customerData?.fullName}
+                </Text>
+              )}
             </Stack>
           )}
+
+          {isMobile && (
+            <Stack padding="0px 0px 10px 0px">
+              {initialValues?.[0]?.borrowers?.length > 1 ? (
+                <Select
+                  name="borrower"
+                  id="borrower"
+                  label="Deudor"
+                  placeholder="Selecciona un deudor"
+                  options={borrowerOptions}
+                  value={String(selectedBorrowerIndex)}
+                  onChange={(_, value) =>
+                    setSelectedBorrowerIndex(Number(value))
+                  }
+                  size="wide"
+                  fullwidth={isMobile}
+                />
+              ) : (
+                <CardGray
+                  label={dataReport.title}
+                  placeHolder={customerData?.fullName}
+                  isMobile={true}
+                />
+              )}
+            </Stack>
+          )}
+
           <Stack
             justifyContent="end"
             gap="16px"
@@ -476,14 +569,14 @@ export const TableFinancialObligationsUI = ({
             </Tr>
           </Tfoot>
         )}
-        {isModalOpenEdit && selectedDebtor && (
+        {isModalOpenEdit && selectedBorrower && (
           <EditFinancialObligationModal
-            title={`${dataReport.edit} ${selectedDebtor.type || ""}`}
+            title={`${dataReport.edit} ${selectedBorrower.type || ""}`}
             onCloseModal={() => setIsModalOpenEdit(false)}
             onConfirm={async (updatedDebtor) => {
               await handleUpdate(updatedDebtor);
             }}
-            initialValues={selectedDebtor}
+            initialValues={selectedBorrower}
             confirmButtonText={dataReport.save}
           />
         )}
@@ -493,10 +586,8 @@ export const TableFinancialObligationsUI = ({
             nextButton={dataReport.delete}
             backButton={dataReport.cancel}
             handleNext={() => {
-              if (selectedDebtor) {
-                handleDelete(selectedDebtor.id as string);
-                setIsDeleteModal(false);
-              }
+              handleDelete(selectedBorrower?.propertyValue ?? "");
+              setIsDeleteModal(false);
             }}
             handleClose={() => setIsDeleteModal(false)}
           >
@@ -527,6 +618,13 @@ export const TableFinancialObligationsUI = ({
           onCloseModal={handleCloseModal}
           onConfirm={handleConfirm}
           confirmButtonText="Agregar"
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
         />
       )}
       <Stack
