@@ -21,7 +21,7 @@ export const dataTableExtraordinaryInstallment = {
   noData: "No se han configurado cuotas extraordinarias.",
   deletion: "Eliminación",
   delete: "Eliminar",
-  content: "¿Realmente desea eliminar este pago extra?",
+  content: "¿Realmente deseas eliminar este pago extra?",
   cancel: "Cancelar",
   titleSuccess: "Cambios guardados con éxito!",
   descriptionSuccess: `Hemos eliminado la Instalación extraordinaria exitosamente.`,

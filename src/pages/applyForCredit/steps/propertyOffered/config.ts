@@ -1,8 +1,8 @@
 export const dataProperty = {
   labelType: "Tipo de inmueble",
-  placeHolderType: "Seleccione una opción",
+  placeHolderType: "Selecciona una opción",
   labelState: "Nuevo o usado",
-  placeHolderState: "Seleccione una opción",
+  placeHolderState: "Selecciona una opción",
   labelAntique: "Antigüedad (años)",
   placeHolderAntique: "Ej: 14",
   labelEstimated: "Valor estimado",

@@ -14,7 +14,7 @@ export const dataSubmitApplication = {
   modals: {
     file: "Radicar",
     fileDescription:
-      "Se radicará la solicitud de crédito {numberProspectCode}. ¿Realmente desea continuar?",
+      "Se radicará la solicitud de crédito {numberProspectCode}. ¿Realmente deseas continuar?",
     continue: "Continuar",
     cancel: "Cerrar",
     filed: "Radicado",

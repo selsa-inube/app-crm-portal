@@ -50,7 +50,7 @@ export const disbursemenOptionAccount = {
   placeAccountNumber: "Ej: 1040 2200 3582",
   observation: "Observaciones",
   placeObservation: "Cosas extra que deben tenerse en cuenta.",
-  placeOption: "Seleccione una opción",
+  placeOption: "Selecciona una opción",
   valueTurnFail:
     "El valor a girar con esta forma de desembolso es diferente de ",
   errorFlagInternal: "Error al obtener cuentas internas",
