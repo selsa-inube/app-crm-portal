@@ -126,6 +126,9 @@ export function Simulations() {
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
+      setTimeout(() => {
+        navigate(`/credit/prospects`);
+      }, 1500);
     }
   };
 
@@ -254,6 +257,11 @@ export function Simulations() {
   const handleInfo = () => {
     setIsModalOpen(true);
   };
+
+  if (prospectCode === undefined) {
+    console.log("prospectCode---->", prospectCode);
+    navigate(`/credit/prospects`);
+  }
 
   return (
     <SimulationsUI
