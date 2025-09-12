@@ -33,6 +33,7 @@ function MenuItem(props: MenuItemProps) {
       to={path}
       onClick={onClick}
     >
+      holaaaa
       <Stack gap="12px" alignItems="center">
         {iconBefore && (
           <Icon
