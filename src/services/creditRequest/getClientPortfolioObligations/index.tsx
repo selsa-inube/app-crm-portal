@@ -18,7 +18,7 @@ export const getClientPortfolioObligationsById = async (
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "ClientPortfolioObligationsById",
+          "X-Action": "SearchPortfolioObligationsById",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
@@ -26,7 +26,7 @@ export const getClientPortfolioObligationsById = async (
       };
       console.log(businessUnitPublicCode);
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests/client-portfolio-obligations/${ClientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/portfolio-obligations/${ClientIdentificationNumber}`,
         options,
       );
 
