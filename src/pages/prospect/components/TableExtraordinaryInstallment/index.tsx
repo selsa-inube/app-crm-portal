@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useMediaQuery, useFlag } from "@inubekit/inubekit";
+import { useMediaQuery } from "@inubekit/inubekit";
 
 import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
-import { TextLabels } from "@components/modals/ExtraordinaryPaymentModal/config";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -102,8 +101,10 @@ export const TableExtraordinaryInstallment = (
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
+
   const paginationProps = usePagination(extraordinaryInstallments);
-  const { addFlag } = useFlag();
 
   const itemIdentifiersForUpdate: IExtraordinaryInstallments = {
     creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
@@ -221,13 +222,8 @@ export const TableExtraordinaryInstallment = (
         const code = err?.data?.code ? `[${err.data.code}] ` : "";
         const description =
           code + (err?.message || "") + (err?.data?.description || "");
-
-        addFlag({
-          title: TextLabels.titleError,
-          description,
-          appearance: "danger",
-          duration: 5000,
-        });
+        setShowErrorModal(true);
+        setMessageError(description);
       }
     }
   };
@@ -244,6 +240,9 @@ export const TableExtraordinaryInstallment = (
       isOpenModalEdit={isOpenModalEdit}
       businessUnitPublicCode={businessUnitPublicCode ?? ""}
       prospectData={prospectData}
+      showErrorModal={showErrorModal}
+      messageError={messageError}
+      setShowErrorModal={setShowErrorModal}
       setIsOpenModalDelete={setIsOpenModalDelete}
       setIsOpenModalEdit={setIsOpenModalEdit}
       handleUpdate={handleUpdateData}

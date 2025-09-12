@@ -26,7 +26,7 @@ type IEnhancedSubOption = {
 };
 
 const CreditUI = (props: ICreditUIProps) => {
-  const { isMobile, dataOptions, dataHeader } = props;
+  const { isMobile, dataOptions, dataHeader, navigate } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
 
@@ -78,7 +78,10 @@ const CreditUI = (props: ICreditUIProps) => {
         />
         <Breadcrumbs crumbs={addConfig.crumbs} />
         <Stack gap="64px" direction="column">
-          <StyledArrowBack $isMobile={isMobile}>
+          <StyledArrowBack
+            $isMobile={isMobile}
+            onClick={() => navigate(addConfig.route)}
+          >
             <Stack gap="8px" alignItems="center" width="100%">
               <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
               <Text type="title" size={isMobile ? "small" : "large"}>

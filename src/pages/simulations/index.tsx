@@ -19,17 +19,18 @@ import { ruleConfig } from "../applyForCredit/config/configRules";
 import { evaluateRule } from "../applyForCredit/evaluateRule";
 import { SimulationsUI } from "./interface";
 import { ICondition, Irule } from "../simulateCredit/types";
+import { dataEditProspect, labelsAndValuesShare } from "./config";
 
 export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
   const [dataProspect, setDataProspect] = useState<IProspect>();
 
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showCreditRequest, setShowCreditRequest] = useState(false);
-  const [pdfProspect, setPdfProspect] = useState<string | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { prospectCode } = useParams();
@@ -77,7 +78,8 @@ export function Simulations() {
       dataCreditRef.current = creditData;
       return creditData;
     } catch (error) {
-      console.error("Error al obtener las solicitudes de crédito:", error);
+      setShowErrorModal(true);
+      setMessageError(`${dataEditProspect.errorCredit}:, ${error}`);
       return null;
     }
   }, [businessUnitPublicCode, prospectCode]);
@@ -112,31 +114,49 @@ export function Simulations() {
     return cleaned;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getSearchProspectByCode(
-          businessUnitPublicCode,
-          prospectCode!,
-        );
-        setDataProspect(Array.isArray(result) ? result[0] : result);
-      } catch (error) {
-        console.error("Error al obtener el prospecto:", error);
-      }
-    };
+  const fetchProspectData = async () => {
+    try {
+      const result = await getSearchProspectByCode(
+        businessUnitPublicCode,
+        prospectCode!,
+      );
+      setDataProspect(Array.isArray(result) ? result[0] : result);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchProspectData();
   }, [businessUnitPublicCode, sentData]);
 
-  useEffect(() => {
-    const fetchPDF = async () => {
-      const pdfData = await generatePDF(dataPrint, "");
-      if (pdfData) {
-        setPdfProspect(pdfData);
+  const generateAndSharePdf = async () => {
+    try {
+      const pdfBlob = await generatePDF(
+        dataPrint,
+        labelsAndValuesShare.titleOnPdf,
+        labelsAndValuesShare.titleOnPdf,
+        { top: 10, bottom: 10, left: 10, right: 10 },
+        true,
+      );
+
+      if (pdfBlob) {
+        const pdfFile = new File([pdfBlob], labelsAndValuesShare.fileName, {
+          type: "application/pdf",
+        });
+
+        await navigator.share({
+          files: [pdfFile],
+          title: labelsAndValuesShare.titleOnPdf,
+          text: labelsAndValuesShare.text,
+        });
       }
-    };
-    fetchPDF();
-  }, []);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(labelsAndValuesShare.error);
+    }
+  };
 
   const fetchValidationRules = useCallback(async () => {
     const rulesToCheck = ["ValidationGuarantee", "ValidationCoBorrower"];
@@ -258,15 +278,15 @@ export function Simulations() {
       data={data}
       dataProspect={dataProspect}
       showMenu={showMenu}
-      showShareModal={showShareModal}
       codeError={codeError}
       addToFix={addToFix}
       hasPermitSubmit={hasPermitSubmit}
       isModalOpen={isModalOpen}
       showCreditRequest={showCreditRequest}
       dataPrint={dataPrint}
-      pdfProspect={pdfProspect}
-      setShowShareModal={setShowShareModal}
+      showErrorModal={showErrorModal}
+      messageError={messageError}
+      setShowErrorModal={setShowErrorModal}
       setShowMenu={setShowMenu}
       handleSubmitClick={handleSubmitClick}
       handleInfo={handleInfo}
@@ -277,7 +297,9 @@ export function Simulations() {
       requestValue={requestValue}
       sentData={sentData}
       setSentData={setSentData}
-      businessUnitPublicCode={businessUnitPublicCode}
+      onProspectUpdated={fetchProspectData}
+      navigate={navigate}
+      generateAndSharePdf={generateAndSharePdf}
     />
   );
 }

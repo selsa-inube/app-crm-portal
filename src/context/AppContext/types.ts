@@ -12,6 +12,7 @@ interface IBusinessManager {
   abbreviatedName: string;
   urlBrand: string;
   urlLogo: string;
+  businessManagerId?: string;
 }
 
 interface IStaffByBusinessUnitAndRole {
@@ -55,9 +56,16 @@ export interface IStaff {
 interface IUser {
   userAccount: string;
   userName: string;
+  identificationDocumentNumber?: string;
   staff: IStaff;
 }
-
+export interface IUsers {
+  username: string;
+  id: string;
+  company: string;
+  urlImgPerfil: string;
+  nickname: string;
+}
 interface IBusinessUnit {
   businessUnitPublicCode: string;
   abbreviatedName: string;

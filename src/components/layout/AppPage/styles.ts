@@ -7,6 +7,10 @@ interface IStyledCollapseIcon {
   $isTablet: boolean;
 }
 
+interface IStyledFooter {
+  $nav: boolean;
+}
+
 export const StyledAppPage = styled.div`
   display: inherit;
   box-sizing: border-box;
@@ -15,6 +19,10 @@ export const StyledAppPage = styled.div`
 export const StyledContainer = styled.div`
   display: inherit;
   overflow: hidden;
+
+  @media print {
+    overflow: visible !important;
+  }
 `;
 
 export const StyledMain = styled.main`
@@ -29,9 +37,11 @@ export const StyledContentImg = styled(Link)`
 
 export const StyledLogo = styled.img`
   max-width: 120px;
+  max-height: 48px;
 `;
 
 export const StyledHeaderContainer = styled.div`
+  z-index: 2;
   position: relative;
 `;
 
@@ -47,6 +57,7 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
   left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
+  z-index: 2;
 `;
 
 export const StyledMenuContainer = styled.div`
@@ -73,12 +84,15 @@ export const StyledCollapse = styled.div`
   top: 48px;
   z-index: 2;
 `;
-export const StyledFooter = styled.footer`
+
+export const StyledFooter = styled.footer<IStyledFooter>`
   display: flex;
   justify-content: center;
   padding: 16px 24px;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
+  /* background-color: red; */
+  width: ${({ $nav }) => ($nav ? "200px" : "auto")};
 `;
 
 export const StyledPrint = styled.div`

@@ -1,12 +1,12 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
 import { FlagProvider } from "@inubekit/inubekit";
+import { jwtDecode } from "jwt-decode";
 
 import { AppContext, AppContextProvider } from "@context/AppContext";
 import { usePortalLogic } from "@hooks/usePortalRedirect";
@@ -14,20 +14,37 @@ import { ErrorPage } from "@components/layout/ErrorPage";
 import { AppPage } from "@components/layout/AppPage";
 import { GlobalStyles } from "@styles/global";
 import { Login } from "@pages/login";
-import { environment } from "@config/environment";
 import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
 import { CreditRoutes } from "@routes/CreditRoutes";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
-import { Home } from "@pages/home";
+import { HomeRoutes } from "@routes/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
+import { useIAuth } from "@context/AuthContext/useAuthContext";
+import { IUsers } from "@context/AppContext/types";
 import { CustomerRoutes } from "@routes/customer";
 
+import { usePostUserAccountsData } from "./hooks/usePostUserAccountsData";
+
 function LogOut() {
-  localStorage.clear();
-  const { logout } = useAuth0();
-  logout({ logoutParams: { returnTo: environment.GOOGLE_REDIRECT_URI } });
-  return <AppPage />;
+  const { logout } = useIAuth();
+  const hasLoggedOut = useRef(false);
+
+  useEffect(() => {
+    if (!hasLoggedOut.current) {
+      hasLoggedOut.current = true;
+      localStorage.clear();
+      sessionStorage.clear();
+
+      logout({
+        logoutParams: {
+          returnTo: `${window.location.origin}/logout`,
+        },
+      });
+    }
+  }, [logout]);
+
+  return <LoadingAppUI />;
 }
 
 function FirstPage() {
@@ -46,7 +63,7 @@ const router = createBrowserRouter(
       />
       <Route path="login/*" element={<LoginRoutes />} />
       <Route path="credit/*" element={<CreditRoutes />} />
-      <Route path="home/*" element={<Home />} />
+      <Route path="home/*" element={<HomeRoutes />} />
       <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
@@ -54,8 +71,35 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  const { codeError, loading } = usePortalLogic();
+  const { codeError, loading, businessManager } = usePortalLogic();
+  const { setUser } = useIAuth();
 
+  const { data: userAccountsData } = usePostUserAccountsData(
+    businessManager.clientId,
+    businessManager.clientSecret,
+  );
+
+  useEffect(() => {
+    if (userAccountsData?.idToken) {
+      const decoded = jwtDecode<{
+        identificationNumber: string;
+        names: string;
+        surNames: string;
+        userAccount: string;
+        consumerApplicationCode: string;
+      }>(userAccountsData.idToken);
+
+      const mappedUser: IUsers = {
+        id: decoded.identificationNumber,
+        username: `${decoded.names} ${decoded.surNames}`,
+        nickname: decoded.userAccount,
+        company: decoded.consumerApplicationCode,
+        urlImgPerfil: "",
+      };
+
+      setUser(mappedUser);
+    }
+  }, [userAccountsData, setUser]);
   if (loading) {
     return <LoadingAppUI />;
   }

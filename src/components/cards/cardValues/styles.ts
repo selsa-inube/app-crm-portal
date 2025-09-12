@@ -25,6 +25,10 @@ export const Container = styled.div<IStyledCollapseIcon>`
   display: flex;
   padding: 4px;
   width: ${({ $showIcon }) => ($showIcon ? "auto" : "100%")};
+
+  @media print {
+    height: 100%;
+  }
 `;
 export const IconWrapper = styled.div`
   align-items: center;

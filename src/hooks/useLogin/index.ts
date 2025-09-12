@@ -10,12 +10,13 @@ const useLogin = () => {
   const { eventData, setBusinessUnitsToTheStaff } = useContext(AppContext);
   const [hasError, setHasError] = useState(false);
   const [codeError, setCodeError] = useState<number>();
+  const userIdentifier = eventData?.user?.identificationDocumentNumber;
 
   useEffect(() => {
     if (eventData.portal.publicCode) {
       validateBusinessUnits(
         eventData.portal.publicCode,
-        eventData.user.userAccount.substring(0, 20),
+        userIdentifier || "",
       ).then((data) => {
         setBusinessUnitsToTheStaff(data);
         if (!setBusinessUnitsToTheStaff) {
@@ -30,7 +31,7 @@ const useLogin = () => {
     }
   }, [
     eventData.portal.publicCode,
-    eventData.user.userAccount,
+    userIdentifier,
     hasError,
     setBusinessUnitsToTheStaff,
   ]);
@@ -43,7 +44,7 @@ const useLogin = () => {
     ) {
       navigate(`/login/${eventData.user.userAccount}/checking-credentials/`);
     }
-  }, [location, navigate, eventData.user.userAccount]);
+  }, [location, navigate, userIdentifier]);
 
   return { eventData, codeError, hasError };
 };
