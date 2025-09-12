@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -36,6 +36,7 @@ export function ApplyForCredit() {
   const customerPublicCode: string = customerData.publicCode;
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
+  const navigate = useNavigate();
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -334,7 +335,7 @@ export function ApplyForCredit() {
     });
   }
   submitData.append("guarantees", JSON.stringify(guarantees));
-
+  console.log("disbursementGeneral: ", disbursementGeneral);
   const disbursements = Object.entries(disbursementGeneral)
     .filter(([, value]) => value.amount && value.amount !== "")
     .map(([key, value]) => ({
@@ -360,8 +361,9 @@ export function ApplyForCredit() {
       transactionOperation: "Insert",
     }));
   submitData.append("modesOfDisbursement", JSON.stringify(disbursements));
-
+  console.log("ingreso applay credit:: ", JSON.stringify(disbursements));
   const handleSubmit = async () => {
+    console.log("este es el submit", submitData);
     try {
       const response = await postSubmitCredit(
         businessUnitPublicCode,
@@ -371,6 +373,7 @@ export function ApplyForCredit() {
       console.log("Solicitud enviada con éxito:", response);
       setSentModal(false);
       setApprovedRequestModal(true);
+      navigate("/credit/credit-requests");
     } catch (error) {
       setSentModal(false);
       handleFlag();

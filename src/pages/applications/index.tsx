@@ -109,13 +109,6 @@ export function CreditApplications() {
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
                 />
-                <Button
-                  iconBefore={<MdAdd />}
-                  type="link"
-                  path="../simulate-credit"
-                >
-                  {dataCreditProspects.applyCredit}
-                </Button>
               </Stack>
               <Stack wrap="wrap" gap="20px">
                 {creditRequestData.map((creditRequest) => (
