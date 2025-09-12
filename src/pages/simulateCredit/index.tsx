@@ -656,7 +656,13 @@ export function SimulateCredit() {
         simulateData,
       );
       const prospectCode = response?.prospectCode;
-      navigate(`/credit/prospects/${prospectCode}`);
+
+      if (prospectCode === undefined) {
+        setShowErrorModal?.(true);
+        setMessageError?.(messagesError.undefinedCodeProspect);
+      } else {
+        navigate(`/credit/prospects/${prospectCode}`);
+      }
     } catch (error) {
       setShowErrorModal?.(true);
       setMessageError?.(`${messagesError.handleSubmit}. ${error}`);

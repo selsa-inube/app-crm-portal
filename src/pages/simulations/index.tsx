@@ -259,7 +259,6 @@ export function Simulations() {
   };
 
   if (prospectCode === undefined) {
-    console.log("prospectCode---->", prospectCode);
     navigate(`/credit/prospects`);
   }
 
