@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
@@ -156,73 +156,83 @@ export function SimulateCredit() {
     },
   });
 
-  const onlyBorrowerData = {
-    borrowerIdentificationType:
-      customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
-    borrowerIdentificationNumber: customerData.publicCode,
-    borrowerType: "MainBorrower",
-    borrowerName: "Lenis Poveda",
-    borrowerProperties: [
-      {
-        propertyName: "PeriodicSalary",
-        propertyValue: "4500000",
-      },
-    ],
-  };
-  const simulateData: IProspect = {
-    borrowers: [
-      Object.keys(formData.borrowerData.borrowers).length === 0
-        ? onlyBorrowerData
-        : (formData.borrowerData.borrowers as unknown as IBorrower),
-    ],
-    consolidatedCredits:
-      Array.isArray(formData.consolidatedCreditArray) &&
-      formData.consolidatedCreditArray.length > 0
-        ? formData.consolidatedCreditArray.map((item) => ({
-            borrowerIdentificationNumber:
-              onlyBorrowerData.borrowerIdentificationNumber,
-            borrowerIdentificationType:
-              onlyBorrowerData.borrowerIdentificationType,
-            consolidatedAmount: item.consolidatedAmount,
-            consolidatedAmountType: item.consolidatedAmountType,
-            creditProductCode: item.creditProductCode,
-            estimatedDateOfConsolidation: item.estimatedDateOfConsolidation,
-            lineOfCreditDescription: item.lineOfCreditDescription,
+  const onlyBorrowerData = useMemo(
+    () => ({
+      borrowerIdentificationType:
+        customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+      borrowerIdentificationNumber: customerData.publicCode,
+      borrowerType: "MainBorrower",
+      borrowerName: "Lenis Poveda",
+      borrowerProperties: [
+        {
+          propertyName: "PeriodicSalary",
+          propertyValue: "4500000",
+        },
+      ],
+    }),
+    [customerData],
+  );
+
+  const simulateData: IProspect = useMemo(
+    () => ({
+      borrowers: [
+        Object.keys(formData.borrowerData.borrowers).length === 0
+          ? onlyBorrowerData
+          : (formData.borrowerData.borrowers as unknown as IBorrower),
+      ],
+      consolidatedCredits:
+        Array.isArray(formData.consolidatedCreditArray) &&
+        formData.consolidatedCreditArray.length > 0
+          ? formData.consolidatedCreditArray.map((item) => ({
+              borrowerIdentificationNumber:
+                onlyBorrowerData.borrowerIdentificationNumber,
+              borrowerIdentificationType:
+                onlyBorrowerData.borrowerIdentificationType,
+              consolidatedAmount: item.consolidatedAmount,
+              consolidatedAmountType: item.consolidatedAmountType,
+              creditProductCode: item.creditProductCode,
+              estimatedDateOfConsolidation: item.estimatedDateOfConsolidation,
+              lineOfCreditDescription: item.lineOfCreditDescription,
+            }))
+          : [],
+      linesOfCredit: formData.selectedProducts.map((product) => ({
+        lineOfCreditAbbreviatedName: product,
+      })),
+      firstPaymentCycleDate: new Date().toISOString().split("T")[0],
+      extraordinaryInstallments: Array.isArray(
+        formData.extraordinaryInstallments,
+      )
+        ? formData.extraordinaryInstallments.map((item) => ({
+            installmentAmount: item.value as number,
+            installmentDate: item.datePayment as string | Date,
+            paymentChannelAbbreviatedName: item.paymentMethod as string,
           }))
         : [],
-    linesOfCredit: formData.selectedProducts.map((product) => ({
-      lineOfCreditAbbreviatedName: product,
-    })),
-    firstPaymentCycleDate: new Date().toISOString().split("T")[0],
-    extraordinaryInstallments: Array.isArray(formData.extraordinaryInstallments)
-      ? formData.extraordinaryInstallments.map((item) => ({
-          installmentAmount: item.value as number,
-          installmentDate: item.datePayment as string | Date,
-          paymentChannelAbbreviatedName: item.paymentMethod as string,
-        }))
-      : [],
-    installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
-    moneyDestinationAbbreviatedName: formData.selectedDestination,
-    preferredPaymentChannelAbbreviatedName:
-      formData.loanAmountState.paymentPlan || "",
-    selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
-    requestedAmount: formData.loanAmountState.inputValue,
-    termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
-    prospectId: "",
-    prospectCode: "",
-    state: "",
-    selectedRateType: "",
-    gracePeriod: 0,
-    gracePeriodType: "",
-    bondValue: 0,
-    creditProducts: [],
-    outlays: [],
-    creditScore: "",
-    modifyJustification: "",
-    clientManagerIdentificationNumber: "",
-    clientManagerName: "",
-    clientManagerObservation: "",
-  };
+      installmentLimit:
+        formData.loanConditionState.quotaCapValue || 999999999999,
+      moneyDestinationAbbreviatedName: formData.selectedDestination,
+      preferredPaymentChannelAbbreviatedName:
+        formData.loanAmountState.paymentPlan || "",
+      selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
+      requestedAmount: formData.loanAmountState.inputValue,
+      termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
+      prospectId: "",
+      prospectCode: "",
+      state: "",
+      selectedRateType: "",
+      gracePeriod: 0,
+      gracePeriodType: "",
+      bondValue: 0,
+      creditProducts: [],
+      outlays: [],
+      creditScore: "",
+      modifyJustification: "",
+      clientManagerIdentificationNumber: "",
+      clientManagerName: "",
+      clientManagerObservation: "",
+    }),
+    [formData, onlyBorrowerData],
+  );
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [creditLineTerms, setCreditLineTerms] = useState<{
@@ -703,6 +713,7 @@ export function SimulateCredit() {
     };
 
     const handleSubmit = async () => {
+      setIsLoading(true);
       try {
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
@@ -719,7 +730,7 @@ export function SimulateCredit() {
     };
 
     handleSubmit();
-  }, [customerData, simulateData]);
+  }, [customerData, simulateData, businessUnitPublicCode]);
 
   useEffect(() => {
     if (clientPortfolio) {
