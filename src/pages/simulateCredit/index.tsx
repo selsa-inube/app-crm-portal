@@ -719,7 +719,7 @@ export function SimulateCredit() {
     };
 
     handleSubmit();
-  }, [customerData, simulateData]);
+  }, [customerData, currentStep]);
 
   useEffect(() => {
     if (clientPortfolio) {
