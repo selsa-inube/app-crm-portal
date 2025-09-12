@@ -29,11 +29,14 @@ export const StyledMain = styled.main`
 
 export const StyledContentImg = styled(Link)`
   width: 100px;
+  display: flex;
+  justify-content: center;
 `;
 
 export const StyledLogo = styled.img`
-  max-width: 120px;
-  max-height: 48px;
+  with: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
 
 export const StyledHeaderContainer = styled.div`
