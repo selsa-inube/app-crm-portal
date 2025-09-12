@@ -13,6 +13,8 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
+import { restoreIncomeInformationByBorrowerId } from "@services/prospect/restoreIncomeInformationByBorrowerId";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 import {
   IncomeEmployment,
@@ -66,6 +68,8 @@ export function SourceIncome(props: ISourceIncomeProps) {
   const [dataValues, setDataValues] = useState<IIncome | null>(null);
   const [pendingDataChange, setPendingDataChange] =
     useState<IIncomeSources | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const groupMapping: Record<
     string,
@@ -146,20 +150,20 @@ export function SourceIncome(props: ISourceIncomeProps) {
     return sumCapital + sumEmployment + sumBusinesses;
   };
 
-  const handleRestore = () => {
-    if (onRestore) {
-      onRestore();
-    } else if (initialDataForRestore) {
-      const restoredValues = buildIncomeValues(
-        initialDataForRestore,
-        IncomeTypes,
-      );
-      setBorrowerIncome(restoredValues);
-      setDataValues(restoredValues);
-      setPendingDataChange(initialDataForRestore);
-    }
-    setIsOpenModal(false);
-  };
+  // const handleRestore = () => {
+  //   if (onRestore) {
+  //     onRestore();
+  //   } else if (initialDataForRestore) {
+  //     const restoredValues = buildIncomeValues(
+  //       initialDataForRestore,
+  //       IncomeTypes,
+  //     );
+  //     setBorrowerIncome(restoredValues);
+  //     setDataValues(restoredValues);
+  //     setPendingDataChange(initialDataForRestore);
+  //   }
+  //   setIsOpenModal(false);
+  // };
 
   function mapToIncomeSources(values: IIncome): IIncomeSources {
     return {
@@ -215,6 +219,36 @@ export function SourceIncome(props: ISourceIncomeProps) {
     setDataValues(updatedIncomeValues);
     setPendingDataChange(updatedData);
     setIsOpenEditModal(false);
+  };
+
+  const handleRestore = async () => {
+    if (!data) return;
+
+    const body = {
+      borrowerIdentificationNumber: data.identificationNumber,
+      income: {
+        dividends: data.Dividends || 0,
+        financialIncome: data.FinancialIncome || 0,
+        leases: data.Leases || 0,
+        otherNonSalaryEmoluments: data.OtherNonSalaryEmoluments || 0,
+        pensionAllowances: data.PensionAllowances || 0,
+        periodicSalary: data.PeriodicSalary || 0,
+        personalBusinessUtilities: data.PersonalBusinessUtilities || 0,
+        professionalFees: data.ProfessionalFees || 0,
+      },
+      justification: "restore income",
+      prospectCode: "",
+    };
+
+    try {
+      await restoreIncomeInformationByBorrowerId("fondecom", body);
+      if (onRestore) onRestore();
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(dataReport.errorIncome);
+    } finally {
+      setIsOpenModal(false);
+    }
   };
 
   return (
@@ -342,6 +376,13 @@ export function SourceIncome(props: ISourceIncomeProps) {
           dataValues={dataValues}
           customerData={customerData}
           borrowerOptions={borrowerOptions}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
         />
       )}
     </StyledContainer>
