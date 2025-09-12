@@ -5,6 +5,7 @@ import { IOption, useMediaQuery } from "@inubekit/inubekit";
 import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 import { CustomerUI } from "./interface";
 
@@ -19,36 +20,41 @@ export function Customer() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
   const handleSearch = async (value: string) => {
-    if (value.length < 3) {
-      setOptions([]);
-      return;
-    }
+    try {
+      if (value.length < 3) {
+        setOptions([]);
+        return;
+      }
 
-    let response = null;
-    if (/^\d+$/.test(value)) {
-      response = await getCustomerCatalog(businessUnitPublicCode, "", value);
-    } else if (/^[A-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
-      response = await getCustomerCatalog(businessUnitPublicCode, value, "");
-    }
+      let response = null;
+      if (/^\d+$/.test(value)) {
+        response = await getCustomerCatalog(businessUnitPublicCode, "", value);
+      } else if (/^[A-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
+        response = await getCustomerCatalog(businessUnitPublicCode, value, "");
+      }
 
-    if (response && Array.isArray(response) && response.length > 0) {
-      const mappedOptions = response.map((item, index) => ({
-        id: `${index}`,
-        label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
-        value: item.publicCode,
-      }));
-      setOptions(mappedOptions);
+      if (response && Array.isArray(response) && response.length > 0) {
+        const mappedOptions = response.map((item, index) => ({
+          id: `${index}`,
+          label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
+          value: item.publicCode,
+        }));
+        setOptions(mappedOptions);
 
-      setTimeout(() => {
-        const clickable = selectRef.current?.querySelector("input");
-        if (clickable) {
-          clickable.focus();
-          clickable.dispatchEvent(
-            new KeyboardEvent("keyup", { bubbles: true }),
-          );
-        }
-      }, 50);
-    } else {
+        setTimeout(() => {
+          const clickable = selectRef.current?.querySelector("input");
+          if (clickable) {
+            clickable.focus();
+            clickable.dispatchEvent(
+              new KeyboardEvent("keyup", { bubbles: true }),
+            );
+          }
+        }, 50);
+      } else {
+        setOptions([]);
+      }
+    } catch (error) {
+      setShowError(true);
       setOptions([]);
     }
   };
@@ -86,6 +92,11 @@ export function Customer() {
     setCustomerPublicCodeState(inputValue);
     navigate(`/home`);
   };
+
+  useEffect(() => {
+    console.log(inputValue, "businessUnitSigla: ", businessUnitSigla);
+    handleSearch(inputValue);
+  }, [businessUnitSigla]);
 
   return (
     <CustomerUI
