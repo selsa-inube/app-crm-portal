@@ -37,6 +37,7 @@ import {
 } from "./types";
 import { SimulateCreditUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
+import { messagesError } from "./config/config";
 import { evaluateRule } from "./evaluateRule";
 
 export function SimulateCredit() {
@@ -648,11 +649,6 @@ export function SimulateCredit() {
       ? titleButtonTextAssited.submitText
       : titleButtonTextAssited.goNextText;
 
-  const handleFlag = (error: string) => {
-    setShowErrorModal(true);
-    setMessageError(error);
-  };
-
   const handleSubmitClick = async () => {
     try {
       const response = await postSimulateCredit(
@@ -660,12 +656,10 @@ export function SimulateCredit() {
         simulateData,
       );
       const prospectCode = response?.prospectCode;
-
-      setTimeout(() => {
-        navigate(`/credit/prospects/${prospectCode}`);
-      }, 1000);
+      navigate(`/credit/prospects/${prospectCode}`);
     } catch (error) {
-      handleFlag(error as string);
+      setShowErrorModal?.(true);
+      setMessageError?.(`${messagesError.handleSubmit}. ${error}`);
     }
   };
 
