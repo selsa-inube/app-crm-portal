@@ -44,6 +44,7 @@ interface ISourceIncomeProps {
   selectedIndex?: number | undefined;
   showErrorModal?: boolean;
   messageError?: string;
+  publicCode?: string;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -58,6 +59,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     customerData = {} as ICustomerData,
     initialDataForRestore,
     borrowerOptions,
+    publicCode,
     onRestore,
   } = props;
 
@@ -150,21 +152,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
     return sumCapital + sumEmployment + sumBusinesses;
   };
 
-  // const handleRestore = () => {
-  //   if (onRestore) {
-  //     onRestore();
-  //   } else if (initialDataForRestore) {
-  //     const restoredValues = buildIncomeValues(
-  //       initialDataForRestore,
-  //       IncomeTypes,
-  //     );
-  //     setBorrowerIncome(restoredValues);
-  //     setDataValues(restoredValues);
-  //     setPendingDataChange(initialDataForRestore);
-  //   }
-  //   setIsOpenModal(false);
-  // };
-
   function mapToIncomeSources(values: IIncome): IIncomeSources {
     return {
       identificationNumber: values.borrower_id,
@@ -225,7 +212,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     if (!data) return;
 
     const body = {
-      borrowerIdentificationNumber: data.identificationNumber,
+      borrowerIdentificationNumber: publicCode || data.identificationNumber,
       income: {
         dividends: data.Dividends || 0,
         financialIncome: data.FinancialIncome || 0,
@@ -241,7 +228,37 @@ export function SourceIncome(props: ISourceIncomeProps) {
     };
 
     try {
-      await restoreIncomeInformationByBorrowerId("fondecom", body);
+      const response = await restoreIncomeInformationByBorrowerId(
+        "fondecom",
+        body,
+      );
+      if (response && response.income) {
+        const restoredIncome = {
+          ...borrowerIncome,
+          borrower_id: borrowerIncome?.borrower_id ?? "",
+          borrower: borrowerIncome?.borrower ?? "",
+          capital: [
+            (response.income.leases ?? 0).toString(),
+            (response.income.dividends ?? 0).toString(),
+            (response.income.financialIncome ?? 0).toString(),
+          ],
+          employment: [
+            (response.income.periodicSalary ?? 0).toString(),
+            (response.income.otherNonSalaryEmoluments ?? 0).toString(),
+            (response.income.pensionAllowances ?? 0).toString(),
+          ],
+          businesses: [
+            (response.income.professionalFees ?? 0).toString(),
+            (response.income.personalBusinessUtilities ?? 0).toString(),
+          ],
+        };
+        setBorrowerIncome(restoredIncome);
+        setDataValues(restoredIncome);
+        if (onDataChange) {
+          const mappedBack = mapToIncomeSources(restoredIncome);
+          onDataChange(mappedBack);
+        }
+      }
       if (onRestore) onRestore();
     } catch (error) {
       setShowErrorModal(true);

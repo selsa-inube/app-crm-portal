@@ -57,6 +57,7 @@ export function SourcesOfIncome({
           customerData={customerData}
           onDataChange={handleSourceIncomeChange}
           onRestore={restoreData}
+          publicCode={customerData?.publicCode || ""}
           showEdit
           disabled
         />

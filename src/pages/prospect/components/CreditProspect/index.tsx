@@ -242,6 +242,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       id: crypto.randomUUID(),
       label: borrower.borrowerName,
       value: borrower.borrowerName,
+      publicCode: borrower.borrowerIdentificationNumber,
     })) ?? [];
 
   const handleChange = (_name: string, value: string) => {
@@ -654,9 +655,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             borrowerOptions={borrowerOptions}
             selectedIndex={selectedIndex}
             creditLimitData={creditLimitData}
+            publicCode={borrowerOptions[selectedIndex]?.publicCode || ""}
           />
         )}
-
         {currentModal === "reportCreditsModal" && (
           <ReportCreditsModal
             handleClose={handleCloseModal}

@@ -24,6 +24,7 @@ interface IncomeModalProps {
   }[];
   selectedIndex?: number;
   creditLimitData?: IIncomeSources | undefined;
+  publicCode?: string;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
@@ -35,6 +36,8 @@ export function IncomeModal(props: IncomeModalProps) {
     onSubmit,
     borrowerOptions,
     selectedIndex,
+    customerData,
+    publicCode,
   } = props;
 
   const [formData, setFormData] = useState(initialValues);
@@ -101,11 +104,12 @@ export function IncomeModal(props: IncomeModalProps) {
         showEdit={false}
         onDataChange={handleDataChange}
         onRestore={restoreData}
-        customerData={props.customerData}
+        customerData={customerData}
         borrowerOptions={borrowerOptions}
         selectedIndex={selectedIndex}
         showErrorModal={showErrorModal}
         messageError={messageError}
+        publicCode={publicCode || ""}
       />
     </BaseModal>
   );
