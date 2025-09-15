@@ -5,7 +5,6 @@ import { IOption, useMediaQuery } from "@inubekit/inubekit";
 import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
-import { ErrorModal } from "@components/modals/ErrorModal";
 
 import { CustomerUI } from "./interface";
 
