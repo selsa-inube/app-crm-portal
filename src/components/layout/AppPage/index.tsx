@@ -149,7 +149,7 @@ function AppPage(props: IAppPage) {
 
   return (
     <StyledAppPage>
-      <Grid templateRows="auto 1fr" height="100vh" justifyContent="unset">
+      <Grid templateRows="auto 1fr 50px" height="100vh" justifyContent="unset">
         <StyledPrint>
           <StyledHeaderContainer>
             <Header
@@ -220,7 +220,7 @@ function AppPage(props: IAppPage) {
           <Grid
             templateColumns={!isTablet ? (showNav ? "auto 1fr" : "1fr") : "1fr"}
             alignContent="unset"
-            height={isTablet ? "81vh" : "89.5vh"}
+            height={isTablet ? "90vh" : "89.5vh"}
           >
             {!isTablet && showNav && (
               <Nav
@@ -234,10 +234,14 @@ function AppPage(props: IAppPage) {
               <Outlet />
             </StyledMain>
           </Grid>
-          <StyledFooter $nav={showNav}>
-            {renderLogo(eventData.businessManager.urlBrand)}
-          </StyledFooter>
         </StyledContainer>
+        <StyledFooter
+          $nav={isTablet}
+          isShowMenuOnHeader={showMenuOnHeader}
+          showNav={showNav}
+        >
+          {renderLogo(eventData.businessManager.urlBrand)}
+        </StyledFooter>
       </Grid>
     </StyledAppPage>
   );

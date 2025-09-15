@@ -9,6 +9,8 @@ interface IStyledCollapseIcon {
 
 interface IStyledFooter {
   $nav: boolean;
+  isShowMenuOnHeader: boolean;
+  showNav: boolean;
 }
 
 export const StyledAppPage = styled.div`
@@ -85,13 +87,14 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
-  display: flex;
+  display: ${({ isShowMenuOnHeader, showNav }) =>
+    isShowMenuOnHeader && showNav ? "flex" : "none"};
   justify-content: center;
+  align-content: center;
   padding: 16px 24px;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
-  /* background-color: red; */
-  width: ${({ $nav }) => ($nav ? "200px" : "auto")};
+  width: ${({ $nav }) => ($nav ? "auto" : "200px")};
 `;
 
 export const StyledPrint = styled.div`
