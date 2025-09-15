@@ -9,57 +9,57 @@ export const stepsAddProspect = {
     id: 2,
     number: 2,
     name: "Destino del dinero",
-    description: "Seleccione el destino del dinero.",
+    description: "Selecciona el destino del dinero.",
   },
   productSelection: {
     id: 3,
     number: 3,
     name: "Elección del producto",
-    description: "Seleccione los productos de crédito.",
+    description: "Selecciona los productos de crédito.",
   },
   extraordinaryInstallments: {
     id: 4,
     number: 4,
     name: "Abonos especiales",
     description:
-      "Programe abonos para disminuir el pago ordinario o recortar plazo.",
+      "Programa abonos para disminuir el pago ordinario o recortar plazo.",
   },
   sourcesIncome: {
     id: 5,
     number: 5,
     name: "Fuentes de ingreso",
     description:
-      "Actualice sus fuentes de ingreso para soportar capacidad de pago.",
+      "Actualiza las fuentes de ingreso para soportar capacidad de pago.",
   },
   obligationsFinancial: {
     id: 6,
     number: 6,
     name: "Obligaciones financieras",
-    description: "Verifique las obligaciones financieras reportadas.",
+    description: "Verifica las obligaciones financieras reportadas.",
   },
   extraBorrowers: {
     id: 7,
     number: 7,
     name: "Deudores",
-    description: "Actualice los deudores",
+    description: "Actualiza los deudores",
   },
   loanConditions: {
     id: 8,
     number: 8,
     name: "Restricciones de la solicitud",
     description:
-      "Registre si el cliente tiene restricciones en el valor de la cuota ordinaria o en el plazo para el pago.",
+      "Registra si el cliente tiene restricciones en el valor de la cuota ordinaria o en el plazo para el pago.",
   },
   loanAmount: {
     id: 9,
     number: 9,
     name: "Valor de la solicitud",
-    description: "Registre el valor de la solicitud y el medio de pago.",
+    description: "Registra el valor de la solicitud y el medio de pago.",
   },
   obligationsCollected: {
     id: 10,
     number: 10,
     name: "Obligaciones recogidas",
-    description: "Seleccione las obligaciones financieras que serán recogidas.",
+    description: "Selecciona las obligaciones financieras que serán recogidas.",
   },
 };
