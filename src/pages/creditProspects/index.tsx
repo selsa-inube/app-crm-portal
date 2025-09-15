@@ -22,8 +22,9 @@ import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { BaseModal } from "@components/modals/baseModal";
 import { CardGray } from "@components/cards/CardGray";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
-import { addConfig, dataCreditProspects } from "./config";
+import { addConfig, dataCreditProspects, errorMessage } from "./config";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CardCreditProspect } from "./components/CardCreditProspect";
@@ -56,6 +57,7 @@ export function CreditProspects() {
   const [commentsByProspectId, setCommentsByProspectId] = useState<
     Record<string, string>
   >({});
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -73,15 +75,19 @@ export function CreditProspects() {
             setProspectSummaryData([result]);
           }
         }
-      } catch (error: unknown) {
-        setCodeError(1021);
-        setAddToFix([dataCreditProspects.errorCreditProspect]);
+      } catch (error) {
+        setShowErrorModal(true);
       }
     };
     if (customerData?.publicCode && businessUnitPublicCode) {
       fetchData();
     }
   }, [businessUnitPublicCode, customerData?.publicCode]);
+
+  const handleCloseModalNotExistProspect = () => {
+    setShowDeleteModal(false);
+    navigate("/credit");
+  };
 
   return (
     <>
@@ -293,6 +299,13 @@ export function CreditProspects() {
             </BaseModal>
           )}
         </Stack>
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={handleCloseModalNotExistProspect}
+          isMobile={isMobile}
+          message={errorMessage.notProspects}
+        />
       )}
     </>
   );

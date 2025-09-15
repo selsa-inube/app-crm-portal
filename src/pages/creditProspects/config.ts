@@ -41,3 +41,7 @@ export const dataCreditProspects = {
   modify: "Modificar observaciones",
   preanalysis: "Comentarios del pre-análisis",
 };
+
+export const errorMessage = {
+  notProspects: "Este cliente aún no tienen ningún prospecto de crédito.",
+};
