@@ -19,6 +19,10 @@ export const StyledAppPage = styled.div`
 export const StyledContainer = styled.div`
   display: inherit;
   overflow: hidden;
+
+  @media print {
+    overflow: visible !important;
+  }
 `;
 
 export const StyledMain = styled.main`

@@ -17,6 +17,5 @@ export const DataCapacityAnalysis = {
   businessUtilities: "(+) Utilidades de negocios personales",
   totalIncome: "(=) Valor total de los ingresos",
   minimumPaymentReserve: "(-) Reserva del pago mínimo ({percent}%)",
-  currentObligations: "(-) Obligaciones vigentes",
   paymentCapacity: "(=) Capacidad de pago",
 };

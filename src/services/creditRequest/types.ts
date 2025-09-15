@@ -54,6 +54,7 @@ export interface IDocumentsCredit {
   documentCode?: string;
   documentId?: string;
   fileName?: string;
+  requirementReference?: string;
 }
 
 export interface IMortgagesCredit {
