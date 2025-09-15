@@ -22,7 +22,7 @@ import { environment } from "@config/environment";
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
-import { addConfig, dataCreditProspects } from "./config";
+import { addConfig, dataCreditProspects, dataError } from "./config";
 
 export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
@@ -124,6 +124,11 @@ export function CreditApplications() {
                     path={`${environment.VITE_CREDIBOARD_URL}/extended-card/${creditRequest.creditRequestCode}`}
                   />
                 ))}
+                {creditRequestData.length === 0 && (
+                  <Text type="title" size="large" margin="30px 2px">
+                    {dataError.notCredits}
+                  </Text>
+                )}
               </Stack>
             </Stack>
           </Fieldset>
