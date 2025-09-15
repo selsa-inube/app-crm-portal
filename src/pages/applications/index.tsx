@@ -75,8 +75,8 @@ export function CreditApplications() {
     fetchCreditRequest();
   }, [customerData.publicCode, search]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
   };
 
   return (
@@ -115,7 +115,7 @@ export function CreditApplications() {
                   id="keyWord"
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
-                  onChange={(e) => handleSearch(e)}
+                  onChange={(event) => handleSearch(event)}
                 />
                 <Button
                   iconBefore={<MdAdd />}

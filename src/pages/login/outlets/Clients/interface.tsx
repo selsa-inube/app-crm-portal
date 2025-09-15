@@ -11,6 +11,7 @@ import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/ty
 import { RadioBusinessUnit } from "@components/RadioBusinessUnit";
 
 import { IBusinessUnitstate } from "./types";
+import { messagesFeedback } from "./config";
 import {
   StyledBusinessUnits,
   StyledBusinessUnitsList,
@@ -36,10 +37,10 @@ interface BusinessUnitsUIProps {
 export function NoResultsMessage({ search }: { search: string }) {
   return (
     <StyledNoResults>
-      <Text size="medium">No se encontraron resultados para "{search}".</Text>
       <Text size="medium">
-        Por favor, intenta modificando los parámetros de búsqueda.
+        {messagesFeedback.notFountResults.title} {search}.
       </Text>
+      <Text size="medium">{messagesFeedback.notFountResults.description}</Text>
     </StyledNoResults>
   );
 }
