@@ -25,4 +25,5 @@ export const dataReport = {
   delete: "Eliminar",
   close: "Cerrar",
   deleteText: "¿Estás seguro de Eliminar este documento?",
+  loading: "Cargando documentos requeridos...",
 };
