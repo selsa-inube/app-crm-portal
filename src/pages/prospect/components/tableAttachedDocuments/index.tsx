@@ -131,23 +131,11 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           justifyContent="center"
           alignItems="center"
           padding="32px"
-          width=""
+          width="100%"
         >
           <Spinner size="large" appearance="primary" />
-          <Text type="title" size="medium" appearance="dark" textAlign="center">
+          <Text type="title" size="medium" appearance="dark">
             {dataReport.loading}
-          </Text>
-        </Stack>
-      ) : ruleValues.length === 0 ? (
-        <Stack
-          direction="column"
-          gap="8px"
-          justifyContent="center"
-          alignItems="center"
-          padding="32px"
-        >
-          <Text size="large" type="label" appearance="gray" textAlign="center">
-            {dataReport.noData}
           </Text>
         </Stack>
       ) : (
@@ -162,63 +150,97 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
             </Tr>
           </Thead>
           <Tbody>
-            {ruleValues.map((row: IBorrowerDocumentRule, rowIndex: number) => (
-              <Tr key={rowIndex}>
-                {visibleHeaders.map((header, colIndex) => {
-                  const cellData =
-                    row[header.key as keyof { borrower: string }];
-
-                  const customColumn = [
-                    "download",
-                    "remove",
-                    "attached",
-                    "actions",
-                  ].includes(header.key);
-
-                  return (
+            {(() => {
+              if (ruleValues.length === 0) {
+                return (
+                  <Tr>
                     <Td
-                      key={colIndex}
-                      width={customColumn ? "70px" : "auto"}
-                      appearance={rowIndex % 2 === 0 ? "light" : "dark"}
-                      type={customColumn ? "custom" : "text"}
-                      align="left"
+                      colSpan={visibleHeaders.length}
+                      align="center"
+                      type="custom"
                     >
-                      {header.key === "actions" ? (
-                        <Stack justifyContent="space-around">
-                          <Icon
-                            icon={iconToShowOnActions(rowIndex)}
-                            appearance="primary"
-                            size="16px"
-                            cursorHover
-                            onClick={() =>
-                              handleOpenAttachment(rowIndex.toString())
-                            }
-                          />
-                        </Stack>
-                      ) : (
-                        cellData
-                      )}
+                      <Text
+                        size="large"
+                        type="label"
+                        appearance="gray"
+                        textAlign="center"
+                      >
+                        {dataReport.noData}
+                      </Text>
                     </Td>
-                  );
-                })}
-              </Tr>
-            ))}
+                  </Tr>
+                );
+              } else {
+                return ruleValues.map(
+                  (row: IBorrowerDocumentRule, rowIndex: number) => (
+                    <Tr key={rowIndex}>
+                      {visibleHeaders.map((header, colIndex) => {
+                        const cellData =
+                          row[header.key as keyof { borrower: string }];
+                        const customColumn = [
+                          "download",
+                          "remove",
+                          "attached",
+                          "actions",
+                        ].includes(header.key);
+                        return (
+                          <Td
+                            key={colIndex}
+                            width={customColumn ? "70px" : "auto"}
+                            appearance={rowIndex % 2 === 0 ? "light" : "dark"}
+                            type={customColumn ? "custom" : "text"}
+                            align={"left"}
+                          >
+                            {(() => {
+                              if (header.key === "actions") {
+                                return (
+                                  <Stack justifyContent="space-around">
+                                    <Icon
+                                      icon={iconToShowOnActions(rowIndex)}
+                                      appearance="primary"
+                                      size="16px"
+                                      cursorHover
+                                      onClick={() =>
+                                        handleOpenAttachment(
+                                          rowIndex.toString(),
+                                        )
+                                      }
+                                    />
+                                  </Stack>
+                                );
+                              }
+                              return cellData;
+                            })()}
+                          </Td>
+                        );
+                      })}
+                    </Tr>
+                  ),
+                );
+              }
+            })()}
           </Tbody>
-          <Tfoot>
-            <Tr border="bottom">
-              <Td colSpan={visibleHeaders.length} type="custom" align="center">
-                <Pagination
-                  firstEntryInPage={firstEntryInPage}
-                  lastEntryInPage={lastEntryInPage}
-                  totalRecords={totalRecords}
-                  handleStartPage={handleStartPage}
-                  handlePrevPage={handlePrevPage}
-                  handleNextPage={handleNextPage}
-                  handleEndPage={handleEndPage}
-                />
-              </Td>
-            </Tr>
-          </Tfoot>
+          {!isLoading && ruleValues.length > 0 && (
+            <Tfoot>
+              <Tr border="bottom">
+                <Td
+                  colSpan={visibleHeaders.length}
+                  type="custom"
+                  align="center"
+                >
+                  <Pagination
+                    firstEntryInPage={firstEntryInPage}
+                    lastEntryInPage={lastEntryInPage}
+                    totalRecords={totalRecords}
+                    handleStartPage={handleStartPage}
+                    handlePrevPage={handlePrevPage}
+                    handleNextPage={handleNextPage}
+                    handleEndPage={handleEndPage}
+                  />
+                </Td>
+              </Tr>
+            </Tfoot>
+          )}
         </Table>
       )}
       {showAttachment && (
