@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
@@ -17,7 +17,7 @@ import { IBorrower, IProspect } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 
 import { dataExtraDebtors } from "./config";
-import { transformServiceData } from "./utils";
+import { transformServiceData, createMainBorrowerFromFormData } from "./utils";
 
 interface IExtraDebtorsProps {
   isMobile: boolean;
@@ -29,7 +29,11 @@ interface IExtraDebtorsProps {
 export function ExtraDebtors(props: IExtraDebtorsProps) {
   const { handleOnChange, initialValues, isMobile } = props;
   const [borrowers, setBorrowers] = useState(() => transformServiceData(initialValues));
-  console.log("borrowers: ",borrowers);
+
+  useEffect(() => {
+    setBorrowers(transformServiceData(initialValues));
+  }, [initialValues]);
+
   const sortedBorrowers = useMemo(() => {
     return [...borrowers].sort((a, b) => {
       if (a.borrowerType === "MainBorrower") return -1;

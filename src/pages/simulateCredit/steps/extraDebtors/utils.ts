@@ -1,5 +1,7 @@
 import { IBorrower } from "@services/prospect/types";
-import { IDebtorDetail } from "@pages/applyForCredit/types";
+
+import { IFormData } from "./../../../simulateCredit/types";
+import { IDebtorDetail } from "./../../../applyForCredit/types";
 
 export interface ITransformedBorrower {
   id: string;
@@ -14,15 +16,16 @@ export interface ITransformedBorrower {
 }
 
 export function transformServiceData(serviceData: IBorrower[]): ITransformedBorrower[] {
-  if (!serviceData || !serviceData) {
+  if (!serviceData || !Array.isArray(serviceData)) {
     return [];
   }
 
   return serviceData.map((serviceBorrower) => {
+
     const properties = serviceBorrower.borrowerProperties.reduce((acc, prop) => {
       acc[prop.propertyName] = prop.propertyValue;
       return acc;
-    }, {} as Record<string, string>);
+    }, {} as Record<string, string>); 
 
     const incomeProperties = [
       "PensionAllowances", "PeriodicSalary", "PersonalBusinessUtilities",
@@ -58,7 +61,7 @@ export function transformServiceData(serviceData: IBorrower[]): ITransformedBorr
       income: totalIncome.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }),
       obligations: totalObligations.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }),
       borrowerType: serviceBorrower.borrowerType,
-      
+
       debtorDetail: {
         document: serviceBorrower.borrowerIdentificationType,
         documentNumber: serviceBorrower.borrowerIdentificationNumber,
@@ -77,4 +80,60 @@ export function transformServiceData(serviceData: IBorrower[]): ITransformedBorr
 
     return transformed;
   });
+}
+
+export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IBorrower {
+  const borrowerProperties: { propertyName: string; propertyValue: string }[] = [];
+  console.log("--------------holaaaaaaa------------------------")
+  console.log(formData);
+  console.log(formData.obligationsFinancial);
+  if (Array.isArray(formData.obligationsFinancial)) {
+    const financialObligations = formData.obligationsFinancial.map((obligation) => {
+      const propertyValue = [
+        obligation.productName || '',
+        obligation.balanceObligationTotal || 0,
+        obligation.nextPaymentValueTotal || 0,
+        obligation.entity || '',
+        obligation.paymentMethodName || '',
+        obligation.obligationNumber || '',
+        obligation.duesPaid || 0,
+        obligation.outstandingDues || 0,
+      ].join(',');
+
+      return {
+        propertyName: "FinancialObligation",
+        propertyValue: propertyValue,
+      };
+    });
+    borrowerProperties.push(...financialObligations);
+  }
+
+  if (formData.sourcesOfIncome) {
+    for (const [key, value] of Object.entries(formData.sourcesOfIncome)) {
+      borrowerProperties.push({
+        propertyName: key,
+        propertyValue: String(value),
+      });
+    }
+  }
+
+  borrowerProperties.push(
+    { propertyName: "name", propertyValue: "personalDetails.name" },
+    { propertyName: "surname", propertyValue: "personalDetails.surname" },
+    { propertyName: "email", propertyValue: "personalDetails.email" },
+    { propertyName: "biological_sex", propertyValue: "personalDetails.biological_sex" },
+    { propertyName: "phone_number", propertyValue: "personalDetails.phone_number" },
+    { propertyName: "birth_date", propertyValue: "personalDetails.birth_date" },
+    { propertyName: "relationship", propertyValue: "personalDetails.relationship" }
+  );
+
+  const mainBorrower: IBorrower = {
+    borrowerName: `${"personalDetails.name"} ${"personalDetails.surname"}`,
+    borrowerType: "MainBorrower",
+    borrowerIdentificationType: "personalDetails.identificationType",
+    borrowerIdentificationNumber: "personalDetails.identificationNumber",
+    borrowerProperties: borrowerProperties,
+  };
+
+  return mainBorrower;
 }

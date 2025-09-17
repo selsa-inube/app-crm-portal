@@ -190,7 +190,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     paymentCapacity,
     showErrorModal,
     messageError,
-    businessUnitPublicCode,
+    businessUnitPublicCode
   } = props;
 
   console.log("formData: ", formData);
@@ -407,9 +407,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                     />
                   )}
-                {currentStepsNumber &&
-                  currentStepsNumber.id ===
-                    stepsAddProspect.extraBorrowers.id && (
+                {currentStepsNumber &&  
+                  currentStepsNumber.id === stepsAddProspect.extraBorrowers.id &&
+                  formData.borrowerData.borrowers.length > 0 &&  (
                     <ExtraDebtors
                       initialValues={
                         formData.borrowerData.borrowers
