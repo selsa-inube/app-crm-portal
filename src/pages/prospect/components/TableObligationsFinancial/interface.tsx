@@ -229,6 +229,7 @@ export const TableFinancialObligationsUI = ({
   const mapToTableFinancialObligationsProps = (
     item: IDataInformationItem,
   ): ITableFinancialObligationsProps => {
+    console.log("item:: ", item);
     return {
       id: item.id,
       type: item.type,
@@ -344,6 +345,7 @@ export const TableFinancialObligationsUI = ({
 
   const renderDataRows = () =>
     paddedCurrentData.map((prop: IDataInformationItem, rowIndex: number) => {
+      console.log("prop:: ", paddedCurrentData);
       if (prop.__isPadding) {
         return (
           <Tr key={prop.id}>

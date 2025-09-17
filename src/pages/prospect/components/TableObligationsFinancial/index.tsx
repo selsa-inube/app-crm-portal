@@ -189,6 +189,8 @@ export const TableFinancialObligations = (
   const handleUpdate = async (
     updatedDebtor: ITableFinancialObligationsProps,
   ) => {
+    console.log("finantial obligation update: ", updatedDebtor);
+    console.log("selectedBorrowerIndex: ", selectedBorrowerIndex);
     if (services) {
       try {
         const borrowers = initialValues?.[0]?.borrowers || [];
@@ -218,7 +220,7 @@ export const TableFinancialObligations = (
           ...updatedProperties[obligationIndex],
           propertyValue: newPropertyValue,
         };
-
+        console.log("+++++ updatedProperties: ", updatedProperties);
         const updatedBorrower = {
           ...selectedBorrower,
           borrowerProperties: updatedProperties,
@@ -238,7 +240,7 @@ export const TableFinancialObligations = (
         onProspectUpdate?.();
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(`${error}`);
+        setMessageError(`Error al actualizar:  ${error}`);
       }
     } else {
       try {
