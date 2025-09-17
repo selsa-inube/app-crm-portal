@@ -51,6 +51,8 @@ interface SimulationsUIProps {
   businessUnitPublicCode: string;
   showErrorModal: boolean;
   messageError: string;
+  showDeleteModal: boolean;
+  setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
   setShowShareModal: (value: boolean) => void;
@@ -69,6 +71,7 @@ interface SimulationsUIProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   onProspectUpdated?: () => void;
+  handleDeleteProspect: () => void;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -90,6 +93,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
     businessUnitPublicCode,
     showErrorModal,
     messageError,
+    showDeleteModal,
+    setShowDeleteModal,
     setShowErrorModal,
     navigate,
     setShowShareModal,
@@ -103,6 +108,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     setShowCreditRequest,
     setProspectData,
     onProspectUpdated,
+    handleDeleteProspect,
   } = props;
 
   const getTotalLoanAmount = (data: IProspect | undefined): number => {
@@ -315,7 +321,11 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         justifyContent="end"
                         padding="0 0 16px 0"
                       >
-                        <Button appearance="danger" variant="outlined">
+                        <Button
+                          appearance="danger"
+                          variant="outlined"
+                          onClick={() => setShowDeleteModal(true)}
+                        >
                           {dataEditProspect.delete}
                         </Button>
                         <Stack gap="2px" alignItems="center">
@@ -420,6 +430,19 @@ export function SimulationsUI(props: SimulationsUIProps) {
           isMobile={isMobile}
           message={messageError}
         />
+      )}
+      {showDeleteModal && (
+        <BaseModal
+          title={dataEditProspect.deleteTitle}
+          handleBack={() => setShowDeleteModal(false)}
+          handleNext={handleDeleteProspect}
+          backButton="Cancelar"
+          nextButton="Eliminar"
+          apparenceNext="danger"
+          width={isMobile ? "300px" : "500px"}
+        >
+          <Text>{dataEditProspect.deleteDescription}</Text>
+        </BaseModal>
       )}
     </div>
   );

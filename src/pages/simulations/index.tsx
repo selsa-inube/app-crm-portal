@@ -14,6 +14,7 @@ import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleBy
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
+import { RemoveProspect } from "@services/prospect/removeProspect";
 
 import { ruleConfig } from "../applyForCredit/config/configRules";
 import { evaluateRule } from "../applyForCredit/evaluateRule";
@@ -25,7 +26,7 @@ export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [dataProspect, setDataProspect] = useState<IProspect>();
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -255,6 +256,25 @@ export function Simulations() {
     setIsModalOpen(true);
   };
 
+  const handleDeleteProspect = async () => {
+    if (!dataProspect) return;
+
+    try {
+      await RemoveProspect(businessUnitPublicCode, {
+        removeProspectsRequest: [
+          {
+            prospectId: dataProspect.prospectId,
+          },
+        ],
+      });
+
+      navigate("/credit/prospects");
+    } catch (error) {
+      setCodeError(1022);
+      setAddToFix([dataEditProspect.errorRemoveProspect]);
+    }
+  };
+
   return (
     <SimulationsUI
       dataHeader={dataHeader}
@@ -288,6 +308,9 @@ export function Simulations() {
       onProspectUpdated={fetchProspectData}
       businessUnitPublicCode={businessUnitPublicCode}
       navigate={navigate}
+      handleDeleteProspect={handleDeleteProspect}
+      showDeleteModal={showDeleteModal}
+      setShowDeleteModal={setShowDeleteModal}
     />
   );
 }
