@@ -193,6 +193,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     businessUnitPublicCode,
   } = props;
 
+  console.log("formData: ", formData);
+
   return (
     <>
       {codeError ? (
@@ -410,7 +412,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     stepsAddProspect.extraBorrowers.id && (
                     <ExtraDebtors
                       initialValues={
-                        formData.borrowerData as unknown as IDebtorDetail
+                        formData.borrowerData.borrowers
                       }
                       onFormValid={setIsCurrentFormValid}
                       handleOnChange={(newDestination) =>

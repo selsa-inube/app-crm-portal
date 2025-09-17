@@ -28,6 +28,7 @@ import { getAdditionalBorrowersAllowed } from "@services/lineOfCredit/getAdditio
 import { getExtraInstallmentsAllowed } from "@services/lineOfCredit/getExtraInstallmentsAllowed";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IValidateRequirement } from "@services/requirement/types";
+import { mockServiceResponse } from "../simulateCredit/steps/extraDebtors/realMock";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import {
@@ -41,7 +42,7 @@ import { evaluateRule } from "./evaluateRule";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
-    stepsAddProspect.generalInformation.id,
+    7
   );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
@@ -121,7 +122,7 @@ export function SimulateCredit() {
     generalToggleChecked: true,
     togglesState: [false, false, false, false],
     borrowerData: {
-      borrowers: {},
+      borrowers: mockServiceResponse,
     },
     extraordinaryInstallments: [],
     obligationsFinancial: clientPortfolio,
@@ -170,11 +171,7 @@ export function SimulateCredit() {
     ],
   };
   const simulateData: IProspect = {
-    borrowers: [
-      Object.keys(formData.borrowerData.borrowers).length === 0
-        ? onlyBorrowerData
-        : (formData.borrowerData.borrowers as unknown as IBorrower),
-    ],
+    borrowers: formData.borrowerData.borrowers,
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
@@ -712,7 +709,7 @@ export function SimulateCredit() {
           setValidateRequirements(data);
         }
       } catch (error) {
-        setShowErrorModal(true);
+        /* setShowErrorModal(true); */
       } finally {
         setIsLoading(false);
       }

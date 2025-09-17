@@ -36,7 +36,20 @@ export const MockDataDebtor = [
     Sex: "Masculino",
     Age: "30",
     Relation: "Hermano",
+    borrowerType: "MainBorrower",
   },
+  {
+    TypeDocument: "Cédula de ciudadanía",
+    NumberDocument: "52369453",
+    Name: "Luis Fernando",
+    LastName: "Alba Orjuela",
+    Email: "Albaorjuela@hotmail.com",
+    Number: "0000000",
+    Sex: "Masculino",
+    Age: "33",
+    Relation: "Hermano",
+    borrowerType: "Borrower",
+  }
 ];
 
 export const MockIncomeDebtor = [

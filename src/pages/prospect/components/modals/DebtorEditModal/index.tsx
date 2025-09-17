@@ -22,6 +22,8 @@ interface IDebtorEditModalProps {
 export function DebtorEditModal(props: IDebtorEditModalProps) {
   const { handleClose, isMobile, initialValues, onUpdate } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
+  const [editedBorrower, setEditedBorrower] = useState<IBorrower>(initialValues);
+
   const [incomeData, setIncomeData] = useState<IIncomeSources | undefined>(
     undefined,
   );
@@ -40,20 +42,43 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     });
   };
 
+  const handleDebtorDataChange = (fieldName: string, value: string) => {
+    const propertyMap: { [key: string]: string } = {
+      email: "email",
+      phone: "phone_number",
+      relation: "relationship",
+    };
+
+    const propertyToUpdate = propertyMap[fieldName];
+
+    if (propertyToUpdate) {
+      setEditedBorrower((prevState) => {
+        const newProperties = prevState.borrowerProperties.map((prop) => {
+          if (prop.propertyName === propertyToUpdate) {
+            return { ...prop, propertyValue: value };
+          }
+          return prop;
+        });
+        return { ...prevState, borrowerProperties: newProperties };
+      });
+
+      setIsModified(true);
+    }
+  };
+
   useEffect(() => {
     if (initialValues) {
       setIncomeData({
         identificationNumber: initialValues.borrowerIdentificationNumber,
         identificationType: initialValues.borrowerIdentificationType,
-        name: getPropertyValue(initialValues.borrowerProperties, "name") || "",
-        surname:
-          getPropertyValue(initialValues.borrowerProperties, "surname") || "",
+        name: initialValues.borrowerName,
+        surname: "",
         Leases: parseFloat(
           getPropertyValue(initialValues.borrowerProperties, "Leases") || "0",
         ),
         Dividends: parseFloat(
           getPropertyValue(initialValues.borrowerProperties, "Dividends") ||
-            "0",
+          "0",
         ),
         FinancialIncome: parseFloat(
           getPropertyValue(
@@ -133,19 +158,9 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   };
 
   const handleSave = () => {
-    if (!initialValues || !incomeData) return;
+    if (!initialValues || !incomeData || onUpdate === undefined) return;
 
-    const updatedProps = convertToPropertyArray(editedIncomeData ?? incomeData);
-
-    const updatedBorrower: IBorrower = {
-      ...initialValues,
-      borrowerProperties: mergeProperties(
-        initialValues.borrowerProperties,
-        updatedProps,
-      ),
-    };
-
-    onUpdate?.(updatedBorrower);
+    onUpdate(editedBorrower);
     handleFlag();
     handleClose();
   };
@@ -169,7 +184,11 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
           tabs={dataTabs}
           onChange={setCurrentTab}
         />
-        {currentTab === "data" && <DataDebtor data={initialValues} />}
+        {currentTab === "data" &&
+          <DataDebtor
+            data={editedBorrower}
+            onDataChange={handleDebtorDataChange}
+          />}
         {currentTab === "sources" && incomeData && (
           <SourceIncome
             data={incomeData}

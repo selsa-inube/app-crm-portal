@@ -18,52 +18,48 @@ export function DataDebtor(props: IDataDebtor) {
     <Stack direction="column" gap="12px">
       <CardGray
         label={dataDebtor.labelTypeDocument}
-        data={initialValues.borrowerIdentificationType}
+        data={initialValues.document}
       />
       <CardGray
         label={dataDebtor.labelNumberDocument}
-        data={initialValues.borrowerIdentificationNumber}
+        data={initialValues.documentNumber}
       />
       <CardGray
         label={dataDebtor.labelName}
-        data={getPropertyValue(initialValues.borrowerProperties, "name")}
+        data={initialValues.name}
       />
       <CardGray
         label={dataDebtor.labelLastName}
-        data={getPropertyValue(initialValues.borrowerProperties, "surname")}
+        data={initialValues.lastName}
       />
       <CardGray
         label={dataDebtor.labelEmail}
-        data={getPropertyValue(initialValues.borrowerProperties, "email")}
+        data={initialValues.email}
         apparencePlaceHolder="gray"
       />
       <CardGray
         label={dataDebtor.labelNumber}
-        data={getPropertyValue(
-          initialValues.borrowerProperties,
-          "phone_number",
-        )}
+        data={
+          initialValues.number
+        }
       />
       <CardGray
         label={dataDebtor.labelSex}
-        data={getPropertyValue(
-          initialValues.borrowerProperties,
-          "biological_sex",
-        )}
+        data={
+          initialValues.sex
+        }
       />
       <CardGray
         label={dataDebtor.labelAge}
-        data={getMonthsElapsed(
-          getPropertyValue(initialValues.borrowerProperties, "birth_date"),
-          0,
-        )}
+        data={
+          initialValues.age
+        }
       />
       <CardGray
         label={dataDebtor.labelRelation}
-        data={getPropertyValue(
-          initialValues.borrowerProperties,
-          "relationship",
-        )}
+        data={
+          initialValues.relation
+        }
       />
     </Stack>
   );

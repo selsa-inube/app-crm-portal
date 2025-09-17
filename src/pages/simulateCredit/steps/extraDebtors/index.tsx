@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import { MdAdd } from "react-icons/md";
 import { useParams } from "react-router-dom";
-import { FormikValues, useFormik } from "formik";
+import { FormikValues } from "formik";
 import { Stack, Grid, Button } from "@inubekit/inubekit";
 
 import { CardBorrower } from "@components/cards/CardBorrower";
@@ -11,48 +11,40 @@ import { DeleteModal } from "@components/modals/DeleteModal";
 import { DebtorAddModal } from "@pages/prospect/components/modals/DebtorAddModal";
 import { DebtorDetailsModal } from "@pages/prospect/components/modals/DebtorDetailsModal";
 import { DebtorEditModal } from "@pages/prospect/components/modals/DebtorEditModal";
-import { mockGuaranteeBorrower } from "@mocks/guarantee/offeredguarantee.mock";
 import { dataSubmitApplication } from "@pages/applyForCredit/config/config";
 import { choiceBorrowers } from "@mocks/filing-application/choice-borrowers/choiceborrowers.mock";
-import { MockDataDebtor } from "@mocks/filing-application/add-borrower/addborrower.mock";
 import { IBorrower, IProspect } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 
 import { dataExtraDebtors } from "./config";
+import { transformServiceData } from "./utils";
 
 interface IExtraDebtorsProps {
   isMobile: boolean;
   onFormValid: (isValid: boolean) => void;
-  initialValues: IDebtorDetail;
+  initialValues: IBorrower[];
   handleOnChange: (values: FormikValues) => void;
 }
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
   const { handleOnChange, initialValues, isMobile } = props;
+  const [borrowers, setBorrowers] = useState(() => transformServiceData(initialValues));
+  console.log("borrowers: ",borrowers);
+  const sortedBorrowers = useMemo(() => {
+    return [...borrowers].sort((a, b) => {
+      if (a.borrowerType === "MainBorrower") return -1;
+      if (b.borrowerType === "MainBorrower") return 1;
+      return 0;
+    });
+  }, [borrowers]);
 
-  const sortedBorrowers = [...mockGuaranteeBorrower].sort((a, b) => {
-    if (a.borrowerType === "MainBorrower") return -1;
-    if (b.borrowerType === "MainBorrower") return 1;
-    return 0;
-  });
 
-  const dataDebtorDetail = MockDataDebtor[0];
-  const initialBorrowers = mockGuaranteeBorrower.reduce(
+  const initialBorrowers = sortedBorrowers.reduce(
     (acc, item, index) => {
       acc[`borrower${index + 1}`] = {
         id: item.id,
         name: item.name,
-        debtorDetail: {
-          document: dataDebtorDetail?.TypeDocument || "",
-          documentNumber: dataDebtorDetail?.NumberDocument || "",
-          name: dataDebtorDetail?.Name || "",
-          lastName: dataDebtorDetail?.LastName || "",
-          email: dataDebtorDetail?.Email || "",
-          number: dataDebtorDetail?.Number || "",
-          sex: dataDebtorDetail?.Sex || "",
-          age: dataDebtorDetail?.Age || "",
-          relation: dataDebtorDetail?.Relation || "",
-        },
+        debtorDetail: item.debtorDetail,
       };
       return acc;
     },
@@ -66,7 +58,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     >,
   );
 
-  const formik = useFormik({
+  /* const formik = useFormik({
     initialValues: {
       ...initialValues,
       initialBorrowers,
@@ -83,13 +75,13 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
       },
     },
     validateOnMount: true,
-    onSubmit: () => {},
+    onSubmit: () => { },
   });
 
   useEffect(() => {
     handleOnChange(formik.values);
   }, [formik.values]);
-
+ */
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
   const [isModalEdit, setIsModalEdit] = useState(false);
@@ -110,8 +102,32 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
 
   const data =
     dataSubmitApplication[
-      userChoice === "borrowers" ? "borrowers" : "coBorrowers"
+    userChoice === "borrowers" ? "borrowers" : "coBorrowers"
     ];
+
+  const handleUpdateBorrower = (updatedBorrower: IBorrower) => {
+    const transformedUpdatedBorrowerArray = transformServiceData([updatedBorrower]);
+
+    if (transformedUpdatedBorrowerArray.length === 0) {
+      console.error("La transformación del deudor actualizado falló.");
+      return;
+    }
+    const transformedUpdatedBorrower = transformedUpdatedBorrowerArray[0];
+
+    const newBorrowers = borrowers.map((borrower) => {
+      if (borrower.id === updatedBorrower.borrowerIdentificationNumber) {
+        return transformedUpdatedBorrower;
+      }
+      return borrower;
+    });
+
+    setBorrowers(newBorrowers);
+
+    handleOnChange({
+      borrowers: newBorrowers,
+    });
+  };
+
 
   return (
     <Fieldset>
@@ -125,7 +141,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
           templateColumns={
             isMobile
               ? "1fr"
-              : `repeat(${mockGuaranteeBorrower.length + 1}, 317px)`
+              : `repeat(${sortedBorrowers.length + 1}, 317px)`
           }
           autoRows="auto"
           gap="20px"
@@ -144,22 +160,25 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                 const borrowerData = initialBorrowers[`borrower${index + 1}`];
                 if (borrowerData) {
                   setSelectedDebtorDetail(borrowerData.debtorDetail);
+                  setSelectedBorrowerForEdit(item.originalData);
                   setIsModalView(true);
                 }
               }}
               handleEdit={() => {
+                console.log(index + "indext" + sortedBorrowers, " initialBorrowers: ", initialBorrowers, `borrower${index + 1}`);
                 const borrowerData = initialBorrowers[`borrower${index + 1}`];
+                console.log(borrowerData, " deptor select:::: ", borrowerData.debtorDetail);
                 if (borrowerData) {
                   const borrowerForEdit: IBorrower = {
-                    ...borrowerData.debtorDetail,
                     id: borrowerData.id,
-                    borrowerName: "",
-                    borrowerType: "",
-                    borrowerIdentificationType: "",
-                    borrowerIdentificationNumber: "",
+                    borrowerName: borrowerData.name,
+                    borrowerType: borrowerData.debtorDetail.type,
+                    borrowerIdentificationType: borrowerData.debtorDetail.document,
+                    borrowerIdentificationNumber: borrowerData.debtorDetail.documentNumber,
                     borrowerProperties: [],
                   } as IBorrower;
-                  setSelectedBorrowerForEdit(borrowerForEdit);
+                  console.log("borrowerForEdit:: ", borrowerForEdit);
+                  setSelectedBorrowerForEdit(item.originalData);
                   setCurrentBorrowerIndex(index);
                   setIsModalEdit(true);
                 }
@@ -181,7 +200,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               onSubmit={() => setIsModalAdd(false)}
               handleClose={() => setIsModalAdd(false)}
               title={data.addButton}
-              onAddBorrower={() => {}}
+              onAddBorrower={() => { }}
               prospectData={{} as IProspect}
             />
           )}
@@ -194,12 +213,13 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               }}
               isMobile={isMobile}
               initialValues={selectedDebtorDetail}
+              allDetails={selectedBorrowerForEdit}
             />
           )}
 
           {isModalDelete && (
             <DeleteModal
-              handleClose={() => {
+              handleClose={() => {selectedDebtorDetail
                 setIsModalDelete(false);
                 setCurrentBorrowerIndex(null);
               }}
@@ -216,6 +236,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               isMobile={isMobile}
               initialValues={selectedBorrowerForEdit}
               currentBorrowerIndex={currentBorrowerIndex}
+              onUpdate={handleUpdateBorrower}
             />
           )}
         </Grid>
