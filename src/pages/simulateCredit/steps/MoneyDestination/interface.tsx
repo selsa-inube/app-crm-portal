@@ -3,59 +3,58 @@ import { Stack } from "@inubekit/inubekit";
 import { IMoneyDestination } from "@services/moneyDestination/types";
 import { MoneyDestinationCard } from "@components/cards/MoneyDestinationCard";
 import { Fieldset } from "@components/data/Fieldset";
-import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { CardDeployMoneyDestination } from "@components/cards/cardDeployMoneyDestination";
 
 interface MoneyDestinationUIProps {
-  destinations: IMoneyDestination[] | undefined;
   isTablet: boolean;
   selectedDestination: string;
   showErrorModal: boolean;
   messageError: string;
+  groupedDestinations: { [type: string]: IMoneyDestination[] };
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleChange: (value: string) => void;
 }
 
 function MoneyDestinationUI(props: MoneyDestinationUIProps) {
   const {
-    destinations,
     isTablet,
     selectedDestination,
     showErrorModal,
     messageError,
+    groupedDestinations,
     setShowErrorModal,
     handleChange,
   } = props;
+
   return (
     <>
       <Fieldset>
-        <Stack
-          direction="row"
-          gap="12px"
-          wrap="wrap"
-          justifyContent={isTablet ? "center" : "initial"}
-        >
-          {destinations &&
-            destinations.map((destination) => {
-              const translation = MoneyDestinationTranslations.find(
-                (item) => item.Code === destination.abbreviatedName,
-              );
-
-              return (
-                <MoneyDestinationCard
-                  key={destination.moneyDestinationId}
-                  id={destination.moneyDestinationId}
-                  name={destination.abbreviatedName}
-                  value={translation?.Description ?? destination.descriptionUse}
-                  label={destination.abbreviatedName}
-                  icon={translation?.Value ?? destination.iconReference}
-                  handleChange={() => handleChange(destination.abbreviatedName)}
-                  isSelected={
-                    selectedDestination === destination.abbreviatedName
-                  }
-                />
-              );
-            })}
+        <Stack direction="column" padding="0 16px">
+          {Object.entries(groupedDestinations).map(([type, group]) => (
+            <CardDeployMoneyDestination key={type} title={type}>
+              <Stack
+                direction="row"
+                wrap="wrap"
+                justifyContent={isTablet ? "center" : "initial"}
+                padding="0 8px"
+                gap="12px"
+              >
+                {group.map((money) => (
+                  <MoneyDestinationCard
+                    key={money.moneyDestinationId}
+                    id={money.moneyDestinationId}
+                    name={money.abbreviatedName}
+                    value={money.descriptionUse}
+                    label={money.abbreviatedName}
+                    icon={money.iconReference}
+                    handleChange={() => handleChange(money.abbreviatedName)}
+                    isSelected={selectedDestination === money.abbreviatedName}
+                  />
+                ))}
+              </Stack>
+            </CardDeployMoneyDestination>
+          ))}
         </Stack>
       </Fieldset>
       {showErrorModal && (
