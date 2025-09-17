@@ -359,5 +359,5 @@ export const tittleOptions = {
   editProduct: "Editar producto",
   save: "Guardar",
   deletedExpensesErrorDescription:
-    "¿Realmente desea eliminar el gasto descontable.",
+    "¿Realmente deseas eliminar el gasto descontable.",
 };

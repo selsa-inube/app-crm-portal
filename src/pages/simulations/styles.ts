@@ -1,6 +1,10 @@
 import styled from "styled-components";
 
 export const StyledPrint = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
   @media print {
     display: none;
   }
@@ -17,5 +21,15 @@ export const StyledMarginPrint = styled.div`
       margin: 1in 0.6in 1in 0.75in;
     }
     margin: -28px 0 0 0;
+  }
+`;
+
+export const StyledScrollPrint = styled.div`
+  @media print {
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    overflow: hidden !important;
   }
 `;

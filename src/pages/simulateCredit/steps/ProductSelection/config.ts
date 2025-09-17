@@ -1,5 +1,5 @@
 export const electionData = {
-  title: "¿Prefiere que el sistema sugiera el producto?",
+  title: "¿Prefieres que el sistema sugiera el producto?",
   information: "Información",
   understood: "Entendido",
   informationDescription: {

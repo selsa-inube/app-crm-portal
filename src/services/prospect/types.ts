@@ -203,3 +203,15 @@ export interface IRefactorIncome {
   justification: string;
   prospectCode: string;
 }
+
+export interface IRemoveProspect {
+  removeProspectsRequest: [
+    {
+      prospectId: string;
+    },
+  ];
+}
+
+export interface IRemoveProspectResponse {
+  prospectId: string;
+}

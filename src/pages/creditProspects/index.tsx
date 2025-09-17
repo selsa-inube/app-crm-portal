@@ -17,6 +17,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
+import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
@@ -56,8 +57,35 @@ export function CreditProspects() {
   const [commentsByProspectId, setCommentsByProspectId] = useState<
     Record<string, string>
   >({});
+  const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
+
+  const handleDeleteProspect = async () => {
+    if (!selectedProspect) return;
+
+    try {
+      await RemoveProspect(businessUnitPublicCode, {
+        removeProspectsRequest: [
+          {
+            prospectId: selectedProspect.prospectId,
+          },
+        ],
+      });
+
+      setProspectSummaryData((prev) =>
+        prev.filter(
+          (prospect) => prospect.prospectId !== selectedProspect.prospectId,
+        ),
+      );
+
+      setShowDeleteModal(false);
+      setSelectedProspect(null);
+    } catch (error) {
+      setCodeError(1022);
+      setAddToFix([dataCreditProspects.errorRemoveProspect]);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +110,33 @@ export function CreditProspects() {
       fetchData();
     }
   }, [businessUnitPublicCode, customerData?.publicCode]);
+
+  const filteredProspects = prospectSummaryData.filter((prospect) => {
+    const borrowerName =
+      prospect.borrowers[0]?.borrowerName?.toLowerCase() || "";
+    const prospectCode = prospect.prospectCode?.toLowerCase() || "";
+    const creationDate = prospect.timeOfCreation
+      ? new Date(prospect.timeOfCreation)
+          .toLocaleDateString("es-CO", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+          .toLowerCase()
+      : "";
+    const requestedAmount = String(
+      prospect.requestedAmount || "",
+    ).toLowerCase();
+
+    const term = searchTerm.toLowerCase();
+
+    return (
+      borrowerName.includes(term) ||
+      prospectCode.includes(term) ||
+      creationDate.includes(term) ||
+      requestedAmount.includes(term)
+    );
+  });
 
   return (
     <>
@@ -130,6 +185,8 @@ export function CreditProspects() {
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
                   fullwidth={isMobile}
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
                 />
                 <Button
                   iconBefore={<MdAdd />}
@@ -145,7 +202,7 @@ export function CreditProspects() {
                 gap="20px"
                 justifyContent={isMobile ? "center" : "flex-start"}
               >
-                {prospectSummaryData.map((prospect) => (
+                {filteredProspects.map((prospect) => (
                   <CardCreditProspect
                     key={prospect.prospectId}
                     title={
@@ -176,7 +233,10 @@ export function CreditProspects() {
                     handleEdit={() =>
                       navigate(`/credit/prospects/${prospect.prospectCode}`)
                     }
-                    handleDelete={() => setShowDeleteModal(true)}
+                    handleDelete={() => {
+                      setSelectedProspect(prospect);
+                      setShowDeleteModal(true);
+                    }}
                   />
                 ))}
               </Stack>
@@ -284,6 +344,7 @@ export function CreditProspects() {
             <BaseModal
               title={dataCreditProspects.deleteTitle}
               handleBack={() => setShowDeleteModal(false)}
+              handleNext={handleDeleteProspect}
               backButton="Cancelar"
               nextButton="Eliminar"
               apparenceNext="danger"

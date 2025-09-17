@@ -136,7 +136,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   const handleHome = () => {
     navigate(`/credit/prospects/${prospectCode}`);
   };
-
   return (
     <>
       {codeError ? (
@@ -341,6 +340,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     }
                     customerData={customerData}
                     prospectData={prospectData}
+                    businessUnitPublicCode={businessUnitPublicCode}
                   />
                 )}
               {currentStepsNumber &&

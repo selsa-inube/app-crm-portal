@@ -37,12 +37,12 @@ export const dataReport = {
   close: "Cerrar",
   restore: "Restablecer",
   descriptionModal:
-    "¿Realmente desea restablecer los valores a su estado inicial?",
+    "¿Realmente deseas restablecer los valores a su estado inicial?",
   save: "Guardar",
   edit: "Editar",
   deletion: "Eliminación",
   delete: "Eliminar",
-  content: "¿Realmente desea eliminar esta obligación?",
+  content: "¿Realmente deseas eliminar esta obligación?",
   cancel: "Cancelar",
   errorIncome: "Error al restablecer las fuentes de ingresos",
 };
