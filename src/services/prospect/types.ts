@@ -185,3 +185,15 @@ export interface IProspectBorrower {
   creditProducts: ICreditProduct[];
   outlays: IOutlay[];
 }
+
+export interface IRemoveProspect {
+  removeProspectsRequest: [
+    {
+      prospectId: string;
+    },
+  ];
+}
+
+export interface IRemoveProspectResponse {
+  prospectId: string;
+}
