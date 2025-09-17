@@ -13,6 +13,7 @@ interface IncomeModalProps {
   handleClose: () => void;
   onSubmit: (updatedData: IIncomeSources) => void;
   openModal?: (state: boolean) => void;
+  businessUnitPublicCode: string;
   initialValues?: IIncomeSources;
   disabled?: boolean;
   dataValues?: IIncome | null;
@@ -24,6 +25,7 @@ interface IncomeModalProps {
   }[];
   selectedIndex?: number;
   creditLimitData?: IIncomeSources | undefined;
+  publicCode?: string;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
@@ -31,10 +33,13 @@ export function IncomeModal(props: IncomeModalProps) {
     handleClose,
     openModal,
     disabled,
+    businessUnitPublicCode,
     initialValues,
     onSubmit,
     borrowerOptions,
     selectedIndex,
+    customerData,
+    publicCode,
   } = props;
 
   const [formData, setFormData] = useState(initialValues);
@@ -101,11 +106,13 @@ export function IncomeModal(props: IncomeModalProps) {
         showEdit={false}
         onDataChange={handleDataChange}
         onRestore={restoreData}
-        customerData={props.customerData}
+        customerData={customerData}
         borrowerOptions={borrowerOptions}
         selectedIndex={selectedIndex}
         showErrorModal={showErrorModal}
         messageError={messageError}
+        publicCode={publicCode || ""}
+        businessUnitPublicCode={businessUnitPublicCode}
       />
     </BaseModal>
   );

@@ -12,15 +12,24 @@ import { dataEditDebtor, dataTabs, dataReport } from "./config";
 import { DataDebtor } from "./dataDebtor";
 
 interface IDebtorEditModalProps {
-  handleClose: () => void;
   isMobile: boolean;
   initialValues: IBorrower;
-  onUpdate?: (updatedBorrower: IBorrower) => void;
   currentBorrowerIndex?: number | null;
+  publicCode?: string;
+  businessUnitPublicCode: string;
+  handleClose: () => void;
+  onUpdate?: (updatedBorrower: IBorrower) => void;
 }
 
 export function DebtorEditModal(props: IDebtorEditModalProps) {
-  const { handleClose, isMobile, initialValues, onUpdate } = props;
+  const {
+    isMobile,
+    initialValues,
+    publicCode,
+    businessUnitPublicCode,
+    handleClose,
+    onUpdate,
+  } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const [incomeData, setIncomeData] = useState<IIncomeSources | undefined>(
     undefined,
@@ -178,6 +187,8 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
               setIsModified(true);
               setEditedIncomeData(newIncome);
             }}
+            publicCode={publicCode}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
         {currentTab === "obligations" && (

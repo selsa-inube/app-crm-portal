@@ -417,6 +417,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         handleFormDataChange("borrowerData", newDestination)
                       }
                       isMobile={isMobile}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -435,6 +436,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       customerData={customerData}
                       creditLimitData={creditLimitData}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 {currentStepsNumber &&

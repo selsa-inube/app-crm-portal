@@ -219,6 +219,7 @@ export function Borrowers(props: borrowersProps) {
                   );
                   formik.setFieldValue("borrowers", updatedBorrowers);
                 }}
+                businessUnitPublicCode={businessUnitPublicCode}
               />
             )}
           </Stack>
