@@ -13,6 +13,7 @@ interface IncomeModalProps {
   handleClose: () => void;
   onSubmit: (updatedData: IIncomeSources) => void;
   openModal?: (state: boolean) => void;
+  businessUnitPublicCode: string;
   initialValues?: IIncomeSources;
   disabled?: boolean;
   dataValues?: IIncome | null;
@@ -32,6 +33,7 @@ export function IncomeModal(props: IncomeModalProps) {
     handleClose,
     openModal,
     disabled,
+    businessUnitPublicCode,
     initialValues,
     onSubmit,
     borrowerOptions,
@@ -110,6 +112,7 @@ export function IncomeModal(props: IncomeModalProps) {
         showErrorModal={showErrorModal}
         messageError={messageError}
         publicCode={publicCode || ""}
+        businessUnitPublicCode={businessUnitPublicCode}
       />
     </BaseModal>
   );

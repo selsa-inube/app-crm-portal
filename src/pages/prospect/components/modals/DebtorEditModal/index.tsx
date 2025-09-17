@@ -16,12 +16,20 @@ interface IDebtorEditModalProps {
   initialValues: IBorrower;
   currentBorrowerIndex?: number | null;
   publicCode?: string;
+  businessUnitPublicCode: string;
   handleClose: () => void;
   onUpdate?: (updatedBorrower: IBorrower) => void;
 }
 
 export function DebtorEditModal(props: IDebtorEditModalProps) {
-  const { isMobile, initialValues, publicCode, handleClose, onUpdate } = props;
+  const {
+    isMobile,
+    initialValues,
+    publicCode,
+    businessUnitPublicCode,
+    handleClose,
+    onUpdate,
+  } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const [incomeData, setIncomeData] = useState<IIncomeSources | undefined>(
     undefined,
@@ -180,6 +188,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
               setEditedIncomeData(newIncome);
             }}
             publicCode={publicCode}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
         {currentTab === "obligations" && (

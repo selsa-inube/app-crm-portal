@@ -656,6 +656,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             selectedIndex={selectedIndex}
             creditLimitData={creditLimitData}
             publicCode={borrowerOptions[selectedIndex]?.publicCode || ""}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
         {currentModal === "reportCreditsModal" && (

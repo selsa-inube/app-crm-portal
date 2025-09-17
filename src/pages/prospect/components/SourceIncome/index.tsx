@@ -45,6 +45,7 @@ interface ISourceIncomeProps {
   showErrorModal?: boolean;
   messageError?: string;
   publicCode?: string;
+  businessUnitPublicCode: string;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -60,6 +61,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     initialDataForRestore,
     borrowerOptions,
     publicCode,
+    businessUnitPublicCode,
     onRestore,
   } = props;
 
@@ -229,7 +231,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
     try {
       const response = await restoreIncomeInformationByBorrowerId(
-        "fondecom",
+        businessUnitPublicCode || "",
         body,
       );
       if (response && response.income) {
@@ -393,6 +395,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
           dataValues={dataValues}
           customerData={customerData}
           borrowerOptions={borrowerOptions}
+          businessUnitPublicCode={businessUnitPublicCode}
         />
       )}
       {showErrorModal && (
