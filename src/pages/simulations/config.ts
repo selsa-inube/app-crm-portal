@@ -53,3 +53,10 @@ export const titlesModal = {
   titleSubmitted: "El prospecto ya se encuentra radicado.",
   textButtonNext: "Entendido",
 };
+
+export const labelsAndValuesShare = {
+  titleOnPdf: "Gestión Comercial",
+  fileName: "reporte_comercial.pdf",
+  text: "Reporte Comercial para compartir",
+  error: "No se pudo compartir el PDF",
+};

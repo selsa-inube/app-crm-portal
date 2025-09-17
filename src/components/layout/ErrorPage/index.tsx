@@ -128,7 +128,7 @@ function ErrorPage(props: ErrorPageProps) {
 
                 <Stack direction="column" gap="24px" width="100%">
                   <Text type="headline" size="medium" weight="bold">
-                    ¿Cómo solucionarlo?
+                    ¿Cómo puedes solucionarlo?
                   </Text>
                   <StyledDiv>
                     <ListContent
