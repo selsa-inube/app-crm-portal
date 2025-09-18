@@ -10,6 +10,8 @@ import { IIncomeSources } from "@services/creditLimit/types";
 
 import { dataEditDebtor, dataTabs, dataReport } from "./config";
 import { DataDebtor } from "./dataDebtor";
+import { transformFinancialObligations, updateBorrowerPropertiesWithNewObligations } from "./utils";
+import { IObligations } from "../../TableObligationsFinancial/types";
 
 interface IDebtorEditModalProps {
   handleClose: () => void;
@@ -32,6 +34,10 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   const [isModified, setIsModified] = useState(false);
 
   const { addFlag } = useFlag();
+
+  useEffect(() => {
+    setEditedBorrower(initialValues);
+  }, [initialValues]);
 
   const handleFlag = () => {
     addFlag({
@@ -165,6 +171,24 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     handleClose();
   };
 
+  const handleOnChange = (newObligations: IObligations[]) => {
+    const editedBorrower = updateBorrowerPropertiesWithNewObligations(newObligations, initialValues.borrowerProperties);
+
+    if (onUpdate === undefined) return;
+
+    onUpdate({
+      ...initialValues,
+      borrowerProperties: editedBorrower
+    });
+
+    setEditedBorrower({
+      ...initialValues,
+      borrowerProperties: editedBorrower
+    });
+    
+    setIsModified(true);
+  };
+
   return (
     <BaseModal
       title={dataEditDebtor.title}
@@ -201,8 +225,10 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
         )}
         {currentTab === "obligations" && (
           <TableFinancialObligations
-            initialValues={initialValues}
+            initialValues={transformFinancialObligations(editedBorrower.borrowerProperties)}
             showActions={true}
+            services={false}
+            handleOnChangeExtraBorrowers={handleOnChange}
           />
         )}
       </Stack>

@@ -1,4 +1,6 @@
 import { IBorrower } from "@services/prospect/types";
+import { transformFinancialObligations } from "@pages/prospect/components/modals/DebtorEditModal/utils";
+import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types.ts"
 
 import { IFormData } from "./../../../simulateCredit/types";
 import { IDebtorDetail } from "./../../../applyForCredit/types";
@@ -19,7 +21,7 @@ export function transformServiceData(serviceData: IBorrower[]): ITransformedBorr
   if (!serviceData || !Array.isArray(serviceData)) {
     return [];
   }
-
+  console.log("serviceData: ", serviceData);
   return serviceData.map((serviceBorrower) => {
 
     const properties = serviceBorrower.borrowerProperties.reduce((acc, prop) => {
@@ -84,9 +86,7 @@ export function transformServiceData(serviceData: IBorrower[]): ITransformedBorr
 
 export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IBorrower {
   const borrowerProperties: { propertyName: string; propertyValue: string }[] = [];
-  console.log("--------------holaaaaaaa------------------------")
-  console.log(formData);
-  console.log(formData.obligationsFinancial);
+
   if (Array.isArray(formData.obligationsFinancial)) {
     const financialObligations = formData.obligationsFinancial.map((obligation) => {
       const propertyValue = [
@@ -136,4 +136,21 @@ export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IB
   };
 
   return mainBorrower;
+}
+
+export const updateFinancialObligationsFormData = (borrowers: IBorrower[]) => {
+    let transformedObligations: IObligations[] = [];
+
+    borrowers.map((borrower) => {
+        if (borrower.borrowerType === "MainBorrower") {
+            const obligations = transformFinancialObligations(borrower.borrowerProperties);
+
+            transformedObligations = obligations.map((obligation) => ({
+                ...obligation,
+                nextPaymentValueTotal: Number(obligation.nextPaymentValueTotal) || 0, 
+            }));
+        }
+    });
+
+    return transformedObligations;
 }

@@ -26,6 +26,7 @@ export const TableFinancialObligations = (
     showButtons,
     formState,
     services = true,
+    handleOnChangeExtraBorrowers,
   } = props;
   const [loading] = useState(false);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
@@ -165,7 +166,7 @@ export const TableFinancialObligations = (
           typeof id === "string" ? id.split(",")[5]?.trim() : undefined;
 
         if (!obligationNumberFromRow) return;
-
+        
         const currentObligations = Array.isArray(initialValues)
           ? [...initialValues]
           : initialValues
@@ -189,8 +190,6 @@ export const TableFinancialObligations = (
   const handleUpdate = async (
     updatedDebtor: ITableFinancialObligationsProps,
   ) => {
-    console.log("finantial obligation update: ", updatedDebtor);
-    console.log("selectedBorrowerIndex: ", selectedBorrowerIndex);
     if (services) {
       try {
         const borrowers = initialValues?.[0]?.borrowers || [];
@@ -201,7 +200,7 @@ export const TableFinancialObligations = (
             prop.propertyName === "FinancialObligation" &&
             prop.propertyValue === selectedBorrower?.propertyValue,
         );
-
+        
         if (obligationIndex === -1) return;
 
         const originalValues = selectedBorrower?.propertyValue
@@ -220,7 +219,7 @@ export const TableFinancialObligations = (
           ...updatedProperties[obligationIndex],
           propertyValue: newPropertyValue,
         };
-        console.log("+++++ updatedProperties: ", updatedProperties);
+
         const updatedBorrower = {
           ...selectedBorrower,
           borrowerProperties: updatedProperties,
@@ -240,7 +239,7 @@ export const TableFinancialObligations = (
         onProspectUpdate?.();
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(`Error al actualizar:  ${error}`);
+        setMessageError(`(1) Error al actualizar:  ${error}`);
       }
     } else {
       try {
@@ -255,7 +254,7 @@ export const TableFinancialObligations = (
             obligation.obligationNumber ===
             updatedDebtor.propertyValue?.split(",")[5].trim(),
         );
-
+        
         if (obligationIndex === -1) return;
 
         const updatedObligation = {
@@ -274,6 +273,10 @@ export const TableFinancialObligations = (
         handleOnChange(updatedInitialValues);
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
+
+        if(handleOnChangeExtraBorrowers === undefined) return;
+
+        handleOnChangeExtraBorrowers(updatedInitialValues);
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);

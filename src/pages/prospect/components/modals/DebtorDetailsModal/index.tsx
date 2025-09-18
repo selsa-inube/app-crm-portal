@@ -21,7 +21,6 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
   const { handleClose, initialValues, isMobile, allDetails } = props;
 
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
-  console.log("DebtorDetailsModal: ",allDetails);
   const onChange = (tabId: string) => {
     setCurrentTab(tabId);
   };

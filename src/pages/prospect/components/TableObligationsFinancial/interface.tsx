@@ -40,6 +40,7 @@ import { usePagination } from "./utils";
 import { dataReport } from "./config";
 import { IBorrowerDataFinancial } from "./types";
 import { ErrorModal } from "@src/components/modals/ErrorModal";
+import { IObligations as IObligationsFinancial } from "./types";
 
 export interface ITableFinancialObligationsProps {
   type?: string;
@@ -79,6 +80,7 @@ export interface ITableFinancialObligationsProps {
     term: string;
     idUser: string;
   };
+  handleOnChangeExtraBorrowers?: (newObligations: IObligationsFinancial[]) => void;
 }
 
 export interface IDataInformationItem {
@@ -229,7 +231,7 @@ export const TableFinancialObligationsUI = ({
   const mapToTableFinancialObligationsProps = (
     item: IDataInformationItem,
   ): ITableFinancialObligationsProps => {
-    console.log("item:: ", item);
+
     return {
       id: item.id,
       type: item.type,
@@ -345,7 +347,7 @@ export const TableFinancialObligationsUI = ({
 
   const renderDataRows = () =>
     paddedCurrentData.map((prop: IDataInformationItem, rowIndex: number) => {
-      console.log("prop:: ", paddedCurrentData);
+
       if (prop.__isPadding) {
         return (
           <Tr key={prop.id}>
@@ -369,7 +371,7 @@ export const TableFinancialObligationsUI = ({
           .filter(([key]) => key !== "id")
           .map(([, value]) => String(value).trim());
       }
-
+      console.log("############# ",prop);
       return (
         <Tr key={rowIndex}>
           {visibleHeaders.map((header, colIndex) => {

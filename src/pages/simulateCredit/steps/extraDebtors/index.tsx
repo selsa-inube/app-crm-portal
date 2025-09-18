@@ -111,9 +111,8 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
 
   const handleUpdateBorrower = (updatedBorrower: IBorrower) => {
     const transformedUpdatedBorrowerArray = transformServiceData([updatedBorrower]);
-
+    
     if (transformedUpdatedBorrowerArray.length === 0) {
-      console.error("La transformación del deudor actualizado falló.");
       return;
     }
     const transformedUpdatedBorrower = transformedUpdatedBorrowerArray[0];
@@ -127,11 +126,14 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
 
     setBorrowers(newBorrowers);
 
+    const newBorrowersArray = newBorrowers.map((borrower) => {
+      return borrower.originalData
+    });
+
     handleOnChange({
-      borrowers: newBorrowers,
+      borrowers: newBorrowersArray,
     });
   };
-
 
   return (
     <Fieldset>
@@ -169,9 +171,8 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                 }
               }}
               handleEdit={() => {
-                console.log(index + "indext" + sortedBorrowers, " initialBorrowers: ", initialBorrowers, `borrower${index + 1}`);
                 const borrowerData = initialBorrowers[`borrower${index + 1}`];
-                console.log(borrowerData, " deptor select:::: ", borrowerData.debtorDetail);
+
                 if (borrowerData) {
                   const borrowerForEdit: IBorrower = {
                     id: borrowerData.id,
@@ -181,7 +182,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                     borrowerIdentificationNumber: borrowerData.debtorDetail.documentNumber,
                     borrowerProperties: [],
                   } as IBorrower;
-                  console.log("borrowerForEdit:: ", borrowerForEdit);
+
                   setSelectedBorrowerForEdit(item.originalData);
                   setCurrentBorrowerIndex(index);
                   setIsModalEdit(true);

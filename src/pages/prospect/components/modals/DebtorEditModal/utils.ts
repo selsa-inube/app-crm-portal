@@ -1,6 +1,7 @@
-import { IFormData } from "../../../../simulateCredit/types";
+import { IBorrower, IBorrowerProperty } from "@services/creditLimit/types";
 
-import { IBorrower } from "@services/creditLimit/types";
+import { IObligations } from "../../TableObligationsFinancial/types";
+import { IFormData } from "../../../../simulateCredit/types";
 
 export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IBorrower {
     const borrowerProperties: { propertyName: string; propertyValue: string }[] = [];
@@ -66,7 +67,69 @@ export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IB
         borrowerProperties: borrowerProperties,
     };
 
-    console.log("mainBorrower: ", mainBorrower);
-
     return mainBorrower;
+}
+
+export const transformFinancialObligations = (borrowerProperties:IBorrowerProperty[])  => {
+
+  const obligationProperties = borrowerProperties.filter(
+    (prop) => prop.propertyName === 'FinancialObligation'
+  );
+
+  const transformedObligations = obligationProperties.map((prop) => {
+    const parts = prop.propertyValue.split(',').map(part => part.trim());
+
+    const [
+      productName,
+      balanceObligationTotalStr,
+      nextPaymentValueTotal,
+      entity,
+      paymentMethodName,
+      obligationNumber,
+      duesPaidStr,
+      outstandingDuesStr,
+    ] = parts;
+
+    return {
+      productName: productName,
+      balanceObligationTotal: parseFloat(balanceObligationTotalStr) || 0,
+      nextPaymentValueTotal: nextPaymentValueTotal, 
+      entity: entity,
+      paymentMethodName: paymentMethodName,
+      obligationNumber: obligationNumber,
+      duesPaid: parseInt(duesPaidStr, 10) || 0,
+      outstandingDues: parseInt(outstandingDuesStr, 10) || 0,
+    };
+  });
+
+  return transformedObligations;
+}
+
+export const updateBorrowerPropertiesWithNewObligations = (newObligations: IObligations[], originalBorrowerProperties: IBorrowerProperty[]) => {
+  const otherProperties = originalBorrowerProperties.filter(
+    (prop) => prop.propertyName !== 'FinancialObligation'
+  );
+  console.log("updateBorrowerPropertiesWithNewObligations:::  ", newObligations)
+  const newFinancialObligationProperties = newObligations.map((obligation: IObligations) => {
+
+    const propertyValue = [
+      obligation.productName,
+      obligation.balanceObligationTotal,
+      obligation.nextPaymentValueTotal,
+      obligation.entity,
+      obligation.paymentMethodName,
+      obligation.obligationNumber,
+      obligation.duesPaid,
+      
+    ].join(',');
+
+    return {
+      propertyName: 'FinancialObligation',
+      propertyValue: propertyValue,
+    };
+  });
+
+  console.log("newFinancialObligationProperties: ",[...newFinancialObligationProperties, ...otherProperties] );
+
+  return [...newFinancialObligationProperties, ...otherProperties];
 }

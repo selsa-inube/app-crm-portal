@@ -21,14 +21,13 @@ import {
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
 
-import { IBorrower, IProspect } from "@services/prospect/types";
+import { IProspect } from "@services/prospect/types";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 import { getFinancialObligationsUpdate } from "@services/lineOfCredit/getFinancialObligationsUpdate";
 import { getAdditionalBorrowersAllowed } from "@services/lineOfCredit/getAdditionalBorrowersAllowed";
 import { getExtraInstallmentsAllowed } from "@services/lineOfCredit/getExtraInstallmentsAllowed";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IValidateRequirement } from "@services/requirement/types";
-import { mockServiceResponse } from "../simulateCredit/steps/extraDebtors/realMock";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import {
