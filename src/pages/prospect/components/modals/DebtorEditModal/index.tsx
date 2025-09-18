@@ -172,6 +172,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   };
 
   const handleOnChange = (newObligations: IObligations[]) => {
+    
     const editedBorrower = updateBorrowerPropertiesWithNewObligations(newObligations, initialValues.borrowerProperties);
 
     if (onUpdate === undefined) return;

@@ -754,7 +754,7 @@ export function SimulateCredit() {
       handleFormDataChange("borrowerData", { borrowers: updatedBorrowers });
     }
   }, [currentStepsNumber, formData]);
-
+  console.log("formData: ",formData);
   return (
     <>
       <SimulateCreditUI

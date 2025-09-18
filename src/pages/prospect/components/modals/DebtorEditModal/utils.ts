@@ -70,66 +70,71 @@ export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IB
     return mainBorrower;
 }
 
-export const transformFinancialObligations = (borrowerProperties:IBorrowerProperty[])  => {
+export const transformFinancialObligations = (borrowerProperties: IBorrowerProperty[]) => {
 
-  const obligationProperties = borrowerProperties.filter(
-    (prop) => prop.propertyName === 'FinancialObligation'
-  );
+    const obligationProperties = borrowerProperties.filter(
+        (prop) => prop.propertyName === 'FinancialObligation'
+    );
 
-  const transformedObligations = obligationProperties.map((prop) => {
-    const parts = prop.propertyValue.split(',').map(part => part.trim());
+    const transformedObligations = obligationProperties.map((prop) => {
+        const parts = prop.propertyValue.split(',').map(part => part.trim());
 
-    const [
-      productName,
-      balanceObligationTotalStr,
-      nextPaymentValueTotal,
-      entity,
-      paymentMethodName,
-      obligationNumber,
-      duesPaidStr,
-      outstandingDuesStr,
-    ] = parts;
+        const [
+            productName,
+            balanceObligationTotalStr,
+            nextPaymentValueTotal,
+            entity,
+            paymentMethodName,
+            obligationNumber,
+            duesPaidStr,
+            outstandingDuesStr,
+        ] = parts;
 
-    return {
-      productName: productName,
-      balanceObligationTotal: parseFloat(balanceObligationTotalStr) || 0,
-      nextPaymentValueTotal: nextPaymentValueTotal, 
-      entity: entity,
-      paymentMethodName: paymentMethodName,
-      obligationNumber: obligationNumber,
-      duesPaid: parseInt(duesPaidStr, 10) || 0,
-      outstandingDues: parseInt(outstandingDuesStr, 10) || 0,
-    };
-  });
+        return {
+            productName: productName,
+            balanceObligationTotal: parseFloat(balanceObligationTotalStr) || 0,
+            nextPaymentValueTotal: nextPaymentValueTotal,
+            entity: entity,
+            paymentMethodName: paymentMethodName,
+            obligationNumber: obligationNumber,
+            duesPaid: parseInt(duesPaidStr, 10) || 0,
+            outstandingDues: parseInt(outstandingDuesStr, 10) || 0,
+        };
+    });
 
-  return transformedObligations;
+    return transformedObligations;
 }
 
 export const updateBorrowerPropertiesWithNewObligations = (newObligations: IObligations[], originalBorrowerProperties: IBorrowerProperty[]) => {
-  const otherProperties = originalBorrowerProperties.filter(
-    (prop) => prop.propertyName !== 'FinancialObligation'
-  );
-  console.log("updateBorrowerPropertiesWithNewObligations:::  ", newObligations)
-  const newFinancialObligationProperties = newObligations.map((obligation: IObligations) => {
+    const otherProperties = originalBorrowerProperties.filter(
+        (prop) => prop.propertyName !== 'FinancialObligation'
+    );
 
-    const propertyValue = [
-      obligation.productName,
-      obligation.balanceObligationTotal,
-      obligation.nextPaymentValueTotal,
-      obligation.entity,
-      obligation.paymentMethodName,
-      obligation.obligationNumber,
-      obligation.duesPaid,
-      
-    ].join(',');
+    const newFinancialObligationProperties = newObligations.map((obligation: IObligations) => {
 
-    return {
-      propertyName: 'FinancialObligation',
-      propertyValue: propertyValue,
-    };
-  });
+        const unformatCurrency = (value: any): string => {
+            if (value === undefined || value === null) return "0";
+            return String(value).replace(/\D/g, "");
+        };
 
-  console.log("newFinancialObligationProperties: ",[...newFinancialObligationProperties, ...otherProperties] );
+        const propertyValue = [
+            obligation.productName,
+            unformatCurrency(obligation.balanceObligationTotal),
+            unformatCurrency(obligation.nextPaymentValueTotal),
+            obligation.entity,
+            obligation.paymentMethodName,
+            obligation.obligationNumber,
+            obligation.duesPaid,
+            obligation.outstandingDues
+        ].join(',');
 
-  return [...newFinancialObligationProperties, ...otherProperties];
+        return {
+            propertyName: 'FinancialObligation',
+            propertyValue: propertyValue,
+        };
+    });
+
+    console.log("newFinancialObligationProperties: ", [...newFinancialObligationProperties, ...otherProperties]);
+
+    return [...newFinancialObligationProperties, ...otherProperties];
 }
