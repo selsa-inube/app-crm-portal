@@ -41,7 +41,9 @@ import { evaluateRule } from "./evaluateRule";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 
 export function SimulateCredit() {
-  const [currentStep, setCurrentStep] = useState<number>(6);
+  const [currentStep, setCurrentStep] = useState<number>(
+    stepsAddProspect.generalInformation.id,
+  );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isAlertIncome, setIsAlertIncome] = useState(false);
