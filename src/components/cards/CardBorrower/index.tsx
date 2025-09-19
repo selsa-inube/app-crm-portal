@@ -7,8 +7,6 @@ import {
   MdOutlineRemoveRedEye,
 } from "react-icons/md";
 
-import { EBorrowerType } from "@pages/simulateCredit/steps/extraDebtors/config";
-
 import { StyledContainer } from "./styles";
 import { newBorrowedDAta } from "./config";
 
