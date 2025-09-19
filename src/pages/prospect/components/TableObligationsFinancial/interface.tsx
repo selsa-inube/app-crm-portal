@@ -434,7 +434,6 @@ export const TableFinancialObligationsUI = ({
         </Tr>
       );
     });
-  console.log("handleOnChangeExtraBorrowers: ", handleOnChangeExtraBorrowers);
   return (
     <Stack
       direction="column"

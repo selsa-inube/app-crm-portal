@@ -240,7 +240,7 @@ export const TableFinancialObligations = (
         onProspectUpdate?.();
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(`(1) Error al actualizar:  ${error}`);
+        setMessageError(`Error al actualizar:  ${error}`);
       }
     } else {
       try {

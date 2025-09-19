@@ -39,9 +39,9 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
   }, [initialValues]);
 
   const sortedBorrowers = useMemo(() => {
-    return [...borrowers].sort((a, b) => {
-      if (a.borrowerType === "MainBorrower") return -1;
-      if (b.borrowerType === "MainBorrower") return 1;
+    return [...borrowers].sort((borrowerA, borrowerB) => {
+      if (borrowerA.borrowerType === "MainBorrower") return -1;
+      if (borrowerB.borrowerType === "MainBorrower") return 1;
       return 0;
     });
   }, [borrowers]);

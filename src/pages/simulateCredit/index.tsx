@@ -740,7 +740,7 @@ export function SimulateCredit() {
       );
 
       const currentMainBorrower = formData.borrowerData.borrowers.find(
-        (b) => b.borrowerType === "MainBorrower",
+        (borrower) => borrower.borrowerType === "MainBorrower",
       );
 
       if (
@@ -750,11 +750,11 @@ export function SimulateCredit() {
       }
 
       const otherBorrowers = formData.borrowerData.borrowers.filter(
-        (b) => b.borrowerType !== "MainBorrower",
+        (borrower) => borrower.borrowerType !== "MainBorrower",
       );
 
       const existMainBorrower = formData.borrowerData.borrowers.filter(
-        (b) => b.borrowerType === "MainBorrower",
+        (borrower) => borrower.borrowerType === "MainBorrower",
       );
 
       let keepBeforeChanges = newMainBorrower;
@@ -774,7 +774,7 @@ export function SimulateCredit() {
 
   useEffect(() => {
     const mainBorrower = formData.borrowerData.borrowers.find(
-      (b) => b.borrowerType === "MainBorrower",
+      (borrower) => borrower.borrowerType === "MainBorrower",
     );
 
     if (!mainBorrower) {
@@ -810,8 +810,7 @@ export function SimulateCredit() {
       handleFormDataChange("sourcesOfIncome", newSourcesOfIncome);
     }
   }, [formData.borrowerData.borrowers]);
-  console.log("formData: ", formData);
-  console.log("CustomerData: ", customerData);
+
   return (
     <>
       <SimulateCreditUI

@@ -26,7 +26,7 @@ interface IDebtorEditModalProps {
   currentBorrowerIndex?: number | null;
 }
 
-export function DebtorEditModal(props: IDebtorEditModalProps) {
+export const DebtorEditModal = (props: IDebtorEditModalProps) => {
   const { handleClose, isMobile, initialValues, onUpdate } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const [editedBorrower, setEditedBorrower] =
@@ -61,8 +61,6 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
       name: "name",
       surname: "surname",
     };
-    console.log("fieldName: ", fieldName);
-    console.log("value: ", value);
     const propertyToUpdate = propertyMap[fieldName];
 
     if (!propertyToUpdate) {
@@ -183,11 +181,6 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   const handleAddObligation = (values: FormikValues) => {
     if (Array.isArray(values)) {
       syncObligations(values as IObligations[]);
-    } else {
-      console.error(
-        "Error: se esperaba un array de obligaciones pero se recibió:",
-        values,
-      );
     }
   };
 
@@ -255,4 +248,4 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
       </Stack>
     </BaseModal>
   );
-}
+};

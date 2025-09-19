@@ -2,78 +2,81 @@ import { IBorrowerProperty, IIncomeSources } from "@services/creditLimit/types";
 
 import { IObligations } from "../../TableObligationsFinancial/types";
 
-export const transformFinancialObligations = (borrowerProperties: IBorrowerProperty[]) => {
+export const transformFinancialObligations = (
+  borrowerProperties: IBorrowerProperty[],
+) => {
+  const obligationProperties = borrowerProperties.filter(
+    (prop) => prop.propertyName === "FinancialObligation",
+  );
 
-    const obligationProperties = borrowerProperties.filter(
-        (prop) => prop.propertyName === 'FinancialObligation'
-    );
+  const transformedObligations = obligationProperties.map((prop) => {
+    const parts = prop.propertyValue.split(",").map((part) => part.trim());
 
-    const transformedObligations = obligationProperties.map((prop) => {
-        const parts = prop.propertyValue.split(',').map(part => part.trim());
+    const [
+      productName,
+      balanceObligationTotalStr,
+      nextPaymentValueTotal,
+      entity,
+      paymentMethodName,
+      obligationNumber,
+      duesPaidStr,
+      outstandingDuesStr,
+    ] = parts;
 
-        const [
-            productName,
-            balanceObligationTotalStr,
-            nextPaymentValueTotal,
-            entity,
-            paymentMethodName,
-            obligationNumber,
-            duesPaidStr,
-            outstandingDuesStr,
-        ] = parts;
+    return {
+      productName: productName,
+      balanceObligationTotal: parseFloat(balanceObligationTotalStr) || 0,
+      nextPaymentValueTotal: nextPaymentValueTotal,
+      entity: entity,
+      paymentMethodName: paymentMethodName,
+      obligationNumber: obligationNumber,
+      duesPaid: parseInt(duesPaidStr, 10) || 0,
+      outstandingDues: parseInt(outstandingDuesStr, 10) || 0,
+    };
+  });
 
-        return {
-            productName: productName,
-            balanceObligationTotal: parseFloat(balanceObligationTotalStr) || 0,
-            nextPaymentValueTotal: nextPaymentValueTotal,
-            entity: entity,
-            paymentMethodName: paymentMethodName,
-            obligationNumber: obligationNumber,
-            duesPaid: parseInt(duesPaidStr, 10) || 0,
-            outstandingDues: parseInt(outstandingDuesStr, 10) || 0,
-        };
-    });
-
-    return transformedObligations;
-}
-
-export const unformatCurrency = (value: any): string => {
-    if (value === undefined || value === null) return "0";
-    return String(value).replace(/\D/g, "");
+  return transformedObligations;
 };
 
-export const updateBorrowerPropertiesWithNewObligations = (newObligations: IObligations[], originalBorrowerProperties: IBorrowerProperty[]) => {
-    const otherProperties = originalBorrowerProperties.filter(
-        (prop) => prop.propertyName !== 'FinancialObligation'
-    );
+export const unformatCurrency = (value: number | string): string => {
+  if (value === undefined || value === null) return "0";
+  return String(value).replace(/\D/g, "");
+};
 
-    const newFinancialObligationProperties = newObligations.map((obligation: IObligations) => {
+export const updateBorrowerPropertiesWithNewObligations = (
+  newObligations: IObligations[],
+  originalBorrowerProperties: IBorrowerProperty[],
+) => {
+  const otherProperties = originalBorrowerProperties.filter(
+    (prop) => prop.propertyName !== "FinancialObligation",
+  );
 
-        const propertyValue = [
-            obligation.productName,
-            unformatCurrency(obligation.balanceObligationTotal),
-            unformatCurrency(obligation.nextPaymentValueTotal),
-            obligation.entity,
-            obligation.paymentMethodName,
-            obligation.obligationNumber,
-            obligation.duesPaid,
-            obligation.outstandingDues
-        ].join(',');
+  const newFinancialObligationProperties = newObligations.map(
+    (obligation: IObligations) => {
+      const propertyValue = [
+        obligation.productName,
+        unformatCurrency(obligation.balanceObligationTotal),
+        unformatCurrency(obligation.nextPaymentValueTotal),
+        obligation.entity,
+        obligation.paymentMethodName,
+        obligation.obligationNumber,
+        obligation.duesPaid,
+        obligation.outstandingDues,
+      ].join(",");
 
-        return {
-            propertyName: 'FinancialObligation',
-            propertyValue: propertyValue,
-        };
-    });
+      return {
+        propertyName: "FinancialObligation",
+        propertyValue: propertyValue,
+      };
+    },
+  );
 
-    console.log("newFinancialObligationProperties: ", [...newFinancialObligationProperties, ...otherProperties]);
-
-    return [...newFinancialObligationProperties, ...otherProperties];
-}
+  return [...newFinancialObligationProperties, ...otherProperties];
+};
 
 export const updateBorrowerPropertiesWithNewIncome = (
   newIncome: IIncomeSources,
-  originalBorrowerProperties: IBorrowerProperty[]
+  originalBorrowerProperties: IBorrowerProperty[],
 ): IBorrowerProperty[] => {
   const incomePropertyNames = [
     "Dividends",
@@ -87,7 +90,7 @@ export const updateBorrowerPropertiesWithNewIncome = (
   ];
 
   const otherProperties = originalBorrowerProperties.filter(
-    (prop) => !incomePropertyNames.includes(prop.propertyName)
+    (prop) => !incomePropertyNames.includes(prop.propertyName),
   );
 
   const newIncomeProperties: IBorrowerProperty[] = Object.entries(newIncome)

@@ -12,7 +12,6 @@ interface IDataDebtorProps {
 }
 
 export function DataDebtor(props: IDataDebtorProps) {
-
   const { data, onDataChange } = props;
 
   return (
@@ -23,7 +22,7 @@ export function DataDebtor(props: IDataDebtorProps) {
           id="email"
           label={DataEditBorrower.email}
           value={getPropertyValue(data.borrowerProperties, "email")}
-          onChange={(e) => onDataChange("email", e.target.value)}
+          onChange={(event) => onDataChange("email", event.target.value)}
           size="compact"
           fullwidth
         />
@@ -32,7 +31,7 @@ export function DataDebtor(props: IDataDebtorProps) {
           id="phone"
           label={DataEditBorrower.phone}
           value={getPropertyValue(data.borrowerProperties, "phone_number")}
-          onChange={(e) => onDataChange("phone", e.target.value)}
+          onChange={(event) => onDataChange("phone", event.target.value)}
           size="compact"
           fullwidth
         />
@@ -41,7 +40,7 @@ export function DataDebtor(props: IDataDebtorProps) {
           id="relation"
           label={DataEditBorrower.relation}
           value={getPropertyValue(data.borrowerProperties, "relationship")}
-          onChange={(e) => onDataChange("relation", e.target.value)}
+          onChange={(event) => onDataChange("relation", event.target.value)}
           size="compact"
           fullwidth
         />

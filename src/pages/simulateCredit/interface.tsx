@@ -193,8 +193,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     businessUnitPublicCode,
   } = props;
 
-  console.log("####prospectData: ", prospectData);
-
   return (
     <>
       {codeError ? (
