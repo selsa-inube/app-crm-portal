@@ -1,6 +1,8 @@
 import { IBorrower } from "@services/prospect/types";
 import { transformFinancialObligations } from "@pages/prospect/components/modals/DebtorEditModal/utils";
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types.ts"
+import { ICustomerData } from "@src/context/CustomerContext/types";
+import { unformatCurrency } from "@pages/prospect/components/modals/DebtorEditModal/utils";
 
 import { IFormData } from "./../../../simulateCredit/types";
 import { IDebtorDetail } from "./../../../applyForCredit/types";
@@ -27,7 +29,7 @@ export function transformServiceData(serviceData: IBorrower[]): ITransformedBorr
     const properties = serviceBorrower.borrowerProperties.reduce((acc, prop) => {
       acc[prop.propertyName] = prop.propertyValue;
       return acc;
-    }, {} as Record<string, string>); 
+    }, {} as Record<string, string>);
 
     const incomeProperties = [
       "PensionAllowances", "PeriodicSalary", "PersonalBusinessUtilities",
@@ -84,16 +86,16 @@ export function transformServiceData(serviceData: IBorrower[]): ITransformedBorr
   });
 }
 
-export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IBorrower {
+export function createMainBorrowerFromFormData(formData: Partial<IFormData>, customerData: ICustomerData): IBorrower {
   const borrowerProperties: { propertyName: string; propertyValue: string }[] = [];
-
   if (Array.isArray(formData.obligationsFinancial)) {
     const financialObligations = formData.obligationsFinancial.map((obligation) => {
+
       const propertyValue = [
         obligation.productName || '',
-        obligation.balanceObligationTotal || 0,
-        obligation.nextPaymentValueTotal || 0,
         obligation.entity || '',
+        unformatCurrency(obligation.nextPaymentValueTotal),
+        unformatCurrency(obligation.balanceObligationTotal),
         obligation.paymentMethodName || '',
         obligation.obligationNumber || '',
         obligation.duesPaid || 0,
@@ -117,40 +119,50 @@ export function createMainBorrowerFromFormData(formData: Partial<IFormData>): IB
     }
   }
 
+  const naturalPersonDetails = customerData?.generalAttributeClientNaturalPersons?.[0] || {};
+
   borrowerProperties.push(
-    { propertyName: "name", propertyValue: "personalDetails.name" },
-    { propertyName: "surname", propertyValue: "personalDetails.surname" },
-    { propertyName: "email", propertyValue: "personalDetails.email" },
-    { propertyName: "biological_sex", propertyValue: "personalDetails.biological_sex" },
-    { propertyName: "phone_number", propertyValue: "personalDetails.phone_number" },
-    { propertyName: "birth_date", propertyValue: "personalDetails.birth_date" },
-    { propertyName: "relationship", propertyValue: "personalDetails.relationship" }
+    { propertyName: "name", propertyValue: naturalPersonDetails.firstNames || '' },
+    { propertyName: "surname", propertyValue: naturalPersonDetails.lastNames || '' },
+    { propertyName: "email", propertyValue: naturalPersonDetails.emailContact || '' },
+    { propertyName: "biological_sex", propertyValue: mapGender(naturalPersonDetails.gender) },
+    { propertyName: "phone_number", propertyValue: naturalPersonDetails.cellPhoneContact || '' },
+    { propertyName: "birth_date", propertyValue: naturalPersonDetails.dateBirth || '' },
+    { propertyName: "relationship", propertyValue: "Titular" }
   );
 
   const mainBorrower: IBorrower = {
-    borrowerName: `${"personalDetails.name"} ${"personalDetails.surname"}`,
+    borrowerName: customerData.fullName || '',
     borrowerType: "MainBorrower",
-    borrowerIdentificationType: "personalDetails.identificationType",
-    borrowerIdentificationNumber: "personalDetails.identificationNumber",
+    borrowerIdentificationType: naturalPersonDetails.typeIdentification || '',
+    borrowerIdentificationNumber: customerData.publicCode || '',
     borrowerProperties: borrowerProperties,
   };
 
   return mainBorrower;
 }
 
+function mapGender(genderString?: string): string {
+  if (!genderString) return '';
+  const code = genderString.charAt(0).toUpperCase();
+  if (code === 'M') return 'male';
+  if (code === 'F') return 'female';
+  return '';
+}
+
 export const updateFinancialObligationsFormData = (borrowers: IBorrower[]) => {
-    let transformedObligations: IObligations[] = [];
+  let transformedObligations: IObligations[] = [];
 
-    borrowers.map((borrower) => {
-        if (borrower.borrowerType === "MainBorrower") {
-            const obligations = transformFinancialObligations(borrower.borrowerProperties);
+  borrowers.map((borrower) => {
+    if (borrower.borrowerType === "MainBorrower") {
+      const obligations = transformFinancialObligations(borrower.borrowerProperties);
 
-            transformedObligations = obligations.map((obligation) => ({
-                ...obligation,
-                nextPaymentValueTotal: Number(obligation.nextPaymentValueTotal) || 0, 
-            }));
-        }
-    });
+      transformedObligations = obligations.map((obligation) => ({
+        ...obligation,
+        nextPaymentValueTotal: Number(obligation.nextPaymentValueTotal) || 0,
+      }));
+    }
+  });
 
-    return transformedObligations;
+  return transformedObligations;
 }

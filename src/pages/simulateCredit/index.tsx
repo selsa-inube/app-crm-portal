@@ -144,7 +144,7 @@ export function SimulateCredit() {
     sourcesOfIncome: {
       Dividends: 0,
       FinancialIncome: 0,
-      Leases: 0,
+      Leases: 4444,
       OtherNonSalaryEmoluments: 0,
       PensionAllowances: 0,
       PeriodicSalary: 0,
@@ -735,7 +735,7 @@ export function SimulateCredit() {
     const isExtraBorrowersStep = currentStepsNumber?.id === stepsAddProspect.extraBorrowers.id;
 
     if (isExtraBorrowersStep) {
-      const newMainBorrower = createMainBorrowerFromFormData(formData);
+      const newMainBorrower = createMainBorrowerFromFormData(formData, customerData);
 
       const currentMainBorrower = formData.borrowerData.borrowers.find(
         (b) => b.borrowerType === "MainBorrower"
@@ -749,12 +749,57 @@ export function SimulateCredit() {
         (b) => b.borrowerType !== "MainBorrower"
       );
 
-      const updatedBorrowers = [newMainBorrower, ...otherBorrowers];
+      const existMainBorrower = formData.borrowerData.borrowers.filter(
+        (b) => b.borrowerType === "MainBorrower"
+      );
+
+      let keepBeforeChanges = newMainBorrower;
+
+      if (existMainBorrower.length > 0) {
+        keepBeforeChanges = {
+          ...existMainBorrower[0],
+          ...newMainBorrower.borrowerProperties
+
+        }
+      }
+
+      const updatedBorrowers = [keepBeforeChanges, ...otherBorrowers];
 
       handleFormDataChange("borrowerData", { borrowers: updatedBorrowers });
     }
-  }, [currentStepsNumber, formData]);
+  }, [currentStepsNumber, customerData]);
+
+  useEffect(() => {
+    const mainBorrower = formData.borrowerData.borrowers.find(
+      (b) => b.borrowerType === "MainBorrower"
+    );
+
+    if (!mainBorrower) {
+      return;
+    }
+
+    const incomeProperties: { [key: string]: number } = {};
+    mainBorrower.borrowerProperties.forEach((prop) => {
+      const incomeKeys = [
+        "Dividends", "FinancialIncome", "Leases", "OtherNonSalaryEmoluments",
+        "PensionAllowances", "PeriodicSalary", "PersonalBusinessUtilities", "ProfessionalFees",
+      ];
+      if (incomeKeys.includes(prop.propertyName)) {
+        incomeProperties[prop.propertyName] = Number(prop.propertyValue) || 0;
+      }
+    });
+
+    const newSourcesOfIncome = {
+      ...formData.sourcesOfIncome,
+      ...incomeProperties,
+    };
+
+    if (JSON.stringify(formData.sourcesOfIncome) !== JSON.stringify(newSourcesOfIncome)) {
+      handleFormDataChange("sourcesOfIncome", newSourcesOfIncome);
+    }
+  }, [formData.borrowerData.borrowers]);
   console.log("formData: ",formData);
+  console.log("CustomerData: ",customerData);
   return (
     <>
       <SimulateCreditUI

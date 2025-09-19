@@ -15,6 +15,7 @@ import { dataSubmitApplication } from "@pages/applyForCredit/config/config";
 import { choiceBorrowers } from "@mocks/filing-application/choice-borrowers/choiceborrowers.mock";
 import { IBorrower, IProspect } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
+import { ICustomerData } from "@context/CustomerContext/types";
 
 import { dataExtraDebtors } from "./config";
 import { transformServiceData, createMainBorrowerFromFormData } from "./utils";
@@ -24,6 +25,7 @@ interface IExtraDebtorsProps {
   onFormValid: (isValid: boolean) => void;
   initialValues: IBorrower[];
   handleOnChange: (values: FormikValues) => void;
+  customerData: ICustomerData;
 }
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
@@ -62,30 +64,6 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     >,
   );
 
-  /* const formik = useFormik({
-    initialValues: {
-      ...initialValues,
-      initialBorrowers,
-      debtorDetail: initialValues.debtorDetail || {
-        document: "",
-        documentNumber: "",
-        name: "",
-        lastName: "",
-        email: "",
-        number: "",
-        sex: "",
-        age: "",
-        relation: "",
-      },
-    },
-    validateOnMount: true,
-    onSubmit: () => { },
-  });
-
-  useEffect(() => {
-    handleOnChange(formik.values);
-  }, [formik.values]);
- */
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
   const [isModalEdit, setIsModalEdit] = useState(false);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Stack, Tabs, useFlag } from "@inubekit/inubekit";
+import { FormikValues } from "formik";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
@@ -10,7 +11,7 @@ import { IIncomeSources } from "@services/creditLimit/types";
 
 import { dataEditDebtor, dataTabs, dataReport } from "./config";
 import { DataDebtor } from "./dataDebtor";
-import { transformFinancialObligations, updateBorrowerPropertiesWithNewObligations } from "./utils";
+import { transformFinancialObligations, updateBorrowerPropertiesWithNewObligations, updateBorrowerPropertiesWithNewIncome } from "./utils";
 import { IObligations } from "../../TableObligationsFinancial/types";
 
 interface IDebtorEditModalProps {
@@ -53,23 +54,40 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
       email: "email",
       phone: "phone_number",
       relation: "relationship",
+      name: "name",
+      surname: "surname",
     };
-
+    console.log("fieldName: ", fieldName);
+    console.log("value: ", value);
     const propertyToUpdate = propertyMap[fieldName];
 
-    if (propertyToUpdate) {
-      setEditedBorrower((prevState) => {
-        const newProperties = prevState.borrowerProperties.map((prop) => {
-          if (prop.propertyName === propertyToUpdate) {
-            return { ...prop, propertyValue: value };
-          }
-          return prop;
-        });
-        return { ...prevState, borrowerProperties: newProperties };
+    if (!propertyToUpdate) {
+      return;
+    }
+
+    setEditedBorrower((prevState) => {
+      const newProperties = prevState.borrowerProperties.map((prop) => {
+        if (prop.propertyName === propertyToUpdate) {
+          return { ...prop, propertyValue: value };
+        }
+        return prop;
       });
 
-      setIsModified(true);
-    }
+      const updatedBorrower = {
+        ...prevState,
+        borrowerProperties: newProperties,
+      };
+
+      if (fieldName === "name" || fieldName === "surname") {
+        const newName = getPropertyValue(newProperties, "name") || "";
+        const newSurname = getPropertyValue(newProperties, "surname") || "";
+        updatedBorrower.borrowerName = `${newName} ${newSurname}`.trim();
+      }
+
+      return updatedBorrower;
+    });
+
+    setIsModified(true);
   };
 
   useEffect(() => {
@@ -126,43 +144,6 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     }
   }, [initialValues]);
 
-  const convertToPropertyArray = (
-    income: IIncomeSources,
-  ): IBorrowerProperty[] => {
-    return Object.entries(income).map(([key, value]) => ({
-      propertyName: key,
-      propertyValue: String(value),
-    }));
-  };
-
-  const mergeProperties = (
-    original: IBorrowerProperty[],
-    updates: IBorrowerProperty[],
-  ): IBorrowerProperty[] => {
-    const result: IBorrowerProperty[] = [];
-
-    const duplicates = ["FinancialObligation"];
-    const seen = new Map<string, IBorrowerProperty>();
-
-    original.forEach((prop) => {
-      if (duplicates.includes(prop.propertyName)) {
-        result.push(prop);
-      } else {
-        seen.set(prop.propertyName, prop);
-      }
-    });
-
-    updates.forEach((prop) => {
-      if (duplicates.includes(prop.propertyName)) {
-        result.push(prop);
-      } else {
-        seen.set(prop.propertyName, prop);
-      }
-    });
-
-    return [...result, ...Array.from(seen.values())];
-  };
-
   const handleSave = () => {
     if (!initialValues || !incomeData || onUpdate === undefined) return;
 
@@ -171,22 +152,50 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     handleClose();
   };
 
-  const handleOnChange = (newObligations: IObligations[]) => {
-    
-    const editedBorrower = updateBorrowerPropertiesWithNewObligations(newObligations, initialValues.borrowerProperties);
+  const syncObligations = (updatedObligationsList: IObligations[]) => {
+    const updatedProperties = updateBorrowerPropertiesWithNewObligations(
+      updatedObligationsList,
+      editedBorrower.borrowerProperties
+    );
 
-    if (onUpdate === undefined) return;
+    const updatedBorrower: IBorrower = {
+      ...editedBorrower,
+      borrowerProperties: updatedProperties,
+    };
 
-    onUpdate({
-      ...initialValues,
-      borrowerProperties: editedBorrower
-    });
+    setEditedBorrower(updatedBorrower);
 
-    setEditedBorrower({
-      ...initialValues,
-      borrowerProperties: editedBorrower
-    });
-    
+    if (onUpdate) {
+      onUpdate(updatedBorrower);
+    }
+
+    setIsModified(true);
+  };
+
+  const handleEditOrDeleteObligation = (newObligations: IObligations[]) => {
+    syncObligations(newObligations);
+  };
+
+  const handleAddObligation = (values: FormikValues) => {
+    if (Array.isArray(values)) {
+      syncObligations(values as IObligations[]);
+    } else {
+      console.error("Error: se esperaba un array de obligaciones pero se recibió:", values);
+    }
+  };
+
+  const handleIncomeChange = (newIncome: IIncomeSources) => {
+    const updatedProperties = updateBorrowerPropertiesWithNewIncome(
+      newIncome,
+      editedBorrower.borrowerProperties
+    );
+
+    const updatedBorrower: IBorrower = {
+      ...editedBorrower,
+      borrowerProperties: updatedProperties,
+    };
+
+    setEditedBorrower(updatedBorrower);
     setIsModified(true);
   };
 
@@ -220,7 +229,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             showEdit={false}
             onDataChange={(newIncome) => {
               setIsModified(true);
-              setEditedIncomeData(newIncome);
+              handleIncomeChange(newIncome);
             }}
           />
         )}
@@ -229,7 +238,8 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             initialValues={transformFinancialObligations(editedBorrower.borrowerProperties)}
             showActions={true}
             services={false}
-            handleOnChangeExtraBorrowers={handleOnChange}
+            handleOnChangeExtraBorrowers={handleEditOrDeleteObligation}
+            handleOnChange={handleAddObligation}
           />
         )}
       </Stack>

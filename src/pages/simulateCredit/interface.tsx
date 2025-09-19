@@ -427,6 +427,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                       }
                       isMobile={isMobile}
+                      customerData={customerData}
                     />
                   )}
                 {currentStepsNumber &&
