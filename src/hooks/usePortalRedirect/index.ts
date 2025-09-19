@@ -1,74 +1,76 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
-import { IBusinessManagers } from "@services/businessManager/types";
 import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager";
 import { getBusinessManagers } from "@services/businessManager/SearchByIdBusinessManager";
 import { decrypt, encrypt } from "@utils/encrypt/encrypt";
-import { useIAuth } from "@context/AuthContext/useAuthContext";
+import { IBusinessManagers } from "@services/businessManager/types";
+
+interface AuthConfig {
+  clientId: string;
+  clientSecret: string;
+}
 
 const usePortalLogic = () => {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  const portalParam = params.get("portal");
+  const storedPortal = localStorage.getItem("portalCode");
+  const decryptedPortal = storedPortal ? decrypt(storedPortal) : "";
+  const portalCode = portalParam ?? decryptedPortal;
+
   const [portalData, setPortalData] =
     useState<IStaffPortalByBusinessManager | null>(null);
   const [businessManager, setBusinessManager] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
+  const [authConfig, setAuthConfig] = useState<AuthConfig | null>(null);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const { loginWithRedirect, isAuthenticated, isLoading } = useIAuth();
 
-  const rawPortalCode = useMemo(() => {
-    const urlCode = new URLSearchParams(window.location.search)
-      .get("portal")
-      ?.trim();
-    if (urlCode) {
-      localStorage.setItem("portalCode", encrypt(urlCode));
-      return urlCode;
+  useEffect(() => {
+    if (portalParam && portalParam !== decryptedPortal) {
+      const encryptedPortal = encrypt(portalParam);
+      localStorage.setItem("portalCode", encryptedPortal);
     }
-
-    const storedEncrypted = localStorage.getItem("portalCode");
-    if (storedEncrypted) {
-      try {
-        return decrypt(storedEncrypted);
-      } catch (err) {
-        return null;
-      }
-    }
-
-    return null;
-  }, []);
+  }, [portalParam, decryptedPortal]);
 
   useEffect(() => {
     const loadData = async () => {
-      if (!rawPortalCode) {
+      if (!portalCode) {
         setCodeError(1000);
         setLoading(false);
         return;
       }
 
       try {
-        const portals = await getStaffPortalsByBusinessManager(rawPortalCode);
-        const portalData = portals[0];
-        if (!portalData) {
+        const portals = await getStaffPortalsByBusinessManager(portalCode);
+
+        if (!portals || portals.length === 0) {
           setCodeError(1001);
           setLoading(false);
           return;
         }
+        const portalData = portals[0];
         setPortalData(portalData);
+
         const { businessManagerCode } = portalData;
+
         if (!businessManagerCode) {
           setCodeError(1002);
           setLoading(false);
           return;
         }
 
-        if (!isAuthenticated && !isLoading) {
-          loginWithRedirect();
-          return;
-        }
-
         const manager = await getBusinessManagers(businessManagerCode);
         setBusinessManager(manager);
+        if (manager.clientId && manager.clientSecret) {
+          setAuthConfig({
+            clientId: manager.clientId,
+            clientSecret: manager.clientSecret,
+          });
+        }
+
         setLoading(false);
       } catch (error) {
         setCodeError(1003);
@@ -76,17 +78,19 @@ const usePortalLogic = () => {
       }
     };
 
-    if (!isLoading) {
-      loadData();
-    }
-  }, [rawPortalCode, isAuthenticated, isLoading, loginWithRedirect]);
+    loadData();
+  }, [portalCode]);
+
+  const hasAuthError = !authConfig || Boolean(codeError);
 
   return {
     portalData,
     businessManager,
+    authConfig,
     codeError,
     loading,
-    isAuthenticated,
+    hasAuthError,
+    portalCode,
   };
 };
 
