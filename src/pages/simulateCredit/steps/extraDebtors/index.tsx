@@ -18,7 +18,7 @@ import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 
 import { dataExtraDebtors } from "./config";
-import { transformServiceData, createMainBorrowerFromFormData } from "./utils";
+import { transformServiceData } from "./utils";
 
 interface IExtraDebtorsProps {
   isMobile: boolean;
@@ -180,17 +180,6 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                 const borrowerData = initialBorrowers[`borrower${index + 1}`];
 
                 if (borrowerData) {
-                  const borrowerForEdit: IBorrower = {
-                    id: borrowerData.id,
-                    borrowerName: borrowerData.name,
-                    borrowerType: borrowerData.debtorDetail.type,
-                    borrowerIdentificationType:
-                      borrowerData.debtorDetail.document,
-                    borrowerIdentificationNumber:
-                      borrowerData.debtorDetail.documentNumber,
-                    borrowerProperties: [],
-                  } as IBorrower;
-
                   setSelectedBorrowerForEdit(item.originalData);
                   setCurrentBorrowerIndex(index);
                   setIsModalEdit(true);

@@ -2,8 +2,6 @@ import { Stack } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
 import { CardGray } from "@components/cards/CardGray";
-import { getPropertyValue } from "@utils/mappingData/mappings";
-import { getMonthsElapsed } from "@utils/formatData/currency";
 
 import { dataDebtor } from "./config";
 
@@ -24,10 +22,7 @@ export function DataDebtor(props: IDataDebtor) {
         label={dataDebtor.labelNumberDocument}
         data={initialValues.documentNumber}
       />
-      <CardGray
-        label={dataDebtor.labelName}
-        data={initialValues.name}
-      />
+      <CardGray label={dataDebtor.labelName} data={initialValues.name} />
       <CardGray
         label={dataDebtor.labelLastName}
         data={initialValues.lastName}
@@ -37,29 +32,12 @@ export function DataDebtor(props: IDataDebtor) {
         data={initialValues.email}
         apparencePlaceHolder="gray"
       />
-      <CardGray
-        label={dataDebtor.labelNumber}
-        data={
-          initialValues.number
-        }
-      />
-      <CardGray
-        label={dataDebtor.labelSex}
-        data={
-          initialValues.sex
-        }
-      />
-      <CardGray
-        label={dataDebtor.labelAge}
-        data={
-          initialValues.age
-        }
-      />
+      <CardGray label={dataDebtor.labelNumber} data={initialValues.number} />
+      <CardGray label={dataDebtor.labelSex} data={initialValues.sex} />
+      <CardGray label={dataDebtor.labelAge} data={initialValues.age} />
       <CardGray
         label={dataDebtor.labelRelation}
-        data={
-          initialValues.relation
-        }
+        data={initialValues.relation}
       />
     </Stack>
   );

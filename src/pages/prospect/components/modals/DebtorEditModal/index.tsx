@@ -6,12 +6,16 @@ import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { IBorrower, IBorrowerProperty } from "@services/prospect/types";
+import { IBorrower } from "@services/prospect/types";
 import { IIncomeSources } from "@services/creditLimit/types";
 
 import { dataEditDebtor, dataTabs, dataReport } from "./config";
 import { DataDebtor } from "./dataDebtor";
-import { transformFinancialObligations, updateBorrowerPropertiesWithNewObligations, updateBorrowerPropertiesWithNewIncome } from "./utils";
+import {
+  transformFinancialObligations,
+  updateBorrowerPropertiesWithNewObligations,
+  updateBorrowerPropertiesWithNewIncome,
+} from "./utils";
 import { IObligations } from "../../TableObligationsFinancial/types";
 
 interface IDebtorEditModalProps {
@@ -25,13 +29,13 @@ interface IDebtorEditModalProps {
 export function DebtorEditModal(props: IDebtorEditModalProps) {
   const { handleClose, isMobile, initialValues, onUpdate } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
-  const [editedBorrower, setEditedBorrower] = useState<IBorrower>(initialValues);
+  const [editedBorrower, setEditedBorrower] =
+    useState<IBorrower>(initialValues);
 
   const [incomeData, setIncomeData] = useState<IIncomeSources | undefined>(
     undefined,
   );
-  const [editedIncomeData, setEditedIncomeData] =
-    useState<IIncomeSources | null>(null);
+
   const [isModified, setIsModified] = useState(false);
 
   const { addFlag } = useFlag();
@@ -102,7 +106,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
         ),
         Dividends: parseFloat(
           getPropertyValue(initialValues.borrowerProperties, "Dividends") ||
-          "0",
+            "0",
         ),
         FinancialIncome: parseFloat(
           getPropertyValue(
@@ -155,7 +159,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   const syncObligations = (updatedObligationsList: IObligations[]) => {
     const updatedProperties = updateBorrowerPropertiesWithNewObligations(
       updatedObligationsList,
-      editedBorrower.borrowerProperties
+      editedBorrower.borrowerProperties,
     );
 
     const updatedBorrower: IBorrower = {
@@ -180,14 +184,17 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     if (Array.isArray(values)) {
       syncObligations(values as IObligations[]);
     } else {
-      console.error("Error: se esperaba un array de obligaciones pero se recibió:", values);
+      console.error(
+        "Error: se esperaba un array de obligaciones pero se recibió:",
+        values,
+      );
     }
   };
 
   const handleIncomeChange = (newIncome: IIncomeSources) => {
     const updatedProperties = updateBorrowerPropertiesWithNewIncome(
       newIncome,
-      editedBorrower.borrowerProperties
+      editedBorrower.borrowerProperties,
     );
 
     const updatedBorrower: IBorrower = {
@@ -218,11 +225,12 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
           tabs={dataTabs}
           onChange={setCurrentTab}
         />
-        {currentTab === "data" &&
+        {currentTab === "data" && (
           <DataDebtor
             data={editedBorrower}
             onDataChange={handleDebtorDataChange}
-          />}
+          />
+        )}
         {currentTab === "sources" && incomeData && (
           <SourceIncome
             data={incomeData}
@@ -235,7 +243,9 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
         )}
         {currentTab === "obligations" && (
           <TableFinancialObligations
-            initialValues={transformFinancialObligations(editedBorrower.borrowerProperties)}
+            initialValues={transformFinancialObligations(
+              editedBorrower.borrowerProperties,
+            )}
             showActions={true}
             services={false}
             handleOnChangeExtraBorrowers={handleEditOrDeleteObligation}

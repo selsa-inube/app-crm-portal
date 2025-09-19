@@ -28,7 +28,6 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
-import { IBorrower } from "@services/creditLimit/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -191,7 +190,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     paymentCapacity,
     showErrorModal,
     messageError,
-    businessUnitPublicCode
+    businessUnitPublicCode,
   } = props;
 
   console.log("####prospectData: ", prospectData);
@@ -335,7 +334,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 <Stack justifyContent="end"></Stack>
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                  stepsAddProspect.generalInformation.id && (
+                    stepsAddProspect.generalInformation.id && (
                     <RequirementsNotMet
                       isMobile={isMobile}
                       prospectData={prospectData as IProspect}
@@ -359,7 +358,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                  stepsAddProspect.productSelection.id && (
+                    stepsAddProspect.productSelection.id && (
                     <ProductSelection
                       initialValues={{
                         selectedProducts,
@@ -396,7 +395,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                  stepsAddProspect.extraordinaryInstallments.id && (
+                    stepsAddProspect.extraordinaryInstallments.id && (
                     <ExtraordinaryInstallments
                       isMobile={isMobile}
                       initialValues={formData.extraordinaryInstallments}
@@ -409,30 +408,29 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     />
                   )}
                 {currentStepsNumber &&
-                  currentStepsNumber.id === stepsAddProspect.extraBorrowers.id &&
+                  currentStepsNumber.id ===
+                    stepsAddProspect.extraBorrowers.id &&
                   formData.borrowerData.borrowers.length > 0 && (
                     <ExtraDebtors
-                      initialValues={
-                        formData.borrowerData.borrowers
-                      }
+                      initialValues={formData.borrowerData.borrowers}
                       onFormValid={setIsCurrentFormValid}
                       handleOnChange={(newDestination) => {
-
-                        handleFormDataChange("obligationsFinancial",
-                          updateFinancialObligationsFormData(newDestination.borrowers)
+                        handleFormDataChange(
+                          "obligationsFinancial",
+                          updateFinancialObligationsFormData(
+                            newDestination.borrowers,
+                          ),
                         );
-                       
-                        handleFormDataChange("borrowerData", newDestination)
 
-                      }
-                      }
+                        handleFormDataChange("borrowerData", newDestination);
+                      }}
                       isMobile={isMobile}
                       customerData={customerData}
                     />
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                  stepsAddProspect.sourcesIncome.id && (
+                    stepsAddProspect.sourcesIncome.id && (
                     <SourcesOfIncome
                       initialValues={formData.sourcesOfIncome}
                       handleOnChange={(
@@ -450,7 +448,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                  stepsAddProspect.obligationsFinancial.id && (
+                    stepsAddProspect.obligationsFinancial.id && (
                     <ObligationsFinancial
                       isMobile={isMobile}
                       initialValues={formData.obligationsFinancial}
@@ -468,7 +466,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                  stepsAddProspect.loanConditions.id && (
+                    stepsAddProspect.loanConditions.id && (
                     <LoanCondition
                       initialValues={formData.loanConditionState}
                       handleOnChange={(
@@ -504,7 +502,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                  stepsAddProspect.obligationsCollected.id &&
+                    stepsAddProspect.obligationsCollected.id &&
                   formData.loanAmountState.toggleChecked && (
                     <ConsolidatedCredit
                       initialValues={formData.consolidatedCreditSelections}
@@ -527,8 +525,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 </Button>
                 <Button onClick={handleNextStep} disabled={!isCurrentFormValid}>
                   {currentStep === steps[steps.length - 1].id ||
-                    (currentStep === stepsAddProspect.loanAmount.id &&
-                      !formData.loanAmountState.toggleChecked)
+                  (currentStep === stepsAddProspect.loanAmount.id &&
+                    !formData.loanAmountState.toggleChecked)
                     ? titleButtonTextAssited.submitText
                     : titleButtonTextAssited.goNextText}
                 </Button>
