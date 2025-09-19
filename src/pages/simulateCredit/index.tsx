@@ -708,8 +708,6 @@ export function SimulateCredit() {
         if (data) {
           setValidateRequirements(data);
         }
-      } catch (error) {
-        /* setShowErrorModal(true); */
       } finally {
         setIsLoading(false);
       }
