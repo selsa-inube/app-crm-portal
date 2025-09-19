@@ -80,7 +80,9 @@ export interface ITableFinancialObligationsProps {
     term: string;
     idUser: string;
   };
-  handleOnChangeExtraBorrowers?: (newObligations: IObligationsFinancial[]) => void;
+  handleOnChangeExtraBorrowers?: (
+    newObligations: IObligationsFinancial[],
+  ) => void;
 }
 
 export interface IDataInformationItem {
@@ -152,6 +154,9 @@ interface UIProps {
   businessUnitPublicCode: string;
   messageError: string;
   setSelectedBorrowerIndex: React.Dispatch<React.SetStateAction<number>>;
+  handleOnChangeExtraBorrowers?: (
+    newObligations: IObligationsFinancial[],
+  ) => void;
 }
 
 export const TableFinancialObligationsUI = ({
@@ -180,6 +185,7 @@ export const TableFinancialObligationsUI = ({
   setMessageError,
   setSelectedBorrowerIndex,
   setShowErrorModal,
+  handleOnChangeExtraBorrowers,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -231,7 +237,6 @@ export const TableFinancialObligationsUI = ({
   const mapToTableFinancialObligationsProps = (
     item: IDataInformationItem,
   ): ITableFinancialObligationsProps => {
-
     return {
       id: item.id,
       type: item.type,
@@ -347,7 +352,6 @@ export const TableFinancialObligationsUI = ({
 
   const renderDataRows = () =>
     paddedCurrentData.map((prop: IDataInformationItem, rowIndex: number) => {
-
       if (prop.__isPadding) {
         return (
           <Tr key={prop.id}>
@@ -371,7 +375,6 @@ export const TableFinancialObligationsUI = ({
           .filter(([key]) => key !== "id")
           .map(([, value]) => String(value).trim());
       }
-      console.log("############# ",prop);
       return (
         <Tr key={rowIndex}>
           {visibleHeaders.map((header, colIndex) => {
@@ -431,100 +434,113 @@ export const TableFinancialObligationsUI = ({
         </Tr>
       );
     });
-
+  console.log("handleOnChangeExtraBorrowers: ", handleOnChangeExtraBorrowers);
   return (
-    <Stack direction="column" width="100%" gap="16px">
+    <Stack
+      direction="column"
+      width="100%"
+      gap={handleOnChangeExtraBorrowers === undefined ? "16px" : "5px"}
+    >
       <Stack direction="column">
-        <Stack alignItems="center">
-          {!isMobile && (
-            <Text size="medium" type="label" weight="bold">
-              {dataReport.title}
-            </Text>
-          )}
-        </Stack>
+        {handleOnChangeExtraBorrowers === undefined && (
+          <>
+            <Stack alignItems="center">
+              {!isMobile && (
+                <Text size="medium" type="label" weight="bold">
+                  {dataReport.title}
+                </Text>
+              )}
+            </Stack>
+          </>
+        )}
         <Stack
           justifyContent="space-between"
           alignItems={isMobile ? "normal" : "end"}
           direction={isMobile ? "column" : "row"}
         >
-          {!isMobile && (
-            <Stack>
-              {initialValues?.[0]?.borrowers?.length > 1 ? (
-                <Select
-                  name="borrower"
-                  id="borrower"
-                  label="Deudor"
-                  placeholder="Selecciona un deudor"
-                  options={borrowerOptions}
-                  value={String(selectedBorrowerIndex)}
-                  onChange={(_, value) =>
-                    setSelectedBorrowerIndex(Number(value))
-                  }
-                  size="wide"
-                  fullwidth={isMobile}
-                />
-              ) : (
-                <Text size="medium" type="title" appearance="dark">
-                  {customerData?.fullName}
-                </Text>
+          {handleOnChangeExtraBorrowers === undefined && (
+            <>
+              {!isMobile && (
+                <Stack>
+                  {initialValues?.[0]?.borrowers?.length > 1 ? (
+                    <Select
+                      name="borrower"
+                      id="borrower"
+                      label="Deudor"
+                      placeholder="Selecciona un deudor"
+                      options={borrowerOptions}
+                      value={String(selectedBorrowerIndex)}
+                      onChange={(_, value) =>
+                        setSelectedBorrowerIndex(Number(value))
+                      }
+                      size="wide"
+                      fullwidth={isMobile}
+                    />
+                  ) : (
+                    <Text size="medium" type="title" appearance="dark">
+                      {customerData?.fullName}
+                    </Text>
+                  )}
+                </Stack>
               )}
+
+              {isMobile && (
+                <Stack padding="0px 0px 10px 0px">
+                  {initialValues?.[0]?.borrowers?.length > 1 ? (
+                    <Select
+                      name="borrower"
+                      id="borrower"
+                      label="Deudor"
+                      placeholder="Selecciona un deudor"
+                      options={borrowerOptions}
+                      value={String(selectedBorrowerIndex)}
+                      onChange={(_, value) =>
+                        setSelectedBorrowerIndex(Number(value))
+                      }
+                      size="wide"
+                      fullwidth={isMobile}
+                    />
+                  ) : (
+                    <CardGray
+                      label={dataReport.title}
+                      placeHolder={customerData?.fullName}
+                      isMobile={true}
+                    />
+                  )}
+                </Stack>
+              )}
+            </>
+          )}
+          {!showOnlyEdit && (
+            <Stack
+              justifyContent="end"
+              gap="16px"
+              direction={isMobile ? "column" : "row"}
+              width={isMobile ? "100%" : "auto"}
+            >
+              <Stack>
+                <Button
+                  children="Restablecer"
+                  iconBefore={<MdCached />}
+                  fullwidth={isMobile}
+                  variant="outlined"
+                  spacing="wide"
+                  onClick={() => setIsOpenModal(true)}
+                />
+              </Stack>
+              <Stack>
+                <Button
+                  children={dataReport.addObligations}
+                  iconBefore={<MdAdd />}
+                  fullwidth={isMobile}
+                  onClick={() => setOpenModal(true)}
+                />
+              </Stack>
             </Stack>
           )}
-
-          {isMobile && (
-            <Stack padding="0px 0px 10px 0px">
-              {initialValues?.[0]?.borrowers?.length > 1 ? (
-                <Select
-                  name="borrower"
-                  id="borrower"
-                  label="Deudor"
-                  placeholder="Selecciona un deudor"
-                  options={borrowerOptions}
-                  value={String(selectedBorrowerIndex)}
-                  onChange={(_, value) =>
-                    setSelectedBorrowerIndex(Number(value))
-                  }
-                  size="wide"
-                  fullwidth={isMobile}
-                />
-              ) : (
-                <CardGray
-                  label={dataReport.title}
-                  placeHolder={customerData?.fullName}
-                  isMobile={true}
-                />
-              )}
-            </Stack>
-          )}
-
-          <Stack
-            justifyContent="end"
-            gap="16px"
-            direction={isMobile ? "column" : "row"}
-            width={isMobile ? "100%" : "auto"}
-          >
-            <Stack>
-              <Button
-                children="Restablecer"
-                iconBefore={<MdCached />}
-                fullwidth={isMobile}
-                variant="outlined"
-                spacing="wide"
-                onClick={() => setIsOpenModal(true)}
-              />
-            </Stack>
-            <Stack>
-              <Button
-                children={dataReport.addObligations}
-                iconBefore={<MdAdd />}
-                fullwidth={isMobile}
-                onClick={() => setOpenModal(true)}
-              />
-            </Stack>
-          </Stack>
         </Stack>
       </Stack>
-      <Divider />
+      {!showOnlyEdit && <Divider />}
       <Table tableLayout="auto">
         <Thead>
           <Tr>{renderHeaders()}</Tr>

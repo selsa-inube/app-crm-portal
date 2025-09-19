@@ -30,7 +30,9 @@ interface IExtraDebtorsProps {
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
   const { handleOnChange, initialValues, isMobile } = props;
-  const [borrowers, setBorrowers] = useState(() => transformServiceData(initialValues));
+  const [borrowers, setBorrowers] = useState(() =>
+    transformServiceData(initialValues),
+  );
 
   useEffect(() => {
     setBorrowers(transformServiceData(initialValues));
@@ -43,7 +45,6 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
       return 0;
     });
   }, [borrowers]);
-
 
   const initialBorrowers = sortedBorrowers.reduce(
     (acc, item, index) => {
@@ -84,12 +85,14 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
 
   const data =
     dataSubmitApplication[
-    userChoice === "borrowers" ? "borrowers" : "coBorrowers"
+      userChoice === "borrowers" ? "borrowers" : "coBorrowers"
     ];
 
   const handleUpdateBorrower = (updatedBorrower: IBorrower) => {
-    const transformedUpdatedBorrowerArray = transformServiceData([updatedBorrower]);
-    
+    const transformedUpdatedBorrowerArray = transformServiceData([
+      updatedBorrower,
+    ]);
+
     if (transformedUpdatedBorrowerArray.length === 0) {
       return;
     }
@@ -105,12 +108,39 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     setBorrowers(newBorrowers);
 
     const newBorrowersArray = newBorrowers.map((borrower) => {
-      return borrower.originalData
+      return borrower.originalData;
     });
 
     handleOnChange({
       borrowers: newBorrowersArray,
     });
+  };
+
+  const handleConfirmDelete = () => {
+    if (currentBorrowerIndex === null) return;
+
+    const borrowerToDelete = sortedBorrowers[currentBorrowerIndex];
+    if (!borrowerToDelete || borrowerToDelete.borrowerType === "MainBorrower") {
+      setIsModalDelete(false);
+      setCurrentBorrowerIndex(null);
+      return;
+    }
+
+    const updatedBorrowers = borrowers.filter(
+      (borrower) => borrower.id !== borrowerToDelete.id,
+    );
+    setBorrowers(updatedBorrowers);
+
+    const updatedOriginalBorrowers = updatedBorrowers.map(
+      (borrower) => borrower.originalData,
+    );
+
+    handleOnChange({
+      borrowers: updatedOriginalBorrowers,
+    });
+
+    setIsModalDelete(false);
+    setCurrentBorrowerIndex(null);
   };
 
   return (
@@ -123,9 +153,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
         </Stack>
         <Grid
           templateColumns={
-            isMobile
-              ? "1fr"
-              : `repeat(${sortedBorrowers.length + 1}, 317px)`
+            isMobile ? "1fr" : `repeat(${sortedBorrowers.length + 1}, 317px)`
           }
           autoRows="auto"
           gap="20px"
@@ -156,8 +184,10 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                     id: borrowerData.id,
                     borrowerName: borrowerData.name,
                     borrowerType: borrowerData.debtorDetail.type,
-                    borrowerIdentificationType: borrowerData.debtorDetail.document,
-                    borrowerIdentificationNumber: borrowerData.debtorDetail.documentNumber,
+                    borrowerIdentificationType:
+                      borrowerData.debtorDetail.document,
+                    borrowerIdentificationNumber:
+                      borrowerData.debtorDetail.documentNumber,
                     borrowerProperties: [],
                   } as IBorrower;
 
@@ -183,7 +213,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               onSubmit={() => setIsModalAdd(false)}
               handleClose={() => setIsModalAdd(false)}
               title={data.addButton}
-              onAddBorrower={() => { }}
+              onAddBorrower={() => {}}
               prospectData={{} as IProspect}
             />
           )}
@@ -202,10 +232,12 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
 
           {isModalDelete && (
             <DeleteModal
-              handleClose={() => {selectedDebtorDetail
+              handleClose={() => {
+                selectedDebtorDetail;
                 setIsModalDelete(false);
                 setCurrentBorrowerIndex(null);
               }}
+              handleDelete={handleConfirmDelete}
               TextDelete={dataExtraDebtors.Delete}
             />
           )}

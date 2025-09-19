@@ -32,10 +32,10 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
       handleNext={handleClose}
       handleClose={handleClose}
       finalDivider={true}
-      width={isMobile ? "290px" : "704px"}
-      height="645px"
+      width={isMobile ? "290px" : "912px"}
+      height={isMobile ? "auto" : "680px"}
     >
-      <Stack direction="column" height="475px" gap="24px">
+      <Stack direction="column" height={isMobile ? "auto" : "510px"} gap="24px">
         <Tabs
           scroll={isMobile}
           selectedTab={currentTab}
@@ -50,6 +50,8 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
           <TableFinancialObligations
             initialValues={allDetails as IBorrower}
             showButtons={false}
+            handleOnChangeExtraBorrowers={() => {}}
+            showOnlyEdit={true}
           />
         )}
       </Stack>

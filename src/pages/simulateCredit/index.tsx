@@ -41,9 +41,7 @@ import { evaluateRule } from "./evaluateRule";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 
 export function SimulateCredit() {
-  const [currentStep, setCurrentStep] = useState<number>(
-    6
-  );
+  const [currentStep, setCurrentStep] = useState<number>(6);
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isAlertIncome, setIsAlertIncome] = useState(false);
@@ -122,7 +120,105 @@ export function SimulateCredit() {
     generalToggleChecked: true,
     togglesState: [false, false, false, false],
     borrowerData: {
-      borrowers: [],
+      borrowers: [
+        {
+          borrowerName: "Andres Giraldo Hurtado",
+          borrowerType: "OTHER",
+          borrowerIdentificationType: "Cedula de Ciudadania",
+          borrowerIdentificationNumber: "010101010101",
+          borrowerProperties: [
+            {
+              propertyName: "FinancialObligation",
+              propertyValue:
+                "consumo, 10000000, 600000, Bancolombia, Caja, c1, 5, 60",
+            },
+            {
+              propertyName: "FinancialObligation",
+              propertyValue: "consumo,2,1,bancolombia,Caja,c2,1,2",
+            },
+            {
+              propertyName: "FinancialObligation",
+              propertyValue: "consumo,2,1,bancolombia,Caja,c3,1,2",
+            },
+            {
+              propertyName: "FinancialObligation",
+              propertyValue: "consumo,2,1,bancolombia,Caja,c4,1,2",
+            },
+            {
+              propertyName: "FinancialObligation",
+              propertyValue: "consumo,2,1,bancolombia,Caja,c5,1,2",
+            },
+            {
+              propertyName: "FinancialObligation",
+              propertyValue: "consumo,2,1,bancolombia,Caja,c6,1,2",
+            },
+            {
+              propertyName: "FinancialObligation",
+              propertyValue: "consumo,2,1,bancolombia,Caja,c7,1,2",
+            },
+            {
+              propertyName: "name",
+              propertyValue: "Andrés",
+            },
+            {
+              propertyName: "surname",
+              propertyValue: "Giraldo Hurtado",
+            },
+            {
+              propertyName: "email",
+              propertyValue: "andres.giraldo@gmail.com",
+            },
+            {
+              propertyName: "biological_sex",
+              propertyValue: "male",
+            },
+            {
+              propertyName: "phone_number",
+              propertyValue: "3102330109",
+            },
+            {
+              propertyName: "birth_date",
+              propertyValue: "1987-01-02T15:04:05Z",
+            },
+            {
+              propertyName: "relationship",
+              propertyValue: "brother",
+            },
+            {
+              propertyName: "Leases",
+              propertyValue: "1275870",
+            },
+            {
+              propertyName: "OtherNonSalaryEmoluments",
+              propertyValue: "0",
+            },
+            {
+              propertyName: "PensionAllowances",
+              propertyValue: "1662310",
+            },
+            {
+              propertyName: "PeriodicSalary",
+              propertyValue: "3232132",
+            },
+            {
+              propertyName: "PersonalBusinessUtilities",
+              propertyValue: "1268750",
+            },
+            {
+              propertyName: "ProfessionalFees",
+              propertyValue: "0",
+            },
+            {
+              propertyName: "Dividends",
+              propertyValue: "1436640",
+            },
+            {
+              propertyName: "FinancialIncome",
+              propertyValue: "871650",
+            },
+          ],
+        },
+      ],
     },
     extraordinaryInstallments: [],
     obligationsFinancial: clientPortfolio,
@@ -174,18 +270,18 @@ export function SimulateCredit() {
     borrowers: formData.borrowerData.borrowers,
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
-        formData.consolidatedCreditArray.length > 0
+      formData.consolidatedCreditArray.length > 0
         ? formData.consolidatedCreditArray.map((item) => ({
-          borrowerIdentificationNumber:
-            onlyBorrowerData.borrowerIdentificationNumber,
-          borrowerIdentificationType:
-            onlyBorrowerData.borrowerIdentificationType,
-          consolidatedAmount: item.consolidatedAmount,
-          consolidatedAmountType: item.consolidatedAmountType,
-          creditProductCode: item.creditProductCode,
-          estimatedDateOfConsolidation: item.estimatedDateOfConsolidation,
-          lineOfCreditDescription: item.lineOfCreditDescription,
-        }))
+            borrowerIdentificationNumber:
+              onlyBorrowerData.borrowerIdentificationNumber,
+            borrowerIdentificationType:
+              onlyBorrowerData.borrowerIdentificationType,
+            consolidatedAmount: item.consolidatedAmount,
+            consolidatedAmountType: item.consolidatedAmountType,
+            creditProductCode: item.creditProductCode,
+            estimatedDateOfConsolidation: item.estimatedDateOfConsolidation,
+            lineOfCreditDescription: item.lineOfCreditDescription,
+          }))
         : [],
     linesOfCredit: formData.selectedProducts.map((product) => ({
       lineOfCreditAbbreviatedName: product,
@@ -193,10 +289,10 @@ export function SimulateCredit() {
     firstPaymentCycleDate: new Date().toISOString().split("T")[0],
     extraordinaryInstallments: Array.isArray(formData.extraordinaryInstallments)
       ? formData.extraordinaryInstallments.map((item) => ({
-        installmentAmount: item.value as number,
-        installmentDate: item.datePayment as string | Date,
-        paymentChannelAbbreviatedName: item.paymentMethod as string,
-      }))
+          installmentAmount: item.value as number,
+          installmentDate: item.datePayment as string | Date,
+          paymentChannelAbbreviatedName: item.paymentMethod as string,
+        }))
       : [],
     installmentLimit: formData.loanConditionState.quotaCapValue || 999999999999,
     moneyDestinationAbbreviatedName: formData.selectedDestination,
@@ -288,8 +384,8 @@ export function SimulateCredit() {
     type LineOfCreditValue = string | { value: string } | null | undefined;
     const lineNames = Array.isArray(lineOfCreditValues)
       ? (lineOfCreditValues as LineOfCreditValue[])
-        .map((v) => (typeof v === "string" ? v : v?.value || ""))
-        .filter((name): name is string => Boolean(name))
+          .map((v) => (typeof v === "string" ? v : v?.value || ""))
+          .filter((name): name is string => Boolean(name))
       : [];
 
     const result: Record<
@@ -307,12 +403,12 @@ export function SimulateCredit() {
       const loanAmountRule = ruleConfig["LoanAmountLimit"]?.(ruleData);
       const loanAmount = loanAmountRule
         ? await evaluateRule(
-          loanAmountRule,
-          postBusinessUnitRules,
-          "value",
-          businessUnitPublicCode,
-          true,
-        )
+            loanAmountRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
         : null;
       const amountValue = Number(getRuleValue(loanAmount) ?? 0);
 
@@ -323,12 +419,12 @@ export function SimulateCredit() {
       const termRule = ruleConfig["LoanTermLimit"]?.(termRuleInput);
       const termValueRaw = termRule
         ? await evaluateRule(
-          termRule,
-          postBusinessUnitRules,
-          "value",
-          businessUnitPublicCode,
-          true,
-        )
+            termRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
         : null;
       const termValue = Number(getRuleValue(termValueRaw) ?? 0);
 
@@ -340,12 +436,12 @@ export function SimulateCredit() {
       const interestRule = ruleConfig["RiskFreeInterestRate"]?.(interestInput);
       const rateValueRaw = interestRule
         ? await evaluateRule(
-          interestRule,
-          postBusinessUnitRules,
-          "value",
-          businessUnitPublicCode,
-          true,
-        )
+            interestRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
         : null;
       const interestRate = Number(getRuleValue(rateValueRaw) ?? 0);
 
@@ -631,7 +727,7 @@ export function SimulateCredit() {
   const assistedButtonText =
     (currentStep === stepsAddProspect.loanAmount.id &&
       !formData.loanAmountState.toggleChecked) ||
-      currentStep === steps[steps.length - 1].id
+    currentStep === steps[steps.length - 1].id
       ? titleButtonTextAssited.submitText
       : titleButtonTextAssited.goNextText;
 
@@ -732,25 +828,31 @@ export function SimulateCredit() {
   }, [formData.selectedProducts, fetchRulesByProducts]);
 
   useEffect(() => {
-    const isExtraBorrowersStep = currentStepsNumber?.id === stepsAddProspect.extraBorrowers.id;
+    const isExtraBorrowersStep =
+      currentStepsNumber?.id === stepsAddProspect.extraBorrowers.id;
 
     if (isExtraBorrowersStep) {
-      const newMainBorrower = createMainBorrowerFromFormData(formData, customerData);
-
-      const currentMainBorrower = formData.borrowerData.borrowers.find(
-        (b) => b.borrowerType === "MainBorrower"
+      const newMainBorrower = createMainBorrowerFromFormData(
+        formData,
+        customerData,
       );
 
-      if (JSON.stringify(currentMainBorrower) === JSON.stringify(newMainBorrower)) {
+      const currentMainBorrower = formData.borrowerData.borrowers.find(
+        (b) => b.borrowerType === "MainBorrower",
+      );
+
+      if (
+        JSON.stringify(currentMainBorrower) === JSON.stringify(newMainBorrower)
+      ) {
         return;
       }
 
       const otherBorrowers = formData.borrowerData.borrowers.filter(
-        (b) => b.borrowerType !== "MainBorrower"
+        (b) => b.borrowerType !== "MainBorrower",
       );
 
       const existMainBorrower = formData.borrowerData.borrowers.filter(
-        (b) => b.borrowerType === "MainBorrower"
+        (b) => b.borrowerType === "MainBorrower",
       );
 
       let keepBeforeChanges = newMainBorrower;
@@ -758,9 +860,8 @@ export function SimulateCredit() {
       if (existMainBorrower.length > 0) {
         keepBeforeChanges = {
           ...existMainBorrower[0],
-          ...newMainBorrower.borrowerProperties
-
-        }
+          ...newMainBorrower.borrowerProperties,
+        };
       }
 
       const updatedBorrowers = [keepBeforeChanges, ...otherBorrowers];
@@ -771,7 +872,7 @@ export function SimulateCredit() {
 
   useEffect(() => {
     const mainBorrower = formData.borrowerData.borrowers.find(
-      (b) => b.borrowerType === "MainBorrower"
+      (b) => b.borrowerType === "MainBorrower",
     );
 
     if (!mainBorrower) {
@@ -781,8 +882,14 @@ export function SimulateCredit() {
     const incomeProperties: { [key: string]: number } = {};
     mainBorrower.borrowerProperties.forEach((prop) => {
       const incomeKeys = [
-        "Dividends", "FinancialIncome", "Leases", "OtherNonSalaryEmoluments",
-        "PensionAllowances", "PeriodicSalary", "PersonalBusinessUtilities", "ProfessionalFees",
+        "Dividends",
+        "FinancialIncome",
+        "Leases",
+        "OtherNonSalaryEmoluments",
+        "PensionAllowances",
+        "PeriodicSalary",
+        "PersonalBusinessUtilities",
+        "ProfessionalFees",
       ];
       if (incomeKeys.includes(prop.propertyName)) {
         incomeProperties[prop.propertyName] = Number(prop.propertyValue) || 0;
@@ -794,12 +901,15 @@ export function SimulateCredit() {
       ...incomeProperties,
     };
 
-    if (JSON.stringify(formData.sourcesOfIncome) !== JSON.stringify(newSourcesOfIncome)) {
+    if (
+      JSON.stringify(formData.sourcesOfIncome) !==
+      JSON.stringify(newSourcesOfIncome)
+    ) {
       handleFormDataChange("sourcesOfIncome", newSourcesOfIncome);
     }
   }, [formData.borrowerData.borrowers]);
-  console.log("formData: ",formData);
-  console.log("CustomerData: ",customerData);
+  console.log("formData: ", formData);
+  console.log("CustomerData: ", customerData);
   return (
     <>
       <SimulateCreditUI

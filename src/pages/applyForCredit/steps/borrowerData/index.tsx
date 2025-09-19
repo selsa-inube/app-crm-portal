@@ -191,6 +191,7 @@ export function Borrowers(props: borrowersProps) {
                 }}
                 isMobile={isMobile}
                 initialValues={selectedBorrower}
+                allDetails={{} as IBorrower}
               />
             )}
             {isModalDelete && (
