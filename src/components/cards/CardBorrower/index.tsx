@@ -7,6 +7,8 @@ import {
   MdOutlineRemoveRedEye,
 } from "react-icons/md";
 
+import { EBorrowerType } from "@pages/simulateCredit/steps/extraDebtors/config";
+
 import { StyledContainer } from "./styles";
 import { newBorrowedDAta } from "./config";
 
@@ -22,6 +24,7 @@ export interface ICardBorrowerProps {
   handleDelete?: () => void;
   showIcons?: boolean;
   isMobile?: boolean;
+  typeBorrower?: string;
 }
 
 export function CardBorrower(props: ICardBorrowerProps) {
@@ -37,6 +40,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
     handleDelete = () => {},
     showIcons = true,
     isMobile = false,
+    typeBorrower,
   } = props;
 
   return (
@@ -124,13 +128,15 @@ export function CardBorrower(props: ICardBorrowerProps) {
                   onClick={handleEdit}
                   cursorHover
                 />
-                <Icon
-                  icon={<MdOutlineDelete />}
-                  appearance={"primary"}
-                  size="20px"
-                  onClick={handleDelete}
-                  cursorHover
-                />
+                {typeBorrower != "MainBorrower" && (
+                  <Icon
+                    icon={<MdOutlineDelete />}
+                    appearance={"primary"}
+                    size="20px"
+                    onClick={handleDelete}
+                    cursorHover
+                  />
+                )}
               </>
             )}
           </Stack>

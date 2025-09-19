@@ -142,7 +142,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     setIsModalDelete(false);
     setCurrentBorrowerIndex(null);
   };
-
+  console.log("sortedBorrowers: ", sortedBorrowers);
   return (
     <Fieldset>
       <Stack direction="column" padding="2px 10px" gap="20px">
@@ -160,6 +160,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
         >
           {sortedBorrowers.map((item, index) => (
             <CardBorrower
+              typeBorrower={item.borrowerType}
               key={index}
               title={data.borrowerLabel + ` ${index + 1}`}
               name={item.name}
