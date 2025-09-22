@@ -223,17 +223,28 @@ function AppPage(props: IAppPage) {
             height={isTablet ? "90vh" : "89.5vh"}
           >
             {!isTablet && showNav && (
-              <Nav
-                navigation={navConfig}
-                actions={actions}
-                collapse={true}
-                footerLogo={eventData.businessManager.urlLogo}
-              />
+              <StyledPrint>
+                <Nav
+                  navigation={navConfig}
+                  actions={actions}
+                  collapse={true}
+                  footerLogo={eventData.businessManager.urlLogo}
+                />
+              </StyledPrint>
             )}
             <StyledMain>
               <Outlet />
             </StyledMain>
           </Grid>
+          <StyledPrint>
+            <StyledFooter
+              showNav={showNav}
+              $nav={showNav}
+              isShowMenuOnHeader={showMenuOnHeader}
+            >
+              {renderLogo(eventData.businessManager.urlBrand)}
+            </StyledFooter>
+          </StyledPrint>
         </StyledContainer>
         <StyledFooter
           $nav={isTablet}
