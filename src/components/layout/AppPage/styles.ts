@@ -95,6 +95,8 @@ export const StyledFooter = styled.footer<IStyledFooter>`
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
   width: ${({ $nav }) => ($nav ? "auto" : "200px")};
+  border-right: 1px solid
+    ${({ theme }) => theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
 `;
 
 export const StyledPrint = styled.div`
