@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useIAuth } from "@inube/iauth-react";
 
-interface AuthConfig {
+interface IAuthConfig {
   clientId: string;
   clientSecret: string;
 }
 
 const useAuthHandler = (
-  authConfig: AuthConfig | null,
+  authConfig: IAuthConfig | null,
   hasAuthError: boolean,
   portalCode: string,
 ) => {

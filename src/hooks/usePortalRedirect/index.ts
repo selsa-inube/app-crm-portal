@@ -6,7 +6,7 @@ import { getBusinessManagers } from "@services/businessManager/SearchByIdBusines
 import { decrypt, encrypt } from "@utils/encrypt/encrypt";
 import { IBusinessManagers } from "@services/businessManager/types";
 
-interface AuthConfig {
+interface IAuthConfig {
   clientId: string;
   clientSecret: string;
 }
@@ -24,7 +24,7 @@ const usePortalLogic = () => {
   const [businessManager, setBusinessManager] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
-  const [authConfig, setAuthConfig] = useState<AuthConfig | null>(null);
+  const [authConfig, setAuthConfig] = useState<IAuthConfig | null>(null);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
