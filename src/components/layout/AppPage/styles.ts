@@ -67,6 +67,7 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
 
 export const StyledMenuContainer = styled.div`
   position: absolute;
+  height: 100%;
   top: 48px;
   right: 15px;
   z-index: 1;
@@ -101,10 +102,13 @@ export const StyledFooter = styled.footer<IStyledFooter>`
   width: ${({ $nav }) => ($nav ? "auto" : "200px")};
   border-right: 1px solid
     ${({ theme }) => theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
+  height: 100%;
 `;
 
 export const StyledPrint = styled.div`
   @media print {
     display: none;
   }
+
+  height: 100%;
 `;
