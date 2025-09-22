@@ -10,6 +10,7 @@ export const getAdditionalBorrowersAllowed = async (
   businessUnitPublicCode: string,
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
+  moneyDestination: string,
 ): Promise<IAdditionalBorrowersAllowedResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -28,7 +29,7 @@ export const getAdditionalBorrowersAllowed = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/additional-borrowers-allowed/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/additional-borrowers-allowed/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}/${moneyDestination}`,
         options,
       );
 

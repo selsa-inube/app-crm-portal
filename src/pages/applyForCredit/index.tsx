@@ -427,7 +427,7 @@ export function ApplyForCredit() {
         }
       }
       const mainBorrower = prospect.borrowers.find(
-        (borrower) => borrower.borrowerType === "MainBorrower",
+        (borrower) => borrower.borrowerType === "Deudor principal",
       );
 
       if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
@@ -435,7 +435,7 @@ export function ApplyForCredit() {
         return;
       }
 
-      if (prospect.state !== "Created") {
+      if (prospect.state !== "Creado") {
         setCodeError(1012);
         return;
       }

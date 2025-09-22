@@ -16,19 +16,22 @@ export const ruleConfig: Record<string, RuleBuilder> = {
     ruleName: "LoanAmountLimit",
     conditions: [
       { condition: "LineOfCredit", value: data.LineOfCredit },
+      //{ condition: "MoneyDestination", value: data.MoneyDestination },
+      //{ condition: "PrimaryIncomeType", value: data.PrimaryIncomeType },
       { condition: "ClientType", value: data.ClientType },
+      { condition: "AffiliateSeniority", value: data.AffiliateSeniority },
     ],
   }),
-  LoanTermLimit: (data) => ({
-    ruleName: "LoanTermLimit",
+  LoanTerm: (data) => ({
+    ruleName: "LoanTerm",
     conditions: [
       { condition: "LineOfCredit", value: data.LineOfCredit },
       { condition: "ClientType", value: data.ClientType },
       { condition: "LoanAmount", value: data.LoanAmount },
     ],
   }),
-  RiskFreeInterestRate: (data) => ({
-    ruleName: "RiskFreeInterestRate",
+  FixedInterestRate: (data) => ({
+    ruleName: "FixedInterestRate",
     conditions: [
       { condition: "LineOfCredit", value: data.LineOfCredit },
       { condition: "LoanAmount", value: data.LoanAmount },
