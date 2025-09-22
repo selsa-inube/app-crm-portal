@@ -1,3 +1,4 @@
+import { IProspect } from "../prospect/types";
 export type DmEtapasPrs =
   | "CUMPLIMIENTO_REQUISITOS"
   | "FORMALIZACION_GARANTIAS"
@@ -20,6 +21,13 @@ export interface IObligations {
     paymentMethodName: string;
     productName: string;
   }[];
+}
+export interface IValidateRequirement {
+  borrowerName: string;
+  documentalRequirement: string[];
+}
+export interface IPatchValidateRequirementsPayload {
+  prospect: IProspect;
 }
 
 export interface IUsersByCreditRequests {

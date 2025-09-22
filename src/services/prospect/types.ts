@@ -185,3 +185,33 @@ export interface IProspectBorrower {
   creditProducts: ICreditProduct[];
   outlays: IOutlay[];
 }
+
+interface IIncome {
+  dividends: number;
+  financialIncome: number;
+  leases: number;
+  otherNonSalaryEmoluments: number;
+  pensionAllowances: number;
+  periodicSalary: number;
+  personalBusinessUtilities: number;
+  professionalFees: number;
+}
+
+export interface IRefactorIncome {
+  borrowerIdentificationNumber: string;
+  income: IIncome;
+  justification: string;
+  prospectCode: string;
+}
+
+export interface IRemoveProspect {
+  removeProspectsRequest: [
+    {
+      prospectId: string;
+    },
+  ];
+}
+
+export interface IRemoveProspectResponse {
+  prospectId: string;
+}

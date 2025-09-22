@@ -37,6 +37,7 @@ export const dataCreditProspects = {
   confirm: "Confirmar",
   cancel: "Cancelar",
   errorCreditProspect: "No se han podido cargar los prospectos de credito.",
+  errorRemoveProspect: "No se ha podido eliminar el prospecto de crédito.",
   close: "Cerrar",
   modify: "Modificar observaciones",
   preanalysis: "Comentarios del pre-análisis",

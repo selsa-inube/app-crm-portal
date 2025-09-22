@@ -16,6 +16,7 @@ import {
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
+import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
@@ -56,8 +57,38 @@ export function CreditProspects() {
   >({});
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [errorModalMessage, setErrorModalMessage] = useState("");
 
   const navigate = useNavigate();
+
+  const handleDeleteProspect = async () => {
+    if (!selectedProspect) return;
+
+    try {
+      await RemoveProspect(businessUnitPublicCode, {
+        removeProspectsRequest: [
+          {
+            prospectId: selectedProspect.prospectId,
+          },
+        ],
+      });
+
+      setProspectSummaryData((prev) =>
+        prev.filter(
+          (prospect) => prospect.prospectId !== selectedProspect.prospectId,
+        ),
+      );
+
+      setShowDeleteModal(false);
+      setSelectedProspect(null);
+    } catch (error) {
+      setErrorModalMessage(
+        dataCreditProspects.errorRemoveProspect ||
+          "Hubo un error al eliminar el prospecto.",
+      );
+      setShowErrorModal(true);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +97,7 @@ export function CreditProspects() {
           businessUnitPublicCode,
           customerData.publicCode,
         );
-        if (result) {
+        if (result && result.length > 0) {
           if (Array.isArray(result)) {
             setProspectSummaryData(result);
           } else {
@@ -74,6 +105,10 @@ export function CreditProspects() {
           }
         }
       } catch (error) {
+        setErrorModalMessage(
+          errorMessage.notProspects ||
+            "No se encontraron prospectos para este cliente.",
+        );
         setShowErrorModal(true);
       }
     };
@@ -103,7 +138,6 @@ export function CreditProspects() {
     const requestedAmount = String(
       prospect.requestedAmount || "",
     ).toLowerCase();
-
     const term = searchTerm.toLowerCase();
 
     return (
@@ -200,7 +234,10 @@ export function CreditProspects() {
                   handleEdit={() =>
                     navigate(`/credit/prospects/${prospect.prospectCode}`)
                   }
-                  handleDelete={() => setShowDeleteModal(true)}
+                  handleDelete={() => {
+                    setSelectedProspect(prospect);
+                    setShowDeleteModal(true);
+                  }}
                 />
               ))}
             </Stack>
@@ -269,7 +306,6 @@ export function CreditProspects() {
                     commentsByProspectId[selectedProspect.prospectId] || "",
                 }));
               }
-
               setShowEditMessageModal(false);
               setShowMessageModal(true);
             }}
@@ -308,6 +344,7 @@ export function CreditProspects() {
           <BaseModal
             title={dataCreditProspects.deleteTitle}
             handleBack={() => setShowDeleteModal(false)}
+            handleNext={handleDeleteProspect}
             backButton="Cancelar"
             nextButton="Eliminar"
             apparenceNext="danger"
@@ -321,7 +358,7 @@ export function CreditProspects() {
         <ErrorModal
           handleClose={handleCloseModalNotExistProspect}
           isMobile={isMobile}
-          message={errorMessage.notProspects}
+          message={errorModalMessage}
         />
       )}
     </>

@@ -24,11 +24,13 @@ interface IExtraDebtorsProps {
   isMobile: boolean;
   onFormValid: (isValid: boolean) => void;
   initialValues: IDebtorDetail;
+  businessUnitPublicCode: string;
   handleOnChange: (values: FormikValues) => void;
 }
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
-  const { handleOnChange, initialValues, isMobile } = props;
+  const { handleOnChange, initialValues, businessUnitPublicCode, isMobile } =
+    props;
 
   const sortedBorrowers = [...mockGuaranteeBorrower].sort((a, b) => {
     if (a.borrowerType === "MainBorrower") return -1;
@@ -216,6 +218,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               isMobile={isMobile}
               initialValues={selectedBorrowerForEdit}
               currentBorrowerIndex={currentBorrowerIndex}
+              businessUnitPublicCode={businessUnitPublicCode}
             />
           )}
         </Grid>
