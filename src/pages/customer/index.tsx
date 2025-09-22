@@ -7,11 +7,14 @@ import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 
 import { CustomerUI } from "./interface";
+import { EErrorMessages } from "./config";
 
 export function Customer() {
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
+  const [messageError, setMessageError] = useState("");
+
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
   const { businessUnitSigla } = useContext(AppContext);
@@ -53,6 +56,7 @@ export function Customer() {
         setOptions([]);
       }
     } catch (error) {
+      setMessageError(EErrorMessages.CLIENT_NOT_FOUND);
       setShowError(true);
       setOptions([]);
     }
@@ -83,6 +87,7 @@ export function Customer() {
     );
 
     if (!isValidOption) {
+      setMessageError(EErrorMessages.NO_CLIENT_SELECTED);
       setShowError(true);
       return;
     }
@@ -93,7 +98,6 @@ export function Customer() {
   };
 
   useEffect(() => {
-    console.log(inputValue, "businessUnitSigla: ", businessUnitSigla);
     handleSearch(inputValue);
   }, [businessUnitSigla]);
 
@@ -106,6 +110,7 @@ export function Customer() {
       selectRef={selectRef}
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
+      messageError={messageError}
     />
   );
 }
