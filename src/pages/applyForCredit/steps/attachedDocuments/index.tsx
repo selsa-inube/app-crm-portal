@@ -9,6 +9,11 @@ import { IProspect } from "@services/prospect/types";
 import { getMonthsElapsed } from "@utils/formatData/currency";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { IFile } from "@components/modals/ListModal";
+import { postDocumentsRequiredByCreditRequest } from "@services/creditRequest/getDocumentsRequiredByCreditRequest";
+import {
+  IPatchValidateRequirementsPayload,
+  IValidateRequirement,
+} from "@services/creditRequest/types";
 
 import { ruleConfig } from "../../config/configRules";
 import { evaluateRule } from "../../evaluateRule";
@@ -28,6 +33,7 @@ interface IAttachedDocumentsProps {
   }) => void;
   customerData: ICustomerData;
   prospectData: IProspect;
+  businessUnitPublicCode: string;
 }
 
 export function AttachedDocuments(props: IAttachedDocumentsProps) {
@@ -37,11 +43,17 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     handleOnChange,
     customerData,
     prospectData,
+    businessUnitPublicCode,
   } = props;
 
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const [ruleValues, setRuleValues] = useState<IBorrowerDocumentRule[]>([]);
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [
+    validDocumentsRequiredByCreditRequest,
+    setValidDocumentsRequiredByCreditRequest,
+  ] = useState<IValidateRequirement[]>([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
     const creditProducts = prospectData?.creditProducts;
@@ -106,6 +118,41 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     }
   }, [customerData, prospectData, fetchValidationRulesData]);
 
+  useEffect(() => {
+    if (!prospectData) return;
+    const payload =
+      prospectData as unknown as IPatchValidateRequirementsPayload;
+    const handleSubmit = async () => {
+      setIsLoading(true);
+      try {
+        const data = await postDocumentsRequiredByCreditRequest(
+          businessUnitPublicCode,
+          payload,
+          eventData?.user?.identificationDocumentNumber || "",
+        );
+        if (data && Array.isArray(data) && data.length > 0) {
+          setValidDocumentsRequiredByCreditRequest(data);
+        }
+      } catch (error) {
+        setShowErrorModal(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    handleSubmit();
+  }, [prospectData, businessUnitPublicCode]);
+
+  const documentsRequiredByBorrower =
+    validDocumentsRequiredByCreditRequest.length
+      ? validDocumentsRequiredByCreditRequest.map((item) => ({
+          borrower: item.borrowerName,
+          value: Array.isArray(item.documentalRequirement)
+            ? item.documentalRequirement.join(", ")
+            : "",
+        }))
+      : ruleValues;
+
   return (
     <Fieldset>
       <Stack padding="16px">
@@ -114,7 +161,9 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
           uploadedFilesByRow={initialValues}
           setUploadedFilesByRow={handleOnChange}
           customerData={customerData}
-          ruleValues={ruleValues}
+          ruleValues={documentsRequiredByBorrower}
+          isLoading={isLoading}
+          showErrorModal={showErrorModal}
         />
       </Stack>
     </Fieldset>

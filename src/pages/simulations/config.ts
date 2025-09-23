@@ -38,6 +38,9 @@ export const dataEditProspect = {
   confirm: "Confirmar solicitud",
   errorCredit: "Error al obtener las solicitudes de crédito",
   errorProspect: "Error al obtener el prospecto",
+  errorRemoveProspect: "No se ha podido eliminar el prospecto de crédito.",
+  deleteTitle: "Eliminar prospecto",
+  deleteDescription: "¿Realmente deseas eliminar este prospecto de crédito?",
 };
 
 export const titlesModal = {
@@ -49,4 +52,11 @@ export const titlesModal = {
     "Ya existe una solicitud de crédito radicada con el mismo código de prospecto.",
   titleSubmitted: "El prospecto ya se encuentra radicado.",
   textButtonNext: "Entendido",
+};
+
+export const labelsAndValuesShare = {
+  titleOnPdf: "Gestión Comercial",
+  fileName: "reporte_comercial.pdf",
+  text: "Reporte Comercial para compartir",
+  error: "No se pudo compartir el PDF",
 };

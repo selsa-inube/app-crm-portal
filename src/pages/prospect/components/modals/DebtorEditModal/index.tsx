@@ -19,16 +19,28 @@ import {
 import { IObligations } from "../../TableObligationsFinancial/types";
 
 interface IDebtorEditModalProps {
-  handleClose: () => void;
   isMobile: boolean;
   initialValues: IBorrower;
-  onUpdate?: (updatedBorrower: IBorrower) => void;
   currentBorrowerIndex?: number | null;
+  publicCode?: string;
+  businessUnitPublicCode: string;
+  handleClose: () => void;
   onSave: () => void;
+  onUpdate?: (updatedBorrower: IBorrower) => void;
+  businessUnit?: string;
+  businessUnitId?: string;
 }
 
-export const DebtorEditModal = (props: IDebtorEditModalProps) => {
-  const { handleClose, isMobile, initialValues, onUpdate, onSave } = props;
+export function DebtorEditModal(props: IDebtorEditModalProps) {
+  const {
+    isMobile,
+    initialValues,
+    publicCode,
+    businessUnitPublicCode,
+    handleClose,
+    onUpdate,
+    onSave,
+  } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const [editedBorrower, setEditedBorrower] =
     useState<IBorrower>(initialValues);
@@ -235,6 +247,8 @@ export const DebtorEditModal = (props: IDebtorEditModalProps) => {
               setIsModified(true);
               handleIncomeChange(newIncome);
             }}
+            publicCode={publicCode}
+            businessUnitPublicCode={businessUnitPublicCode}
           />
         )}
         {currentTab === "obligations" && (
@@ -251,4 +265,4 @@ export const DebtorEditModal = (props: IDebtorEditModalProps) => {
       </Stack>
     </BaseModal>
   );
-};
+}

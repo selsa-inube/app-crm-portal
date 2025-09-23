@@ -416,6 +416,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }}
                       isMobile={isMobile}
                       customerData={customerData}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -434,6 +435,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       customerData={customerData}
                       creditLimitData={creditLimitData}
+                      businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}
                 {currentStepsNumber &&

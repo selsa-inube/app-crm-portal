@@ -221,6 +221,7 @@ export function Borrowers(props: borrowersProps) {
                   formik.setFieldValue("borrowers", updatedBorrowers);
                 }}
                 onSave={() => {}}
+                businessUnitPublicCode={businessUnitPublicCode}
               />
             )}
           </Stack>

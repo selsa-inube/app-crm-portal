@@ -1,7 +1,7 @@
 export const DeleteData = {
   title: "Eliminación",
   close: "Cerrar",
-  data: "¿Realmente desea eliminar este producto?",
+  data: "¿Realmente deseas eliminar este producto?",
   cancel: "Cancelar",
   delate: "Eliminar",
 };

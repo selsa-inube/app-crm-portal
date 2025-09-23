@@ -1,6 +1,6 @@
 export const dataVehicule = {
   labelState: "Nuevo o usado",
-  placeHolderState: "Seleccione una opción",
+  placeHolderState: "Selecciona una opción",
   labelModel: "Modelo (año)",
   placeHolderModel: "Ej: 2021",
   labelValue: "Valor estimado",

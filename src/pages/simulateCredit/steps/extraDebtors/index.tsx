@@ -24,12 +24,14 @@ interface IExtraDebtorsProps {
   isMobile: boolean;
   onFormValid: (isValid: boolean) => void;
   initialValues: IBorrower[];
+  businessUnitPublicCode: string;
   handleOnChange: (values: FormikValues) => void;
   customerData: ICustomerData;
 }
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
-  const { handleOnChange, initialValues, isMobile } = props;
+  const { handleOnChange, initialValues, isMobile, businessUnitPublicCode } =
+    props;
   const [borrowers, setBorrowers] = useState(() =>
     transformServiceData(initialValues),
   );
@@ -234,6 +236,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               currentBorrowerIndex={currentBorrowerIndex}
               onUpdate={handleUpdateBorrower}
               onSave={() => saveGlobalState()}
+              businessUnitPublicCode={businessUnitPublicCode}
             />
           )}
         </Grid>

@@ -337,6 +337,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       currentStepsNumber={currentStepsNumber}
       handleSubmitClick={handleSubmitClick}
       handleClose={handleClose}
+      businessUnitPublicCode={businessUnitPublicCode || ""}
       title={title}
       isMobile={isMobile}
     />

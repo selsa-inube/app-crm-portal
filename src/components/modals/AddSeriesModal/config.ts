@@ -8,7 +8,7 @@ export const dataAddSeriesModal = {
   labelValue: "Valor",
   labelFrequency: "Frecuencia de pago",
   labelDate: "Primer pago",
-  placeHolderSelect: "Seleccione una opción",
+  placeHolderSelect: "Selecciona una opción",
   placeHolderAmount: "Número de pagos",
   placeHolderValue: "Valor a pagar",
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MdAttachFile, MdOutlineEdit } from "react-icons/md";
 import {
   Pagination,
@@ -11,10 +11,9 @@ import {
   Tr,
   Icon,
   Text,
-  SkeletonLine,
-  SkeletonIcon,
   useFlag,
   Stack,
+  Spinner,
 } from "@inubekit/inubekit";
 
 import { ListModal } from "@components/modals/ListModal";
@@ -35,25 +34,24 @@ interface ITableAttachedDocumentsProps {
   customerData: ICustomerData;
   setUploadedFilesByRow: (files: { [key: string]: IFile[] }) => void;
   ruleValues: IBorrowerDocumentRule[];
+  isLoading: boolean;
+  showErrorModal: boolean;
 }
 
 export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
-  const { isMobile, uploadedFilesByRow, setUploadedFilesByRow, ruleValues } =
-    props;
+  const {
+    isMobile,
+    uploadedFilesByRow,
+    setUploadedFilesByRow,
+    ruleValues,
+    isLoading,
+  } = props;
 
-  const [loading, setLoading] = useState(true);
   const [showAttachment, setShowAttachments] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [seeAttachment, setSeeAttachments] = useState(false);
+  const [currentRowId, setCurrentRowId] = useState<string>("");
   const [rowIdToDelete, setRowIdToDelete] = useState<string | null>(null);
-
-  const handleConfirmDelete = () => {
-    if (rowIdToDelete) {
-      handleRemoveAllFiles(rowIdToDelete);
-      setShowDeleteModal(false);
-      setRowIdToDelete(null);
-    }
-  };
 
   const {
     totalRecords,
@@ -64,19 +62,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     firstEntryInPage,
     lastEntryInPage,
   } = usePagination(ruleValues);
-  const [currentRowId, setCurrentRowId] = useState<string>("");
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, []);
-
-  const visibleHeaders = isMobile
-    ? headers.filter((header) => ["borrower", "actions"].includes(header.key))
-    : headers;
 
   const { addFlag } = useFlag();
 
@@ -110,9 +95,16 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     handleFlag();
   };
 
+  const handleConfirmDelete = () => {
+    if (rowIdToDelete) {
+      handleRemoveAllFiles(rowIdToDelete);
+      setShowDeleteModal(false);
+      setRowIdToDelete(null);
+    }
+  };
+
   const iconToShowOnActions = (rowIndex: number) => {
     const hasNoFiles = uploadedFilesByRow[rowIndex];
-
     return hasNoFiles === undefined || hasNoFiles.length === 0 ? (
       <MdAttachFile />
     ) : (
@@ -122,118 +114,134 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
 
   const getTitleToModal = (rowId: string) => {
     const rowIdParsed = parseInt(rowId);
-
-    if (Number.isNaN(rowIdParsed)) {
-      return "Adjuntar";
-    }
-
+    if (Number.isNaN(rowIdParsed)) return "Adjuntar";
     return ruleValues[rowIdParsed].value;
   };
 
+  const visibleHeaders = isMobile
+    ? headers.filter((header) => ["borrower", "actions"].includes(header.key))
+    : headers;
+
   return (
-    <Table tableLayout="auto">
-      <Thead>
-        <Tr>
-          {loading
-            ? visibleHeaders.map((_, index) => (
-                <Td key={index} type="custom">
-                  <SkeletonIcon />
-                </Td>
-              ))
-            : visibleHeaders.map((header, index) => (
+    <>
+      {isLoading ? (
+        <Stack
+          direction="column"
+          gap="16px"
+          justifyContent="center"
+          alignItems="center"
+          padding="32px"
+          width="100%"
+        >
+          <Spinner size="large" appearance="primary" />
+          <Text type="title" size="medium" appearance="dark">
+            {dataReport.loading}
+          </Text>
+        </Stack>
+      ) : (
+        <Table tableLayout="auto">
+          <Thead>
+            <Tr>
+              {visibleHeaders.map((header, index) => (
                 <Th key={index} action={header.action} align="center">
                   {header.label}
                 </Th>
               ))}
-        </Tr>
-      </Thead>
-      <Tbody>
-        {(() => {
-          if (loading) {
-            <Tr>
-              {visibleHeaders.map((_, index) => (
-                <Td key={index} type="custom">
-                  <SkeletonLine />
-                </Td>
-              ))}
-            </Tr>;
-          } else if (ruleValues.length === 0) {
-            <Tr>
-              <Td colSpan={visibleHeaders.length} align="center" type="custom">
-                <Text
-                  size="large"
-                  type="label"
-                  appearance="gray"
-                  textAlign="center"
-                >
-                  {dataReport.noData}
-                </Text>
-              </Td>
-            </Tr>;
-          } else {
-            return ruleValues.map(
-              (row: IBorrowerDocumentRule, rowIndex: number) => (
-                <Tr key={rowIndex}>
-                  {visibleHeaders.map((header, colIndex) => {
-                    const cellData =
-                      row[header.key as keyof { borrower: string }];
-                    const customColumn = [
-                      "download",
-                      "remove",
-                      "attached",
-                      "actions",
-                    ].includes(header.key);
-                    return (
-                      <Td
-                        key={colIndex}
-                        width={customColumn ? "70px" : "auto"}
-                        appearance={rowIndex % 2 === 0 ? "light" : "dark"}
-                        type={customColumn ? "custom" : "text"}
-                        align={"left"}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {(() => {
+              if (ruleValues.length === 0) {
+                return (
+                  <Tr>
+                    <Td
+                      colSpan={visibleHeaders.length}
+                      align="center"
+                      type="custom"
+                    >
+                      <Text
+                        size="large"
+                        type="label"
+                        appearance="gray"
+                        textAlign="center"
                       >
-                        {(() => {
-                          if (header.key === "actions") {
-                            return (
-                              <Stack justifyContent="space-around">
-                                <Icon
-                                  icon={iconToShowOnActions(rowIndex)}
-                                  appearance="primary"
-                                  size="16px"
-                                  cursorHover
-                                  onClick={() =>
-                                    handleOpenAttachment(rowIndex.toString())
-                                  }
-                                />
-                              </Stack>
-                            );
-                          }
-                          return cellData;
-                        })()}
-                      </Td>
-                    );
-                  })}
-                </Tr>
-              ),
-            );
-          }
-        })()}
-      </Tbody>
-      {!loading && ruleValues.length > 0 && (
-        <Tfoot>
-          <Tr border="bottom">
-            <Td colSpan={visibleHeaders.length} type="custom" align="center">
-              <Pagination
-                firstEntryInPage={firstEntryInPage}
-                lastEntryInPage={lastEntryInPage}
-                totalRecords={totalRecords}
-                handleStartPage={handleStartPage}
-                handlePrevPage={handlePrevPage}
-                handleNextPage={handleNextPage}
-                handleEndPage={handleEndPage}
-              />
-            </Td>
-          </Tr>
-        </Tfoot>
+                        {dataReport.noData}
+                      </Text>
+                    </Td>
+                  </Tr>
+                );
+              } else {
+                return ruleValues.map(
+                  (row: IBorrowerDocumentRule, rowIndex: number) => (
+                    <Tr key={rowIndex}>
+                      {visibleHeaders.map((header, colIndex) => {
+                        const cellData =
+                          row[header.key as keyof { borrower: string }];
+                        const customColumn = [
+                          "download",
+                          "remove",
+                          "attached",
+                          "actions",
+                        ].includes(header.key);
+                        return (
+                          <Td
+                            key={colIndex}
+                            width={customColumn ? "70px" : "auto"}
+                            appearance={rowIndex % 2 === 0 ? "light" : "dark"}
+                            type={customColumn ? "custom" : "text"}
+                            align={"left"}
+                          >
+                            {(() => {
+                              if (header.key === "actions") {
+                                return (
+                                  <Stack justifyContent="space-around">
+                                    <Icon
+                                      icon={iconToShowOnActions(rowIndex)}
+                                      appearance="primary"
+                                      size="16px"
+                                      cursorHover
+                                      onClick={() =>
+                                        handleOpenAttachment(
+                                          rowIndex.toString(),
+                                        )
+                                      }
+                                    />
+                                  </Stack>
+                                );
+                              }
+                              return cellData;
+                            })()}
+                          </Td>
+                        );
+                      })}
+                    </Tr>
+                  ),
+                );
+              }
+            })()}
+          </Tbody>
+          {!isLoading && ruleValues.length > 0 && (
+            <Tfoot>
+              <Tr border="bottom">
+                <Td
+                  colSpan={visibleHeaders.length}
+                  type="custom"
+                  align="center"
+                >
+                  <Pagination
+                    firstEntryInPage={firstEntryInPage}
+                    lastEntryInPage={lastEntryInPage}
+                    totalRecords={totalRecords}
+                    handleStartPage={handleStartPage}
+                    handlePrevPage={handlePrevPage}
+                    handleNextPage={handleNextPage}
+                    handleEndPage={handleEndPage}
+                  />
+                </Td>
+              </Tr>
+            </Tfoot>
+          )}
+        </Table>
       )}
       {showAttachment && (
         <ListModal
@@ -273,6 +281,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
           <Text>{dataReport.deleteText}</Text>
         </BaseModal>
       )}
-    </Table>
+    </>
   );
 }

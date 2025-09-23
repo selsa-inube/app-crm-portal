@@ -3,37 +3,40 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IObligations } from "../types";
 
-export const getClientPortfolioObligationsById = async (
+import { IRefactorIncome } from "../types";
+
+export const restoreIncomeInformationByBorrowerId = async (
   businessUnitPublicCode: string,
-  ClientIdentificationNumber: string,
-): Promise<IObligations | null> => {
+  payload: IRefactorIncome,
+): Promise<IRefactorIncome | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
-        method: "GET",
+        method: "PATCH",
         headers: {
-          "X-Action": "SearchPortfolioObligationsById",
+          "X-Action": "RestoreIncomeInformationByBorrowerId",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
         },
+        body: JSON.stringify(payload),
         signal: controller.signal,
       };
-      console.log(businessUnitPublicCode);
+
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/portfolio-obligations/${ClientIdentificationNumber}`,
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return null;
+        return;
       }
 
       const data = await res.json();
@@ -56,11 +59,9 @@ export const getClientPortfolioObligationsById = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener el portafolio de obligaciones.",
+          "Todos los intentos fallaron. No se pudo restaurar las fuentes de ingresos.",
         );
       }
     }
   }
-
-  return null;
 };

@@ -4,7 +4,7 @@ import { IDebtorDetail } from "@pages/applyForCredit/types";
 export const dataExtraDebtors = {
   AddBorrower: "Agregar deudor",
   Add: "Agregar",
-  Delete: "¿Realmente desea eliminar este deudor?",
+  Delete: "¿Realmente deseas eliminar este deudor?",
 };
 
 export enum EBorrowerProperty {

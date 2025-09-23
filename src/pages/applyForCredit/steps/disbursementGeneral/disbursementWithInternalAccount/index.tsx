@@ -236,7 +236,6 @@ export function DisbursementWithInternalAccount(
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
-
         const hasData = customer?.publicCode && data;
         if (hasData && customer.publicCode !== customerData?.publicCode) {
           setCurrentIdentification(identification);
