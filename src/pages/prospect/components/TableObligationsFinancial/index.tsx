@@ -6,7 +6,11 @@ import { AppContext } from "@context/AppContext";
 import { currencyFormat } from "@utils/formatData/currency";
 import { updateProspect } from "@services/prospect/updateProspect";
 
-import { convertObligationsToProperties, headers } from "./config";
+import {
+  convertObligationsToProperties,
+  headers,
+  errorMessages,
+} from "./config";
 import {
   ITableFinancialObligationsProps,
   TableFinancialObligationsUI,
@@ -43,15 +47,6 @@ export const TableFinancialObligations = (
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-
-  const formik = useFormik({
-    initialValues: initialValues as IObligations,
-    onSubmit: () => {},
-  });
-
-  useEffect(() => {
-    handleOnChange(formik.values);
-  }, []);
 
   const handleEdit = (debtor: ITableFinancialObligationsProps) => {
     let balance = "";
@@ -240,7 +235,7 @@ export const TableFinancialObligations = (
         onProspectUpdate?.();
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(`Error al actualizar:  ${error}`);
+        setMessageError(`${errorMessages.updateMessage}  ${error}`);
       }
     } else {
       try {

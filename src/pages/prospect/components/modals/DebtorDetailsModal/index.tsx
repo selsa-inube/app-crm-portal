@@ -3,22 +3,22 @@ import { Stack, Tabs } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
+import { IBorrower } from "@services/prospect/types";
+import { IDebtorDetail } from "@pages/applyForCredit/types";
 
 import { dataDetails, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
 import { IncomeDebtor } from "./incomeDebtor";
-import { IBorrower } from "@src/services/prospect/types";
-import { IDebtorDetail } from "@src/pages/applyForCredit/types";
 
 interface IDebtorDetailsModalProps {
   handleClose: () => void;
   initialValues: IDebtorDetail;
-  allDetails: IBorrower | null;
+  properties: IBorrower | null;
   isMobile?: boolean;
 }
 
 export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
-  const { handleClose, initialValues, isMobile, allDetails } = props;
+  const { handleClose, initialValues, isMobile, properties } = props;
 
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const onChange = (tabId: string) => {
@@ -44,11 +44,11 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
         />
         {currentTab === "data" && <DataDebtor initialValues={initialValues} />}
         {currentTab === "sources" && (
-          <IncomeDebtor initialValues={allDetails as IBorrower} />
+          <IncomeDebtor initialValues={properties as IBorrower} />
         )}
         {currentTab === "obligations" && (
           <TableFinancialObligations
-            initialValues={allDetails as IBorrower}
+            initialValues={properties as IBorrower}
             showButtons={false}
             handleOnChangeExtraBorrowers={() => {}}
             showOnlyEdit={true}

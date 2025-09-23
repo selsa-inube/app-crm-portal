@@ -238,7 +238,6 @@ export function DisbursementWithInternalAccount(
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
 
         const hasData = customer?.publicCode && data;
-        console.log("hasData", customer);
         if (hasData && customer.publicCode !== customerData?.publicCode) {
           setCurrentIdentification(identification);
           formik.setFieldValue(

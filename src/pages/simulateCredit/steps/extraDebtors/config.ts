@@ -1,6 +1,5 @@
 import { IBorrower } from "@services/prospect/types";
-
-import { IDebtorDetail } from "./../../../applyForCredit/types";
+import { IDebtorDetail } from "@pages/applyForCredit/types";
 
 export const dataExtraDebtors = {
   AddBorrower: "Agregar deudor",

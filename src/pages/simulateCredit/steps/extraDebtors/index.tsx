@@ -106,14 +106,6 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     });
 
     setBorrowers(newBorrowers);
-
-    const newBorrowersArray = newBorrowers.map((borrower) => {
-      return borrower.originalData;
-    });
-
-    handleOnChange({
-      borrowers: newBorrowersArray,
-    });
   };
 
   const handleConfirmDelete = () => {
@@ -131,18 +123,16 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     );
     setBorrowers(updatedBorrowers);
 
-    const updatedOriginalBorrowers = updatedBorrowers.map(
-      (borrower) => borrower.originalData,
-    );
-
-    handleOnChange({
-      borrowers: updatedOriginalBorrowers,
-    });
-
     setIsModalDelete(false);
     setCurrentBorrowerIndex(null);
   };
-  console.log("sortedBorrowers: ", sortedBorrowers);
+
+  const saveGlobalState = () => {
+    handleOnChange({
+      borrowers: borrowers.map((borrower) => borrower.originalData),
+    });
+  };
+
   return (
     <Fieldset>
       <Stack direction="column" padding="2px 10px" gap="20px">
@@ -216,7 +206,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               }}
               isMobile={isMobile}
               initialValues={selectedDebtorDetail}
-              allDetails={selectedBorrowerForEdit}
+              properties={selectedBorrowerForEdit}
             />
           )}
 
@@ -237,11 +227,13 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                 setIsModalEdit(false);
                 setSelectedBorrowerForEdit(null);
                 setCurrentBorrowerIndex(null);
+                setBorrowers(transformServiceData(initialValues));
               }}
               isMobile={isMobile}
               initialValues={selectedBorrowerForEdit}
               currentBorrowerIndex={currentBorrowerIndex}
               onUpdate={handleUpdateBorrower}
+              onSave={() => saveGlobalState()}
             />
           )}
         </Grid>

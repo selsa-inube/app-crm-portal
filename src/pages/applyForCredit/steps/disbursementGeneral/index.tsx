@@ -172,7 +172,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   };
 
   const isAmountReadOnly = validTabs.length === 1;
-  console.log(initialValues);
+
   return (
     <Fieldset>
       <Stack

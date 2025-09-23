@@ -20,6 +20,7 @@ import {
   IIncomeSources,
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
+import { updateFinancialObligationsFormData } from "./utils";
 
 import { IProspect } from "@services/prospect/types";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
@@ -42,7 +43,7 @@ import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
-    stepsAddProspect.generalInformation.id,
+    7 /* stepsAddProspect.generalInformation.id,*/,
   );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
@@ -144,7 +145,7 @@ export function SimulateCredit() {
     sourcesOfIncome: {
       Dividends: 0,
       FinancialIncome: 0,
-      Leases: 4444,
+      Leases: 0,
       OtherNonSalaryEmoluments: 0,
       PensionAllowances: 0,
       PeriodicSalary: 0,
@@ -739,16 +740,6 @@ export function SimulateCredit() {
         customerData,
       );
 
-      const currentMainBorrower = formData.borrowerData.borrowers.find(
-        (borrower) => borrower.borrowerType === "MainBorrower",
-      );
-
-      if (
-        JSON.stringify(currentMainBorrower) === JSON.stringify(newMainBorrower)
-      ) {
-        return;
-      }
-
       const otherBorrowers = formData.borrowerData.borrowers.filter(
         (borrower) => borrower.borrowerType !== "MainBorrower",
       );
@@ -759,18 +750,29 @@ export function SimulateCredit() {
 
       let keepBeforeChanges = newMainBorrower;
 
-      if (existMainBorrower.length > 0) {
+      if (existMainBorrower.length) {
         keepBeforeChanges = {
           ...existMainBorrower[0],
-          ...newMainBorrower.borrowerProperties,
+          borrowerProperties: [...newMainBorrower.borrowerProperties],
         };
       }
 
       const updatedBorrowers = [keepBeforeChanges, ...otherBorrowers];
-
       handleFormDataChange("borrowerData", { borrowers: updatedBorrowers });
     }
   }, [currentStepsNumber, customerData]);
+
+  useEffect(() => {
+    const isFinancialStep =
+      currentStepsNumber?.id === stepsAddProspect.obligationsFinancial.id;
+    if (!isFinancialStep) return;
+
+    const newObligations = updateFinancialObligationsFormData(
+      formData.borrowerData.borrowers,
+    );
+
+    handleFormDataChange("obligationsFinancial", newObligations);
+  }, [currentStepsNumber]);
 
   useEffect(() => {
     const mainBorrower = formData.borrowerData.borrowers.find(

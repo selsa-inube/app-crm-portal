@@ -87,7 +87,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 size="18px"
               />
               <Text type="body" size="large">
-                {income}
+                {income.replace("$", "")}
               </Text>
             </Stack>
           </Stack>
@@ -102,7 +102,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 size="18px"
               />
               <Text type="body" size="large">
-                {obligations}
+                {obligations.replace("$", "")}
               </Text>
             </Stack>
           </Stack>

@@ -58,7 +58,6 @@ import {
   AlertCreditLimit,
   AlertIncome,
 } from "./components/smallModals/modals";
-import { updateFinancialObligationsFormData } from "./utils";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -413,13 +412,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       initialValues={formData.borrowerData.borrowers}
                       onFormValid={setIsCurrentFormValid}
                       handleOnChange={(newDestination) => {
-                        handleFormDataChange(
-                          "obligationsFinancial",
-                          updateFinancialObligationsFormData(
-                            newDestination.borrowers,
-                          ),
-                        );
-
                         handleFormDataChange("borrowerData", newDestination);
                       }}
                       isMobile={isMobile}

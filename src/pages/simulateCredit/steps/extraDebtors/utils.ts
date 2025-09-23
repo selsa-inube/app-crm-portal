@@ -1,8 +1,9 @@
 import { IBorrower } from "@services/prospect/types";
 import { transformFinancialObligations } from "@pages/prospect/components/modals/DebtorEditModal/utils";
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types.ts";
-import { ICustomerData } from "@src/context/CustomerContext/types";
+import { ICustomerData } from "@context/CustomerContext/types";
 import { unformatCurrency } from "@pages/prospect/components/modals/DebtorEditModal/utils";
+import { IFormData } from "@pages/simulateCredit/types.tsx";
 
 import {
   INCOME_PROPERTY_KEYS,
@@ -15,7 +16,6 @@ import {
   Delimiters,
   RelationshipType,
 } from "./config";
-import { IFormData } from "./../../../simulateCredit/types";
 
 export const transformServiceData = (
   serviceData: IBorrower[],
@@ -115,9 +115,9 @@ export const createMainBorrowerFromFormData = (
       (obligation) => {
         const propertyValue = [
           obligation.productName || "",
-          obligation.entity || "",
-          unformatCurrency(obligation.nextPaymentValueTotal),
           unformatCurrency(obligation.balanceObligationTotal),
+          unformatCurrency(obligation.nextPaymentValueTotal),
+          obligation.entity || "",
           obligation.paymentMethodName || "",
           obligation.obligationNumber || "",
           obligation.duesPaid || 0,

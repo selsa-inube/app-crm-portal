@@ -24,10 +24,11 @@ interface IDebtorEditModalProps {
   initialValues: IBorrower;
   onUpdate?: (updatedBorrower: IBorrower) => void;
   currentBorrowerIndex?: number | null;
+  onSave: () => void;
 }
 
 export const DebtorEditModal = (props: IDebtorEditModalProps) => {
-  const { handleClose, isMobile, initialValues, onUpdate } = props;
+  const { handleClose, isMobile, initialValues, onUpdate, onSave } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const [editedBorrower, setEditedBorrower] =
     useState<IBorrower>(initialValues);
@@ -150,6 +151,8 @@ export const DebtorEditModal = (props: IDebtorEditModalProps) => {
     if (!initialValues || !incomeData || onUpdate === undefined) return;
 
     onUpdate(editedBorrower);
+    onSave();
+
     handleFlag();
     handleClose();
   };
