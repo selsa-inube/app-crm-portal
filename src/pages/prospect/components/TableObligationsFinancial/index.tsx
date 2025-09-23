@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
-import { FormikValues, useFormik } from "formik";
+import { FormikValues } from "formik";
 
 import { AppContext } from "@context/AppContext";
 import { currencyFormat } from "@utils/formatData/currency";

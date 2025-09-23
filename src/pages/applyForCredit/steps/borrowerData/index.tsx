@@ -191,7 +191,7 @@ export function Borrowers(props: borrowersProps) {
                 }}
                 isMobile={isMobile}
                 initialValues={selectedBorrower}
-                allDetails={{} as IBorrower}
+                properties={{} as IBorrower}
               />
             )}
             {isModalDelete && (
@@ -220,6 +220,7 @@ export function Borrowers(props: borrowersProps) {
                   );
                   formik.setFieldValue("borrowers", updatedBorrowers);
                 }}
+                onSave={() => {}}
               />
             )}
           </Stack>
