@@ -4,7 +4,7 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-export const restoreIncomeInformationByBorrowerId = async (
+export const restoreFinancialObligationsByBorrowerId = async (
   businessUnitPublicCode: string,
   borrowerIdentificationNumber: string,
 ): Promise<void> => {
