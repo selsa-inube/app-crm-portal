@@ -5,6 +5,7 @@ import { FormikValues, useFormik } from "formik";
 import { AppContext } from "@context/AppContext";
 import { currencyFormat } from "@utils/formatData/currency";
 import { updateProspect } from "@services/prospect/updateProspect";
+import { restoreFinancialObligationsByBorrowerId } from "@services/prospect/restoreFinancialObligationsByBorrowerId";
 
 import { convertObligationsToProperties, headers } from "./config";
 import {
@@ -297,6 +298,14 @@ export const TableFinancialObligations = (
       extraDebtors) ||
     [];
 
+  const handleRestore = () => {
+    restoreFinancialObligationsByBorrowerId(
+      businessUnitPublicCode,
+      initialValues![0].borrowers[selectedBorrowerIndex]
+        .borrowerIdentificationNumber || "",
+    );
+  };
+
   return (
     <TableFinancialObligationsUI
       dataInformation={dataInformation}
@@ -325,6 +334,7 @@ export const TableFinancialObligations = (
       setMessageError={setMessageError}
       showErrorModal={showErrorModal}
       messageError={messageError}
+      handleRestore={handleRestore}
     />
   );
 };
