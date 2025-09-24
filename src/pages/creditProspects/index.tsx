@@ -23,6 +23,7 @@ import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { BaseModal } from "@components/modals/baseModal";
 import { CardGray } from "@components/cards/CardGray";
+import { updateProspect } from "@services/prospect/updateProspect";
 
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
@@ -138,6 +139,41 @@ export function CreditProspects() {
     );
   });
 
+  const handleUpdateComment = async () => {
+    if (!selectedProspect) return;
+
+    const updatedComment =
+      commentsByProspectId[selectedProspect.prospectId] || "";
+
+    const updatedProspect = {
+      ...selectedProspect,
+      clientComments: updatedComment,
+    };
+
+    try {
+      const result = await updateProspect(
+        businessUnitPublicCode,
+        updatedProspect,
+      );
+
+      setProspectSummaryData((prev) =>
+        prev.map((prospect) =>
+          prospect.prospectId === selectedProspect.prospectId
+            ? { ...prospect, clientComments: updatedComment }
+            : prospect,
+        ),
+      );
+
+      setShowEditMessageModal(false);
+      setShowMessageModal(false);
+      setSelectedProspect(result || updatedProspect);
+    } catch (error) {
+      setCodeError(1023);
+      setAddToFix([dataCreditProspects.errorObservations]);
+    }
+  };
+
+  console.log(filteredProspects, "filteredProspects");
   return (
     <>
       {codeError ? (
@@ -251,7 +287,7 @@ export function CreditProspects() {
                   setCommentsByProspectId((prev) => ({
                     ...prev,
                     [selectedProspect.prospectId]:
-                      selectedProspect.selectedRegularPaymentSchedule || "",
+                      selectedProspect.clientComments || "",
                   }));
                 }
                 setShowEditMessageModal(true);
@@ -285,7 +321,7 @@ export function CreditProspects() {
                   label={dataCreditProspects.observationProspect}
                   placeHolder={
                     commentsByProspectId[selectedProspect?.prospectId || ""] ||
-                    selectedProspect?.selectedRegularPaymentSchedule ||
+                    selectedProspect?.clientComments ||
                     ""
                   }
                   apparencePlaceHolder="gray"
@@ -297,18 +333,7 @@ export function CreditProspects() {
             <BaseModal
               title={dataCreditProspects.messageTitle}
               handleClose={() => setShowEditMessageModal(false)}
-              handleNext={() => {
-                if (selectedProspect) {
-                  setSelectedProspect((prev) => ({
-                    ...prev!,
-                    selectedRegularPaymentSchedule:
-                      commentsByProspectId[selectedProspect.prospectId] || "",
-                  }));
-                }
-
-                setShowEditMessageModal(false);
-                setShowMessageModal(true);
-              }}
+              handleNext={handleUpdateComment}
               nextButton={dataCreditProspects.modify}
               backButton={dataCreditProspects.close}
               width={isMobile ? "300px" : "500px"}

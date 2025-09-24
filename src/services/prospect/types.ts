@@ -105,12 +105,14 @@ export interface IProspect {
   gracePeriodType: string;
   moneyDestinationAbbreviatedName: string;
   bondValue: number;
+  clientComments: string;
   creditScore: string;
   modifyJustification: string;
   clientManagerIdentificationNumber: string;
   clientManagerName: string;
   clientManagerObservation: string;
   borrowers: IBorrower[];
+  referenceIndexForVariableInterestRate: string;
   consolidatedCredits: IConsolidatedCredit[];
   linesOfCredit?: ISimulateLineOfCredit[];
   firstPaymentCycleDate?: string;
