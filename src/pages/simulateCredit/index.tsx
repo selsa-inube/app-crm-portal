@@ -222,6 +222,8 @@ export function SimulateCredit() {
     clientManagerIdentificationNumber: "",
     clientManagerName: "",
     clientManagerObservation: "",
+    clientComments: "",
+    referenceIndexForVariableInterestRate: "",
   };
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
