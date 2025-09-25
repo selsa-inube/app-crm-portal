@@ -43,7 +43,7 @@ import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
-    7 /* stepsAddProspect.generalInformation.id,*/,
+    stepsAddProspect.generalInformation.id,
   );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
