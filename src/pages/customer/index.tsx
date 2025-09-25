@@ -8,6 +8,7 @@ import { AppContext } from "@context/AppContext";
 
 import { CustomerUI } from "./interface";
 import { EErrorMessages } from "./config";
+import { isValidUpperCaseName, isNumericString } from "./utils";
 
 export function Customer() {
   const [inputValue, setInputValue] = useState("");
@@ -29,9 +30,9 @@ export function Customer() {
       }
 
       let response = null;
-      if (/^\d+$/.test(value)) {
+      if (isNumericString(value)) {
         response = await getCustomerCatalog(businessUnitPublicCode, "", value);
-      } else if (/^[A-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
+      } else if (isValidUpperCaseName(value)) {
         response = await getCustomerCatalog(businessUnitPublicCode, value, "");
       }
 
@@ -56,7 +57,7 @@ export function Customer() {
         setOptions([]);
       }
     } catch (error) {
-      setMessageError(EErrorMessages.CLIENT_NOT_FOUND);
+      setMessageError(EErrorMessages.ClientNotFound);
       setShowError(true);
       setOptions([]);
     }
@@ -87,7 +88,7 @@ export function Customer() {
     );
 
     if (!isValidOption) {
-      setMessageError(EErrorMessages.NO_CLIENT_SELECTED);
+      setMessageError(EErrorMessages.NoClientSelected);
       setShowError(true);
       return;
     }

@@ -6,6 +6,6 @@ export const homeData = {
 };
 
 export enum EErrorMessages {
-  NO_CLIENT_SELECTED = "Para continuar, primero debes seleccionar un cliente.",
-  CLIENT_NOT_FOUND = "El cliente no se encuentra registrado.",
+  NoClientSelected = "Para continuar, primero debes seleccionar un cliente.",
+  ClientNotFound = "El cliente no se encuentra registrado.",
 }
