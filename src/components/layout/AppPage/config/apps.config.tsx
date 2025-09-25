@@ -66,7 +66,7 @@ const useNavigationConfig = () => {
       displaySubtitles: true,
       collapse: true,
     },
-    breakpoint: "700px",
+    breakpoint: "1024px",
   };
 
   return navigation;

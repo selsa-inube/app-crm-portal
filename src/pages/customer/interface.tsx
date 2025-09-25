@@ -21,6 +21,7 @@ interface ICustomerUI {
   selectRef: React.RefObject<HTMLDivElement>;
   handleChangeAutocomplete: (event: unknown, value: string | null) => void;
   handleSubmit: () => void;
+  messageError: string;
 }
 
 export function CustomerUI(props: ICustomerUI) {
@@ -32,6 +33,7 @@ export function CustomerUI(props: ICustomerUI) {
     selectRef,
     handleChangeAutocomplete,
     handleSubmit,
+    messageError,
   } = props;
 
   return (
@@ -64,18 +66,6 @@ export function CustomerUI(props: ICustomerUI) {
                   value={inputValue}
                   onChange={handleChangeAutocomplete}
                 />
-                {showError && (
-                  <Stack gap="4px" margin="4px 0 0 16px ">
-                    <Icon
-                      icon={<MdReportProblem />}
-                      appearance="danger"
-                      size="14px"
-                    />
-                    <Text type="body" size="small" appearance="danger">
-                      {homeData.noSelectClient}
-                    </Text>
-                  </Stack>
-                )}
               </StyledAutomatic>
               {isMobile ? (
                 <Icon
@@ -90,6 +80,20 @@ export function CustomerUI(props: ICustomerUI) {
                 <Button onClick={handleSubmit}>{homeData.continue}</Button>
               )}
             </Stack>
+            <>
+              {showError && (
+                <Stack gap="4px" margin="4px 0 0 16px ">
+                  <Icon
+                    icon={<MdReportProblem />}
+                    appearance="danger"
+                    size="14px"
+                  />
+                  <Text type="body" size="small" appearance="danger">
+                    {messageError}
+                  </Text>
+                </Stack>
+              )}
+            </>
           </Fieldset>
         </Stack>
       </Fieldset>

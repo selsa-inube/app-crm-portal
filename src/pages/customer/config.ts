@@ -4,3 +4,8 @@ export const homeData = {
   continue: "Continuar",
   noSelectClient: "Para continuar, primero debes seleccionar un cliente.",
 };
+
+export enum EErrorMessages {
+  NoClientSelected = "Para continuar, primero debes seleccionar un cliente.",
+  ClientNotFound = "El cliente no se encuentra registrado.",
+}
