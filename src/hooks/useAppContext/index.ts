@@ -86,7 +86,7 @@ function useAppContext() {
   useEffect(() => {
     const fetchStaffData = async () => {
       try {
-        const userIdentifier = user?.username;
+        const userIdentifier = user?.id;
         if (!userIdentifier) return;
         const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
