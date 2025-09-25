@@ -22,7 +22,11 @@ import { ApplyForCreditUI } from "./interface";
 import { ICondition, IFormData, Irule } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
-import { dataSubmitApplication, tittleOptions } from "./config/config";
+import {
+  dataSubmitApplication,
+  prospectStates,
+  tittleOptions,
+} from "./config/config";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -435,7 +439,7 @@ export function ApplyForCredit() {
         return;
       }
 
-      if (prospect.state !== "Created") {
+      if (prospect.state !== prospectStates.CREATED) {
         setCodeError(1012);
         return;
       }

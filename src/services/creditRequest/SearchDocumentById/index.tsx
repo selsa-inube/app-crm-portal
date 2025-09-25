@@ -29,7 +29,7 @@ export const getSearchDocumentById = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests/document/id/${documentId}?mode=file`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests/documents/id/${documentId}?mode=file`,
         options,
       );
 

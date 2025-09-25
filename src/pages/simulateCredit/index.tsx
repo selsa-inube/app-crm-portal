@@ -289,12 +289,12 @@ export function SimulateCredit() {
       ),
     };
 
-    const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
-      ...baseDataRules,
-      LineOfCredit: "",
-    });
+    // const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
+    //   ...baseDataRules,
+    //   LineOfCredit: "",
+    // });
 
-    if (!lineOfCreditRule) return;
+    // if (!lineOfCreditRule) return;
 
     const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
       businessUnitPublicCode,
@@ -336,7 +336,7 @@ export function SimulateCredit() {
         ...ruleData,
         LoanAmount: amountValue,
       };
-      const termRule = ruleConfig["LoanTermLimit"]?.(termRuleInput);
+      const termRule = ruleConfig["LoanTerm"]?.(termRuleInput);
       const termValueRaw = termRule
         ? await evaluateRule(
             termRule,
@@ -353,7 +353,7 @@ export function SimulateCredit() {
         LoanAmount: amountValue,
         LoanTerm: termValue,
       };
-      const interestRule = ruleConfig["RiskFreeInterestRate"]?.(interestInput);
+      const interestRule = ruleConfig["FixedInterestRate"]?.(interestInput);
       const rateValueRaw = interestRule
         ? await evaluateRule(
             interestRule,
@@ -392,16 +392,19 @@ export function SimulateCredit() {
               businessUnitPublicCode,
               product,
               customerData.publicCode,
+              formData.selectedDestination,
             ),
             getAdditionalBorrowersAllowed(
               businessUnitPublicCode,
               product,
               customerData.publicCode,
+              formData.selectedDestination,
             ),
             getExtraInstallmentsAllowed(
               businessUnitPublicCode,
               product,
               customerData.publicCode,
+              formData.selectedDestination,
             ),
           ]);
 
