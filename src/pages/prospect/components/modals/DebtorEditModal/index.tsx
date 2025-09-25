@@ -25,8 +25,8 @@ interface IDebtorEditModalProps {
   publicCode?: string;
   businessUnitPublicCode: string;
   handleClose: () => void;
-  onSave: () => void;
-  onUpdate?: (updatedBorrower: IBorrower) => void;
+  onSave?: () => void;
+  onUpdate?: (updatedBorrower: IBorrower, isSave?: boolean) => void;
   businessUnit?: string;
   businessUnitId?: string;
 }
@@ -39,7 +39,6 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     businessUnitPublicCode,
     handleClose,
     onUpdate,
-    onSave,
   } = props;
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const [editedBorrower, setEditedBorrower] =
@@ -162,11 +161,9 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   const handleSave = () => {
     if (!initialValues || !incomeData || onUpdate === undefined) return;
 
-    onUpdate(editedBorrower);
-    onSave();
+    onUpdate(editedBorrower, true);
 
     handleFlag();
-    handleClose();
   };
 
   const syncObligations = (updatedObligationsList: IObligations[]) => {
@@ -221,6 +218,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
       backButton={dataEditDebtor.close}
       handleNext={handleSave}
       handleBack={handleClose}
+      handleClose={handleClose}
       finalDivider={true}
       width={isMobile ? "290px" : "912px"}
       height={isMobile ? "auto" : "680px"}

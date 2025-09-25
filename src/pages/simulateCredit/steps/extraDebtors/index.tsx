@@ -17,7 +17,7 @@ import { IBorrower, IProspect } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 
-import { dataExtraDebtors } from "./config";
+import { dataExtraDebtors, ITransformedBorrower } from "./config";
 import { transformServiceData } from "./utils";
 
 interface IExtraDebtorsProps {
@@ -90,7 +90,10 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
       userChoice === "borrowers" ? "borrowers" : "coBorrowers"
     ];
 
-  const handleUpdateBorrower = (updatedBorrower: IBorrower) => {
+  const handleUpdateBorrower = (
+    updatedBorrower: IBorrower,
+    isSave?: boolean,
+  ) => {
     const transformedUpdatedBorrowerArray = transformServiceData([
       updatedBorrower,
     ]);
@@ -106,8 +109,9 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
       }
       return borrower;
     });
-
     setBorrowers(newBorrowers);
+
+    isSave && saveGlobalState(newBorrowers);
   };
 
   const handleConfirmDelete = () => {
@@ -129,10 +133,15 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     setCurrentBorrowerIndex(null);
   };
 
-  const saveGlobalState = () => {
+  const saveGlobalState = (newBorrowers: ITransformedBorrower[]) => {
     handleOnChange({
-      borrowers: borrowers.map((borrower) => borrower.originalData),
+      borrowers: newBorrowers.map((borrower) => borrower.originalData),
     });
+    handleCloseModal();
+  };
+
+  const handleCloseModal = () => {
+    setIsModalEdit(false);
   };
 
   return (
@@ -226,16 +235,13 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
           {isModalEdit && selectedBorrowerForEdit && (
             <DebtorEditModal
               handleClose={() => {
-                setIsModalEdit(false);
-                setSelectedBorrowerForEdit(null);
-                setCurrentBorrowerIndex(null);
+                handleCloseModal();
                 setBorrowers(transformServiceData(initialValues));
               }}
               isMobile={isMobile}
               initialValues={selectedBorrowerForEdit}
               currentBorrowerIndex={currentBorrowerIndex}
               onUpdate={handleUpdateBorrower}
-              onSave={() => saveGlobalState()}
               businessUnitPublicCode={businessUnitPublicCode}
             />
           )}
