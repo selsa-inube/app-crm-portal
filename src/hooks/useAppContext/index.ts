@@ -23,8 +23,6 @@ interface IBusinessUnits {
 
 function useAppContext() {
   const { user, isAuthenticated, isLoading } = useIAuth();
-  console.log(user);
-
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
@@ -73,6 +71,62 @@ function useAppContext() {
       canSubmitProspect: isAdmon,
     };
   };
+  useEffect(() => {
+    if (user) {
+      setEventData((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          userAccount: user.username || "",
+          userName: user.nickname || "",
+          identificationDocumentNumber: user.id || "",
+        },
+      }));
+    }
+  }, [user]);
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const userIdentifier = user?.username;
+        if (!userIdentifier) return;
+        const staffData = await getStaff(userIdentifier);
+        if (!staffData.length) return;
+        const userPermissions = getUserPermissions(
+          staffData[0].identificationDocumentNumber,
+        );
+        setEventData((prev) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            staff: {
+              biologicalSex: staffData[0].biologicalSex,
+              birthDay: staffData[0].birthDay,
+              businessManagerCode: staffData[0].businessManagerCode,
+              identificationDocumentNumber:
+                staffData[0].identificationDocumentNumber,
+              identificationTypeNaturalPerson:
+                staffData[0].identificationTypeNaturalPerson,
+              missionName: staffData[0].missionName,
+              principalEmail: staffData[0].principalEmail,
+              principalPhone: staffData[0].principalPhone,
+              staffByBusinessUnitAndRole:
+                staffData[0].staffByBusinessUnitAndRole,
+              staffId: staffData[0].staffId,
+              staffName: staffData[0].staffName,
+              userAccount: staffData[0].userAccount,
+              useCases: userPermissions,
+            },
+          },
+        }));
+      } catch (error) {
+        console.error("Error fetching staff data:", error);
+      }
+    };
+
+    if (user?.username) {
+      fetchStaffData();
+    }
+  }, [user?.username]);
 
   const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
