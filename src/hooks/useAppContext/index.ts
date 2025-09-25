@@ -206,8 +206,6 @@ function useAppContext() {
       try {
         const userIdentifier = user?.username;
         if (!userIdentifier || isLoading || !isAuthenticated) return;
-
-        console.log(user?.username, "user?.username");
         const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
 

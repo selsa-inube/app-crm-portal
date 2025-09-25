@@ -15,8 +15,6 @@ function CheckingCredentials({
   const navigate = useNavigate();
   const { eventData, setBusinessUnitSigla } = useContext(AppContext);
   const { user } = useIAuth();
-  console.log(user, "user");
-  console.log(eventData, "eventData");
   const checkCredentials = useCallback(async () => {
     try {
       if (!eventData) {
