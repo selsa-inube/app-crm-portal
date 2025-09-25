@@ -1,14 +1,9 @@
-const IS_PRODUCTION = import.meta.env.PROD;
-const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 const secretKeyPortalId = import.meta.env.VITE_SECRET_KEY_PORTAL_ID as string;
 
 const environment = {
   REDIRECT_URI: window.location.origin,
-  GOOGLE_REDIRECT_URI: !IS_PRODUCTION
-    ? window.location.origin
-    : GOOGLE_REDIRECT_URI,
   TEMP_BUSINESS_UNIT: "test",
-
+  GOOGLE_REDIRECT_URI: import.meta.env.VITE_GOOGLE_REDIRECT_URI,
   VITE_CREDIBOARD_URL: import.meta.env.VITE_CREDIBOARD_URL,
   ICOREBANKING_API_URL_QUERY: import.meta.env.VITE_ICOREBANKING_API_URL_QUERY,
   ICOREBANKING_API_URL_PERSISTENCE: import.meta.env

@@ -20,13 +20,14 @@ import { HomeRoutes } from "@routes/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { CustomerRoutes } from "@routes/customer";
 
-import { AuthProviderWrapper } from "./pages/AuthWrapper";
+import { environment } from "./config/environment";
+import { AuthProvider } from "./pages/AuthProvider";
 
 function LogOut() {
   localStorage.clear();
   sessionStorage.clear();
   const { logout } = useIAuth();
-  logout();
+  logout({ logoutParams: { returnTo: environment.GOOGLE_REDIRECT_URI } });
   return <AppPage />;
 }
 
@@ -55,7 +56,7 @@ const router = createBrowserRouter(
 
 function App() {
   return (
-    <AuthProviderWrapper>
+    <AuthProvider>
       <AppContextProvider>
         <CustomerContextProvider>
           <CustomerContextProvider>
@@ -66,7 +67,7 @@ function App() {
           </CustomerContextProvider>
         </CustomerContextProvider>
       </AppContextProvider>
-    </AuthProviderWrapper>
+    </AuthProvider>
   );
 }
 

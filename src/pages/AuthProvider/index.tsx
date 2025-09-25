@@ -8,7 +8,7 @@ import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { usePortalLogic } from "@hooks/usePortalRedirect";
 import { useAuthHandler } from "@hooks/useAuthHandler";
 
-interface IAuthProviderWrapper {
+interface IAuthProvider {
   children: ReactNode;
 }
 
@@ -33,7 +33,7 @@ function AuthContent({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-export function AuthProviderWrapper({ children }: IAuthProviderWrapper) {
+export function AuthProvider({ children }: IAuthProvider) {
   const { codeError, authConfig, loading, portalCode } = usePortalLogic();
   if (loading) {
     return <LoadingAppUI />;
