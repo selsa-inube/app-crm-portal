@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useIAuth } from "@inube/iauth-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
 import { IBusinessManagers } from "@services/businessManager/types";
@@ -12,7 +13,6 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
-import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;

@@ -22,10 +22,12 @@ import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
 import { addConfig, dataCreditProspects, dataError } from "./config";
+import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 
 export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
 
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
@@ -59,6 +61,7 @@ export function CreditApplications() {
           userAccount,
           {
             clientIdentificationNumber: customerData.publicCode,
+            textInSearch: search,
           },
         );
         setCreditRequestData(creditData);
@@ -69,7 +72,11 @@ export function CreditApplications() {
     };
 
     fetchCreditRequest();
-  }, [customerData.publicCode]);
+  }, [customerData.publicCode, search]);
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
   return (
     <>
@@ -107,9 +114,13 @@ export function CreditApplications() {
                   id="keyWord"
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
+                  onChange={(event) => handleSearch(event)}
                 />
               </Stack>
               <Stack wrap="wrap" gap="20px">
+                {creditRequestData.length === 0 && (
+                  <NoResultsMessage search={search} />
+                )}
                 {creditRequestData.map((creditRequest) => (
                   <SummaryCard
                     key={creditRequest.creditRequestId}

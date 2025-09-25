@@ -1,6 +1,5 @@
+import { useIAuth } from "@inube/iauth-react";
 import { MdLogout, MdOutlineCreditCard, MdVpnKey } from "react-icons/md";
-
-import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 const appsConfig = [
   {
