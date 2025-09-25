@@ -1,7 +1,10 @@
 const secretKeyPortalId = import.meta.env.VITE_SECRET_KEY_PORTAL_ID as string;
+const isprod = import.meta.env.PROD;
 
 const environment = {
-  REDIRECT_URI: window.location.origin,
+  REDIRECT_URI: isprod
+    ? import.meta.env.VITE_CALLBACK_URL
+    : window.location.origin,
   TEMP_BUSINESS_UNIT: "test",
   GOOGLE_REDIRECT_URI: import.meta.env.VITE_LOGOUT_REDIRECT_URI,
   VITE_CREDIBOARD_URL: import.meta.env.VITE_CREDIBOARD_URL,
