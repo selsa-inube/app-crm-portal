@@ -16,8 +16,6 @@ export const ruleConfig: Record<string, RuleBuilder> = {
     ruleName: "LoanAmountLimit",
     conditions: [
       { condition: "LineOfCredit", value: data.LineOfCredit },
-      //{ condition: "MoneyDestination", value: data.MoneyDestination },
-      //{ condition: "PrimaryIncomeType", value: data.PrimaryIncomeType },
       { condition: "ClientType", value: data.ClientType },
       { condition: "AffiliateSeniority", value: data.AffiliateSeniority },
     ],
