@@ -24,6 +24,7 @@ import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-cre
 import { BaseModal } from "@components/modals/baseModal";
 import { CardGray } from "@components/cards/CardGray";
 import { updateProspect } from "@services/prospect/updateProspect";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
@@ -55,6 +56,8 @@ export function CreditProspects() {
   );
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
   const [commentsByProspectId, setCommentsByProspectId] = useState<
     Record<string, string>
   >({});
@@ -168,12 +171,11 @@ export function CreditProspects() {
       setShowMessageModal(false);
       setSelectedProspect(result || updatedProspect);
     } catch (error) {
-      setCodeError(1023);
-      setAddToFix([dataCreditProspects.errorObservations]);
+      setShowErrorModal(true);
+      setMessageError(dataCreditProspects.errorObservations);
     }
   };
 
-  console.log(filteredProspects, "filteredProspects");
   return (
     <>
       {codeError ? (
@@ -377,6 +379,15 @@ export function CreditProspects() {
             >
               <Text>{dataCreditProspects.deleteDescription}</Text>
             </BaseModal>
+          )}
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => {
+                setShowErrorModal(false);
+              }}
+              isMobile={isMobile}
+              message={messageError}
+            />
           )}
         </Stack>
       )}
