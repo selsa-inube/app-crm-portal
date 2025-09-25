@@ -22,6 +22,7 @@ export interface ICardBorrowerProps {
   handleDelete?: () => void;
   showIcons?: boolean;
   isMobile?: boolean;
+  typeBorrower?: string;
 }
 
 export function CardBorrower(props: ICardBorrowerProps) {
@@ -37,6 +38,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
     handleDelete = () => {},
     showIcons = true,
     isMobile = false,
+    typeBorrower,
   } = props;
 
   return (
@@ -85,7 +87,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 size="18px"
               />
               <Text type="body" size="large">
-                {income}
+                {income.replace("$", "")}
               </Text>
             </Stack>
           </Stack>
@@ -100,7 +102,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 size="18px"
               />
               <Text type="body" size="large">
-                {obligations}
+                {obligations.replace("$", "")}
               </Text>
             </Stack>
           </Stack>
@@ -124,13 +126,15 @@ export function CardBorrower(props: ICardBorrowerProps) {
                   onClick={handleEdit}
                   cursorHover
                 />
-                <Icon
-                  icon={<MdOutlineDelete />}
-                  appearance={"primary"}
-                  size="20px"
-                  onClick={handleDelete}
-                  cursorHover
-                />
+                {typeBorrower != "MainBorrower" && (
+                  <Icon
+                    icon={<MdOutlineDelete />}
+                    appearance={"primary"}
+                    size="20px"
+                    onClick={handleDelete}
+                    cursorHover
+                  />
+                )}
               </>
             )}
           </Stack>

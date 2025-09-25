@@ -20,8 +20,9 @@ import {
   IIncomeSources,
 } from "@services/creditLimit/types";
 import { getBorrowerPaymentCapacityById } from "@services/creditLimit/getBorrowePaymentCapacity";
+import { updateFinancialObligationsFormData } from "./utils";
 
-import { IBorrower, IProspect } from "@services/prospect/types";
+import { IProspect } from "@services/prospect/types";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 import { getFinancialObligationsUpdate } from "@services/lineOfCredit/getFinancialObligationsUpdate";
 import { getAdditionalBorrowersAllowed } from "@services/lineOfCredit/getAdditionalBorrowersAllowed";
@@ -38,10 +39,11 @@ import {
 import { SimulateCreditUI } from "./interface";
 import { ruleConfig } from "./config/configRules";
 import { evaluateRule } from "./evaluateRule";
+import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
-    stepsAddProspect.generalInformation.id,
+    7 /* stepsAddProspect.generalInformation.id,*/,
   );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
@@ -121,7 +123,7 @@ export function SimulateCredit() {
     generalToggleChecked: true,
     togglesState: [false, false, false, false],
     borrowerData: {
-      borrowers: {},
+      borrowers: [],
     },
     extraordinaryInstallments: [],
     obligationsFinancial: clientPortfolio,
@@ -170,11 +172,7 @@ export function SimulateCredit() {
     ],
   };
   const simulateData: IProspect = {
-    borrowers: [
-      Object.keys(formData.borrowerData.borrowers).length === 0
-        ? onlyBorrowerData
-        : (formData.borrowerData.borrowers as unknown as IBorrower),
-    ],
+    borrowers: formData.borrowerData.borrowers,
     consolidatedCredits:
       Array.isArray(formData.consolidatedCreditArray) &&
       formData.consolidatedCreditArray.length > 0
@@ -711,8 +709,6 @@ export function SimulateCredit() {
         if (data) {
           setValidateRequirements(data);
         }
-      } catch (error) {
-        setShowErrorModal(true);
       } finally {
         setIsLoading(false);
       }
@@ -733,6 +729,89 @@ export function SimulateCredit() {
   useEffect(() => {
     fetchRulesByProducts();
   }, [formData.selectedProducts, fetchRulesByProducts]);
+
+  useEffect(() => {
+    const isExtraBorrowersStep =
+      currentStepsNumber?.id === stepsAddProspect.extraBorrowers.id;
+
+    if (isExtraBorrowersStep) {
+      const newMainBorrower = createMainBorrowerFromFormData(
+        formData,
+        customerData,
+      );
+
+      const otherBorrowers = formData.borrowerData.borrowers.filter(
+        (borrower) => borrower.borrowerType !== "MainBorrower",
+      );
+
+      const existMainBorrower = formData.borrowerData.borrowers.filter(
+        (borrower) => borrower.borrowerType === "MainBorrower",
+      );
+
+      let keepBeforeChanges = newMainBorrower;
+
+      if (existMainBorrower.length) {
+        keepBeforeChanges = {
+          ...existMainBorrower[0],
+          borrowerProperties: [...newMainBorrower.borrowerProperties],
+        };
+      }
+
+      const updatedBorrowers = [keepBeforeChanges, ...otherBorrowers];
+      handleFormDataChange("borrowerData", { borrowers: updatedBorrowers });
+    }
+  }, [currentStepsNumber, customerData]);
+
+  useEffect(() => {
+    const isFinancialStep =
+      currentStepsNumber?.id === stepsAddProspect.obligationsFinancial.id;
+    if (!isFinancialStep) return;
+
+    const newObligations = updateFinancialObligationsFormData(
+      formData.borrowerData.borrowers,
+    );
+
+    handleFormDataChange("obligationsFinancial", newObligations);
+  }, [currentStepsNumber]);
+
+  useEffect(() => {
+    const mainBorrower = formData.borrowerData.borrowers.find(
+      (borrower) => borrower.borrowerType === "MainBorrower",
+    );
+
+    if (!mainBorrower) {
+      return;
+    }
+
+    const incomeProperties: { [key: string]: number } = {};
+    mainBorrower.borrowerProperties.forEach((prop) => {
+      const incomeKeys = [
+        "Dividends",
+        "FinancialIncome",
+        "Leases",
+        "OtherNonSalaryEmoluments",
+        "PensionAllowances",
+        "PeriodicSalary",
+        "PersonalBusinessUtilities",
+        "ProfessionalFees",
+      ];
+      if (incomeKeys.includes(prop.propertyName)) {
+        incomeProperties[prop.propertyName] = Number(prop.propertyValue) || 0;
+      }
+    });
+
+    const newSourcesOfIncome = {
+      ...formData.sourcesOfIncome,
+      ...incomeProperties,
+    };
+
+    if (
+      JSON.stringify(formData.sourcesOfIncome) !==
+      JSON.stringify(newSourcesOfIncome)
+    ) {
+      handleFormDataChange("sourcesOfIncome", newSourcesOfIncome);
+    }
+  }, [formData.borrowerData.borrowers]);
 
   return (
     <>

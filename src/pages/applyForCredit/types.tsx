@@ -62,6 +62,7 @@ export interface IDebtorDetail {
   age: string | number;
   relation: string;
   debtorDetail?: Record<string, never>;
+  type?: string;
 }
 export interface IFormData {
   contactInformation: IContactInformation;

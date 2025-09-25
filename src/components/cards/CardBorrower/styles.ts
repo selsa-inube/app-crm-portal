@@ -26,4 +26,6 @@ export const StyledContainer = styled.div<IStyledContainer>`
         : theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
   justify-content: center;
   cursor: ${({ $new }) => ($new ? "pointer" : "normal")};
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
