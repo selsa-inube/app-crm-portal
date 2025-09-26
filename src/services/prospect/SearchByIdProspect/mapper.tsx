@@ -28,6 +28,7 @@ const mapProspectEntity = (
       data.moneyDestinationAbbreviatedName as string,
     bondValue: data.bondValue as number,
     creditScore: data.creditScore as string,
+    clientComments: data.clientComments as string,
     modifyJustification: data.modifyJustification as string,
     clientManagerIdentificationNumber:
       data.clientManagerIdentificationNumber as string,

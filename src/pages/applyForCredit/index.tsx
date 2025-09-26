@@ -76,6 +76,7 @@ export function ApplyForCredit() {
     clientManagerIdentificationNumber: "",
     clientManagerName: "",
     clientManagerObservation: "",
+    clientComments: "",
     borrowers: [],
     consolidatedCredits: [],
     creditProducts: [],

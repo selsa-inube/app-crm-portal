@@ -233,6 +233,7 @@ export function SimulateCredit() {
       clientManagerIdentificationNumber: "",
       clientManagerName: "",
       clientManagerObservation: "",
+      clientComments: "",
     }),
     [formData, onlyBorrowerData],
   );
