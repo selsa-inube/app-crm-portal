@@ -150,7 +150,7 @@ export function CreditProspects() {
     );
   });
 
-  const handleUpdateComment = async () => {
+  const handleClientCommentsUpdate = async () => {
     if (!selectedProspect) return;
 
     const updatedComment =
@@ -319,7 +319,7 @@ export function CreditProspects() {
                 placeHolderTag={true}
               />
               <CardGray
-                label={dataCreditProspects.observationProspect}
+                label={dataCreditProspects.clientComments}
                 placeHolder={
                   commentsByProspectId[selectedProspect?.prospectId || ""] ||
                   selectedProspect?.clientComments ||
@@ -334,7 +334,7 @@ export function CreditProspects() {
           <BaseModal
             title={dataCreditProspects.messageTitle}
             handleClose={() => setShowEditMessageModal(false)}
-            handleNext={handleUpdateComment}
+            handleNext={handleClientCommentsUpdate}
             nextButton={dataCreditProspects.modify}
             backButton={dataCreditProspects.close}
             width={isMobile ? "300px" : "500px"}

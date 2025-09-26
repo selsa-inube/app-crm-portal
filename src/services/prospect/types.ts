@@ -75,6 +75,7 @@ export interface ICreditProduct {
   installmentsForInterest: IInstallmentsForInterest[];
   extraordinaryInstallments: IExtraordinaryInstallment[];
   acquiredCashFlows: IAcquiredCashFlow[];
+  referenceIndexForVariableInterestRate: string;
 }
 
 export interface IOutlay {
@@ -112,7 +113,6 @@ export interface IProspect {
   clientManagerName: string;
   clientManagerObservation: string;
   borrowers: IBorrower[];
-  referenceIndexForVariableInterestRate: string;
   consolidatedCredits: IConsolidatedCredit[];
   linesOfCredit?: ISimulateLineOfCredit[];
   firstPaymentCycleDate?: string;

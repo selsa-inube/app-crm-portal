@@ -29,7 +29,7 @@ export const dataCreditProspects = {
   keyWord: "Palabra clave",
   messageTitle: "Observaciones",
   moneyDesination: "Destino del dinero",
-  observationProspect: "Observaciones del cliente",
+  clientComments: "Observaciones del cliente",
   errorObservations: "Error al actualizar comentario del prospecto",
   confirmTitle: "Confirmación de prospecto",
   confirmDescription: "¿Realmente deseas confirmar este prospecto de crédito?",

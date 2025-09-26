@@ -234,7 +234,6 @@ export function SimulateCredit() {
       clientManagerName: "",
       clientManagerObservation: "",
       clientComments: "",
-      referenceIndexForVariableInterestRate: "",
     }),
     [formData, onlyBorrowerData],
   );

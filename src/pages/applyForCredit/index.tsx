@@ -77,7 +77,6 @@ export function ApplyForCredit() {
     clientManagerName: "",
     clientManagerObservation: "",
     clientComments: "",
-    referenceIndexForVariableInterestRate: "",
     borrowers: [],
     consolidatedCredits: [],
     creditProducts: [],
