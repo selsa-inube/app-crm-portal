@@ -7,6 +7,7 @@ import { IMoneyDestination } from "@services/moneyDestination/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
+import { dataMoneyDestination } from "./config";
 
 interface IMoneyDestinationProps {
   initialValues: string;
@@ -51,6 +52,19 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     selectedDestination: Yup.string().required(""),
   });
 
+  const groupedDestinations: { [type: string]: IMoneyDestination[] } = {};
+
+  if (moneyDestinations) {
+    moneyDestinations.forEach((destination) => {
+      const type =
+        destination.moneyDestinationType || dataMoneyDestination.noType;
+      if (!groupedDestinations[type]) {
+        groupedDestinations[type] = [];
+      }
+      groupedDestinations[type].push(destination);
+    });
+  }
+
   return (
     <Formik
       initialValues={{ selectedDestination: initialValues }}
@@ -62,7 +76,6 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     >
       {({ values, setFieldValue }) => (
         <MoneyDestinationUI
-          destinations={moneyDestinations}
           isTablet={isTablet}
           selectedDestination={values.selectedDestination}
           handleChange={(value: string) => {
@@ -73,6 +86,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
           setShowErrorModal={setShowErrorModal}
           showErrorModal={showErrorModal}
           messageError={messageError}
+          groupedDestinations={groupedDestinations}
         />
       )}
     </Formik>
