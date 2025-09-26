@@ -4,7 +4,7 @@ import { IMoneyDestination } from "@services/moneyDestination/types";
 import { MoneyDestinationCard } from "@components/cards/MoneyDestinationCard";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { CardDeployMoneyDestination } from "@components/cards/cardDeployMoneyDestination";
+import { CardDeployMoneyDestination } from "@pages/prospect/components/cardDeployMoneyDestination";
 
 interface MoneyDestinationUIProps {
   isTablet: boolean;

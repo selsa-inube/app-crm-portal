@@ -8,7 +8,7 @@ const mapMoneyDestinationToEntity = (
     descriptionUse: data.descriptionUse as string,
     iconReference: data.iconReference as string,
     moneyDestinationId: data.moneyDestinationId as string,
-    type: data.type as string,
+    moneyDestinationType: data.moneyDestinationType as string,
   };
   return buildResend;
 };

@@ -56,7 +56,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
 
   if (moneyDestinations) {
     moneyDestinations.forEach((destination) => {
-      const type = destination.type || dataMoneyDestination.noType;
+      const type =
+        destination.moneyDestinationType || dataMoneyDestination.noType;
       if (!groupedDestinations[type]) {
         groupedDestinations[type] = [];
       }
