@@ -24,33 +24,3 @@ export const MockTipeOfFamily = [
   { id: "13", label: "Yerno/a", value: "Yerno" },
   { id: "15", label: "Otro", value: "Otro" },
 ];
-
-export const MockDataDebtor = [
-  {
-    TypeDocument: "Cédula de ciudadanía",
-    NumberDocument: "1010477949",
-    Name: "Daniel Rodrigo",
-    LastName: "Rodríguez Velandia",
-    Email: "daniel.rodriguez98@hotmail.com",
-    Number: "3102330109",
-    Sex: "Masculino",
-    Age: "30",
-    Relation: "Hermano",
-  },
-];
-
-export const MockIncomeDebtor = [
-  {
-    work: "4.500.000",
-    capital: "0",
-    variables: "0",
-  },
-];
-
-export const MockEditDebtor = [
-  {
-    email: "daniel.rodriguez98@hotmail.com",
-    phone: "3102330109",
-    relation: "Hermano",
-  },
-];

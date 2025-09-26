@@ -125,6 +125,9 @@ export function Simulations() {
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
+      setTimeout(() => {
+        navigate(`/credit/prospects`);
+      }, 1500);
     }
   };
 
@@ -271,6 +274,9 @@ export function Simulations() {
     setIsModalOpen(true);
   };
 
+  if (prospectCode === undefined) {
+    navigate(`/credit/prospects`);
+  }
   const handleDeleteProspect = async () => {
     if (!dataProspect) return;
 

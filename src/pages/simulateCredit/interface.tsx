@@ -58,7 +58,6 @@ import {
   AlertCreditLimit,
   AlertIncome,
 } from "./components/smallModals/modals";
-import { IDebtorDetail } from "../applyForCredit/types";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -407,16 +406,16 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                    stepsAddProspect.extraBorrowers.id && (
+                    stepsAddProspect.extraBorrowers.id &&
+                  formData.borrowerData.borrowers.length > 0 && (
                     <ExtraDebtors
-                      initialValues={
-                        formData.borrowerData as unknown as IDebtorDetail
-                      }
+                      initialValues={formData.borrowerData.borrowers}
                       onFormValid={setIsCurrentFormValid}
-                      handleOnChange={(newDestination) =>
-                        handleFormDataChange("borrowerData", newDestination)
-                      }
+                      handleOnChange={(newDestination) => {
+                        handleFormDataChange("borrowerData", newDestination);
+                      }}
                       isMobile={isMobile}
+                      customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
                     />
                   )}

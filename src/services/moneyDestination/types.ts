@@ -3,4 +3,5 @@ export interface IMoneyDestination {
   descriptionUse: string;
   iconReference: string;
   moneyDestinationId: string;
+  moneyDestinationType: string;
 }

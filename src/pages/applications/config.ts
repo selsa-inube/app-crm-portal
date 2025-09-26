@@ -30,3 +30,8 @@ export const dataCreditProspects = {
   errorCreditRequest: "No se han podido cargar las solicitudes de credito.",
   titleError: "Lamentamos los inconvenientes",
 };
+
+export const dataError = {
+  notCredits:
+    "Este cliente aún no tiene ningúna solicitud de crédito en trámite.",
+};

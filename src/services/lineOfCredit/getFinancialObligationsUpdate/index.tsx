@@ -10,6 +10,7 @@ export const getFinancialObligationsUpdate = async (
   businessUnitPublicCode: string,
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
+  moneyDestination: string,
 ): Promise<IFinancialObligationsUpdateResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -28,7 +29,7 @@ export const getFinancialObligationsUpdate = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/financial-obligation-update/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/financial-obligation-update/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}/${moneyDestination}`,
         options,
       );
 

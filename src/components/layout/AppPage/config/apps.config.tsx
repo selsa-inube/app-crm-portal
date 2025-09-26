@@ -1,6 +1,5 @@
+import { useIAuth } from "@inube/iauth-react";
 import { MdLogout, MdOutlineCreditCard, MdVpnKey } from "react-icons/md";
-
-import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 const appsConfig = [
   {
@@ -67,7 +66,7 @@ const useNavigationConfig = () => {
       displaySubtitles: true,
       collapse: true,
     },
-    breakpoint: "700px",
+    breakpoint: "1024px",
   };
 
   return navigation;

@@ -1,5 +1,6 @@
 import { IObligations } from "@services/creditRequest/types";
 import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
+import { IBorrower } from "@services/prospect/types";
 
 export const titleButtonTextAssited = {
   goBackText: "Anterior",
@@ -70,7 +71,7 @@ export interface LoanAmountState {
 }
 
 export interface IBorrowerData {
-  borrowers: Record<string, never>;
+  borrowers: IBorrower[];
 }
 
 export interface IConsolidatedCreditItem {
