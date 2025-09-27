@@ -47,7 +47,6 @@ interface SimulationsUIProps {
   showMenu: boolean;
   codeError: number | null;
   addToFix: string[];
-  hasPermitSubmit: boolean;
   isModalOpen: boolean;
   showCreditRequest: boolean;
   dataPrint: React.RefObject<HTMLDivElement>;
@@ -86,7 +85,6 @@ export function SimulationsUI(props: SimulationsUIProps) {
     showMenu,
     codeError,
     addToFix,
-    hasPermitSubmit,
     isModalOpen,
     showCreditRequest,
     dataPrint,
@@ -359,19 +357,12 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         <Stack gap="2px" alignItems="center">
                           <Button
                             onClick={handleSubmitClick}
-                            disabled={
-                              dataProspect?.state === "Submitted" ||
-                              !hasPermitSubmit
-                                ? true
-                                : false || canRequestCredit
-                            }
+                            disabled={canRequestCredit}
                           >
                             {dataEditProspect.confirm}
                           </Button>
                           <Stack alignItems="center">
-                            {(dataProspect?.state === "Submitted" ||
-                              !hasPermitSubmit ||
-                              canRequestCredit) && (
+                            {canRequestCredit && (
                               <Icon
                                 icon={<MdOutlineInfo />}
                                 appearance="primary"
@@ -403,7 +394,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                       </Text>
                       <Stack direction="column" gap="8px">
                         <ul>
-                          {!hasPermitSubmit && (
+                          {
                             <li>
                               <Text
                                 weight="normal"
@@ -413,7 +404,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 {titlesModal.titlePrivileges}
                               </Text>
                             </li>
-                          )}
+                          }
                           {dataProspect?.state === "Submitted" && (
                             <li>
                               <Text

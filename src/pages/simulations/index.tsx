@@ -60,7 +60,6 @@ export function Simulations() {
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
-  const hasPermitSubmit = !!eventData.user.staff.useCases.canSubmitProspect;
 
   const fetchValidateCreditRequest = useCallback(async () => {
     if (!prospectCode) return;
@@ -306,7 +305,6 @@ export function Simulations() {
       showMenu={showMenu}
       codeError={codeError}
       addToFix={addToFix}
-      hasPermitSubmit={hasPermitSubmit}
       isModalOpen={isModalOpen}
       showCreditRequest={showCreditRequest}
       dataPrint={dataPrint}
