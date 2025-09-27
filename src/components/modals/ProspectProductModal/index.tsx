@@ -1,6 +1,6 @@
 import { Formik, FormikValues, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { MdAttachMoney, MdPercent } from "react-icons/md";
+import { MdAttachMoney, MdOutlineInfo, MdPercent } from "react-icons/md";
 import {
   Stack,
   Icon,
@@ -8,7 +8,11 @@ import {
   Select,
   Textfield,
 } from "@inubekit/inubekit";
+import { useState } from "react";
 
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import InfoModal from "@pages/prospect/components/InfoModal";
+import { privilegeCrm } from "@config/privilege";
 import { BaseModal } from "@components/modals/baseModal";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
 import {
@@ -61,7 +65,16 @@ function EditProductModal(props: EditProductModalProps) {
     interestRate: Yup.number().min(0, ""),
     rateType: Yup.string(),
   });
-
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   return (
     <Formik
       initialValues={initialValues}
@@ -81,8 +94,22 @@ function EditProductModal(props: EditProductModalProps) {
           nextButton={confirmButtonText}
           handleNext={formik.submitForm}
           handleBack={onCloseModal}
-          disabledNext={!formik.dirty || !formik.isValid}
-          iconBeforeNext={iconBefore}
+          disabledNext={
+            !formik.dirty || !formik.isValid || canEditCreditRequest
+          }
+          iconBeforeNext={
+            canEditCreditRequest ? (
+              <Icon
+                icon={<MdOutlineInfo />}
+                appearance="primary"
+                size="16px"
+                cursorHover
+                onClick={handleInfo}
+              />
+            ) : (
+              iconBefore
+            )
+          }
           iconAfterNext={iconAfter}
           finalDivider={true}
         >
@@ -218,6 +245,18 @@ function EditProductModal(props: EditProductModalProps) {
               />
             </Stack>
           </ScrollableContainer>
+          {isModalOpen ? (
+            <InfoModal
+              onClose={handleInfoModalClose}
+              title={privilegeCrm.title}
+              subtitle={privilegeCrm.subtitle}
+              description={privilegeCrm.description}
+              nextButtonText={privilegeCrm.nextButtonText}
+              isMobile={isMobile}
+            />
+          ) : (
+            <></>
+          )}
         </BaseModal>
       )}
     </Formik>

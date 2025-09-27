@@ -25,6 +25,7 @@ import {
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
@@ -124,6 +125,15 @@ export function SimulationsUI(props: SimulationsUIProps) {
     );
     return found?.Code || code;
   };
+  const { disabledButton: canRequestCredit } = useValidateUseCase({
+    useCase: getUseCaseValue("canRequestCredit"),
+  });
+  const { disabledButton: canDeleteCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canDeleteCreditRequest"),
+  });
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
 
   return (
     <div ref={dataPrint}>
@@ -330,24 +340,13 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         <Button
                           appearance="danger"
                           variant="outlined"
+                          disabled={canDeleteCreditRequest}
                           onClick={() => setShowDeleteModal(true)}
                         >
                           {dataEditProspect.delete}
                         </Button>
-                        <Stack gap="2px" alignItems="center">
-                          <Button
-                            onClick={handleSubmitClick}
-                            disabled={
-                              dataProspect?.state === "Submitted" ||
-                              !hasPermitSubmit
-                                ? true
-                                : false
-                            }
-                          >
-                            {dataEditProspect.confirm}
-                          </Button>
-                          {(dataProspect?.state === "Submitted" ||
-                            !hasPermitSubmit) && (
+                        <Stack alignItems="center">
+                          {canDeleteCreditRequest && (
                             <Icon
                               icon={<MdOutlineInfo />}
                               appearance="primary"
@@ -356,6 +355,32 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               onClick={handleInfo}
                             />
                           )}
+                        </Stack>
+                        <Stack gap="2px" alignItems="center">
+                          <Button
+                            onClick={handleSubmitClick}
+                            disabled={
+                              dataProspect?.state === "Submitted" ||
+                              !hasPermitSubmit
+                                ? true
+                                : false || canRequestCredit
+                            }
+                          >
+                            {dataEditProspect.confirm}
+                          </Button>
+                          <Stack alignItems="center">
+                            {(dataProspect?.state === "Submitted" ||
+                              !hasPermitSubmit ||
+                              canRequestCredit) && (
+                              <Icon
+                                icon={<MdOutlineInfo />}
+                                appearance="primary"
+                                size="16px"
+                                cursorHover
+                                onClick={handleInfo}
+                              />
+                            )}
+                          </Stack>
                         </Stack>
                       </Stack>
                     </StyledPrint>
@@ -433,6 +458,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
           title={dataEditProspect.deleteTitle}
           handleBack={() => setShowDeleteModal(false)}
           handleNext={handleDeleteProspect}
+          disabledNext={canEditCreditRequest}
           backButton="Cancelar"
           nextButton="Eliminar"
           apparenceNext="danger"

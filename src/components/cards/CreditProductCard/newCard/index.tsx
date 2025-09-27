@@ -1,5 +1,10 @@
-import { MdOutlineAdd } from "react-icons/md";
-import { Stack, Icon, Text } from "@inubekit/inubekit";
+import { MdOutlineAdd, MdOutlineInfo } from "react-icons/md";
+import { useState } from "react";
+import { Stack, Icon, Text, useMediaQuery } from "@inubekit/inubekit";
+
+import InfoModal from "@pages/prospect/components/InfoModal";
+import { privilegeCrm } from "@config/privilege";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
 import { dataNewCard } from "./config";
 import { StyledCreditProductCard } from "../styles";
@@ -10,15 +15,52 @@ interface INewCreditProductCardProps {
 
 export function NewCreditProductCard(props: INewCreditProductCardProps) {
   const { onClick } = props;
-
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width:880px)");
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   return (
-    <StyledCreditProductCard onClick={onClick} $new={true}>
-      <Stack direction="column" alignItems="center" margin="auto">
-        <Icon icon={<MdOutlineAdd />} appearance="gray" size="45px" />
-        <Text type="body" size="large" appearance="gray">
-          {dataNewCard.add}
-        </Text>
+    <Stack gap="6px">
+      <StyledCreditProductCard
+        onClick={onClick}
+        $new={true}
+        $disabled={canEditCreditRequest}
+      >
+        <Stack direction="column" alignItems="center" margin="auto">
+          <Icon icon={<MdOutlineAdd />} appearance="gray" size="45px" />
+          <Text type="body" size="large" appearance="gray">
+            {dataNewCard.add}
+          </Text>
+        </Stack>
+      </StyledCreditProductCard>
+      <Stack alignItems="end">
+        {canEditCreditRequest && (
+          <Icon
+            icon={<MdOutlineInfo />}
+            appearance="primary"
+            size="16px"
+            cursorHover
+            onClick={handleInfo}
+          />
+        )}
       </Stack>
-    </StyledCreditProductCard>
+      {isModalOpen && (
+        <InfoModal
+          onClose={handleInfoModalClose}
+          title={privilegeCrm.title}
+          subtitle={privilegeCrm.subtitle}
+          description={privilegeCrm.description}
+          nextButtonText={privilegeCrm.nextButtonText}
+          isMobile={isMobile}
+        />
+      )}
+    </Stack>
   );
 }
