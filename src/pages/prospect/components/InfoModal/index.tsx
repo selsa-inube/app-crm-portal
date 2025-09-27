@@ -1,6 +1,5 @@
 import { BaseModal } from "@components/modals/baseModal";
 import { Stack, Text } from "@inubekit/inubekit";
-import React from "react";
 
 interface InfoModalProps {
   onClose: () => void;
@@ -13,16 +12,16 @@ interface InfoModalProps {
   isMobile?: boolean;
 }
 
-const InfoModal: React.FC<InfoModalProps> = ({
+function InfoModal({
   onClose,
   onNext,
   title,
   subtitle,
   description,
-  nextButtonText = "Continuar",
+  nextButtonText = infoModalConfig.nextButtonText,
   width,
   isMobile = false,
-}) => {
+}: InfoModalProps) {
   const handleNext = () => {
     if (onNext) {
       onNext();
@@ -51,6 +50,6 @@ const InfoModal: React.FC<InfoModalProps> = ({
       </Stack>
     </BaseModal>
   );
-};
+}
 
 export default InfoModal;

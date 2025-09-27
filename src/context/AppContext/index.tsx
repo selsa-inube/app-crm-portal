@@ -1,5 +1,7 @@
 import { createContext } from "react";
+import { useMediaQuery } from "@inubekit/inubekit";
 
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { useAppContext } from "@hooks/useAppContext";
 
 import { IAppContext } from "./types";
@@ -13,9 +15,20 @@ interface IProviderProps {
 function AppContextProvider(props: IProviderProps) {
   const { children } = props;
   const appContext = useAppContext();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <AppContext.Provider value={appContext}>{children}</AppContext.Provider>
+    <AppContext.Provider value={appContext}>
+      {children}
+
+      {appContext.showErrorModal && (
+        <ErrorModal
+          handleClose={() => appContext.setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={appContext.messageError}
+        />
+      )}
+    </AppContext.Provider>
   );
 }
 

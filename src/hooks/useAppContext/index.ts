@@ -28,6 +28,7 @@ function useAppContext() {
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
+  const [messageError, setMessageError] = useState("");
   const [businessManagers, setBusinessManagers] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
@@ -42,7 +43,7 @@ function useAppContext() {
   });
   const [optionStaffData, setOptionStaffData] = useState<IOptionStaff[]>([]);
   const [staffUseCases, setStaffUseCases] = useState<string[]>([]);
-
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const portalId = localStorage.getItem("portalCode");
   let portalCode = "";
   if (portalId) {
@@ -202,7 +203,6 @@ function useAppContext() {
     fetchStaffData();
   }, [user?.username, isLoading, isAuthenticated, hasUserLoaded]);
 
-  // Nuevo useEffect para obtener los use cases del staff
   useEffect(() => {
     const identificationNumber =
       eventData?.user?.identificationDocumentNumber || "";
@@ -224,7 +224,8 @@ function useAppContext() {
         );
         setStaffUseCases(staffUseCaseData);
       } catch (error) {
-        console.error("Error fetching use cases:", error);
+        setShowErrorModal(true);
+        setMessageError(JSON.stringify(error));
       }
     })();
   }, [
@@ -382,6 +383,9 @@ function useAppContext() {
       setBusinessUnitSigla,
       setBusinessUnitsToTheStaff,
       setOptionStaffData,
+      showErrorModal,
+      setShowErrorModal,
+      messageError,
     }),
     [
       eventData,
@@ -391,6 +395,9 @@ function useAppContext() {
       isLoading,
       isAuthenticated,
       hasUserLoaded,
+      showErrorModal,
+      setShowErrorModal,
+      messageError,
     ],
   );
 
