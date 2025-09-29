@@ -12,12 +12,19 @@ import { dataMoneyDestination } from "./config";
 interface IMoneyDestinationProps {
   initialValues: string;
   isTablet: boolean;
+  businessManagerCode: string;
   handleOnChange: React.Dispatch<React.SetStateAction<string>>;
   onFormValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function MoneyDestination(props: IMoneyDestinationProps) {
-  const { initialValues, isTablet, handleOnChange, onFormValid } = props;
+  const {
+    initialValues,
+    isTablet,
+    businessManagerCode,
+    handleOnChange,
+    onFormValid,
+  } = props;
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -30,7 +37,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     useState<IMoneyDestination[]>();
 
   useEffect(() => {
-    getMoneyDestinations(businessUnitPublicCode)
+    getMoneyDestinations(businessUnitPublicCode, businessManagerCode)
       .then((data) => {
         if (data && Array.isArray(data)) {
           setMoneyDestinations(data);

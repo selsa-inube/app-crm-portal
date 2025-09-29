@@ -22,6 +22,7 @@ interface DebtorAddModalUIProps {
   AutoCompleted: boolean;
   prospectData: IProspect;
   businessUnitPublicCode: string;
+  businessManagerCode: string;
   handleFormChange: (updatedValues: Partial<FormData>) => void;
   handleIncomeChange: (updatedValues: Partial<IIncomeSources>) => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
@@ -44,6 +45,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     AutoCompleted,
     prospectData,
     businessUnitPublicCode,
+    businessManagerCode,
     handleFormChange,
     handleIncomeChange,
     handleNextStep,
@@ -105,6 +107,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               showEdit={false}
               onDataChange={handleIncomeChange}
               businessUnitPublicCode={businessUnitPublicCode}
+              businessManagerCode={businessManagerCode}
             />
           )}
         {currentStepsNumber &&

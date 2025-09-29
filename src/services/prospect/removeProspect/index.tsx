@@ -8,6 +8,7 @@ import { IRemoveProspect, IRemoveProspectResponse } from "../types";
 
 export const RemoveProspect = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   payload: IRemoveProspect,
 ): Promise<IRemoveProspectResponse | undefined> => {
   const maxRetries = maxRetriesServices;
@@ -23,6 +24,7 @@ export const RemoveProspect = async (
           "X-Action": "RemoveProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,

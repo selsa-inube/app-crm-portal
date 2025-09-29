@@ -44,6 +44,8 @@ export function Simulations() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -68,6 +70,7 @@ export function Simulations() {
     try {
       const result = await getCreditRequestByCode(
         businessUnitPublicCode,
+        businessManagerCode,
         userAccount,
         {
           creditRequestCode: prospectCode!,
@@ -119,6 +122,7 @@ export function Simulations() {
     try {
       const result = await getSearchProspectByCode(
         businessUnitPublicCode,
+        businessManagerCode,
         prospectCode!,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
@@ -175,6 +179,7 @@ export function Simulations() {
             postBusinessUnitRules,
             "value",
             businessUnitPublicCode,
+            businessManagerCode,
           );
         } catch (error) {
           const errorResponse = error as { response?: { status: number } };
@@ -228,6 +233,7 @@ export function Simulations() {
               postBusinessUnitRules,
               "value",
               businessUnitPublicCode,
+              businessManagerCode,
             );
 
             const extractedValues = Array.isArray(values)
@@ -281,7 +287,7 @@ export function Simulations() {
     if (!dataProspect) return;
 
     try {
-      await RemoveProspect(businessUnitPublicCode, {
+      await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
         removeProspectsRequest: [
           {
             prospectId: dataProspect.prospectId,
@@ -312,6 +318,7 @@ export function Simulations() {
       dataPrint={dataPrint}
       showErrorModal={showErrorModal}
       messageError={messageError}
+      businessManagerCode={businessManagerCode}
       setShowErrorModal={setShowErrorModal}
       setShowMenu={setShowMenu}
       handleSubmitClick={handleSubmitClick}

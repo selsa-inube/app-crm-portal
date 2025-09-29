@@ -53,6 +53,7 @@ interface SimulationsUIProps {
   showErrorModal: boolean;
   messageError: string;
   showDeleteModal: boolean;
+  businessManagerCode: string;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
@@ -92,6 +93,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     showErrorModal,
     messageError,
     showDeleteModal,
+    businessManagerCode,
     setShowDeleteModal,
     setShowErrorModal,
     navigate,
@@ -314,6 +316,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           isPrint={true}
                           prospectData={dataProspect!}
                           sentData={sentData}
+                          businessManagerCode={businessManagerCode}
                           setSentData={setSentData}
                           setRequestValue={setRequestValue}
                           onProspectUpdate={setProspectData}

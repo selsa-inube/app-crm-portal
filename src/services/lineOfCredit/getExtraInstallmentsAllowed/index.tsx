@@ -8,6 +8,7 @@ import { IExtraInstallmentsAllowedResponse } from "../types";
 
 export const getExtraInstallmentsAllowed = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
   moneyDestination: string,
@@ -24,6 +25,7 @@ export const getExtraInstallmentsAllowed = async (
           "X-Action": "GetExtraInstallmentsAllowed",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

@@ -8,6 +8,7 @@ import { mapMoneyDestinationToEntity } from "./mappers";
 
 const getMoneyDestinations = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
 ): Promise<IMoneyDestination[]> => {
   const requestUrl = `${environment.ICOREBANKING_API_URL_QUERY}/money-destinations`;
   const maxRetries = maxRetriesServices;
@@ -24,6 +25,7 @@ const getMoneyDestinations = async (
           "X-Action": "SearchAllMoneyDestination",
           "Content-type": "application/json; charset=UTF-8",
           "X-Business-Unit": businessUnitPublicCode,
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

@@ -34,6 +34,7 @@ interface IDisbursementWithCashProps {
   identificationNumber: string;
   businessUnitPublicCode: string;
   isAmountReadOnly: boolean;
+  businessManagerCode: string;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -49,6 +50,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
     identificationNumber,
     businessUnitPublicCode,
     isAmountReadOnly,
+    businessManagerCode,
     customerData,
     onFormValid,
     handleOnChange,
@@ -210,6 +212,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
         const customer = await getSearchCustomerByCode(
           identification,
           businessUnitPublicCode,
+          businessManagerCode,
           true,
         );
 

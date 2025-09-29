@@ -10,6 +10,7 @@ import { mapCreditPaymentsApiToEntities } from "./mappers";
 const getCreditPayments = async (
   userIdentification: string,
   businessUnitPublicCode: string,
+  businessManagerCode: string,
 ): Promise<IPayment[] | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -27,6 +28,7 @@ const getCreditPayments = async (
           "X-Action": "SearchAllPortfolioObligationPayment",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
       };
 

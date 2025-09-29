@@ -53,6 +53,9 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     validDocumentsRequiredByCreditRequest,
     setValidDocumentsRequiredByCreditRequest,
   ] = useState<IValidateRequirement[]>([]);
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
   const [showErrorModal, setShowErrorModal] = useState(false);
   const fetchValidationRulesData = useCallback(async () => {
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
@@ -93,6 +96,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
               postBusinessUnitRules,
               "value",
               businessUnitPublicCode,
+              businessManagerCode,
             );
             if (Array.isArray(values) && values.length > 0) {
               for (const value of values) {
@@ -127,6 +131,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
       try {
         const data = await postDocumentsRequiredByCreditRequest(
           businessUnitPublicCode,
+          businessManagerCode,
           payload,
           eventData?.user?.identificationDocumentNumber || "",
         );

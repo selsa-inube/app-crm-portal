@@ -11,6 +11,7 @@ import {
 
 export const postDocumentsRequiredByCreditRequest = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   validataRequirements: IPatchValidateRequirementsPayload,
   userAccount: string,
 ): Promise<IValidateRequirement[] | undefined> => {
@@ -29,6 +30,7 @@ export const postDocumentsRequiredByCreditRequest = async (
           "X-User-Name": userAccount,
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         body: JSON.stringify(validataRequirements),
         signal: controller.signal,

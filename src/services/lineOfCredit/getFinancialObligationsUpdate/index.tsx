@@ -8,6 +8,7 @@ import { IFinancialObligationsUpdateResponse } from "../types";
 
 export const getFinancialObligationsUpdate = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
   moneyDestination: string,
@@ -24,6 +25,7 @@ export const getFinancialObligationsUpdate = async (
           "X-Action": "FinancialObligationsUpdateRequired",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
