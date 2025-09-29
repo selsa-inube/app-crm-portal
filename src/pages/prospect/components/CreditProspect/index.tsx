@@ -453,7 +453,6 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(labelsAndValuesShare.error);
     }
   };
-  console.log("prospectData: ", prospectData);
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
