@@ -63,6 +63,7 @@ import InfoModal from "../InfoModal";
 interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
+  businessManagerCode: string;
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
   setSentData: React.Dispatch<
@@ -80,6 +81,7 @@ interface ICreditProspectProps {
 export function CreditProspect(props: ICreditProspectProps) {
   const {
     prospectData,
+    businessManagerCode,
     showMenu,
     setRequestValue,
     onProspectUpdate,
@@ -126,6 +128,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       setCreditLimitError(null);
       const result = await getCreditLimit(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       setCreditLimitData(result);
@@ -206,11 +209,16 @@ export function CreditProspect(props: ICreditProspectProps) {
         ],
       };
 
-      await addCreditProduct(businessUnitPublicCode, payload);
+      await addCreditProduct(
+        businessUnitPublicCode,
+        businessManagerCode,
+        payload,
+      );
 
       if (prospectData?.prospectId) {
         const updatedProspect = await getSearchProspectById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         setDataProspect([updatedProspect]);
@@ -713,6 +721,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             creditLimitData={creditLimitData}
             publicCode={borrowerOptions[selectedIndex]?.publicCode || ""}
             businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentModal === "reportCreditsModal" && (

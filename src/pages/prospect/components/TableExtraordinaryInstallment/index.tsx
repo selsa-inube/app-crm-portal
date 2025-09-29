@@ -21,6 +21,7 @@ export interface TableExtraordinaryInstallmentProps {
   businessUnitPublicCode?: string;
   extraordinary?: TableExtraordinaryInstallmentProps[];
   service?: boolean;
+  businessManagerCode?: string;
   setSentData?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
@@ -77,6 +78,7 @@ export const TableExtraordinaryInstallment = (
     prospectData,
     businessUnitPublicCode,
     extraordinary,
+    businessManagerCode,
     service = true,
     setSentData,
     handleClose,
@@ -207,6 +209,7 @@ export const TableExtraordinaryInstallment = (
       try {
         await removeExtraordinaryInstallment(
           businessUnitPublicCode ?? "",
+          businessManagerCode || "",
           itemIdentifiersForUpdate,
         );
 

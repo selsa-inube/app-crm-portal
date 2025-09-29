@@ -49,9 +49,12 @@ export const CardCommercialManagement = (
     [],
   );
 
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const currentModal = modalHistory[modalHistory.length - 1];
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -90,7 +93,7 @@ export const CardCommercialManagement = (
   const handleDelete = async () => {
     if (!prospectData || !prospectProducts.length) return;
     try {
-      await RemoveCreditProduct(businessUnitPublicCode, {
+      await RemoveCreditProduct(businessUnitPublicCode, businessManagerCode, {
         creditProductCode: selectedProductId,
         prospectId: prospectData.prospectId,
       });
@@ -103,6 +106,7 @@ export const CardCommercialManagement = (
       if (prospectData?.prospectId) {
         const updatedProspect = await getSearchProspectById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         if (onProspectUpdate) {
@@ -136,11 +140,16 @@ export const CardCommercialManagement = (
         prospectId: prospectData.prospectId,
       };
 
-      await updateCreditProduct(businessUnitPublicCode, payload);
+      await updateCreditProduct(
+        businessUnitPublicCode,
+        businessManagerCode,
+        payload,
+      );
 
       if (prospectData?.prospectId) {
         const updatedProspect = await getSearchProspectById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         if (onProspectUpdate) {
@@ -172,6 +181,7 @@ export const CardCommercialManagement = (
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData?.prospectId || "",
         );
         if (result) {
@@ -194,6 +204,7 @@ export const CardCommercialManagement = (
       try {
         const data = await getAllDeductibleExpensesById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         setDeductibleExpenses(data);

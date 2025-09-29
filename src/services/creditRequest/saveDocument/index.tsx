@@ -6,6 +6,7 @@ import {
 
 export const saveDocument = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   creditRequestId: string | undefined,
   abbreviatedName: string | undefined,
   file: File | undefined,
@@ -31,6 +32,7 @@ export const saveDocument = async (
         headers: {
           "X-Action": "SaveDocument",
           "X-Business-Unit": businessUnitPublicCode,
+          "X-Process-Manager": businessManagerCode,
         },
         body: formData,
       };

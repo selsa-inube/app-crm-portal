@@ -3,6 +3,7 @@ import { IProspect } from "../types";
 
 const postSimulateCredit = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   simulateData: IProspect,
 ): Promise<IProspect | undefined> => {
   const requestUrl = `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`;
@@ -14,6 +15,7 @@ const postSimulateCredit = async (
         "X-Action": "SimulateCredit",
         "X-Business-Unit": businessUnitPublicCode,
         "Content-type": "application/json; charset=UTF-8",
+        "X-Process-Manager": businessManagerCode,
       },
       body: JSON.stringify(simulateData),
     };

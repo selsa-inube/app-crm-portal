@@ -42,9 +42,11 @@ export function CreditProspects() {
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const [prospectSummaryData, setProspectSummaryData] = useState<IProspect[]>(
     [],
@@ -70,7 +72,7 @@ export function CreditProspects() {
     if (!selectedProspect) return;
 
     try {
-      await RemoveProspect(businessUnitPublicCode, {
+      await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
         removeProspectsRequest: [
           {
             prospectId: selectedProspect.prospectId,
@@ -100,6 +102,7 @@ export function CreditProspects() {
       try {
         const result = await getProspectsByCustomerCode(
           businessUnitPublicCode,
+          businessManagerCode,
           customerData.publicCode,
         );
         if (result && result.length > 0) {
@@ -167,6 +170,7 @@ export function CreditProspects() {
     try {
       const result = await updateProspect(
         businessUnitPublicCode,
+        businessManagerCode,
         updatedProspect,
       );
 

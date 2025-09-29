@@ -8,6 +8,7 @@ import { IAddCreditProduct, IProspect } from "../types";
 
 export const addCreditProduct = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   payload: IAddCreditProduct,
 ): Promise<IProspect | undefined> => {
   const maxRetries = maxRetriesServices;
@@ -23,6 +24,7 @@ export const addCreditProduct = async (
           "X-Action": "AddCreditProduct",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,

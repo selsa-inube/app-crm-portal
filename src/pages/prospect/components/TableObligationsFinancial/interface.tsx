@@ -36,6 +36,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { CardGray } from "@components/cards/CardGray";
 import { ListModal } from "@components/modals/ListModal";
 import { CustomerContext } from "@context/CustomerContext";
+
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { privilegeCrm } from "@config/privilege";
@@ -106,6 +107,7 @@ interface UIProps {
   loading: boolean;
   visibleHeaders: { key: string; label: string; action?: boolean }[];
   isModalOpenEdit: boolean;
+  businessManagerCode: string;
   setIsModalOpenEdit: (value: boolean) => void;
   onProspectUpdate?: () => void;
   showErrorModal: boolean;
@@ -171,6 +173,7 @@ export const TableFinancialObligationsUI = ({
   visibleHeaders,
   isMobile,
   isModalOpenEdit,
+  businessManagerCode,
   setIsModalOpenEdit,
   onProspectUpdate,
   showOnlyEdit,
@@ -281,7 +284,11 @@ export const TableFinancialObligationsUI = ({
           borrowers: updatedBorrowers,
         };
 
-        await updateProspect(businessUnitPublicCode, prospectData);
+        await updateProspect(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData,
+        );
 
         setRefreshKey?.((prev) => prev + 1);
         setOpenModal(false);

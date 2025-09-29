@@ -34,6 +34,7 @@ interface IDisbursementWithCheckEntityProps {
   identificationNumber: string;
   businessUnitPublicCode: string;
   isAmountReadOnly: boolean;
+  businessManagerCode: string;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -51,6 +52,7 @@ export function DisbursementWithCheckEntity(
     identificationNumber,
     businessUnitPublicCode,
     isAmountReadOnly,
+    businessManagerCode,
     customerData,
     onFormValid,
     handleOnChange,
@@ -212,6 +214,7 @@ export function DisbursementWithCheckEntity(
         const customer = await getSearchCustomerByCode(
           identification,
           businessUnitPublicCode,
+          businessManagerCode,
           true,
         );
 

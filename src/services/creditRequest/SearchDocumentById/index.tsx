@@ -8,6 +8,7 @@ export const getSearchDocumentById = async (
   documentId: string,
   userAccount: string,
   businessUnitPublicCode: string,
+  businessManagerCode: string,
 ) => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ export const getSearchDocumentById = async (
           "X-Business-Unit": businessUnitPublicCode,
           "X-User-Name": userAccount,
           "Content-Type": "application/pdf",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

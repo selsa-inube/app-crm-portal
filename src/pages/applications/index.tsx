@@ -38,6 +38,8 @@ export function CreditApplications() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
@@ -58,6 +60,7 @@ export function CreditApplications() {
       try {
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
+          businessManagerCode,
           userAccount,
           {
             clientIdentificationNumber: customerData.publicCode,

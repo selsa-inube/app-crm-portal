@@ -9,6 +9,7 @@ import { ICustomer } from "../types";
 const getSearchCustomerByCode = async (
   publicCode: string,
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   silent = false,
 ): Promise<ICustomer | null> => {
   const maxRetries = maxRetriesServices;
@@ -28,6 +29,7 @@ const getSearchCustomerByCode = async (
           "X-Action": "SearchAllCustomerCatalog",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

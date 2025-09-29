@@ -15,6 +15,7 @@ interface ISourcesOfIncomeProps {
   customerData: ICustomerData;
   initialValues: ISourcesOfIncomeState;
   businessUnitPublicCode: string;
+  businessManagerCode: string;
   handleOnChange: (newState: Partial<ISourcesOfIncomeState>) => void;
 }
 
@@ -23,6 +24,7 @@ export function SourcesOfIncome({
   creditLimitData,
   initialValues,
   businessUnitPublicCode,
+  businessManagerCode,
   handleOnChange,
 }: ISourcesOfIncomeProps) {
   const [localData, setLocalData] = useState<IIncomeSources | null>(null);
@@ -61,6 +63,7 @@ export function SourcesOfIncome({
           onRestore={restoreData}
           publicCode={customerData?.publicCode || ""}
           businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
           showEdit
           disabled
         />

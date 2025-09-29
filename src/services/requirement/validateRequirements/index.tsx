@@ -11,6 +11,7 @@ import {
 
 export const patchValidateRequirements = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   validataRequirements: IPatchValidateRequirementsPayload,
 ): Promise<IValidateRequirement[] | undefined> => {
   const maxRetries = maxRetriesServices;
@@ -27,6 +28,7 @@ export const patchValidateRequirements = async (
           "X-Action": "ValidateRequirements",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         body: JSON.stringify(validataRequirements),
         signal: controller.signal,

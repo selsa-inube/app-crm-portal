@@ -29,8 +29,10 @@ export function CustomerContextProvider({
 
   const [customerPublicCodeState, setCustomerPublicCodeState] =
     useState<string>(getInitialPublicCode());
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   let businessUnitPublicCode: string = "";
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   try {
     if (businessUnitSigla) {
@@ -49,6 +51,7 @@ export function CustomerContextProvider({
       const customers = await getSearchCustomerByCode(
         publicCode,
         businessUnitPublicCode,
+        businessManagerCode,
       );
 
       if (customers) {

@@ -18,10 +18,13 @@ export function Customer() {
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const isMobile = useMediaQuery("(max-width:880px)");
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
   const handleSearch = async (value: string) => {
     try {
       if (value.length < 3) {
@@ -31,9 +34,19 @@ export function Customer() {
 
       let response = null;
       if (isNumericString(value)) {
-        response = await getCustomerCatalog(businessUnitPublicCode, "", value);
+        response = await getCustomerCatalog(
+          businessUnitPublicCode,
+          businessManagerCode,
+          "",
+          value,
+        );
       } else if (isValidUpperCaseName(value)) {
-        response = await getCustomerCatalog(businessUnitPublicCode, value, "");
+        response = await getCustomerCatalog(
+          businessUnitPublicCode,
+          businessManagerCode,
+          value,
+          "",
+        );
       }
 
       if (response && Array.isArray(response) && response.length > 0) {
