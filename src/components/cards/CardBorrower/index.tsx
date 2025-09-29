@@ -56,7 +56,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedDAta.names}
             </Text>
-            <Text type="body" size="large">
+            <Text type="body" size="large" ellipsis={true}>
               {name}
             </Text>
           </Stack>
@@ -64,7 +64,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedDAta.lastNames}
             </Text>
-            <Text type="body" size="large">
+            <Text type="body" size="large" ellipsis={true}>
               {lastName}
             </Text>
           </Stack>
@@ -72,7 +72,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedDAta.email}
             </Text>
-            <Text type="body" size="large">
+            <Text type="body" size="large" ellipsis={true}>
               {email}
             </Text>
           </Stack>
@@ -86,7 +86,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 appearance={"success"}
                 size="18px"
               />
-              <Text type="body" size="large">
+              <Text type="body" size="large" ellipsis={true}>
                 {income.replace("$", "")}
               </Text>
             </Stack>
@@ -101,7 +101,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 appearance={"success"}
                 size="18px"
               />
-              <Text type="body" size="large">
+              <Text type="body" size="large" ellipsis={true}>
                 {obligations.replace("$", "")}
               </Text>
             </Stack>
