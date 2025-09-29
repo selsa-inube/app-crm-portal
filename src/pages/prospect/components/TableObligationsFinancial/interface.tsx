@@ -324,7 +324,16 @@ export const TableFinancialObligationsUI = ({
     (sum, item) => sum + getValueFromProperty(item.propertyValue, 2),
     0,
   );
-
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   const renderHeaders = () => {
     return visibleHeaders.map((header, index) =>
       loading ? (
@@ -410,7 +419,11 @@ export const TableFinancialObligationsUI = ({
                       appearance="dark"
                       size="16px"
                       onClick={() =>
-                        handleEdit(mapToTableFinancialObligationsProps(prop))
+                        canEditCreditRequest
+                          ? handleInfo()
+                          : handleEdit(
+                              mapToTableFinancialObligationsProps(prop),
+                            )
                       }
                       cursorHover
                     />
@@ -419,12 +432,14 @@ export const TableFinancialObligationsUI = ({
                         icon={<MdDeleteOutline />}
                         appearance="danger"
                         size="16px"
-                        onClick={() => {
-                          setSelectedBorrower?.(
-                            mapToTableFinancialObligationsProps(prop),
-                          );
-                          setIsDeleteModal(true);
-                        }}
+                        onClick={() =>
+                          canEditCreditRequest
+                            ? handleInfo()
+                            : (setSelectedBorrower?.(
+                                mapToTableFinancialObligationsProps(prop),
+                              ),
+                              setIsDeleteModal(true))
+                        }
                         cursorHover
                       />
                     )}
@@ -438,16 +453,7 @@ export const TableFinancialObligationsUI = ({
         </Tr>
       );
     });
-  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
-    useCase: getUseCaseValue("canEditCreditRequest"),
-  });
-  const handleInfo = () => {
-    setIsModalOpen(true);
-  };
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleInfoModalClose = () => {
-    setIsModalOpen(false);
-  };
+
   return (
     <Stack
       direction="column"
@@ -638,18 +644,6 @@ export const TableFinancialObligationsUI = ({
               setIsDeleteModal(false);
             }}
             handleClose={() => setIsDeleteModal(false)}
-            disabledNext={canEditCreditRequest}
-            iconBeforeNext={
-              canEditCreditRequest ? (
-                <Icon
-                  icon={<MdOutlineInfo />}
-                  appearance="primary"
-                  size="16px"
-                  cursorHover
-                  onClick={handleInfo}
-                />
-              ) : undefined
-            }
           >
             <Stack width="400px">
               <Text>{dataReport.content}</Text>

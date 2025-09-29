@@ -1,4 +1,4 @@
-import { MdOutlineAdd, MdOutlineInfo } from "react-icons/md";
+import { MdOutlineAdd } from "react-icons/md";
 import { useState } from "react";
 import { Stack, Icon, Text, useMediaQuery } from "@inubekit/inubekit";
 
@@ -29,9 +29,8 @@ export function NewCreditProductCard(props: INewCreditProductCardProps) {
   return (
     <Stack gap="6px">
       <StyledCreditProductCard
-        onClick={onClick}
+        onClick={() => (canEditCreditRequest ? handleInfo() : onClick())}
         $new={true}
-        $disabled={canEditCreditRequest}
       >
         <Stack direction="column" alignItems="center" margin="auto">
           <Icon icon={<MdOutlineAdd />} appearance="gray" size="45px" />
@@ -40,17 +39,6 @@ export function NewCreditProductCard(props: INewCreditProductCardProps) {
           </Text>
         </Stack>
       </StyledCreditProductCard>
-      <Stack alignItems="end">
-        {canEditCreditRequest && (
-          <Icon
-            icon={<MdOutlineInfo />}
-            appearance="primary"
-            size="16px"
-            cursorHover
-            onClick={handleInfo}
-          />
-        )}
-      </Stack>
       {isModalOpen && (
         <InfoModal
           onClose={handleInfoModalClose}

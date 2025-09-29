@@ -192,9 +192,6 @@ export function CreditProspects() {
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
     useCase: getUseCaseValue("canEditCreditRequest"),
   });
-  const { disabledButton: canDeleteCreditRequest } = useValidateUseCase({
-    useCase: getUseCaseValue("canDeleteCreditRequest"),
-  });
   const handleInfo = () => {
     setIsModalOpen(true);
   };
@@ -326,7 +323,7 @@ export function CreditProspects() {
             }}
             nextButton={dataCreditProspects.modify}
             disabledNext={canEditCreditRequest}
-            iconBeforeNext={
+            iconAfterNext={
               canEditCreditRequest ? (
                 <Icon
                   icon={<MdOutlineInfo />}
@@ -413,18 +410,6 @@ export function CreditProspects() {
             title={dataCreditProspects.deleteTitle}
             handleBack={() => setShowDeleteModal(false)}
             handleNext={handleDeleteProspect}
-            disabledNext={canDeleteCreditRequest}
-            iconBeforeNext={
-              canDeleteCreditRequest ? (
-                <Icon
-                  icon={<MdOutlineInfo />}
-                  appearance="primary"
-                  size="16px"
-                  cursorHover
-                  onClick={handleInfo}
-                />
-              ) : undefined
-            }
             backButton="Cancelar"
             nextButton="Eliminar"
             apparenceNext="danger"

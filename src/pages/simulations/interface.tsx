@@ -331,28 +331,30 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     </StyledScrollPrint>
                     <StyledPrint>
                       <Stack
-                        gap="20px"
+                        gap="10px"
                         justifyContent="end"
                         padding="0 0 16px 0"
                       >
-                        <Button
-                          appearance="danger"
-                          variant="outlined"
-                          disabled={canDeleteCreditRequest}
-                          onClick={() => setShowDeleteModal(true)}
-                        >
-                          {dataEditProspect.delete}
-                        </Button>
-                        <Stack alignItems="center">
-                          {canDeleteCreditRequest && (
-                            <Icon
-                              icon={<MdOutlineInfo />}
-                              appearance="primary"
-                              size="16px"
-                              cursorHover
-                              onClick={handleInfo}
-                            />
-                          )}
+                        <Stack gap="2px">
+                          <Button
+                            appearance="danger"
+                            variant="outlined"
+                            disabled={canDeleteCreditRequest}
+                            onClick={() => setShowDeleteModal(true)}
+                          >
+                            {dataEditProspect.delete}
+                          </Button>
+                          <Stack alignItems="center">
+                            {canDeleteCreditRequest && (
+                              <Icon
+                                icon={<MdOutlineInfo />}
+                                appearance="primary"
+                                size="16px"
+                                cursorHover
+                                onClick={handleInfo}
+                              />
+                            )}
+                          </Stack>
                         </Stack>
                         <Stack gap="2px" alignItems="center">
                           <Button

@@ -4,7 +4,6 @@ import {
   MdOutlineEdit,
   MdOutlineSend,
   MdOutlineMessage,
-  MdOutlineInfo,
 } from "react-icons/md";
 import { useState } from "react";
 
@@ -52,6 +51,9 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
   } = props;
   const { disabledButton: canRequestCredit } = useValidateUseCase({
     useCase: getUseCaseValue("canRequestCredit"),
+  });
+  const { disabledButton: canDeleteCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canDeleteCreditRequest"),
   });
   const handleInfo = () => {
     setIsModalOpen(true);
@@ -117,19 +119,9 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
                 icon={<MdOutlineSend />}
                 appearance="primary"
                 size="20px"
-                onClick={handleSend}
-                disabled={!handleSend || canRequestCredit}
                 cursorHover
+                onClick={canRequestCredit ? handleInfo : handleSend}
               />
-              {canRequestCredit && (
-                <Icon
-                  icon={<MdOutlineInfo />}
-                  appearance="primary"
-                  size="16px"
-                  cursorHover
-                  onClick={handleInfo}
-                />
-              )}
             </Stack>
             <Icon
               icon={<MdOutlineEdit />}
@@ -142,7 +134,7 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
               icon={<MdOutlineDelete />}
               appearance="danger"
               size="20px"
-              onClick={handleDelete}
+              onClick={canDeleteCreditRequest ? handleInfo : handleDelete}
               cursorHover
             />
           </Stack>

@@ -1,13 +1,9 @@
 import { FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
-import { MdOutlineAttachMoney, MdOutlineInfo } from "react-icons/md";
+import { MdOutlineAttachMoney } from "react-icons/md";
 import { Icon, Grid, useMediaQuery, Textfield } from "@inubekit/inubekit";
-import { useState } from "react";
 
-import InfoModal from "@pages/prospect/components/InfoModal";
-import { privilegeCrm } from "@config/privilege";
 import { BaseModal } from "@components/modals/baseModal";
-import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import {
   handleChangeWithCurrency,
   validateCurrencyField,
@@ -31,7 +27,6 @@ function EditFinancialObligationModal({
   title,
   confirmButtonText,
   initialValues,
-  iconBefore,
   iconAfter,
 }: IEditFinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
@@ -51,16 +46,7 @@ function EditFinancialObligationModal({
       onCloseModal();
     },
   });
-  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
-    useCase: getUseCaseValue("canEditCreditRequest"),
-  });
-  const handleInfo = () => {
-    setIsModalOpen(true);
-  };
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleInfoModalClose = () => {
-    setIsModalOpen(false);
-  };
+
   return (
     <BaseModal
       title={title}
@@ -68,21 +54,8 @@ function EditFinancialObligationModal({
       nextButton={confirmButtonText}
       handleBack={onCloseModal}
       handleNext={formik.submitForm}
-      disabledNext={!formik.dirty || !formik.isValid || canEditCreditRequest}
+      disabledNext={!formik.dirty || !formik.isValid}
       iconAfterNext={iconAfter}
-      iconBeforeNext={
-        canEditCreditRequest ? (
-          <Icon
-            icon={<MdOutlineInfo />}
-            appearance="primary"
-            size="16px"
-            cursorHover
-            onClick={handleInfo}
-          />
-        ) : (
-          iconBefore
-        )
-      }
       finalDivider={true}
       width={isMobile ? "300px" : "410px"}
       height={isMobile ? "298px" : "auto"}
@@ -130,18 +103,6 @@ function EditFinancialObligationModal({
           fullwidth
         />
       </Grid>
-      {isModalOpen ? (
-        <InfoModal
-          onClose={handleInfoModalClose}
-          title={privilegeCrm.title}
-          subtitle={privilegeCrm.subtitle}
-          description={privilegeCrm.description}
-          nextButtonText={privilegeCrm.nextButtonText}
-          isMobile={isMobile}
-        />
-      ) : (
-        <></>
-      )}
     </BaseModal>
   );
 }
