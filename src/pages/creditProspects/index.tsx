@@ -151,7 +151,7 @@ export function CreditProspects() {
   return (
     <>
       <Stack
-        margin="20px auto 50px auto"
+        margin={`20px auto ${isMobile ? "100px" : "50px"} auto`}
         width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
         direction="column"
         gap="24px"
