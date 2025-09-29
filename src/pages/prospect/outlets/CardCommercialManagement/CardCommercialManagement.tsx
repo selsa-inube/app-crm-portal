@@ -25,6 +25,12 @@ import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";
+import {
+  getUseCaseValue,
+  useValidateUseCase,
+} from "@src/hooks/useValidateUseCase";
+import InfoModal from "../../components/InfoModal";
+import { privilegeCrm } from "@src/config/privilege";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -67,7 +73,16 @@ export const CardCommercialManagement = (
     { expenseName: string; expenseValue: number }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   useEffect(() => {
     if (prospectData?.creditProducts) {
       setProspectProducts(prospectData?.creditProducts);
@@ -228,11 +243,17 @@ export const CardCommercialManagement = (
                 entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
               }
               schedule={entry.lineOfCreditAbbreviatedName as Schedule}
-              onEdit={() => {
-                setSelectedProduct(entry);
-                setModalHistory((prev) => [...prev, "editProductModal"]);
-              }}
-              onDelete={() => handleDeleteClick(entry.creditProductCode)}
+              onEdit={() =>
+                canEditCreditRequest
+                  ? handleInfo()
+                  : (setSelectedProduct(entry),
+                    setModalHistory((prev) => [...prev, "editProductModal"]))
+              }
+              onDelete={() =>
+                canEditCreditRequest
+                  ? handleInfo()
+                  : handleDeleteClick(entry.creditProductCode)
+              }
             />
           ))}
           <StyledPrint>
@@ -300,6 +321,16 @@ export const CardCommercialManagement = (
           handleClose={() => setDeductibleExpensesModal(false)}
           initialValues={deductibleExpenses}
           loading={isLoading}
+          isMobile={isMobile}
+        />
+      )}
+      {isModalOpen && (
+        <InfoModal
+          onClose={handleInfoModalClose}
+          title={privilegeCrm.title}
+          subtitle={privilegeCrm.subtitle}
+          description={privilegeCrm.description}
+          nextButtonText={privilegeCrm.nextButtonText}
           isMobile={isMobile}
         />
       )}

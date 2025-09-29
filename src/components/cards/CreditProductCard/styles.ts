@@ -18,12 +18,10 @@ export const StyledCreditProductCard = styled.div<IStyledProduct>`
     theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
   box-shadow: 0px 4px 8px 3px rgba(9, 30, 66, 0.13);
   cursor: ${({ $new }) => ($new ? "pointer" : "normal")};
-
   @media print {
     height: 365px;
   }
 `;
-
 export const StyledDivider = styled.hr`
   margin: 0;
   width: 100%;
@@ -32,7 +30,6 @@ export const StyledDivider = styled.hr`
   border-top-color: ${({ theme }) =>
     theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
 `;
-
 export const StyledPrint = styled.div`
   @media print {
     display: none;
