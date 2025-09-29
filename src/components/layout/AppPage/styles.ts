@@ -30,6 +30,7 @@ export const StyledContainer = styled.div`
 export const StyledMain = styled.main`
   display: flex;
   flex-direction: column;
+  height: 100dvh;
   overflow-y: auto;
 `;
 

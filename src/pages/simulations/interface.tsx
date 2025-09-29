@@ -133,7 +133,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin="0 auto"
+          margin="0 auto 50px auto"
         >
           <Stack
             direction="column"
