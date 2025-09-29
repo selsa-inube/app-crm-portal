@@ -16,7 +16,7 @@ export const addConfig = {
       isActive: false,
     },
     {
-      path: "/credit/applications",
+      path: "/credit/credit-requests",
       label: "Solicitudes de crédito",
       id: "/prospectos",
       isActive: false,

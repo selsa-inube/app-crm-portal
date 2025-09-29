@@ -92,17 +92,16 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
-  display: ${({ isShowMenuOnHeader, showNav }) =>
-    isShowMenuOnHeader && showNav ? "flex" : "none"};
+  display: inline-flex;
   justify-content: center;
   align-content: center;
-  padding: 16px 24px;
+  align-items: center;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
   width: ${({ $nav }) => ($nav ? "auto" : "200px")};
-  border-right: 1px solid
-    ${({ theme }) => theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
-  height: 100%;
+  height: 50px;
+  top: -50px;
+  position: relative;
 `;
 
 export const StyledPrint = styled.div`
