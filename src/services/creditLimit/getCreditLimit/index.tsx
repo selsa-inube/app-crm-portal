@@ -9,6 +9,7 @@ import { mapCreditLimitEntity } from "./mapper";
 
 const getCreditLimit = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   clientIdentificationNumber: string,
 ): Promise<IIncomeSources> => {
   const maxRetries = maxRetriesServices;
@@ -24,6 +25,7 @@ const getCreditLimit = async (
           "X-Action": "SearchClientIncomeSourcesById",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

@@ -48,6 +48,8 @@ export function ApplyForCredit() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
   const dataHeader = {
     name: customerData?.fullName ?? "",
     status:
@@ -400,6 +402,7 @@ export function ApplyForCredit() {
     try {
       const response = await postSubmitCredit(
         businessUnitPublicCode,
+        businessManagerCode,
         userAccount,
         submitData,
       );
@@ -423,6 +426,7 @@ export function ApplyForCredit() {
     try {
       const prospect = await getSearchProspectByCode(
         businessUnitPublicCode,
+        businessManagerCode,
         prospectCode || "",
       );
 
@@ -484,6 +488,7 @@ export function ApplyForCredit() {
             postBusinessUnitRules,
             "value",
             businessUnitPublicCode,
+            businessManagerCode,
           );
         } catch (error) {
           const apiError = error as { response?: { status?: number } };
@@ -552,6 +557,7 @@ export function ApplyForCredit() {
               postBusinessUnitRules,
               "value",
               businessUnitPublicCode,
+              businessManagerCode,
             );
             const extractedValues = Array.isArray(values)
               ? values
@@ -643,6 +649,7 @@ export function ApplyForCredit() {
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         if (result) {
@@ -693,6 +700,7 @@ export function ApplyForCredit() {
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         setShowErrorModal={setShowErrorModal}
+        businessManagerCode={businessManagerCode}
         isMobile={isMobile}
         prospectData={prospectData as IProspect}
         customerData={customerData}

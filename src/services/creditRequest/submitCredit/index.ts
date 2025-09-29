@@ -4,6 +4,7 @@ import { ISubmitCredit } from "../types";
 
 const postSubmitCredit = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   userAccount: string,
   submitData: FormData,
 ): Promise<ISubmitCredit | undefined> => {
@@ -16,6 +17,7 @@ const postSubmitCredit = async (
         "X-Action": "ApplyForCredit",
         "X-Business-Unit": businessUnitPublicCode,
         "X-User-Name": userAccount,
+        "X-Process-Manager": businessManagerCode,
       },
       body: submitData,
     };

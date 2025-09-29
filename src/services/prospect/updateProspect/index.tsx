@@ -9,6 +9,7 @@ import { IProspect } from "../types";
 
 export const updateProspect = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   prospect: IProspect | ITableFinancialObligationsProps[],
 ): Promise<IProspect | null> => {
   const maxRetries = maxRetriesServices;
@@ -24,6 +25,7 @@ export const updateProspect = async (
           "X-Action": "UpdateProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
         body: JSON.stringify(prospect),

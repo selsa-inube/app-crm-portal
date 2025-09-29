@@ -10,6 +10,7 @@ import { IExtraordinaryInstallments } from "../types";
 export const saveExtraordinaryInstallments = async (
   extraordinaryInstallments: IExtraordinaryInstallments,
   businessUnitPublicCode: string,
+  businessManagerCode: string,
 ): Promise<IExtraordinaryInstallments | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ export const saveExtraordinaryInstallments = async (
           "X-Action": "SaveExtraordinaryInstallments",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         body: JSON.stringify(
           mapExtraordinaryInstallmentsEntity(extraordinaryInstallments),

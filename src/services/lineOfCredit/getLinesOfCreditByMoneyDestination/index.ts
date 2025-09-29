@@ -8,6 +8,7 @@ import { ILinesOfCreditByMoneyDestination } from "../types";
 
 const getLinesOfCreditByMoneyDestination = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   moneyDestinationAbbreviatedName: string,
 ): Promise<ILinesOfCreditByMoneyDestination | null> => {
   const maxRetries = maxRetriesServices;
@@ -23,6 +24,7 @@ const getLinesOfCreditByMoneyDestination = async (
           "X-Action": "GetLinesOfCreditByMoneyDestination",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
