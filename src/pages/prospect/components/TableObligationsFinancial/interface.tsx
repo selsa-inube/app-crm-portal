@@ -537,7 +537,7 @@ export const TableFinancialObligationsUI = ({
               direction={isMobile ? "column" : "row"}
               width={isMobile ? "100%" : "auto"}
             >
-              <Stack>
+              <Stack gap="2px">
                 <Button
                   children="Restablecer"
                   iconBefore={<MdCached />}
@@ -547,28 +547,43 @@ export const TableFinancialObligationsUI = ({
                   spacing="wide"
                   onClick={() => setIsOpenModal(true)}
                 />
+                <Stack alignItems="center">
+                  {canEditCreditRequest ? (
+                    <Icon
+                      icon={<MdOutlineInfo />}
+                      appearance="primary"
+                      size="16px"
+                      cursorHover
+                      onClick={handleInfo}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Stack>
               </Stack>
               <Stack>
-                <Button
-                  children={dataReport.addObligations}
-                  iconBefore={<MdAdd />}
-                  disabled={canEditCreditRequest}
-                  fullwidth={isMobile}
-                  onClick={() => setOpenModal(true)}
-                />
-              </Stack>
-              <Stack alignItems="center">
-                {canEditCreditRequest ? (
-                  <Icon
-                    icon={<MdOutlineInfo />}
-                    appearance="primary"
-                    size="16px"
-                    cursorHover
-                    onClick={handleInfo}
+                <Stack gap="2px">
+                  <Button
+                    children={dataReport.addObligations}
+                    iconBefore={<MdAdd />}
+                    disabled={canEditCreditRequest}
+                    fullwidth={isMobile}
+                    onClick={() => setOpenModal(true)}
                   />
-                ) : (
-                  <></>
-                )}
+                </Stack>
+                <Stack alignItems="center">
+                  {canEditCreditRequest ? (
+                    <Icon
+                      icon={<MdOutlineInfo />}
+                      appearance="primary"
+                      size="16px"
+                      cursorHover
+                      onClick={handleInfo}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Stack>
               </Stack>
             </Stack>
           )}
