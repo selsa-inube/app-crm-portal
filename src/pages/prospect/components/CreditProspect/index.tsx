@@ -141,7 +141,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   };
 
   const currentModal = modalHistory[modalHistory.length - 1];
-
   const handleCloseModal = () => {
     setModalHistory((prevHistory) => {
       const newHistory = [...prevHistory];
@@ -454,7 +453,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(labelsAndValuesShare.error);
     }
   };
-
+  console.log("prospectData: ", prospectData);
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -477,7 +476,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               >
                 {dataCreditProspect.addProduct}
               </Button>
-              {prospectData?.creditProducts && (
+              {!prospectData?.creditProducts[0].extraordinaryInstallments && (
                 <Button
                   type="button"
                   appearance="primary"

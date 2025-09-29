@@ -22,6 +22,7 @@ export interface ICardBorrowerProps {
   handleDelete?: () => void;
   showIcons?: boolean;
   isMobile?: boolean;
+  typeBorrower?: string;
 }
 
 export function CardBorrower(props: ICardBorrowerProps) {
@@ -37,6 +38,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
     handleDelete = () => {},
     showIcons = true,
     isMobile = false,
+    typeBorrower,
   } = props;
 
   return (
@@ -54,7 +56,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedDAta.names}
             </Text>
-            <Text type="body" size="large">
+            <Text type="body" size="large" ellipsis={true}>
               {name}
             </Text>
           </Stack>
@@ -62,7 +64,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedDAta.lastNames}
             </Text>
-            <Text type="body" size="large">
+            <Text type="body" size="large" ellipsis={true}>
               {lastName}
             </Text>
           </Stack>
@@ -70,7 +72,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedDAta.email}
             </Text>
-            <Text type="body" size="large">
+            <Text type="body" size="large" ellipsis={true}>
               {email}
             </Text>
           </Stack>
@@ -84,8 +86,8 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 appearance={"success"}
                 size="18px"
               />
-              <Text type="body" size="large">
-                {income}
+              <Text type="body" size="large" ellipsis={true}>
+                {income.replace("$", "")}
               </Text>
             </Stack>
           </Stack>
@@ -99,8 +101,8 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 appearance={"success"}
                 size="18px"
               />
-              <Text type="body" size="large">
-                {obligations}
+              <Text type="body" size="large" ellipsis={true}>
+                {obligations.replace("$", "")}
               </Text>
             </Stack>
           </Stack>
@@ -124,13 +126,15 @@ export function CardBorrower(props: ICardBorrowerProps) {
                   onClick={handleEdit}
                   cursorHover
                 />
-                <Icon
-                  icon={<MdOutlineDelete />}
-                  appearance={"primary"}
-                  size="20px"
-                  onClick={handleDelete}
-                  cursorHover
-                />
+                {typeBorrower != "MainBorrower" && (
+                  <Icon
+                    icon={<MdOutlineDelete />}
+                    appearance={"primary"}
+                    size="20px"
+                    onClick={handleDelete}
+                    cursorHover
+                  />
+                )}
               </>
             )}
           </Stack>

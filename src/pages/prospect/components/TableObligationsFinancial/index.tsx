@@ -1,13 +1,17 @@
 import { useState, useEffect, useContext } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
-import { FormikValues, useFormik } from "formik";
+import { FormikValues } from "formik";
 
 import { AppContext } from "@context/AppContext";
 import { currencyFormat } from "@utils/formatData/currency";
 import { updateProspect } from "@services/prospect/updateProspect";
 import { restoreFinancialObligationsByBorrowerId } from "@services/prospect/restoreFinancialObligationsByBorrowerId";
 
-import { convertObligationsToProperties, headers } from "./config";
+import {
+  convertObligationsToProperties,
+  headers,
+  errorMessages,
+} from "./config";
 import {
   ITableFinancialObligationsProps,
   TableFinancialObligationsUI,
@@ -27,6 +31,8 @@ export const TableFinancialObligations = (
     showButtons,
     formState,
     services = true,
+    handleOnChangeExtraBorrowers = undefined,
+    showOnlyEdit = false,
   } = props;
   const [loading] = useState(false);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
@@ -42,15 +48,6 @@ export const TableFinancialObligations = (
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-
-  const formik = useFormik({
-    initialValues: initialValues as IObligations,
-    onSubmit: () => {},
-  });
-
-  useEffect(() => {
-    handleOnChange(formik.values);
-  }, []);
 
   const handleEdit = (debtor: ITableFinancialObligationsProps) => {
     let balance = "";
@@ -239,7 +236,7 @@ export const TableFinancialObligations = (
         onProspectUpdate?.();
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(`${error}`);
+        setMessageError(`${errorMessages.updateMessage}  ${error}`);
       }
     } else {
       try {
@@ -273,6 +270,10 @@ export const TableFinancialObligations = (
         handleOnChange(updatedInitialValues);
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
+
+        if (handleOnChangeExtraBorrowers === undefined) return;
+
+        handleOnChangeExtraBorrowers(updatedInitialValues);
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);
@@ -335,6 +336,8 @@ export const TableFinancialObligations = (
       showErrorModal={showErrorModal}
       messageError={messageError}
       handleRestore={handleRestore}
+      handleOnChangeExtraBorrowers={handleOnChangeExtraBorrowers}
+      showOnlyEdit={showOnlyEdit}
     />
   );
 };

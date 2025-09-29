@@ -7,11 +7,15 @@ import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 
 import { CustomerUI } from "./interface";
+import { EErrorMessages } from "./config";
+import { isValidUpperCaseName, isNumericString } from "./utils";
 
 export function Customer() {
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
+  const [messageError, setMessageError] = useState("");
+
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
   const { businessUnitSigla } = useContext(AppContext);
@@ -19,36 +23,42 @@ export function Customer() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
   const handleSearch = async (value: string) => {
-    if (value.length < 3) {
-      setOptions([]);
-      return;
-    }
+    try {
+      if (value.length < 3) {
+        setOptions([]);
+        return;
+      }
 
-    let response = null;
-    if (/^\d+$/.test(value)) {
-      response = await getCustomerCatalog(businessUnitPublicCode, "", value);
-    } else if (/^[A-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
-      response = await getCustomerCatalog(businessUnitPublicCode, value, "");
-    }
+      let response = null;
+      if (isNumericString(value)) {
+        response = await getCustomerCatalog(businessUnitPublicCode, "", value);
+      } else if (isValidUpperCaseName(value)) {
+        response = await getCustomerCatalog(businessUnitPublicCode, value, "");
+      }
 
-    if (response && Array.isArray(response) && response.length > 0) {
-      const mappedOptions = response.map((item, index) => ({
-        id: `${index}`,
-        label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
-        value: item.publicCode,
-      }));
-      setOptions(mappedOptions);
+      if (response && Array.isArray(response) && response.length > 0) {
+        const mappedOptions = response.map((item, index) => ({
+          id: `${index}`,
+          label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
+          value: item.publicCode,
+        }));
+        setOptions(mappedOptions);
 
-      setTimeout(() => {
-        const clickable = selectRef.current?.querySelector("input");
-        if (clickable) {
-          clickable.focus();
-          clickable.dispatchEvent(
-            new KeyboardEvent("keyup", { bubbles: true }),
-          );
-        }
-      }, 50);
-    } else {
+        setTimeout(() => {
+          const clickable = selectRef.current?.querySelector("input");
+          if (clickable) {
+            clickable.focus();
+            clickable.dispatchEvent(
+              new KeyboardEvent("keyup", { bubbles: true }),
+            );
+          }
+        }, 50);
+      } else {
+        setOptions([]);
+      }
+    } catch (error) {
+      setMessageError(EErrorMessages.ClientNotFound);
+      setShowError(true);
       setOptions([]);
     }
   };
@@ -78,6 +88,7 @@ export function Customer() {
     );
 
     if (!isValidOption) {
+      setMessageError(EErrorMessages.NoClientSelected);
       setShowError(true);
       return;
     }
@@ -86,6 +97,10 @@ export function Customer() {
     setCustomerPublicCodeState(inputValue);
     navigate(`/home`);
   };
+
+  useEffect(() => {
+    handleSearch(inputValue);
+  }, [businessUnitSigla]);
 
   return (
     <CustomerUI
@@ -96,6 +111,7 @@ export function Customer() {
       selectRef={selectRef}
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
+      messageError={messageError}
     />
   );
 }

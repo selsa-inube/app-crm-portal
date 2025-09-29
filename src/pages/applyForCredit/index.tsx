@@ -22,7 +22,11 @@ import { ApplyForCreditUI } from "./interface";
 import { ICondition, IFormData, Irule } from "./types";
 import { evaluateRule } from "./evaluateRule";
 import { ruleConfig } from "./config/configRules";
-import { dataSubmitApplication, tittleOptions } from "./config/config";
+import {
+  dataSubmitApplication,
+  prospectStates,
+  tittleOptions,
+} from "./config/config";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -72,6 +76,7 @@ export function ApplyForCredit() {
     clientManagerIdentificationNumber: "",
     clientManagerName: "",
     clientManagerObservation: "",
+    clientComments: "",
     borrowers: [],
     consolidatedCredits: [],
     creditProducts: [],
@@ -246,7 +251,7 @@ export function ApplyForCredit() {
   }, [valueRule, hasBorrowers, bondValue]);
 
   const [currentStep, setCurrentStep] = useState<number>(
-    stepsFilingApplication.generalInformation.id,
+    /* stepsFilingApplication.generalInformation.id, */ 3,
   );
 
   const {
@@ -435,7 +440,7 @@ export function ApplyForCredit() {
         return;
       }
 
-      if (prospect.state !== "Created") {
+      if (prospect.state !== prospectStates.CREATED) {
         setCodeError(1012);
         return;
       }

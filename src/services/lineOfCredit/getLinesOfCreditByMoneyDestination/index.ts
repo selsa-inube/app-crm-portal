@@ -28,7 +28,7 @@ const getLinesOfCreditByMoneyDestination = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/by-money-destination/${moneyDestinationAbbreviatedName}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/${moneyDestinationAbbreviatedName}`,
         options,
       );
 

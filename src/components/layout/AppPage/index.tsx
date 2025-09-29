@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { MdLogout, MdOutlineChevronRight } from "react-icons/md";
 import {
   Nav,
@@ -20,7 +20,6 @@ import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
 import { userMenu } from "@config/menuMainConfiguration";
 
-import { useNavigationConfig } from "./config/apps.config";
 import {
   StyledAppPage,
   StyledContainer,
@@ -34,6 +33,7 @@ import {
   StyledPrint,
   StyledFooter,
 } from "./styles";
+import { useNavigationConfig } from "./config/apps.config";
 
 const renderLogo = (imgUrl: string) => {
   return (
@@ -52,9 +52,13 @@ function AppPage(props: IAppPage) {
 
   const { eventData, businessUnitsToTheStaff, setBusinessUnitSigla } =
     useContext(AppContext);
+  const location = useLocation();
+
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [collapse, setCollapse] = useState(false);
+  const [showMenuOnHeader, setShowMenuOnHeader] = useState(true);
+
   const userMenuRef = useRef<HTMLDivElement>(null);
   const collapseMenuRef = useRef<HTMLDivElement>(null);
   const businessUnitChangeRef = useRef<HTMLDivElement>(null);
@@ -135,6 +139,14 @@ function AppPage(props: IAppPage) {
     }
   }, [businessUnitsToTheStaff]);
 
+  useEffect(() => {
+    if (location.pathname.toString().includes("clients/select-client")) {
+      setShowMenuOnHeader(false);
+    } else {
+      setShowMenuOnHeader(true);
+    }
+  });
+
   return (
     <StyledAppPage>
       <Grid templateRows="auto 1fr" height="100vh" justifyContent="unset">
@@ -142,7 +154,7 @@ function AppPage(props: IAppPage) {
           <StyledHeaderContainer>
             <Header
               logoURL={renderLogo(eventData.businessUnit.urlLogo)}
-              navigation={useNavigationConfig()}
+              {...(showMenuOnHeader && { navigation: useNavigationConfig() })}
               user={{
                 username: eventData.user.userName,
                 breakpoint: "848px",
@@ -208,7 +220,7 @@ function AppPage(props: IAppPage) {
           <Grid
             templateColumns={!isTablet ? (showNav ? "auto 1fr" : "1fr") : "1fr"}
             alignContent="unset"
-            height={isTablet ? "81vh" : "89.5vh"}
+            height="100%"
           >
             {!isTablet && showNav && (
               <StyledPrint>
@@ -224,12 +236,14 @@ function AppPage(props: IAppPage) {
               <Outlet />
             </StyledMain>
           </Grid>
-          <StyledPrint>
-            <StyledFooter $nav={showNav}>
-              {renderLogo(eventData.businessManager.urlBrand)}
-            </StyledFooter>
-          </StyledPrint>
         </StyledContainer>
+        <StyledFooter
+          $nav={isTablet}
+          isShowMenuOnHeader={showMenuOnHeader}
+          showNav={showNav}
+        >
+          {renderLogo(eventData.businessManager.urlBrand)}
+        </StyledFooter>
       </Grid>
     </StyledAppPage>
   );

@@ -1,9 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdAdd, MdArrowBack } from "react-icons/md";
+import { MdArrowBack } from "react-icons/md";
 import {
   Breadcrumbs,
-  Button,
   Icon,
   Input,
   Stack,
@@ -22,11 +21,13 @@ import { environment } from "@config/environment";
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
-import { addConfig, dataCreditProspects } from "./config";
+import { addConfig, dataCreditProspects, dataError } from "./config";
+import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 
 export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
 
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
@@ -60,6 +61,7 @@ export function CreditApplications() {
           userAccount,
           {
             clientIdentificationNumber: customerData.publicCode,
+            textInSearch: search,
           },
         );
         setCreditRequestData(creditData);
@@ -70,7 +72,11 @@ export function CreditApplications() {
     };
 
     fetchCreditRequest();
-  }, [customerData.publicCode]);
+  }, [customerData.publicCode, search]);
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
   return (
     <>
@@ -83,7 +89,7 @@ export function CreditApplications() {
       ) : (
         <Stack
           margin="20px auto"
-          width={isMobile ? "-webkit-fill-available" : "min(100%,1064px)"}
+          width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
           direction="column"
           gap="24px"
         >
@@ -108,16 +114,13 @@ export function CreditApplications() {
                   id="keyWord"
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
+                  onChange={(event) => handleSearch(event)}
                 />
-                <Button
-                  iconBefore={<MdAdd />}
-                  type="link"
-                  path="../simulate-credit"
-                >
-                  {dataCreditProspects.applyCredit}
-                </Button>
               </Stack>
               <Stack wrap="wrap" gap="20px">
+                {creditRequestData.length === 0 && (
+                  <NoResultsMessage search={search} />
+                )}
                 {creditRequestData.map((creditRequest) => (
                   <SummaryCard
                     key={creditRequest.creditRequestId}
@@ -131,6 +134,11 @@ export function CreditApplications() {
                     path={`${environment.VITE_CREDIBOARD_URL}/extended-card/${creditRequest.creditRequestCode}`}
                   />
                 ))}
+                {creditRequestData.length === 0 && (
+                  <Text type="title" size="large" margin="30px 2px">
+                    {dataError.notCredits}
+                  </Text>
+                )}
               </Stack>
             </Stack>
           </Fieldset>

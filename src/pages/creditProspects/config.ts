@@ -29,7 +29,8 @@ export const dataCreditProspects = {
   keyWord: "Palabra clave",
   messageTitle: "Observaciones",
   moneyDesination: "Destino del dinero",
-  observationProspect: "Observaciones del prospecto",
+  clientComments: "Observaciones del cliente",
+  errorObservations: "Error al actualizar comentario del prospecto",
   confirmTitle: "Confirmación de prospecto",
   confirmDescription: "¿Realmente deseas confirmar este prospecto de crédito?",
   deleteTitle: "Eliminar prospecto",
@@ -41,4 +42,8 @@ export const dataCreditProspects = {
   close: "Cerrar",
   modify: "Modificar observaciones",
   preanalysis: "Comentarios del pre-análisis",
+};
+
+export const errorMessage = {
+  notProspects: "Este cliente aún no tienen ningún prospecto de crédito.",
 };

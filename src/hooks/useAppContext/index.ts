@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useIAuth } from "@inube/iauth-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
 import { IBusinessManagers } from "@services/businessManager/types";
@@ -12,7 +13,6 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
-import { useIAuth } from "@context/AuthContext/useAuthContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -22,7 +22,8 @@ interface IBusinessUnits {
 }
 
 function useAppContext() {
-  const { user } = useIAuth();
+  const { user, isAuthenticated, isLoading } = useIAuth();
+  const [hasUserLoaded, setHasUserLoaded] = useState(false);
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
@@ -45,12 +46,51 @@ function useAppContext() {
   if (portalId) {
     portalCode = decrypt(portalId);
   }
+
   let businessUnit: IBusinessUnits | null = null;
   try {
     businessUnit = JSON.parse(businessUnitSigla || "{}") as IBusinessUnits;
   } catch (error) {
     console.error("Error parsing businessUnitSigla: ", error);
   }
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const isValidAuthUser =
+      user?.id &&
+      user?.username &&
+      user.id !== "id" &&
+      user.username !== "username";
+
+    if (user?.id === "id" && user?.username === "username") {
+      const hasAlreadyRefreshed = localStorage.getItem(
+        "hasRefreshedForDefaultUser",
+      );
+
+      if (!hasAlreadyRefreshed) {
+        localStorage.setItem("hasRefreshedForDefaultUser", "true");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 100);
+        return;
+      }
+    } else {
+      localStorage.removeItem("hasRefreshedForDefaultUser");
+    }
+
+    if (isValidAuthUser) {
+      setHasUserLoaded(true);
+    } else if (
+      user?.id === "id" &&
+      user?.username === "username" &&
+      !hasUserLoaded
+    ) {
+      setHasUserLoaded(false);
+    } else if (!user && !hasUserLoaded) {
+      setHasUserLoaded(false);
+    }
+  }, [user, hasUserLoaded, isLoading]);
 
   const getUserPermissions = (identificationDocumentNumber: string) => {
     const isAdmon = identificationDocumentNumber === "elyerogo@gmail.com";
@@ -70,62 +110,6 @@ function useAppContext() {
       canSubmitProspect: isAdmon,
     };
   };
-  useEffect(() => {
-    if (user) {
-      setEventData((prev) => ({
-        ...prev,
-        user: {
-          ...prev.user,
-          userAccount: user.username || "",
-          userName: user.nickname || "",
-          identificationDocumentNumber: user.id || "",
-        },
-      }));
-    }
-  }, [user]);
-  useEffect(() => {
-    const fetchStaffData = async () => {
-      try {
-        const userIdentifier = user?.username;
-        if (!userIdentifier) return;
-        const staffData = await getStaff(userIdentifier);
-        if (!staffData.length) return;
-        const userPermissions = getUserPermissions(
-          staffData[0].identificationDocumentNumber,
-        );
-        setEventData((prev) => ({
-          ...prev,
-          user: {
-            ...prev.user,
-            staff: {
-              biologicalSex: staffData[0].biologicalSex,
-              birthDay: staffData[0].birthDay,
-              businessManagerCode: staffData[0].businessManagerCode,
-              identificationDocumentNumber:
-                staffData[0].identificationDocumentNumber,
-              identificationTypeNaturalPerson:
-                staffData[0].identificationTypeNaturalPerson,
-              missionName: staffData[0].missionName,
-              principalEmail: staffData[0].principalEmail,
-              principalPhone: staffData[0].principalPhone,
-              staffByBusinessUnitAndRole:
-                staffData[0].staffByBusinessUnitAndRole,
-              staffId: staffData[0].staffId,
-              staffName: staffData[0].staffName,
-              userAccount: staffData[0].userAccount,
-              useCases: userPermissions,
-            },
-          },
-        }));
-      } catch (error) {
-        console.error("Error fetching staff data:", error);
-      }
-    };
-
-    if (user?.username) {
-      fetchStaffData();
-    }
-  }, [user?.username]);
 
   const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
@@ -148,8 +132,9 @@ function useAppContext() {
       urlLogo: businessUnit?.urlLogo || "",
     },
     user: {
-      userAccount: user?.username || "",
-      userName: user?.nickname || "",
+      userAccount: "",
+      userName: "",
+      identificationDocumentNumber: "",
       staff: {
         biologicalSex: "",
         birthDay: "",
@@ -187,10 +172,79 @@ function useAppContext() {
   });
 
   useEffect(() => {
+    if (hasUserLoaded && user) {
+      setEventData((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          userAccount: user.username || "",
+          userName: user.nickname || "",
+          identificationDocumentNumber: user.id || "",
+        },
+      }));
+    }
+  }, [user, hasUserLoaded]);
+
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const userIdentifier = user?.id;
+        if (
+          !userIdentifier ||
+          isLoading ||
+          !isAuthenticated ||
+          !hasUserLoaded
+        ) {
+          return;
+        }
+
+        const staffData = await getStaff(userIdentifier);
+        if (!staffData.length) return;
+
+        const userPermissions = getUserPermissions(
+          staffData[0].identificationDocumentNumber,
+        );
+
+        setEventData((prev) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            staff: {
+              biologicalSex: staffData[0].biologicalSex,
+              birthDay: staffData[0].birthDay,
+              businessManagerCode: staffData[0].businessManagerCode,
+              identificationDocumentNumber:
+                staffData[0].identificationDocumentNumber,
+              identificationTypeNaturalPerson:
+                staffData[0].identificationTypeNaturalPerson,
+              missionName: staffData[0].missionName,
+              principalEmail: staffData[0].principalEmail,
+              principalPhone: staffData[0].principalPhone,
+              staffByBusinessUnitAndRole:
+                staffData[0].staffByBusinessUnitAndRole,
+              staffId: staffData[0].staffId,
+              staffName: staffData[0].staffName,
+              userAccount: staffData[0].userAccount,
+              useCases: userPermissions,
+            },
+          },
+        }));
+      } catch (error) {
+        console.error("Error fetching staff data:", error);
+      }
+    };
+
+    fetchStaffData();
+  }, [user?.username, isLoading, isAuthenticated, hasUserLoaded]);
+
+  useEffect(() => {
+    if (!hasUserLoaded || !portalCode) return;
+
     validateConsultation(portalCode).then((data) => {
       setPortalData(data);
     });
-  }, []);
+  }, [portalCode, hasUserLoaded]);
+
   const userIdentifier = eventData?.user?.identificationDocumentNumber;
 
   useEffect(() => {
@@ -199,7 +253,10 @@ function useAppContext() {
         if (
           !eventData?.portal?.publicCode ||
           !eventData?.businessUnit?.businessUnitPublicCode ||
-          !user?.username
+          !user?.username ||
+          isLoading ||
+          !isAuthenticated ||
+          !hasUserLoaded
         ) {
           return;
         }
@@ -220,10 +277,15 @@ function useAppContext() {
     eventData?.portal?.publicCode,
     eventData?.businessUnit?.businessUnitPublicCode,
     user?.username,
+    isLoading,
+    isAuthenticated,
+    userIdentifier,
+    hasUserLoaded,
   ]);
 
   useEffect(() => {
-    if (!portalCode) return;
+    if (!portalCode || !hasUserLoaded) return;
+
     const portalDataFiltered = portalData.filter(
       (data) => data.staffPortalId === portalCode,
     );
@@ -237,10 +299,10 @@ function useAppContext() {
         setBusinessManagers(data);
       });
     }
-  }, [portalData, portalCode]);
+  }, [portalData, portalCode, hasUserLoaded]);
 
   useEffect(() => {
-    if (!businessManagers) return;
+    if (!businessManagers || !hasUserLoaded) return;
 
     const portalDataFiltered = portalData.find(
       (data) => data.staffPortalId === portalCode,
@@ -263,7 +325,7 @@ function useAppContext() {
         businessManagerId: businessManagers.id || "",
       },
     }));
-  }, [businessManagers, portalData, portalCode]);
+  }, [businessManagers, portalData, portalCode, hasUserLoaded]);
 
   useEffect(() => {
     localStorage.setItem("businessUnitSigla", businessUnitSigla);
@@ -303,6 +365,9 @@ function useAppContext() {
       businessUnitSigla,
       businessUnitsToTheStaff,
       optionStaffData,
+      isLoading,
+      isAuthenticated,
+      hasUserLoaded,
       setEventData,
       setBusinessUnitSigla,
       setBusinessUnitsToTheStaff,
@@ -313,9 +378,9 @@ function useAppContext() {
       businessUnitSigla,
       businessUnitsToTheStaff,
       optionStaffData,
-      setEventData,
-      setBusinessUnitSigla,
-      setBusinessUnitsToTheStaff,
+      isLoading,
+      isAuthenticated,
+      hasUserLoaded,
     ],
   );
 

@@ -16,7 +16,7 @@ export const addConfig = {
       isActive: false,
     },
     {
-      path: "/credit/applications",
+      path: "/credit/credit-requests",
       label: "Solicitudes de crédito",
       id: "/prospectos",
       isActive: false,
@@ -29,4 +29,9 @@ export const dataCreditProspects = {
   keyWord: "Palabra clave",
   errorCreditRequest: "No se han podido cargar las solicitudes de credito.",
   titleError: "Lamentamos los inconvenientes",
+};
+
+export const dataError = {
+  notCredits:
+    "Este cliente aún no tiene ningúna solicitud de crédito en trámite.",
 };

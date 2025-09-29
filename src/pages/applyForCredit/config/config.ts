@@ -27,6 +27,9 @@ export const dataSubmitApplication = {
     destination: "Destino: ",
   },
 };
+export const prospectStates = {
+  CREATED: "Created",
+};
 
 export const tittleOptions = {
   title: "Información",

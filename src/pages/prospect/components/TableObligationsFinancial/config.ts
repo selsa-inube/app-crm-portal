@@ -73,3 +73,7 @@ export function convertObligationsToProperties(
     ].join(", "),
   }));
 }
+
+export const errorMessages = {
+  updateMessage: "Error al actualizar:",
+};

@@ -191,6 +191,7 @@ export function Borrowers(props: borrowersProps) {
                 }}
                 isMobile={isMobile}
                 initialValues={selectedBorrower}
+                properties={{} as IBorrower}
               />
             )}
             {isModalDelete && (
@@ -219,6 +220,7 @@ export function Borrowers(props: borrowersProps) {
                   );
                   formik.setFieldValue("borrowers", updatedBorrowers);
                 }}
+                onSave={() => {}}
                 businessUnitPublicCode={businessUnitPublicCode}
               />
             )}

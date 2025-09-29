@@ -9,6 +9,8 @@ interface IStyledCollapseIcon {
 
 interface IStyledFooter {
   $nav: boolean;
+  isShowMenuOnHeader: boolean;
+  showNav: boolean;
 }
 
 export const StyledAppPage = styled.div`
@@ -33,11 +35,14 @@ export const StyledMain = styled.main`
 
 export const StyledContentImg = styled(Link)`
   width: 100px;
+  display: flex;
+  justify-content: center;
 `;
 
 export const StyledLogo = styled.img`
-  max-width: 120px;
-  max-height: 48px;
+  with: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
 
 export const StyledHeaderContainer = styled.div`
@@ -62,6 +67,7 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
 
 export const StyledMenuContainer = styled.div`
   position: absolute;
+  height: 100%;
   top: 48px;
   right: 15px;
   z-index: 1;
@@ -86,17 +92,22 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
-  display: flex;
+  display: inline-flex;
   justify-content: center;
-  padding: 16px 24px;
+  align-content: center;
+  align-items: center;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
-  /* background-color: red; */
-  width: ${({ $nav }) => ($nav ? "200px" : "auto")};
+  width: ${({ $nav }) => ($nav ? "auto" : "200px")};
+  height: 50px;
+  top: -50px;
+  position: relative;
 `;
 
 export const StyledPrint = styled.div`
   @media print {
     display: none;
   }
+
+  height: 100%;
 `;
