@@ -1,7 +1,7 @@
 export const EPayrollAgreement = [
   {
     Code: "canSimulateCredit",
-    Value: "simular credito",
+    Value: "Simular crédito",
     Description: "Permite realizar simulaciones de crédito",
   },
   {
