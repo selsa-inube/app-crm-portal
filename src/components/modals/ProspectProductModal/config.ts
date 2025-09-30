@@ -4,6 +4,7 @@ import {
   AmortizationType,
   RateType,
 } from "@services/enum/prospectProduct";
+import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { Schedule } from "@services/enum/schedule";
 
 const creditLineOptions = [
@@ -139,6 +140,8 @@ const rateTypeOptions = [
   { id: RateType.Adjustable, label: "Ajustable", value: RateType.Adjustable },
   { id: RateType.Floating, label: "Flotante", value: RateType.Floating },
 ];
+
+export const messageNotFound = "No se encontraron resultados";
 
 export {
   creditLineOptions,

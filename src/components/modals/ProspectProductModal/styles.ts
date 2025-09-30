@@ -6,11 +6,11 @@ interface IStyledModal {
 }
 
 export const ScrollableContainer = styled.div<IStyledModal>`
-  width: ${({ $smallScreen }) => ($smallScreen ? "270px" : "440px")};
+  width: ${({ $smallScreen }) => ($smallScreen ? "270px" : "auto")};
   padding: 10px;
   overflow: auto;
   display: flex;
-  max-height: 500px;
+  max-height: width: ${({ $smallScreen }) => ($smallScreen ? "auto" : "500px")};
 
   &::-webkit-scrollbar {
     width: 8px;

@@ -592,6 +592,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             iconBefore={<MdOutlineAdd />}
             onCloseModal={handleCloseModal}
             onConfirm={handleConfirm}
+            moneyDestination={prospectData!.moneyDestinationAbbreviatedName}
+            businessUnitPublicCode={businessUnitPublicCode}
+            customerData={customerData}
           />
         )}
         {currentModal === "IncomeModal" && (
