@@ -16,6 +16,7 @@ import {
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
+import { ErrorSearchAllProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode/ErrorSearchAllProspectsByCustomerCode";
 import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
@@ -24,7 +25,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { CardGray } from "@components/cards/CardGray";
 import { ErrorModal } from "@components/modals/ErrorModal";
 
-import { addConfig, dataCreditProspects, errorMessage } from "./config";
+import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CardCreditProspect } from "./components/CardCreditProspect";
@@ -58,6 +59,7 @@ export function CreditProspects() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [errorModalMessage, setErrorModalMessage] = useState("");
+  const [messageSearchResults, setMessageSearchResults] = useState("");
 
   const navigate = useNavigate();
 
@@ -105,11 +107,9 @@ export function CreditProspects() {
           }
         }
       } catch (error) {
-        setErrorModalMessage(
-          errorMessage.notProspects ||
-            "No se encontraron prospectos para este cliente.",
+        setMessageSearchResults(
+          ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable,
         );
-        setShowErrorModal(true);
       }
     };
     if (customerData?.publicCode && businessUnitPublicCode) {
@@ -205,6 +205,12 @@ export function CreditProspects() {
               gap="20px"
               justifyContent={isMobile ? "center" : "flex-start"}
             >
+              {messageSearchResults ==
+                ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable && (
+                <Text type="title" size="small">
+                  {messageSearchResults}
+                </Text>
+              )}
               {filteredProspects.map((prospect) => (
                 <CardCreditProspect
                   key={prospect.prospectId}

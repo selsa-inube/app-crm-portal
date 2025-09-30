@@ -93,7 +93,7 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
-  display: inline-flex;
+  display: ${({ showNav }) => (!showNav ? "none" : "inline-flex")};
   justify-content: center;
   align-content: center;
   align-items: center;

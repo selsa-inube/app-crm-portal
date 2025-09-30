@@ -237,6 +237,7 @@ function AppPage(props: IAppPage) {
             </StyledMain>
           </Grid>
         </StyledContainer>
+
         <StyledFooter
           $nav={isTablet}
           isShowMenuOnHeader={showMenuOnHeader}
