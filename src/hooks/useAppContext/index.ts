@@ -65,23 +65,6 @@ function useAppContext() {
       user?.username &&
       user.id !== "id" &&
       user.username !== "username";
-
-    if (user?.id === "id" && user?.username === "username") {
-      const hasAlreadyRefreshed = localStorage.getItem(
-        "hasRefreshedForDefaultUser",
-      );
-
-      if (!hasAlreadyRefreshed) {
-        localStorage.setItem("hasRefreshedForDefaultUser", "true");
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 100);
-        return;
-      }
-    } else {
-      localStorage.removeItem("hasRefreshedForDefaultUser");
-    }
-
     if (isValidAuthUser) {
       setHasUserLoaded(true);
     } else if (
