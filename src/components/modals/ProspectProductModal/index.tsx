@@ -16,7 +16,7 @@ import { ScrollableContainer } from "./styles";
 import { messageNotFound } from "./config";
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 
-interface IEditProductModalProps {
+export interface IEditProductModalProps {
   onCloseModal: () => void;
   onConfirm: (values: IFormValues) => void;
   title: string;
@@ -29,12 +29,12 @@ interface IEditProductModalProps {
   customerData?: ICustomerData;
 }
 
-type TRuleEvaluationResult = {
+export type TRuleEvaluationResult = {
   value: number | string;
   [key: string]: string | number;
 };
 
-type TCreditLineTerms = Record<
+export type TCreditLineTerms = Record<
   string,
   {
     LoanAmountLimit: number;
@@ -43,7 +43,7 @@ type TCreditLineTerms = Record<
   }
 >;
 
-interface IFormValues {
+export interface IFormValues {
   selectedProducts: string[];
   creditLine?: string;
   creditAmount?: number;
@@ -56,6 +56,42 @@ interface IFormValues {
   rateType?: string;
 }
 
+export type TRulePrimitiveValue = number | string;
+
+export type TRuleArrayValue = Array<TRuleEvaluationResult | TRulePrimitiveValue | undefined>;
+
+
+export type TRuleInput =
+  | TRulePrimitiveValue
+  | TRuleEvaluationResult
+  | TRuleArrayValue
+  | null
+  | undefined;
+
+export const isRuleObject = (
+  value: TRuleInput
+): value is TRuleEvaluationResult => {
+  return (
+    value !== null &&
+    value !== undefined &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    "value" in value &&
+    (typeof value.value === "string" || typeof value.value === "number")
+  );
+};
+
+const isRulePrimitive = (
+  value: TRuleInput | TRuleEvaluationResult | TRulePrimitiveValue
+): value is TRulePrimitiveValue => {
+  return typeof value === "string" || typeof value === "number";
+};
+
+const isRuleArray = (
+  value: TRuleInput
+): value is TRuleArrayValue => {
+  return Array.isArray(value);
+};
 function EditProductModal(props: IEditProductModalProps) {
   const {
     onCloseModal,
@@ -92,21 +128,35 @@ function EditProductModal(props: IEditProductModalProps) {
     return parseFloat((years + months).toFixed(decimal));
   };
 
-  const getRuleValue = (input: unknown): number | string | null => {
-    if (Array.isArray(input)) {
+  const getRuleValue = (input: TRuleInput): number | string | null => {
+
+    if (isRuleArray(input)) {
       const first = input[0];
-      return first && typeof first === "object" && "value" in first
-        ? (first as TRuleEvaluationResult).value
-        : (first ?? null);
+
+      if (first === null || first === undefined) {
+        return null;
+      }
+
+      if (isRuleObject(first)) {
+        return first.value;
+      }
+
+      if (isRulePrimitive(first)) {
+        return first;
+      }
+
+      return null;
     }
 
-    if (input !== null && typeof input === "object" && "value" in input) {
-      return (input as TRuleEvaluationResult).value;
+    if (isRuleObject(input)) {
+      return input.value;
     }
 
-    return typeof input === "string" || typeof input === "number"
-      ? input
-      : null;
+    if (isRulePrimitive(input)) {
+      return input;
+    }
+
+    return null;
   };
 
   useEffect(() => {
@@ -134,8 +184,8 @@ function EditProductModal(props: IEditProductModalProps) {
       type LineOfCreditValue = string | { value: string } | null | undefined;
       const lineNames = Array.isArray(lineOfCreditValues)
         ? (lineOfCreditValues as LineOfCreditValue[])
-            .map((v) => (typeof v === "string" ? v : v?.value || ""))
-            .filter((name): name is string => Boolean(name))
+          .map((v) => (typeof v === "string" ? v : v?.value || ""))
+          .filter((name): name is string => Boolean(name))
         : [];
 
       const result: TCreditLineTerms = {};
@@ -146,12 +196,12 @@ function EditProductModal(props: IEditProductModalProps) {
         const loanAmountRule = ruleConfig["LoanAmountLimit"]?.(ruleData);
         const loanAmount = loanAmountRule
           ? await evaluateRule(
-              loanAmountRule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            )
+            loanAmountRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
           : null;
         const amountValue = Number(getRuleValue(loanAmount) ?? 0);
 
@@ -162,12 +212,12 @@ function EditProductModal(props: IEditProductModalProps) {
         const termRule = ruleConfig["LoanTerm"]?.(termRuleInput);
         const termValueRaw = termRule
           ? await evaluateRule(
-              termRule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            )
+            termRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
           : null;
         const termValue = Number(getRuleValue(termValueRaw) ?? 0);
 
@@ -179,12 +229,12 @@ function EditProductModal(props: IEditProductModalProps) {
         const interestRule = ruleConfig["FixedInterestRate"]?.(interestInput);
         const rateValueRaw = interestRule
           ? await evaluateRule(
-              interestRule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              true,
-            )
+            interestRule,
+            postBusinessUnitRules,
+            "value",
+            businessUnitPublicCode,
+            true,
+          )
           : null;
         const interestRate = Number(getRuleValue(rateValueRaw) ?? 0);
 

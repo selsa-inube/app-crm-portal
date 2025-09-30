@@ -1,49 +1,77 @@
 import { useState } from "react";
-import { FormikValues } from "formik";
 import { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@inubekit/inubekit";
-import { MdAdd, MdCached } from "react-icons/md";
+import { MdCheckCircle } from "react-icons/md";
 import { action } from "@storybook/addon-actions";
 
-import {
-  AmortizationType,
-  CreditLine,
-  PaymentMethod,
-  RateType,
-} from "@services/enum/prospectProduct";
-import { Schedule } from "@services/enum/schedule";
+import { IFormValues } from "..";
+import { SelectProductModal, SelectProductModalProps } from "..";
 
-import { props, parameters } from "./props";
-import { EditProductModal, EditProductModalProps } from "..";
-
-const meta: Meta<typeof EditProductModal> = {
-  title: "components/modals/EditProductModal",
-  component: EditProductModal,
-  parameters: parameters,
-  argTypes: props,
+const meta: Meta<typeof SelectProductModal> = {
+  title: "components/modals/SelectProductModal",
+  component: SelectProductModal,
+  parameters: {
+    docs: {
+      description: {
+        component: "Modal para seleccionar productos de crédito basado en líneas de crédito disponibles.",
+      },
+    },
+  },
+  argTypes: {
+    title: {
+      control: "text",
+      description: "Título del modal",
+    },
+    confirmButtonText: {
+      control: "text",
+      description: "Texto del botón de confirmación",
+    },
+    moneyDestination: {
+      control: "text",
+      description: "Destino del dinero para filtrar líneas de crédito",
+    },
+    businessUnitPublicCode: {
+      control: "text",
+      description: "Código público de la unidad de negocio",
+    },
+    onCloseModal: {
+      action: "onCloseModal",
+      description: "Función ejecutada al cerrar el modal",
+    },
+    onConfirm: {
+      action: "onConfirm",
+      description: "Función ejecutada al confirmar la selección",
+    },
+  },
 };
 
-type Story = StoryObj<typeof EditProductModal>;
+type Story = StoryObj<typeof SelectProductModal>;
 
-export const Create: Story = (args: EditProductModalProps) => {
+const mockCustomerData = {
+  generalAttributeClientNaturalPersons: [
+    {
+      associateType: "Asociado",
+      employmentType: "Indefinido",
+    },
+  ],
+  generalAssociateAttributes: [
+    {
+      affiliateSeniorityDate: "2020-01-15",
+    },
+  ],
+};
+
+export const Default: Story = (args: SelectProductModalProps) => {
   const [showModal, setShowModal] = useState(false);
-  const initialValues: FormikValues = {
-    creditLine: "",
-    creditAmount: "",
-    paymentMethod: "",
-    paymentCycle: "",
-    firstPaymentCycle: "",
-    termInMonths: "",
-    amortizationType: "",
-    interestRate: "",
-    rateType: "",
+  const initialValues: Partial<IFormValues> = {
+    selectedProducts: [],
   };
 
   return (
     <>
-      <Button onClick={() => setShowModal(true)}>Abrir Modal</Button>
+      <Button onClick={() => setShowModal(true)}>Seleccionar Producto</Button>
       {showModal && (
-        <EditProductModal
+        <SelectProductModal
           {...args}
           initialValues={initialValues}
           onCloseModal={() => {
@@ -53,7 +81,7 @@ export const Create: Story = (args: EditProductModalProps) => {
           }}
           onConfirm={(values) => {
             setShowModal(false);
-            action("onConfirm")();
+            action("onConfirm")(values);
             args.onConfirm(values);
           }}
         />
@@ -62,31 +90,28 @@ export const Create: Story = (args: EditProductModalProps) => {
   );
 };
 
-Create.args = {
-  title: "Agregar producto",
-  confirmButtonText: "Agregar",
-  iconBefore: <MdAdd />,
+Default.args = {
+  title: "Seleccionar producto de crédito",
+  confirmButtonText: "Continuar",
+  iconAfter: <MdCheckCircle />,
+  moneyDestination: "education",
+  businessUnitPublicCode: "fondecom",
+  customerData: mockCustomerData,
 };
 
-export const Edit: Story = (args: EditProductModalProps) => {
+export const WithPreselection: Story = (args: SelectProductModalProps) => {
   const [showModal, setShowModal] = useState(false);
-  const initialValues: FormikValues = {
-    creditLine: CreditLine.Vacation,
-    creditAmount: 10000000,
-    paymentMethod: PaymentMethod.MonthlyPayroll,
-    paymentCycle: Schedule.Biweekly,
-    firstPaymentCycle: "ciclo1",
-    termInMonths: "48",
-    amortizationType: AmortizationType.FixedIntegralPayments,
-    interestRate: 2.15,
-    rateType: RateType.Fixed,
+  const initialValues: Partial<IFormValues> = {
+    selectedProducts: ["Vivienda"],
   };
 
   return (
     <>
-      <Button onClick={() => setShowModal(true)}>Abrir Modal</Button>
+      <Button onClick={() => setShowModal(true)}>
+        Seleccionar Producto (Con Preselección)
+      </Button>
       {showModal && (
-        <EditProductModal
+        <SelectProductModal
           {...args}
           initialValues={initialValues}
           onCloseModal={() => {
@@ -96,7 +121,7 @@ export const Edit: Story = (args: EditProductModalProps) => {
           }}
           onConfirm={(values) => {
             setShowModal(false);
-            action("onConfirm")();
+            action("onConfirm")(values);
             args.onConfirm(values);
           }}
         />
@@ -105,10 +130,97 @@ export const Edit: Story = (args: EditProductModalProps) => {
   );
 };
 
-Edit.args = {
-  title: "Nombre de producto",
+WithPreselection.args = {
+  title: "Editar selección de producto",
   confirmButtonText: "Actualizar",
-  iconAfter: <MdCached />,
+  iconAfter: <MdCheckCircle />,
+  moneyDestination: "education",
+  businessUnitPublicCode: "fondecom",
+  customerData: mockCustomerData,
+};
+
+export const DifferentMoneyDestination: Story = (args: SelectProductModalProps) => {
+  const [showModal, setShowModal] = useState(false);
+  const initialValues: Partial<IFormValues> = {
+    selectedProducts: [],
+  };
+
+  return (
+    <>
+      <Button onClick={() => setShowModal(true)}>
+        Productos para Vehículo
+      </Button>
+      {showModal && (
+        <SelectProductModal
+          {...args}
+          initialValues={initialValues}
+          onCloseModal={() => {
+            setShowModal(false);
+            action("onCloseModal")();
+            args.onCloseModal();
+          }}
+          onConfirm={(values) => {
+            setShowModal(false);
+            action("onConfirm")(values);
+            args.onConfirm(values);
+          }}
+        />
+      )}
+    </>
+  );
+};
+
+DifferentMoneyDestination.args = {
+  title: "Seleccionar producto para vehículo",
+  confirmButtonText: "Seleccionar",
+  iconAfter: <MdCheckCircle />,
+  moneyDestination: "vehicle",
+  businessUnitPublicCode: "fondecom",
+  customerData: mockCustomerData,
+};
+
+export const MobileView: Story = (args: SelectProductModalProps) => {
+  const [showModal, setShowModal] = useState(false);
+  const initialValues: Partial<IFormValues> = {
+    selectedProducts: [],
+  };
+
+  return (
+    <>
+      <Button onClick={() => setShowModal(true)}>Vista Móvil</Button>
+      {showModal && (
+        <SelectProductModal
+          {...args}
+          initialValues={initialValues}
+          onCloseModal={() => {
+            setShowModal(false);
+            action("onCloseModal")();
+            args.onCloseModal();
+          }}
+          onConfirm={(values) => {
+            setShowModal(false);
+            action("onConfirm")(values);
+            args.onConfirm(values);
+          }}
+        />
+      )}
+    </>
+  );
+};
+
+MobileView.args = {
+  title: "Seleccionar producto",
+  confirmButtonText: "Continuar",
+  iconAfter: <MdCheckCircle />,
+  moneyDestination: "education",
+  businessUnitPublicCode: "fondecom",
+  customerData: mockCustomerData,
+};
+
+MobileView.parameters = {
+  viewport: {
+    defaultViewport: "mobile1",
+  },
 };
 
 export default meta;
