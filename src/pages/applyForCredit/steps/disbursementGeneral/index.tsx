@@ -57,13 +57,15 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     onSubmit: () => {},
   });
 
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const userHasChangedTab = useRef(false);
 
   const [validTabs, setValidTabs] = useState<Tab[]>([]);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   useEffect(() => {
     handleOnChange(formik.values);
@@ -202,6 +204,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
                 prospectSummaryData={prospectSummaryData}
+                businessManagerCode={businessManagerCode}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.external.id) &&
@@ -214,6 +217,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 formik={formik}
                 optionNameForm="External_account"
                 getTotalAmount={getTotalAmount}
+                businessManagerCode={businessManagerCode}
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
@@ -230,6 +234,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 formik={formik}
                 optionNameForm="Certified_check"
                 getTotalAmount={getTotalAmount}
+                businessManagerCode={businessManagerCode}
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
@@ -246,6 +251,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 formik={formik}
                 optionNameForm="Business_check"
                 getTotalAmount={getTotalAmount}
+                businessManagerCode={businessManagerCode}
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}
@@ -262,6 +268,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 formik={formik}
                 optionNameForm="Cash"
                 getTotalAmount={getTotalAmount}
+                businessManagerCode={businessManagerCode}
                 businessUnitPublicCode={businessUnitPublicCode}
                 identificationNumber={identificationNumber}
                 customerData={customerData}

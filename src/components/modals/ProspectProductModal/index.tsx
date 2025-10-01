@@ -44,7 +44,6 @@ function EditProductModal(props: EditProductModalProps) {
     title,
     confirmButtonText,
     initialValues,
-    iconBefore,
     iconAfter,
   } = props;
 
@@ -61,7 +60,6 @@ function EditProductModal(props: EditProductModalProps) {
     interestRate: Yup.number().min(0, ""),
     rateType: Yup.string(),
   });
-
   return (
     <Formik
       initialValues={initialValues}
@@ -82,7 +80,6 @@ function EditProductModal(props: EditProductModalProps) {
           handleNext={formik.submitForm}
           handleBack={onCloseModal}
           disabledNext={!formik.dirty || !formik.isValid}
-          iconBeforeNext={iconBefore}
           iconAfterNext={iconAfter}
           finalDivider={true}
         >

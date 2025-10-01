@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MdOutlineAdd } from "react-icons/md";
+import { MdOutlineAdd, MdOutlineInfo } from "react-icons/md";
 import { Stack, Icon, useMediaQuery, Button } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
@@ -10,6 +10,9 @@ import {
   IProspect,
 } from "@services/prospect/types";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import InfoModal from "@pages/prospect/components/InfoModal";
+import { privilegeCrm } from "@config/privilege";
 
 import { TextLabels } from "./config";
 
@@ -62,7 +65,16 @@ export const ExtraordinaryPaymentModal = (
   const handleSubmit = () => {
     closeAddSeriesModal();
   };
-
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   return (
     <BaseModal
       title={TextLabels.extraPayments}
@@ -88,9 +100,23 @@ export const ExtraordinaryPaymentModal = (
               />
             }
             onClick={openAddSeriesModal}
+            disabled={canEditCreditRequest}
           >
             {TextLabels.addSeries}
           </Button>
+          <Stack alignItems="center">
+            {canEditCreditRequest ? (
+              <Icon
+                icon={<MdOutlineInfo />}
+                appearance="primary"
+                size="16px"
+                cursorHover
+                onClick={handleInfo}
+              />
+            ) : (
+              <></>
+            )}
+          </Stack>
         </Stack>
         <Stack>
           <TableExtraordinaryInstallment
@@ -115,6 +141,18 @@ export const ExtraordinaryPaymentModal = (
             selectedModal={selectedModal}
             prospectData={prospectData}
           />
+        )}
+        {isModalOpen ? (
+          <InfoModal
+            onClose={handleInfoModalClose}
+            title={privilegeCrm.title}
+            subtitle={privilegeCrm.subtitle}
+            description={privilegeCrm.description}
+            nextButtonText={privilegeCrm.nextButtonText}
+            isMobile={isMobile}
+          />
+        ) : (
+          <></>
         )}
       </Stack>
     </BaseModal>

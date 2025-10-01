@@ -8,6 +8,7 @@ export const getSearchAllDocumentsById = async (
   creditRequestId: string,
   userAccount: string,
   businessUnitPublicCode: string,
+  businessManagerCode: string,
 ) => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ export const getSearchAllDocumentsById = async (
           "X-Business-Unit": businessUnitPublicCode,
           "X-User-Name": userAccount,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

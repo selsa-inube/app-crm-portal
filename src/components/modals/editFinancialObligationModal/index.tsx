@@ -27,7 +27,6 @@ function EditFinancialObligationModal({
   title,
   confirmButtonText,
   initialValues,
-  iconBefore,
   iconAfter,
 }: IEditFinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
@@ -57,7 +56,6 @@ function EditFinancialObligationModal({
       handleNext={formik.submitForm}
       disabledNext={!formik.dirty || !formik.isValid}
       iconAfterNext={iconAfter}
-      iconBeforeNext={iconBefore}
       finalDivider={true}
       width={isMobile ? "300px" : "410px"}
       height={isMobile ? "298px" : "auto"}

@@ -68,6 +68,7 @@ interface ApplyForCreditUIProps {
   isModalOpen: boolean;
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
+  businessManagerCode: string;
   getRuleByName: (name: string) => string[];
   prospectSummaryData?: IProspectSummaryById;
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -102,6 +103,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     dataHeader,
     sentModal,
     approvedRequestModal,
+    businessManagerCode,
     getRuleByName,
     setSentModal,
     setApprovedRequestModal,
@@ -240,6 +242,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     customerData={customerData}
                     prospectData={prospectData}
                     businessUnitPublicCode={businessUnitPublicCode}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
@@ -270,6 +273,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     }
                     prospectData={prospectData as IProspectBorrower}
                     valueRule={getRuleByName("ValidationCoBorrower")}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&

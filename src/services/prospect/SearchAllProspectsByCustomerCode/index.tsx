@@ -9,6 +9,7 @@ import { ErrorSearchAllProspectsByCustomerCode } from "./ErrorSearchAllProspects
 
 const getProspectsByCustomerCode = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   customerCode: string,
 ): Promise<IProspect[]> => {
   const maxRetries = maxRetriesServices;
@@ -24,6 +25,7 @@ const getProspectsByCustomerCode = async (
           "X-Action": "SearchAllProspectsByCustomerCode",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

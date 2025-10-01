@@ -7,6 +7,7 @@ import { ICustomerCatalog } from "../types";
 
 export const getCustomerCatalog = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   fullName?: string,
   publicCode?: string,
 ): Promise<ICustomerCatalog[] | null> => {
@@ -22,6 +23,7 @@ export const getCustomerCatalog = async (
           "X-Action": "SearchAllCustomerCatalog",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

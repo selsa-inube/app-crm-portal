@@ -7,6 +7,7 @@ import { IObligations } from "../types";
 
 export const getClientPortfolioObligationsById = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   ClientIdentificationNumber: string,
 ): Promise<IObligations | null> => {
   const maxRetries = maxRetriesServices;
@@ -21,6 +22,7 @@ export const getClientPortfolioObligationsById = async (
           "X-Action": "SearchPortfolioObligationsById",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

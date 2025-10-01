@@ -30,6 +30,7 @@ interface DebtorAddModalProps {
   onAddBorrower: (borrowerData: BorrowerData[]) => void;
   title: string;
   prospectData: IProspect;
+  businessManagerCode: string;
   businessUnitPublicCode?: string;
 }
 
@@ -39,6 +40,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     handleClose,
     businessUnitPublicCode,
     prospectData,
+    businessManagerCode,
     onAddBorrower,
   } = props;
 
@@ -188,10 +190,12 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
         const response = await getIncomeSourcesById(
           borrowerId,
           businessUnitPublicCode || "",
+          businessManagerCode,
         );
         const customer = await getSearchCustomerByCode(
           borrowerId,
           businessUnitPublicCode || "",
+          businessManagerCode,
           true,
         );
 
@@ -338,6 +342,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       handleSubmitClick={handleSubmitClick}
       handleClose={handleClose}
       businessUnitPublicCode={businessUnitPublicCode || ""}
+      businessManagerCode={businessManagerCode}
       title={title}
       isMobile={isMobile}
     />

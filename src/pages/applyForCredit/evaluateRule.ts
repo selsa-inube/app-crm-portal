@@ -14,12 +14,14 @@ export async function evaluateRule(
   rule: Rule,
   endpoint: (
     business: string,
+    manager: string,
     data: Rule,
   ) => Promise<IBusinessUnitRules | undefined>,
   uniqueKey: string,
   business: string,
+  manager: string,
 ): Promise<IBusinessUnitRules[]> {
-  const response = await endpoint(business, rule);
+  const response = await endpoint(business, manager, rule);
 
   if (!response || !Array.isArray(response) || response.length === 0) {
     return [];

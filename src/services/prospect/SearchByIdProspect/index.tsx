@@ -7,6 +7,7 @@ import { IProspect } from "../types";
 
 const getSearchProspectById = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   prospectCode: string,
 ): Promise<IProspect> => {
   const maxRetries = maxRetriesServices;
@@ -22,6 +23,7 @@ const getSearchProspectById = async (
           "X-Action": "SearchByIdProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

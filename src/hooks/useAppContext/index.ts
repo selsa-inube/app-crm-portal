@@ -13,6 +13,7 @@ import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
+import { getSearchUseCaseForStaff } from "@services/staffs/SearchUseCaseForStaff";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -27,6 +28,7 @@ function useAppContext() {
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
+  const [messageError, setMessageError] = useState("");
   const [businessManagers, setBusinessManagers] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
@@ -40,7 +42,8 @@ function useAppContext() {
     return savedBusinessUnits ? JSON.parse(savedBusinessUnits) : [];
   });
   const [optionStaffData, setOptionStaffData] = useState<IOptionStaff[]>([]);
-
+  const [staffUseCases, setStaffUseCases] = useState<string[]>([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const portalId = localStorage.getItem("portalCode");
   let portalCode = "";
   if (portalId) {
@@ -92,25 +95,6 @@ function useAppContext() {
     }
   }, [user, hasUserLoaded, isLoading]);
 
-  const getUserPermissions = (identificationDocumentNumber: string) => {
-    const isAdmon = identificationDocumentNumber === "elyerogo@gmail.com";
-    return {
-      canReject: isAdmon,
-      canCancel: isAdmon,
-      canPrint: isAdmon,
-      canAttach: false,
-      canViewAttachments: false,
-      canManageGuarantees: isAdmon,
-      canViewCreditProfile: false,
-      canManageDisbursementMethods: isAdmon,
-      canAddRequirements: false,
-      canSendDecision: isAdmon,
-      canChangeUsers: isAdmon,
-      canApprove: isAdmon,
-      canSubmitProspect: isAdmon,
-    };
-  };
-
   const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
       abbreviatedName: "",
@@ -152,21 +136,7 @@ function useAppContext() {
         staffId: "",
         staffName: "",
         userAccount: "",
-        useCases: {
-          canReject: false,
-          canCancel: false,
-          canPrint: false,
-          canAttach: false,
-          canViewAttachments: false,
-          canManageGuarantees: false,
-          canViewCreditProfile: false,
-          canManageDisbursementMethods: false,
-          canAddRequirements: false,
-          canSendDecision: false,
-          canChangeUsers: false,
-          canApprove: false,
-          canSubmitProspect: false,
-        },
+        useCases: [],
       },
     },
   });
@@ -201,15 +171,12 @@ function useAppContext() {
         const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
 
-        const userPermissions = getUserPermissions(
-          staffData[0].identificationDocumentNumber,
-        );
-
         setEventData((prev) => ({
           ...prev,
           user: {
             ...prev.user,
             staff: {
+              ...prev.user.staff,
               biologicalSex: staffData[0].biologicalSex,
               birthDay: staffData[0].birthDay,
               businessManagerCode: staffData[0].businessManagerCode,
@@ -225,7 +192,6 @@ function useAppContext() {
               staffId: staffData[0].staffId,
               staffName: staffData[0].staffName,
               userAccount: staffData[0].userAccount,
-              useCases: userPermissions,
             },
           },
         }));
@@ -236,6 +202,37 @@ function useAppContext() {
 
     fetchStaffData();
   }, [user?.username, isLoading, isAuthenticated, hasUserLoaded]);
+
+  useEffect(() => {
+    const identificationNumber =
+      eventData?.user?.identificationDocumentNumber || "";
+
+    if (
+      !eventData.businessUnit.abbreviatedName ||
+      !eventData.businessManager.publicCode ||
+      !identificationNumber
+    ) {
+      return;
+    }
+
+    (async () => {
+      try {
+        const staffUseCaseData = await getSearchUseCaseForStaff(
+          eventData.businessUnit.abbreviatedName,
+          eventData.businessManager.publicCode,
+          identificationNumber,
+        );
+        setStaffUseCases(staffUseCaseData);
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError(JSON.stringify(error));
+      }
+    })();
+  }, [
+    eventData.businessUnit.abbreviatedName,
+    eventData.businessManager.publicCode,
+    eventData?.user?.identificationDocumentNumber,
+  ]);
 
   useEffect(() => {
     if (!hasUserLoaded || !portalCode) return;
@@ -359,6 +356,20 @@ function useAppContext() {
     );
   }, [businessUnitsToTheStaff]);
 
+  useEffect(() => {
+    if (staffUseCases) {
+      setEventData((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          staff: {
+            ...prev.user.staff,
+            useCases: staffUseCases,
+          },
+        },
+      }));
+    }
+  }, [staffUseCases]);
   const appContext = useMemo(
     () => ({
       eventData,
@@ -372,6 +383,9 @@ function useAppContext() {
       setBusinessUnitSigla,
       setBusinessUnitsToTheStaff,
       setOptionStaffData,
+      showErrorModal,
+      setShowErrorModal,
+      messageError,
     }),
     [
       eventData,
@@ -381,6 +395,9 @@ function useAppContext() {
       isLoading,
       isAuthenticated,
       hasUserLoaded,
+      showErrorModal,
+      setShowErrorModal,
+      messageError,
     ],
   );
 
