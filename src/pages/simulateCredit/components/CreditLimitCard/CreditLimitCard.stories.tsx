@@ -52,14 +52,6 @@ export const Default: Story = {
       maxUsableLimit: 20000000,
       availableLimitWithoutGuarantee: 15000000,
     },
-    maxLimitData: {
-      reportedIncomeSources: 2000000,
-      reportedFinancialObligations: 6789000,
-      subsistenceReserve: 2000000,
-      availableForNewCommitments: 5000000,
-      maxVacationTerm: 12,
-      maxAmount: 1000000,
-    },
     reciprocityData: {
       balanceOfContributions: 40000000,
       accordingToRegulation: 2,
