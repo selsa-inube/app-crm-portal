@@ -117,10 +117,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [currentIncomeModalData, setCurrentIncomeModalData] = useState<
     IIncomeSources | undefined
   >();
-  const [commentsByProspectId, setCommentsByProspectId] = useState<
-    Record<string, string>
-  >({});
-  const [showMessageModal, setShowMessageModal] = useState(false);
   const [showEditMessageModal, setShowEditMessageModal] = useState(false);
 
   const { addFlag } = useFlag();
@@ -712,15 +708,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             title={configModal.observations.title}
             handleClose={handleCloseModal}
             handleNext={() => {
-              if (prospectData) {
-                setCommentsByProspectId((prev) => ({
-                  ...prev,
-                  [prospectData.prospectId]:
-                    prospectData.selectedRegularPaymentSchedule || "",
-                }));
-              }
               setShowEditMessageModal(true);
-              setShowMessageModal(false);
             }}
             nextButton={configModal.observations.modify}
             backButton={configModal.observations.cancel}
