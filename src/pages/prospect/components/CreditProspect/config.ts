@@ -15,3 +15,13 @@ export const labelsAndValuesShare = {
   text: "Reporte Comercial para compartir",
   error: "No se pudo compartir el PDF",
 };
+
+export const configModal = {
+  observations: {
+    title: "Observaciones",
+    label: "Observaciones",
+    cancel: "Cancelar",
+    modify: "Modificar observaciones",
+    labelTextarea: "Observaciones del prospecto",
+  },
+};

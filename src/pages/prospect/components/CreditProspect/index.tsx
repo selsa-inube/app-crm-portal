@@ -15,6 +15,7 @@ import {
   Select,
   useFlag,
   Spinner,
+  Textarea,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -51,10 +52,15 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
-import { dataCreditProspect, labelsAndValuesShare } from "./config";
+import {
+  dataCreditProspect,
+  labelsAndValuesShare,
+  configModal,
+} from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
@@ -117,6 +123,8 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [currentIncomeModalData, setCurrentIncomeModalData] = useState<
     IIncomeSources | undefined
   >();
+  const [showEditMessageModal, setShowEditMessageModal] = useState(false);
+
   const { addFlag } = useFlag();
   const dataPrint = useRef<HTMLDivElement>(null);
 
@@ -148,7 +156,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   };
 
   const currentModal = modalHistory[modalHistory.length - 1];
-
   const handleCloseModal = () => {
     setModalHistory((prevHistory) => {
       const newHistory = [...prevHistory];
@@ -500,7 +507,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 >
                   {dataCreditProspect.addProduct}
                 </Button>
-                {canEditCreditRequest && (
+                {!prospectData?.creditProducts[0].extraordinaryInstallments && (
                   <Icon
                     icon={<MdOutlineInfo />}
                     appearance="primary"
@@ -743,6 +750,46 @@ export function CreditProspect(props: ICreditProspectProps) {
             setSentData={setSentData}
             businessUnitPublicCode={businessUnitPublicCode}
           />
+        )}
+
+        {currentModal === "observations" && (
+          <BaseModal
+            title={configModal.observations.title}
+            handleClose={handleCloseModal}
+            handleNext={() => {
+              setShowEditMessageModal(true);
+            }}
+            nextButton={configModal.observations.modify}
+            backButton={configModal.observations.cancel}
+            width={isMobile ? "300px" : "500px"}
+          >
+            <Stack direction="column" gap="16px">
+              <CardGray
+                label={configModal.observations.labelTextarea}
+                placeHolder={prospectData!.clientComments || ""}
+                apparencePlaceHolder="gray"
+              />
+            </Stack>
+          </BaseModal>
+        )}
+
+        {showEditMessageModal && (
+          <BaseModal
+            title={configModal.observations.title}
+            handleClose={() => setShowEditMessageModal(false)}
+            handleNext={() => setShowEditMessageModal(false)}
+            nextButton={configModal.observations.modify}
+            backButton={configModal.observations.cancel}
+            width={isMobile ? "300px" : "500px"}
+          >
+            <Textarea
+              id="comments"
+              label={configModal.observations.labelTextarea}
+              value={prospectData!.clientComments || ""}
+              onChange={() => {}}
+              maxLength={120}
+            />
+          </BaseModal>
         )}
 
         {showErrorModal && (

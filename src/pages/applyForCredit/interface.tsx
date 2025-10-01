@@ -150,9 +150,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
         >
           <Stack
             direction="column"
-            alignItems={isMobile ? "normal" : "center"}
-            margin="20px 0px"
-            padding="24px"
+            width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
+            margin={`0px auto ${isMobile ? "100px" : "50px"} auto`}
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
               <GeneralHeader
