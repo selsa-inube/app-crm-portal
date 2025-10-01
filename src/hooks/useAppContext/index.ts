@@ -23,6 +23,7 @@ interface IBusinessUnits {
 
 function useAppContext() {
   const { user, isAuthenticated, isLoading } = useIAuth();
+  const [hasUserLoaded, setHasUserLoaded] = useState(false);
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
@@ -53,6 +54,44 @@ function useAppContext() {
     console.error("Error parsing businessUnitSigla: ", error);
   }
 
+  useEffect(() => {
+    if (isLoading) return;
+
+    const isValidAuthUser =
+      user?.id &&
+      user?.username &&
+      user.id !== "id" &&
+      user.username !== "username";
+
+    if (user?.id === "id" && user?.username === "username") {
+      const hasAlreadyRefreshed = localStorage.getItem(
+        "hasRefreshedForDefaultUser",
+      );
+
+      if (!hasAlreadyRefreshed) {
+        localStorage.setItem("hasRefreshedForDefaultUser", "true");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 100);
+        return;
+      }
+    } else {
+      localStorage.removeItem("hasRefreshedForDefaultUser");
+    }
+
+    if (isValidAuthUser) {
+      setHasUserLoaded(true);
+    } else if (
+      user?.id === "id" &&
+      user?.username === "username" &&
+      !hasUserLoaded
+    ) {
+      setHasUserLoaded(false);
+    } else if (!user && !hasUserLoaded) {
+      setHasUserLoaded(false);
+    }
+  }, [user, hasUserLoaded, isLoading]);
+
   const getUserPermissions = (identificationDocumentNumber: string) => {
     const isAdmon = identificationDocumentNumber === "elyerogo@gmail.com";
     return {
@@ -71,62 +110,6 @@ function useAppContext() {
       canSubmitProspect: isAdmon,
     };
   };
-  useEffect(() => {
-    if (user) {
-      setEventData((prev) => ({
-        ...prev,
-        user: {
-          ...prev.user,
-          userAccount: user.username || "",
-          userName: user.nickname || "",
-          identificationDocumentNumber: user.id || "",
-        },
-      }));
-    }
-  }, [user]);
-  useEffect(() => {
-    const fetchStaffData = async () => {
-      try {
-        const userIdentifier = user?.username;
-        if (!userIdentifier) return;
-        const staffData = await getStaff(userIdentifier);
-        if (!staffData.length) return;
-        const userPermissions = getUserPermissions(
-          staffData[0].identificationDocumentNumber,
-        );
-        setEventData((prev) => ({
-          ...prev,
-          user: {
-            ...prev.user,
-            staff: {
-              biologicalSex: staffData[0].biologicalSex,
-              birthDay: staffData[0].birthDay,
-              businessManagerCode: staffData[0].businessManagerCode,
-              identificationDocumentNumber:
-                staffData[0].identificationDocumentNumber,
-              identificationTypeNaturalPerson:
-                staffData[0].identificationTypeNaturalPerson,
-              missionName: staffData[0].missionName,
-              principalEmail: staffData[0].principalEmail,
-              principalPhone: staffData[0].principalPhone,
-              staffByBusinessUnitAndRole:
-                staffData[0].staffByBusinessUnitAndRole,
-              staffId: staffData[0].staffId,
-              staffName: staffData[0].staffName,
-              userAccount: staffData[0].userAccount,
-              useCases: userPermissions,
-            },
-          },
-        }));
-      } catch (error) {
-        console.error("Error fetching staff data:", error);
-      }
-    };
-
-    if (user?.username) {
-      fetchStaffData();
-    }
-  }, [user?.username]);
 
   const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
@@ -187,8 +170,9 @@ function useAppContext() {
       },
     },
   });
+
   useEffect(() => {
-    if (!isLoading && isAuthenticated && user) {
+    if (hasUserLoaded && user) {
       setEventData((prev) => ({
         ...prev,
         user: {
@@ -199,13 +183,21 @@ function useAppContext() {
         },
       }));
     }
-  }, [user, isAuthenticated, isLoading]);
+  }, [user, hasUserLoaded]);
 
   useEffect(() => {
     const fetchStaffData = async () => {
       try {
-        const userIdentifier = user?.username;
-        if (!userIdentifier || isLoading || !isAuthenticated) return;
+        const userIdentifier = user?.id;
+        if (
+          !userIdentifier ||
+          isLoading ||
+          !isAuthenticated ||
+          !hasUserLoaded
+        ) {
+          return;
+        }
+
         const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
 
@@ -242,16 +234,16 @@ function useAppContext() {
       }
     };
 
-    if (!isLoading && isAuthenticated && user?.username) {
-      fetchStaffData();
-    }
-  }, [user?.username, isLoading, isAuthenticated]);
+    fetchStaffData();
+  }, [user?.username, isLoading, isAuthenticated, hasUserLoaded]);
 
   useEffect(() => {
+    if (!hasUserLoaded || !portalCode) return;
+
     validateConsultation(portalCode).then((data) => {
       setPortalData(data);
     });
-  }, [portalCode]);
+  }, [portalCode, hasUserLoaded]);
 
   const userIdentifier = eventData?.user?.identificationDocumentNumber;
 
@@ -263,7 +255,8 @@ function useAppContext() {
           !eventData?.businessUnit?.businessUnitPublicCode ||
           !user?.username ||
           isLoading ||
-          !isAuthenticated
+          !isAuthenticated ||
+          !hasUserLoaded
         ) {
           return;
         }
@@ -279,9 +272,7 @@ function useAppContext() {
       }
     };
 
-    if (!isLoading && isAuthenticated) {
-      fetchOptionStaff();
-    }
+    fetchOptionStaff();
   }, [
     eventData?.portal?.publicCode,
     eventData?.businessUnit?.businessUnitPublicCode,
@@ -289,10 +280,12 @@ function useAppContext() {
     isLoading,
     isAuthenticated,
     userIdentifier,
+    hasUserLoaded,
   ]);
 
   useEffect(() => {
-    if (!portalCode) return;
+    if (!portalCode || !hasUserLoaded) return;
+
     const portalDataFiltered = portalData.filter(
       (data) => data.staffPortalId === portalCode,
     );
@@ -306,10 +299,10 @@ function useAppContext() {
         setBusinessManagers(data);
       });
     }
-  }, [portalData, portalCode]);
+  }, [portalData, portalCode, hasUserLoaded]);
 
   useEffect(() => {
-    if (!businessManagers) return;
+    if (!businessManagers || !hasUserLoaded) return;
 
     const portalDataFiltered = portalData.find(
       (data) => data.staffPortalId === portalCode,
@@ -332,7 +325,7 @@ function useAppContext() {
         businessManagerId: businessManagers.id || "",
       },
     }));
-  }, [businessManagers, portalData, portalCode]);
+  }, [businessManagers, portalData, portalCode, hasUserLoaded]);
 
   useEffect(() => {
     localStorage.setItem("businessUnitSigla", businessUnitSigla);
@@ -374,6 +367,7 @@ function useAppContext() {
       optionStaffData,
       isLoading,
       isAuthenticated,
+      hasUserLoaded,
       setEventData,
       setBusinessUnitSigla,
       setBusinessUnitsToTheStaff,
@@ -386,6 +380,7 @@ function useAppContext() {
       optionStaffData,
       isLoading,
       isAuthenticated,
+      hasUserLoaded,
     ],
   );
 

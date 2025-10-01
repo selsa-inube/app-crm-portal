@@ -76,6 +76,7 @@ export function ApplyForCredit() {
     clientManagerIdentificationNumber: "",
     clientManagerName: "",
     clientManagerObservation: "",
+    clientComments: "",
     borrowers: [],
     consolidatedCredits: [],
     creditProducts: [],
@@ -250,7 +251,7 @@ export function ApplyForCredit() {
   }, [valueRule, hasBorrowers, bondValue]);
 
   const [currentStep, setCurrentStep] = useState<number>(
-    stepsFilingApplication.generalInformation.id,
+    /* stepsFilingApplication.generalInformation.id, */ 3,
   );
 
   const {
