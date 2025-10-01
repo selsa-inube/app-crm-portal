@@ -20,7 +20,6 @@ import { MenuProspect } from "@components/navigation/MenuProspect";
 import { MaxLimitModal } from "@components/modals/MaxLimitModal";
 import { ReciprocityModal } from "@components/modals/ReciprocityModal";
 import { ScoreModal } from "@components/modals/FrcModal";
-import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
@@ -49,6 +48,7 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { EditProductModalCards } from "@src/components/modals/ProspectProductModalCards";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect, labelsAndValuesShare } from "./config";
@@ -585,7 +585,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         )}
         {currentModal === "editProductModal" && (
-          <EditProductModal
+          <EditProductModalCards
             title="Agregar productos"
             confirmButtonText="Guardar"
             initialValues={initialValues}
