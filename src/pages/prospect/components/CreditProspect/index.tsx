@@ -272,6 +272,27 @@ export function CreditProspect(props: ICreditProspectProps) {
   };
   const selectedBorrower = borrowersProspect?.borrowers?.[selectedIndex];
 
+  function hasExtraordinaryInstallments(dataProspect: IProspect): boolean {
+    if (
+      !dataProspect?.creditProducts ||
+      !Array.isArray(dataProspect.creditProducts)
+    ) {
+      return false;
+    }
+
+    for (const creditProduct of dataProspect.creditProducts) {
+      if (
+        creditProduct?.extraordinaryInstallments &&
+        Array.isArray(creditProduct.extraordinaryInstallments) &&
+        creditProduct.extraordinaryInstallments.length > 0
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   const handleIncomeSubmit = (updatedData: IIncomeSources) => {
     setCurrentIncomeModalData({ ...updatedData });
     setCreditLimitData({ ...updatedData });
@@ -517,7 +538,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   />
                 )}
               </Stack>
-              {prospectData?.creditProducts && (
+              {!hasExtraordinaryInstallments(prospectData as IProspect) && (
                 <Button
                   type="button"
                   appearance="primary"
