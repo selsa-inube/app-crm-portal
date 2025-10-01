@@ -54,6 +54,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
+import { updateProspect } from "@services/prospect/updateProspect";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -98,7 +99,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     isPrint = false,
     showPrint = true,
   } = props;
-
+  console.log("prospectData:  ", prospectData);
   const { customerData } = useContext(CustomerContext);
   const customerPublicCode: string = customerData.publicCode;
 
@@ -124,6 +125,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     IIncomeSources | undefined
   >();
   const [showEditMessageModal, setShowEditMessageModal] = useState(false);
+  const [editedComments, setEditedComments] = useState("");
 
   const { addFlag } = useFlag();
   const dataPrint = useRef<HTMLDivElement>(null);
@@ -504,6 +506,51 @@ export function CreditProspect(props: ICreditProspectProps) {
   const handleInfoModalClose = () => {
     setIsModalOpen(false);
   };
+
+  const handleCommentsChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    console.log(event.target.value);
+    setEditedComments(event.target.value);
+  };
+
+  const handleSaveComments = async () => {
+    try {
+      if (!prospectData) return;
+
+      const updatedProspect: IProspect = {
+        ...prospectData,
+        clientComments: editedComments,
+      };
+
+      if (onProspectUpdate) {
+        onProspectUpdate(updatedProspect);
+      }
+
+      if (onProspectUpdated) {
+        onProspectUpdated();
+      }
+
+      setShowEditMessageModal(false);
+      handleCloseModal();
+
+      await updateProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        updatedProspect,
+      );
+
+      addFlag({
+        title: "Observaciones actualizadas",
+        description: "Las observaciones se han guardado correctamente",
+        appearance: "success",
+        duration: 5000,
+      });
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(configModal.observations.errorMessage);
+    }
+  };
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -778,6 +825,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             title={configModal.observations.title}
             handleClose={handleCloseModal}
             handleNext={() => {
+              setEditedComments(prospectData!.clientComments || "");
               setShowEditMessageModal(true);
             }}
             nextButton={configModal.observations.modify}
@@ -798,7 +846,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           <BaseModal
             title={configModal.observations.title}
             handleClose={() => setShowEditMessageModal(false)}
-            handleNext={() => setShowEditMessageModal(false)}
+            handleNext={handleSaveComments}
             nextButton={configModal.observations.modify}
             backButton={configModal.observations.cancel}
             width={isMobile ? "300px" : "500px"}
@@ -806,8 +854,8 @@ export function CreditProspect(props: ICreditProspectProps) {
             <Textarea
               id="comments"
               label={configModal.observations.labelTextarea}
-              value={prospectData!.clientComments || ""}
-              onChange={() => {}}
+              value={editedComments}
+              onChange={(e) => handleCommentsChange(e)}
               maxLength={120}
             />
           </BaseModal>

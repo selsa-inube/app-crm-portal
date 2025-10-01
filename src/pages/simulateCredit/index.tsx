@@ -82,7 +82,7 @@ export function SimulateCredit() {
     aditionalBorrowers: [""],
     extraInstallement: [""],
   });
-
+  console.log("");
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
@@ -554,14 +554,14 @@ export function SimulateCredit() {
   };
 
   const totalIncome =
-    (creditLimitData?.Dividends ?? 0) +
-    (creditLimitData?.FinancialIncome ?? 0) +
-    (creditLimitData?.Leases ?? 0) +
-    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
-    (creditLimitData?.PensionAllowances ?? 0) +
-    (creditLimitData?.PeriodicSalary ?? 0) +
-    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
-    (creditLimitData?.ProfessionalFees ?? 0);
+    (formData.sourcesOfIncome?.Dividends ?? 0) +
+    (formData.sourcesOfIncome?.FinancialIncome ?? 0) +
+    (formData.sourcesOfIncome?.Leases ?? 0) +
+    (formData.sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0) +
+    (formData.sourcesOfIncome?.PensionAllowances ?? 0) +
+    (formData.sourcesOfIncome?.PeriodicSalary ?? 0) +
+    (formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0) +
+    (formData.sourcesOfIncome?.ProfessionalFees ?? 0);
 
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -726,7 +726,7 @@ export function SimulateCredit() {
 
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
-
+    console.log("************simulateData:  ", simulateData);
     const payload = {
       clientIdentificationNumber: customerData.customerId,
       prospect: { ...simulateData },
@@ -749,7 +749,7 @@ export function SimulateCredit() {
     };
 
     handleSubmit();
-  }, [customerData, simulateData, businessUnitPublicCode]);
+  }, [customerData?.customerId, businessUnitPublicCode, businessManagerCode]);
 
   useEffect(() => {
     if (clientPortfolio) {

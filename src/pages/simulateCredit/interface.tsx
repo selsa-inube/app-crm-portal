@@ -432,12 +432,12 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       initialValues={formData.sourcesOfIncome}
                       handleOnChange={(
                         newState: Partial<ISourcesOfIncomeState>,
-                      ) =>
+                      ) => {
                         handleFormDataChange("sourcesOfIncome", {
                           ...formData.sourcesOfIncome,
                           ...newState,
-                        })
-                      }
+                        });
+                      }}
                       isMobile={isMobile}
                       customerData={customerData}
                       creditLimitData={creditLimitData}

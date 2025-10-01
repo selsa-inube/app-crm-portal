@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Stack } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
@@ -28,6 +28,7 @@ export function SourcesOfIncome({
   handleOnChange,
 }: ISourcesOfIncomeProps) {
   const [localData, setLocalData] = useState<IIncomeSources | null>(null);
+  const hasInitialized = useRef(false);
 
   const { restoreData } = useRestoreIncomeData({
     onSuccess: (refreshedData) => {
@@ -40,13 +41,17 @@ export function SourcesOfIncome({
     Object.values(data).some((value) => typeof value === "number" && value > 0);
 
   useEffect(() => {
+    if (hasInitialized.current) return;
+
     if (hasValidData(initialValues)) {
       setLocalData(initialValues as unknown as IIncomeSources);
+      hasInitialized.current = true;
     } else if (creditLimitData) {
+      hasInitialized.current = true;
       setLocalData(creditLimitData);
       handleOnChange(creditLimitData);
     }
-  }, [creditLimitData, initialValues, handleOnChange]);
+  }, [creditLimitData, initialValues]);
 
   const handleSourceIncomeChange = (newData: IIncomeSources) => {
     setLocalData(newData);
