@@ -117,6 +117,7 @@ export interface IProspect {
   extraordinaryInstallments?: ISimulateExtraordinaryInstallment[];
   creditProducts: ICreditProduct[];
   outlays: IOutlay[];
+  clientComments?: string;
 }
 
 export interface IAddCreditProduct {
