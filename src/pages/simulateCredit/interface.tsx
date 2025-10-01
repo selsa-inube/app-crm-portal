@@ -58,6 +58,7 @@ import {
   AlertCreditLimit,
   AlertIncome,
 } from "./components/smallModals/modals";
+import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -111,6 +112,7 @@ interface SimulateCreditUIProps {
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
   isCreditLimitModalOpen: boolean;
+  dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
   isCreditLimitWarning: boolean;
   isCapacityAnalysisModal: boolean;
   isCapacityAnalysisWarning: boolean;
@@ -166,6 +168,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     isCreditLimitModalOpen,
     isCreditLimitWarning,
     isCapacityAnalysisModal,
+    dataMaximumCreditLimitService,
     isCapacityAnalysisWarning,
     formData,
     selectedProducts,
@@ -543,6 +546,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleClose={() => setIsCreditLimitModalOpen(false)}
                   isMobile={isMobile}
                   setRequestValue={setRequestValue}
+                  dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+                  businessUnitPublicCode={businessUnitPublicCode}
+                  businessManagerCode={businessManagerCode}
                 />
               )}
               {isCreditLimitWarning && (

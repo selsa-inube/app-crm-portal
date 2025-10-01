@@ -1,4 +1,5 @@
 export const incomeModalConfig = {
+  title: "Tope máx. para Crédito vacacional",
   closeButton: {
     text: "Cerrar",
   },

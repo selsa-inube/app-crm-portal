@@ -48,3 +48,11 @@ export interface IPaymentCapacityData {
   extraordinary: number;
   extraordinaryQuotes?: CurrentDataRow[];
 }
+
+export interface IdataMaximumCreditLimitService {
+  lineOfCreditAbbreviatedName?: string;
+  identificationDocumentType: string;
+  identificationDocumentNumber: string;
+  moneyDestination: string;
+  primaryIncomeType: string;
+}
