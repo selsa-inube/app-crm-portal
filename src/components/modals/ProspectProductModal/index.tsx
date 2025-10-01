@@ -338,4 +338,3 @@ function EditProductModal(props: IEditProductModalProps) {
 }
 
 export { EditProductModal };
-export type { IEditProductModalProps };
