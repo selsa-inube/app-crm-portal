@@ -3,10 +3,10 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@inubekit/inubekit";
 import { MdCheckCircle } from "react-icons/md";
 import { action } from "@storybook/addon-actions";
+import { ICustomerData } from "@context/CustomerContext/types";
 
 import { IEditProductModalProps, IFormValues } from "../config";
 import { EditProductModalCards } from "..";
-import { ICustomerData } from "@context/CustomerContext/types";
 
 const meta: Meta<typeof EditProductModalCards> = {
   title: "components/modals/EditProductModal/SelectProduct",

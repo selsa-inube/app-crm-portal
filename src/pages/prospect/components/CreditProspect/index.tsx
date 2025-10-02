@@ -48,7 +48,7 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { EditProductModalCards } from "@src/components/modals/ProspectProductModalCards";
+import { EditProductModalCards } from "@components/modals/ProspectProductModalCards";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import { dataCreditProspect, labelsAndValuesShare } from "./config";
@@ -453,7 +453,6 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(labelsAndValuesShare.error);
     }
   };
-  console.log("prospectData: ", prospectData);
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
