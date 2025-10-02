@@ -110,6 +110,7 @@ function EditProductModalCards(props: IEditProductModalProps) {
       const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
         businessUnitPublicCode,
         "education",
+        moneyDestination,
       );
 
       type LineOfCreditValue = string | { value: string } | null | undefined;
@@ -131,6 +132,7 @@ function EditProductModalCards(props: IEditProductModalProps) {
               postBusinessUnitRules,
               "value",
               businessUnitPublicCode,
+              "",
               true,
             )
           : null;
@@ -147,6 +149,7 @@ function EditProductModalCards(props: IEditProductModalProps) {
               postBusinessUnitRules,
               "value",
               businessUnitPublicCode,
+              "",
               true,
             )
           : null;
@@ -164,6 +167,7 @@ function EditProductModalCards(props: IEditProductModalProps) {
               postBusinessUnitRules,
               "value",
               businessUnitPublicCode,
+              "",
               true,
             )
           : null;
