@@ -13,6 +13,7 @@ import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments
 export interface ExtraordinaryInstallmentsProps {
   isMobile: boolean;
   initialValues: TableExtraordinaryInstallmentProps[] | null;
+  businessManagerCode: string;
   handleOnChange: (
     newExtraordinary: TableExtraordinaryInstallmentProps[],
   ) => void;
@@ -21,7 +22,8 @@ export interface ExtraordinaryInstallmentsProps {
 export function ExtraordinaryInstallments(
   props: ExtraordinaryInstallmentsProps,
 ) {
-  const { initialValues, isMobile, handleOnChange } = props;
+  const { initialValues, isMobile, businessManagerCode, handleOnChange } =
+    props;
 
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -145,6 +147,7 @@ export function ExtraordinaryInstallments(
               extraordinary={extraordinary}
               service={false}
               handleDelete={handleDelete}
+              businessManagerCode={businessManagerCode}
             />
           </Stack>
         </Stack>

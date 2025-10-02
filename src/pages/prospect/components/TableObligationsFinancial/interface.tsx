@@ -5,6 +5,7 @@ import {
   MdDeleteOutline,
   MdAdd,
   MdCached,
+  MdOutlineInfo,
 } from "react-icons/md";
 import {
   Pagination,
@@ -36,11 +37,15 @@ import { CardGray } from "@components/cards/CardGray";
 import { ListModal } from "@components/modals/ListModal";
 import { CustomerContext } from "@context/CustomerContext";
 
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { ErrorModal } from "@components/modals/ErrorModal";
+import { privilegeCrm } from "@config/privilege";
+
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
 import { IBorrowerDataFinancial } from "./types";
-import { ErrorModal } from "@src/components/modals/ErrorModal";
 import { IObligations as IObligationsFinancial } from "./types";
+import InfoModal from "../InfoModal";
 
 export interface ITableFinancialObligationsProps {
   type?: string;
@@ -102,6 +107,7 @@ interface UIProps {
   loading: boolean;
   visibleHeaders: { key: string; label: string; action?: boolean }[];
   isModalOpenEdit: boolean;
+  businessManagerCode: string;
   setIsModalOpenEdit: (value: boolean) => void;
   onProspectUpdate?: () => void;
   showErrorModal: boolean;
@@ -167,6 +173,7 @@ export const TableFinancialObligationsUI = ({
   visibleHeaders,
   isMobile,
   isModalOpenEdit,
+  businessManagerCode,
   setIsModalOpenEdit,
   onProspectUpdate,
   showOnlyEdit,
@@ -277,7 +284,11 @@ export const TableFinancialObligationsUI = ({
           borrowers: updatedBorrowers,
         };
 
-        await updateProspect(businessUnitPublicCode, prospectData);
+        await updateProspect(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData,
+        );
 
         setRefreshKey?.((prev) => prev + 1);
         setOpenModal(false);
@@ -320,7 +331,16 @@ export const TableFinancialObligationsUI = ({
     (sum, item) => sum + getValueFromProperty(item.propertyValue, 2),
     0,
   );
-
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   const renderHeaders = () => {
     return visibleHeaders.map((header, index) =>
       loading ? (
@@ -406,7 +426,11 @@ export const TableFinancialObligationsUI = ({
                       appearance="dark"
                       size="16px"
                       onClick={() =>
-                        handleEdit(mapToTableFinancialObligationsProps(prop))
+                        canEditCreditRequest
+                          ? handleInfo()
+                          : handleEdit(
+                              mapToTableFinancialObligationsProps(prop),
+                            )
                       }
                       cursorHover
                     />
@@ -415,12 +439,14 @@ export const TableFinancialObligationsUI = ({
                         icon={<MdDeleteOutline />}
                         appearance="danger"
                         size="16px"
-                        onClick={() => {
-                          setSelectedBorrower?.(
-                            mapToTableFinancialObligationsProps(prop),
-                          );
-                          setIsDeleteModal(true);
-                        }}
+                        onClick={() =>
+                          canEditCreditRequest
+                            ? handleInfo()
+                            : (setSelectedBorrower?.(
+                                mapToTableFinancialObligationsProps(prop),
+                              ),
+                              setIsDeleteModal(true))
+                        }
                         cursorHover
                       />
                     )}
@@ -434,6 +460,7 @@ export const TableFinancialObligationsUI = ({
         </Tr>
       );
     });
+
   return (
     <Stack
       direction="column"
@@ -517,23 +544,53 @@ export const TableFinancialObligationsUI = ({
               direction={isMobile ? "column" : "row"}
               width={isMobile ? "100%" : "auto"}
             >
-              <Stack>
+              <Stack gap="2px">
                 <Button
                   children="Restablecer"
                   iconBefore={<MdCached />}
                   fullwidth={isMobile}
+                  disabled={canEditCreditRequest}
                   variant="outlined"
                   spacing="wide"
                   onClick={() => setIsOpenModal(true)}
                 />
+                <Stack alignItems="center">
+                  {canEditCreditRequest ? (
+                    <Icon
+                      icon={<MdOutlineInfo />}
+                      appearance="primary"
+                      size="16px"
+                      cursorHover
+                      onClick={handleInfo}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Stack>
               </Stack>
               <Stack>
-                <Button
-                  children={dataReport.addObligations}
-                  iconBefore={<MdAdd />}
-                  fullwidth={isMobile}
-                  onClick={() => setOpenModal(true)}
-                />
+                <Stack gap="2px">
+                  <Button
+                    children={dataReport.addObligations}
+                    iconBefore={<MdAdd />}
+                    disabled={canEditCreditRequest}
+                    fullwidth={isMobile}
+                    onClick={() => setOpenModal(true)}
+                  />
+                </Stack>
+                <Stack alignItems="center">
+                  {canEditCreditRequest ? (
+                    <Icon
+                      icon={<MdOutlineInfo />}
+                      appearance="primary"
+                      size="16px"
+                      cursorHover
+                      onClick={handleInfo}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Stack>
               </Stack>
             </Stack>
           )}
@@ -645,6 +702,18 @@ export const TableFinancialObligationsUI = ({
           isMobile={isMobile}
           message={messageError}
         />
+      )}
+      {isModalOpen ? (
+        <InfoModal
+          onClose={handleInfoModalClose}
+          title={privilegeCrm.title}
+          subtitle={privilegeCrm.subtitle}
+          description={privilegeCrm.description}
+          nextButtonText={privilegeCrm.nextButtonText}
+          isMobile={isMobile}
+        />
+      ) : (
+        <></>
       )}
       <Stack
         gap="48px"

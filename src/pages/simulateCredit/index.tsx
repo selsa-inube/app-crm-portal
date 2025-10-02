@@ -90,7 +90,7 @@ export function SimulateCredit() {
   const navigate = useNavigate();
 
   const { customerData } = useContext(CustomerContext);
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const customerPublicCode: string = customerData.publicCode;
 
   const [formState, setFormState] = useState({
@@ -106,6 +106,8 @@ export function SimulateCredit() {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const dataHeader = {
     name: customerData.fullName,
@@ -299,6 +301,7 @@ export function SimulateCredit() {
 
     const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
       businessUnitPublicCode,
+      businessManagerCode,
       formData.selectedDestination,
     );
 
@@ -328,6 +331,7 @@ export function SimulateCredit() {
             postBusinessUnitRules,
             "value",
             businessUnitPublicCode,
+            businessManagerCode,
             true,
           )
         : null;
@@ -344,6 +348,7 @@ export function SimulateCredit() {
             postBusinessUnitRules,
             "value",
             businessUnitPublicCode,
+            businessManagerCode,
             true,
           )
         : null;
@@ -361,6 +366,7 @@ export function SimulateCredit() {
             postBusinessUnitRules,
             "value",
             businessUnitPublicCode,
+            businessManagerCode,
             true,
           )
         : null;
@@ -391,18 +397,21 @@ export function SimulateCredit() {
           const [financial, borrowers, extra] = await Promise.all([
             getFinancialObligationsUpdate(
               businessUnitPublicCode,
+              businessManagerCode,
               product,
               customerData.publicCode,
               formData.selectedDestination,
             ),
             getAdditionalBorrowersAllowed(
               businessUnitPublicCode,
+              businessManagerCode,
               product,
               customerData.publicCode,
               formData.selectedDestination,
             ),
             getExtraInstallmentsAllowed(
               businessUnitPublicCode,
+              businessManagerCode,
               product,
               customerData.publicCode,
               formData.selectedDestination,
@@ -446,6 +455,7 @@ export function SimulateCredit() {
     try {
       const data = await getClientPortfolioObligationsById(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       setClientPortfolio(data);
@@ -482,6 +492,7 @@ export function SimulateCredit() {
     try {
       const paymentCapacity = await getBorrowerPaymentCapacityById(
         businessUnitPublicCode,
+        businessManagerCode,
         data,
       );
       setPaymentCapacity(paymentCapacity ?? null);
@@ -506,6 +517,7 @@ export function SimulateCredit() {
       const data = await getCreditPayments(
         customerPublicCode,
         businessUnitPublicCode,
+        businessManagerCode,
       );
       setObligationPayment(data ?? null);
     } catch (error: unknown) {
@@ -659,6 +671,7 @@ export function SimulateCredit() {
     try {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
+        businessManagerCode,
         simulateData,
       );
       const prospectCode = response?.prospectCode;
@@ -686,6 +699,7 @@ export function SimulateCredit() {
     try {
       const result = await getCreditLimit(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       setCreditLimitData(result);
@@ -723,6 +737,7 @@ export function SimulateCredit() {
       try {
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
+          businessManagerCode,
           payload,
         );
         if (data) {
@@ -888,6 +903,7 @@ export function SimulateCredit() {
         showErrorModal={showErrorModal}
         messageError={messageError}
         businessUnitPublicCode={businessUnitPublicCode}
+        businessManagerCode={businessManagerCode}
       />
       {showConsultingModal && <Consulting />}
     </>

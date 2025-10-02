@@ -30,6 +30,7 @@ interface borrowersProps {
   initialValues: IBorrowerData;
   isMobile: boolean;
   valueRule: string[];
+  businessManagerCode: string;
 }
 
 export interface Borrower {
@@ -43,8 +44,14 @@ export interface Borrower {
 }
 
 export function Borrowers(props: borrowersProps) {
-  const { handleOnChange, initialValues, isMobile, prospectData, valueRule } =
-    props;
+  const {
+    handleOnChange,
+    initialValues,
+    isMobile,
+    prospectData,
+    valueRule,
+    businessManagerCode,
+  } = props;
 
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
@@ -167,6 +174,7 @@ export function Borrowers(props: borrowersProps) {
               <DebtorAddModal
                 onSubmit={() => setIsModalAdd(false)}
                 handleClose={() => setIsModalAdd(false)}
+                businessManagerCode={businessManagerCode}
                 title={
                   valueRule?.includes("Codeudor")
                     ? dataSubmitApplication.coBorrowers.borrowerLabel
@@ -222,6 +230,7 @@ export function Borrowers(props: borrowersProps) {
                 }}
                 onSave={() => {}}
                 businessUnitPublicCode={businessUnitPublicCode}
+                businessManagerCode={businessManagerCode}
               />
             )}
           </Stack>

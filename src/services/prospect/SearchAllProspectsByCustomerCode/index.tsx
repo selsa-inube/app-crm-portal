@@ -3,10 +3,13 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+
 import { IProspect } from "../types";
+import { ErrorSearchAllProspectsByCustomerCode } from "./ErrorSearchAllProspectsByCustomerCode";
 
 const getProspectsByCustomerCode = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   customerCode: string,
 ): Promise<IProspect[]> => {
   const maxRetries = maxRetriesServices;
@@ -22,6 +25,7 @@ const getProspectsByCustomerCode = async (
           "X-Action": "SearchAllProspectsByCustomerCode",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
@@ -34,7 +38,9 @@ const getProspectsByCustomerCode = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay tarea disponible.");
+        throw Error(
+          ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable,
+        );
       }
 
       const data = await res.json();
@@ -50,8 +56,15 @@ const getProspectsByCustomerCode = async (
       }
       return [data];
     } catch (error) {
-      console.error(`Intento ${attempt} fallido:`, error);
-      if (attempt === maxRetries) {
+      if (
+        String(error).includes(
+          ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable,
+        )
+      ) {
+        throw new Error(
+          ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable,
+        );
+      } else if (attempt === maxRetries) {
         throw new Error(
           "Todos los intentos fallaron. No se pudo obtener el prospecto.",
         );

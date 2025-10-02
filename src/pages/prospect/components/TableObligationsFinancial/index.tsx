@@ -44,9 +44,11 @@ export const TableFinancialObligations = (
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
 
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const handleEdit = (debtor: ITableFinancialObligationsProps) => {
     let balance = "";
@@ -149,7 +151,11 @@ export const TableFinancialObligations = (
       };
 
       try {
-        await updateProspect(businessUnitPublicCode, updatedInitialValues);
+        await updateProspect(
+          businessUnitPublicCode,
+          businessManagerCode,
+          updatedInitialValues,
+        );
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);
@@ -229,7 +235,11 @@ export const TableFinancialObligations = (
           borrowers: updatedBorrowers,
         };
 
-        await updateProspect(businessUnitPublicCode, updatedInitialValues);
+        await updateProspect(
+          businessUnitPublicCode,
+          businessManagerCode,
+          updatedInitialValues,
+        );
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
         onProspectUpdate?.();
@@ -307,6 +317,7 @@ export const TableFinancialObligations = (
       isMobile={isMobile}
       selectedBorrower={selectedBorrower}
       isModalOpenEdit={isModalOpenEdit}
+      businessManagerCode={businessManagerCode}
       setIsModalOpenEdit={setIsModalOpenEdit}
       handleEdit={handleEdit}
       handleDelete={handleDelete}

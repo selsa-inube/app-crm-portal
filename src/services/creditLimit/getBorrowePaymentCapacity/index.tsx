@@ -9,6 +9,7 @@ import { IPaymentCapacity, IPaymentCapacityResponse } from "../types";
 
 const getBorrowerPaymentCapacityById = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   data: IPaymentCapacity,
 ): Promise<IPaymentCapacityResponse | undefined> => {
   const maxRetries = maxRetriesServices;
@@ -25,6 +26,7 @@ const getBorrowerPaymentCapacityById = async (
           "X-Action": "GetBorrowerPaymentCapacityByIdentificationNumber",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         body: JSON.stringify(data),
       };

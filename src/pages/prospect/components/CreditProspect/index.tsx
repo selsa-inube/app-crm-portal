@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
   MdOutlineAdd,
+  MdOutlineInfo,
   MdOutlinePayments,
   MdOutlinePictureAsPdf,
   MdOutlineShare,
@@ -14,6 +15,7 @@ import {
   Select,
   useFlag,
   Spinner,
+  Textarea,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -41,6 +43,7 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
@@ -49,16 +52,24 @@ import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPayme
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { EditProductModalCards } from "@components/modals/ProspectProductModalCards";
+import { CardGray } from "@components/cards/CardGray";
+import { privilegeCrm } from "@config/privilege";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
-import { dataCreditProspect, labelsAndValuesShare } from "./config";
+import {
+  dataCreditProspect,
+  labelsAndValuesShare,
+  configModal,
+} from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
+import InfoModal from "../InfoModal";
 
 interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
+  businessManagerCode: string;
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
   setSentData: React.Dispatch<
@@ -76,6 +87,7 @@ interface ICreditProspectProps {
 export function CreditProspect(props: ICreditProspectProps) {
   const {
     prospectData,
+    businessManagerCode,
     showMenu,
     setRequestValue,
     onProspectUpdate,
@@ -111,6 +123,8 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [currentIncomeModalData, setCurrentIncomeModalData] = useState<
     IIncomeSources | undefined
   >();
+  const [showEditMessageModal, setShowEditMessageModal] = useState(false);
+
   const { addFlag } = useFlag();
   const dataPrint = useRef<HTMLDivElement>(null);
 
@@ -122,6 +136,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       setCreditLimitError(null);
       const result = await getCreditLimit(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       setCreditLimitData(result);
@@ -201,11 +216,16 @@ export function CreditProspect(props: ICreditProspectProps) {
         ],
       };
 
-      await addCreditProduct(businessUnitPublicCode, payload);
+      await addCreditProduct(
+        businessUnitPublicCode,
+        businessManagerCode,
+        payload,
+      );
 
       if (prospectData?.prospectId) {
         const updatedProspect = await getSearchProspectById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         setDataProspect([updatedProspect]);
@@ -453,29 +473,51 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(labelsAndValuesShare.error);
     }
   };
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
         {!isMobile && (
           <StyledPrint>
             <Stack gap="16px" justifyContent="end" alignItems="center">
-              <Button
-                type="button"
-                appearance="primary"
-                spacing="compact"
-                iconBefore={
+              <Stack alignItems="center" gap="4px">
+                <Button
+                  type="button"
+                  appearance="primary"
+                  spacing="compact"
+                  iconBefore={
+                    <Icon
+                      icon={<MdOutlineAdd />}
+                      appearance="light"
+                      size="18px"
+                      spacing="narrow"
+                    />
+                  }
+                  disabled={canEditCreditRequest}
+                  onClick={() => handleOpenModal("editProductModal")}
+                >
+                  {dataCreditProspect.addProduct}
+                </Button>
+                {!prospectData?.creditProducts[0].extraordinaryInstallments && (
                   <Icon
-                    icon={<MdOutlineAdd />}
-                    appearance="light"
-                    size="18px"
-                    spacing="narrow"
+                    icon={<MdOutlineInfo />}
+                    appearance="primary"
+                    size="16px"
+                    cursorHover
+                    onClick={handleInfo}
                   />
-                }
-                onClick={() => handleOpenModal("editProductModal")}
-              >
-                {dataCreditProspect.addProduct}
-              </Button>
-              {!prospectData?.creditProducts[0].extraordinaryInstallments && (
+                )}
+              </Stack>
+              {prospectData?.creditProducts && (
                 <Button
                   type="button"
                   appearance="primary"
@@ -641,13 +683,27 @@ export function CreditProspect(props: ICreditProspectProps) {
                     onChange={handleChange}
                     size="compact"
                   />
-                  <Button
-                    onClick={() => {
-                      setOpenModal("IncomeModalEdit");
-                    }}
-                  >
-                    {dataCreditProspect.edit}
-                  </Button>
+                  <Stack alignItems="center">
+                    <Button
+                      onClick={() => {
+                        setOpenModal("IncomeModalEdit");
+                      }}
+                      disabled={canEditCreditRequest}
+                    >
+                      {dataCreditProspect.edit}
+                    </Button>
+                    {canEditCreditRequest ? (
+                      <Icon
+                        icon={<MdOutlineInfo />}
+                        appearance="primary"
+                        size="16px"
+                        cursorHover
+                        onClick={handleInfo}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </Stack>
                 </Stack>
                 <IncomeDebtor
                   initialValues={
@@ -675,6 +731,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             creditLimitData={creditLimitData}
             publicCode={borrowerOptions[selectedIndex]?.publicCode || ""}
             businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentModal === "reportCreditsModal" && (
@@ -698,12 +755,64 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         )}
 
+        {currentModal === "observations" && (
+          <BaseModal
+            title={configModal.observations.title}
+            handleClose={handleCloseModal}
+            handleNext={() => {
+              setShowEditMessageModal(true);
+            }}
+            nextButton={configModal.observations.modify}
+            backButton={configModal.observations.cancel}
+            width={isMobile ? "300px" : "500px"}
+          >
+            <Stack direction="column" gap="16px">
+              <CardGray
+                label={configModal.observations.labelTextarea}
+                placeHolder={prospectData!.clientComments || ""}
+                apparencePlaceHolder="gray"
+              />
+            </Stack>
+          </BaseModal>
+        )}
+
+        {showEditMessageModal && (
+          <BaseModal
+            title={configModal.observations.title}
+            handleClose={() => setShowEditMessageModal(false)}
+            handleNext={() => setShowEditMessageModal(false)}
+            nextButton={configModal.observations.modify}
+            backButton={configModal.observations.cancel}
+            width={isMobile ? "300px" : "500px"}
+          >
+            <Textarea
+              id="comments"
+              label={configModal.observations.labelTextarea}
+              value={prospectData!.clientComments || ""}
+              onChange={() => {}}
+              maxLength={120}
+            />
+          </BaseModal>
+        )}
+
         {showErrorModal && (
           <ErrorModal
             handleClose={() => setShowErrorModal(false)}
             isMobile={isMobile}
             message={messageError}
           />
+        )}
+        {isModalOpen ? (
+          <InfoModal
+            onClose={handleInfoModalClose}
+            title={privilegeCrm.title}
+            subtitle={privilegeCrm.subtitle}
+            description={privilegeCrm.description}
+            nextButtonText={privilegeCrm.nextButtonText}
+            isMobile={isMobile}
+          />
+        ) : (
+          <></>
         )}
       </Stack>
     </div>

@@ -122,7 +122,7 @@ export const ListModal = (props: IListModalProps) => {
   const isMobile = useMediaQuery("(max-width: 700px)");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
 
   const [isDragging, setIsDragging] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<IFile[]>([]);
@@ -143,6 +143,8 @@ export const ListModal = (props: IListModalProps) => {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -239,6 +241,7 @@ export const ListModal = (props: IListModalProps) => {
         for (const fileData of pendingFiles) {
           await saveDocument(
             businessUnitPublicCode,
+            businessManagerCode,
             id,
             fileData.name.split(".").slice(0, -1).join("."),
             fileData.file,

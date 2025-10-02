@@ -4,6 +4,7 @@ import { IBusinessUnitRules } from "../types";
 
 const postBusinessUnitRules = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   submitData: IBusinessUnitRules,
 ): Promise<IBusinessUnitRules> => {
   const requestUrl = `${environment.ICOREBANKING_API_URL_PERSISTENCE}/business-unit-rules`;
@@ -15,6 +16,7 @@ const postBusinessUnitRules = async (
         "X-Action": "EvaluteRuleByBusinessUnit",
         "X-Business-Unit": businessUnitPublicCode,
         "Content-type": "application/json; charset=UTF-8",
+        "X-Process-Manager": businessManagerCode,
       },
       body: JSON.stringify(submitData),
     };

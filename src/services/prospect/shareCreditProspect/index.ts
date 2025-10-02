@@ -8,6 +8,7 @@ import { IShareCreditProspect, IShareCreditProspectResponse } from "../types";
 
 export const patchShareCreditProspect = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   payload: IShareCreditProspect,
 ): Promise<IShareCreditProspectResponse | undefined> => {
   const maxRetries = maxRetriesServices;
@@ -32,6 +33,7 @@ export const patchShareCreditProspect = async (
         headers: {
           "X-Action": "ShareCreditProspect",
           "X-Business-Unit": businessUnitPublicCode,
+          "X-Process-Manager": businessManagerCode,
         },
         body: formData,
         signal: controller.signal,

@@ -145,7 +145,6 @@ export function ContactInformation(props: IContactInformationProps) {
               <Phonefield
                 name="phone"
                 id="phone"
-                type="number"
                 placeholder={dataContactInformation.placePhone}
                 label={dataContactInformation.cardPhone}
                 size="compact"
@@ -200,7 +199,6 @@ export function ContactInformation(props: IContactInformationProps) {
                   <Phonefield
                     name="whatsAppPhone"
                     id="whatsAppPhone"
-                    type="number"
                     placeholder={dataContactInformation.placeWhatsApp}
                     label={dataContactInformation.cardWhatsApp}
                     size="compact"

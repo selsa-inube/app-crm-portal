@@ -136,6 +136,7 @@ interface SimulateCreditUIProps {
   messageError: string;
   servicesProductSelection: IServicesProductSelection;
   paymentCapacity?: IPaymentCapacityResponse | null;
+  businessManagerCode: string;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -190,6 +191,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     showErrorModal,
     messageError,
     businessUnitPublicCode,
+    businessManagerCode,
   } = props;
 
   return (
@@ -204,7 +206,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin="0 auto"
+          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
@@ -337,6 +339,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       prospectData={prospectData as IProspect}
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
+                      businessManagerCode={businessManagerCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -351,6 +354,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                       onFormValid={setIsCurrentFormValid}
                       isTablet={isTablet}
+                      businessManagerCode={businessManagerCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -396,6 +400,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     <ExtraordinaryInstallments
                       isMobile={isMobile}
                       initialValues={formData.extraordinaryInstallments}
+                      businessManagerCode={businessManagerCode}
                       handleOnChange={(newExtraordinary) =>
                         handleFormDataChange(
                           "extraordinaryInstallments",
@@ -417,6 +422,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
+                      businessManagerCode={businessManagerCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -436,6 +442,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       customerData={customerData}
                       creditLimitData={creditLimitData}
                       businessUnitPublicCode={businessUnitPublicCode}
+                      businessManagerCode={businessManagerCode}
                     />
                   )}
                 {currentStepsNumber &&

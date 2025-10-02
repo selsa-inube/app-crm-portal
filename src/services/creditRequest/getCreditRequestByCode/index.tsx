@@ -9,6 +9,7 @@ import { mapCreditRequestToEntities } from "./mapper";
 
 export const getCreditRequestByCode = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   userAccount: string,
   params: CreditRequestParams,
 ): Promise<ICreditRequest[]> => {
@@ -43,6 +44,7 @@ export const getCreditRequestByCode = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "x-user-name": userAccount,
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };

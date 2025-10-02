@@ -26,6 +26,7 @@ interface IncomeModalProps {
   selectedIndex?: number;
   creditLimitData?: IIncomeSources | undefined;
   publicCode?: string;
+  businessManagerCode: string;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
@@ -40,6 +41,7 @@ export function IncomeModal(props: IncomeModalProps) {
     selectedIndex,
     customerData,
     publicCode,
+    businessManagerCode,
   } = props;
 
   const [formData, setFormData] = useState(initialValues);
@@ -113,6 +115,7 @@ export function IncomeModal(props: IncomeModalProps) {
         messageError={messageError}
         publicCode={publicCode || ""}
         businessUnitPublicCode={businessUnitPublicCode}
+        businessManagerCode={businessManagerCode}
       />
     </BaseModal>
   );

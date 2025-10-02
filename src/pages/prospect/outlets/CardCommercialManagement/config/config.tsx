@@ -5,6 +5,7 @@ import {
   MdOutlineAccountBalanceWallet,
   MdOutlineEdit,
   MdOutlineRemoveRedEye,
+  MdOutlineMessage,
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
@@ -339,6 +340,14 @@ export const menuOptions = (
       handleOpenModal("extraPayments");
     },
     icon: <MdOutlinePayments />,
+    visible: visibleExtraPayments,
+  },
+  {
+    title: "Observaciones",
+    onClick: () => {
+      handleOpenModal("observations");
+    },
+    icon: <MdOutlineMessage />,
     visible: visibleExtraPayments,
   },
 ];

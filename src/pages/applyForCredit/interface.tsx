@@ -68,6 +68,7 @@ interface ApplyForCreditUIProps {
   isModalOpen: boolean;
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
+  businessManagerCode: string;
   getRuleByName: (name: string) => string[];
   prospectSummaryData?: IProspectSummaryById;
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -102,6 +103,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     dataHeader,
     sentModal,
     approvedRequestModal,
+    businessManagerCode,
     getRuleByName,
     setSentModal,
     setApprovedRequestModal,
@@ -148,9 +150,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
         >
           <Stack
             direction="column"
-            alignItems={isMobile ? "normal" : "center"}
-            margin="20px 0px"
-            padding="24px"
+            width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
+            margin={`0px auto ${isMobile ? "100px" : "50px"} auto`}
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
               <GeneralHeader
@@ -241,6 +242,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     customerData={customerData}
                     prospectData={prospectData}
                     businessUnitPublicCode={businessUnitPublicCode}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
@@ -271,6 +273,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     }
                     prospectData={prospectData as IProspectBorrower}
                     valueRule={getRuleByName("ValidationCoBorrower")}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
