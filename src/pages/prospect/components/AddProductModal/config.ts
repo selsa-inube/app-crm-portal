@@ -1,3 +1,5 @@
+import { ObjectSchema, AnyObject } from "yup";
+
 import {
   CreditLine,
   PaymentMethod,
@@ -143,7 +145,7 @@ const rateTypeOptions = [
 
 export const messageNotFound = "No se encontraron resultados";
 
-export interface IEditProductModalProps {
+export interface IAddProductModalProps {
   onCloseModal: () => void;
   onConfirm: (values: IFormValues) => void;
   title: string;
@@ -220,6 +222,19 @@ export const isRulePrimitive = (
 export const isRuleArray = (value: TRuleInput): value is TRuleArrayValue => {
   return Array.isArray(value);
 };
+
+export interface IAddProductModalUIProps {
+  title: string;
+  confirmButtonText: string;
+  initialValues: Partial<IFormValues>;
+  validationSchema: ObjectSchema<IFormValues, AnyObject, IFormValues>;
+  onConfirm: (values: IFormValues) => void;
+  onCloseModal: () => void;
+  iconBefore?: React.JSX.Element;
+  iconAfter?: React.JSX.Element;
+  creditLineTerms: TCreditLineTerms;
+  isMobile: boolean;
+}
 
 export {
   creditLineOptions,

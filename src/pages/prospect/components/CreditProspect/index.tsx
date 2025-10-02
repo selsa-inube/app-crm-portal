@@ -51,7 +51,7 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { EditProductModalCards } from "@components/modals/ProspectProductModalCards";
+import { AddProductModal } from "@src/pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 
@@ -626,7 +626,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         )}
         {currentModal === "editProductModal" && (
-          <EditProductModalCards
+          <AddProductModal
             title="Agregar productos"
             confirmButtonText="Guardar"
             initialValues={initialValues}
