@@ -73,6 +73,8 @@ export function SimulateCredit() {
     IValidateRequirement[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
+
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -82,7 +84,6 @@ export function SimulateCredit() {
     aditionalBorrowers: [""],
     extraInstallement: [""],
   });
-  console.log("");
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
@@ -272,114 +273,120 @@ export function SimulateCredit() {
   };
 
   const fetchCreditLineTerms = useCallback(async () => {
-    if (customerData.fullName.length === 0) {
-      setCodeError(1016);
-      setAddToFix(["No se ha seleccionado ningún cliente "]);
-    } else {
-      setCodeError(null);
-    }
-    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    if (!clientInfo?.associateType) return;
-
-    const baseDataRules = {
-      MoneyDestination: formData.selectedDestination,
-      ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      EmploymentContractTermType:
-        clientInfo.employmentType?.substring(0, 2) || "",
-      AffiliateSeniority: getMonthsElapsed(
-        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-        0,
-      ),
-    };
-
-    // const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
-    //   ...baseDataRules,
-    //   LineOfCredit: "",
-    // });
-
-    // if (!lineOfCreditRule) return;
-
-    const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
-      businessUnitPublicCode,
-      businessManagerCode,
-      formData.selectedDestination,
-    );
-
-    type LineOfCreditValue = string | { value: string } | null | undefined;
-    const lineNames = Array.isArray(lineOfCreditValues)
-      ? (lineOfCreditValues as LineOfCreditValue[])
-          .map((v) => (typeof v === "string" ? v : v?.value || ""))
-          .filter((name): name is string => Boolean(name))
-      : [];
-
-    const result: Record<
-      string,
-      {
-        LoanAmountLimit: number;
-        LoanTermLimit: number;
-        RiskFreeInterestRate: number;
+    try {
+      if (customerData.fullName.length === 0) {
+        setCodeError(1016);
+        setAddToFix(["No se ha seleccionado ningún cliente "]);
+      } else {
+        setCodeError(null);
       }
-    > = {};
+      const clientInfo =
+        customerData?.generalAttributeClientNaturalPersons?.[0];
+      if (!clientInfo?.associateType) return;
 
-    for (const line of lineNames) {
-      const ruleData = { ...baseDataRules, LineOfCredit: line };
-
-      const loanAmountRule = ruleConfig["LoanAmountLimit"]?.(ruleData);
-      const loanAmount = loanAmountRule
-        ? await evaluateRule(
-            loanAmountRule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            businessManagerCode,
-            true,
-          )
-        : null;
-      const amountValue = Number(getRuleValue(loanAmount) ?? 0);
-
-      const termRuleInput = {
-        ...ruleData,
-        LoanAmount: amountValue,
+      const baseDataRules = {
+        MoneyDestination: formData.selectedDestination,
+        ClientType: clientInfo.associateType?.substring(0, 1) || "",
+        EmploymentContractTermType:
+          clientInfo.employmentType?.substring(0, 2) || "",
+        AffiliateSeniority: getMonthsElapsed(
+          customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
+          0,
+        ),
       };
-      const termRule = ruleConfig["LoanTerm"]?.(termRuleInput);
-      const termValueRaw = termRule
-        ? await evaluateRule(
-            termRule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            businessManagerCode,
-            true,
-          )
-        : null;
-      const termValue = Number(getRuleValue(termValueRaw) ?? 0);
 
-      const interestInput = {
-        ...ruleData,
-        LoanAmount: amountValue,
-        LoanTerm: termValue,
-      };
-      const interestRule = ruleConfig["FixedInterestRate"]?.(interestInput);
-      const rateValueRaw = interestRule
-        ? await evaluateRule(
-            interestRule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            businessManagerCode,
-            true,
-          )
-        : null;
-      const interestRate = Number(getRuleValue(rateValueRaw) ?? 0);
+      // const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
+      //   ...baseDataRules,
+      //   LineOfCredit: "",
+      // });
 
-      result[line] = {
-        LoanAmountLimit: amountValue,
-        LoanTermLimit: termValue,
-        RiskFreeInterestRate: interestRate,
-      };
+      // if (!lineOfCreditRule) return;
+
+      const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
+        businessUnitPublicCode,
+        businessManagerCode,
+        formData.selectedDestination,
+      );
+
+      type LineOfCreditValue = string | { value: string } | null | undefined;
+      const lineNames = Array.isArray(lineOfCreditValues)
+        ? (lineOfCreditValues as LineOfCreditValue[])
+            .map((v) => (typeof v === "string" ? v : v?.value || ""))
+            .filter((name): name is string => Boolean(name))
+        : [];
+
+      const result: Record<
+        string,
+        {
+          LoanAmountLimit: number;
+          LoanTermLimit: number;
+          RiskFreeInterestRate: number;
+        }
+      > = {};
+
+      for (const line of lineNames) {
+        const ruleData = { ...baseDataRules, LineOfCredit: line };
+
+        const loanAmountRule = ruleConfig["LoanAmountLimit"]?.(ruleData);
+        const loanAmount = loanAmountRule
+          ? await evaluateRule(
+              loanAmountRule,
+              postBusinessUnitRules,
+              "value",
+              businessUnitPublicCode,
+              businessManagerCode,
+              true,
+            )
+          : null;
+        const amountValue = Number(getRuleValue(loanAmount) ?? 0);
+
+        const termRuleInput = {
+          ...ruleData,
+          LoanAmount: amountValue,
+        };
+        const termRule = ruleConfig["LoanTerm"]?.(termRuleInput);
+        const termValueRaw = termRule
+          ? await evaluateRule(
+              termRule,
+              postBusinessUnitRules,
+              "value",
+              businessUnitPublicCode,
+              businessManagerCode,
+              true,
+            )
+          : null;
+        const termValue = Number(getRuleValue(termValueRaw) ?? 0);
+
+        const interestInput = {
+          ...ruleData,
+          LoanAmount: amountValue,
+          LoanTerm: termValue,
+        };
+        const interestRule = ruleConfig["FixedInterestRate"]?.(interestInput);
+        const rateValueRaw = interestRule
+          ? await evaluateRule(
+              interestRule,
+              postBusinessUnitRules,
+              "value",
+              businessUnitPublicCode,
+              businessManagerCode,
+              true,
+            )
+          : null;
+        const interestRate = Number(getRuleValue(rateValueRaw) ?? 0);
+
+        result[line] = {
+          LoanAmountLimit: amountValue,
+          LoanTermLimit: termValue,
+          RiskFreeInterestRate: interestRate,
+        };
+      }
+
+      setCreditLineTerms(result);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
     }
-
-    setCreditLineTerms(result);
   }, [
     customerData,
     businessUnitPublicCode,
@@ -436,15 +443,8 @@ export function SimulateCredit() {
         extraInstallement: results.map((result) => result.extraInstallement),
       });
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
+      setMessageError(messagesError.tryLater);
     }
   }, [formData.selectedProducts]);
 
@@ -497,15 +497,7 @@ export function SimulateCredit() {
       );
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
     }
   };
 
@@ -704,15 +696,10 @@ export function SimulateCredit() {
       );
       setCreditLimitData(result);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
-      setShowErrorModal?.(true);
-      setMessageError?.(description);
+      setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
+    } finally {
+      setIsLoadingCreditLimit(false);
     }
   };
   useEffect(() => {
@@ -726,7 +713,6 @@ export function SimulateCredit() {
 
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
-    console.log("************simulateData:  ", simulateData);
     const payload = {
       clientIdentificationNumber: customerData.customerId,
       prospect: { ...simulateData },
@@ -743,6 +729,9 @@ export function SimulateCredit() {
         if (data) {
           setValidateRequirements(data);
         }
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError(messagesError.tryLater);
       } finally {
         setIsLoading(false);
       }
@@ -847,9 +836,15 @@ export function SimulateCredit() {
     }
   }, [formData.borrowerData.borrowers]);
 
+  const handleModalTryAgain = () => {
+    setShowErrorModal(false);
+    navigate("/credit/prospects");
+  };
+
   return (
     <>
       <SimulateCreditUI
+        isLoadingCreditLimit={isLoadingCreditLimit}
         steps={steps}
         currentStep={currentStep}
         customerData={customerData}
@@ -904,6 +899,7 @@ export function SimulateCredit() {
         messageError={messageError}
         businessUnitPublicCode={businessUnitPublicCode}
         businessManagerCode={businessManagerCode}
+        handleModalTryAgain={handleModalTryAgain}
       />
       {showConsultingModal && <Consulting />}
     </>

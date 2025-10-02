@@ -99,7 +99,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     isPrint = false,
     showPrint = true,
   } = props;
-  console.log("prospectData:  ", prospectData);
+
   const { customerData } = useContext(CustomerContext);
   const customerPublicCode: string = customerData.publicCode;
 
@@ -510,7 +510,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   const handleCommentsChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    console.log(event.target.value);
     setEditedComments(event.target.value);
   };
 

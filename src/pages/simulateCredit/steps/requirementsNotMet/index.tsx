@@ -113,26 +113,19 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             direction="column"
             alignItems="center"
           >
-            <Icon
-              icon={<MdCheckCircleOutline />}
-              appearance={"success"}
-              size="54px"
-            />
+            {!hasError && (
+              <Icon
+                icon={<MdCheckCircleOutline />}
+                appearance={"success"}
+                size="54px"
+              />
+            )}
             <Text type="title" size="medium" appearance="dark">
-              {dataError.noData}
+              {hasError ? dataError.descriptionError : dataError.noData}
             </Text>
           </Stack>
         )}
       </Fieldset>
-      {showErrorModal && (
-        <ErrorModal
-          handleClose={() => {
-            setShowErrorModal(false);
-          }}
-          isMobile={isMobile}
-          message={dataError.descriptionError}
-        />
-      )}
     </>
   );
 }

@@ -4,6 +4,7 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 import { useIAuth } from "@inube/iauth-react";
 import { FlagProvider } from "@inubekit/inubekit";
@@ -34,7 +35,10 @@ function LogOut() {
 function FirstPage() {
   const { businessUnitSigla } = useContext(AppContext);
   initializeDataDB(businessUnitSigla);
-  return businessUnitSigla.length === 0 ? <Login /> : <AppPage />;
+  if (businessUnitSigla.length === 0) {
+    return <Login />;
+  }
+  return <Navigate to="/credit" replace />;
 }
 
 const router = createBrowserRouter(

@@ -17,6 +17,7 @@ interface ISourcesOfIncomeProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   handleOnChange: (newState: Partial<ISourcesOfIncomeState>) => void;
+  isLoadingCreditLimit?: boolean;
 }
 
 export function SourcesOfIncome({
@@ -26,6 +27,7 @@ export function SourcesOfIncome({
   businessUnitPublicCode,
   businessManagerCode,
   handleOnChange,
+  isLoadingCreditLimit,
 }: ISourcesOfIncomeProps) {
   const [localData, setLocalData] = useState<IIncomeSources | null>(null);
   const hasInitialized = useRef(false);
@@ -71,6 +73,7 @@ export function SourcesOfIncome({
           businessManagerCode={businessManagerCode}
           showEdit
           disabled
+          isLoadingCreditLimit={isLoadingCreditLimit}
         />
       </Stack>
     </Fieldset>

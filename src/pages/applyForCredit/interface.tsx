@@ -54,6 +54,7 @@ import { Observations } from "./steps/observations";
 import { submitCreditApplicationConfig } from "./config/submitCreditApplication.config";
 import { dataSubmitApplication } from "./config/config";
 import { titlesModal } from "../simulations/config";
+import { tittleOptions } from "./config/config";
 
 interface ApplyForCreditUIProps {
   currentStep: number;
@@ -85,6 +86,7 @@ interface ApplyForCreditUIProps {
   prospectData: IProspect;
   showErrorModal: boolean;
   messageError: string;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
@@ -122,6 +124,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     codeError,
     addToFix,
     businessUnitPublicCode,
+    setMessageError,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -138,10 +141,23 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   const handleHome = () => {
     navigate(`/credit/prospects/${prospectCode}`);
   };
+
+  if (codeError) {
+    setShowErrorModal(true);
+    setMessageError(tittleOptions.tryLater);
+  }
+
+  const handleRedirect = () => {
+    navigate(`/credit/prospects`);
+  };
   return (
     <>
       {codeError ? (
-        <ErrorPage errorCode={codeError} addToFix={addToFix || []} />
+        <ErrorPage
+          errorCode={codeError}
+          addToFix={addToFix || []}
+          handleRedirect={handleRedirect}
+        />
       ) : (
         <Stack
           direction="column"
@@ -434,7 +450,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 }
                 handleNext={() => setApprovedRequestModal(false)}
                 handleClose={() => setApprovedRequestModal(false)}
-                handleBack={() => console.log("data: ", formData)}
                 width={isMobile ? "290px" : "402px"}
               >
                 <Stack direction="column" alignItems="center" gap="24px">
