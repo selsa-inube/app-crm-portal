@@ -3,7 +3,6 @@ import { MdCheckCircleOutline } from "react-icons/md";
 import { Stack, Text, Icon, Spinner } from "@inubekit/inubekit";
 
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
-import { ErrorModal } from "@components/modals/ErrorModal";
 import { Fieldset } from "@components/data/Fieldset";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { ICustomerData } from "@context/CustomerContext/types";
@@ -58,6 +57,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
       } catch (error) {
         setHasError(true);
         setShowErrorModal(true);
+        showErrorModal;
       } finally {
         setIsLoading(false);
       }
