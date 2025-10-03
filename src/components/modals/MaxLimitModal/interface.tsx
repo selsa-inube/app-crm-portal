@@ -100,7 +100,7 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
               >
                 $
                 {loading
-                  ? "Cargando..."
+                  ? incomeModalConfig.loading
                   : currencyFormat(
                       dataMaximumCreditLimitService.lineOfCreditLoanAmountLimitRegulation,
                       false,

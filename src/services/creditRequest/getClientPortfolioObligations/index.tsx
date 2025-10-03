@@ -26,7 +26,7 @@ export const getClientPortfolioObligationsById = async (
         },
         signal: controller.signal,
       };
-      console.log(businessUnitPublicCode);
+
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/portfolio-obligations/${ClientIdentificationNumber}`,
         options,

@@ -29,7 +29,6 @@ const getIncomeSourcesById = async (
         signal: controller.signal,
       };
 
-      console.log(businessUnitPublicCode);
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/client-income-sources/${publicCode}`,
         options,
