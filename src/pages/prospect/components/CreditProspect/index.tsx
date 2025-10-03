@@ -854,7 +854,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               id="comments"
               label={configModal.observations.labelTextarea}
               value={editedComments}
-              onChange={(e) => handleCommentsChange(e)}
+              onChange={(event) => handleCommentsChange(event)}
               maxLength={120}
             />
           </BaseModal>

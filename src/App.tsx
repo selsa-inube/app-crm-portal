@@ -38,7 +38,7 @@ function FirstPage() {
   if (businessUnitSigla.length === 0) {
     return <Login />;
   }
-  return <Navigate to="/credit" replace />;
+  return <Navigate to="/home" replace />;
 }
 
 const router = createBrowserRouter(
