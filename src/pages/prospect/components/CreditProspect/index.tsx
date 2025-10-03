@@ -22,7 +22,6 @@ import { MenuProspect } from "@components/navigation/MenuProspect";
 import { MaxLimitModal } from "@components/modals/MaxLimitModal";
 import { ReciprocityModal } from "@components/modals/ReciprocityModal";
 import { ScoreModal } from "@components/modals/FrcModal";
-import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
@@ -52,6 +51,7 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { AddProductModal } from "@src/pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
@@ -693,13 +693,16 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         )}
         {currentModal === "editProductModal" && (
-          <EditProductModal
+          <AddProductModal
             title="Agregar productos"
             confirmButtonText="Guardar"
             initialValues={initialValues}
             iconBefore={<MdOutlineAdd />}
             onCloseModal={handleCloseModal}
             onConfirm={handleConfirm}
+            moneyDestination={prospectData!.moneyDestinationAbbreviatedName}
+            businessUnitPublicCode={businessUnitPublicCode}
+            customerData={customerData}
           />
         )}
         {currentModal === "IncomeModal" && (

@@ -153,7 +153,6 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
         <Phonefield
           name="phone"
           id="phone"
-          type="number"
           label={dataAddModal.labelNumber}
           placeholder={dataAddModal.placeHolderNumber}
           onChange={formik.handleChange}
