@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useIAuth } from "@inube/iauth-react";
+import { useSignOut } from "../useSignOut";
 
 interface IAuthConfig {
   clientId: string;
@@ -11,8 +12,12 @@ const useAuthHandler = (
   hasAuthError: boolean,
   portalCode: string,
 ) => {
-  const { loginWithRedirect, isAuthenticated, isLoading } = useIAuth();
+  const { loginWithRedirect, isAuthenticated, isLoading, error } = useIAuth();
+  const { signOut } = useSignOut();
 
+  if (error) {
+    signOut("/error?code=1009");
+  }
   useEffect(() => {
     if (
       !hasAuthError &&
