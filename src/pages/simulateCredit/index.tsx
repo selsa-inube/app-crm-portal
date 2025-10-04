@@ -70,6 +70,8 @@ export function SimulateCredit() {
     IValidateRequirement[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
+
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -79,7 +81,6 @@ export function SimulateCredit() {
     aditionalBorrowers: [""],
     extraInstallement: [""],
   });
-
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
@@ -200,7 +201,7 @@ export function SimulateCredit() {
       linesOfCredit: formData.selectedProducts.map((product) => ({
         lineOfCreditAbbreviatedName: product,
       })),
-      firstPaymentCycleDate: new Date().toISOString().split("T")[0],
+      firstPaymentCycleDate: new Date().toISOString(),
       extraordinaryInstallments: Array.isArray(
         formData.extraordinaryInstallments,
       )
@@ -253,7 +254,9 @@ export function SimulateCredit() {
     } else {
       setCodeError(null);
     }
+
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
+
     if (!clientInfo?.associateType) return;
 
     const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
@@ -343,15 +346,8 @@ export function SimulateCredit() {
         extraInstallement: results.map((result) => result.extraInstallement),
       });
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
+      setMessageError(messagesError.tryLater);
     }
   }, [formData.selectedProducts]);
 
@@ -404,15 +400,7 @@ export function SimulateCredit() {
       );
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
     }
   };
 
@@ -461,14 +449,14 @@ export function SimulateCredit() {
   };
 
   const totalIncome =
-    (creditLimitData?.Dividends ?? 0) +
-    (creditLimitData?.FinancialIncome ?? 0) +
-    (creditLimitData?.Leases ?? 0) +
-    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
-    (creditLimitData?.PensionAllowances ?? 0) +
-    (creditLimitData?.PeriodicSalary ?? 0) +
-    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
-    (creditLimitData?.ProfessionalFees ?? 0);
+    (formData.sourcesOfIncome?.Dividends ?? 0) +
+    (formData.sourcesOfIncome?.FinancialIncome ?? 0) +
+    (formData.sourcesOfIncome?.Leases ?? 0) +
+    (formData.sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0) +
+    (formData.sourcesOfIncome?.PensionAllowances ?? 0) +
+    (formData.sourcesOfIncome?.PeriodicSalary ?? 0) +
+    (formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0) +
+    (formData.sourcesOfIncome?.ProfessionalFees ?? 0);
 
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -611,15 +599,10 @@ export function SimulateCredit() {
       );
       setCreditLimitData(result);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
-      setShowErrorModal?.(true);
-      setMessageError?.(description);
+      setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
+    } finally {
+      setIsLoadingCreditLimit(false);
     }
   };
   useEffect(() => {
@@ -633,7 +616,6 @@ export function SimulateCredit() {
 
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
-
     const payload = {
       clientIdentificationNumber: customerData.customerId,
       prospect: { ...simulateData },
@@ -650,13 +632,16 @@ export function SimulateCredit() {
         if (data) {
           setValidateRequirements(data);
         }
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError(messagesError.tryLater);
       } finally {
         setIsLoading(false);
       }
     };
 
     handleSubmit();
-  }, [customerData, simulateData, businessUnitPublicCode]);
+  }, [customerData?.customerId, businessUnitPublicCode, businessManagerCode]);
 
   useEffect(() => {
     if (clientPortfolio) {
@@ -754,9 +739,15 @@ export function SimulateCredit() {
     }
   }, [formData.borrowerData.borrowers]);
 
+  const handleModalTryAgain = () => {
+    setShowErrorModal(false);
+    navigate("/credit/prospects");
+  };
+
   return (
     <>
       <SimulateCreditUI
+        isLoadingCreditLimit={isLoadingCreditLimit}
         steps={steps}
         currentStep={currentStep}
         customerData={customerData}
@@ -811,6 +802,7 @@ export function SimulateCredit() {
         messageError={messageError}
         businessUnitPublicCode={businessUnitPublicCode}
         businessManagerCode={businessManagerCode}
+        handleModalTryAgain={handleModalTryAgain}
       />
       {showConsultingModal && <Consulting />}
     </>

@@ -713,6 +713,7 @@ export function ApplyForCredit() {
         messageError={messageError}
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
+        setMessageError={setMessageError}
       />
     </>
   );
