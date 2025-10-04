@@ -8,7 +8,7 @@ function CustomerRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AppPage showNav={false} />}>
-        <Route path="/" element={<Customer />} />
+        <Route index path="/" element={<Customer />} />
       </Route>
       <Route path="/*" element={<ErrorPage errorCode={404} />} />
     </Routes>

@@ -13,7 +13,7 @@ function CreditRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AppPage />}>
-        <Route path="/" element={<Credit />} />
+        <Route index path="/" element={<Credit />} />
         <Route path="/simulate-credit" element={<SimulateCredit />} />
         <Route path="/prospects" element={<CreditProspects />} />
         <Route path="/credit-requests" element={<CreditApplications />} />

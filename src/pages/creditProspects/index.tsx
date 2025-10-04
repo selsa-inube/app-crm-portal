@@ -203,6 +203,10 @@ export function CreditProspects() {
     setIsModalOpen(false);
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleConfirmProspect = () => {
+    navigate(`/credit/apply-for-credit/${selectedProspect?.prospectCode}`);
+  };
   return (
     <>
       <Stack
@@ -303,7 +307,10 @@ export function CreditProspects() {
                     setSelectedProspect(prospect);
                     setShowMessageModal(true);
                   }}
-                  handleSend={() => setShowConfirmModal(true)}
+                  handleSend={() => {
+                    setShowConfirmModal(true);
+                    setSelectedProspect(prospect);
+                  }}
                   handleEdit={() =>
                     navigate(`/credit/prospects/${prospect.prospectCode}`)
                   }
@@ -408,6 +415,7 @@ export function CreditProspects() {
           <BaseModal
             title={dataCreditProspects.confirmTitle}
             handleBack={() => setShowConfirmModal(false)}
+            handleNext={handleConfirmProspect}
             backButton="Cancelar"
             nextButton="Confirmar"
             width={isMobile ? "300px" : "500px"}
