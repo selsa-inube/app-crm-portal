@@ -636,6 +636,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             moneyDestination={prospectData!.moneyDestinationAbbreviatedName}
             businessUnitPublicCode={businessUnitPublicCode}
             customerData={customerData}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentModal === "IncomeModal" && (

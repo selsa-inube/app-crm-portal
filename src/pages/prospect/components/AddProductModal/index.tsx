@@ -21,6 +21,7 @@ function AddProductModal(props: IAddProductModalProps) {
     moneyDestination,
     businessUnitPublicCode,
     customerData,
+    businessManagerCode,
   } = props;
 
   const [creditLineTerms, setCreditLineTerms] = useState<TCreditLineTerms>({});
@@ -33,7 +34,7 @@ function AddProductModal(props: IAddProductModalProps) {
 
       const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
         businessUnitPublicCode,
-        "education",
+        businessManagerCode,
         moneyDestination,
         customerData!.publicCode,
       );
