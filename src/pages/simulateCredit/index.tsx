@@ -204,7 +204,7 @@ export function SimulateCredit() {
       linesOfCredit: formData.selectedProducts.map((product) => ({
         lineOfCreditAbbreviatedName: product,
       })),
-      firstPaymentCycleDate: new Date().toISOString().split("T")[0],
+      firstPaymentCycleDate: new Date().toISOString(),
       extraordinaryInstallments: Array.isArray(
         formData.extraordinaryInstallments,
       )
