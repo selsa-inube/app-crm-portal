@@ -169,6 +169,8 @@ export type TCreditLineTerms = Record<
     LoanAmountLimit: number;
     LoanTermLimit: number;
     RiskFreeInterestRate: number;
+    amortizationType?: string[];
+    description?: string;
   }
 >;
 
