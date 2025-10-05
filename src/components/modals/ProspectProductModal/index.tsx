@@ -1,4 +1,4 @@
-import { Formik, FormikValues, FormikHelpers } from "formik";
+import { Formik, FormikValues, FormikHelpers, FormikProps } from "formik";
 import * as Yup from "yup";
 import { MdAttachMoney, MdPercent } from "react-icons/md";
 import {
@@ -8,6 +8,7 @@ import {
   Select,
   Textfield,
 } from "@inubekit/inubekit";
+import { useState } from "react";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
@@ -37,6 +38,14 @@ interface EditProductModalProps {
   iconAfter?: React.JSX.Element;
 }
 
+type FieldGroup =
+  | "creditAmount"
+  | "paymentGroup"
+  | "termInMonths"
+  | "amortizationType"
+  | "interestRate"
+  | "rateType";
+
 function EditProductModal(props: EditProductModalProps) {
   const {
     onCloseModal,
@@ -47,7 +56,69 @@ function EditProductModal(props: EditProductModalProps) {
     iconAfter,
   } = props;
 
+  const [modifiedGroup, setModifiedGroup] = useState<FieldGroup | null>(null);
+
   const isMobile = useMediaQuery("(max-width: 550px)");
+
+  const getFieldGroup = (fieldName: string): FieldGroup | null => {
+    if (fieldName === "creditAmount") return "creditAmount";
+
+    if (
+      ["paymentMethod", "paymentCycle", "firstPaymentCycle"].includes(fieldName)
+    ) {
+      return "paymentGroup";
+    }
+
+    if (fieldName === "termInMonths") return "termInMonths";
+    if (fieldName === "amortizationType") return "amortizationType";
+    if (fieldName === "interestRate") return "interestRate";
+    if (fieldName === "rateType") return "rateType";
+    return null;
+  };
+
+  const isFieldDisabled = (fieldName: string): boolean => {
+    if (!modifiedGroup) return false;
+
+    const fieldGroup = getFieldGroup(fieldName);
+
+    return fieldGroup !== modifiedGroup;
+  };
+
+  const handleFieldModification = (fieldName: string) => {
+    if (!modifiedGroup) {
+      const group = getFieldGroup(fieldName);
+      if (group) {
+        setModifiedGroup(group);
+      }
+    }
+  };
+
+  const handleSelectChange = (
+    formik: FormikProps<FormikValues>,
+    fieldName: string,
+    name: string,
+    value: string,
+  ) => {
+    handleFieldModification(fieldName);
+    formik.setFieldValue(name, value);
+  };
+
+  const handleCurrencyChange = (
+    formik: FormikProps<FormikValues>,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    handleFieldModification("creditAmount");
+    handleChangeWithCurrency(formik, event);
+  };
+
+  const handleTextChange = (
+    formik: FormikProps<FormikValues>,
+    fieldName: string,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    handleFieldModification(fieldName);
+    formik.handleChange(event);
+  };
 
   const validationSchema = Yup.object({
     creditLine: Yup.string(),
@@ -90,7 +161,7 @@ function EditProductModal(props: EditProductModalProps) {
               width="100%"
               height={isMobile ? "auto" : "600px"}
             >
-              <Select
+              {/*               <Select
                 label="Línea de crédito"
                 name="creditLine"
                 id="creditLine"
@@ -101,7 +172,7 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) => formik.setFieldValue(name, value)}
                 value={formik.values.creditLine}
                 fullwidth
-              />
+              /> */}
               <Textfield
                 label="Monto del crédito"
                 name="creditAmount"
@@ -118,8 +189,9 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 size="compact"
                 onBlur={formik.handleBlur}
-                onChange={(e) => handleChangeWithCurrency(formik, e)}
+                onChange={(event) => handleCurrencyChange(formik, event)}
                 fullwidth
+                disabled={isFieldDisabled("creditAmount")}
               />
               <Select
                 label="Medio de pago"
@@ -129,9 +201,12 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder="Selecciona una opción"
                 options={paymentMethodOptions}
                 onBlur={formik.handleBlur}
-                onChange={(name, value) => formik.setFieldValue(name, value)}
+                onChange={(name, value) =>
+                  handleSelectChange(formik, "paymentMethod", name, value)
+                }
                 value={formik.values.paymentMethod}
                 fullwidth
+                disabled={isFieldDisabled("paymentMethod")}
               />
               <Select
                 label="Ciclo de pagos"
@@ -141,9 +216,12 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder="Selecciona una opción"
                 options={paymentCycleOptions}
                 onBlur={formik.handleBlur}
-                onChange={(name, value) => formik.setFieldValue(name, value)}
+                onChange={(name, value) =>
+                  handleSelectChange(formik, "paymentCycle", name, value)
+                }
                 value={formik.values.paymentCycle}
                 fullwidth
+                disabled={isFieldDisabled("paymentCycle")}
               />
               <Select
                 label="Primer ciclo de pago"
@@ -153,9 +231,12 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder="Selecciona una opción"
                 options={firstPaymentCycleOptions}
                 onBlur={formik.handleBlur}
-                onChange={(name, value) => formik.setFieldValue(name, value)}
+                onChange={(name, value) =>
+                  handleSelectChange(formik, "firstPaymentCycle", name, value)
+                }
                 value={formik.values.firstPaymentCycle}
                 fullwidth
+                disabled={isFieldDisabled("firstPaymentCycle")}
               />
               <Select
                 label="Plazo en meses"
@@ -165,9 +246,12 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder="Selecciona una opción"
                 options={termInMonthsOptions}
                 onBlur={formik.handleBlur}
-                onChange={(name, value) => formik.setFieldValue(name, value)}
+                onChange={(name, value) =>
+                  handleSelectChange(formik, "termInMonths", name, value)
+                }
                 value={formik.values.termInMonths}
                 fullwidth
+                disabled={isFieldDisabled("termInMonths")}
               />
               <Select
                 label="Tipo de amortización"
@@ -177,9 +261,12 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder="Selecciona una opción"
                 options={amortizationTypeOptions}
                 onBlur={formik.handleBlur}
-                onChange={(name, value) => formik.setFieldValue(name, value)}
+                onChange={(name, value) =>
+                  handleSelectChange(formik, "amortizationType", name, value)
+                }
                 value={formik.values.amortizationType}
                 fullwidth
+                disabled={isFieldDisabled("amortizationType")}
               />
               <Textfield
                 label="Tasa de interés"
@@ -198,8 +285,11 @@ function EditProductModal(props: EditProductModalProps) {
                 type="number"
                 size="compact"
                 onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
+                onChange={(event) =>
+                  handleTextChange(formik, "interestRate", event)
+                }
                 fullwidth
+                disabled={isFieldDisabled("interestRate")}
               />
               <Select
                 label="Tipo de tasa"
@@ -209,9 +299,12 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder="Selecciona una opción"
                 options={rateTypeOptions}
                 onBlur={formik.handleBlur}
-                onChange={(name, value) => formik.setFieldValue(name, value)}
+                onChange={(name, value) =>
+                  handleSelectChange(formik, "rateType", name, value)
+                }
                 value={formik.values.rateType}
                 fullwidth
+                disabled={isFieldDisabled("rateType")}
               />
             </Stack>
           </ScrollableContainer>
