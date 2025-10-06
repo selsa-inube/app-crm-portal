@@ -37,4 +37,5 @@ export const tittleOptions = {
   titleError: "¡Uy, algo ha salido mal!",
   descriptionError: "No se han podido guardar los cambios.",
   errorSubmit: "El radicado no se ha podido enviar correctamente.",
+  tryLater: "Estamos tienendo problemas, intentalo mas tarde.",
 };

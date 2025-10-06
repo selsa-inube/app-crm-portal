@@ -8,7 +8,7 @@ function HomeRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AppPage showNav={false} />}>
-        <Route path="/" element={<Home />} />
+        <Route index path="/" element={<Home />} />
       </Route>
       <Route path="/*" element={<ErrorPage errorCode={404} />} />
     </Routes>

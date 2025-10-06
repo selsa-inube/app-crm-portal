@@ -53,6 +53,7 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
+import { messagesError } from "./config/config";
 import {
   AlertCapacityAnalysis,
   AlertCreditLimit,
@@ -137,8 +138,10 @@ interface SimulateCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   servicesProductSelection: IServicesProductSelection;
+  isLoadingCreditLimit: boolean;
   paymentCapacity?: IPaymentCapacityResponse | null;
   businessManagerCode: string;
+  handleModalTryAgain: () => void;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -195,6 +198,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     messageError,
     businessUnitPublicCode,
     businessManagerCode,
+    isLoadingCreditLimit,
+    handleModalTryAgain,
   } = props;
 
   return (
@@ -432,15 +437,16 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   currentStepsNumber.id ===
                     stepsAddProspect.sourcesIncome.id && (
                     <SourcesOfIncome
+                      isLoadingCreditLimit={isLoadingCreditLimit}
                       initialValues={formData.sourcesOfIncome}
                       handleOnChange={(
                         newState: Partial<ISourcesOfIncomeState>,
-                      ) =>
+                      ) => {
                         handleFormDataChange("sourcesOfIncome", {
                           ...formData.sourcesOfIncome,
                           ...newState,
-                        })
-                      }
+                        });
+                      }}
                       isMobile={isMobile}
                       customerData={customerData}
                       creditLimitData={creditLimitData}
@@ -581,7 +587,12 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               )}
               {showErrorModal && (
                 <ErrorModal
-                  handleClose={() => setShowErrorModal(false)}
+                  handleClose={() => {
+                    if (messageError === messagesError.tryLater) {
+                      handleModalTryAgain();
+                    }
+                    setShowErrorModal(false);
+                  }}
                   isMobile={isMobile}
                   message={messageError}
                 />
