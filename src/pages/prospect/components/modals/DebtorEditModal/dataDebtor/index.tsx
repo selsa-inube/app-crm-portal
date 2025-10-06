@@ -2,11 +2,17 @@ import { Stack, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { getPropertyValue } from "@utils/mappingData/mappings";
+import { IBorrower } from "@services/prospect/types";
 
 import { DataEditBorrower } from "./config";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function DataDebtor(initialValues: any) {
-  const { data } = initialValues;
+
+interface IDataDebtorProps {
+  data: IBorrower;
+  onDataChange: (fieldName: string, value: string) => void;
+}
+
+export function DataDebtor(props: IDataDebtorProps) {
+  const { data, onDataChange } = props;
 
   return (
     <Fieldset>
@@ -16,6 +22,7 @@ export function DataDebtor(initialValues: any) {
           id="email"
           label={DataEditBorrower.email}
           value={getPropertyValue(data.borrowerProperties, "email")}
+          onChange={(event) => onDataChange("email", event.target.value)}
           size="compact"
           fullwidth
         />
@@ -24,6 +31,7 @@ export function DataDebtor(initialValues: any) {
           id="phone"
           label={DataEditBorrower.phone}
           value={getPropertyValue(data.borrowerProperties, "phone_number")}
+          onChange={(event) => onDataChange("phone", event.target.value)}
           size="compact"
           fullwidth
         />
@@ -32,6 +40,7 @@ export function DataDebtor(initialValues: any) {
           id="relation"
           label={DataEditBorrower.relation}
           value={getPropertyValue(data.borrowerProperties, "relationship")}
+          onChange={(event) => onDataChange("relation", event.target.value)}
           size="compact"
           fullwidth
         />

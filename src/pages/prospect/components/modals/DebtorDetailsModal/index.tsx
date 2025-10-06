@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Stack, Tabs } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { IDebtorDetail } from "@pages/SubmitCreditApplication/types";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
+import { IBorrower } from "@services/prospect/types";
+import { IDebtorDetail } from "@pages/applyForCredit/types";
 
 import { dataDetails, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
@@ -12,14 +13,14 @@ import { IncomeDebtor } from "./incomeDebtor";
 interface IDebtorDetailsModalProps {
   handleClose: () => void;
   initialValues: IDebtorDetail;
+  properties: IBorrower | null;
   isMobile?: boolean;
 }
 
 export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
-  const { handleClose, initialValues, isMobile } = props;
+  const { handleClose, initialValues, isMobile, properties } = props;
 
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
-
   const onChange = (tabId: string) => {
     setCurrentTab(tabId);
   };
@@ -31,10 +32,10 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
       handleNext={handleClose}
       handleClose={handleClose}
       finalDivider={true}
-      width={isMobile ? "290px" : "704px"}
-      height="645px"
+      width={isMobile ? "290px" : "912px"}
+      height={isMobile ? "auto" : "680px"}
     >
-      <Stack direction="column" height="475px" gap="24px">
+      <Stack direction="column" height={isMobile ? "auto" : "510px"} gap="24px">
         <Tabs
           scroll={isMobile}
           selectedTab={currentTab}
@@ -43,12 +44,14 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
         />
         {currentTab === "data" && <DataDebtor initialValues={initialValues} />}
         {currentTab === "sources" && (
-          <IncomeDebtor initialValues={initialValues} />
+          <IncomeDebtor initialValues={properties as IBorrower} />
         )}
         {currentTab === "obligations" && (
           <TableFinancialObligations
-            initialValues={initialValues}
+            initialValues={properties as IBorrower}
             showButtons={false}
+            handleOnChangeExtraBorrowers={() => {}}
+            showOnlyEdit={true}
           />
         )}
       </Stack>

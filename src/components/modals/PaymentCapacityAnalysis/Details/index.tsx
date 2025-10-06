@@ -5,6 +5,7 @@ import { DataCapacityAnalysisDetails } from "./config";
 interface IPaymentCapacityAnalysisDetailsProps {
   isMobile: boolean;
   initialValues: {
+    concept: string;
     income: string;
     reserve: string;
     value: string;
@@ -26,7 +27,7 @@ export const PaymentCapacityAnalysisDetails = (
       width={isMobile ? "290px" : "335px"}
     >
       <Stack direction="column" gap="8px">
-        <Text>{DataCapacityAnalysisDetails.periodicSalary}</Text>
+        <Text>{initialValues.concept.replace("(+)", "")}</Text>
         <Divider dashed />
         <Stack justifyContent="space-between">
           <Text

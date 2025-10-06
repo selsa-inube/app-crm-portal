@@ -1,36 +1,86 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFlag, useMediaQuery } from "@inubekit/inubekit";
-
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
+import { IIncomeSources } from "@services/creditLimit/types";
+import { ICustomerData } from "@context/CustomerContext/types";
+import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
 
 import { dataIncomeModal } from "./config";
+import { IIncome } from "../../SourceIncome/types";
 
 interface IncomeModalProps {
   handleClose: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (data: any) => void;
+  onSubmit: (updatedData: IIncomeSources) => void;
   openModal?: (state: boolean) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues?: any;
+  businessUnitPublicCode: string;
+  initialValues?: IIncomeSources;
   disabled?: boolean;
+  dataValues?: IIncome | null;
+  customerData?: ICustomerData;
+  borrowerOptions?: {
+    id: `${string}-${string}-${string}-${string}-${string}`;
+    label: string;
+    value: string;
+  }[];
+  selectedIndex?: number;
+  creditLimitData?: IIncomeSources | undefined;
+  publicCode?: string;
+  businessManagerCode: string;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
-  const { handleClose, openModal, disabled, initialValues, onSubmit } = props;
+  const {
+    handleClose,
+    openModal,
+    disabled,
+    businessUnitPublicCode,
+    initialValues,
+    onSubmit,
+    borrowerOptions,
+    selectedIndex,
+    customerData,
+    publicCode,
+    businessManagerCode,
+  } = props;
 
   const [formData, setFormData] = useState(initialValues);
+  const isMobile = useMediaQuery("(max-width:880px)");
+  const { addFlag } = useFlag();
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
+  const { restoreData } = useRestoreIncomeData({
+    setShowErrorModal,
+    setMessageError,
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDataChange = (newData: any) => {
+    onSuccess: (refreshedData) => {
+      setFormData(refreshedData);
+      handleDataChange(refreshedData);
+    },
+  });
+
+  useEffect(() => {
+    if (initialValues) {
+      setFormData({ ...initialValues });
+    }
+  }, [initialValues]);
+
+  const handleDataChange = (newData: IIncomeSources) => {
     setFormData(newData);
   };
-  const isMobile = useMediaQuery("(max-width:880px)");
-
-  const { addFlag } = useFlag();
 
   const handleSubmit = () => {
-    onSubmit(formData);
+    if (!formData) {
+      console.error("formData es undefined o null");
+      addFlag({
+        title: "Error",
+        description: "No hay datos para guardar",
+        appearance: "danger",
+        duration: 5000,
+      });
+      return;
+    }
+    onSubmit(formData as IIncomeSources);
     handleClose();
     addFlag({
       title: `${dataIncomeModal.flagTittle}`,
@@ -54,9 +104,18 @@ export function IncomeModal(props: IncomeModalProps) {
         ShowSupport={false}
         disabled={disabled}
         openModal={openModal}
-        data={initialValues}
+        data={formData}
         showEdit={false}
         onDataChange={handleDataChange}
+        onRestore={restoreData}
+        customerData={customerData}
+        borrowerOptions={borrowerOptions}
+        selectedIndex={selectedIndex}
+        showErrorModal={showErrorModal}
+        messageError={messageError}
+        publicCode={publicCode || ""}
+        businessUnitPublicCode={businessUnitPublicCode}
+        businessManagerCode={businessManagerCode}
       />
     </BaseModal>
   );

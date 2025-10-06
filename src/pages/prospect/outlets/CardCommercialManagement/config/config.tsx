@@ -5,10 +5,11 @@ import {
   MdOutlineAccountBalanceWallet,
   MdOutlineEdit,
   MdOutlineRemoveRedEye,
+  MdOutlineMessage,
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
-import { Schedule } from "@services/enums";
+import { Schedule } from "@services/enum/schedule";
 import { IOptions } from "@components/navigation/MenuProspect/types";
 
 export const titlesCommercialManagementAccordion = [
@@ -341,6 +342,14 @@ export const menuOptions = (
     icon: <MdOutlinePayments />,
     visible: visibleExtraPayments,
   },
+  {
+    title: "Observaciones",
+    onClick: () => {
+      handleOpenModal("observations");
+    },
+    icon: <MdOutlineMessage />,
+    visible: visibleExtraPayments,
+  },
 ];
 
 export const tittleOptions = {
@@ -354,6 +363,10 @@ export const tittleOptions = {
   titleAddProduct: "Agregar producto",
   titleExtraPayments: "Pagos extras",
   titleError: "¡Uy, algo ha salido mal!",
-  descriptionError: "No se han podido guardar los cambios.",
+  descriptionError: "Lamentamos los inconvenientes",
   deductibleExpensesErrorTitle: "Error al cargar gastos descontables",
+  editProduct: "Editar producto",
+  save: "Guardar",
+  deletedExpensesErrorDescription:
+    "¿Realmente deseas eliminar el gasto descontable.",
 };

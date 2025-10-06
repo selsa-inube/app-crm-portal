@@ -4,27 +4,30 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useIAuth } from "@inube/iauth-react";
 import { FlagProvider } from "@inubekit/inubekit";
 
 import { AppContext, AppContextProvider } from "@context/AppContext";
-import { usePortalLogic } from "@hooks/usePortalRedirect";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { AppPage } from "@components/layout/AppPage";
 import { GlobalStyles } from "@styles/global";
 import { Login } from "@pages/login";
-import { environment } from "@config/environment";
 import { initializeDataDB } from "@mocks/utils/initializeDataDB";
 import { LoginRoutes } from "@routes/login";
-import { AddProspectRoutes } from "@routes/addProspect";
-import { EditProspectRoutes } from "@routes/editProspect";
-import { SubmitCreditApplicationRoutes } from "@routes/SubmitCreditApplication";
-import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
+import { CreditRoutes } from "@routes/CreditRoutes";
+import { HomeRoutes } from "@routes/home";
+import { CustomerContextProvider } from "@context/CustomerContext";
+import { CustomerRoutes } from "@routes/customer";
+
+import { environment } from "./config/environment";
+import { AuthProvider } from "./pages/AuthProvider";
 
 function LogOut() {
   localStorage.clear();
-  const { logout } = useAuth0();
+  sessionStorage.clear();
+  const { logout } = useIAuth();
   logout({ logoutParams: { returnTo: environment.GOOGLE_REDIRECT_URI } });
   return <AppPage />;
 }
@@ -32,7 +35,10 @@ function LogOut() {
 function FirstPage() {
   const { businessUnitSigla } = useContext(AppContext);
   initializeDataDB(businessUnitSigla);
-  return businessUnitSigla.length === 0 ? <Login /> : <AppPage />;
+  if (businessUnitSigla.length === 0) {
+    return <Login />;
+  }
+  return <Navigate to="/home" replace />;
 }
 
 const router = createBrowserRouter(
@@ -44,35 +50,28 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage errorCode={400} />}
       />
       <Route path="login/*" element={<LoginRoutes />} />
-      <Route path="credit/simulate-credit/*" element={<AddProspectRoutes />} />
-      <Route path="credit/edit-prospect/*" element={<EditProspectRoutes />} />
-      <Route
-        path="credit/apply-for-credit/*"
-        element={<SubmitCreditApplicationRoutes />}
-      />
+      <Route path="credit/*" element={<CreditRoutes />} />
+      <Route path="home/*" element={<HomeRoutes />} />
+      <Route path="clients/select-client/*" element={<CustomerRoutes />} />
       <Route path="logout" element={<LogOut />} />
     </>,
   ),
 );
 
 function App() {
-  const { codeError, loading } = usePortalLogic();
-
-  if (loading) {
-    return <LoadingAppUI />;
-  }
-
-  if (codeError) {
-    return <ErrorPage errorCode={codeError} />;
-  }
-
   return (
-    <AppContextProvider>
-      <FlagProvider>
-        <GlobalStyles />
-        <RouterProvider router={router} />
-      </FlagProvider>
-    </AppContextProvider>
+    <AuthProvider>
+      <AppContextProvider>
+        <CustomerContextProvider>
+          <CustomerContextProvider>
+            <FlagProvider>
+              <GlobalStyles />
+              <RouterProvider router={router} />
+            </FlagProvider>
+          </CustomerContextProvider>
+        </CustomerContextProvider>
+      </AppContextProvider>
+    </AuthProvider>
   );
 }
 

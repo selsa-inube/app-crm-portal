@@ -1,17 +1,19 @@
 import { useState, useEffect, useMemo } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { IStaffPortalByBusinessManager } from "@services/staffPortal/types";
-import { IBusinessManagers } from "@services/businessManager/types";
+import { useIAuth } from "@inube/iauth-react";
 
+import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
+import { IBusinessManagers } from "@services/businessManager/types";
 import {
   validateBusinessManagers,
   validateConsultation,
 } from "@context/AppContext/utils";
 import { ICRMPortalData } from "@context/AppContext/types";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import { getStaff } from "@services/staffs";
-
+import { getStaff } from "@services/staffs/searchAllStaff";
 import { decrypt } from "@utils/encrypt/encrypt";
+import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
+import { getSearchUseCaseForStaff } from "@services/staffs/SearchUseCaseForStaff";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -21,10 +23,12 @@ interface IBusinessUnits {
 }
 
 function useAppContext() {
-  const { user } = useAuth0();
+  const { user, isLoading: isIAuthLoading } = useIAuth();
+
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
   );
+  const [messageError, setMessageError] = useState("");
   const [businessManagers, setBusinessManagers] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
@@ -37,7 +41,9 @@ function useAppContext() {
     const savedBusinessUnits = localStorage.getItem("businessUnitsToTheStaff");
     return savedBusinessUnits ? JSON.parse(savedBusinessUnits) : [];
   });
-
+  const [optionStaffData, setOptionStaffData] = useState<IOptionStaff[]>([]);
+  const [staffUseCases, setStaffUseCases] = useState<string[]>([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const portalId = localStorage.getItem("portalCode");
   let portalCode = "";
   if (portalId) {
@@ -51,75 +57,6 @@ function useAppContext() {
     console.error("Error parsing businessUnitSigla: ", error);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getUserPermissions = (IStaff: any) => {
-    const isAdmon =
-      IStaff.identificationDocumentNumber === "elyerogo@gmail.com";
-    return {
-      canReject: isAdmon,
-      canCancel: isAdmon,
-      canPrint: isAdmon,
-      canAttach: false,
-      canViewAttachments: false,
-      canManageGuarantees: isAdmon,
-      canViewCreditProfile: false,
-      canManageDisbursementMethods: isAdmon,
-      canAddRequirements: false,
-      canSendDecision: isAdmon,
-      canChangeUsers: isAdmon,
-      canApprove: isAdmon,
-      canSubmitProspect: isAdmon,
-    };
-  };
-
-  useEffect(() => {
-    const fetchStaffData = async () => {
-      try {
-        const staffData = await getStaff();
-        if (!staffData.length) return;
-        const matchedStaff = staffData.find(
-          (staff) =>
-            staff.identificationDocumentNumber ===
-            user?.email?.substring(0, 20),
-        );
-
-        if (matchedStaff) {
-          const userPermissions = getUserPermissions(matchedStaff);
-          setEventData((prev) => ({
-            ...prev,
-            user: {
-              ...prev.user,
-              staff: {
-                biologicalSex: matchedStaff.biologicalSex,
-                birthDay: matchedStaff.birthDay,
-                businessManagerCode: matchedStaff.businessManagerCode,
-                identificationDocumentNumber:
-                  matchedStaff.identificationDocumentNumber,
-                identificationTypeNaturalPerson:
-                  matchedStaff.identificationTypeNaturalPerson,
-                missionName: matchedStaff.missionName,
-                principalEmail: matchedStaff.principalEmail,
-                principalPhone: matchedStaff.principalPhone,
-                staffByBusinessUnitAndRole:
-                  matchedStaff.staffByBusinessUnitAndRole,
-                staffId: matchedStaff.staffId,
-                staffName: matchedStaff.staffName,
-                userAccount: matchedStaff.userAccount,
-                useCases: userPermissions,
-              },
-            },
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching staff data:", error);
-      }
-    };
-
-    if (user?.email) {
-      fetchStaffData();
-    }
-  }, [user?.email]);
-
   const [eventData, setEventData] = useState<ICRMPortalData>({
     portal: {
       abbreviatedName: "",
@@ -132,6 +69,7 @@ function useAppContext() {
       abbreviatedName: "",
       urlBrand: "",
       urlLogo: "",
+      businessManagerId: "",
     },
     businessUnit: {
       businessUnitPublicCode: businessUnit?.businessUnitPublicCode || "",
@@ -140,8 +78,9 @@ function useAppContext() {
       urlLogo: businessUnit?.urlLogo || "",
     },
     user: {
-      userAccount: user?.email || "",
-      userName: user?.name || "",
+      userAccount: "",
+      userName: "",
+      identificationDocumentNumber: "",
       staff: {
         biologicalSex: "",
         birthDay: "",
@@ -159,49 +98,162 @@ function useAppContext() {
         staffId: "",
         staffName: "",
         userAccount: "",
-        useCases: {
-          canReject: false,
-          canCancel: false,
-          canPrint: false,
-          canAttach: false,
-          canViewAttachments: false,
-          canManageGuarantees: false,
-          canViewCreditProfile: false,
-          canManageDisbursementMethods: false,
-          canAddRequirements: false,
-          canSendDecision: false,
-          canChangeUsers: false,
-          canApprove: false,
-          canSubmitProspect: false,
-        },
+        useCases: [],
       },
     },
   });
 
   useEffect(() => {
-    validateConsultation().then((data) => {
-      setPortalData(data);
-    });
-  }, []);
+    if (!isIAuthLoading) {
+      if (user) {
+        setEventData((prev) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            userAccount: user.username || "",
+            userName: user.nickname || "",
+            identificationDocumentNumber: user.id || "",
+          },
+        }));
+      }
+    }
+  }, [user, isIAuthLoading]);
 
   useEffect(() => {
-    if (!portalCode) return;
+    const fetchStaffData = async () => {
+      try {
+        const userIdentifier = user?.id;
+        if (!userIdentifier || isIAuthLoading) {
+          return;
+        }
+
+        const staffData = await getStaff(userIdentifier);
+        if (!staffData.length) return;
+
+        setEventData((prev) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            staff: {
+              ...prev.user.staff,
+              biologicalSex: staffData[0].biologicalSex,
+              birthDay: staffData[0].birthDay,
+              businessManagerCode: staffData[0].businessManagerCode,
+              identificationDocumentNumber:
+                staffData[0].identificationDocumentNumber,
+              identificationTypeNaturalPerson:
+                staffData[0].identificationTypeNaturalPerson,
+              missionName: staffData[0].missionName,
+              principalEmail: staffData[0].principalEmail,
+              principalPhone: staffData[0].principalPhone,
+              staffByBusinessUnitAndRole:
+                staffData[0].staffByBusinessUnitAndRole,
+              staffId: staffData[0].staffId,
+              staffName: staffData[0].staffName,
+              userAccount: staffData[0].userAccount,
+            },
+          },
+        }));
+      } catch (error) {
+        console.error("Error fetching staff data:", error);
+      }
+    };
+
+    fetchStaffData();
+  }, [user?.username, isIAuthLoading]);
+
+  useEffect(() => {
+    const identificationNumber =
+      eventData?.user?.identificationDocumentNumber || "";
+
+    if (
+      !eventData.businessUnit.abbreviatedName ||
+      !eventData.businessManager.publicCode ||
+      !identificationNumber
+    ) {
+      return;
+    }
+
+    (async () => {
+      try {
+        const staffUseCaseData = await getSearchUseCaseForStaff(
+          eventData.businessUnit.abbreviatedName,
+          eventData.businessManager.publicCode,
+          identificationNumber,
+        );
+        setStaffUseCases(staffUseCaseData);
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError(JSON.stringify(error));
+      }
+    })();
+  }, [
+    eventData.businessUnit.abbreviatedName,
+    eventData.businessManager.publicCode,
+    eventData?.user?.identificationDocumentNumber,
+  ]);
+
+  useEffect(() => {
+    if (isIAuthLoading || !portalCode) return;
+
+    validateConsultation(portalCode).then((data) => {
+      setPortalData(data);
+    });
+  }, [portalCode, isIAuthLoading]);
+
+  const userIdentifier = eventData?.user?.identificationDocumentNumber;
+
+  useEffect(() => {
+    const fetchOptionStaff = async () => {
+      try {
+        if (
+          !eventData?.portal?.publicCode ||
+          !eventData?.businessUnit?.businessUnitPublicCode ||
+          !user?.username ||
+          isIAuthLoading
+        ) {
+          return;
+        }
+
+        const result = await getSearchOptionForStaff(
+          eventData.portal.publicCode,
+          eventData.businessUnit.businessUnitPublicCode,
+          userIdentifier || "",
+        );
+        setOptionStaffData(result);
+      } catch (error) {
+        console.error("Error fetching option staff:", error);
+      }
+    };
+
+    fetchOptionStaff();
+  }, [
+    eventData?.portal?.publicCode,
+    eventData?.businessUnit?.businessUnitPublicCode,
+    user?.username,
+    isIAuthLoading,
+  ]);
+
+  useEffect(() => {
+    if (!portalCode || isIAuthLoading) return;
+
     const portalDataFiltered = portalData.filter(
       (data) => data.staffPortalId === portalCode,
     );
+
     const foundBusiness = portalDataFiltered.find(
       (bussines) => bussines,
-    )?.businessManagerId;
+    )?.businessManagerCode;
 
     if (portalDataFiltered.length > 0 && foundBusiness) {
       validateBusinessManagers(foundBusiness).then((data) => {
         setBusinessManagers(data);
       });
     }
-  }, [portalData, portalCode]);
+  }, [portalData, portalCode, isIAuthLoading]);
 
   useEffect(() => {
-    if (!businessManagers) return;
+    if (!businessManagers || isIAuthLoading) return;
 
     const portalDataFiltered = portalData.find(
       (data) => data.staffPortalId === portalCode,
@@ -212,7 +264,7 @@ function useAppContext() {
         ...prev.portal,
         abbreviatedName: portalDataFiltered?.abbreviatedName || "",
         staffPortalCatalogId: portalDataFiltered?.staffPortalId || "",
-        businessManagerId: portalDataFiltered?.businessManagerId || "",
+        businessManagerId: portalDataFiltered?.businessManagerCode || "",
         publicCode: portalDataFiltered?.publicCode || "",
       },
       businessManager: {
@@ -221,9 +273,10 @@ function useAppContext() {
         abbreviatedName: businessManagers.abbreviatedName || "",
         urlBrand: businessManagers.urlBrand || "",
         urlLogo: businessManagers.urlLogo || "",
+        businessManagerId: businessManagers.id || "",
       },
     }));
-  }, [businessManagers, portalData, portalCode]);
+  }, [businessManagers, portalData, portalCode, isIAuthLoading]);
 
   useEffect(() => {
     localStorage.setItem("businessUnitSigla", businessUnitSigla);
@@ -257,22 +310,44 @@ function useAppContext() {
     );
   }, [businessUnitsToTheStaff]);
 
+  useEffect(() => {
+    if (staffUseCases) {
+      setEventData((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          staff: {
+            ...prev.user.staff,
+            useCases: staffUseCases,
+          },
+        },
+      }));
+    }
+  }, [staffUseCases]);
   const appContext = useMemo(
     () => ({
       eventData,
       businessUnitSigla,
       businessUnitsToTheStaff,
+      optionStaffData,
+      isIAuthLoading,
       setEventData,
       setBusinessUnitSigla,
       setBusinessUnitsToTheStaff,
+      setOptionStaffData,
+      showErrorModal,
+      setShowErrorModal,
+      messageError,
     }),
     [
       eventData,
       businessUnitSigla,
       businessUnitsToTheStaff,
-      setEventData,
-      setBusinessUnitSigla,
-      setBusinessUnitsToTheStaff,
+      optionStaffData,
+      isIAuthLoading,
+      showErrorModal,
+      setShowErrorModal,
+      messageError,
     ],
   );
 

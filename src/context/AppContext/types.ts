@@ -1,4 +1,5 @@
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
+import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 
 interface IPortal {
   abbreviatedName: string;
@@ -11,6 +12,7 @@ interface IBusinessManager {
   abbreviatedName: string;
   urlBrand: string;
   urlLogo: string;
+  businessManagerId?: string;
 }
 
 interface IStaffByBusinessUnitAndRole {
@@ -33,8 +35,9 @@ export interface Ipermissions {
   canChangeUsers: boolean;
   canApprove: boolean;
   canSubmitProspect: boolean;
+  identificationDocumentNumber?: string;
 }
-interface IStaff {
+export interface IStaff {
   biologicalSex: string;
   birthDay: string;
   businessManagerCode: string;
@@ -47,15 +50,22 @@ interface IStaff {
   staffId: string;
   staffName: string;
   userAccount: string;
-  useCases: Ipermissions;
+  useCases: string[];
 }
 
 interface IUser {
   userAccount: string;
   userName: string;
+  identificationDocumentNumber?: string;
   staff: IStaff;
 }
-
+export interface IUsers {
+  username: string;
+  id: string;
+  company: string;
+  urlImgPerfil: string;
+  nickname: string;
+}
 interface IBusinessUnit {
   businessUnitPublicCode: string;
   abbreviatedName: string;
@@ -80,6 +90,8 @@ interface IAppContext {
   setBusinessUnitsToTheStaff: React.Dispatch<
     React.SetStateAction<IBusinessUnitsPortalStaff[]>
   >;
+  setOptionStaffData: React.Dispatch<React.SetStateAction<IOptionStaff[]>>;
+  optionStaffData?: IOptionStaff[];
 }
 
 export type { ICRMPortalData, IAppContext, IBusinessUnit };

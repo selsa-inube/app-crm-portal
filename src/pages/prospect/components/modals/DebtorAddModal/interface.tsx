@@ -3,8 +3,8 @@ import { Stack, Divider, Assisted } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
-import { IIncomeSources } from "@services/incomeSources/types";
-import { IProspect } from "@services/types";
+import { IIncomeSources } from "@services/creditLimit/types";
+import { IProspect } from "@services/prospect/types";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";
@@ -21,6 +21,8 @@ interface DebtorAddModalUIProps {
   incomeData: IIncomeSources | undefined;
   AutoCompleted: boolean;
   prospectData: IProspect;
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
   handleFormChange: (updatedValues: Partial<FormData>) => void;
   handleIncomeChange: (updatedValues: Partial<IIncomeSources>) => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
@@ -42,6 +44,8 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     incomeData,
     AutoCompleted,
     prospectData,
+    businessUnitPublicCode,
+    businessManagerCode,
     handleFormChange,
     handleIncomeChange,
     handleNextStep,
@@ -102,6 +106,8 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               data={incomeData}
               showEdit={false}
               onDataChange={handleIncomeChange}
+              businessUnitPublicCode={businessUnitPublicCode}
+              businessManagerCode={businessManagerCode}
             />
           )}
         {currentStepsNumber &&

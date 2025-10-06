@@ -8,7 +8,7 @@ export const dataAddModal = {
   labelSex: "Sexo biológico",
   labelAge: "Edad",
   labelRelation: "Parentesco",
-  placeHolderSelect: "Seleccione una opción",
+  placeHolderSelect: "Selecciona una opción",
   placeNumberDocument: "Ej: 1010477949",
   placeHolderName: "Ej: Daniel Rodrigo",
   placeHolderLastName: "Ej: Rodriguez Velandia",

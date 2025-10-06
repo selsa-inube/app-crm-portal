@@ -12,9 +12,13 @@ import {
 } from "@inubekit/inubekit";
 
 import { ActionMobile } from "@components/feedback/ActionMobile";
-import { ListModal } from "@components/modals/ListModal";
-import { EditSeriesModal } from "@components/modals/EditSeriesModal";
+import { DeleteModal } from "@components/modals/DeleteModal";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { formatPrimaryDate } from "@utils/formatData/date";
+import {
+  IExtraordinaryInstallments,
+  IProspect,
+} from "@services/prospect/types";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";
@@ -33,14 +37,18 @@ interface ITableExtraordinaryInstallmentProps {
   selectedDebtor: TableExtraordinaryInstallmentProps;
   isOpenModalDelete: boolean;
   isOpenModalEdit: boolean;
+  prospectData: IProspect | undefined;
+  businessUnitPublicCode: string;
+  service: boolean;
+  showErrorModal: boolean;
+  messageError: string;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
-  handleEdit: (row: TableExtraordinaryInstallmentProps) => void;
-  handleDelete: (id: string) => void;
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
-  usePagination: (data: TableExtraordinaryInstallmentProps[]) => {
+  usePagination: {
     totalRecords: number;
     handleStartPage: () => void;
     handlePrevPage: () => void;
@@ -48,7 +56,18 @@ interface ITableExtraordinaryInstallmentProps {
     handleEndPage: () => void;
     firstEntryInPage: number;
     lastEntryInPage: number;
+    paddedCurrentData: TableExtraordinaryInstallmentProps[];
   };
+  setSentData?:
+    | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
+    | undefined;
+  handleClose?: (() => void) | undefined;
+  setSelectedDebtor: React.Dispatch<
+    React.SetStateAction<TableExtraordinaryInstallmentProps>
+  >;
+  handleDelete?: (id: string) => void;
+  itemIdentifiersForUpdate: IExtraordinaryInstallments;
+  handleDeleteAction: () => Promise<void>;
 }
 
 export function TableExtraordinaryInstallmentUI(
@@ -60,26 +79,26 @@ export function TableExtraordinaryInstallmentUI(
     visbleActions,
     extraordinaryInstallments,
     isMobile,
-    selectedDebtor,
     isOpenModalDelete,
-    isOpenModalEdit,
-    setIsOpenModalDelete,
-    setIsOpenModalEdit,
-    handleEdit,
-    handleDelete,
-    handleUpdate,
     usePagination,
+    showErrorModal,
+    messageError,
+    setShowErrorModal,
+    setIsOpenModalDelete,
+    setSelectedDebtor,
+    handleDeleteAction,
   } = props;
 
   const {
     totalRecords,
+    firstEntryInPage,
+    lastEntryInPage,
+    paddedCurrentData,
     handleStartPage,
     handlePrevPage,
     handleNextPage,
     handleEndPage,
-    firstEntryInPage,
-    lastEntryInPage,
-  } = usePagination(extraordinaryInstallments);
+  } = usePagination;
 
   return (
     <Table>
@@ -125,58 +144,79 @@ export function TableExtraordinaryInstallmentUI(
             </Td>
           </Tr>
         )}
+
         {!loading &&
-          extraordinaryInstallments &&
-          extraordinaryInstallments.length > 0 &&
-          extraordinaryInstallments.map((row, indx) => (
-            <Tr key={indx} zebra={indx % 2 !== 0}>
-              {visbleHeaders.map((header) => (
-                <Td key={header.key} align="left">
-                  {header.key === "datePayment"
-                    ? formatPrimaryDate(new Date(row[header.key] as string))
-                    : header.mask
-                      ? header.mask(row[header.key] as string | number)
-                      : (row[header.key] as React.ReactNode)}
-                </Td>
-              ))}
-              {visbleActions &&
-                visbleActions.length > 0 &&
-                visbleActions.map((action) => (
+          paddedCurrentData.filter(
+            (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+          ).length > 0 &&
+          paddedCurrentData
+            .filter(
+              (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+            )
+            .map((row: TableExtraordinaryInstallmentProps, index: number) => (
+              <Tr key={index} zebra={index % 2 !== 0}>
+                {visbleHeaders.map((header) => {
+                  const raw =
+                    row[header.key as keyof TableExtraordinaryInstallmentProps];
+                  const value =
+                    header.key === "datePayment"
+                      ? formatPrimaryDate(new Date(raw as string))
+                      : header.mask
+                        ? header.mask(raw as string | number)
+                        : raw;
+
+                  return (
+                    <Td key={header.key} align="left">
+                      {value?.toString() ?? ""}
+                    </Td>
+                  );
+                })}
+
+                {visbleActions.map((action) => (
                   <Td key={action.key} type="custom">
                     {isMobile ? (
                       <ActionMobile
-                        handleDelete={() => setIsOpenModalDelete(true)}
-                        handleEdit={() => handleEdit(row)}
+                        handleDelete={() => {
+                          setSelectedDebtor(row);
+                          setIsOpenModalDelete(true);
+                        }}
                       />
                     ) : (
                       <Detail
-                        handleDelete={() => setIsOpenModalDelete(true)}
-                        handleEdit={() => handleEdit(row)}
+                        handleDelete={() => {
+                          setSelectedDebtor(row);
+                          setIsOpenModalDelete(true);
+                        }}
                       />
                     )}
                   </Td>
                 ))}
-            </Tr>
-          ))}
-        {!loading && extraordinaryInstallments.length === 0 && (
-          <Tr>
-            <Td
-              colSpan={visbleHeaders.length + visbleActions.length}
-              align="center"
-              type="custom"
-            >
-              <Text
-                size="large"
-                type="label"
-                appearance="gray"
-                textAlign="center"
+              </Tr>
+            ))}
+
+        {!loading &&
+          paddedCurrentData.filter(
+            (row: TableExtraordinaryInstallmentProps) => !row.__isPadding,
+          ).length === 0 && (
+            <Tr>
+              <Td
+                colSpan={visbleHeaders.length + visbleActions.length}
+                align="center"
+                type="custom"
               >
-                {dataTableExtraordinaryInstallment.noData}
-              </Text>
-            </Td>
-          </Tr>
-        )}
+                <Text
+                  size="large"
+                  type="label"
+                  appearance="gray"
+                  textAlign="center"
+                >
+                  {dataTableExtraordinaryInstallment.noData}
+                </Text>
+              </Td>
+            </Tr>
+          )}
       </Tbody>
+
       {extraordinaryInstallments.length > 0 && !loading && (
         <Tfoot>
           <Tr border="bottom">
@@ -199,29 +239,17 @@ export function TableExtraordinaryInstallmentUI(
         </Tfoot>
       )}
       {isOpenModalDelete && (
-        <ListModal
-          title={dataTableExtraordinaryInstallment.deletion}
+        <DeleteModal
           handleClose={() => setIsOpenModalDelete(false)}
-          handleSubmit={() => setIsOpenModalDelete(false)}
-          onSubmit={() => {
-            if (selectedDebtor) {
-              handleDelete(selectedDebtor.id as string);
-              setIsOpenModalDelete(false);
-            }
-          }}
-          buttonLabel={dataTableExtraordinaryInstallment.delete}
-          content={dataTableExtraordinaryInstallment.content}
-          cancelButton={dataTableExtraordinaryInstallment.cancel}
+          handleDelete={handleDeleteAction}
+          TextDelete={dataTableExtraordinaryInstallment.content}
         />
       )}
-      {isOpenModalEdit && (
-        <EditSeriesModal
-          handleClose={() => setIsOpenModalEdit(false)}
-          onSubmit={() => setIsOpenModalEdit(false)}
-          onConfirm={async (updatedDebtor) => {
-            await handleUpdate(updatedDebtor);
-          }}
-          initialValues={selectedDebtor}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
         />
       )}
     </Table>

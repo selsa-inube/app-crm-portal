@@ -1,11 +1,11 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
 
-import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
+import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { AppContext } from "@context/AppContext";
 
-import { ICustomerContext, ICustomerData } from "./types";
+import { ICustomerContext, ICustomerData, initialCustomerData } from "./types";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const CustomerContext = createContext<ICustomerContext>(
   {} as ICustomerContext,
 );
@@ -17,42 +17,31 @@ interface ICustomerContextProviderProps {
 export function CustomerContextProvider({
   children,
 }: ICustomerContextProviderProps) {
-  const { customerPublicCode } = useParams();
-  const [customerData, setCustomerData] = useState<ICustomerData>({
-    customerId: "",
-    publicCode: "",
-    fullName: "",
-    natureClient: "",
-    generalAttributeClientNaturalPersons: [
-      {
-        employmentType: "",
-        associateType: "",
-        typeIdentification: "",
-        firstNames: "",
-        lastNames: "",
-        emailContact: "",
-        cellPhoneContact: "",
-        gender: "",
-        dateBirth: "",
-        zone: "",
-      },
-    ],
-    generalAssociateAttributes: [
-      {
-        affiliateSeniorityDate: "",
-        partnerStatus: "",
-      },
-    ],
-  });
+  const getInitialPublicCode = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("customerPublicCodeState") || "";
+    }
+    return "";
+  };
 
-  const { businessUnitSigla } = useContext(AppContext);
+  const [customerData, setCustomerData] =
+    useState<ICustomerData>(initialCustomerData);
 
-  const businessUnitPublicCode: string =
-    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+  const [customerPublicCodeState, setCustomerPublicCodeState] =
+    useState<string>(getInitialPublicCode());
+  const { businessUnitSigla, eventData } = useContext(AppContext);
+  let businessUnitPublicCode: string = "";
 
-  useEffect(() => {
-    fetchCustomerData(customerPublicCode!, businessUnitPublicCode);
-  }, [customerPublicCode, businessUnitPublicCode]);
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
+  try {
+    if (businessUnitSigla) {
+      const parsed = JSON.parse(businessUnitSigla);
+      businessUnitPublicCode = parsed?.businessUnitPublicCode || "";
+    }
+  } catch (e) {
+    businessUnitPublicCode = "";
+  }
 
   const fetchCustomerData = async (
     publicCode: string,
@@ -62,6 +51,7 @@ export function CustomerContextProvider({
       const customers = await getSearchCustomerByCode(
         publicCode,
         businessUnitPublicCode,
+        businessManagerCode,
       );
 
       if (customers) {
@@ -87,8 +77,24 @@ export function CustomerContextProvider({
     }
   };
 
+  useEffect(() => {
+    if (customerPublicCodeState) {
+      fetchCustomerData(customerPublicCodeState, businessUnitPublicCode);
+    }
+  }, [customerPublicCodeState, businessUnitPublicCode]);
+
+  useEffect(() => {
+    if (customerPublicCodeState) {
+      localStorage.setItem("customerPublicCodeState", customerPublicCodeState);
+    } else {
+      localStorage.removeItem("customerPublicCodeState");
+    }
+  }, [customerPublicCodeState]);
+
   return (
-    <CustomerContext.Provider value={{ customerData }}>
+    <CustomerContext.Provider
+      value={{ customerData, setCustomerPublicCodeState, setCustomerData }}
+    >
       {children}
     </CustomerContext.Provider>
   );

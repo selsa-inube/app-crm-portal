@@ -97,7 +97,6 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.tipeOfDocument}
           size="compact"
-          readonly={!AutoCompleted}
           fullwidth
         />
         <Input
@@ -154,7 +153,6 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
         <Phonefield
           name="phone"
           id="phone"
-          type="number"
           label={dataAddModal.labelNumber}
           placeholder={dataAddModal.placeHolderNumber}
           onChange={formik.handleChange}
@@ -174,7 +172,6 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           onBlur={formik.handleBlur}
           value={formik.values.sex}
           size="compact"
-          readonly={!AutoCompleted}
           fullwidth
         />
         <Input

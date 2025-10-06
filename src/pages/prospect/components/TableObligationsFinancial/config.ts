@@ -37,17 +37,18 @@ export const dataReport = {
   close: "Cerrar",
   restore: "Restablecer",
   descriptionModal:
-    "¿Realmente desea restablecer los valores a su estado inicial?",
+    "¿Realmente deseas restablecer los valores a su estado inicial?",
   save: "Guardar",
   edit: "Editar",
   deletion: "Eliminación",
   delete: "Eliminar",
-  content: "¿Realmente desea eliminar esta obligación?",
+  content: "¿Realmente deseas eliminar esta obligación?",
   cancel: "Cancelar",
+  errorIncome: "Error al restablecer las fuentes de ingresos",
 };
 
 export function convertObligationsToProperties(
-  obligations: {
+  obligationsFinancial: {
     balanceObligationTotal: number;
     duesPaid: number;
     entity: string;
@@ -58,7 +59,7 @@ export function convertObligationsToProperties(
     productName: string;
   }[],
 ): { propertyName: string; propertyValue: string }[] {
-  return obligations.map((obligation) => ({
+  return obligationsFinancial.map((obligation) => ({
     propertyName: "FinancialObligation",
     propertyValue: [
       obligation.productName ?? "",
@@ -72,3 +73,7 @@ export function convertObligationsToProperties(
     ].join(", "),
   }));
 }
+
+export const errorMessages = {
+  updateMessage: "Error al actualizar:",
+};

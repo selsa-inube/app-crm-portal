@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { MdLogout, MdOutlineChevronRight } from "react-icons/md";
 import {
   Nav,
@@ -9,6 +9,7 @@ import {
   useMediaQuery,
   Header,
 } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { AppContext } from "@context/AppContext";
 import { MenuSection } from "@components/navigation/MenuSection";
@@ -33,26 +34,37 @@ import {
   StyledPrint,
   StyledFooter,
 } from "./styles";
-
 import { useNavigationConfig } from "./config/apps.config";
 
 const renderLogo = (imgUrl: string) => {
   return (
-    <StyledContentImg to="/">
+    <StyledContentImg to="/home">
       <StyledLogo src={imgUrl} />
     </StyledContentImg>
   );
 };
 
-function AppPage() {
+interface IAppPage {
+  showNav?: boolean;
+}
+
+function AppPage(props: IAppPage) {
+  const { showNav = true } = props;
+
   const { eventData, businessUnitsToTheStaff, setBusinessUnitSigla } =
     useContext(AppContext);
+  const location = useLocation();
+  const { user } = useIAuth();
+
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [collapse, setCollapse] = useState(false);
+  const [showMenuOnHeader, setShowMenuOnHeader] = useState(true);
+
   const userMenuRef = useRef<HTMLDivElement>(null);
   const collapseMenuRef = useRef<HTMLDivElement>(null);
   const businessUnitChangeRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -79,6 +91,7 @@ function AppPage() {
   const [selectedClient, setSelectedClient] = useState<string>(
     eventData.businessUnit.abbreviatedName,
   );
+
   useEffect(() => {
     const selectUser = document.querySelector("header div div:nth-child(0)");
     const handleToggleuserMenu = () => {
@@ -103,6 +116,11 @@ function AppPage() {
     setBusinessUnitSigla(selectJSON);
     setSelectedClient(businessUnit.abbreviatedName);
     setCollapse(false);
+    if (
+      businessUnit.abbreviatedName !== eventData.businessUnit.abbreviatedName
+    ) {
+      navigate("/clients/select-client/");
+    }
   };
 
   const { addFlag } = useFlag();
@@ -123,6 +141,21 @@ function AppPage() {
     }
   }, [businessUnitsToTheStaff]);
 
+  useEffect(() => {
+    if (location.pathname.toString().includes("clients/select-client")) {
+      setShowMenuOnHeader(false);
+    } else {
+      setShowMenuOnHeader(true);
+    }
+  });
+
+  if (
+    eventData.businessUnit.businessUnitPublicCode === "" ||
+    eventData.businessUnit.businessUnitPublicCode === undefined
+  ) {
+    navigate(`/login/${user.username}/business-units/select-business-unit`);
+  }
+
   return (
     <StyledAppPage>
       <Grid templateRows="auto 1fr" height="100vh" justifyContent="unset">
@@ -130,7 +163,7 @@ function AppPage() {
           <StyledHeaderContainer>
             <Header
               logoURL={renderLogo(eventData.businessUnit.urlLogo)}
-              navigation={useNavigationConfig()}
+              {...(showMenuOnHeader && { navigation: useNavigationConfig() })}
               user={{
                 username: eventData.user.userName,
                 breakpoint: "848px",
@@ -194,28 +227,33 @@ function AppPage() {
           )}
 
           <Grid
-            templateColumns={!isTablet ? "auto 1fr" : "1fr"}
+            templateColumns={!isTablet ? (showNav ? "auto 1fr" : "1fr") : "1fr"}
             alignContent="unset"
-            height={isTablet ? "81vh" : "92vh"}
+            height="100%"
           >
-            {!isTablet && (
-              <Nav
-                navigation={navConfig}
-                actions={actions}
-                collapse={true}
-                footerLogo={eventData.businessManager.urlLogo}
-              />
+            {!isTablet && showNav && (
+              <StyledPrint>
+                <Nav
+                  navigation={navConfig}
+                  actions={actions}
+                  collapse={true}
+                  footerLogo={eventData.businessManager.urlLogo}
+                />
+              </StyledPrint>
             )}
             <StyledMain>
               <Outlet />
             </StyledMain>
           </Grid>
-          {isTablet && (
-            <StyledFooter>
-              {renderLogo(eventData.businessManager.urlBrand)}
-            </StyledFooter>
-          )}
         </StyledContainer>
+
+        <StyledFooter
+          $nav={isTablet}
+          isShowMenuOnHeader={showMenuOnHeader}
+          showNav={showNav}
+        >
+          {renderLogo(eventData.businessManager.urlBrand)}
+        </StyledFooter>
       </Grid>
     </StyledAppPage>
   );

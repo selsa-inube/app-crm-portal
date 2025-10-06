@@ -1,4 +1,8 @@
 import { IncomeCard } from "@components/cards/IncomeCard";
+import { ICustomerData } from "@context/CustomerContext/types";
+import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
+
+import { IIncome } from "./types";
 
 interface IncomeProps {
   values: string[];
@@ -13,15 +17,16 @@ function IncomeCapital({
   disabled,
   onValueChange,
 }: IncomeProps) {
+  const capitalSources = IncomeTypes.filter(
+    (src) => src.Type === "Capital income",
+  );
   return (
     <IncomeCard
-      title="Rentas de capital"
-      labels={[
-        "Arrendamientos",
-        "Dividendos o participaciones",
-        "Rendimientos financieros",
-      ]}
-      placeholders={["Arrendamiento/mes", "Utilidades/mes", "Rendimientos/mes"]}
+      title={capitalSources[0]?.TypeEs ?? ""}
+      labels={capitalSources.map((source) => source.DescriptionEs ?? "")}
+      placeholders={capitalSources.map(
+        (source) => `${source.DescriptionEs}/mes`,
+      )}
       values={values}
       ShowSupport={ShowSupport}
       disabled={disabled}
@@ -36,19 +41,17 @@ function IncomeEmployment({
   disabled,
   onValueChange,
 }: IncomeProps) {
+  const employmentSources = IncomeTypes.filter(
+    (src) => src.Type === "Employment income",
+  );
+
   return (
     <IncomeCard
-      title="Rentas de trabajo"
-      labels={[
-        "Salario mensual",
-        "Otros pagos mensuales",
-        "Mesadas pensionales",
-      ]}
-      placeholders={[
-        "Salario percibido/mes",
-        "Subsidios, utilidades, propinas, etc.",
-        "Pensión/mes",
-      ]}
+      title={employmentSources[0]?.TypeEs ?? ""}
+      labels={employmentSources.map((source) => source.DescriptionEs ?? "")}
+      placeholders={employmentSources.map(
+        (source) => `${source.DescriptionEs}/mes`,
+      )}
       values={values}
       ShowSupport={ShowSupport}
       disabled={disabled}
@@ -63,11 +66,18 @@ function MicroBusinesses({
   disabled,
   onValueChange,
 }: IncomeProps) {
+  const variableSources = IncomeTypes.filter(
+    (src) =>
+      src.Type === "Professional fees" ||
+      src.Type === "Earnings from ventures or micro-businesses",
+  );
   return (
     <IncomeCard
-      title="Otros ingresos variables"
-      labels={["Honorarios profesionales", "Ganancias en micronegocios"]}
-      placeholders={["Honorarios/mes", "Ganancias/mes"]}
+      title={variableSources[0]?.TypeEs ?? ""}
+      labels={variableSources.map((source) => source.DescriptionEs ?? "")}
+      placeholders={variableSources.map(
+        (source) => `${source.DescriptionEs}/mes`,
+      )}
       values={values}
       ShowSupport={ShowSupport}
       disabled={disabled}
@@ -76,4 +86,14 @@ function MicroBusinesses({
   );
 }
 
-export { IncomeCapital, IncomeEmployment, MicroBusinesses };
+function getInitialValues(customerData: ICustomerData) {
+  return {
+    borrower_id: customerData?.publicCode ?? "",
+    borrower: customerData?.fullName ?? "",
+    capital: ["0", "0", "0"],
+    employment: ["0", "0", "0"],
+    businesses: ["0", "0"],
+  } as IIncome;
+}
+
+export { IncomeCapital, IncomeEmployment, MicroBusinesses, getInitialValues };

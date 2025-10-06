@@ -1,32 +1,3 @@
-import { IExtraordinaryPayment } from "@services/types";
-
-export const extraordinaryInstallmentMock: IExtraordinaryPayment[] = [
-  {
-    id: 1,
-    datePayment: "2024-02-03",
-    amount: 1500000,
-    value: 1500000,
-    paymentMethod: "Selsa",
-    frequency: "Mensual",
-  },
-  {
-    id: 2,
-    datePayment: "2024-02-03",
-    amount: 1500000,
-    value: 1000000,
-    paymentMethod: "Selsa",
-    frequency: "Trimestral",
-  },
-  {
-    id: 3,
-    datePayment: "2024-02-03",
-    amount: 1500000,
-    value: 2000000,
-    paymentMethod: "Prima",
-    frequency: "Anual",
-  },
-];
-
 export const paymentMethodOptionsMock = [
   {
     id: "comfandi_payroll_jun",
@@ -44,7 +15,7 @@ export const paymentDateOptionsMock = [
   {
     id: "dic",
     label: "15/Dic/2025",
-    value: "15/Dic/2025",
+    value: "2025-12-15T00:00:00.000Z",
   },
   {
     id: "Jun",

@@ -1,15 +1,29 @@
-import { Stack, Icon } from "@inubekit/inubekit";
+import { useState } from "react";
+import { Stack, Icon, useMediaQuery } from "@inubekit/inubekit";
+
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { privilegeCrm } from "@config/privilege";
 
 import { icons } from "./config";
+import InfoModal from "../../InfoModal";
 
 interface IDetailprops {
-  handleEdit: () => void;
   handleDelete: () => void;
 }
 
 export function Detail(props: IDetailprops) {
-  const { handleEdit, handleDelete } = props;
-
+  const { handleDelete } = props;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const isMobile = useMediaQuery("(max-width:880px)");
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
   return (
     <Stack justifyContent="space-around">
       {icons.map((item, index) => (
@@ -19,15 +33,24 @@ export function Detail(props: IDetailprops) {
           size="16px"
           cursorHover
           appearance={item.appearance}
-          onClick={() => {
-            if (item.id === "edit") {
-              handleEdit();
-            } else if (item.id === "delete") {
-              handleDelete();
-            }
-          }}
+          onClick={() =>
+            item.id === "delete" &&
+            (canEditCreditRequest ? handleInfo() : handleDelete())
+          }
         />
       ))}
+      {isModalOpen ? (
+        <InfoModal
+          onClose={handleInfoModalClose}
+          title={privilegeCrm.title}
+          subtitle={privilegeCrm.subtitle}
+          description={privilegeCrm.description}
+          nextButtonText={privilegeCrm.nextButtonText}
+          isMobile={isMobile}
+        />
+      ) : (
+        <></>
+      )}
     </Stack>
   );
 }

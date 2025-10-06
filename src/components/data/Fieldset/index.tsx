@@ -24,6 +24,8 @@ interface IFieldsetProps {
   selectedState?: boolean;
   width?: string;
   borderColor?: string;
+  showFieldset?: boolean;
+  padding?: string;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -41,6 +43,8 @@ export const Fieldset = (props: IFieldsetProps) => {
     selectedState = false,
     width = "-webkit-fill-available",
     borderColor = "normal",
+    showFieldset = true,
+    padding = "0 0 16px 0",
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -62,7 +66,7 @@ export const Fieldset = (props: IFieldsetProps) => {
       gap="8px"
       width={width}
       height={!isMobile ? heightFieldset : "auto"}
-      padding="0 0 16px 0"
+      padding={padding}
     >
       <Stack justifyContent={activeButton && "space-between"}>
         <Stack gap={isMobile ? "12px" : "8px"}>
@@ -103,6 +107,7 @@ export const Fieldset = (props: IFieldsetProps) => {
         $height={isMobile ? "auto" : heightFieldset}
         $isClickable={isClickable}
         $borderColor={borderColor}
+        $showFieldset={showFieldset}
       >
         {children}
       </StyledContainerFieldset>

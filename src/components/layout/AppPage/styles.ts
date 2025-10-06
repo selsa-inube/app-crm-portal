@@ -7,6 +7,12 @@ interface IStyledCollapseIcon {
   $isTablet: boolean;
 }
 
+interface IStyledFooter {
+  $nav: boolean;
+  isShowMenuOnHeader: boolean;
+  showNav: boolean;
+}
+
 export const StyledAppPage = styled.div`
   display: inherit;
   box-sizing: border-box;
@@ -15,23 +21,33 @@ export const StyledAppPage = styled.div`
 export const StyledContainer = styled.div`
   display: inherit;
   overflow: hidden;
+
+  @media print {
+    overflow: visible !important;
+  }
 `;
 
 export const StyledMain = styled.main`
   display: flex;
   flex-direction: column;
+  height: 100dvh;
   overflow-y: auto;
 `;
 
 export const StyledContentImg = styled(Link)`
   width: 100px;
+  display: flex;
+  justify-content: center;
 `;
 
 export const StyledLogo = styled.img`
-  max-width: 120px;
+  with: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
 
 export const StyledHeaderContainer = styled.div`
+  z-index: 2;
   position: relative;
 `;
 
@@ -47,10 +63,12 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
   left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
+  z-index: 2;
 `;
 
 export const StyledMenuContainer = styled.div`
   position: absolute;
+  height: 100%;
   top: 48px;
   right: 15px;
   z-index: 1;
@@ -71,17 +89,26 @@ export const StyledMenuContainer = styled.div`
 export const StyledCollapse = styled.div`
   position: absolute;
   top: 48px;
+  z-index: 2;
 `;
-export const StyledFooter = styled.footer`
-  display: flex;
+
+export const StyledFooter = styled.footer<IStyledFooter>`
+  display: ${({ showNav }) => (!showNav ? "none" : "inline-flex")};
   justify-content: center;
-  padding: 16px 24px;
+  align-content: center;
+  align-items: center;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
+  width: ${({ $nav }) => ($nav ? "auto" : "200px")};
+  height: 50px;
+  top: -50px;
+  position: relative;
 `;
 
 export const StyledPrint = styled.div`
   @media print {
     display: none;
   }
+
+  height: 100%;
 `;

@@ -1,40 +1,55 @@
 import { useEffect, useState } from "react";
 import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
-import { getIncomeSourcesById } from "@services/incomeSources";
-import { IIncomeSources } from "@services/incomeSources/types";
-import { getSearchCustomerByCode } from "@services/customers/AllCustomers";
+import { getIncomeSourcesById } from "@services/creditLimit/getIncomeSources";
+import { IIncomeSources } from "@services/creditLimit/types";
+import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { getAge } from "@utils/formatData/currency";
 import { getAllPropertyValues } from "@utils/mappingData/mappings";
+import { IProspect } from "@services/prospect/types";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { DebtorAddModalUI } from "./interface";
 import { FormData } from "./types";
 
+interface BorrowerProperty {
+  propertyName: string;
+  propertyValue: string;
+}
+interface BorrowerData {
+  borrowerName: string;
+  borrowerType: string;
+  borrowerIdentificationType: string;
+  borrowerIdentificationNumber: string;
+  borrowerProperties: BorrowerProperty[];
+}
+
 interface DebtorAddModalProps {
   onSubmit: () => void;
   handleClose: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onAddBorrower: React.Dispatch<React.SetStateAction<any>>;
+  onAddBorrower: (borrowerData: BorrowerData[]) => void;
   title: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  prospectData: any;
+  prospectData: IProspect;
+  businessManagerCode: string;
   businessUnitPublicCode?: string;
 }
+
 export function DebtorAddModal(props: DebtorAddModalProps) {
   const {
     title,
     handleClose,
     businessUnitPublicCode,
     prospectData,
+    businessManagerCode,
     onAddBorrower,
   } = props;
 
-  const financialObligations =
-    getAllPropertyValues(
-      prospectData.borrowers[0].borrowerProperties,
-      "FinancialObligation",
-    ) || [];
+  const financialObligations = prospectData?.borrowers?.[0]?.borrowerProperties
+    ? getAllPropertyValues(
+        prospectData.borrowers[0].borrowerProperties,
+        "FinancialObligation",
+      ) || []
+    : [];
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddBorrower.generalInformation.id,
@@ -58,7 +73,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
   );
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
 
-  const dataBorrower = [
+  const dataBorrower: BorrowerData[] = [
     {
       borrowerName: formData.personalInfo.firstName,
       borrowerType: "Borrower",
@@ -175,10 +190,12 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
         const response = await getIncomeSourcesById(
           borrowerId,
           businessUnitPublicCode || "",
+          businessManagerCode,
         );
         const customer = await getSearchCustomerByCode(
           borrowerId,
           businessUnitPublicCode || "",
+          businessManagerCode,
           true,
         );
 
@@ -230,7 +247,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     };
 
     fetchIncomeData();
-  }, [borrowerId]);
+  }, [borrowerId, businessUnitPublicCode, isAutoCompleted]);
 
   useEffect(() => {
     if (!isAutoCompleted) {
@@ -245,7 +262,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           }) as IIncomeSources,
       );
     }
-  }, [formData.personalInfo]);
+  }, [formData.personalInfo, isAutoCompleted]);
 
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -324,6 +341,8 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       currentStepsNumber={currentStepsNumber}
       handleSubmitClick={handleSubmitClick}
       handleClose={handleClose}
+      businessUnitPublicCode={businessUnitPublicCode || ""}
+      businessManagerCode={businessManagerCode}
       title={title}
       isMobile={isMobile}
     />

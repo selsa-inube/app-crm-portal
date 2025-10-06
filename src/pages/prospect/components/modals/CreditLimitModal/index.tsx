@@ -2,23 +2,34 @@ import { useEffect } from "react";
 import { Stack, Text } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { CreditLimitCard } from "@pages/addProspect/components/CreditLimitCard";
-import { IPaymentChannel } from "@services/types";
+import { CreditLimitCard } from "@pages/simulateCredit/components/CreditLimitCard";
+import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
+import { IPaymentChannel } from "@services/creditRequest/types";
 import { mockCreditLimit } from "@mocks/add-prospect/modals-amount/modalsAmount.mock";
 import { get } from "@mocks/utils/dataMock.service";
 
 import { dataCreditLimitModal } from "./config";
 
 export interface ICreditLimitModalProps {
-  handleClose: () => void;
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
+  dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
   isMobile: boolean;
+  handleClose: () => void;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
 }
 
 export function CreditLimitModal(props: ICreditLimitModalProps) {
-  const { isMobile, handleClose, setRequestValue } = props;
+  const {
+    businessUnitPublicCode,
+    businessManagerCode,
+    dataMaximumCreditLimitService,
+    isMobile,
+    handleClose,
+    setRequestValue,
+  } = props;
 
   const creditCardsData = mockCreditLimit;
   useEffect(() => {
@@ -32,6 +43,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
         console.error("Error fetching money destinations data:", error.message);
       });
   }, []);
+
   return (
     <BaseModal
       title={dataCreditLimitModal.title}
@@ -46,7 +58,6 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
         <Text appearance="gray" type="body" size="medium" weight="normal">
           {dataCreditLimitModal.creditText}
         </Text>
-
         <Stack
           direction={isMobile ? "column" : "row"}
           gap="24px"
@@ -58,14 +69,17 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
               key={index}
               creditLineTxt={item.creditLineTxt}
               creditLine={item.creditLine}
-              creditLimitData={item.CreditLimitdata}
+              creditLimitData={item.creditLimitdata}
               paymentCapacityData={item.paymentCapacityData}
               reciprocityData={item.reciprocityData}
               scoreData={item.scoreData}
+              isMobile={isMobile}
+              businessUnitPublicCode={businessUnitPublicCode}
+              businessManagerCode={businessManagerCode}
+              dataMaximumCreditLimitService={dataMaximumCreditLimitService}
             />
           ))}
         </Stack>
-
         <Text appearance="gray" type="body" size="medium" weight="normal">
           <Text
             as="span"

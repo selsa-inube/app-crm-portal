@@ -1,14 +1,16 @@
+import { ReactNode } from "react";
 import { Stack, Text } from "@inubekit/inubekit";
 
 import { StyledContainer } from "./styles";
 
 export interface ICardGrayProps {
   label: string;
-  placeHolder?: string;
+  placeHolder?: string | ReactNode;
   data?: string | number;
   apparencePlaceHolder?: "dark" | "gray";
   height?: string;
   isMobile?: boolean;
+  placeHolderTag?: boolean;
 }
 
 export function CardGray(props: ICardGrayProps) {
@@ -19,6 +21,7 @@ export function CardGray(props: ICardGrayProps) {
     isMobile = false,
     height = "",
     apparencePlaceHolder = "dark",
+    placeHolderTag = false,
   } = props;
 
   return (
@@ -28,9 +31,13 @@ export function CardGray(props: ICardGrayProps) {
           <Text type="label" weight="bold" size="medium" appearance="dark">
             {label}
           </Text>
-          <Text type="body" size="medium" appearance={apparencePlaceHolder}>
-            {placeHolder}
-          </Text>
+          {!placeHolderTag ? (
+            <Text type="body" size="medium" appearance={apparencePlaceHolder}>
+              {placeHolder}
+            </Text>
+          ) : (
+            <Stack>{placeHolder}</Stack>
+          )}
         </Stack>
         <Text
           type="body"

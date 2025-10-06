@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
+import { useIAuth } from "@inube/iauth-react";
 
 import { AppContext } from "@context/AppContext";
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
@@ -13,7 +14,7 @@ function CheckingCredentials({
 }) {
   const navigate = useNavigate();
   const { eventData, setBusinessUnitSigla } = useContext(AppContext);
-
+  const { user } = useIAuth();
   const checkCredentials = useCallback(async () => {
     try {
       if (!eventData) {
@@ -29,7 +30,7 @@ function CheckingCredentials({
 
         navigate("/login/loading-app");
       } else {
-        navigate(`/login/${eventData.user.userAccount}/clients`);
+        navigate(`/login/${user.username}/business-units/select-business-unit`);
       }
     } catch (error) {
       navigate("/login/error/not-available");

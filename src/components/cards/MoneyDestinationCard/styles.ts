@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { inube } from "@inubekit/inubekit";
 
 export const StyledMoneyDestinationCard = styled.label`
-  width: 455px;
-  min-width: 290px;
+  width: 318px;
+  min-width: 200px;
   & div:nth-child(1) {
     border-radius: 8px;
     box-sizing: border-box;
@@ -24,6 +24,7 @@ export const StyledMoneyDestinationCard = styled.label`
 
   @media (max-width: 1000px) {
     width: 100%;
+    max-height: 110px;
   }
 `;
 

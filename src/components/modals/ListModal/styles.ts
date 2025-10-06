@@ -10,10 +10,19 @@ interface IStyledAttachContainer {
   theme?: typeof inube;
 }
 
+export const StyledItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid
+    ${({ theme }) => theme.palette?.neutral?.N40 || inube.palette.neutral.N40};
+`;
+
 export const StyledModal = styled.div<IStyledModal>`
   display: flex;
   flex-direction: column;
-  width: ${({ $smallScreen }) => ($smallScreen ? "290px" : "510px")};
+  width: ${({ $smallScreen }) => ($smallScreen ? "300px" : "510px")};
   background-color: ${({ theme }) =>
     theme.palette?.neutral?.N0 || inube.palette.neutral.N0};
   padding: ${({ $smallScreen }) => ($smallScreen ? "16px" : "24px")};
@@ -52,4 +61,9 @@ export const StyledAttachContainer = styled.div<IStyledAttachContainer>`
 
 export const StyledContainerClose = styled.div`
   cursor: pointer;
+`;
+
+export const StyledDocuments = styled.ul`
+  padding-inline-start: 2px;
+  margin-block: 8px;
 `;

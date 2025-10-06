@@ -8,7 +8,7 @@ function LoadingAppUI() {
           Cargando la aplicación
         </Text>
         <Text type="title" size="small" textAlign="center">
-          Espere un momento, por favor.
+          Espera un momento, por favor.
         </Text>
       </Stack>
       <Stack alignItems="center" direction="column">

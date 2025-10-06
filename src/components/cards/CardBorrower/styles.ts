@@ -9,7 +9,7 @@ interface IStyledContainer {
 }
 
 export const StyledContainer = styled.div<IStyledContainer>`
-  width: ${({ $isMobile }) => ($isMobile ? "285px" : "315px")};
+  width: ${({ $isMobile }) => ($isMobile ? "285px" : "300px")};
   height: 368px;
   display: flex;
   flex-direction: column;
@@ -26,4 +26,5 @@ export const StyledContainer = styled.div<IStyledContainer>`
         : theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
   justify-content: center;
   cursor: ${({ $new }) => ($new ? "pointer" : "normal")};
+  text-overflow: ellipsis;
 `;

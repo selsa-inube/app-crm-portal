@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useIAuth } from "@inube/iauth-react";
 import { MdLogout, MdOutlineCreditCard, MdVpnKey } from "react-icons/md";
 
 const appsConfig = [
@@ -25,7 +25,7 @@ const appsConfig = [
   },
 ];
 const useNavigationConfig = () => {
-  const { logout } = useAuth0();
+  const { logout } = useIAuth();
 
   const navigation = {
     nav: {
@@ -36,9 +36,9 @@ const useNavigationConfig = () => {
           subtitle: "Inicio",
           links: [
             {
-              path: "/credit/simulate-credit/16378491",
+              path: "/credit",
               label: "Crédito",
-              id: "/credit/simulate-credit/16378491",
+              id: "credit",
               icon: <MdOutlineCreditCard />,
             },
           ],
@@ -66,7 +66,7 @@ const useNavigationConfig = () => {
       displaySubtitles: true,
       collapse: true,
     },
-    breakpoint: "700px",
+    breakpoint: "1024px",
   };
 
   return navigation;

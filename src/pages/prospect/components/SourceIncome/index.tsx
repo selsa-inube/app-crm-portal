@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MdCached, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Grid, useMediaQuery, Button } from "@inubekit/inubekit";
 
@@ -9,14 +9,22 @@ import {
   currencyFormat,
   parseCurrencyString,
 } from "@utils/formatData/currency";
-import { IIncome } from "@services/types";
-import { IIncomeSources } from "@services/incomeSources/types";
+import { IIncomeSources } from "@services/creditLimit/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
+import { restoreIncomeInformationByBorrowerId } from "@services/prospect/restoreIncomeInformationByBorrowerId";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
-import { IncomeEmployment, IncomeCapital, MicroBusinesses } from "./config";
+import {
+  IncomeEmployment,
+  IncomeCapital,
+  MicroBusinesses,
+  getInitialValues,
+} from "./config";
 import { StyledContainer } from "./styles";
 import { dataReport } from "../TableObligationsFinancial/config";
+import { IIncome } from "./types";
 
 interface ISourceIncomeProps {
   openModal?: (state: boolean) => void;
@@ -26,6 +34,20 @@ interface ISourceIncomeProps {
   data?: IIncomeSources;
   customerData?: ICustomerData;
   showEdit?: boolean;
+  initialDataForRestore?: IIncomeSources | null;
+  onRestore?: () => void;
+  borrowerOptions?: {
+    id: `${string}-${string}-${string}-${string}-${string}`;
+    label: string;
+    value: string;
+  }[];
+  selectedIndex?: number | undefined;
+  showErrorModal?: boolean;
+  messageError?: string;
+  publicCode?: string;
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
+  isLoadingCreditLimit?: boolean;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -36,40 +58,83 @@ export function SourceIncome(props: ISourceIncomeProps) {
     disabled,
     showEdit = true,
     data,
-    customerData,
+    selectedIndex,
+    customerData = {} as ICustomerData,
+    initialDataForRestore,
+    borrowerOptions,
+    publicCode,
+    businessUnitPublicCode,
+    businessManagerCode,
+    onRestore,
   } = props;
+
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
   const isMobile = useMediaQuery("(max-width:880px)");
   const [dataValues, setDataValues] = useState<IIncome | null>(null);
+  const [pendingDataChange, setPendingDataChange] =
+    useState<IIncomeSources | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
+  const groupMapping: Record<
+    string,
+    keyof Omit<IIncome, "borrower_id" | "borrower">
+  > = {
+    "Employment income": "employment",
+    "Capital income": "capital",
+    "Professional fees": "businesses",
+    "Earnings from ventures or micro-businesses": "businesses",
+  };
+
+  function buildIncomeValues(
+    sourceData: IIncomeSources,
+    IncomeTypes: { Code: string; Type: string }[],
+  ): IIncome {
+    const values: IIncome = {
+      borrower_id: sourceData?.identificationNumber ?? ".....",
+      borrower: sourceData?.name ?? "",
+      employment: [],
+      capital: [],
+      businesses: [],
+    };
+
+    for (const item of IncomeTypes) {
+      const groupKey = groupMapping[item.Type];
+      if (!groupKey) continue;
+
+      const amount = (
+        sourceData[item.Code as keyof IIncomeSources] ?? 0
+      ).toString();
+      if (values[groupKey]) {
+        (values[groupKey] as unknown as string[]).push(amount);
+      }
+    }
+
+    return values;
+  }
+
   useEffect(() => {
-    if (data) {
-      const values: IIncome = {
-        borrower_id: customerData?.publicCode ?? "",
-        borrower: customerData?.fullName ?? "",
-        capital: [
-          (data.FinancialIncome ?? 0).toString(),
-          (data.Dividends ?? 0).toString(),
-          (data.Leases ?? 0).toString(),
-        ],
-        employment: [
-          (data.PeriodicSalary ?? 0).toString(),
-          (data.OtherNonSalaryEmoluments ?? 0).toString(),
-          (data.PensionAllowances ?? 0).toString(),
-        ],
-        businesses: [
-          (data.ProfessionalFees ?? 0).toString(),
-          (data.PersonalBusinessUtilities ?? 0).toString(),
-        ],
-      };
+    if (data && Object.keys(data).length > 0) {
+      const sourceData = data as IIncomeSources;
+      const values = buildIncomeValues(sourceData, IncomeTypes);
+
       setDataValues(values);
       setBorrowerIncome(values);
-      initialValuesRef.current = values;
+    } else {
+      const defaultValues = getInitialValues(customerData);
+
+      setDataValues(defaultValues);
+      setBorrowerIncome(defaultValues);
     }
   }, [data]);
 
-  const initialValuesRef = useRef<IIncome | null>(dataValues);
+  useEffect(() => {
+    if (pendingDataChange && onDataChange) {
+      onDataChange(pendingDataChange);
+      setPendingDataChange(null);
+    }
+  }, [pendingDataChange, onDataChange]);
 
   const totalSum = () => {
     const sumCapital =
@@ -89,13 +154,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
       ) ?? 0;
 
     return sumCapital + sumEmployment + sumBusinesses;
-  };
-
-  const handleRestore = () => {
-    if (initialValuesRef.current) {
-      setBorrowerIncome(initialValuesRef.current);
-    }
-    setIsOpenModal(false);
   };
 
   function mapToIncomeSources(values: IIncome): IIncomeSources {
@@ -119,29 +177,100 @@ export function SourceIncome(props: ISourceIncomeProps) {
     };
   }
 
-  const handleIncomeChange = (
-    category: "employment" | "capital" | "businesses",
-    index: number,
-    newValue: string,
-  ) => {
-    const cleanedValue = parseCurrencyString(newValue);
-    const cleanedString = cleanedValue.toString();
+  const handleIncomeChange = useCallback(
+    (
+      category: "employment" | "capital" | "businesses",
+      index: number,
+      newValue: string,
+    ) => {
+      const cleanedValue = parseCurrencyString(newValue);
+      const cleanedString = cleanedValue.toString();
 
-    setBorrowerIncome((prev) => {
-      if (!prev) return null;
+      setBorrowerIncome((prev) => {
+        if (!prev) return null;
 
-      const updated = {
-        ...prev,
-        [category]: prev[category].map((val, i) =>
-          i === index ? cleanedString : val,
-        ),
-      };
+        const updated = {
+          ...prev,
+          [category]: prev[category].map((val, i) =>
+            i === index ? cleanedString : val,
+          ),
+        };
+        const mappedBack: IIncomeSources = mapToIncomeSources(updated);
+        setPendingDataChange(mappedBack);
 
-      const mappedBack: IIncomeSources = mapToIncomeSources(updated);
-      onDataChange?.(mappedBack);
+        return updated;
+      });
+    },
+    [],
+  );
 
-      return updated;
-    });
+  const handleEditModalSubmit = (updatedData: IIncomeSources) => {
+    const updatedIncomeValues = buildIncomeValues(updatedData, IncomeTypes);
+    setBorrowerIncome(updatedIncomeValues);
+    setDataValues(updatedIncomeValues);
+    setPendingDataChange(updatedData);
+    setIsOpenEditModal(false);
+  };
+
+  const handleRestore = async () => {
+    if (!data) return;
+
+    const body = {
+      borrowerIdentificationNumber: publicCode || data.identificationNumber,
+      income: {
+        dividends: data.Dividends || 0,
+        financialIncome: data.FinancialIncome || 0,
+        leases: data.Leases || 0,
+        otherNonSalaryEmoluments: data.OtherNonSalaryEmoluments || 0,
+        pensionAllowances: data.PensionAllowances || 0,
+        periodicSalary: data.PeriodicSalary || 0,
+        personalBusinessUtilities: data.PersonalBusinessUtilities || 0,
+        professionalFees: data.ProfessionalFees || 0,
+      },
+      justification: "restore income",
+      prospectCode: "",
+    };
+
+    try {
+      const response = await restoreIncomeInformationByBorrowerId(
+        businessUnitPublicCode || "",
+        businessManagerCode,
+        body,
+      );
+      if (response && response.income) {
+        const restoredIncome = {
+          ...borrowerIncome,
+          borrower_id: borrowerIncome?.borrower_id ?? "",
+          borrower: borrowerIncome?.borrower ?? "",
+          capital: [
+            (response.income.leases ?? 0).toString(),
+            (response.income.dividends ?? 0).toString(),
+            (response.income.financialIncome ?? 0).toString(),
+          ],
+          employment: [
+            (response.income.periodicSalary ?? 0).toString(),
+            (response.income.otherNonSalaryEmoluments ?? 0).toString(),
+            (response.income.pensionAllowances ?? 0).toString(),
+          ],
+          businesses: [
+            (response.income.professionalFees ?? 0).toString(),
+            (response.income.personalBusinessUtilities ?? 0).toString(),
+          ],
+        };
+        setBorrowerIncome(restoredIncome);
+        setDataValues(restoredIncome);
+        if (onDataChange) {
+          const mappedBack = mapToIncomeSources(restoredIncome);
+          onDataChange(mappedBack);
+        }
+      }
+      if (onRestore) onRestore();
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(dataReport.errorIncome);
+    } finally {
+      setIsOpenModal(false);
+    }
   };
 
   return (
@@ -165,7 +294,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                   {incomeCardData.borrower}
                 </Text>
                 <Text type="title" size="medium">
-                  {customerData?.fullName}
+                  {borrowerOptions?.[selectedIndex || 0]?.value}
                 </Text>
               </Stack>
             )}
@@ -201,6 +330,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                 iconBefore={<MdCached />}
                 fullwidth={isMobile}
                 onClick={() => setIsOpenModal(true)}
+                disabled={!initialDataForRestore && !onRestore}
               >
                 {incomeCardData.restore}
               </Button>
@@ -263,8 +393,20 @@ export function SourceIncome(props: ISourceIncomeProps) {
         <IncomeModal
           handleClose={() => setIsOpenEditModal(false)}
           disabled={false}
-          onSubmit={() => {}}
+          onSubmit={handleEditModalSubmit}
           initialValues={data}
+          dataValues={dataValues}
+          customerData={customerData}
+          borrowerOptions={borrowerOptions}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          isMobile={isMobile}
+          message={messageError}
         />
       )}
     </StyledContainer>
