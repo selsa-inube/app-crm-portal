@@ -71,7 +71,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
       groupedDestinations[type].push(destination);
     });
   }
-
+  console.log("initialValues: ", groupedDestinations);
   return (
     <Formik
       initialValues={{ selectedDestination: initialValues }}

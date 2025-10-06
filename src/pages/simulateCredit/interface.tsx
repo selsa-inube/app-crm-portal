@@ -582,9 +582,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               {showErrorModal && (
                 <ErrorModal
                   handleClose={() => {
-                    if (messageError === messagesError.tryLater) {
+                    /*                     if (messageError === messagesError.tryLater) {
                       handleModalTryAgain();
-                    }
+                    } */
                     setShowErrorModal(false);
                   }}
                   isMobile={isMobile}
