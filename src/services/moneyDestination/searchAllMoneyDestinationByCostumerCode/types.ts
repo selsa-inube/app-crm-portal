@@ -1,4 +1,4 @@
-export interface MoneyDestination {
+export interface IMoneyDestination {
   abbreviatedName: string;
   descriptionUse: string;
   iconReference: string;
@@ -8,8 +8,4 @@ export interface MoneyDestination {
   }[];
   moneyDestinationId: string;
   moneyDestinationType: string;
-}
-
-export interface SearchAllMoneyDestinationByCostumerResponse {
-  moneyDestinations: MoneyDestination[];
 }

@@ -3,12 +3,12 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { SearchAllMoneyDestinationByCostumerResponse } from "./types";
+import { IMoneyDestination } from "./types";
 
 export const searchAllMoneyDestinationByCustomerCode = async (
   businessUnitPublicCode: string,
   clientIdentificationNumber: string,
-): Promise<SearchAllMoneyDestinationByCostumerResponse | null> => {
+): Promise<IMoneyDestination[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
