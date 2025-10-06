@@ -142,6 +142,19 @@ const rateTypeOptions = [
 
 export const messageNotFound = "No se encontraron resultados";
 
+export const messagesErrorValidations = {
+  loadPaymentOptions: "Error al cargar las opciones de pago",
+  validateLoanAmount: "Error al validar el monto del crédito",
+  validateLoanTermBusiness: "El plazo no cumple con las reglas de negocio",
+  validateLoanTermRange: "El plazo debe estar dentro del rango permitido",
+  validateLoanTermOther: "Error al validar el plazo",
+  validateInterestRateBusiness: "La tasa no cumple con las reglas de negocio",
+  validateInterestRateRange: "La tasa debe estar dentro del rango permitido",
+  validateInterestRateOther: "Error al validar la tasa de interés",
+};
+
+export const VALIDATED_NUMBER_REGEX = /[^0-9]/g;
+
 export {
   creditLineOptions,
   paymentMethodOptions,

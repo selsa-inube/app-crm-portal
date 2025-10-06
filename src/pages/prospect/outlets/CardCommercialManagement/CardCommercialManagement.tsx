@@ -295,6 +295,8 @@ export const CardCommercialManagement = (
           onConfirm={handleConfirm}
           title={tittleOptions.editProduct}
           confirmButtonText={tittleOptions.save}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
           initialValues={{
             creditLine: selectedProduct.lineOfCreditAbbreviatedName || "",
             creditAmount: selectedProduct.loanAmount || 0,
