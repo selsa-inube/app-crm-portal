@@ -255,7 +255,7 @@ export function ApplyForCredit() {
   }, [valueRule, hasBorrowers, bondValue]);
 
   const [currentStep, setCurrentStep] = useState<number>(
-    /* stepsFilingApplication.generalInformation.id, */ 3,
+    stepsFilingApplication.generalInformation.id,
   );
 
   const {
@@ -715,6 +715,7 @@ export function ApplyForCredit() {
         messageError={messageError}
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
+        setMessageError={setMessageError}
       />
     </>
   );
