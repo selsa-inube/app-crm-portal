@@ -843,9 +843,9 @@ export function SimulateCredit() {
 
   const dataMaximumCreditLimitService = useMemo(
     () => ({
-      identificationDocumentType: customerData.publicCode,
-      identificationDocumentNumber:
+      identificationDocumentType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+      identificationDocumentNumber: customerData.publicCode,
       moneyDestination: formData.selectedDestination,
       primaryIncomeType:
         typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
