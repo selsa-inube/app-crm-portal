@@ -31,11 +31,6 @@ export const Default: Story = (args: PaymentCapacityProps) => {
   );
 };
 Default.args = {
-  title: "Cupo máx. capacidad de pago",
-  reportedIncomeSources: 5000000,
-  reportedFinancialObligations: 1000000,
-  subsistenceReserve: 200000,
-  availableForNewCommitments: 800000,
-  maxVacationTerm: 60,
-  maxAmount: 2000000,
+  businessManagerCode: "sistemasEnLinea",
+  businessUnitPublicCode: "fondecom",
 };

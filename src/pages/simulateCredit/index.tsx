@@ -841,6 +841,25 @@ export function SimulateCredit() {
     navigate("/credit/prospects");
   };
 
+  const dataMaximumCreditLimitService = useMemo(
+    () => ({
+      identificationDocumentType: customerData.publicCode,
+      identificationDocumentNumber:
+        customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+      moneyDestination: formData.selectedDestination,
+      primaryIncomeType:
+        typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
+          ? formData.sourcesOfIncome.PeriodicSalary.toString()
+          : "0",
+    }),
+    [
+      customerData.publicCode,
+      customerData.generalAttributeClientNaturalPersons,
+      formData.selectedDestination,
+      formData.sourcesOfIncome?.PeriodicSalary,
+    ],
+  );
+
   return (
     <>
       <SimulateCreditUI
@@ -891,6 +910,7 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
+        dataMaximumCreditLimitService={dataMaximumCreditLimitService}
         servicesProductSelection={
           servicesProductSelection as IServicesProductSelection
         }
