@@ -39,7 +39,7 @@ const getLinesOfCreditByMoneyDestination = async (
       if (res.status === 204) {
         return null;
       }
-
+      console.log(await res.json());
       const data = await res.json();
 
       if (!res.ok) {
