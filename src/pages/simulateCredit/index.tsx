@@ -227,12 +227,10 @@ export function SimulateCredit() {
       state: "",
       selectedRateType: "",
       gracePeriod: 0,
-      gracePeriodType: "",
       bondValue: 0,
       creditProducts: [],
       outlays: [],
       creditScore: "",
-      modifyJustification: "",
       clientManagerIdentificationNumber: "",
       clientManagerName: "",
       clientManagerObservation: "",
@@ -738,7 +736,7 @@ export function SimulateCredit() {
     };
 
     handleSubmit();
-  }, [customerData?.customerId, businessUnitPublicCode, businessManagerCode]);
+  }, [currentStep, businessUnitPublicCode]);
 
   useEffect(() => {
     if (clientPortfolio) {
