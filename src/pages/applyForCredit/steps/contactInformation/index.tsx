@@ -59,12 +59,13 @@ export function ContactInformation(props: IContactInformationProps) {
         ? initialValues.email
         : (customerData?.generalAttributeClientNaturalPersons?.[0]
             ?.emailContact ?? ""),
-
     phone:
       initialValues?.phone !== null && `${initialValues.phone}`.trim() !== ""
         ? `${initialValues.phone}`
         : (customerData?.generalAttributeClientNaturalPersons?.[0]
             ?.cellPhoneContact ?? ""),
+    phoneDial: initialValues.phoneDial,
+    whatsAppDial: initialValues.whatsAppDial,
     toggleChecked: initialValues.toggleChecked,
     whatsAppPhone: initialValues.whatsAppPhone,
   });
@@ -93,14 +94,7 @@ export function ContactInformation(props: IContactInformationProps) {
 
     if (hasChanged) {
       const updatedData = {
-        document: formik.values.document,
-        documentNumber: formik.values.documentNumber,
-        name: formik.values.name,
-        lastName: formik.values.lastName,
-        email: formik.values.email,
-        phone: formik.values.phone,
-        toggleChecked: formik.values.toggleChecked,
-        whatsAppPhone: formik.values.whatsAppPhone,
+        ...formik.values,
       };
 
       handleOnChange(updatedData);
@@ -117,7 +111,7 @@ export function ContactInformation(props: IContactInformationProps) {
   }, [formik.values.toggleChecked]);
 
   return (
-    <Fieldset>
+    <Fieldset hasOverflow={true}>
       <Stack direction="column" padding="24px">
         <Input
           name="email"
@@ -145,13 +139,18 @@ export function ContactInformation(props: IContactInformationProps) {
               <Phonefield
                 name="phone"
                 id="phone"
-                type="number"
                 placeholder={dataContactInformation.placePhone}
                 label={dataContactInformation.cardPhone}
                 size="compact"
                 value={formik.values.phone}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                initialCountryCode="COL"
+                onDialValueChange={(dial) => {
+                  if (formik.values.phoneDial !== dial) {
+                    formik.setFieldValue("phoneDial", dial);
+                  }
+                }}
                 status={
                   formik.touched.phone &&
                   formik.values.phone !== "" &&
@@ -200,13 +199,18 @@ export function ContactInformation(props: IContactInformationProps) {
                   <Phonefield
                     name="whatsAppPhone"
                     id="whatsAppPhone"
-                    type="number"
                     placeholder={dataContactInformation.placeWhatsApp}
                     label={dataContactInformation.cardWhatsApp}
                     size="compact"
                     value={formik.values.whatsAppPhone}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
+                    initialCountryCode="COL"
+                    onDialValueChange={(dial) => {
+                      if (formik.values.whatsAppDial !== dial) {
+                        formik.setFieldValue("whatsAppDial", dial);
+                      }
+                    }}
                     status={
                       formik.touched.whatsAppPhone &&
                       formik.values.whatsAppPhone !== "" &&

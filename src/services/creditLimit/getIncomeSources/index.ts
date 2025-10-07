@@ -8,6 +8,7 @@ import { IIncomeSources } from "../types";
 const getIncomeSourcesById = async (
   publicCode: string,
   businessUnitPublicCode: string,
+  businessManagerCode: string,
 ): Promise<IIncomeSources> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -23,11 +24,11 @@ const getIncomeSourcesById = async (
           "X-Action": "SearchClientIncomeSourcesById",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
 
-      console.log(businessUnitPublicCode);
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/client-income-sources/${publicCode}`,
         options,

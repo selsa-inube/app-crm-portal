@@ -4,6 +4,7 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 import { useIAuth } from "@inube/iauth-react";
 import { FlagProvider } from "@inubekit/inubekit";
@@ -19,6 +20,7 @@ import { CreditRoutes } from "@routes/CreditRoutes";
 import { HomeRoutes } from "@routes/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { CustomerRoutes } from "@routes/customer";
+import { EnumProvider } from "./context/EnumContext";
 
 import { environment } from "./config/environment";
 import { AuthProvider } from "./pages/AuthProvider";
@@ -34,7 +36,10 @@ function LogOut() {
 function FirstPage() {
   const { businessUnitSigla } = useContext(AppContext);
   initializeDataDB(businessUnitSigla);
-  return businessUnitSigla.length === 0 ? <Login /> : <AppPage />;
+  if (businessUnitSigla.length === 0) {
+    return <Login />;
+  }
+  return <Navigate to="/home" replace />;
 }
 
 const router = createBrowserRouter(
@@ -60,10 +65,12 @@ function App() {
       <AppContextProvider>
         <CustomerContextProvider>
           <CustomerContextProvider>
-            <FlagProvider>
-              <GlobalStyles />
-              <RouterProvider router={router} />
-            </FlagProvider>
+            <EnumProvider>
+              <FlagProvider>
+                <GlobalStyles />
+                <RouterProvider router={router} />
+              </FlagProvider>
+            </EnumProvider>
           </CustomerContextProvider>
         </CustomerContextProvider>
       </AppContextProvider>

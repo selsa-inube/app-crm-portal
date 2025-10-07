@@ -46,6 +46,8 @@ interface ISourceIncomeProps {
   messageError?: string;
   publicCode?: string;
   businessUnitPublicCode: string;
+  businessManagerCode: string;
+  isLoadingCreditLimit?: boolean;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -62,6 +64,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     borrowerOptions,
     publicCode,
     businessUnitPublicCode,
+    businessManagerCode,
     onRestore,
   } = props;
 
@@ -74,7 +77,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
     useState<IIncomeSources | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
-
   const groupMapping: Record<
     string,
     keyof Omit<IIncome, "borrower_id" | "borrower">
@@ -232,6 +234,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     try {
       const response = await restoreIncomeInformationByBorrowerId(
         businessUnitPublicCode || "",
+        businessManagerCode,
         body,
       );
       if (response && response.income) {
@@ -396,6 +399,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
           customerData={customerData}
           borrowerOptions={borrowerOptions}
           businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
         />
       )}
       {showErrorModal && (

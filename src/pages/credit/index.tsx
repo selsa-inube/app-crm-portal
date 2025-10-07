@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
+
 import { useAppContext } from "@hooks/useAppContext";
 import { CustomerContext } from "@context/CustomerContext";
 

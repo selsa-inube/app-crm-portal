@@ -9,6 +9,7 @@ import {
   useMediaQuery,
   Header,
 } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { AppContext } from "@context/AppContext";
 import { MenuSection } from "@components/navigation/MenuSection";
@@ -53,6 +54,7 @@ function AppPage(props: IAppPage) {
   const { eventData, businessUnitsToTheStaff, setBusinessUnitSigla } =
     useContext(AppContext);
   const location = useLocation();
+  const { user } = useIAuth();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -147,6 +149,13 @@ function AppPage(props: IAppPage) {
     }
   });
 
+  if (
+    eventData.businessUnit.businessUnitPublicCode === "" ||
+    eventData.businessUnit.businessUnitPublicCode === undefined
+  ) {
+    navigate(`/login/${user.username}/business-units/select-business-unit`);
+  }
+
   return (
     <StyledAppPage>
       <Grid templateRows="auto 1fr" height="100vh" justifyContent="unset">
@@ -237,6 +246,7 @@ function AppPage(props: IAppPage) {
             </StyledMain>
           </Grid>
         </StyledContainer>
+
         <StyledFooter
           $nav={isTablet}
           isShowMenuOnHeader={showMenuOnHeader}

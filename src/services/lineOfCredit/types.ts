@@ -1,24 +1,17 @@
-interface ICondition {
-  name: string;
-  dataType: string;
-  value: string;
-  valueUse: string;
-}
-
 export interface ILinesOfCreditByMoneyDestination {
-  name: string;
-  dataType: string;
-  value: string;
-  valueUse: string;
-  startDate: string;
-  totalConditionsEvaluated: number;
-  dataEvaluated: string[];
-  typeDecision: string;
-  conditions: ICondition[];
+  abbreviateName: string;
+  amortizationType: string[];
+  description: string;
+  maxAmount: number;
+  maxEffectiveInterestRate: number;
+  maxTerm: number;
+  minAmount: number;
+  minEffectiveInterestRate: number;
+  minTerm: number;
 }
 
 export interface IAdditionalBorrowersAllowedResponse {
-  additionalBorowersAllowed: string;
+  additionalBorrowersAllowed: string;
 }
 
 export interface IExtraInstallmentsAllowedResponse {

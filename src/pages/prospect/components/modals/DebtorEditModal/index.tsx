@@ -21,6 +21,7 @@ import { IObligations } from "../../TableObligationsFinancial/types";
 interface IDebtorEditModalProps {
   isMobile: boolean;
   initialValues: IBorrower;
+  businessManagerCode: string;
   currentBorrowerIndex?: number | null;
   publicCode?: string;
   businessUnitPublicCode: string;
@@ -37,6 +38,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     initialValues,
     publicCode,
     businessUnitPublicCode,
+    businessManagerCode,
     handleClose,
     onUpdate,
   } = props;
@@ -247,6 +249,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             }}
             publicCode={publicCode}
             businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentTab === "obligations" && (

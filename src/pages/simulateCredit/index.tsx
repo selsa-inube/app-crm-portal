@@ -5,8 +5,7 @@ import { useMediaQuery } from "@inubekit/inubekit";
 import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
-import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
+import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { postSimulateCredit } from "@services/prospect/simulateCredit";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
@@ -36,9 +35,7 @@ import {
   titleButtonTextAssited,
 } from "./types";
 import { SimulateCreditUI } from "./interface";
-import { ruleConfig } from "./config/configRules";
 import { messagesError } from "./config/config";
-import { evaluateRule } from "./evaluateRule";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 import { updateFinancialObligationsFormData } from "./utils";
 
@@ -73,6 +70,8 @@ export function SimulateCredit() {
     IValidateRequirement[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
+
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -82,7 +81,6 @@ export function SimulateCredit() {
     aditionalBorrowers: [""],
     extraInstallement: [""],
   });
-
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
@@ -90,7 +88,7 @@ export function SimulateCredit() {
   const navigate = useNavigate();
 
   const { customerData } = useContext(CustomerContext);
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const customerPublicCode: string = customerData.publicCode;
 
   const [formState, setFormState] = useState({
@@ -106,6 +104,8 @@ export function SimulateCredit() {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const dataHeader = {
     name: customerData.fullName,
@@ -178,6 +178,8 @@ export function SimulateCredit() {
 
   const simulateData: IProspect = useMemo(
     () => ({
+      clientIdentificationNumber: customerData.publicCode,
+      clientManagerName: customerData.fullName,
       borrowers: [
         Object.keys(formData.borrowerData.borrowers).length === 0
           ? onlyBorrowerData
@@ -201,7 +203,7 @@ export function SimulateCredit() {
       linesOfCredit: formData.selectedProducts.map((product) => ({
         lineOfCreditAbbreviatedName: product,
       })),
-      firstPaymentCycleDate: new Date().toISOString().split("T")[0],
+      firstPaymentCycleDate: new Date().toISOString(),
       extraordinaryInstallments: Array.isArray(
         formData.extraordinaryInstallments,
       )
@@ -217,21 +219,18 @@ export function SimulateCredit() {
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
       selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
-      requestedAmount: formData.loanAmountState.inputValue,
+      requestedAmount: formData.loanAmountState.inputValue || 0,
       termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
       prospectId: "",
       prospectCode: "",
       state: "",
       selectedRateType: "",
       gracePeriod: 0,
-      gracePeriodType: "",
       bondValue: 0,
       creditProducts: [],
       outlays: [],
       creditScore: "",
-      modifyJustification: "",
       clientManagerIdentificationNumber: "",
-      clientManagerName: "",
       clientManagerObservation: "",
       clientComments: "",
     }),
@@ -247,28 +246,6 @@ export function SimulateCredit() {
     };
   }>({});
 
-  type RuleEvaluationResult = {
-    value: number | string;
-    [key: string]: string | number;
-  };
-
-  const getRuleValue = (input: unknown): number | string | null => {
-    if (Array.isArray(input)) {
-      const first = input[0];
-      return first && typeof first === "object" && "value" in first
-        ? (first as RuleEvaluationResult).value
-        : (first ?? null);
-    }
-
-    if (input !== null && typeof input === "object" && "value" in input) {
-      return (input as RuleEvaluationResult).value;
-    }
-
-    return typeof input === "string" || typeof input === "number"
-      ? input
-      : null;
-  };
-
   const fetchCreditLineTerms = useCallback(async () => {
     if (customerData.fullName.length === 0) {
       setCodeError(1016);
@@ -276,38 +253,21 @@ export function SimulateCredit() {
     } else {
       setCodeError(null);
     }
+
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    if (!clientInfo?.associateType) return;
 
-    const baseDataRules = {
-      MoneyDestination: formData.selectedDestination,
-      ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      EmploymentContractTermType:
-        clientInfo.employmentType?.substring(0, 2) || "",
-      AffiliateSeniority: getMonthsElapsed(
-        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-        0,
-      ),
-    };
-
-    // const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
-    //   ...baseDataRules,
-    //   LineOfCredit: "",
-    // });
-
-    // if (!lineOfCreditRule) return;
+    if (!clientInfo?.associateType || !formData.selectedDestination) return;
 
     const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
       businessUnitPublicCode,
+      businessManagerCode,
       formData.selectedDestination,
+      customerData.publicCode,
     );
 
-    type LineOfCreditValue = string | { value: string } | null | undefined;
-    const lineNames = Array.isArray(lineOfCreditValues)
-      ? (lineOfCreditValues as LineOfCreditValue[])
-          .map((v) => (typeof v === "string" ? v : v?.value || ""))
-          .filter((name): name is string => Boolean(name))
-      : [];
+    const linesArray = Array.isArray(lineOfCreditValues)
+      ? lineOfCreditValues
+      : [lineOfCreditValues];
 
     const result: Record<
       string,
@@ -318,60 +278,15 @@ export function SimulateCredit() {
       }
     > = {};
 
-    for (const line of lineNames) {
-      const ruleData = { ...baseDataRules, LineOfCredit: line };
-
-      const loanAmountRule = ruleConfig["LoanAmountLimit"]?.(ruleData);
-      const loanAmount = loanAmountRule
-        ? await evaluateRule(
-            loanAmountRule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            true,
-          )
-        : null;
-      const amountValue = Number(getRuleValue(loanAmount) ?? 0);
-
-      const termRuleInput = {
-        ...ruleData,
-        LoanAmount: amountValue,
-      };
-      const termRule = ruleConfig["LoanTerm"]?.(termRuleInput);
-      const termValueRaw = termRule
-        ? await evaluateRule(
-            termRule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            true,
-          )
-        : null;
-      const termValue = Number(getRuleValue(termValueRaw) ?? 0);
-
-      const interestInput = {
-        ...ruleData,
-        LoanAmount: amountValue,
-        LoanTerm: termValue,
-      };
-      const interestRule = ruleConfig["FixedInterestRate"]?.(interestInput);
-      const rateValueRaw = interestRule
-        ? await evaluateRule(
-            interestRule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            true,
-          )
-        : null;
-      const interestRate = Number(getRuleValue(rateValueRaw) ?? 0);
-
-      result[line] = {
-        LoanAmountLimit: amountValue,
-        LoanTermLimit: termValue,
-        RiskFreeInterestRate: interestRate,
-      };
-    }
+    linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
+      if (line && line.abbreviateName) {
+        result[line.abbreviateName] = {
+          LoanAmountLimit: line.maxAmount,
+          LoanTermLimit: line.maxTerm,
+          RiskFreeInterestRate: line.maxEffectiveInterestRate,
+        };
+      }
+    });
 
     setCreditLineTerms(result);
   }, [
@@ -391,18 +306,21 @@ export function SimulateCredit() {
           const [financial, borrowers, extra] = await Promise.all([
             getFinancialObligationsUpdate(
               businessUnitPublicCode,
+              businessManagerCode,
               product,
               customerData.publicCode,
               formData.selectedDestination,
             ),
             getAdditionalBorrowersAllowed(
               businessUnitPublicCode,
+              businessManagerCode,
               product,
               customerData.publicCode,
               formData.selectedDestination,
             ),
             getExtraInstallmentsAllowed(
               businessUnitPublicCode,
+              businessManagerCode,
               product,
               customerData.publicCode,
               formData.selectedDestination,
@@ -413,7 +331,7 @@ export function SimulateCredit() {
             product,
             financialObligation:
               financial?.financialObligationsUpdateRequired ?? "N",
-            aditionalBorrowers: borrowers?.additionalBorowersAllowed ?? "N",
+            aditionalBorrowers: borrowers?.additionalBorrowersAllowed ?? "N",
             extraInstallement: extra?.extraInstallmentsAllowed ?? "N",
           };
         }),
@@ -427,15 +345,8 @@ export function SimulateCredit() {
         extraInstallement: results.map((result) => result.extraInstallement),
       });
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
+      setMessageError(messagesError.tryLater);
     }
   }, [formData.selectedProducts]);
 
@@ -446,6 +357,7 @@ export function SimulateCredit() {
     try {
       const data = await getClientPortfolioObligationsById(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       setClientPortfolio(data);
@@ -482,19 +394,12 @@ export function SimulateCredit() {
     try {
       const paymentCapacity = await getBorrowerPaymentCapacityById(
         businessUnitPublicCode,
+        businessManagerCode,
         data,
       );
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
     }
   };
 
@@ -506,6 +411,7 @@ export function SimulateCredit() {
       const data = await getCreditPayments(
         customerPublicCode,
         businessUnitPublicCode,
+        businessManagerCode,
       );
       setObligationPayment(data ?? null);
     } catch (error: unknown) {
@@ -542,14 +448,14 @@ export function SimulateCredit() {
   };
 
   const totalIncome =
-    (creditLimitData?.Dividends ?? 0) +
-    (creditLimitData?.FinancialIncome ?? 0) +
-    (creditLimitData?.Leases ?? 0) +
-    (creditLimitData?.OtherNonSalaryEmoluments ?? 0) +
-    (creditLimitData?.PensionAllowances ?? 0) +
-    (creditLimitData?.PeriodicSalary ?? 0) +
-    (creditLimitData?.PersonalBusinessUtilities ?? 0) +
-    (creditLimitData?.ProfessionalFees ?? 0);
+    (formData.sourcesOfIncome?.Dividends ?? 0) +
+    (formData.sourcesOfIncome?.FinancialIncome ?? 0) +
+    (formData.sourcesOfIncome?.Leases ?? 0) +
+    (formData.sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0) +
+    (formData.sourcesOfIncome?.PensionAllowances ?? 0) +
+    (formData.sourcesOfIncome?.PeriodicSalary ?? 0) +
+    (formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0) +
+    (formData.sourcesOfIncome?.ProfessionalFees ?? 0);
 
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
@@ -659,6 +565,7 @@ export function SimulateCredit() {
     try {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
+        businessManagerCode,
         simulateData,
       );
       const prospectCode = response?.prospectCode;
@@ -686,19 +593,15 @@ export function SimulateCredit() {
     try {
       const result = await getCreditLimit(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       setCreditLimitData(result);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
-      setShowErrorModal?.(true);
-      setMessageError?.(description);
+      setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
+    } finally {
+      setIsLoadingCreditLimit(false);
     }
   };
   useEffect(() => {
@@ -712,29 +615,31 @@ export function SimulateCredit() {
 
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
-
     const payload = {
-      clientIdentificationNumber: customerData.customerId,
+      clientIdentificationNumber: customerData.publicCode,
       prospect: { ...simulateData },
     };
-
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
+          businessManagerCode,
           payload,
         );
         if (data) {
           setValidateRequirements(data);
         }
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError(messagesError.tryLater);
       } finally {
         setIsLoading(false);
       }
     };
 
     handleSubmit();
-  }, [customerData, simulateData, businessUnitPublicCode]);
+  }, [currentStep, businessUnitPublicCode]);
 
   useEffect(() => {
     if (clientPortfolio) {
@@ -832,9 +737,34 @@ export function SimulateCredit() {
     }
   }, [formData.borrowerData.borrowers]);
 
+  const handleModalTryAgain = () => {
+    setShowErrorModal(false);
+    navigate("/credit/prospects");
+  };
+
+  const dataMaximumCreditLimitService = useMemo(
+    () => ({
+      identificationDocumentType:
+        customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+      identificationDocumentNumber: customerData.publicCode,
+      moneyDestination: formData.selectedDestination,
+      primaryIncomeType:
+        typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
+          ? formData.sourcesOfIncome.PeriodicSalary.toString()
+          : "0",
+    }),
+    [
+      customerData.publicCode,
+      customerData.generalAttributeClientNaturalPersons,
+      formData.selectedDestination,
+      formData.sourcesOfIncome?.PeriodicSalary,
+    ],
+  );
+
   return (
     <>
       <SimulateCreditUI
+        isLoadingCreditLimit={isLoadingCreditLimit}
         steps={steps}
         currentStep={currentStep}
         customerData={customerData}
@@ -881,6 +811,7 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
+        dataMaximumCreditLimitService={dataMaximumCreditLimitService}
         servicesProductSelection={
           servicesProductSelection as IServicesProductSelection
         }
@@ -888,6 +819,8 @@ export function SimulateCredit() {
         showErrorModal={showErrorModal}
         messageError={messageError}
         businessUnitPublicCode={businessUnitPublicCode}
+        businessManagerCode={businessManagerCode}
+        handleModalTryAgain={handleModalTryAgain}
       />
       {showConsultingModal && <Consulting />}
     </>

@@ -25,6 +25,7 @@ import {
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
@@ -46,13 +47,13 @@ interface SimulationsUIProps {
   showMenu: boolean;
   codeError: number | null;
   addToFix: string[];
-  hasPermitSubmit: boolean;
   isModalOpen: boolean;
   showCreditRequest: boolean;
   dataPrint: React.RefObject<HTMLDivElement>;
   showErrorModal: boolean;
   messageError: string;
   showDeleteModal: boolean;
+  businessManagerCode: string;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
@@ -85,13 +86,13 @@ export function SimulationsUI(props: SimulationsUIProps) {
     showMenu,
     codeError,
     addToFix,
-    hasPermitSubmit,
     isModalOpen,
     showCreditRequest,
     dataPrint,
     showErrorModal,
     messageError,
     showDeleteModal,
+    businessManagerCode,
     setShowDeleteModal,
     setShowErrorModal,
     navigate,
@@ -124,6 +125,15 @@ export function SimulationsUI(props: SimulationsUIProps) {
     );
     return found?.Code || code;
   };
+  const { disabledButton: canRequestCredit } = useValidateUseCase({
+    useCase: getUseCaseValue("canRequestCredit"),
+  });
+  const { disabledButton: canDeleteCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canDeleteCreditRequest"),
+  });
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
 
   return (
     <div ref={dataPrint}>
@@ -133,7 +143,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin="0 auto"
+          margin={`20px auto ${isMobile ? "100px" : "50px"} auto`}
         >
           <Stack
             direction="column"
@@ -314,6 +324,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           isPrint={true}
                           prospectData={dataProspect!}
                           sentData={sentData}
+                          businessManagerCode={businessManagerCode}
                           setSentData={setSentData}
                           setRequestValue={setRequestValue}
                           onProspectUpdate={setProspectData}
@@ -323,39 +334,49 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     </StyledScrollPrint>
                     <StyledPrint>
                       <Stack
-                        gap="20px"
+                        gap="10px"
                         justifyContent="end"
                         padding="0 0 16px 0"
                       >
-                        <Button
-                          appearance="danger"
-                          variant="outlined"
-                          onClick={() => setShowDeleteModal(true)}
-                        >
-                          {dataEditProspect.delete}
-                        </Button>
+                        <Stack gap="2px">
+                          <Button
+                            appearance="danger"
+                            variant="outlined"
+                            disabled={canDeleteCreditRequest}
+                            onClick={() => setShowDeleteModal(true)}
+                          >
+                            {dataEditProspect.delete}
+                          </Button>
+                          <Stack alignItems="center">
+                            {canDeleteCreditRequest && (
+                              <Icon
+                                icon={<MdOutlineInfo />}
+                                appearance="primary"
+                                size="16px"
+                                cursorHover
+                                onClick={handleInfo}
+                              />
+                            )}
+                          </Stack>
+                        </Stack>
                         <Stack gap="2px" alignItems="center">
                           <Button
                             onClick={handleSubmitClick}
-                            disabled={
-                              dataProspect?.state === "Submitted" ||
-                              !hasPermitSubmit
-                                ? true
-                                : false
-                            }
+                            disabled={canRequestCredit}
                           >
                             {dataEditProspect.confirm}
                           </Button>
-                          {(dataProspect?.state === "Submitted" ||
-                            !hasPermitSubmit) && (
-                            <Icon
-                              icon={<MdOutlineInfo />}
-                              appearance="primary"
-                              size="16px"
-                              cursorHover
-                              onClick={handleInfo}
-                            />
-                          )}
+                          <Stack alignItems="center">
+                            {canRequestCredit && (
+                              <Icon
+                                icon={<MdOutlineInfo />}
+                                appearance="primary"
+                                size="16px"
+                                cursorHover
+                                onClick={handleInfo}
+                              />
+                            )}
+                          </Stack>
                         </Stack>
                       </Stack>
                     </StyledPrint>
@@ -378,7 +399,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                       </Text>
                       <Stack direction="column" gap="8px">
                         <ul>
-                          {!hasPermitSubmit && (
+                          {
                             <li>
                               <Text
                                 weight="normal"
@@ -388,7 +409,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 {titlesModal.titlePrivileges}
                               </Text>
                             </li>
-                          )}
+                          }
                           {dataProspect?.state === "Submitted" && (
                             <li>
                               <Text
@@ -433,6 +454,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
           title={dataEditProspect.deleteTitle}
           handleBack={() => setShowDeleteModal(false)}
           handleNext={handleDeleteProspect}
+          disabledNext={canEditCreditRequest}
           backButton="Cancelar"
           nextButton="Eliminar"
           apparenceNext="danger"

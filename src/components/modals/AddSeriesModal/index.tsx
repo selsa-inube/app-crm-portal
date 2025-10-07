@@ -79,12 +79,14 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     setAddModal,
   } = props;
 
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const formik = useFormik({
     initialValues: {
@@ -160,6 +162,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     try {
       await saveExtraordinaryInstallment(
         businessUnitPublicCode,
+        businessManagerCode,
         extraordinaryInstallments,
       );
 

@@ -3,7 +3,6 @@ import { MdCheckCircleOutline } from "react-icons/md";
 import { Stack, Text, Icon, Spinner } from "@inubekit/inubekit";
 
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
-import { ErrorModal } from "@components/modals/ErrorModal";
 import { Fieldset } from "@components/data/Fieldset";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { ICustomerData } from "@context/CustomerContext/types";
@@ -17,11 +16,17 @@ interface IRequirementsNotMetProps {
   customerData: ICustomerData;
   prospectData: IProspect;
   businessUnitPublicCode: string;
+  businessManagerCode: string;
 }
 
 export function RequirementsNotMet(props: IRequirementsNotMetProps) {
-  const { isMobile, customerData, prospectData, businessUnitPublicCode } =
-    props;
+  const {
+    isMobile,
+    customerData,
+    prospectData,
+    businessUnitPublicCode,
+    businessManagerCode,
+  } = props;
 
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
@@ -43,6 +48,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
       try {
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
+          businessManagerCode,
           payload,
         );
         if (data) {
@@ -51,6 +57,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
       } catch (error) {
         setHasError(true);
         setShowErrorModal(true);
+        showErrorModal;
       } finally {
         setIsLoading(false);
       }
@@ -106,26 +113,19 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             direction="column"
             alignItems="center"
           >
-            <Icon
-              icon={<MdCheckCircleOutline />}
-              appearance={"success"}
-              size="54px"
-            />
+            {!hasError && (
+              <Icon
+                icon={<MdCheckCircleOutline />}
+                appearance={"success"}
+                size="54px"
+              />
+            )}
             <Text type="title" size="medium" appearance="dark">
-              {dataError.noData}
+              {hasError ? dataError.descriptionError : dataError.noData}
             </Text>
           </Stack>
         )}
       </Fieldset>
-      {showErrorModal && (
-        <ErrorModal
-          handleClose={() => {
-            setShowErrorModal(false);
-          }}
-          isMobile={isMobile}
-          message={dataError.descriptionError}
-        />
-      )}
     </>
   );
 }

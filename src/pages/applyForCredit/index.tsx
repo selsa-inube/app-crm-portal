@@ -48,6 +48,8 @@ export function ApplyForCredit() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
+
   const dataHeader = {
     name: customerData?.fullName ?? "",
     status:
@@ -95,6 +97,8 @@ export function ApplyForCredit() {
       lastName: "",
       email: "",
       phone: "",
+      phoneDial: "+57",
+      whatsAppDial: "",
       whatsAppPhone: "",
       toggleChecked: true,
     },
@@ -150,7 +154,7 @@ export function ApplyForCredit() {
         city: "",
         bank: "",
         accountType: "",
-        accountNumber: "",
+        accountNumber: "0",
         documentType: "",
       },
       Certified_check: {
@@ -251,7 +255,7 @@ export function ApplyForCredit() {
   }, [valueRule, hasBorrowers, bondValue]);
 
   const [currentStep, setCurrentStep] = useState<number>(
-    /* stepsFilingApplication.generalInformation.id, */ 3,
+    stepsFilingApplication.generalInformation.id,
   );
 
   const {
@@ -314,8 +318,10 @@ export function ApplyForCredit() {
     JSON.stringify([
       {
         instantMessagingPlatformName: MessagingPlatform[0].Value,
-        propertyName: "+57",
-        propertyValue: `+57${formData.contactInformation.whatsAppPhone}`,
+        propertyName:
+          formData.contactInformation.whatsAppDial ||
+          formData.contactInformation.phoneDial,
+        propertyValue: `${formData.contactInformation.whatsAppDial} ${formData.contactInformation.whatsAppPhone} || ${formData.contactInformation.phoneDial} ${formData.contactInformation.phone}`,
         transactionOperation: "Insert",
       },
     ]),
@@ -375,7 +381,7 @@ export function ApplyForCredit() {
     .map(([key, value]) => ({
       accountBankCode: value.bank || businessUnitPublicCode,
       accountBankName: value.bank || businessUnitPublicCode,
-      accountNumber: value.accountNumber,
+      accountNumber: value.accountNumber || "0",
       accountType: value.accountType || "CH",
       disbursementAmount: value.amount,
       disbursementDate: new Date().toISOString().split("T")[0],
@@ -400,6 +406,7 @@ export function ApplyForCredit() {
     try {
       const response = await postSubmitCredit(
         businessUnitPublicCode,
+        businessManagerCode,
         userAccount,
         submitData,
       );
@@ -423,6 +430,7 @@ export function ApplyForCredit() {
     try {
       const prospect = await getSearchProspectByCode(
         businessUnitPublicCode,
+        businessManagerCode,
         prospectCode || "",
       );
 
@@ -484,6 +492,7 @@ export function ApplyForCredit() {
             postBusinessUnitRules,
             "value",
             businessUnitPublicCode,
+            businessManagerCode,
           );
         } catch (error) {
           const apiError = error as { response?: { status?: number } };
@@ -552,6 +561,7 @@ export function ApplyForCredit() {
               postBusinessUnitRules,
               "value",
               businessUnitPublicCode,
+              businessManagerCode,
             );
             const extractedValues = Array.isArray(values)
               ? values
@@ -643,6 +653,7 @@ export function ApplyForCredit() {
       try {
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         if (result) {
@@ -693,6 +704,7 @@ export function ApplyForCredit() {
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         setShowErrorModal={setShowErrorModal}
+        businessManagerCode={businessManagerCode}
         isMobile={isMobile}
         prospectData={prospectData as IProspect}
         customerData={customerData}
@@ -705,6 +717,7 @@ export function ApplyForCredit() {
         messageError={messageError}
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
+        setMessageError={setMessageError}
       />
     </>
   );

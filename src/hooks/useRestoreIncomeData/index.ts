@@ -19,16 +19,19 @@ export function useRestoreIncomeData({
   const [isLoading, setIsLoading] = useState(false);
 
   const { customerData } = useContext(CustomerContext);
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const customerPublicCode: string = customerData.publicCode;
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const restoreData = async () => {
     try {
       setIsLoading(true);
       const refreshedData = await getCreditLimit(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       onSuccess?.(refreshedData);

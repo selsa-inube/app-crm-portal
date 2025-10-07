@@ -54,6 +54,7 @@ import { Observations } from "./steps/observations";
 import { submitCreditApplicationConfig } from "./config/submitCreditApplication.config";
 import { dataSubmitApplication } from "./config/config";
 import { titlesModal } from "../simulations/config";
+import { tittleOptions } from "./config/config";
 
 interface ApplyForCreditUIProps {
   currentStep: number;
@@ -68,6 +69,7 @@ interface ApplyForCreditUIProps {
   isModalOpen: boolean;
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
+  businessManagerCode: string;
   getRuleByName: (name: string) => string[];
   prospectSummaryData?: IProspectSummaryById;
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -84,6 +86,7 @@ interface ApplyForCreditUIProps {
   prospectData: IProspect;
   showErrorModal: boolean;
   messageError: string;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
@@ -102,6 +105,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     dataHeader,
     sentModal,
     approvedRequestModal,
+    businessManagerCode,
     getRuleByName,
     setSentModal,
     setApprovedRequestModal,
@@ -120,6 +124,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     codeError,
     addToFix,
     businessUnitPublicCode,
+    setMessageError,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -136,10 +141,23 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   const handleHome = () => {
     navigate(`/credit/prospects/${prospectCode}`);
   };
+
+  if (codeError) {
+    setShowErrorModal(true);
+    setMessageError(tittleOptions.tryLater);
+  }
+
+  const handleRedirect = () => {
+    navigate(`/credit/prospects`);
+  };
   return (
     <>
       {codeError ? (
-        <ErrorPage errorCode={codeError} addToFix={addToFix || []} />
+        <ErrorPage
+          errorCode={codeError}
+          addToFix={addToFix || []}
+          handleRedirect={handleRedirect}
+        />
       ) : (
         <Stack
           direction="column"
@@ -148,9 +166,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
         >
           <Stack
             direction="column"
-            alignItems={isMobile ? "normal" : "center"}
-            margin="20px 0px"
-            padding="24px"
+            width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
+            margin={`0px auto ${isMobile ? "100px" : "50px"} auto`}
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
               <GeneralHeader
@@ -241,6 +258,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     customerData={customerData}
                     prospectData={prospectData}
                     businessUnitPublicCode={businessUnitPublicCode}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
@@ -271,6 +289,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     }
                     prospectData={prospectData as IProspectBorrower}
                     valueRule={getRuleByName("ValidationCoBorrower")}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
@@ -283,8 +302,11 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ propertyOffered: values })
                     }
+                    businessUnitPublicCode={businessUnitPublicCode}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
+
               {currentStepsNumber &&
                 currentStepsNumber.id ===
                   stepsFilingApplication.vehicleOffered.id && (
@@ -295,6 +317,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ vehicleOffered: values })
                     }
+                    businessUnitPublicCode={businessUnitPublicCode}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
@@ -431,7 +455,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 }
                 handleNext={() => setApprovedRequestModal(false)}
                 handleClose={() => setApprovedRequestModal(false)}
-                handleBack={() => console.log("data: ", formData)}
                 width={isMobile ? "290px" : "402px"}
               >
                 <Stack direction="column" alignItems="center" gap="24px">

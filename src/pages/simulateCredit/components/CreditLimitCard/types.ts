@@ -18,13 +18,6 @@ export interface IMaxLimitData {
   maxAmount: number;
 }
 
-export interface IReciprocityData {
-  balanceOfContributions: number;
-  accordingToRegulation: number;
-  assignedQuota: number;
-  numRegulations: number;
-}
-
 export interface IScoreData {
   totalScore: number;
   seniority: number;
@@ -47,4 +40,12 @@ export interface IPaymentCapacityData {
   maxValue: number;
   extraordinary: number;
   extraordinaryQuotes?: CurrentDataRow[];
+}
+
+export interface IdataMaximumCreditLimitService {
+  lineOfCreditAbbreviatedName?: string;
+  identificationDocumentType: string;
+  identificationDocumentNumber: string;
+  moneyDestination: string;
+  primaryIncomeType: string;
 }

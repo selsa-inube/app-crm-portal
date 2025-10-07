@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
   MdOutlineAdd,
+  MdOutlineInfo,
   MdOutlinePayments,
   MdOutlinePictureAsPdf,
   MdOutlineShare,
@@ -14,13 +15,13 @@ import {
   Select,
   useFlag,
   Spinner,
+  Textarea,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
 import { MaxLimitModal } from "@components/modals/MaxLimitModal";
 import { ReciprocityModal } from "@components/modals/ReciprocityModal";
 import { ScoreModal } from "@components/modals/FrcModal";
-import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { ReportCreditsModal } from "@components/modals/ReportCreditsModal";
 import { BaseModal } from "@components/modals/baseModal";
@@ -42,6 +43,7 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
@@ -49,16 +51,26 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { AddProductModal } from "@src/pages/prospect/components/AddProductModal";
+import { CardGray } from "@components/cards/CardGray";
+import { privilegeCrm } from "@config/privilege";
+import { updateProspect } from "@services/prospect/updateProspect";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
-import { dataCreditProspect, labelsAndValuesShare } from "./config";
+import {
+  dataCreditProspect,
+  labelsAndValuesShare,
+  configModal,
+} from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
+import InfoModal from "../InfoModal";
 
 interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
+  businessManagerCode: string;
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
   setSentData: React.Dispatch<
@@ -76,6 +88,7 @@ interface ICreditProspectProps {
 export function CreditProspect(props: ICreditProspectProps) {
   const {
     prospectData,
+    businessManagerCode,
     showMenu,
     setRequestValue,
     onProspectUpdate,
@@ -111,6 +124,9 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [currentIncomeModalData, setCurrentIncomeModalData] = useState<
     IIncomeSources | undefined
   >();
+  const [showEditMessageModal, setShowEditMessageModal] = useState(false);
+  const [editedComments, setEditedComments] = useState("");
+
   const { addFlag } = useFlag();
   const dataPrint = useRef<HTMLDivElement>(null);
 
@@ -122,6 +138,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       setCreditLimitError(null);
       const result = await getCreditLimit(
         businessUnitPublicCode,
+        businessManagerCode,
         customerPublicCode,
       );
       setCreditLimitData(result);
@@ -201,11 +218,16 @@ export function CreditProspect(props: ICreditProspectProps) {
         ],
       };
 
-      await addCreditProduct(businessUnitPublicCode, payload);
+      await addCreditProduct(
+        businessUnitPublicCode,
+        businessManagerCode,
+        payload,
+      );
 
       if (prospectData?.prospectId) {
         const updatedProspect = await getSearchProspectById(
           businessUnitPublicCode,
+          businessManagerCode,
           prospectData.prospectId,
         );
         setDataProspect([updatedProspect]);
@@ -251,6 +273,27 @@ export function CreditProspect(props: ICreditProspectProps) {
     setSelectedIndex(index ?? 0);
   };
   const selectedBorrower = borrowersProspect?.borrowers?.[selectedIndex];
+
+  function hasExtraordinaryInstallments(dataProspect: IProspect): boolean {
+    if (
+      !dataProspect?.creditProducts ||
+      !Array.isArray(dataProspect.creditProducts)
+    ) {
+      return false;
+    }
+
+    for (const creditProduct of dataProspect.creditProducts) {
+      if (
+        creditProduct?.extraordinaryInstallments &&
+        Array.isArray(creditProduct.extraordinaryInstallments) &&
+        creditProduct.extraordinaryInstallments.length > 0
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   const handleIncomeSubmit = (updatedData: IIncomeSources) => {
     setCurrentIncomeModalData({ ...updatedData });
@@ -453,30 +496,107 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(labelsAndValuesShare.error);
     }
   };
-  console.log("prospectData: ", prospectData);
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const borrower = dataProspect?.[0]?.borrowers?.[0];
+
+  const dataMaximumCreditLimitService = {
+    identificationDocumentType: borrower?.borrowerIdentificationType || "",
+    identificationDocumentNumber: borrower?.borrowerIdentificationNumber || "",
+    moneyDestination: dataProspect?.[0]?.moneyDestinationAbbreviatedName || "",
+    primaryIncomeType:
+      borrower?.borrowerProperties?.find(
+        (property) => property.propertyName === "PeriodicSalary",
+      )?.propertyValue || "",
+  };
+
+  const handleCommentsChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setEditedComments(event.target.value);
+  };
+
+  const handleSaveComments = async () => {
+    try {
+      if (!prospectData) return;
+
+      const updatedProspect: IProspect = {
+        ...prospectData,
+        clientComments: editedComments,
+      };
+
+      if (onProspectUpdate) {
+        onProspectUpdate(updatedProspect);
+      }
+
+      if (onProspectUpdated) {
+        onProspectUpdated();
+      }
+
+      setShowEditMessageModal(false);
+      handleCloseModal();
+
+      await updateProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        updatedProspect,
+      );
+
+      addFlag({
+        title: "Observaciones actualizadas",
+        description: "Las observaciones se han guardado correctamente",
+        appearance: "success",
+        duration: 5000,
+      });
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(configModal.observations.errorMessage);
+    }
+  };
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
         {!isMobile && (
           <StyledPrint>
             <Stack gap="16px" justifyContent="end" alignItems="center">
-              <Button
-                type="button"
-                appearance="primary"
-                spacing="compact"
-                iconBefore={
+              <Stack alignItems="center" gap="4px">
+                <Button
+                  type="button"
+                  appearance="primary"
+                  spacing="compact"
+                  iconBefore={
+                    <Icon
+                      icon={<MdOutlineAdd />}
+                      appearance="light"
+                      size="18px"
+                      spacing="narrow"
+                    />
+                  }
+                  disabled={canEditCreditRequest}
+                  onClick={() => handleOpenModal("editProductModal")}
+                >
+                  {dataCreditProspect.addProduct}
+                </Button>
+                {!prospectData?.creditProducts[0].extraordinaryInstallments && (
                   <Icon
-                    icon={<MdOutlineAdd />}
-                    appearance="light"
-                    size="18px"
-                    spacing="narrow"
+                    icon={<MdOutlineInfo />}
+                    appearance="primary"
+                    size="16px"
+                    cursorHover
+                    onClick={handleInfo}
                   />
-                }
-                onClick={() => handleOpenModal("editProductModal")}
-              >
-                {dataCreditProspect.addProduct}
-              </Button>
-              {!prospectData?.creditProducts[0].extraordinaryInstallments && (
+                )}
+              </Stack>
+              {!hasExtraordinaryInstallments(prospectData as IProspect) && (
                 <Button
                   type="button"
                   appearance="primary"
@@ -543,30 +663,29 @@ export function CreditProspect(props: ICreditProspectProps) {
             handleClose={handleCloseModal}
             isMobile={isMobile}
             setRequestValue={setRequestValue || (() => {})}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
           />
         )}
         {openModal === "paymentCapacity" && (
           <MaxLimitModal
-            title="Cupo máx. capacidad de pago"
             handleClose={() => setOpenModal(null)}
-            reportedIncomeSources={2000000}
-            reportedFinancialObligations={6789000}
-            subsistenceReserve={2000000}
-            availableForNewCommitments={5000000}
-            maxVacationTerm={12}
-            maxAmount={1000000}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
           />
         )}
         {openModal === "reciprocityModal" && (
           <ReciprocityModal
             handleClose={() => setOpenModal(null)}
-            balanceOfContributions={4000000}
-            accordingToRegulation={2}
-            assignedQuota={1000000}
-            numRegulations={2}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            clientIdentificationNumber={
+              dataMaximumCreditLimitService.identificationDocumentNumber
+            }
           />
         )}
-
         {openModal === "scoreModal" && (
           <ScoreModal
             handleClose={() => setOpenModal(null)}
@@ -585,13 +704,17 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         )}
         {currentModal === "editProductModal" && (
-          <EditProductModal
+          <AddProductModal
             title="Agregar productos"
             confirmButtonText="Guardar"
             initialValues={initialValues}
             iconBefore={<MdOutlineAdd />}
             onCloseModal={handleCloseModal}
             onConfirm={handleConfirm}
+            moneyDestination={prospectData!.moneyDestinationAbbreviatedName}
+            businessUnitPublicCode={businessUnitPublicCode}
+            customerData={customerData}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentModal === "IncomeModal" && (
@@ -639,13 +762,27 @@ export function CreditProspect(props: ICreditProspectProps) {
                     onChange={handleChange}
                     size="compact"
                   />
-                  <Button
-                    onClick={() => {
-                      setOpenModal("IncomeModalEdit");
-                    }}
-                  >
-                    {dataCreditProspect.edit}
-                  </Button>
+                  <Stack alignItems="center">
+                    <Button
+                      onClick={() => {
+                        setOpenModal("IncomeModalEdit");
+                      }}
+                      disabled={canEditCreditRequest}
+                    >
+                      {dataCreditProspect.edit}
+                    </Button>
+                    {canEditCreditRequest ? (
+                      <Icon
+                        icon={<MdOutlineInfo />}
+                        appearance="primary"
+                        size="16px"
+                        cursorHover
+                        onClick={handleInfo}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </Stack>
                 </Stack>
                 <IncomeDebtor
                   initialValues={
@@ -673,6 +810,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             creditLimitData={creditLimitData}
             publicCode={borrowerOptions[selectedIndex]?.publicCode || ""}
             businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentModal === "reportCreditsModal" && (
@@ -696,12 +834,65 @@ export function CreditProspect(props: ICreditProspectProps) {
           />
         )}
 
+        {currentModal === "observations" && (
+          <BaseModal
+            title={configModal.observations.title}
+            handleClose={handleCloseModal}
+            handleNext={() => {
+              setEditedComments(prospectData!.clientComments || "");
+              setShowEditMessageModal(true);
+            }}
+            nextButton={configModal.observations.modify}
+            backButton={configModal.observations.cancel}
+            width={isMobile ? "300px" : "500px"}
+          >
+            <Stack direction="column" gap="16px">
+              <CardGray
+                label={configModal.observations.labelTextarea}
+                placeHolder={prospectData!.clientComments || ""}
+                apparencePlaceHolder="gray"
+              />
+            </Stack>
+          </BaseModal>
+        )}
+
+        {showEditMessageModal && (
+          <BaseModal
+            title={configModal.observations.title}
+            handleClose={() => setShowEditMessageModal(false)}
+            handleNext={handleSaveComments}
+            nextButton={configModal.observations.modify}
+            backButton={configModal.observations.cancel}
+            width={isMobile ? "300px" : "500px"}
+          >
+            <Textarea
+              id="comments"
+              label={configModal.observations.labelTextarea}
+              value={editedComments}
+              onChange={(event) => handleCommentsChange(event)}
+              maxLength={120}
+            />
+          </BaseModal>
+        )}
+
         {showErrorModal && (
           <ErrorModal
             handleClose={() => setShowErrorModal(false)}
             isMobile={isMobile}
             message={messageError}
           />
+        )}
+        {isModalOpen ? (
+          <InfoModal
+            onClose={handleInfoModalClose}
+            title={privilegeCrm.title}
+            subtitle={privilegeCrm.subtitle}
+            description={privilegeCrm.description}
+            nextButtonText={privilegeCrm.nextButtonText}
+            isMobile={isMobile}
+          />
+        ) : (
+          <></>
         )}
       </Stack>
     </div>

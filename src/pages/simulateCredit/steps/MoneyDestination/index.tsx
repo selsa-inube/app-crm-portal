@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
-import { getMoneyDestinations } from "@services/moneyDestination/SearchAllMoneyDestination";
-import { IMoneyDestination } from "@services/moneyDestination/types";
+import { searchAllMoneyDestinationByCustomerCode } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
+import { IMoneyDestination } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
@@ -12,12 +12,21 @@ import { dataMoneyDestination } from "./config";
 interface IMoneyDestinationProps {
   initialValues: string;
   isTablet: boolean;
+  businessManagerCode: string;
+  clientIdentificationNumber: string;
   handleOnChange: React.Dispatch<React.SetStateAction<string>>;
   onFormValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function MoneyDestination(props: IMoneyDestinationProps) {
-  const { initialValues, isTablet, handleOnChange, onFormValid } = props;
+  const {
+    initialValues,
+    isTablet,
+    businessManagerCode,
+    clientIdentificationNumber,
+    handleOnChange,
+    onFormValid,
+  } = props;
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -30,10 +39,25 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     useState<IMoneyDestination[]>();
 
   useEffect(() => {
-    getMoneyDestinations(businessUnitPublicCode)
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setMoneyDestinations(data);
+    searchAllMoneyDestinationByCustomerCode(
+      businessUnitPublicCode,
+      businessManagerCode,
+      clientIdentificationNumber,
+    )
+      .then((response) => {
+        if (response && Array.isArray(response)) {
+          const filteredDestinations = response.filter((destination) =>
+            destination.linesOfCredit.some(
+              (lineOfCredit: {
+                creditPlacementChannels: string[];
+                lineOfCreditAbbreviatedName: string;
+              }) => lineOfCredit.creditPlacementChannels.includes("CRM"),
+            ),
+          );
+
+          setMoneyDestinations(filteredDestinations);
+        } else if (response === null) {
+          setMoneyDestinations([]);
         }
       })
       .catch((error) => {

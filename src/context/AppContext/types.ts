@@ -50,7 +50,7 @@ export interface IStaff {
   staffId: string;
   staffName: string;
   userAccount: string;
-  useCases: Ipermissions;
+  useCases: string[];
 }
 
 interface IUser {

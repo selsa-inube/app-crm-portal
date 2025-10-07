@@ -34,6 +34,7 @@ interface ErrorPageProps {
   onClick?: () => void;
   errorCode?: number;
   addToFix?: string[];
+  handleRedirect?: () => void;
 }
 
 const ListContent = ({ items }: { items: string[] }) => (
@@ -55,6 +56,7 @@ function ErrorPage(props: ErrorPageProps) {
     onClick,
     errorCode = 0,
     addToFix,
+    handleRedirect,
   } = props;
 
   const mediaQueries = ["(max-width: 600px)"];
@@ -144,11 +146,15 @@ function ErrorPage(props: ErrorPageProps) {
                       spacing="wide"
                       variant="filled"
                       fullwidth={queriesMatches}
-                      onClick={() =>
-                        onClick
-                          ? onClick()
-                          : window.open(environment.REDIRECT_URI, "_self")
-                      }
+                      onClick={() => {
+                        if (handleRedirect) {
+                          handleRedirect();
+                        } else {
+                          onClick
+                            ? onClick()
+                            : window.open(environment.REDIRECT_URI, "_self");
+                        }
+                      }}
                     >
                       {nameButton}
                     </Button>

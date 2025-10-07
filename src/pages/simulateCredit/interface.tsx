@@ -53,11 +53,13 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
+import { messagesError } from "./config/config";
 import {
   AlertCapacityAnalysis,
   AlertCreditLimit,
   AlertIncome,
 } from "./components/smallModals/modals";
+import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -111,6 +113,7 @@ interface SimulateCreditUIProps {
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
   isCreditLimitModalOpen: boolean;
+  dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
   isCreditLimitWarning: boolean;
   isCapacityAnalysisModal: boolean;
   isCapacityAnalysisWarning: boolean;
@@ -135,7 +138,10 @@ interface SimulateCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   servicesProductSelection: IServicesProductSelection;
+  isLoadingCreditLimit: boolean;
   paymentCapacity?: IPaymentCapacityResponse | null;
+  businessManagerCode: string;
+  handleModalTryAgain: () => void;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -165,6 +171,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     isCreditLimitModalOpen,
     isCreditLimitWarning,
     isCapacityAnalysisModal,
+    dataMaximumCreditLimitService,
     isCapacityAnalysisWarning,
     formData,
     selectedProducts,
@@ -190,6 +197,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     showErrorModal,
     messageError,
     businessUnitPublicCode,
+    businessManagerCode,
+    isLoadingCreditLimit,
+    handleModalTryAgain,
   } = props;
 
   return (
@@ -204,7 +214,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin="0 auto"
+          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
@@ -337,6 +347,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       prospectData={prospectData as IProspect}
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
+                      businessManagerCode={businessManagerCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -351,6 +362,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                       onFormValid={setIsCurrentFormValid}
                       isTablet={isTablet}
+                      businessManagerCode={businessManagerCode}
+                      clientIdentificationNumber={customerData.publicCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -396,6 +409,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     <ExtraordinaryInstallments
                       isMobile={isMobile}
                       initialValues={formData.extraordinaryInstallments}
+                      businessManagerCode={businessManagerCode}
                       handleOnChange={(newExtraordinary) =>
                         handleFormDataChange(
                           "extraordinaryInstallments",
@@ -417,25 +431,28 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isMobile={isMobile}
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
+                      businessManagerCode={businessManagerCode}
                     />
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
                     stepsAddProspect.sourcesIncome.id && (
                     <SourcesOfIncome
+                      isLoadingCreditLimit={isLoadingCreditLimit}
                       initialValues={formData.sourcesOfIncome}
                       handleOnChange={(
                         newState: Partial<ISourcesOfIncomeState>,
-                      ) =>
+                      ) => {
                         handleFormDataChange("sourcesOfIncome", {
                           ...formData.sourcesOfIncome,
                           ...newState,
-                        })
-                      }
+                        });
+                      }}
                       isMobile={isMobile}
                       customerData={customerData}
                       creditLimitData={creditLimitData}
                       businessUnitPublicCode={businessUnitPublicCode}
+                      businessManagerCode={businessManagerCode}
                     />
                   )}
                 {currentStepsNumber &&
@@ -536,6 +553,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleClose={() => setIsCreditLimitModalOpen(false)}
                   isMobile={isMobile}
                   setRequestValue={setRequestValue}
+                  dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+                  businessUnitPublicCode={businessUnitPublicCode}
+                  businessManagerCode={businessManagerCode}
                 />
               )}
               {isCreditLimitWarning && (
@@ -568,7 +588,12 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               )}
               {showErrorModal && (
                 <ErrorModal
-                  handleClose={() => setShowErrorModal(false)}
+                  handleClose={() => {
+                    if (messageError === messagesError.tryLater) {
+                      handleModalTryAgain();
+                    }
+                    setShowErrorModal(false);
+                  }}
                   isMobile={isMobile}
                   message={messageError}
                 />

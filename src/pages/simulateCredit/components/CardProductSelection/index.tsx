@@ -13,6 +13,8 @@ export interface ICardProductSelectionProps {
   disabled?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
+  typeCheck?: string;
+  isMobile?: boolean;
 }
 
 export function CardProductSelection(props: ICardProductSelectionProps) {
@@ -24,16 +26,19 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
     disabled,
     onSelect,
     isSelected,
+    typeCheck,
+    isMobile,
   } = props;
 
   return (
-    <Stack width="455px" direction="column">
+    <Stack width={isMobile ? "250px" : "455px"} direction="column">
       <Stack gap="4px">
         <input
-          type="checkbox"
+          type={typeCheck ? typeCheck : "checkbox"}
           disabled={disabled}
           checked={isSelected}
           onChange={onSelect}
+          name="productSelection"
         />
         <Text
           type="title"
@@ -75,7 +80,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               {selectData.rate}
             </Text>
             <Text appearance="gray" size="medium">
-              {rate} % M.V
+              {rate.toFixed(3)} % M.V
             </Text>
           </Stack>
           <Stack justifyContent="space-between">

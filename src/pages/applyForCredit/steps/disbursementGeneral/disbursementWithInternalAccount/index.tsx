@@ -39,6 +39,7 @@ interface IDisbursementWithInternalAccountProps {
   businessUnitPublicCode: string;
   isAmountReadOnly: boolean;
   prospectSummaryData: IProspectSummaryById | undefined;
+  businessManagerCode: string;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -57,6 +58,7 @@ export function DisbursementWithInternalAccount(
     businessUnitPublicCode,
     isAmountReadOnly,
     customerData,
+    businessManagerCode,
     getTotalAmount,
     onFormValid,
     handleOnChange,
@@ -232,6 +234,7 @@ export function DisbursementWithInternalAccount(
         const customer = await getSearchCustomerByCode(
           identification,
           businessUnitPublicCode,
+          businessManagerCode,
           true,
         );
 
@@ -285,6 +288,7 @@ export function DisbursementWithInternalAccount(
         const response = await getAllInternalAccounts(
           currentIdentification,
           businessUnitPublicCode,
+          businessManagerCode,
         );
 
         const uniqueMap = new Map<

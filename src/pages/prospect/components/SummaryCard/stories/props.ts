@@ -14,10 +14,6 @@ const props: Partial<ArgTypes<SummaryCardProps>> = {
     control: "text",
     description: "Activity to be performed in the request",
   },
-  path: {
-    control: "text",
-    description: "Navigation path when clicking on the card",
-  },
 };
 
 export { props };

@@ -8,7 +8,9 @@ import { ILinesOfCreditByMoneyDestination } from "../types";
 
 const getLinesOfCreditByMoneyDestination = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   moneyDestinationAbbreviatedName: string,
+  clientIdentificationNumber: string,
 ): Promise<ILinesOfCreditByMoneyDestination | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -23,12 +25,13 @@ const getLinesOfCreditByMoneyDestination = async (
           "X-Action": "GetLinesOfCreditByMoneyDestination",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/${moneyDestinationAbbreviatedName}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/${moneyDestinationAbbreviatedName}/${clientIdentificationNumber}`,
         options,
       );
 

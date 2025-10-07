@@ -25,12 +25,6 @@ const creditLimitCard: Meta<typeof CreditLimitCard> = {
       },
       description: "Data for the Payment Capacity modal.",
     },
-    reciprocityData: {
-      control: {
-        type: "object",
-      },
-      description: "Data for the Reciprocity modal.",
-    },
     scoreData: {
       control: {
         type: "object",
@@ -51,20 +45,6 @@ export const Default: Story = {
       assignedLimit: 0,
       maxUsableLimit: 20000000,
       availableLimitWithoutGuarantee: 15000000,
-    },
-    maxLimitData: {
-      reportedIncomeSources: 2000000,
-      reportedFinancialObligations: 6789000,
-      subsistenceReserve: 2000000,
-      availableForNewCommitments: 5000000,
-      maxVacationTerm: 12,
-      maxAmount: 1000000,
-    },
-    reciprocityData: {
-      balanceOfContributions: 40000000,
-      accordingToRegulation: 2,
-      assignedQuota: 1000000,
-      numRegulations: 3,
     },
     scoreData: {
       totalScore: 150,

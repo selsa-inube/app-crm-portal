@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdAdd, MdArrowBack } from "react-icons/md";
+import { MdAdd, MdArrowBack, MdOutlineInfo } from "react-icons/md";
 import {
   Breadcrumbs,
   Button,
@@ -16,6 +16,7 @@ import {
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
+import { ErrorSearchAllProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode/ErrorSearchAllProspectsByCustomerCode";
 import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
@@ -24,11 +25,14 @@ import { BaseModal } from "@components/modals/baseModal";
 import { CardGray } from "@components/cards/CardGray";
 import { updateProspect } from "@services/prospect/updateProspect";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { privilegeCrm } from "@config/privilege";
 
-import { addConfig, dataCreditProspects, errorMessage } from "./config";
+import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CardCreditProspect } from "./components/CardCreditProspect";
+import InfoModal from "../prospect/components/InfoModal";
 
 export function CreditProspects() {
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -39,9 +43,12 @@ export function CreditProspects() {
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
-  const { businessUnitSigla } = useContext(AppContext);
+
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const [prospectSummaryData, setProspectSummaryData] = useState<IProspect[]>(
     [],
@@ -60,6 +67,7 @@ export function CreditProspects() {
   >({});
   const [searchTerm, setSearchTerm] = useState("");
   const [errorModalMessage, setErrorModalMessage] = useState("");
+  const [messageSearchResults, setMessageSearchResults] = useState("");
 
   const navigate = useNavigate();
 
@@ -67,7 +75,7 @@ export function CreditProspects() {
     if (!selectedProspect) return;
 
     try {
-      await RemoveProspect(businessUnitPublicCode, {
+      await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
         removeProspectsRequest: [
           {
             prospectId: selectedProspect.prospectId,
@@ -97,6 +105,7 @@ export function CreditProspects() {
       try {
         const result = await getProspectsByCustomerCode(
           businessUnitPublicCode,
+          businessManagerCode,
           customerData.publicCode,
         );
         if (result && result.length > 0) {
@@ -107,11 +116,9 @@ export function CreditProspects() {
           }
         }
       } catch (error) {
-        setErrorModalMessage(
-          errorMessage.notProspects ||
-            "No se encontraron prospectos para este cliente.",
+        setMessageSearchResults(
+          ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable,
         );
-        setShowErrorModal(true);
       }
     };
     if (customerData?.publicCode && businessUnitPublicCode) {
@@ -164,6 +171,7 @@ export function CreditProspects() {
     try {
       const result = await updateProspect(
         businessUnitPublicCode,
+        businessManagerCode,
         updatedProspect,
       );
 
@@ -183,11 +191,27 @@ export function CreditProspects() {
       setErrorModalMessage(dataCreditProspects.errorObservations);
     }
   };
+  const { disabledButton: canSimulateCredit } = useValidateUseCase({
+    useCase: getUseCaseValue("canSimulateCredit"),
+  });
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+  const handleInfo = () => {
+    setIsModalOpen(true);
+  };
+  const handleInfoModalClose = () => {
+    setIsModalOpen(false);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleConfirmProspect = () => {
+    navigate(`/credit/apply-for-credit/${selectedProspect?.prospectCode}`);
+  };
   return (
     <>
       <Stack
-        margin="20px auto"
+        margin={`20px auto ${isMobile ? "100px" : "50px"} auto`}
         width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
         direction="column"
         gap="24px"
@@ -227,20 +251,42 @@ export function CreditProspects() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
               />
-              <Button
-                iconBefore={<MdAdd />}
-                type="link"
-                path="../simulate-credit"
-                fullwidth={isMobile}
-              >
-                {dataCreditProspects.simulate}
-              </Button>
+              <Stack alignItems="center" gap="6x">
+                <Button
+                  iconBefore={<MdAdd />}
+                  type="link"
+                  path="../simulate-credit"
+                  fullwidth={isMobile}
+                  disabled={
+                    canSimulateCredit ||
+                    customerData.generalAssociateAttributes[0].partnerStatus !==
+                      "A-Activo"
+                  }
+                >
+                  {dataCreditProspects.simulate}
+                </Button>
+                {canSimulateCredit && (
+                  <Icon
+                    icon={<MdOutlineInfo />}
+                    appearance="primary"
+                    size="16px"
+                    cursorHover
+                    onClick={handleInfo}
+                  />
+                )}
+              </Stack>
             </Stack>
             <Stack
               wrap="wrap"
               gap="20px"
               justifyContent={isMobile ? "center" : "flex-start"}
             >
+              {messageSearchResults ==
+                ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable && (
+                <Text type="title" size="small">
+                  {messageSearchResults}
+                </Text>
+              )}
               {filteredProspects.map((prospect) => (
                 <CardCreditProspect
                   key={prospect.prospectId}
@@ -266,7 +312,10 @@ export function CreditProspects() {
                     setSelectedProspect(prospect);
                     setShowMessageModal(true);
                   }}
-                  handleSend={() => setShowConfirmModal(true)}
+                  handleSend={() => {
+                    setShowConfirmModal(true);
+                    setSelectedProspect(prospect);
+                  }}
                   handleEdit={() =>
                     navigate(`/credit/prospects/${prospect.prospectCode}`)
                   }
@@ -295,6 +344,18 @@ export function CreditProspects() {
               setShowMessageModal(false);
             }}
             nextButton={dataCreditProspects.modify}
+            disabledNext={canEditCreditRequest}
+            iconAfterNext={
+              canEditCreditRequest ? (
+                <Icon
+                  icon={<MdOutlineInfo />}
+                  appearance="primary"
+                  size="16px"
+                  cursorHover
+                  onClick={handleInfo}
+                />
+              ) : undefined
+            }
             backButton={dataCreditProspects.close}
             width={isMobile ? "300px" : "500px"}
           >
@@ -359,6 +420,7 @@ export function CreditProspects() {
           <BaseModal
             title={dataCreditProspects.confirmTitle}
             handleBack={() => setShowConfirmModal(false)}
+            handleNext={handleConfirmProspect}
             backButton="Cancelar"
             nextButton="Confirmar"
             width={isMobile ? "300px" : "500px"}
@@ -386,6 +448,19 @@ export function CreditProspects() {
           isMobile={isMobile}
           message={errorModalMessage}
         />
+      )}
+
+      {isModalOpen ? (
+        <InfoModal
+          onClose={handleInfoModalClose}
+          title={privilegeCrm.title}
+          subtitle={privilegeCrm.subtitle}
+          description={privilegeCrm.description}
+          nextButtonText={privilegeCrm.nextButtonText}
+          isMobile={isMobile}
+        />
+      ) : (
+        <></>
       )}
     </>
   );

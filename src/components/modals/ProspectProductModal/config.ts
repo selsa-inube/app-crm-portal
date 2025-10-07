@@ -140,6 +140,8 @@ const rateTypeOptions = [
   { id: RateType.Floating, label: "Flotante", value: RateType.Floating },
 ];
 
+export const messageNotFound = "No se encontraron resultados";
+
 export {
   creditLineOptions,
   paymentMethodOptions,

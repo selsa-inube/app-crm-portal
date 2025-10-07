@@ -30,6 +30,7 @@ export const StyledContainer = styled.div`
 export const StyledMain = styled.main`
   display: flex;
   flex-direction: column;
+  height: 100dvh;
   overflow-y: auto;
 `;
 
@@ -92,7 +93,7 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
-  display: inline-flex;
+  display: ${({ showNav }) => (!showNav ? "none" : "inline-flex")};
   justify-content: center;
   align-content: center;
   align-items: center;

@@ -9,6 +9,7 @@ import { IAllInternal } from "../types";
 const getAllInternalAccounts = async (
   customerCode: string,
   businessUnitPublicCode: string,
+  businessManagerCode: string,
 ): Promise<IAllInternal[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -27,6 +28,7 @@ const getAllInternalAccounts = async (
           "X-Action": "SearchAllCardSavingProducts",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
