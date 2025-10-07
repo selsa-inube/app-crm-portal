@@ -178,6 +178,7 @@ export function SimulateCredit() {
 
   const simulateData: IProspect = useMemo(
     () => ({
+      clientIdentificationNumber: customerData.customerId,
       borrowers: [
         Object.keys(formData.borrowerData.borrowers).length === 0
           ? onlyBorrowerData
@@ -255,7 +256,7 @@ export function SimulateCredit() {
 
     const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
 
-    if (!clientInfo?.associateType) return;
+    if (!clientInfo?.associateType || !formData.selectedDestination) return;
 
     const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
       businessUnitPublicCode,
@@ -330,7 +331,7 @@ export function SimulateCredit() {
             product,
             financialObligation:
               financial?.financialObligationsUpdateRequired ?? "N",
-            aditionalBorrowers: borrowers?.additionalBorowersAllowed ?? "N",
+            aditionalBorrowers: borrowers?.additionalBorrowersAllowed ?? "N",
             extraInstallement: extra?.extraInstallmentsAllowed ?? "N",
           };
         }),

@@ -12,6 +12,7 @@ import {
 
 import { ICreditRequest } from "@services/creditRequest/types";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
+import { BaseModal } from "@components/modals/baseModal/index.tsx";
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
@@ -28,10 +29,14 @@ export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
   );
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [selectedRequestCode, setSelectedRequestCode] = useState<string | null>(
+    null,
+  );
+
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
 
@@ -134,7 +139,10 @@ export function CreditApplications() {
                     value={creditRequest.loanAmount}
                     toDo={creditRequest.taskToBeDone}
                     hasMessage={creditRequest.unreadNovelties === "Y"}
-                    path={`${environment.VITE_CREDIBOARD_URL}/extended-card/${creditRequest.creditRequestCode}`}
+                    onCardClick={() => {
+                      setSelectedRequestCode(creditRequest.creditRequestCode);
+                      setIsShowModal(true);
+                    }}
                   />
                 ))}
                 {creditRequestData.length === 0 && (
@@ -145,6 +153,19 @@ export function CreditApplications() {
               </Stack>
             </Stack>
           </Fieldset>
+          {isShowModal && (
+            <BaseModal
+              title={dataCreditProspects.creditApplication}
+              nextButton={dataCreditProspects.accept}
+              backButton={dataCreditProspects.cancel}
+              handleBack={() => setIsShowModal(false)}
+              handleNext={() => {
+                window.location.href = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}`;
+              }}
+            >
+              <Text>{dataCreditProspects.sure}</Text>
+            </BaseModal>
+          )}
         </Stack>
       )}
     </>

@@ -13,6 +13,7 @@ interface IMoneyDestinationProps {
   initialValues: string;
   isTablet: boolean;
   businessManagerCode: string;
+  clientIdentificationNumber: string;
   handleOnChange: React.Dispatch<React.SetStateAction<string>>;
   onFormValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -22,6 +23,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     initialValues,
     isTablet,
     businessManagerCode,
+    clientIdentificationNumber,
     handleOnChange,
     onFormValid,
   } = props;
@@ -40,6 +42,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     searchAllMoneyDestinationByCustomerCode(
       businessUnitPublicCode,
       businessManagerCode,
+      clientIdentificationNumber,
     )
       .then((response) => {
         if (response && Array.isArray(response)) {

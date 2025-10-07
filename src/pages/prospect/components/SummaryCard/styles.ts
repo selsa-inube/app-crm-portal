@@ -1,14 +1,14 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import { inube } from "@inubekit/inubekit";
 
-export const StyledLink = styled(Link)`
+export const StyledLink = styled.div`
   display: flex;
   text-decoration: none;
   flex-direction: column;
   padding: 8px;
   justify-content: space-between;
   height: 100%;
+  cursor: pointer;
 `;
 
 export const StyledSummaryCard = styled.div`
