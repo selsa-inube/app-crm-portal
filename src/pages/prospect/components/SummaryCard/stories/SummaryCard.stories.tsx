@@ -29,7 +29,6 @@ Default.args = {
   destination: "Educación de Postgrado a menos de tres meses",
   value: 10000000,
   toDo: "Aceptación por parte del cliente de la propuesta",
-  path: "/",
 };
 
 export default story;
