@@ -507,6 +507,18 @@ export function CreditProspect(props: ICreditProspectProps) {
     setIsModalOpen(false);
   };
 
+  const borrower = dataProspect?.[0]?.borrowers?.[0];
+
+  const dataMaximumCreditLimitService = {
+    identificationDocumentType: borrower?.borrowerIdentificationType || "",
+    identificationDocumentNumber: borrower?.borrowerIdentificationNumber || "",
+    moneyDestination: dataProspect?.[0]?.moneyDestinationAbbreviatedName || "",
+    primaryIncomeType:
+      borrower?.borrowerProperties?.find(
+        (property) => property.propertyName === "PeriodicSalary",
+      )?.propertyValue || "",
+  };
+
   const handleCommentsChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -651,18 +663,17 @@ export function CreditProspect(props: ICreditProspectProps) {
             handleClose={handleCloseModal}
             isMobile={isMobile}
             setRequestValue={setRequestValue || (() => {})}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
           />
         )}
         {openModal === "paymentCapacity" && (
           <MaxLimitModal
-            title="Cupo máx. capacidad de pago"
             handleClose={() => setOpenModal(null)}
-            reportedIncomeSources={2000000}
-            reportedFinancialObligations={6789000}
-            subsistenceReserve={2000000}
-            availableForNewCommitments={5000000}
-            maxVacationTerm={12}
-            maxAmount={1000000}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
           />
         )}
         {openModal === "reciprocityModal" && (
@@ -674,7 +685,6 @@ export function CreditProspect(props: ICreditProspectProps) {
             numRegulations={2}
           />
         )}
-
         {openModal === "scoreModal" && (
           <ScoreModal
             handleClose={() => setOpenModal(null)}

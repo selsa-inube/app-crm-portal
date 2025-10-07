@@ -23,6 +23,8 @@ export interface IStep {
 export interface IContactInformation {
   email: string;
   phone: string;
+  whatsAppDial: string;
+  phoneDial: string;
   whatsAppPhone: string;
   document: string;
   documentNumber: string;

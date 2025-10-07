@@ -217,19 +217,17 @@ export function SimulateCredit() {
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
       selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
-      requestedAmount: formData.loanAmountState.inputValue,
+      requestedAmount: formData.loanAmountState.inputValue || 0,
       termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
       prospectId: "",
       prospectCode: "",
       state: "",
       selectedRateType: "",
       gracePeriod: 0,
-      gracePeriodType: "",
       bondValue: 0,
       creditProducts: [],
       outlays: [],
       creditScore: "",
-      modifyJustification: "",
       clientManagerIdentificationNumber: "",
       clientManagerName: "",
       clientManagerObservation: "",
@@ -617,10 +615,9 @@ export function SimulateCredit() {
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
     const payload = {
-      clientIdentificationNumber: customerData.customerId,
+      clientIdentificationNumber: customerData.publicCode,
       prospect: { ...simulateData },
     };
-
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
@@ -641,7 +638,7 @@ export function SimulateCredit() {
     };
 
     handleSubmit();
-  }, [customerData?.customerId, businessUnitPublicCode, businessManagerCode]);
+  }, [currentStep, businessUnitPublicCode]);
 
   useEffect(() => {
     if (clientPortfolio) {
@@ -744,6 +741,25 @@ export function SimulateCredit() {
     navigate("/credit/prospects");
   };
 
+  const dataMaximumCreditLimitService = useMemo(
+    () => ({
+      identificationDocumentType: customerData.publicCode,
+      identificationDocumentNumber:
+        customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+      moneyDestination: formData.selectedDestination,
+      primaryIncomeType:
+        typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
+          ? formData.sourcesOfIncome.PeriodicSalary.toString()
+          : "0",
+    }),
+    [
+      customerData.publicCode,
+      customerData.generalAttributeClientNaturalPersons,
+      formData.selectedDestination,
+      formData.sourcesOfIncome?.PeriodicSalary,
+    ],
+  );
+
   return (
     <>
       <SimulateCreditUI
@@ -794,6 +810,7 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
+        dataMaximumCreditLimitService={dataMaximumCreditLimitService}
         servicesProductSelection={
           servicesProductSelection as IServicesProductSelection
         }
