@@ -311,7 +311,7 @@ export function DisbursementWithExternalAccount(
     };
 
     fetchBanks();
-  }, [addFlag]);
+  }, [initialValues]);
 
   return (
     <Stack
