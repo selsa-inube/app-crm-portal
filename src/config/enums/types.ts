@@ -11,13 +11,10 @@ export interface IDomainEnum {
 export interface IEnumContextState {
   enums: Record<string, IDomainEnum[]>;
   language: string;
-  isLoading: boolean;
-  error: string | null;
 }
 
 export interface IEnumContextActions {
-  getEnums: (businessUnitPublicCode: string, enumName: string) => Promise<void>;
-  clearEnums: () => void;
+  getEnums: (enumName: string) => Promise<void>;
 }
 
 export type TEnumContext = IEnumContextState & IEnumContextActions;

@@ -8,12 +8,7 @@ import {
   ReactNode,
 } from "react";
 
-import {
-  IDomainEnum,
-  IEnumContextState,
-  IEnumContextActions,
-  TEnumContext,
-} from "@config/enums/types";
+import { IDomainEnum, TEnumContext } from "@config/enums/types";
 import { requirementStatusData } from "@services/enum/requirements";
 
 const EnumContext = createContext<TEnumContext>({} as TEnumContext);
@@ -21,8 +16,6 @@ const EnumContext = createContext<TEnumContext>({} as TEnumContext);
 export const EnumProvider = ({ children }: { children: ReactNode }) => {
   const [enums, setEnums] = useState<Record<string, IDomainEnum[]>>({});
   const [language, setLanguage] = useState("es");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && navigator.language) {
@@ -55,52 +48,31 @@ export const EnumProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      setIsLoading(true);
-      setError(null);
+      let rawData: IDomainEnum[] | null = null;
 
-      try {
-        let rawData: IDomainEnum[] | null = null;
-
-        rawData = getMocks(enumName);
-
-        if (!rawData) {
-          return;
-        }
-
-        const translatedData = transformEnumData(rawData);
-
-        setEnums((prevEnums) => ({
-          ...prevEnums,
-          [enumName]: translatedData,
-        }));
-
-        console.log(`✅ Enum '${enumName}' cargado exitosamente`);
-      } catch (err) {
-        const errorMsg = `Error al cargar el enum '${enumName}': ${err}`;
-        console.error(errorMsg);
-        setError(errorMsg);
-      } finally {
-        setIsLoading(false);
+      rawData = getMocks(enumName);
+      console.log("rawData: ", rawData);
+      if (!rawData) {
+        return;
       }
+
+      const translatedData = transformEnumData(rawData);
+      console.log("translatedData: ", translatedData);
+      setEnums((prevEnums) => ({
+        ...prevEnums,
+        [enumName]: translatedData,
+      }));
     },
     [language, enums, getMocks, transformEnumData],
   );
-
-  const clearEnums = useCallback(() => {
-    setEnums({});
-    setError(null);
-  }, []);
 
   const contextValue = useMemo(
     () => ({
       enums,
       language,
-      isLoading,
-      error,
       getEnums,
-      clearEnums,
     }),
-    [enums, language, isLoading, error, getEnums, clearEnums],
+    [enums, language, getEnums],
   );
 
   return (
@@ -111,7 +83,7 @@ export const EnumProvider = ({ children }: { children: ReactNode }) => {
 export const useEnums = (): TEnumContext => {
   const context = useContext(EnumContext);
   if (!context) {
-    throw new Error("useEnums debe ser usado dentro de un EnumProvider");
+    return {} as TEnumContext;
   }
   return context;
 };
