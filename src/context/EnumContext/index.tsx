@@ -83,7 +83,7 @@ export const EnumProvider = ({ children }: { children: ReactNode }) => {
 export const useEnums = (): TEnumContext => {
   const context = useContext(EnumContext);
   if (!context) {
-    return {} as TEnumContext;
+    throw new Error("useEnums debe ser usado dentro de un EnumProvider");
   }
   return context;
 };
