@@ -11,7 +11,7 @@ export interface ILinesOfCreditByMoneyDestination {
 }
 
 export interface IAdditionalBorrowersAllowedResponse {
-  additionalBorowersAllowed: string;
+  additionalBorrowersAllowed: string;
 }
 
 export interface IExtraInstallmentsAllowedResponse {

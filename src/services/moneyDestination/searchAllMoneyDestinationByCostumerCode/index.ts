@@ -7,6 +7,7 @@ import { IMoneyDestination } from "./types";
 
 export const searchAllMoneyDestinationByCustomerCode = async (
   businessUnitPublicCode: string,
+  businessManagerCode: string,
   clientIdentificationNumber: string,
 ): Promise<IMoneyDestination[] | null> => {
   const maxRetries = maxRetriesServices;
@@ -21,6 +22,7 @@ export const searchAllMoneyDestinationByCustomerCode = async (
           "X-Action": "SearchAllMoneyDestinationByCustomerCode",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
