@@ -7,4 +7,9 @@ export const dataReciprocity = {
   currentPortafolio: "(-) Cartera descubierta vigente",
   loading: "Cargando...",
   mount: "Monto máximo disponible según reciprocidad",
+  error: {
+    title: "Error cargando datos",
+    message:
+      "No se pudieron cargar los datos. Por favor, intente nuevamente más tarde.",
+  },
 };

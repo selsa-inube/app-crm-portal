@@ -5,8 +5,7 @@ import { useMediaQuery } from "@inubekit/inubekit";
 import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
-import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
+import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { postSimulateCredit } from "@services/prospect/simulateCredit";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
@@ -36,9 +35,7 @@ import {
   titleButtonTextAssited,
 } from "./types";
 import { SimulateCreditUI } from "./interface";
-import { ruleConfig } from "./config/configRules";
 import { messagesError } from "./config/config";
-import { evaluateRule } from "./evaluateRule";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 import { updateFinancialObligationsFormData } from "./utils";
 
@@ -181,6 +178,7 @@ export function SimulateCredit() {
 
   const simulateData: IProspect = useMemo(
     () => ({
+      clientIdentificationNumber: customerData.customerId,
       borrowers: [
         Object.keys(formData.borrowerData.borrowers).length === 0
           ? onlyBorrowerData
@@ -220,7 +218,7 @@ export function SimulateCredit() {
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
       selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
-      requestedAmount: formData.loanAmountState.inputValue,
+      requestedAmount: formData.loanAmountState.inputValue || 0,
       termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
       prospectId: "",
       prospectCode: "",
@@ -248,143 +246,49 @@ export function SimulateCredit() {
     };
   }>({});
 
-  type RuleEvaluationResult = {
-    value: number | string;
-    [key: string]: string | number;
-  };
-
-  const getRuleValue = (input: unknown): number | string | null => {
-    if (Array.isArray(input)) {
-      const first = input[0];
-      return first && typeof first === "object" && "value" in first
-        ? (first as RuleEvaluationResult).value
-        : (first ?? null);
-    }
-
-    if (input !== null && typeof input === "object" && "value" in input) {
-      return (input as RuleEvaluationResult).value;
-    }
-
-    return typeof input === "string" || typeof input === "number"
-      ? input
-      : null;
-  };
-
   const fetchCreditLineTerms = useCallback(async () => {
-    try {
-      if (customerData.fullName.length === 0) {
-        setCodeError(1016);
-        setAddToFix(["No se ha seleccionado ningún cliente "]);
-      } else {
-        setCodeError(null);
-      }
-      const clientInfo =
-        customerData?.generalAttributeClientNaturalPersons?.[0];
-      if (!clientInfo?.associateType) return;
-
-      const baseDataRules = {
-        MoneyDestination: formData.selectedDestination,
-        ClientType: clientInfo.associateType?.substring(0, 1) || "",
-        EmploymentContractTermType:
-          clientInfo.employmentType?.substring(0, 2) || "",
-        AffiliateSeniority: getMonthsElapsed(
-          customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-          0,
-        ),
-      };
-
-      // const lineOfCreditRule = ruleConfig["LineOfCredit"]?.({
-      //   ...baseDataRules,
-      //   LineOfCredit: "",
-      // });
-
-      // if (!lineOfCreditRule) return;
-
-      const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
-        businessUnitPublicCode,
-        businessManagerCode,
-        formData.selectedDestination,
-      );
-
-      type LineOfCreditValue = string | { value: string } | null | undefined;
-      const lineNames = Array.isArray(lineOfCreditValues)
-        ? (lineOfCreditValues as LineOfCreditValue[])
-            .map((v) => (typeof v === "string" ? v : v?.value || ""))
-            .filter((name): name is string => Boolean(name))
-        : [];
-
-      const result: Record<
-        string,
-        {
-          LoanAmountLimit: number;
-          LoanTermLimit: number;
-          RiskFreeInterestRate: number;
-        }
-      > = {};
-
-      for (const line of lineNames) {
-        const ruleData = { ...baseDataRules, LineOfCredit: line };
-
-        const loanAmountRule = ruleConfig["LoanAmountLimit"]?.(ruleData);
-        const loanAmount = loanAmountRule
-          ? await evaluateRule(
-              loanAmountRule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              businessManagerCode,
-              true,
-            )
-          : null;
-        const amountValue = Number(getRuleValue(loanAmount) ?? 0);
-
-        const termRuleInput = {
-          ...ruleData,
-          LoanAmount: amountValue,
-        };
-        const termRule = ruleConfig["LoanTerm"]?.(termRuleInput);
-        const termValueRaw = termRule
-          ? await evaluateRule(
-              termRule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              businessManagerCode,
-              true,
-            )
-          : null;
-        const termValue = Number(getRuleValue(termValueRaw) ?? 0);
-
-        const interestInput = {
-          ...ruleData,
-          LoanAmount: amountValue,
-          LoanTerm: termValue,
-        };
-        const interestRule = ruleConfig["FixedInterestRate"]?.(interestInput);
-        const rateValueRaw = interestRule
-          ? await evaluateRule(
-              interestRule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              businessManagerCode,
-              true,
-            )
-          : null;
-        const interestRate = Number(getRuleValue(rateValueRaw) ?? 0);
-
-        result[line] = {
-          LoanAmountLimit: amountValue,
-          LoanTermLimit: termValue,
-          RiskFreeInterestRate: interestRate,
-        };
-      }
-
-      setCreditLineTerms(result);
-    } catch (error) {
-      setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+    if (customerData.fullName.length === 0) {
+      setCodeError(1016);
+      setAddToFix(["No se ha seleccionado ningún cliente "]);
+    } else {
+      setCodeError(null);
     }
+
+    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
+
+    if (!clientInfo?.associateType || !formData.selectedDestination) return;
+
+    const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
+      businessUnitPublicCode,
+      businessManagerCode,
+      formData.selectedDestination,
+      customerData.publicCode,
+    );
+
+    const linesArray = Array.isArray(lineOfCreditValues)
+      ? lineOfCreditValues
+      : [lineOfCreditValues];
+
+    const result: Record<
+      string,
+      {
+        LoanAmountLimit: number;
+        LoanTermLimit: number;
+        RiskFreeInterestRate: number;
+      }
+    > = {};
+
+    linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
+      if (line && line.abbreviateName) {
+        result[line.abbreviateName] = {
+          LoanAmountLimit: line.maxAmount,
+          LoanTermLimit: line.maxTerm,
+          RiskFreeInterestRate: line.maxEffectiveInterestRate,
+        };
+      }
+    });
+
+    setCreditLineTerms(result);
   }, [
     customerData,
     businessUnitPublicCode,
@@ -427,7 +331,7 @@ export function SimulateCredit() {
             product,
             financialObligation:
               financial?.financialObligationsUpdateRequired ?? "N",
-            aditionalBorrowers: borrowers?.additionalBorowersAllowed ?? "N",
+            aditionalBorrowers: borrowers?.additionalBorrowersAllowed ?? "N",
             extraInstallement: extra?.extraInstallmentsAllowed ?? "N",
           };
         }),
@@ -712,10 +616,9 @@ export function SimulateCredit() {
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
     const payload = {
-      clientIdentificationNumber: customerData.customerId,
+      clientIdentificationNumber: customerData.publicCode,
       prospect: { ...simulateData },
     };
-
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
@@ -841,9 +744,9 @@ export function SimulateCredit() {
 
   const dataMaximumCreditLimitService = useMemo(
     () => ({
-      identificationDocumentType: customerData.publicCode,
-      identificationDocumentNumber:
+      identificationDocumentType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+      identificationDocumentNumber: customerData.publicCode,
       moneyDestination: formData.selectedDestination,
       primaryIncomeType:
         typeof formData.sourcesOfIncome?.PeriodicSalary === "number"

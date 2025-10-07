@@ -679,10 +679,11 @@ export function CreditProspect(props: ICreditProspectProps) {
         {openModal === "reciprocityModal" && (
           <ReciprocityModal
             handleClose={() => setOpenModal(null)}
-            balanceOfContributions={4000000}
-            accordingToRegulation={2}
-            assignedQuota={1000000}
-            numRegulations={2}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            clientIdentificationNumber={
+              dataMaximumCreditLimitService.identificationDocumentNumber
+            }
           />
         )}
         {openModal === "scoreModal" && (
@@ -713,6 +714,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             moneyDestination={prospectData!.moneyDestinationAbbreviatedName}
             businessUnitPublicCode={businessUnitPublicCode}
             customerData={customerData}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentModal === "IncomeModal" && (

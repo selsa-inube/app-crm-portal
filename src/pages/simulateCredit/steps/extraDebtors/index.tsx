@@ -213,6 +213,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               onAddBorrower={() => {}}
               prospectData={{} as IProspect}
               businessManagerCode={businessManagerCode}
+              businessUnitPublicCode={businessUnitPublicCode}
             />
           )}
 

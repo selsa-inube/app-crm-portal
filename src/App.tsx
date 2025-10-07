@@ -20,6 +20,7 @@ import { CreditRoutes } from "@routes/CreditRoutes";
 import { HomeRoutes } from "@routes/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { CustomerRoutes } from "@routes/customer";
+import { EnumProvider } from "./context/EnumContext";
 
 import { environment } from "./config/environment";
 import { AuthProvider } from "./pages/AuthProvider";
@@ -64,10 +65,12 @@ function App() {
       <AppContextProvider>
         <CustomerContextProvider>
           <CustomerContextProvider>
-            <FlagProvider>
-              <GlobalStyles />
-              <RouterProvider router={router} />
-            </FlagProvider>
+            <EnumProvider>
+              <FlagProvider>
+                <GlobalStyles />
+                <RouterProvider router={router} />
+              </FlagProvider>
+            </EnumProvider>
           </CustomerContextProvider>
         </CustomerContextProvider>
       </AppContextProvider>

@@ -7,23 +7,13 @@ interface SummaryCardProps {
   destination: string;
   value: number;
   toDo: string;
-  path: string;
   hasMessage: boolean;
   onCardClick?: () => void;
 }
 
 const SummaryCard = (props: SummaryCardProps) => {
-  const {
-    rad,
-    date,
-    name,
-    destination,
-    value,
-    toDo,
-    path,
-    hasMessage,
-    onCardClick,
-  } = props;
+  const { rad, date, name, destination, value, toDo, hasMessage, onCardClick } =
+    props;
 
   return (
     <SummaryCardUI
@@ -33,7 +23,6 @@ const SummaryCard = (props: SummaryCardProps) => {
       destination={destination}
       value={value}
       toDo={toDo}
-      path={path}
       hasMessage={hasMessage}
       onCardClick={onCardClick}
     />

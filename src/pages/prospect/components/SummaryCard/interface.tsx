@@ -14,20 +14,11 @@ import { StyledSummaryCard, StyledLink } from "./styles";
 import { summaryData } from "./config";
 
 function SummaryCardUI(props: SummaryCardProps) {
-  const {
-    rad,
-    date,
-    name,
-    destination,
-    value,
-    toDo,
-    path,
-    hasMessage,
-    onCardClick,
-  } = props;
+  const { rad, date, name, destination, value, toDo, hasMessage, onCardClick } =
+    props;
   return (
     <StyledSummaryCard>
-      <StyledLink to={path} onClick={onCardClick}>
+      <StyledLink onClick={onCardClick}>
         <Stack justifyContent="space-between">
           <Stack>
             <Text type="body" size="small" appearance="gray">

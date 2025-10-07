@@ -363,6 +363,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       onFormValid={setIsCurrentFormValid}
                       isTablet={isTablet}
                       businessManagerCode={businessManagerCode}
+                      clientIdentificationNumber={customerData.publicCode}
                     />
                   )}
                 {currentStepsNumber &&

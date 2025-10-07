@@ -302,8 +302,11 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ propertyOffered: values })
                     }
+                    businessUnitPublicCode={businessUnitPublicCode}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
+
               {currentStepsNumber &&
                 currentStepsNumber.id ===
                   stepsFilingApplication.vehicleOffered.id && (
@@ -314,6 +317,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ vehicleOffered: values })
                     }
+                    businessUnitPublicCode={businessUnitPublicCode}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
