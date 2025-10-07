@@ -218,7 +218,7 @@ export const CardCommercialManagement = (
 
     fetchExpenses();
   }, [businessUnitPublicCode, prospectData?.prospectId]);
-
+  console.log("prospectData: ", prospectData);
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>
@@ -309,6 +309,18 @@ export const CardCommercialManagement = (
             amortizationType: "",
             interestRate: selectedProduct.interestRate || 0,
             rateType: "",
+          }}
+          prospectData={{
+            lineOfCredit: selectedProduct.lineOfCreditAbbreviatedName || "",
+            moneyDestination:
+              prospectData!.moneyDestinationAbbreviatedName || "",
+            incomeSourceType: "prospectData!.incomeSourceTypeAbbreviatedName",
+            clientType: "string",
+            seniority: 1,
+            totalMonthlyIncome: 1,
+            contractType: "string",
+            paymentChannelType:
+              prospectData!.preferredPaymentChannelAbbreviatedName,
           }}
         />
       )}

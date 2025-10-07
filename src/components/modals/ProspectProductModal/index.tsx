@@ -14,10 +14,11 @@ import { BaseModal } from "@components/modals/baseModal";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { getPaymentMethods } from "@services/prospect/getPaymentMethods";
+import { IBusinessUnitRules } from "@services/businessUnitRules/types";
 import {
   IPaymentMethod,
   IPaymentCycle,
-  IFirstPaymentCycle
+  IFirstPaymentCycle,
 } from "@services/prospect/getPaymentMethods/types";
 import {
   handleChangeWithCurrency,
@@ -30,7 +31,7 @@ import {
   amortizationTypeOptions,
   rateTypeOptions,
   VALIDATED_NUMBER_REGEX,
-  messagesErrorValidations
+  messagesErrorValidations,
 } from "./config";
 
 interface EditProductModalProps {
@@ -41,6 +42,16 @@ interface EditProductModalProps {
   initialValues: FormikValues;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  prospectData: {
+    lineOfCredit: string;
+    moneyDestination: string;
+    incomeSourceType: string;
+    clientType: string;
+    seniority: number;
+    totalMonthlyIncome: number;
+    contractType?: string;
+    paymentChannelType?: string;
+  };
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
 }
@@ -53,6 +64,18 @@ type FieldGroup =
   | "interestRate"
   | "rateType";
 
+interface IRuleDecision {
+  decisionId?: string;
+  typeDecision?: string;
+  value?: string;
+  ruleDataType?: "Alphabetical" | "Numerical" | "Range";
+  ruleName?: string;
+  howToSetTheDecision?: string;
+  coverage?: number;
+  effectiveFrom?: string;
+  validUntil?: string;
+}
+
 function EditProductModal(props: EditProductModalProps) {
   const {
     onCloseModal,
@@ -63,20 +86,32 @@ function EditProductModal(props: EditProductModalProps) {
     iconAfter,
     businessUnitPublicCode,
     businessManagerCode,
+    prospectData,
   } = props;
 
   const [modifiedGroup, setModifiedGroup] = useState<FieldGroup | null>(null);
   const [loanAmountError, setLoanAmountError] = useState<string>("");
-  const [paymentMethodsList, setPaymentMethodsList] = useState<IPaymentMethod[]>([]);
-  const [paymentCyclesList, setPaymentCyclesList] = useState<IPaymentCycle[]>([]);
-  const [firstPaymentCyclesList, setFirstPaymentCyclesList] = useState<IFirstPaymentCycle[]>([]);
+  const [paymentMethodsList, setPaymentMethodsList] = useState<
+    IPaymentMethod[]
+  >([]);
+  const [paymentCyclesList, setPaymentCyclesList] = useState<IPaymentCycle[]>(
+    [],
+  );
+  const [firstPaymentCyclesList, setFirstPaymentCyclesList] = useState<
+    IFirstPaymentCycle[]
+  >([]);
   const [isLoadingPaymentOptions, setIsLoadingPaymentOptions] = useState(false);
   const [paymentOptionsError, setPaymentOptionsError] = useState<string>("");
   const [loanTermError, setLoanTermError] = useState<string>("");
-  const [amortizationTypesList, setAmortizationTypesList] = useState<{ id: string; value: string; label: string }[]>([]);
-  const [isLoadingAmortizationTypes, setIsLoadingAmortizationTypes] = useState(false);
+  const [amortizationTypesList, setAmortizationTypesList] = useState<
+    { id: string; value: string; label: string }[]
+  >([]);
+  const [isLoadingAmortizationTypes, setIsLoadingAmortizationTypes] =
+    useState(false);
   const [interestRateError, setInterestRateError] = useState<string>("");
-  const [rateTypesList, setRateTypesList] = useState<{ id: string; value: string; label: string }[]>([]);
+  const [rateTypesList, setRateTypesList] = useState<
+    { id: string; value: string; label: string }[]
+  >([]);
   const [isLoadingRateTypes, setIsLoadingRateTypes] = useState(false);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
@@ -105,29 +140,29 @@ function EditProductModal(props: EditProductModalProps) {
         setPaymentOptionsError(messagesErrorValidations.loadPaymentOptions);
 
         // ← Fallback a opciones estáticas si falla
-        setPaymentMethodsList(
-          [{
+        setPaymentMethodsList([
+          {
             id: "0",
             value: "No hay opciones de pago disponibles",
             label: "No hay opciones de pago disponibles",
-          }]
-        );
+          },
+        ]);
 
-        setPaymentCyclesList(
-          [{
+        setPaymentCyclesList([
+          {
             id: "0",
             value: "No hay opciones de pago disponibles",
             label: "No hay opciones de pago disponibles",
-          }]
-        );
+          },
+        ]);
 
-        setFirstPaymentCyclesList(
-          [{
+        setFirstPaymentCyclesList([
+          {
             id: "0",
             value: "No hay opciones de pago disponibles",
             label: "No hay opciones de pago disponibles",
-          }]
-        );
+          },
+        ]);
         // ... mismo para los otros dos
       } finally {
         setIsLoadingPaymentOptions(false);
@@ -143,9 +178,16 @@ function EditProductModal(props: EditProductModalProps) {
       setIsLoadingAmortizationTypes(true);
 
       try {
-        const payload = {
-          ruleName: "RepaymentStructure",
-          conditions: [],
+        const payload: IBusinessUnitRules = {
+          ruleName: "RepaymentStructure", // ✅ Correcto según indicación (5)
+          conditions: [
+            { condition: "LineOfCredit", value: prospectData.lineOfCredit },
+            {
+              condition: "IncomeSourceType",
+              value: prospectData.incomeSourceType,
+            },
+            { condition: "ClientType", value: prospectData.clientType },
+          ],
         };
 
         const response = await postBusinessUnitRules(
@@ -154,16 +196,16 @@ function EditProductModal(props: EditProductModalProps) {
           payload,
         );
 
-        // Mapear decisiones a opciones del select
-        if (response && Array.isArray(response) && response.length > 0) {
-          const options = response.map((decision, index) => ({
+        const decisions = response as unknown as IRuleDecision[];
+
+        if (decisions && Array.isArray(decisions) && decisions.length > 0) {
+          const options = decisions.map((decision, index) => ({
             id: decision.decisionId || `${index}`,
             value: decision.value || "",
             label: decision.typeDecision || decision.value || "",
           }));
           setAmortizationTypesList(options);
         } else {
-          // Fallback a opciones estáticas
           setAmortizationTypesList(amortizationTypeOptions);
         }
       } catch (error) {
@@ -175,7 +217,7 @@ function EditProductModal(props: EditProductModalProps) {
     };
 
     loadAmortizationTypes();
-  }, [businessUnitPublicCode, businessManagerCode]);
+  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
 
   // ← NUEVO: Cargar tipos de tasa desde regla InterestRateType
   useEffect(() => {
@@ -183,9 +225,20 @@ function EditProductModal(props: EditProductModalProps) {
       setIsLoadingRateTypes(true);
 
       try {
-        const payload = {
+        const payload: IBusinessUnitRules = {
           ruleName: "InterestRateType",
-          conditions: [],
+          conditions: [
+            { condition: "LineOfCredit", value: prospectData.lineOfCredit },
+            {
+              condition: "MoneyDestination",
+              value: prospectData.moneyDestination,
+            },
+            {
+              condition: "IncomeSourceType",
+              value: prospectData.incomeSourceType,
+            },
+            { condition: "ClientType", value: prospectData.clientType },
+          ],
         };
 
         const response = await postBusinessUnitRules(
@@ -194,16 +247,16 @@ function EditProductModal(props: EditProductModalProps) {
           payload,
         );
 
-        // Mapear decisiones a opciones del select
-        if (response && Array.isArray(response) && response.length > 0) {
-          const options = response.map((decision, index) => ({
+        const decisions = response as unknown as IRuleDecision[];
+
+        if (decisions && Array.isArray(decisions) && decisions.length > 0) {
+          const options = decisions.map((decision, index) => ({
             id: decision.decisionId || `${index}`,
             value: decision.value || "",
             label: decision.typeDecision || decision.value || "",
           }));
           setRateTypesList(options);
         } else {
-          // Fallback a opciones estáticas
           setRateTypesList(rateTypeOptions);
         }
       } catch (error) {
@@ -215,7 +268,7 @@ function EditProductModal(props: EditProductModalProps) {
     };
 
     loadRateTypes();
-  }, [businessUnitPublicCode, businessManagerCode]);
+  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
 
   const getFieldGroup = (fieldName: string): FieldGroup | null => {
     if (fieldName === "creditAmount") return "creditAmount";
@@ -261,8 +314,10 @@ function EditProductModal(props: EditProductModalProps) {
 
     if (fieldName === "termInMonths" && value) {
       const numericValue = Number(value);
-      if (numericValue > 0) {
-        validateLoanTerm(numericValue);
+      const currentAmount = Number(formik.values.creditAmount) || 0;
+
+      if (numericValue >= 0 && currentAmount >= 0) {
+        validateLoanTerm(numericValue, currentAmount);
       } else {
         setLoanTermError("");
       }
@@ -279,8 +334,11 @@ function EditProductModal(props: EditProductModalProps) {
 
     if (fieldName === "interestRate") {
       const numericValue = Number(event.target.value);
-      if (numericValue > 0) {
-        validateInterestRate(numericValue);
+      const currentAmount = Number(formik.values.creditAmount) || 0;
+      const currentTerm = Number(formik.values.termInMonths) || 0;
+
+      if (numericValue >= 0 && currentAmount >= 0 && currentTerm >= 0) {
+        validateInterestRate(numericValue, currentAmount, currentTerm);
       } else {
         setInterestRateError("");
       }
@@ -291,13 +349,20 @@ function EditProductModal(props: EditProductModalProps) {
     try {
       setLoanAmountError("");
 
-      const payload = {
-        ruleName: "loanAmount",
+      const payload: IBusinessUnitRules = {
+        ruleName: "LoanAmountLimit",
         conditions: [
+          { condition: "LineOfCredit", value: prospectData.lineOfCredit },
           {
-            condition: "loanAmount",
-            value: amount.toString(),
+            condition: "MoneyDestination",
+            value: prospectData.moneyDestination,
           },
+          {
+            condition: "IncomeSourceType",
+            value: prospectData.incomeSourceType,
+          },
+          { condition: "ClientType", value: prospectData.clientType },
+          { condition: "Seniority", value: prospectData.seniority },
         ],
       };
 
@@ -307,24 +372,50 @@ function EditProductModal(props: EditProductModalProps) {
         payload,
       );
 
-      // LO QUE TOQUE VALIDAR EL MONTO DEL CREDITO
+      const decisions = response as unknown as IRuleDecision[];
+
+      if (decisions && Array.isArray(decisions) && decisions.length > 0) {
+        const maxAmount = Number(decisions[0].value);
+
+        if (!isNaN(maxAmount) && amount > maxAmount) {
+          setLoanAmountError(
+            `El monto máximo permitido es $${maxAmount.toLocaleString()}`,
+          );
+        }
+      } else {
+        setLoanAmountError("No se pudo validar el monto del crédito");
+      }
     } catch (error) {
-      setLoanAmountError(messagesErrorValidations.validateLoanAmount);
+      console.error("Error validando monto del crédito:", error);
+      setLoanAmountError("Error al validar el monto del crédito");
     }
   };
 
-  // ← NUEVO: Valida el plazo usando la regla loanTerm
-  const validateLoanTerm = async (term: number): Promise<void> => {
+  const validateLoanTerm = async (
+    term: number,
+    loanAmount: number,
+  ): Promise<void> => {
     try {
       setLoanTermError("");
 
-      const payload = {
-        ruleName: "loanTerm",
+      const payload: IBusinessUnitRules = {
+        ruleName: "LoanTerm",
         conditions: [
+          { condition: "LineOfCredit", value: prospectData.lineOfCredit },
           {
-            condition: "loanTerm",
-            value: term.toString(),
+            condition: "MoneyDestination",
+            value: prospectData.moneyDestination,
           },
+          { condition: "LoanAmount", value: loanAmount },
+          {
+            condition: "IncomeSourceType",
+            value: prospectData.incomeSourceType,
+          },
+          { condition: "ClientType", value: prospectData.clientType },
+          ...(prospectData.contractType
+            ? [{ condition: "ContractType", value: prospectData.contractType }]
+            : []),
+          { condition: "Seniority", value: prospectData.seniority },
         ],
       };
 
@@ -334,34 +425,57 @@ function EditProductModal(props: EditProductModalProps) {
         payload,
       );
 
-      if (!response || !Array.isArray(response) || response.length === 0) {
-        setLoanTermError(messagesErrorValidations.validateLoanTermBusiness);
-        return;
-      }
+      const decisions = response as unknown as IRuleDecision[];
 
-      const hasValidDecision = response.some((decision) => {
-        return decision.value !== undefined && decision.value !== null;
-      });
+      if (decisions && Array.isArray(decisions) && decisions.length > 0) {
+        const decision = decisions[0];
 
-      if (!hasValidDecision) {
-        setLoanTermError(messagesErrorValidations.validateLoanTermRange);
+        if (decision.ruleDataType === "Range" && decision.value) {
+          const rangeParts = decision.value.split("-");
+          if (rangeParts.length === 2) {
+            const [min, max] = rangeParts.map(Number);
+            if (!isNaN(min) && !isNaN(max) && (term < min || term > max)) {
+              setLoanTermError(
+                `El plazo debe estar entre ${min} y ${max} meses`,
+              );
+            }
+          }
+        }
+      } else {
+        setLoanTermError("No se pudo validar el plazo");
       }
     } catch (error) {
       console.error("Error validando plazo:", error);
-      setLoanTermError(messagesErrorValidations.validateLoanTermOther);
+      setLoanTermError("Error al validar el plazo");
     }
   };
   // ← NUEVO: Valida la tasa de interés usando la regla interestRate
-  const validateInterestRate = async (rate: number): Promise<void> => {
+  const validateInterestRate = async (
+    rate: number,
+    loanAmount: number,
+    loanTerm: number,
+  ): Promise<void> => {
     try {
       setInterestRateError("");
 
-      const payload = {
-        ruleName: "interestRate",
+      const payload: IBusinessUnitRules = {
+        ruleName: "InterestRateType",
         conditions: [
+          { condition: "LineOfCredit", value: prospectData.lineOfCredit },
           {
-            condition: "interestRate",
-            value: rate.toString(),
+            condition: "MoneyDestination",
+            value: prospectData.moneyDestination,
+          },
+          { condition: "ClientType", value: prospectData.clientType },
+          {
+            condition: "IncomeSourceType",
+            value: prospectData.incomeSourceType,
+          },
+          { condition: "LoanTerm", value: loanTerm },
+          { condition: "LoanAmount", value: loanAmount },
+          {
+            condition: "TotalMonthlyIncome",
+            value: prospectData.totalMonthlyIncome,
           },
         ],
       };
@@ -372,21 +486,28 @@ function EditProductModal(props: EditProductModalProps) {
         payload,
       );
 
-      if (!response || !Array.isArray(response) || response.length === 0) {
-        setInterestRateError(messagesErrorValidations.validateInterestRateBusiness);
-        return;
-      }
+      const decisions = response as unknown as IRuleDecision[];
 
-      const hasValidDecision = response.some((decision) => {
-        return decision.value !== undefined && decision.value !== null;
-      });
+      if (decisions && Array.isArray(decisions) && decisions.length > 0) {
+        const decision = decisions[0];
 
-      if (!hasValidDecision) {
-        setInterestRateError(messagesErrorValidations.validateInterestRateRange);
+        if (decision.ruleDataType === "Range" && decision.value) {
+          const rangeParts = decision.value.split("-");
+          if (rangeParts.length === 2) {
+            const [min, max] = rangeParts.map(Number);
+            if (!isNaN(min) && !isNaN(max) && (rate < min || rate > max)) {
+              setInterestRateError(
+                `La tasa debe estar entre ${min}% y ${max}%`,
+              );
+            }
+          }
+        }
+      } else {
+        setInterestRateError("No se pudo validar la tasa de interés");
       }
     } catch (error) {
       console.error("Error validando tasa de interés:", error);
-      setInterestRateError(messagesErrorValidations.validateInterestRateOther);
+      setInterestRateError("Error al validar la tasa de interés");
     }
   };
 
@@ -501,7 +622,9 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 value={formik.values.paymentMethod}
                 fullwidth
-                disabled={isFieldDisabled("paymentMethod") || isLoadingPaymentOptions}
+                disabled={
+                  isFieldDisabled("paymentMethod") || isLoadingPaymentOptions
+                }
               />
               <Select
                 label="Ciclo de pagos"
@@ -516,7 +639,9 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 value={formik.values.paymentCycle}
                 fullwidth
-                disabled={isFieldDisabled("paymentCycle") || isLoadingPaymentOptions}
+                disabled={
+                  isFieldDisabled("paymentCycle") || isLoadingPaymentOptions
+                }
               />
               <Select
                 label="Primer ciclo de pago"
@@ -531,7 +656,10 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 value={formik.values.firstPaymentCycle}
                 fullwidth
-                disabled={isFieldDisabled("firstPaymentCycle") || isLoadingPaymentOptions}
+                disabled={
+                  isFieldDisabled("firstPaymentCycle") ||
+                  isLoadingPaymentOptions
+                }
               />
               <Select
                 label="Plazo en meses"
@@ -563,7 +691,10 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 value={formik.values.amortizationType}
                 fullwidth
-                disabled={isFieldDisabled("amortizationType") || isLoadingAmortizationTypes}
+                disabled={
+                  isFieldDisabled("amortizationType") ||
+                  isLoadingAmortizationTypes
+                }
               />
               <Textfield
                 label="Tasa de interés"
