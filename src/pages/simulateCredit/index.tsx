@@ -220,7 +220,7 @@ export function SimulateCredit() {
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
       selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
-      requestedAmount: formData.loanAmountState.inputValue,
+      requestedAmount: formData.loanAmountState.inputValue || 0,
       termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
       prospectId: "",
       prospectCode: "",
@@ -305,7 +305,7 @@ export function SimulateCredit() {
         businessManagerCode,
         formData.selectedDestination,
       );
-
+      console.log(lineOfCreditValues);
       type LineOfCreditValue = string | { value: string } | null | undefined;
       const lineNames = Array.isArray(lineOfCreditValues)
         ? (lineOfCreditValues as LineOfCreditValue[])
@@ -712,10 +712,10 @@ export function SimulateCredit() {
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
     const payload = {
-      clientIdentificationNumber: customerData.customerId,
+      clientIdentificationNumber: customerData.publicCode,
       prospect: { ...simulateData },
     };
-
+    console.log(customerData);
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
