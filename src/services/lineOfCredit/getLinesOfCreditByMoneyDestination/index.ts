@@ -10,6 +10,7 @@ const getLinesOfCreditByMoneyDestination = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   moneyDestinationAbbreviatedName: string,
+  clientIdentificationNumber: string,
 ): Promise<ILinesOfCreditByMoneyDestination | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -30,7 +31,7 @@ const getLinesOfCreditByMoneyDestination = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/${moneyDestinationAbbreviatedName}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/${moneyDestinationAbbreviatedName}/${clientIdentificationNumber}`,
         options,
       );
 
@@ -39,7 +40,7 @@ const getLinesOfCreditByMoneyDestination = async (
       if (res.status === 204) {
         return null;
       }
-      console.log(await res.json());
+
       const data = await res.json();
 
       if (!res.ok) {

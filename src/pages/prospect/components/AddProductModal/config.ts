@@ -153,6 +153,7 @@ export interface IAddProductModalProps {
   initialValues: Partial<IFormValues>;
   moneyDestination: string;
   businessUnitPublicCode: string;
+  businessManagerCode: string;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   customerData?: ICustomerData;
@@ -169,6 +170,8 @@ export type TCreditLineTerms = Record<
     LoanAmountLimit: number;
     LoanTermLimit: number;
     RiskFreeInterestRate: number;
+    amortizationType?: string[];
+    description?: string;
   }
 >;
 
