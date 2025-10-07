@@ -57,7 +57,7 @@ export const EnumProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const translatedData = transformEnumData(rawData);
-      console.log("translatedData: ", translatedData);
+
       setEnums((prevEnums) => ({
         ...prevEnums,
         [enumName]: translatedData,
@@ -83,7 +83,7 @@ export const EnumProvider = ({ children }: { children: ReactNode }) => {
 export const useEnums = (): TEnumContext => {
   const context = useContext(EnumContext);
   if (!context) {
-    throw new Error("useEnums debe ser usado dentro de un EnumProvider");
+    return {} as TEnumContext;
   }
   return context;
 };
