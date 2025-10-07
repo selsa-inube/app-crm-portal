@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Stack, Icon, Tag, Text, Spinner } from "@inubekit/inubekit";
 import { MdCheckCircleOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 
@@ -8,6 +8,8 @@ import { TableBoard } from "@components/data/TableBoard";
 import { Fieldset } from "@components/data/Fieldset";
 import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { useEnums } from "@context/EnumContext";
+import { getEnumByCode } from "@src/config/enums/utils";
 
 import {
   dataError,
@@ -30,14 +32,26 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     evaluation: string;
     description: string;
   } | null>(null);
+
+  const { enums, getEnums, language } = useEnums();
   const [showErrorModal, setShowErrorModal] = useState(false);
+
+  useEffect(() => {
+    getEnums("requirementStatus");
+  }, [getEnums]);
 
   const entries = validateRequirements.map((item, idx) => ({
     id: `${item.requirementName}-${idx}`,
     requierement: item.requirementName,
     tag: (
       <Tag
-        label={item.requirementStatus}
+        label={
+          getEnumByCode(
+            item.requirementStatus,
+            language,
+            enums.requirementStatus,
+          ) || item.requirementStatus
+        }
         appearance={
           item.requirementStatus === "Aprobado"
             ? "success"
