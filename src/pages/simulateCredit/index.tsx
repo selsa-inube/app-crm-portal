@@ -305,7 +305,6 @@ export function SimulateCredit() {
         businessManagerCode,
         formData.selectedDestination,
       );
-      console.log(lineOfCreditValues);
       type LineOfCreditValue = string | { value: string } | null | undefined;
       const lineNames = Array.isArray(lineOfCreditValues)
         ? (lineOfCreditValues as LineOfCreditValue[])
@@ -715,7 +714,6 @@ export function SimulateCredit() {
       clientIdentificationNumber: customerData.publicCode,
       prospect: { ...simulateData },
     };
-    console.log(customerData);
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
