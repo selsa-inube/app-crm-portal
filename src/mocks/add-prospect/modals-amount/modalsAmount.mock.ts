@@ -10,12 +10,6 @@ export const mockCreditLimit = [
       maxUsableLimit: 21000000,
       availableLimitWithoutGuarantee: 20000000,
     },
-    reciprocityData: {
-      balanceOfContributions: 60000000,
-      accordingToRegulation: 10000000,
-      assignedQuota: 29000000,
-      numRegulations: 2,
-    },
     scoreData: {
       totalScore: 70,
       seniority: 100,
@@ -75,12 +69,6 @@ export const mockCreditLimit = [
       assignedLimit: 0,
       maxUsableLimit: 20000000,
       availableLimitWithoutGuarantee: 15000000,
-    },
-    reciprocityData: {
-      balanceOfContributions: 50000000,
-      accordingToRegulation: 3,
-      assignedQuota: 2000000,
-      numRegulations: 2,
     },
     scoreData: {
       totalScore: 150,

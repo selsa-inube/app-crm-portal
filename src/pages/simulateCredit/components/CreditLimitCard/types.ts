@@ -18,13 +18,6 @@ export interface IMaxLimitData {
   maxAmount: number;
 }
 
-export interface IReciprocityData {
-  balanceOfContributions: number;
-  accordingToRegulation: number;
-  assignedQuota: number;
-  numRegulations: number;
-}
-
 export interface IScoreData {
   totalScore: number;
   seniority: number;
