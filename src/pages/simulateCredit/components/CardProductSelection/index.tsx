@@ -80,7 +80,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               {selectData.rate}
             </Text>
             <Text appearance="gray" size="medium">
-              {rate} % M.V
+              {rate.toFixed(3)} % M.V
             </Text>
           </Stack>
           <Stack justifyContent="space-between">

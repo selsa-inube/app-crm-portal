@@ -31,7 +31,7 @@ export const dataCreditProspects = {
   titleError: "Lamentamos los inconvenientes",
   accept: "Aceptar",
   cancel: "Cancelar",
-  sure: "¿Está seguro que desea cambiar de portal?",
+  sure: "Esta acción te redirigirá a otro portal. ¿Seguro que deseas continuar?",
   creditApplication: "Solicitud de crédito",
 };
 

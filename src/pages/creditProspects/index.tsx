@@ -43,6 +43,7 @@ export function CreditProspects() {
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
+
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -256,7 +257,11 @@ export function CreditProspects() {
                   type="link"
                   path="../simulate-credit"
                   fullwidth={isMobile}
-                  disabled={canSimulateCredit}
+                  disabled={
+                    canSimulateCredit ||
+                    customerData.generalAssociateAttributes[0].partnerStatus !==
+                      "A-Activo"
+                  }
                 >
                   {dataCreditProspects.simulate}
                 </Button>
