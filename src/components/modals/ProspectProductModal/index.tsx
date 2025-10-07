@@ -45,11 +45,6 @@ interface EditProductModalProps {
   prospectData: {
     lineOfCredit: string;
     moneyDestination: string;
-    incomeSourceType: string;
-    clientType: string;
-    seniority: number;
-    totalMonthlyIncome: number;
-    contractType?: string;
     paymentChannelType?: string;
   };
   iconBefore?: React.JSX.Element;
@@ -67,8 +62,8 @@ type FieldGroup =
 interface IRuleDecision {
   decisionId?: string;
   typeDecision?: string;
-  value?: string;
-  ruleDataType?: "Alphabetical" | "Numerical" | "Range";
+  value?: string | { from: number; to: number };
+  ruleDataType?: "Alphabetical" | "Numerical" | "Range" | "Monetary";
   ruleName?: string;
   howToSetTheDecision?: string;
   coverage?: number;
@@ -182,11 +177,6 @@ function EditProductModal(props: EditProductModalProps) {
           ruleName: "RepaymentStructure", // ✅ Correcto según indicación (5)
           conditions: [
             { condition: "LineOfCredit", value: prospectData.lineOfCredit },
-            {
-              condition: "IncomeSourceType",
-              value: prospectData.incomeSourceType,
-            },
-            { condition: "ClientType", value: prospectData.clientType },
           ],
         };
 
@@ -201,8 +191,10 @@ function EditProductModal(props: EditProductModalProps) {
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
           const options = decisions.map((decision, index) => ({
             id: decision.decisionId || `${index}`,
-            value: decision.value || "",
-            label: decision.typeDecision || decision.value || "",
+            value: typeof decision.value === "string" ? decision.value : "",
+            label:
+              decision.typeDecision ||
+              (typeof decision.value === "string" ? decision.value : ""),
           }));
           setAmortizationTypesList(options);
         } else {
@@ -233,11 +225,6 @@ function EditProductModal(props: EditProductModalProps) {
               condition: "MoneyDestination",
               value: prospectData.moneyDestination,
             },
-            {
-              condition: "IncomeSourceType",
-              value: prospectData.incomeSourceType,
-            },
-            { condition: "ClientType", value: prospectData.clientType },
           ],
         };
 
@@ -252,8 +239,10 @@ function EditProductModal(props: EditProductModalProps) {
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
           const options = decisions.map((decision, index) => ({
             id: decision.decisionId || `${index}`,
-            value: decision.value || "",
-            label: decision.typeDecision || decision.value || "",
+            value: typeof decision.value === "string" ? decision.value : "",
+            label:
+              decision.typeDecision ||
+              (typeof decision.value === "string" ? decision.value : ""),
           }));
           setRateTypesList(options);
         } else {
@@ -357,12 +346,6 @@ function EditProductModal(props: EditProductModalProps) {
             condition: "MoneyDestination",
             value: prospectData.moneyDestination,
           },
-          {
-            condition: "IncomeSourceType",
-            value: prospectData.incomeSourceType,
-          },
-          { condition: "ClientType", value: prospectData.clientType },
-          { condition: "Seniority", value: prospectData.seniority },
         ],
       };
 
@@ -375,12 +358,24 @@ function EditProductModal(props: EditProductModalProps) {
       const decisions = response as unknown as IRuleDecision[];
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
-        const maxAmount = Number(decisions[0].value);
+        const decision = decisions[0];
 
-        if (!isNaN(maxAmount) && amount > maxAmount) {
-          setLoanAmountError(
-            `El monto máximo permitido es $${maxAmount.toLocaleString()}`,
-          );
+        if (typeof decision.value === "object" && decision.value !== null) {
+          const { from, to } = decision.value;
+
+          if (amount < from || amount > to) {
+            setLoanAmountError(
+              `El monto ingresado es $${amount.toLocaleString()}. Debe estar entre $${from.toLocaleString()} y $${to.toLocaleString()}`,
+            );
+          }
+        } else if (typeof decision.value === "string") {
+          const maxAmount = Number(decision.value);
+
+          if (!isNaN(maxAmount) && amount > maxAmount) {
+            setLoanAmountError(
+              `El monto ingresado es $${amount.toLocaleString()}. El máximo permitido es $${maxAmount.toLocaleString()}`,
+            );
+          }
         }
       } else {
         setLoanAmountError("No se pudo validar el monto del crédito");
@@ -407,15 +402,6 @@ function EditProductModal(props: EditProductModalProps) {
             value: prospectData.moneyDestination,
           },
           { condition: "LoanAmount", value: loanAmount },
-          {
-            condition: "IncomeSourceType",
-            value: prospectData.incomeSourceType,
-          },
-          { condition: "ClientType", value: prospectData.clientType },
-          ...(prospectData.contractType
-            ? [{ condition: "ContractType", value: prospectData.contractType }]
-            : []),
-          { condition: "Seniority", value: prospectData.seniority },
         ],
       };
 
@@ -430,13 +416,21 @@ function EditProductModal(props: EditProductModalProps) {
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
         const decision = decisions[0];
 
-        if (decision.ruleDataType === "Range" && decision.value) {
+        if (typeof decision.value === "object" && decision.value !== null) {
+          const { from, to } = decision.value;
+
+          if (term < from || term > to) {
+            setLoanTermError(
+              `El plazo ingresado es ${term} meses. Debe estar entre ${from} y ${to} meses`,
+            );
+          }
+        } else if (typeof decision.value === "string") {
           const rangeParts = decision.value.split("-");
           if (rangeParts.length === 2) {
             const [min, max] = rangeParts.map(Number);
             if (!isNaN(min) && !isNaN(max) && (term < min || term > max)) {
               setLoanTermError(
-                `El plazo debe estar entre ${min} y ${max} meses`,
+                `El plazo ingresado es ${term} meses. Debe estar entre ${min} y ${max} meses`,
               );
             }
           }
@@ -466,17 +460,8 @@ function EditProductModal(props: EditProductModalProps) {
             condition: "MoneyDestination",
             value: prospectData.moneyDestination,
           },
-          { condition: "ClientType", value: prospectData.clientType },
-          {
-            condition: "IncomeSourceType",
-            value: prospectData.incomeSourceType,
-          },
           { condition: "LoanTerm", value: loanTerm },
           { condition: "LoanAmount", value: loanAmount },
-          {
-            condition: "TotalMonthlyIncome",
-            value: prospectData.totalMonthlyIncome,
-          },
         ],
       };
 
@@ -491,13 +476,21 @@ function EditProductModal(props: EditProductModalProps) {
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
         const decision = decisions[0];
 
-        if (decision.ruleDataType === "Range" && decision.value) {
+        if (typeof decision.value === "object" && decision.value !== null) {
+          const { from, to } = decision.value;
+
+          if (rate < from || rate > to) {
+            setInterestRateError(
+              `La tasa ingresada es ${rate}%. Debe estar entre ${from}% y ${to}%`,
+            );
+          }
+        } else if (typeof decision.value === "string") {
           const rangeParts = decision.value.split("-");
           if (rangeParts.length === 2) {
             const [min, max] = rangeParts.map(Number);
             if (!isNaN(min) && !isNaN(max) && (rate < min || rate > max)) {
               setInterestRateError(
-                `La tasa debe estar entre ${min}% y ${max}%`,
+                `La tasa ingresada es ${rate}%. Debe estar entre ${min}% y ${max}%`,
               );
             }
           }
@@ -567,6 +560,7 @@ function EditProductModal(props: EditProductModalProps) {
           }
           iconAfterNext={iconAfter}
           finalDivider={true}
+          width={isMobile ? "290px" : "500px"}
         >
           <ScrollableContainer $smallScreen={isMobile}>
             <Stack

@@ -314,11 +314,6 @@ export const CardCommercialManagement = (
             lineOfCredit: selectedProduct.lineOfCreditAbbreviatedName || "",
             moneyDestination:
               prospectData!.moneyDestinationAbbreviatedName || "",
-            incomeSourceType: "prospectData!.incomeSourceTypeAbbreviatedName",
-            clientType: "string",
-            seniority: 1,
-            totalMonthlyIncome: 1,
-            contractType: "string",
             paymentChannelType:
               prospectData!.preferredPaymentChannelAbbreviatedName,
           }}
