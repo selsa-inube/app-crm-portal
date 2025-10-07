@@ -21,7 +21,7 @@ const getCreditPayments = async (
       const queryParams = new URLSearchParams({
         customerCode: userIdentification,
       });
-      console.log(businessUnitPublicCode);
+
       const options: RequestInit = {
         method: "GET",
         headers: {

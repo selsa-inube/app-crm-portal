@@ -97,6 +97,8 @@ export function ApplyForCredit() {
       lastName: "",
       email: "",
       phone: "",
+      phoneDial: "+57",
+      whatsAppDial: "",
       whatsAppPhone: "",
       toggleChecked: true,
     },
@@ -316,8 +318,8 @@ export function ApplyForCredit() {
     JSON.stringify([
       {
         instantMessagingPlatformName: MessagingPlatform[0].Value,
-        propertyName: "+57",
-        propertyValue: `+57${formData.contactInformation.whatsAppPhone}`,
+        propertyName: formData.contactInformation.whatsAppDial,
+        propertyValue: `${formData.contactInformation.whatsAppDial} ${formData.contactInformation.whatsAppPhone}`,
         transactionOperation: "Insert",
       },
     ]),
@@ -713,6 +715,7 @@ export function ApplyForCredit() {
         messageError={messageError}
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
+        setMessageError={setMessageError}
       />
     </>
   );

@@ -103,12 +103,12 @@ export interface IProspect {
   selectedRateType: string;
   preferredPaymentChannelAbbreviatedName: string;
   gracePeriod: number;
-  gracePeriodType: string;
+  gracePeriodType?: string;
   moneyDestinationAbbreviatedName: string;
   bondValue: number;
   clientComments: string;
   creditScore: string;
-  modifyJustification: string;
+  modifyJustification?: string;
   clientManagerIdentificationNumber: string;
   clientManagerName: string;
   clientManagerObservation: string;

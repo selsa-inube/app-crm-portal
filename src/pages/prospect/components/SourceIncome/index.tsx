@@ -47,6 +47,7 @@ interface ISourceIncomeProps {
   publicCode?: string;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  isLoadingCreditLimit?: boolean;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -76,7 +77,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
     useState<IIncomeSources | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
-
   const groupMapping: Record<
     string,
     keyof Omit<IIncome, "borrower_id" | "borrower">

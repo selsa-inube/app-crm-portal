@@ -3,26 +3,32 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { IMaximumCreditLimit } from "../types";
 
-import { ILinesOfCreditByMoneyDestination } from "../types";
-
-const getLinesOfCreditByMoneyDestination = async (
+export const getMaximumCreditLimitByLineOfCreditRegulation = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  moneyDestinationAbbreviatedName: string,
-  clientIdentificationNumber: string,
-): Promise<ILinesOfCreditByMoneyDestination | null> => {
+  lineOfCreditAbbreviatedName: string,
+  identificationDocumentType: string,
+  identificationDocumentNumber: string,
+  moneyDestination: string,
+  primaryIncomeType: string,
+): Promise<IMaximumCreditLimit | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+      const queryParams = new URLSearchParams({
+        moneyDestination: moneyDestination,
+        primaryIncomeType: primaryIncomeType,
+      });
+
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "GetLinesOfCreditByMoneyDestination",
+          "X-Action": "GetMaximumCreditLimitByLineOfCreditRegulation",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
@@ -31,7 +37,7 @@ const getLinesOfCreditByMoneyDestination = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/${moneyDestinationAbbreviatedName}/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/${lineOfCreditAbbreviatedName}/${identificationDocumentType}/${identificationDocumentNumber}/?${queryParams.toString()}`,
         options,
       );
 
@@ -51,7 +57,7 @@ const getLinesOfCreditByMoneyDestination = async (
         };
       }
 
-      return data as ILinesOfCreditByMoneyDestination;
+      return data;
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {
@@ -61,7 +67,7 @@ const getLinesOfCreditByMoneyDestination = async (
           };
         }
         throw new Error(
-          `Todos los intentos fallaron. No se pudo obtener las líneas de crédito para el destino de dinero ${moneyDestinationAbbreviatedName}.`,
+          "Todos los intentos fallaron. No se pudo obtener el portafolio de obligaciones.",
         );
       }
     }
@@ -69,5 +75,3 @@ const getLinesOfCreditByMoneyDestination = async (
 
   return null;
 };
-
-export { getLinesOfCreditByMoneyDestination };

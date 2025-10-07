@@ -54,6 +54,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { AddProductModal } from "@src/pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
+import { updateProspect } from "@services/prospect/updateProspect";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -124,6 +125,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     IIncomeSources | undefined
   >();
   const [showEditMessageModal, setShowEditMessageModal] = useState(false);
+  const [editedComments, setEditedComments] = useState("");
 
   const { addFlag } = useFlag();
   const dataPrint = useRef<HTMLDivElement>(null);
@@ -271,6 +273,27 @@ export function CreditProspect(props: ICreditProspectProps) {
     setSelectedIndex(index ?? 0);
   };
   const selectedBorrower = borrowersProspect?.borrowers?.[selectedIndex];
+
+  function hasExtraordinaryInstallments(dataProspect: IProspect): boolean {
+    if (
+      !dataProspect?.creditProducts ||
+      !Array.isArray(dataProspect.creditProducts)
+    ) {
+      return false;
+    }
+
+    for (const creditProduct of dataProspect.creditProducts) {
+      if (
+        creditProduct?.extraordinaryInstallments &&
+        Array.isArray(creditProduct.extraordinaryInstallments) &&
+        creditProduct.extraordinaryInstallments.length > 0
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   const handleIncomeSubmit = (updatedData: IIncomeSources) => {
     setCurrentIncomeModalData({ ...updatedData });
@@ -483,6 +506,62 @@ export function CreditProspect(props: ICreditProspectProps) {
   const handleInfoModalClose = () => {
     setIsModalOpen(false);
   };
+
+  const borrower = dataProspect?.[0]?.borrowers?.[0];
+
+  const dataMaximumCreditLimitService = {
+    identificationDocumentType: borrower?.borrowerIdentificationType || "",
+    identificationDocumentNumber: borrower?.borrowerIdentificationNumber || "",
+    moneyDestination: dataProspect?.[0]?.moneyDestinationAbbreviatedName || "",
+    primaryIncomeType:
+      borrower?.borrowerProperties?.find(
+        (property) => property.propertyName === "PeriodicSalary",
+      )?.propertyValue || "",
+  };
+
+  const handleCommentsChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setEditedComments(event.target.value);
+  };
+
+  const handleSaveComments = async () => {
+    try {
+      if (!prospectData) return;
+
+      const updatedProspect: IProspect = {
+        ...prospectData,
+        clientComments: editedComments,
+      };
+
+      if (onProspectUpdate) {
+        onProspectUpdate(updatedProspect);
+      }
+
+      if (onProspectUpdated) {
+        onProspectUpdated();
+      }
+
+      setShowEditMessageModal(false);
+      handleCloseModal();
+
+      await updateProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        updatedProspect,
+      );
+
+      addFlag({
+        title: "Observaciones actualizadas",
+        description: "Las observaciones se han guardado correctamente",
+        appearance: "success",
+        duration: 5000,
+      });
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(configModal.observations.errorMessage);
+    }
+  };
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -517,7 +596,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   />
                 )}
               </Stack>
-              {prospectData?.creditProducts && (
+              {!hasExtraordinaryInstallments(prospectData as IProspect) && (
                 <Button
                   type="button"
                   appearance="primary"
@@ -584,18 +663,17 @@ export function CreditProspect(props: ICreditProspectProps) {
             handleClose={handleCloseModal}
             isMobile={isMobile}
             setRequestValue={setRequestValue || (() => {})}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
           />
         )}
         {openModal === "paymentCapacity" && (
           <MaxLimitModal
-            title="Cupo máx. capacidad de pago"
             handleClose={() => setOpenModal(null)}
-            reportedIncomeSources={2000000}
-            reportedFinancialObligations={6789000}
-            subsistenceReserve={2000000}
-            availableForNewCommitments={5000000}
-            maxVacationTerm={12}
-            maxAmount={1000000}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
           />
         )}
         {openModal === "reciprocityModal" && (
@@ -607,7 +685,6 @@ export function CreditProspect(props: ICreditProspectProps) {
             numRegulations={2}
           />
         )}
-
         {openModal === "scoreModal" && (
           <ScoreModal
             handleClose={() => setOpenModal(null)}
@@ -636,6 +713,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             moneyDestination={prospectData!.moneyDestinationAbbreviatedName}
             businessUnitPublicCode={businessUnitPublicCode}
             customerData={customerData}
+            businessManagerCode={businessManagerCode}
           />
         )}
         {currentModal === "IncomeModal" && (
@@ -760,6 +838,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             title={configModal.observations.title}
             handleClose={handleCloseModal}
             handleNext={() => {
+              setEditedComments(prospectData!.clientComments || "");
               setShowEditMessageModal(true);
             }}
             nextButton={configModal.observations.modify}
@@ -780,7 +859,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           <BaseModal
             title={configModal.observations.title}
             handleClose={() => setShowEditMessageModal(false)}
-            handleNext={() => setShowEditMessageModal(false)}
+            handleNext={handleSaveComments}
             nextButton={configModal.observations.modify}
             backButton={configModal.observations.cancel}
             width={isMobile ? "300px" : "500px"}
@@ -788,8 +867,8 @@ export function CreditProspect(props: ICreditProspectProps) {
             <Textarea
               id="comments"
               label={configModal.observations.labelTextarea}
-              value={prospectData!.clientComments || ""}
-              onChange={() => {}}
+              value={editedComments}
+              onChange={(event) => handleCommentsChange(event)}
               maxLength={120}
             />
           </BaseModal>

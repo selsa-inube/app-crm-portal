@@ -4,38 +4,30 @@ import { Stack, Icon, Text, SkeletonLine } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
 import { Fieldset } from "@components/data/Fieldset";
+import { IMaximumCreditLimit } from "@services/creditLimit/types";
 
 import { incomeModalConfig } from "./IcomeModalConfig";
 
 interface IMaxLimitModalUIProps {
   loading: boolean;
   error: boolean;
-  title: string;
   isMobile: boolean;
-  reportedIncomeSources: number;
-  reportedFinancialObligations: number;
-  subsistenceReserve: number;
-  availableForNewCommitments: number;
-  maxVacationTerm: number;
-  maxAmount: number;
+  dataMaximumCreditLimitService: IMaximumCreditLimit;
   handleClose: () => void;
 }
 
 export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
   const {
+    dataMaximumCreditLimitService,
     loading,
     error,
-    title,
     isMobile,
-    reportedFinancialObligations,
-    subsistenceReserve,
-    maxAmount,
     handleClose,
   } = props;
 
   return (
     <BaseModal
-      title={title}
+      title={incomeModalConfig.title}
       nextButton={incomeModalConfig.buttons.close}
       handleNext={handleClose}
       handleClose={handleClose}
@@ -65,7 +57,10 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                   <SkeletonLine width="70px" animated={true} />
                 ) : (
                   <Text type="body" size="medium">
-                    {currencyFormat(reportedFinancialObligations, false)}
+                    {currencyFormat(
+                      dataMaximumCreditLimitService.customerCreditLimitInLineOfCredit,
+                      false,
+                    )}
                   </Text>
                 )}
               </Stack>
@@ -80,7 +75,10 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                   <SkeletonLine width="70px" animated={true} />
                 ) : (
                   <Text type="body" size="medium">
-                    {currencyFormat(subsistenceReserve, false)}
+                    {currencyFormat(
+                      dataMaximumCreditLimitService.customerTotalObligationsInLineOfCredit,
+                      false,
+                    )}
                   </Text>
                 )}
               </Stack>
@@ -100,7 +98,13 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                 type="headline"
                 size="large"
               >
-                ${loading ? "Cargando..." : currencyFormat(maxAmount, false)}
+                $
+                {loading
+                  ? incomeModalConfig.loading
+                  : currencyFormat(
+                      dataMaximumCreditLimitService.lineOfCreditLoanAmountLimitRegulation,
+                      false,
+                    )}
               </Text>
               <Text appearance="gray" size="small">
                 {incomeModalConfig.maxAmount}

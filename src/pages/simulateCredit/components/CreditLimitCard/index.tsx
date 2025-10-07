@@ -12,17 +12,19 @@ import { PaymentCapacityModal } from "@components/modals/PaymentCapacityModal";
 import { StyledContainer } from "./styles";
 import {
   ICreditLimitData,
-  IMaxLimitData,
+  IdataMaximumCreditLimitService,
   IPaymentCapacityData,
   IReciprocityData,
   IScoreData,
 } from "./types";
 
 export interface CreditLimitProps {
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
+  dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
   creditLine: number;
   creditLineTxt: string;
   creditLimitData: ICreditLimitData;
-  maxLimitData: IMaxLimitData;
   paymentCapacityData: IPaymentCapacityData;
   reciprocityData: IReciprocityData;
   scoreData: IScoreData;
@@ -31,10 +33,12 @@ export interface CreditLimitProps {
 
 export function CreditLimitCard(props: CreditLimitProps) {
   const {
+    businessUnitPublicCode,
+    businessManagerCode,
+    dataMaximumCreditLimitService,
     creditLine,
     creditLineTxt,
     creditLimitData,
-    maxLimitData,
     paymentCapacityData,
     reciprocityData,
     scoreData,
@@ -98,11 +102,15 @@ export function CreditLimitCard(props: CreditLimitProps) {
 
       {openModal === "maxLimitModal" && (
         <MaxLimitModal
-          title="Tope máx. para Crédito vacacional"
           loading={loading}
           handleClose={() => setOpenModal(null)}
-          {...maxLimitData}
           iconVisible={true}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+          dataMaximumCreditLimitService={{
+            ...dataMaximumCreditLimitService,
+            lineOfCreditAbbreviatedName: creditLineTxt,
+          }}
         />
       )}
 

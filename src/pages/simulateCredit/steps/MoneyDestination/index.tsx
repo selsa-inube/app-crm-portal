@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
-import { getMoneyDestinations } from "@services/moneyDestination/SearchAllMoneyDestination";
-import { IMoneyDestination } from "@services/moneyDestination/types";
+import { searchAllMoneyDestinationByCustomerCode } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
+import { IMoneyDestination } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
@@ -37,10 +37,24 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     useState<IMoneyDestination[]>();
 
   useEffect(() => {
-    getMoneyDestinations(businessUnitPublicCode, businessManagerCode)
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setMoneyDestinations(data);
+    searchAllMoneyDestinationByCustomerCode(
+      businessUnitPublicCode,
+      businessManagerCode,
+    )
+      .then((response) => {
+        if (response && Array.isArray(response)) {
+          const filteredDestinations = response.filter((destination) =>
+            destination.linesOfCredit.some(
+              (lineOfCredit: {
+                creditPlacementChannels: string[];
+                lineOfCreditAbbreviatedName: string;
+              }) => lineOfCredit.creditPlacementChannels.includes("CRM"),
+            ),
+          );
+
+          setMoneyDestinations(filteredDestinations);
+        } else if (response === null) {
+          setMoneyDestinations([]);
         }
       })
       .catch((error) => {

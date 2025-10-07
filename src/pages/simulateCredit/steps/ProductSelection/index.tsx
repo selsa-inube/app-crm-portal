@@ -218,80 +218,82 @@ export function ProductSelection(props: IProductSelectionProps) {
                 </Stack>
               </Fieldset>
             )}
-            <Fieldset>
-              {filteredQuestions.map(
-                ({ key, question, index }, filteredIndex) => (
-                  <Stack
-                    direction="column"
-                    key={key}
-                    gap="16px"
-                    padding="4px 10px"
-                  >
-                    <Text
-                      type="body"
-                      size="medium"
-                      appearance={isQuestionDisabled(key) ? "gray" : "dark"}
+            {filteredQuestions.length > 0 && (
+              <Fieldset>
+                {filteredQuestions.map(
+                  ({ key, question, index }, filteredIndex) => (
+                    <Stack
+                      direction="column"
+                      key={key}
+                      gap="16px"
+                      padding="4px 10px"
                     >
-                      {question}
-                    </Text>
-                    <Stack gap="8px">
-                      <Stack>
-                        <Field name={`togglesState[${index}]`}>
-                          {({
-                            field,
-                          }: {
-                            field: { value: boolean; name: string };
-                          }) => (
-                            <Toggle
-                              {...field}
-                              value={field.value.toString()}
-                              checked={field.value}
-                              disabled={isQuestionDisabled(key)}
-                              onChange={() => {
-                                onToggleChange(index);
-                                setFieldValue(
-                                  `togglesState[${index}]`,
-                                  !field.value,
-                                );
-                              }}
-                            />
-                          )}
-                        </Field>
-                        {isQuestionDisabled(key) && (
-                          <Stack margin="2px 0">
-                            <Icon
-                              icon={<MdInfoOutline />}
-                              appearance="primary"
-                              size="16px"
-                              onClick={() => {
-                                setCurrentDisabledQuestion(key);
-                                setShowInfoModal(true);
-                              }}
-                              cursorHover
-                            />
-                          </Stack>
-                        )}
-                      </Stack>
                       <Text
-                        type="label"
-                        size="large"
-                        weight="bold"
-                        appearance={
-                          values.togglesState[index] ? "success" : "danger"
-                        }
+                        type="body"
+                        size="medium"
+                        appearance={isQuestionDisabled(key) ? "gray" : "dark"}
                       >
-                        {values.togglesState[index]
-                          ? electionData.yes
-                          : electionData.no}
+                        {question}
                       </Text>
+                      <Stack gap="8px">
+                        <Stack>
+                          <Field name={`togglesState[${index}]`}>
+                            {({
+                              field,
+                            }: {
+                              field: { value: boolean; name: string };
+                            }) => (
+                              <Toggle
+                                {...field}
+                                value={field.value.toString()}
+                                checked={field.value}
+                                disabled={isQuestionDisabled(key)}
+                                onChange={() => {
+                                  onToggleChange(index);
+                                  setFieldValue(
+                                    `togglesState[${index}]`,
+                                    !field.value,
+                                  );
+                                }}
+                              />
+                            )}
+                          </Field>
+                          {isQuestionDisabled(key) && (
+                            <Stack margin="2px 0">
+                              <Icon
+                                icon={<MdInfoOutline />}
+                                appearance="primary"
+                                size="16px"
+                                onClick={() => {
+                                  setCurrentDisabledQuestion(key);
+                                  setShowInfoModal(true);
+                                }}
+                                cursorHover
+                              />
+                            </Stack>
+                          )}
+                        </Stack>
+                        <Text
+                          type="label"
+                          size="large"
+                          weight="bold"
+                          appearance={
+                            values.togglesState[index] ? "success" : "danger"
+                          }
+                        >
+                          {values.togglesState[index]
+                            ? electionData.yes
+                            : electionData.no}
+                        </Text>
+                      </Stack>
+                      {filteredIndex !== filteredQuestions.length - 1 && (
+                        <Divider dashed />
+                      )}
                     </Stack>
-                    {filteredIndex !== filteredQuestions.length - 1 && (
-                      <Divider dashed />
-                    )}
-                  </Stack>
-                ),
-              )}
-            </Fieldset>
+                  ),
+                )}
+              </Fieldset>
+            )}
           </Stack>
           {showInfoModal && (
             <BaseModal

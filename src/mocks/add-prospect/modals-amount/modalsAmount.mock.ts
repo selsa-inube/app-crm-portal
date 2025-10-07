@@ -10,14 +10,6 @@ export const mockCreditLimit = [
       maxUsableLimit: 21000000,
       availableLimitWithoutGuarantee: 20000000,
     },
-    maxLimitData: {
-      reportedIncomeSources: 4500000,
-      reportedFinancialObligations: 1200000,
-      subsistenceReserve: 2250000,
-      availableForNewCommitments: 1050000,
-      maxVacationTerm: 36,
-      maxAmount: 22000000,
-    },
     reciprocityData: {
       balanceOfContributions: 60000000,
       accordingToRegulation: 10000000,
@@ -83,14 +75,6 @@ export const mockCreditLimit = [
       assignedLimit: 0,
       maxUsableLimit: 20000000,
       availableLimitWithoutGuarantee: 15000000,
-    },
-    maxLimitData: {
-      reportedIncomeSources: 2000000,
-      reportedFinancialObligations: 6789000,
-      subsistenceReserve: 2000000,
-      availableForNewCommitments: 5000000,
-      maxVacationTerm: 12,
-      maxAmount: 1000000,
     },
     reciprocityData: {
       balanceOfContributions: 50000000,

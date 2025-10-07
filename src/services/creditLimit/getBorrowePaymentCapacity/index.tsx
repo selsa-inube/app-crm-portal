@@ -15,7 +15,6 @@ const getBorrowerPaymentCapacityById = async (
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
-  console.log(businessUnitPublicCode);
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
