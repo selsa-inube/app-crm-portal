@@ -538,10 +538,6 @@ export function CreditProspect(props: ICreditProspectProps) {
         onProspectUpdate(updatedProspect);
       }
 
-      if (onProspectUpdated) {
-        onProspectUpdated();
-      }
-
       setShowEditMessageModal(false);
       handleCloseModal();
 
@@ -550,6 +546,10 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessManagerCode,
         updatedProspect,
       );
+
+      if (onProspectUpdated) {
+        onProspectUpdated();
+      }
 
       addFlag({
         title: "Observaciones actualizadas",
