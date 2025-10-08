@@ -18,20 +18,6 @@ export interface IMaxLimitData {
   maxAmount: number;
 }
 
-export interface IScoreData {
-  totalScore: number;
-  seniority: number;
-  centralRisk: number;
-  employmentStability: number;
-  maritalStatus: number;
-  economicActivity: number;
-  monthlyIncome: number;
-  maxIndebtedness: number;
-  incomeScore: number;
-  maxLimit: number;
-  totalPortafolio: number;
-}
-
 export interface IPaymentCapacityData {
   incomeSources: number;
   subsistenceReserve: number;
