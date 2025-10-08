@@ -21,7 +21,7 @@ const environment = {
     .VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE,
   ORIGINATOR_ID: import.meta.env.VITE_ORIGINATOR_ID as string,
   IAUTH_URL: import.meta.env.VITE_IAUTH_URL as string,
-  IAUTH_API_URL: import.meta.env.VITE_IAUTH_API_URL as string,
+  IAUTH_SERVICE_URL: import.meta.env.VITE_IAUTH_SERVICE_URL as string,
   VITE_STAFF_PORTAL_CATALOG_CODE: import.meta.env
     .VITE_STAFF_PORTAL_CATALOG_CODE,
 };
