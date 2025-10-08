@@ -283,7 +283,11 @@ export function ApplyForCredit() {
     borrowerType: borrower.borrowerType,
   }));
 
-  submitData.append("borrowers", JSON.stringify(borrowers));
+  const showBorrowers = steps?.some((step) => step.id === 3);
+  const borrowersToSend = showBorrowers
+    ? borrowers
+    : prospectData.borrowers || [];
+  submitData.append("borrowers", JSON.stringify(borrowersToSend));
 
   submitData.append("clientEmail", contactInformation.email);
   submitData.append("clientId", customerData.customerId);
