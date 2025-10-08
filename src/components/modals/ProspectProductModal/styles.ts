@@ -8,7 +8,6 @@ interface IStyledModal {
 export const ScrollableContainer = styled.div<IStyledModal>`
   width: ${({ $smallScreen }) => ($smallScreen ? "270px" : "auto")};
   padding: 10px;
-  
   display: flex;
   z-index: 1; 
   position: relative;

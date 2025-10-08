@@ -36,7 +36,7 @@ import {
   rateTypeOptions,
   VALIDATED_NUMBER_REGEX,
   messagesErrorValidations,
-  repaymentStructureMap
+  repaymentStructureMap,
 } from "./config";
 
 interface EditProductModalProps {
@@ -126,7 +126,7 @@ function EditProductModal(props: EditProductModalProps) {
         const response = await getPaymentMethods(
           businessUnitPublicCode,
           businessManagerCode,
-          initialValues.creditLine, 
+          initialValues.creditLine,
         );
 
         if (!response) {
@@ -134,16 +134,18 @@ function EditProductModal(props: EditProductModalProps) {
         }
 
         setPaymentMethodsList(response.paymentMethods);
-        const mappedPaymentCycles = response.paymentCycles.map(cycle => ({
+        const mappedPaymentCycles = response.paymentCycles.map((cycle) => ({
           ...cycle,
           label: paymentCycleMap[cycle.value] || cycle.label,
         }));
         setPaymentCyclesList(mappedPaymentCycles);
 
-        const mappedFirstPaymentCycles = response.firstPaymentCycles.map(cycle => ({
-          ...cycle,
-          label: paymentCycleMap[cycle.value] || cycle.label,
-        }));
+        const mappedFirstPaymentCycles = response.firstPaymentCycles.map(
+          (cycle) => ({
+            ...cycle,
+            label: paymentCycleMap[cycle.value] || cycle.label,
+          }),
+        );
         setFirstPaymentCyclesList(mappedFirstPaymentCycles);
       } catch (error) {
         setPaymentOptionsError(messagesErrorValidations.loadPaymentOptions);
@@ -171,7 +173,6 @@ function EditProductModal(props: EditProductModalProps) {
             label: "No hay opciones de pago disponibles",
           },
         ]);
-
       } finally {
         setIsLoadingPaymentOptions(false);
       }
@@ -202,11 +203,13 @@ function EditProductModal(props: EditProductModalProps) {
 
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
           const options = decisions
-            .filter(decision => typeof decision.value === "string")
+            .filter((decision) => typeof decision.value === "string")
             .map((decision, index) => ({
               id: decision.decisionId || `${index}`,
               value: decision.value as string,
-              label: repaymentStructureMap[decision.value as string] || decision.value as string,
+              label:
+                repaymentStructureMap[decision.value as string] ||
+                (decision.value as string),
             }));
           setAmortizationTypesList(options);
         } else {
@@ -249,11 +252,13 @@ function EditProductModal(props: EditProductModalProps) {
 
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
           const options = decisions
-            .filter(decision => typeof decision.value === "string")
+            .filter((decision) => typeof decision.value === "string")
             .map((decision, index) => ({
               id: decision.decisionId || `${index}`,
               value: decision.value as string,
-              label: interestRateTypeMap[decision.value as string] || decision.value as string,
+              label:
+                interestRateTypeMap[decision.value as string] ||
+                (decision.value as string),
             }));
           setRateTypesList(options);
         } else {
@@ -339,13 +344,15 @@ function EditProductModal(props: EditProductModalProps) {
     fieldName: string,
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    handleFieldModification(fieldName);
     formik.handleChange(event);
 
     const newValue = event.target.value;
     const initialValue = initialValues[fieldName];
 
-    if (newValue === initialValue || newValue === "") {
+    const newNumericValue = Number(newValue);
+    const initialNumericValue = Number(initialValue);
+
+    if (newValue === "" || newNumericValue === initialNumericValue) {
       setModifiedGroup(null);
       if (fieldName === "interestRate") {
         setInterestRateError("");
@@ -476,9 +483,7 @@ function EditProductModal(props: EditProductModalProps) {
       setLoanTermError("Error al validar el plazo");
     }
   };
-  const validateInterestRate = async (
-    rate: number,
-  ): Promise<void> => {
+  const validateInterestRate = async (rate: number): Promise<void> => {
     try {
       setInterestRateError("");
 
@@ -486,15 +491,15 @@ function EditProductModal(props: EditProductModalProps) {
         businessUnitPublicCode,
         businessManagerCode,
         initialValues.creditLine,
-        customerData.publicCode
+        customerData.publicCode,
       );
 
       const periodicInterestRateMin = response?.periodicInterestRateMin || 0;
       const periodicInterestRateMax = response?.periodicInterestRateMax || 2;
 
-      if (rate < periodicInterestRateMin || rate > periodicInterestRateMax) {
+      if (rate <= periodicInterestRateMin || rate >= periodicInterestRateMax) {
         setInterestRateError(
-          `La tasa ingresada es ${rate}% mensual. Debe estar entre ${periodicInterestRateMin.toFixed(2)}% y ${periodicInterestRateMax.toFixed(2)}% mensual`
+          `La tasa ingresada es ${rate}% mensual. Debe estar entre ${periodicInterestRateMin.toFixed(2)}% y ${periodicInterestRateMax.toFixed(2)}% mensual`,
         );
       }
     } catch (error) {
@@ -533,9 +538,9 @@ function EditProductModal(props: EditProductModalProps) {
       const element = document.getElementById(fieldId);
       if (element) {
         element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'nearest'
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
         });
       }
     }, 100);
@@ -636,12 +641,11 @@ function EditProductModal(props: EditProductModalProps) {
                   handleSelectChange(formik, "paymentMethod", name, value)
                 }
                 value={
-                  formik.values.paymentMethod.charAt(0).toUpperCase() + formik.values.paymentMethod.slice(1)
+                  formik.values.paymentMethod.charAt(0).toUpperCase() +
+                  formik.values.paymentMethod.slice(1)
                 }
                 fullwidth
-                disabled={
-                  isFieldDisabled("paymentMethod") || isLoadingPaymentOptions
-                }
+                disabled={true}
               />
               <Select
                 label="Ciclo de pagos"
@@ -654,11 +658,12 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) =>
                   handleSelectChange(formik, "paymentCycle", name, value)
                 }
-                value={paymentCycleMap[formik.values.paymentCycle] || formik.values.paymentCycle}
-                fullwidth
-                disabled={
-                  isFieldDisabled("paymentCycle") || isLoadingPaymentOptions
+                value={
+                  paymentCycleMap[formik.values.paymentCycle] ||
+                  formik.values.paymentCycle
                 }
+                fullwidth
+                disabled={true}
               />
               <Select
                 label="Primer ciclo de pago"
@@ -673,10 +678,7 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 value={formik.values.firstPaymentCycle}
                 fullwidth
-                disabled={
-                  isFieldDisabled("firstPaymentCycle") ||
-                  isLoadingPaymentOptions
-                }
+                disabled={true}
               />
               <Select
                 label="Plazo en meses"
@@ -749,7 +751,7 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) =>
                   handleSelectChange(formik, "rateType", name, value)
                 }
-                onFocus={() => handleSelectFocus('rateType')}
+                onFocus={() => handleSelectFocus("rateType")}
                 value={formik.values.rateType}
                 fullwidth
                 disabled={isFieldDisabled("rateType") || isLoadingRateTypes}
