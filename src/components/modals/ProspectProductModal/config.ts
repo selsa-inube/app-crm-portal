@@ -155,6 +155,18 @@ export const messagesErrorValidations = {
 
 export const VALIDATED_NUMBER_REGEX = /[^0-9]/g;
 
+export const repaymentStructureMap: Record<string, string> = {
+  "FixedInstallment": "Cuota integral fija",
+  "ConstantAmortization": "Abonos fijos a capital",
+  "GeometricGradientRepayment": "Gradiente geométrico",
+  "ArithmeticGradientRepayment": "Gradiente aritmético",
+};
+
+export const interestRateTypeMap: Record<string, string> = {
+  "VariableInterestRate": "Tasa variable",
+  "FixedInterestRate": "Tasa fija",
+};
+
 export {
   creditLineOptions,
   paymentMethodOptions,

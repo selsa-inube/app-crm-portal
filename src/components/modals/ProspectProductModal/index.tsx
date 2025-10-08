@@ -8,7 +8,7 @@ import {
   Select,
   Textfield,
 } from "@inubekit/inubekit";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
@@ -24,7 +24,11 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
+import { getEffectiveInterestRate } from "@services/prospect/getEffectiveInterestRate";
+import { CustomerContext } from "@context/CustomerContext";
+import { paymentCycleMap } from "@src/pages/prospect/outlets/CardCommercialManagement/config/config";
 
+import { interestRateTypeMap } from "./config";
 import { ScrollableContainer } from "./styles";
 import {
   termInMonthsOptions,
@@ -32,6 +36,7 @@ import {
   rateTypeOptions,
   VALIDATED_NUMBER_REGEX,
   messagesErrorValidations,
+  repaymentStructureMap
 } from "./config";
 
 interface EditProductModalProps {
@@ -83,7 +88,7 @@ function EditProductModal(props: EditProductModalProps) {
     businessManagerCode,
     prospectData,
   } = props;
-
+  console.log("prospectData: ", prospectData);
   const [modifiedGroup, setModifiedGroup] = useState<FieldGroup | null>(null);
   const [loanAmountError, setLoanAmountError] = useState<string>("");
   const [paymentMethodsList, setPaymentMethodsList] = useState<
@@ -110,8 +115,8 @@ function EditProductModal(props: EditProductModalProps) {
   const [isLoadingRateTypes, setIsLoadingRateTypes] = useState(false);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
+  const { customerData } = useContext(CustomerContext);
 
-  // ← NUEVO: Cargar opciones de pago al montar el componente
   useEffect(() => {
     const loadPaymentOptions = async () => {
       setIsLoadingPaymentOptions(true);
@@ -121,7 +126,7 @@ function EditProductModal(props: EditProductModalProps) {
         const response = await getPaymentMethods(
           businessUnitPublicCode,
           businessManagerCode,
-          initialValues.creditLine, // OPTINAL IN CASE OF OTHERS VALIDATIONS
+          initialValues.creditLine, 
         );
 
         if (!response) {
@@ -129,12 +134,20 @@ function EditProductModal(props: EditProductModalProps) {
         }
 
         setPaymentMethodsList(response.paymentMethods);
-        setPaymentCyclesList(response.paymentCycles);
-        setFirstPaymentCyclesList(response.firstPaymentCycles);
+        const mappedPaymentCycles = response.paymentCycles.map(cycle => ({
+          ...cycle,
+          label: paymentCycleMap[cycle.value] || cycle.label,
+        }));
+        setPaymentCyclesList(mappedPaymentCycles);
+
+        const mappedFirstPaymentCycles = response.firstPaymentCycles.map(cycle => ({
+          ...cycle,
+          label: paymentCycleMap[cycle.value] || cycle.label,
+        }));
+        setFirstPaymentCyclesList(mappedFirstPaymentCycles);
       } catch (error) {
         setPaymentOptionsError(messagesErrorValidations.loadPaymentOptions);
 
-        // ← Fallback a opciones estáticas si falla
         setPaymentMethodsList([
           {
             id: "0",
@@ -158,7 +171,7 @@ function EditProductModal(props: EditProductModalProps) {
             label: "No hay opciones de pago disponibles",
           },
         ]);
-        // ... mismo para los otros dos
+
       } finally {
         setIsLoadingPaymentOptions(false);
       }
@@ -167,14 +180,13 @@ function EditProductModal(props: EditProductModalProps) {
     loadPaymentOptions();
   }, [businessUnitPublicCode, businessManagerCode, initialValues.creditLine]);
 
-  // ← NUEVO: Cargar tipos de amortización desde regla RepaymentStructure
   useEffect(() => {
     const loadAmortizationTypes = async () => {
       setIsLoadingAmortizationTypes(true);
 
       try {
         const payload: IBusinessUnitRules = {
-          ruleName: "RepaymentStructure", // ✅ Correcto según indicación (5)
+          ruleName: "RepaymentStructure",
           conditions: [
             { condition: "LineOfCredit", value: prospectData.lineOfCredit },
           ],
@@ -189,13 +201,13 @@ function EditProductModal(props: EditProductModalProps) {
         const decisions = response as unknown as IRuleDecision[];
 
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
-          const options = decisions.map((decision, index) => ({
-            id: decision.decisionId || `${index}`,
-            value: typeof decision.value === "string" ? decision.value : "",
-            label:
-              decision.typeDecision ||
-              (typeof decision.value === "string" ? decision.value : ""),
-          }));
+          const options = decisions
+            .filter(decision => typeof decision.value === "string")
+            .map((decision, index) => ({
+              id: decision.decisionId || `${index}`,
+              value: decision.value as string,
+              label: repaymentStructureMap[decision.value as string] || decision.value as string,
+            }));
           setAmortizationTypesList(options);
         } else {
           setAmortizationTypesList(amortizationTypeOptions);
@@ -211,7 +223,6 @@ function EditProductModal(props: EditProductModalProps) {
     loadAmortizationTypes();
   }, [businessUnitPublicCode, businessManagerCode, prospectData]);
 
-  // ← NUEVO: Cargar tipos de tasa desde regla InterestRateType
   useEffect(() => {
     const loadRateTypes = async () => {
       setIsLoadingRateTypes(true);
@@ -237,13 +248,13 @@ function EditProductModal(props: EditProductModalProps) {
         const decisions = response as unknown as IRuleDecision[];
 
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
-          const options = decisions.map((decision, index) => ({
-            id: decision.decisionId || `${index}`,
-            value: typeof decision.value === "string" ? decision.value : "",
-            label:
-              decision.typeDecision ||
-              (typeof decision.value === "string" ? decision.value : ""),
-          }));
+          const options = decisions
+            .filter(decision => typeof decision.value === "string")
+            .map((decision, index) => ({
+              id: decision.decisionId || `${index}`,
+              value: decision.value as string,
+              label: interestRateTypeMap[decision.value as string] || decision.value as string,
+            }));
           setRateTypesList(options);
         } else {
           setRateTypesList(rateTypeOptions);
@@ -301,14 +312,24 @@ function EditProductModal(props: EditProductModalProps) {
     handleFieldModification(fieldName);
     formik.setFieldValue(name, value);
 
-    if (fieldName === "termInMonths" && value) {
-      const numericValue = Number(value);
-      const currentAmount = Number(formik.values.creditAmount) || 0;
-
-      if (numericValue >= 0 && currentAmount >= 0) {
-        validateLoanTerm(numericValue, currentAmount);
-      } else {
+    const initialValue = initialValues[name];
+    if (value === initialValue) {
+      setModifiedGroup(null);
+      if (fieldName === "termInMonths") {
         setLoanTermError("");
+      }
+    } else {
+      handleFieldModification(fieldName);
+
+      if (fieldName === "termInMonths" && value) {
+        const numericValue = Number(value);
+        const currentAmount = Number(formik.values.creditAmount) || 0;
+
+        if (numericValue >= 0 && currentAmount >= 0) {
+          validateLoanTerm(numericValue, currentAmount);
+        } else {
+          setLoanTermError("");
+        }
       }
     }
   };
@@ -321,15 +342,27 @@ function EditProductModal(props: EditProductModalProps) {
     handleFieldModification(fieldName);
     formik.handleChange(event);
 
-    if (fieldName === "interestRate") {
-      const numericValue = Number(event.target.value);
-      const currentAmount = Number(formik.values.creditAmount) || 0;
-      const currentTerm = Number(formik.values.termInMonths) || 0;
+    const newValue = event.target.value;
+    const initialValue = initialValues[fieldName];
 
-      if (numericValue >= 0 && currentAmount >= 0 && currentTerm >= 0) {
-        validateInterestRate(numericValue, currentAmount, currentTerm);
-      } else {
+    if (newValue === initialValue || newValue === "") {
+      setModifiedGroup(null);
+      if (fieldName === "interestRate") {
         setInterestRateError("");
+      }
+    } else {
+      handleFieldModification(fieldName);
+
+      if (fieldName === "interestRate") {
+        const numericValue = Number(newValue);
+        const currentAmount = Number(formik.values.creditAmount) || 0;
+        const currentTerm = Number(formik.values.termInMonths) || 0;
+
+        if (numericValue >= 0 && currentAmount >= 0 && currentTerm >= 0) {
+          validateInterestRate(numericValue);
+        } else {
+          setInterestRateError("");
+        }
       }
     }
   };
@@ -443,60 +476,26 @@ function EditProductModal(props: EditProductModalProps) {
       setLoanTermError("Error al validar el plazo");
     }
   };
-  // ← NUEVO: Valida la tasa de interés usando la regla interestRate
   const validateInterestRate = async (
     rate: number,
-    loanAmount: number,
-    loanTerm: number,
   ): Promise<void> => {
     try {
       setInterestRateError("");
 
-      const payload: IBusinessUnitRules = {
-        ruleName: "InterestRateType",
-        conditions: [
-          { condition: "LineOfCredit", value: prospectData.lineOfCredit },
-          {
-            condition: "MoneyDestination",
-            value: prospectData.moneyDestination,
-          },
-          { condition: "LoanTerm", value: loanTerm },
-          { condition: "LoanAmount", value: loanAmount },
-        ],
-      };
-
-      const response = await postBusinessUnitRules(
+      const response = await getEffectiveInterestRate(
         businessUnitPublicCode,
         businessManagerCode,
-        payload,
+        initialValues.creditLine,
+        customerData.publicCode
       );
 
-      const decisions = response as unknown as IRuleDecision[];
+      const periodicInterestRateMin = response?.periodicInterestRateMin || 0;
+      const periodicInterestRateMax = response?.periodicInterestRateMax || 2;
 
-      if (decisions && Array.isArray(decisions) && decisions.length > 0) {
-        const decision = decisions[0];
-
-        if (typeof decision.value === "object" && decision.value !== null) {
-          const { from, to } = decision.value;
-
-          if (rate < from || rate > to) {
-            setInterestRateError(
-              `La tasa ingresada es ${rate}%. Debe estar entre ${from}% y ${to}%`,
-            );
-          }
-        } else if (typeof decision.value === "string") {
-          const rangeParts = decision.value.split("-");
-          if (rangeParts.length === 2) {
-            const [min, max] = rangeParts.map(Number);
-            if (!isNaN(min) && !isNaN(max) && (rate < min || rate > max)) {
-              setInterestRateError(
-                `La tasa ingresada es ${rate}%. Debe estar entre ${min}% y ${max}%`,
-              );
-            }
-          }
-        }
-      } else {
-        setInterestRateError("No se pudo validar la tasa de interés");
+      if (rate < periodicInterestRateMin || rate > periodicInterestRateMax) {
+        setInterestRateError(
+          `La tasa ingresada es ${rate}% mensual. Debe estar entre ${periodicInterestRateMin.toFixed(2)}% y ${periodicInterestRateMax.toFixed(2)}% mensual`
+        );
       }
     } catch (error) {
       console.error("Error validando tasa de interés:", error);
@@ -514,11 +513,32 @@ function EditProductModal(props: EditProductModalProps) {
     const rawValue = event.target.value.replace(VALIDATED_NUMBER_REGEX, "");
     const numericValue = Number(rawValue);
 
-    if (numericValue > 0) {
-      validateLoanAmount(numericValue);
-    } else {
+    const initialAmount = initialValues.creditAmount;
+    if (numericValue === initialAmount || rawValue === "") {
+      setModifiedGroup(null);
       setLoanAmountError("");
+    } else {
+      handleFieldModification("creditAmount");
+
+      if (numericValue > 0) {
+        validateLoanAmount(numericValue);
+      } else {
+        setLoanAmountError("");
+      }
     }
+  };
+
+  const handleSelectFocus = (fieldId: string) => {
+    setTimeout(() => {
+      const element = document.getElementById(fieldId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
   };
 
   const validationSchema = Yup.object({
@@ -568,6 +588,7 @@ function EditProductModal(props: EditProductModalProps) {
               gap="24px"
               width="100%"
               height={isMobile ? "auto" : "600px"}
+              margin="0px 0px 30px 0"
             >
               {/*               <Select
                 label="Línea de crédito"
@@ -614,7 +635,9 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) =>
                   handleSelectChange(formik, "paymentMethod", name, value)
                 }
-                value={formik.values.paymentMethod}
+                value={
+                  formik.values.paymentMethod.charAt(0).toUpperCase() + formik.values.paymentMethod.slice(1)
+                }
                 fullwidth
                 disabled={
                   isFieldDisabled("paymentMethod") || isLoadingPaymentOptions
@@ -631,7 +654,7 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) =>
                   handleSelectChange(formik, "paymentCycle", name, value)
                 }
-                value={formik.values.paymentCycle}
+                value={paymentCycleMap[formik.values.paymentCycle] || formik.values.paymentCycle}
                 fullwidth
                 disabled={
                   isFieldDisabled("paymentCycle") || isLoadingPaymentOptions
@@ -726,6 +749,7 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) =>
                   handleSelectChange(formik, "rateType", name, value)
                 }
+                onFocus={() => handleSelectFocus('rateType')}
                 value={formik.values.rateType}
                 fullwidth
                 disabled={isFieldDisabled("rateType") || isLoadingRateTypes}

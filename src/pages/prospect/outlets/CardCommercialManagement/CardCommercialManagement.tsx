@@ -22,15 +22,15 @@ import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeduct
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
-
-import { SummaryProspectCredit, tittleOptions } from "./config/config";
-import { StyledCardsCredit, StyledPrint } from "./styles";
 import {
   getUseCaseValue,
   useValidateUseCase,
 } from "@src/hooks/useValidateUseCase";
-import InfoModal from "../../components/InfoModal";
 import { privilegeCrm } from "@src/config/privilege";
+
+import { SummaryProspectCredit, tittleOptions } from "./config/config";
+import { StyledCardsCredit, StyledPrint } from "./styles";
+import InfoModal from "../../components/InfoModal";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -218,7 +218,7 @@ export const CardCommercialManagement = (
 
     fetchExpenses();
   }, [businessUnitPublicCode, prospectData?.prospectId]);
-  console.log("prospectData: ", prospectData);
+  console.log("selectedProduct: ", selectedProduct);
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>
@@ -303,7 +303,7 @@ export const CardCommercialManagement = (
             paymentMethod:
               selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
                 ?.paymentChannelAbbreviatedName || "",
-            paymentCycle: selectedProduct.lineOfCreditAbbreviatedName || "",
+            paymentCycle: selectedProduct.installmentFrequency || "",
             firstPaymentCycle: "",
             termInMonths: selectedProduct.loanTerm || 0,
             amortizationType: "",

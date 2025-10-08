@@ -19,7 +19,7 @@ const useValidateUseCase = (props: { useCase: string }) => {
   }, [useCasesData]);
 
   return {
-    disabledButton,
+    disabledButton: false
   };
 };
 const getUseCaseValue = (code: string) => {
