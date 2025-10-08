@@ -162,6 +162,7 @@ export function CreditApplications() {
               handleNext={() => {
                 window.location.href = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}`;
               }}
+              width="400px"
             >
               <Text>{dataCreditProspects.sure}</Text>
             </BaseModal>

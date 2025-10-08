@@ -27,7 +27,7 @@ const getBusinessManagers = async (
       };
 
       const res = await fetch(
-        `${environment.IVITE_ISAAS_QUERY_PROCESS_SERVICE}/business-managers?${businessManagerCode}`,
+        `${environment.IVITE_ISAAS_QUERY_PROCESS_SERVICE}/business-managers/?publicCode=${businessManagerCode}`,
         options,
       );
 

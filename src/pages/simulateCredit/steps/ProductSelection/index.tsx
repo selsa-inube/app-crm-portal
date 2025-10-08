@@ -92,7 +92,7 @@ export function ProductSelection(props: IProductSelectionProps) {
   const [fullRules, setFullRules] = useState(servicesQuestion);
   useEffect(() => {
     setFullRules(servicesQuestion);
-  }, [choiceMoneyDestination]);
+  }, [servicesQuestion, choiceMoneyDestination]);
 
   const getQuestionState = (values: string[]) => {
     const hasY = values.includes("Y");

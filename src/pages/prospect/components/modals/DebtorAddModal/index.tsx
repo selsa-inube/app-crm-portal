@@ -78,7 +78,8 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       borrowerName: formData.personalInfo.firstName,
       borrowerType: "Borrower",
       borrowerIdentificationType: formData.personalInfo.tipeOfDocument,
-      borrowerIdentificationNumber: formData.personalInfo.documentNumber,
+      borrowerIdentificationNumber:
+        formData.personalInfo.documentNumber.toString(),
       borrowerProperties: [
         {
           propertyName: "PeriodicSalary",

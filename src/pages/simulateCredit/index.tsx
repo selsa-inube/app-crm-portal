@@ -178,7 +178,8 @@ export function SimulateCredit() {
 
   const simulateData: IProspect = useMemo(
     () => ({
-      clientIdentificationNumber: customerData.customerId,
+      clientIdentificationNumber: customerData.publicCode,
+      clientManagerName: customerData.fullName,
       borrowers: [
         Object.keys(formData.borrowerData.borrowers).length === 0
           ? onlyBorrowerData
@@ -230,7 +231,6 @@ export function SimulateCredit() {
       outlays: [],
       creditScore: "",
       clientManagerIdentificationNumber: "",
-      clientManagerName: "",
       clientManagerObservation: "",
       clientComments: "",
     }),

@@ -1,22 +1,22 @@
 export const EPayrollAgreement = [
   {
     Code: "canSimulateCredit",
-    Value: "Simular crédito",
+    Value: "Agregar prospecto de credito en portal CRM",
     Description: "Permite realizar simulaciones de crédito",
   },
   {
     Code: "canRequestCredit",
-    Value: "Solicitar crédito",
+    Value: "Agregar solicitud de credito en portal CRM",
     Description: "Permite realizar Solicitar crédito",
   },
   {
     Code: "canEditCreditRequest",
-    Value: "Editar un prospecto de crédito",
+    Value: "Modificar prospecto de credito en portal CRM",
     Description: "Permite realizar Editar un prospecto de crédito",
   },
   {
     Code: "canDeleteCreditRequest",
-    Value: "Eliminar un prospecto de crédito",
+    Value: "Eliminar prospecto de credito en portal CRM",
     Description: "Permite realizar Eliminar un prospecto de crédito",
   },
 ];

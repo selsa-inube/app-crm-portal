@@ -34,7 +34,6 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { IObligations } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { CardGray } from "@components/cards/CardGray";
-import { ListModal } from "@components/modals/ListModal";
 import { CustomerContext } from "@context/CustomerContext";
 
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
@@ -160,6 +159,7 @@ interface UIProps {
   businessUnitPublicCode: string;
   messageError: string;
   setSelectedBorrowerIndex: React.Dispatch<React.SetStateAction<number>>;
+  handleRestore: () => void;
   handleOnChangeExtraBorrowers?: (
     newObligations: IObligationsFinancial[],
   ) => void;
@@ -192,6 +192,7 @@ export const TableFinancialObligationsUI = ({
   setMessageError,
   setSelectedBorrowerIndex,
   setShowErrorModal,
+  handleRestore,
   handleOnChangeExtraBorrowers,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -675,17 +676,19 @@ export const TableFinancialObligationsUI = ({
       </Table>
       <Stack gap="15px" justifyContent="center">
         {isOpenModal && (
-          <ListModal
+          <BaseModal
             title={dataReport.restore}
+            nextButton={dataReport.restore}
+            backButton={dataReport.cancel}
+            handleNext={() => {
+              handleRestore();
+              setIsOpenModal(false);
+            }}
+            handleBack={() => setIsOpenModal(false)}
             handleClose={() => setIsOpenModal(false)}
-            handleSubmit={() => setIsOpenModal(false)}
-            cancelButton="Cancelar"
-            appearanceCancel="gray"
-            buttonLabel={dataReport.restore}
-            content={dataReport.descriptionModal}
-            uploadedFiles={[]}
-            setUploadedFiles={() => {}}
-          />
+          >
+            <Text>{dataReport.descriptionModal}</Text>
+          </BaseModal>
         )}
       </Stack>
       {openModal && (

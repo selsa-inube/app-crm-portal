@@ -154,7 +154,7 @@ export function ApplyForCredit() {
         city: "",
         bank: "",
         accountType: "",
-        accountNumber: "",
+        accountNumber: "0",
         documentType: "",
       },
       Certified_check: {
@@ -318,8 +318,10 @@ export function ApplyForCredit() {
     JSON.stringify([
       {
         instantMessagingPlatformName: MessagingPlatform[0].Value,
-        propertyName: formData.contactInformation.whatsAppDial,
-        propertyValue: `${formData.contactInformation.whatsAppDial} ${formData.contactInformation.whatsAppPhone}`,
+        propertyName:
+          formData.contactInformation.whatsAppDial ||
+          formData.contactInformation.phoneDial,
+        propertyValue: `${formData.contactInformation.whatsAppDial} ${formData.contactInformation.whatsAppPhone} || ${formData.contactInformation.phoneDial} ${formData.contactInformation.phone}`,
         transactionOperation: "Insert",
       },
     ]),
@@ -379,7 +381,7 @@ export function ApplyForCredit() {
     .map(([key, value]) => ({
       accountBankCode: value.bank || businessUnitPublicCode,
       accountBankName: value.bank || businessUnitPublicCode,
-      accountNumber: value.accountNumber,
+      accountNumber: value.accountNumber || "0",
       accountType: value.accountType || "CH",
       disbursementAmount: value.amount,
       disbursementDate: new Date().toISOString().split("T")[0],
