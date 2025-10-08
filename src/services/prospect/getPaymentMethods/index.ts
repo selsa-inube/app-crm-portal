@@ -26,7 +26,7 @@ export const getPaymentMethods = async (
         },
         signal: controller.signal,
       };
-      console.log(businessUnitPublicCode);
+      lineOfCredit;
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/portfolio-obligations/`,
         options,
