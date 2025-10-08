@@ -207,13 +207,13 @@ export function CreditProspect(props: ICreditProspectProps) {
       setProspectProducts;
       return;
     }
-
+    console.log("values: ", values);
     try {
       const payload: IAddCreditProduct = {
         prospectId: prospectData.prospectId,
         creditProducts: [
           {
-            lineOfCreditAbbreviatedName: values.creditLine,
+            lineOfCreditAbbreviatedName: values.selectedProducts[0],
           },
         ],
       };
