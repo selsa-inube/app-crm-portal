@@ -47,28 +47,28 @@ export const getPaymentMethods = async (
           data,
         };
       }
-      //DATA MOCK-------------------------
+      // i keep this for the future i'ts only testing with the real services and vaoid break the logic
       return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          paymentMethods: [
-            { id: "1", value: "transfer", label: "Transferencia" },
-            { id: "2", value: "debit", label: "Débito automático" },
-            { id: "3", value: "cash", label: "Efectivo" },
-          ],
-          paymentCycles: [
-            { id: "1", value: "monthly", label: "Mensual" },
-            { id: "2", value: "biweekly", label: "Quincenal" },
-            { id: "3", value: "weekly", label: "Semanal" },
-          ],
-          firstPaymentCycles: [
-            { id: "1", value: "immediate", label: "Inmediato" },
-            { id: "2", value: "30days", label: "30 días" },
-            { id: "3", value: "60days", label: "60 días" },
-          ],
-        });
-      }, 500);
-    });
+        setTimeout(() => {
+          resolve({
+            paymentMethods: [
+              { id: "1", value: "transfer", label: "Transferencia" },
+              { id: "2", value: "debit", label: "Débito automático" },
+              { id: "3", value: "cash", label: "Efectivo" },
+            ],
+            paymentCycles: [
+              { id: "1", value: "monthly", label: "Mensual" },
+              { id: "2", value: "biweekly", label: "Quincenal" },
+              { id: "3", value: "weekly", label: "Semanal" },
+            ],
+            firstPaymentCycles: [
+              { id: "1", value: "immediate", label: "Inmediato" },
+              { id: "2", value: "30days", label: "30 días" },
+              { id: "3", value: "60days", label: "60 días" },
+            ],
+          });
+        }, 500);
+      });
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {

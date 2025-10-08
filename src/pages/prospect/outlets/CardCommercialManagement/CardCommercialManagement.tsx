@@ -218,7 +218,7 @@ export const CardCommercialManagement = (
 
     fetchExpenses();
   }, [businessUnitPublicCode, prospectData?.prospectId]);
-  console.log("selectedProduct: ", selectedProduct);
+
   return (
     <div ref={dataRef}>
       <StyledCardsCredit $isMobile={isMobile}>

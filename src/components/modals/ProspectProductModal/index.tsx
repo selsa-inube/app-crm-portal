@@ -587,18 +587,6 @@ function EditProductModal(props: EditProductModalProps) {
               height={isMobile ? "auto" : "600px"}
               margin="0px 0px 30px 0"
             >
-              {/*               <Select
-                label="Línea de crédito"
-                name="creditLine"
-                id="creditLine"
-                size="compact"
-                placeholder="Selecciona una opción"
-                options={creditLineOptions}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) => formik.setFieldValue(name, value)}
-                value={formik.values.creditLine}
-                fullwidth
-              /> */}
               <Textfield
                 label="Monto del crédito"
                 name="creditAmount"
