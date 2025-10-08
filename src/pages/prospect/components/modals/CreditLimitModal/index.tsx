@@ -71,7 +71,6 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
               creditLine={item.creditLine}
               creditLimitData={item.creditLimitdata}
               paymentCapacityData={item.paymentCapacityData}
-              scoreData={item.scoreData}
               isMobile={isMobile}
               businessUnitPublicCode={businessUnitPublicCode}
               businessManagerCode={businessManagerCode}

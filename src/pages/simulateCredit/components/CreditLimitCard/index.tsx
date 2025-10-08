@@ -14,7 +14,6 @@ import {
   ICreditLimitData,
   IdataMaximumCreditLimitService,
   IPaymentCapacityData,
-  IScoreData,
 } from "./types";
 
 export interface CreditLimitProps {
@@ -25,7 +24,6 @@ export interface CreditLimitProps {
   creditLineTxt: string;
   creditLimitData: ICreditLimitData;
   paymentCapacityData: IPaymentCapacityData;
-  scoreData: IScoreData;
   isMobile: boolean;
 }
 
@@ -38,7 +36,6 @@ export function CreditLimitCard(props: CreditLimitProps) {
     creditLineTxt,
     creditLimitData,
     paymentCapacityData,
-    scoreData,
     isMobile,
   } = props;
 
@@ -134,9 +131,12 @@ export function CreditLimitCard(props: CreditLimitProps) {
       {openModal === "scoreModal" && (
         <ScoreModal
           handleClose={() => setOpenModal(null)}
-          subTitle="Your Financial Score"
           loading={loading}
-          {...scoreData}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+          clientIdentificationNumber={
+            dataMaximumCreditLimitService.identificationDocumentNumber
+          }
         />
       )}
     </StyledContainer>

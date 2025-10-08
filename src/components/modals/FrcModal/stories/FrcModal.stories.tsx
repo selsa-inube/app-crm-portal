@@ -28,12 +28,6 @@ export const Default: Story = (args: ScoreModalProps) => {
 };
 
 Default.args = {
-  totalScore: 150,
-  seniority: 10,
-  centralRisk: 150,
-  employmentStability: 200,
-  maritalStatus: 50,
-  economicActivity: 150,
-  monthlyIncome: 5000000,
-  maxIndebtedness: 2000000,
+  businessManagerCode: "sistemasEnLinea",
+  businessUnitPublicCode: "fondecom",
 };
