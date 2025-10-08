@@ -100,8 +100,7 @@ function EditProductModal(props: EditProductModalProps) {
   const [firstPaymentCyclesList, setFirstPaymentCyclesList] = useState<
     IFirstPaymentCycle[]
   >([]);
-  const [isLoadingPaymentOptions, setIsLoadingPaymentOptions] = useState(false);
-  const [paymentOptionsError, setPaymentOptionsError] = useState<string>("");
+
   const [loanTermError, setLoanTermError] = useState<string>("");
   const [amortizationTypesList, setAmortizationTypesList] = useState<
     { id: string; value: string; label: string }[]
@@ -119,9 +118,6 @@ function EditProductModal(props: EditProductModalProps) {
 
   useEffect(() => {
     const loadPaymentOptions = async () => {
-      setIsLoadingPaymentOptions(true);
-      setPaymentOptionsError("");
-
       try {
         const response = await getPaymentMethods(
           businessUnitPublicCode,
@@ -148,8 +144,6 @@ function EditProductModal(props: EditProductModalProps) {
         );
         setFirstPaymentCyclesList(mappedFirstPaymentCycles);
       } catch (error) {
-        setPaymentOptionsError(messagesErrorValidations.loadPaymentOptions);
-
         setPaymentMethodsList([
           {
             id: "0",
@@ -173,8 +167,6 @@ function EditProductModal(props: EditProductModalProps) {
             label: "No hay opciones de pago disponibles",
           },
         ]);
-      } finally {
-        setIsLoadingPaymentOptions(false);
       }
     };
 
