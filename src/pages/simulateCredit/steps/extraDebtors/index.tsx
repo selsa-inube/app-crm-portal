@@ -210,7 +210,16 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               onSubmit={() => setIsModalAdd(false)}
               handleClose={() => setIsModalAdd(false)}
               title={data.addButton}
-              onAddBorrower={() => {}}
+              onAddBorrower={(newBorrowers: IBorrower[]) => {
+                const transformed = transformServiceData(newBorrowers);
+                if (transformed.length === 0) return;
+                const updated = [...borrowers, ...transformed];
+                setBorrowers(updated);
+                handleOnChange({
+                  borrowers: updated.map((borrower) => borrower.originalData),
+                });
+                setIsModalAdd(false);
+              }}
               prospectData={{} as IProspect}
               businessManagerCode={businessManagerCode}
               businessUnitPublicCode={businessUnitPublicCode}
@@ -228,7 +237,6 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               properties={selectedBorrowerForEdit}
             />
           )}
-
           {isModalDelete && (
             <DeleteModal
               handleClose={() => {

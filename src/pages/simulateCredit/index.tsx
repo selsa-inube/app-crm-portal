@@ -66,6 +66,7 @@ export function SimulateCredit() {
   );
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [allowToContinue, setAllowToContinue] = useState(true);
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
   >([]);
@@ -180,11 +181,10 @@ export function SimulateCredit() {
     () => ({
       clientIdentificationNumber: customerData.publicCode,
       clientManagerName: customerData.fullName,
-      borrowers: [
+      borrowers:
         Object.keys(formData.borrowerData.borrowers).length === 0
-          ? onlyBorrowerData
-          : (formData.borrowerData.borrowers as unknown as IBorrower),
-      ],
+          ? [onlyBorrowerData]
+          : (formData.borrowerData.borrowers as IBorrower[]),
       consolidatedCredits:
         Array.isArray(formData.consolidatedCreditArray) &&
         formData.consolidatedCreditArray.length > 0
@@ -347,6 +347,7 @@ export function SimulateCredit() {
     } catch (error: unknown) {
       setShowErrorModal(true);
       setMessageError(messagesError.tryLater);
+      setAllowToContinue(false);
     }
   }, [formData.selectedProducts]);
 
@@ -600,6 +601,7 @@ export function SimulateCredit() {
     } catch (error: unknown) {
       setShowErrorModal(true);
       setMessageError(messagesError.tryLater);
+      setAllowToContinue(false);
     } finally {
       setIsLoadingCreditLimit(false);
     }
@@ -630,9 +632,6 @@ export function SimulateCredit() {
         if (data) {
           setValidateRequirements(data);
         }
-      } catch (error) {
-        setShowErrorModal(true);
-        setMessageError(messagesError.tryLater);
       } finally {
         setIsLoading(false);
       }
@@ -821,6 +820,7 @@ export function SimulateCredit() {
         businessUnitPublicCode={businessUnitPublicCode}
         businessManagerCode={businessManagerCode}
         handleModalTryAgain={handleModalTryAgain}
+        allowToContinue={allowToContinue}
       />
       {showConsultingModal && <Consulting />}
     </>

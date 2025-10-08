@@ -43,10 +43,6 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 460px)");
   const navigate = useNavigate();
 
-  if (name === "") {
-    navigate("/clients/select-client/");
-  }
-
   return (
     <StyledContainerGeneralHeader>
       <Stack
