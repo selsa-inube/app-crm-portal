@@ -141,6 +141,7 @@ interface SimulateCreditUIProps {
   isLoadingCreditLimit: boolean;
   paymentCapacity?: IPaymentCapacityResponse | null;
   businessManagerCode: string;
+  allowToContinue: boolean;
   handleModalTryAgain: () => void;
 }
 
@@ -199,6 +200,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     businessUnitPublicCode,
     businessManagerCode,
     isLoadingCreditLimit,
+    allowToContinue,
     handleModalTryAgain,
   } = props;
 
@@ -589,7 +591,10 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               {showErrorModal && (
                 <ErrorModal
                   handleClose={() => {
-                    if (messageError === messagesError.tryLater) {
+                    if (
+                      messageError === messagesError.tryLater &&
+                      !allowToContinue
+                    ) {
                       handleModalTryAgain();
                     }
                     setShowErrorModal(false);
