@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
@@ -419,7 +419,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               ) || "",
             Leases: parseFloat(
               getPropertyValue(selectedBorrower.borrowerProperties, "Leases") ||
-                "0",
+              "0",
             ),
             Dividends: parseFloat(
               getPropertyValue(
@@ -562,6 +562,18 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(configModal.observations.errorMessage);
     }
   };
+/* 
+  const calculateCreditDifference = useMemo((): number => {
+    const totalLoanAmount = prospectData!.creditProducts.reduce((sum, product) => {
+      return sum + product.loanAmount;
+    }, 0);
+
+    const difference = Number(prospectData!.requestedAmount) - totalLoanAmount;
+
+    return difference;
+
+  }, [prospectData]) */
+  console.log("prospectData: ", prospectData);
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -656,13 +668,14 @@ export function CreditProspect(props: ICreditProspectProps) {
             onClick={() => handleOpenModal("editProductModal")}
             prospectData={prospectData || undefined}
             onProspectUpdate={onProspectUpdate}
+            
           />
         </Stack>
         {currentModal === "creditLimit" && (
           <CreditLimitModal
             handleClose={handleCloseModal}
             isMobile={isMobile}
-            setRequestValue={setRequestValue || (() => {})}
+            setRequestValue={setRequestValue || (() => { })}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
             dataMaximumCreditLimitService={dataMaximumCreditLimitService}
