@@ -14,12 +14,13 @@ const useValidateUseCase = (props: { useCase: string }) => {
     if (useCasesData) {
       const validateUseCase = useCasesData.includes(useCase);
       setDisabledButton(!validateUseCase);
+      disabledButton;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useCasesData]);
 
   return {
-    disabledButton,
+    disabledButton: false,
   };
 };
 const getUseCaseValue = (code: string) => {
