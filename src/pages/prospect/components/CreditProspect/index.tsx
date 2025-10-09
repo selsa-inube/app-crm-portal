@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState, useMemo } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FormikValues } from "formik";
 import {
@@ -203,11 +203,10 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const handleConfirm = async (values: FormikValues) => {
     if (!prospectData?.prospectId) {
-      console.error("ID no está definido");
       setProspectProducts;
       return;
     }
-    console.log("values: ", values);
+
     try {
       const payload: IAddCreditProduct = {
         prospectId: prospectData.prospectId,
@@ -245,7 +244,13 @@ export function CreditProspect(props: ICreditProspectProps) {
         data?: { description?: string; code?: string };
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
+      let description = code + err?.message + (err?.data?.description || "");
+
+      if (
+        err?.data?.description == "Credit product already exists in prospect"
+      ) {
+        description = "El producto de crédito ya existe en el prospecto";
+      }
       addFlag({
         title: dataCreditProspect.descriptionError,
         description,
@@ -419,7 +424,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               ) || "",
             Leases: parseFloat(
               getPropertyValue(selectedBorrower.borrowerProperties, "Leases") ||
-              "0",
+                "0",
             ),
             Dividends: parseFloat(
               getPropertyValue(
@@ -562,18 +567,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(configModal.observations.errorMessage);
     }
   };
-/* 
-  const calculateCreditDifference = useMemo((): number => {
-    const totalLoanAmount = prospectData!.creditProducts.reduce((sum, product) => {
-      return sum + product.loanAmount;
-    }, 0);
 
-    const difference = Number(prospectData!.requestedAmount) - totalLoanAmount;
-
-    return difference;
-
-  }, [prospectData]) */
-  console.log("prospectData: ", prospectData);
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -668,14 +662,13 @@ export function CreditProspect(props: ICreditProspectProps) {
             onClick={() => handleOpenModal("editProductModal")}
             prospectData={prospectData || undefined}
             onProspectUpdate={onProspectUpdate}
-            
           />
         </Stack>
         {currentModal === "creditLimit" && (
           <CreditLimitModal
             handleClose={handleCloseModal}
             isMobile={isMobile}
-            setRequestValue={setRequestValue || (() => { })}
+            setRequestValue={setRequestValue || (() => {})}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
             dataMaximumCreditLimitService={dataMaximumCreditLimitService}

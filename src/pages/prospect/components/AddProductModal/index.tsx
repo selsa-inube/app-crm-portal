@@ -44,7 +44,7 @@ function AddProductModal(props: IAddProductModalProps) {
         : [lineOfCreditValues];
 
       const result: TCreditLineTerms = {};
-      console.log("Libre destino:: ", lineOfCreditValues);
+
       linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
         if (line && line.abbreviateName) {
           result[line.abbreviateName] = {
@@ -78,7 +78,7 @@ function AddProductModal(props: IAddProductModalProps) {
       .default([])
       .required(),
   });
-  console.log("initialValues:: ", creditLineTerms);
+
   return (
     <AddProductModalUI
       title={title}
