@@ -4,15 +4,39 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
+interface IFinancialObligation {
+  balanceObligationTotal: number;
+  duesPaid: number;
+  entity: string;
+  nextPaymentValueTotal: number;
+  obligationNumber: string;
+  outstandingDues: number;
+  paymentMethodName: string;
+  productName: string;
+}
+
+interface IRestorePayload {
+  borrowerIdentificationNumber: string;
+  financialObligations: IFinancialObligation[];
+  justification: string;
+  prospectCode: string;
+}
+
 export const restoreFinancialObligationsByBorrowerId = async (
   businessUnitPublicCode: string,
   borrowerIdentificationNumber: string,
+  prospectCode: string,
+  financialObligations: IFinancialObligation[],
+  justification: string = "Restauración de obligaciones financieras",
 ): Promise<void> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
-  const payload = {
+  const payload: IRestorePayload = {
     borrowerIdentificationNumber,
+    prospectCode,
+    financialObligations,
+    justification,
   };
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {

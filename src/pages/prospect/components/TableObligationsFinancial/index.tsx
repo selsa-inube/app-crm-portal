@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
@@ -44,6 +44,8 @@ export const TableFinancialObligations = (
   const [selectedBorrowerIndex, setSelectedBorrowerIndex] = useState<number>(0);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const initialValuesSnapshot = useRef<FormikValues | null>(null);
+  const initialObligationsSnapshot = useRef<IProperty[]>([]);
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -125,6 +127,30 @@ export const TableFinancialObligations = (
     }
   }, [refreshKey, initialValues]);
 
+  useEffect(() => {
+    if (initialValues && !initialValuesSnapshot.current) {
+      initialValuesSnapshot.current = JSON.parse(JSON.stringify(initialValues));
+
+      const data = Array.isArray(initialValues)
+        ? initialValues
+        : [initialValues];
+      if (data && data.length > 0) {
+        const borrowerList = Array.isArray(data[0]?.borrowers)
+          ? data[0]?.borrowers
+          : data;
+
+        const financialObligations =
+          borrowerList?.[0]?.borrowerProperties?.filter(
+            (prop: IProperty) => prop.propertyName === "FinancialObligation",
+          ) || [];
+
+        initialObligationsSnapshot.current = JSON.parse(
+          JSON.stringify(financialObligations),
+        );
+      }
+    }
+  }, []);
+
   const handleDelete = async (id: string) => {
     if (services) {
       const borrowers = initialValues?.[0]?.borrowers || [];
@@ -196,9 +222,9 @@ export const TableFinancialObligations = (
     if (services) {
       try {
         const borrowers = initialValues?.[0]?.borrowers || [];
-        const selectedBorrower = borrowers[selectedBorrowerIndex];
+        const currentBorrower = borrowers[selectedBorrowerIndex];
 
-        const obligationIndex = selectedBorrower.borrowerProperties.findIndex(
+        const obligationIndex = currentBorrower.borrowerProperties.findIndex(
           (prop: IProperty) =>
             prop.propertyName === "FinancialObligation" &&
             prop.propertyValue === selectedBorrower?.propertyValue,
@@ -217,14 +243,14 @@ export const TableFinancialObligations = (
 
         const newPropertyValue = originalValues.join(", ");
 
-        const updatedProperties = [...selectedBorrower.borrowerProperties];
+        const updatedProperties = [...currentBorrower.borrowerProperties];
         updatedProperties[obligationIndex] = {
           ...updatedProperties[obligationIndex],
           propertyValue: newPropertyValue,
         };
 
         const updatedBorrower = {
-          ...selectedBorrower,
+          ...currentBorrower,
           borrowerProperties: updatedProperties,
         };
 
@@ -309,12 +335,61 @@ export const TableFinancialObligations = (
       extraDebtors) ||
     [];
 
-  const handleRestore = () => {
-    restoreFinancialObligationsByBorrowerId(
-      businessUnitPublicCode,
-      initialValues![0].borrowers[selectedBorrowerIndex]
-        .borrowerIdentificationNumber || "",
-    );
+  const handleRestore = async () => {
+    if (!services) {
+      if (initialValuesSnapshot.current) {
+        handleOnChange(
+          JSON.parse(JSON.stringify(initialValuesSnapshot.current)),
+        );
+        setRefreshKey?.((prev) => prev + 1);
+      }
+      return;
+    }
+
+    try {
+      const borrower =
+        initialValuesSnapshot.current?.[0]?.borrowers?.[selectedBorrowerIndex];
+
+      if (!borrower) {
+        setShowErrorModal(true);
+        setMessageError("No se encontró el deudor para restaurar");
+        return;
+      }
+
+      const financialObligations = initialObligationsSnapshot.current.map(
+        (prop) => {
+          const values =
+            prop.propertyValue
+              ?.toString()
+              .split(",")
+              .map((v) => v.trim()) || [];
+          return {
+            productName: values[0] || "",
+            balanceObligationTotal: parseFloat(values[1]) || 0,
+            nextPaymentValueTotal: parseFloat(values[2]) || 0,
+            entity: values[3] || "",
+            paymentMethodName: values[4] || "",
+            obligationNumber: values[5] || "",
+            duesPaid: parseInt(values[6]) || 0,
+            outstandingDues: parseInt(values[7]) || 0,
+          };
+        },
+      );
+
+      await restoreFinancialObligationsByBorrowerId(
+        businessUnitPublicCode,
+        borrower.borrowerIdentificationNumber || "",
+        initialValuesSnapshot.current?.[0]?.prospectCode || "",
+        financialObligations,
+        "Restauración de obligaciones financieras a valores iniciales",
+      );
+
+      setRefreshKey?.((prev) => prev + 1);
+      onProspectUpdate?.();
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(`Error al restaurar: ${error}`);
+    }
   };
 
   return (
