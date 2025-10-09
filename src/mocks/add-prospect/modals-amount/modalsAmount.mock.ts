@@ -2,14 +2,6 @@ export const mockCreditLimit = [
   {
     creditLineTxt: "Libre inversión ",
     creditLine: 20000000,
-    creditLimitdata: {
-      maxPaymentCapacity: 22000000,
-      maxReciprocity: 24000000,
-      maxDebtFRC: 21000000,
-      assignedLimit: 0,
-      maxUsableLimit: 21000000,
-      availableLimitWithoutGuarantee: 20000000,
-    },
     paymentCapacityData: {
       incomeSources: 4500000,
       subsistenceReserve: 2500000,
@@ -49,14 +41,6 @@ export const mockCreditLimit = [
   {
     creditLineTxt: "Hogar",
     creditLine: 12000000,
-    creditLimitdata: {
-      maxPaymentCapacity: 50000000,
-      maxReciprocity: 40000000,
-      maxDebtFRC: 45000000,
-      assignedLimit: 0,
-      maxUsableLimit: 20000000,
-      availableLimitWithoutGuarantee: 15000000,
-    },
     paymentCapacityData: {
       incomeSources: 4500000,
       subsistenceReserve: 2500000,

@@ -80,3 +80,8 @@ export interface IMaximumCreditLimitAnalysis {
   totalMonthlyIncome: number;
   totalPortfolioObligation: number;
 }
+
+export interface IMaximumCreditLimitByLineOfCredit {
+  creditLimitCalculationMethodAbbreviatedName: string;
+  creditLimitCalculationMethodValue: number;
+}
