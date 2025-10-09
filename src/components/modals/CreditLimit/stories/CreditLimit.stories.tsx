@@ -34,11 +34,6 @@ export const Default: Story = (args: ICreditLimitProps) => {
 };
 
 Default.args = {
-  title: "Origen de cupo",
-  maxPaymentCapacity: 50000000,
-  maxReciprocity: 40000000,
-  maxDebtFRC: 45000000,
-  assignedLimit: 0,
-  maxUsableLimit: 20000000,
-  availableLimitWithoutGuarantee: 15000000,
+  businessManagerCode: "sistemasEnLinea",
+  businessUnitPublicCode: "fondecom",
 };

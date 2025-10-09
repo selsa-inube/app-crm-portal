@@ -1,4 +1,9 @@
-import { MdOutlineVisibility, MdInfoOutline } from "react-icons/md";
+import { useEffect, useMemo, useState } from "react";
+import {
+  MdOutlineVisibility,
+  MdInfoOutline,
+  MdErrorOutline,
+} from "react-icons/md";
 import {
   Stack,
   Icon,
@@ -10,18 +15,17 @@ import {
 
 import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
+import { getGlobalCreditLimitByLineOfCredit } from "@services/creditLimit/getGlobalCreditLimitByLineOfCredit";
+import { IMaximumCreditLimitByLineOfCredit } from "@services/creditLimit/types";
 
 import { creditLimitTexts } from "./creditLimitConfig";
 import { StyledList } from "./styles";
 
 export interface ICreditLimitProps {
   title: string;
-  maxPaymentCapacity?: number;
-  maxReciprocity?: number;
-  maxDebtFRC?: number;
-  assignedLimit?: number;
-  maxUsableLimit?: number;
-  availableLimitWithoutGuarantee: number;
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
+  clientIdentificationNumber: string;
   loading?: boolean;
   handleClose: () => void;
   onOpenMaxLimitModal?: () => void;
@@ -33,13 +37,10 @@ export interface ICreditLimitProps {
 export const CreditLimit = (props: ICreditLimitProps) => {
   const {
     title,
+    businessUnitPublicCode,
+    businessManagerCode,
+    clientIdentificationNumber,
     loading,
-    maxPaymentCapacity,
-    maxReciprocity,
-    maxDebtFRC,
-    assignedLimit,
-    maxUsableLimit,
-    availableLimitWithoutGuarantee,
     handleClose,
     onOpenMaxLimitModal,
     onOpenPaymentCapacityModal,
@@ -48,6 +49,48 @@ export const CreditLimit = (props: ICreditLimitProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
+
+  const [error, setError] = useState(false);
+  const [dataMaximumCreditLimit, setDataMaximumCreditLimit] = useState<
+    IMaximumCreditLimitByLineOfCredit[]
+  >([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getGlobalCreditLimitByLineOfCredit(
+          businessUnitPublicCode,
+          businessManagerCode,
+          clientIdentificationNumber,
+        );
+
+        if (data) {
+          setDataMaximumCreditLimit(data);
+        }
+      } catch (err) {
+        setError(true);
+      }
+    };
+
+    fetchData();
+  }, [businessUnitPublicCode, businessManagerCode, clientIdentificationNumber]);
+
+  const limits = useMemo(() => {
+    const map: Record<string, number> = {};
+
+    dataMaximumCreditLimit.forEach((item) => {
+      map[item.creditLimitCalculationMethodAbbreviatedName] =
+        item.creditLimitCalculationMethodValue;
+    });
+
+    return {
+      maxCreditLimit: map["MaxCreditLimit"],
+      reciprocity: map["ReciprocityBasedCreditLimit"],
+      paymentCapacity: map["PaymentCapacityBasedCreditLimit"],
+      riskAnalysis: map["RiskAnalysisBasedCreditLimit"],
+      personalized: map["Personalized"],
+    };
+  }, [dataMaximumCreditLimit]);
 
   return (
     <BaseModal
@@ -59,207 +102,224 @@ export const CreditLimit = (props: ICreditLimitProps) => {
       handleBack={handleClose}
       finalDivider={true}
     >
-      <Stack direction="column" gap="24px">
-        <StyledList>
-          <Stack direction="column" gap="12px">
-            {maxPaymentCapacity !== undefined && (
-              <li>
-                <Stack justifyContent="space-between">
-                  <Text
-                    appearance="dark"
-                    size="large"
-                    weight="bold"
-                    type="label"
-                  >
-                    {creditLimitTexts.maxPaymentCapacity}
-                  </Text>
-
-                  <Stack alignItems="center">
-                    <Text appearance="success">$</Text>
-                    {loading ? (
-                      <SkeletonLine width="70px" animated={true} />
-                    ) : (
-                      <Text type="body" size="medium" appearance="dark">
-                        {currencyFormat(maxPaymentCapacity, false)}
-                      </Text>
-                    )}
-                    <Stack margin="0px 0px 0px 5px">
-                      <Icon
-                        appearance="primary"
-                        icon={<MdOutlineVisibility />}
-                        size="16px"
-                        spacing="narrow"
-                        cursorHover={true}
-                        variant="filled"
-                        shape="circle"
-                        onClick={onOpenMaxLimitModal}
-                      />
-                    </Stack>
-                  </Stack>
-                </Stack>
-              </li>
-            )}
-            {maxReciprocity !== undefined && (
-              <li>
-                <Stack justifyContent="space-between">
-                  <Text
-                    appearance="dark"
-                    size="large"
-                    weight="bold"
-                    type="label"
-                  >
-                    {creditLimitTexts.maxReciprocity}
-                  </Text>
-                  <Stack alignItems="center">
-                    <Text appearance="success">$</Text>
-                    {loading ? (
-                      <SkeletonLine width="70px" animated={true} />
-                    ) : (
-                      <Text type="body" size="medium" appearance="dark">
-                        {currencyFormat(maxReciprocity, false)}
-                      </Text>
-                    )}
-                    <Stack margin="0px 0px 0px 5px">
-                      <Icon
-                        appearance="primary"
-                        icon={<MdOutlineVisibility />}
-                        size="16px"
-                        spacing="narrow"
-                        cursorHover={true}
-                        variant="filled"
-                        shape="circle"
-                        onClick={onOpenReciprocityModal}
-                      />
-                    </Stack>
-                  </Stack>
-                </Stack>
-              </li>
-            )}
-            {maxDebtFRC !== undefined && (
-              <li>
-                <Stack justifyContent="space-between">
-                  <Text
-                    appearance="dark"
-                    size="large"
-                    weight="bold"
-                    type="label"
-                  >
-                    {creditLimitTexts.maxDebtFRC}
-                  </Text>
-                  <Stack alignItems="center">
-                    <Text appearance="success">$</Text>
-                    {loading ? (
-                      <SkeletonLine width="70px" animated={true} />
-                    ) : (
-                      <Text type="body" size="medium" appearance="dark">
-                        {currencyFormat(maxDebtFRC, false)}
-                      </Text>
-                    )}
-                    <Stack margin="0px 0px 0px 5px">
-                      <Icon
-                        appearance="primary"
-                        icon={<MdOutlineVisibility />}
-                        size="16px"
-                        spacing="narrow"
-                        cursorHover
-                        variant="filled"
-                        shape="circle"
-                        onClick={onOpenPaymentCapacityModal}
-                      />
-                    </Stack>
-                  </Stack>
-                </Stack>
-              </li>
-            )}
-
-            {maxUsableLimit !== undefined && (
-              <li>
-                <Stack justifyContent="space-between">
-                  <Text
-                    appearance="dark"
-                    size="large"
-                    weight="bold"
-                    type="label"
-                  >
-                    {creditLimitTexts.maxIndebtedness}
-                  </Text>
-                  <Stack alignItems="center">
-                    <Text appearance="success">$</Text>
-                    {loading ? (
-                      <SkeletonLine width="70px" animated={true} />
-                    ) : (
-                      <Text type="body" size="medium" appearance="dark">
-                        {currencyFormat(maxUsableLimit, false)}
-                      </Text>
-                    )}
-                    <Stack margin="0px 0px 0px 5px">
-                      <Icon
-                        appearance="primary"
-                        icon={<MdOutlineVisibility />}
-                        size="16px"
-                        spacing="narrow"
-                        cursorHover
-                        variant="filled"
-                        shape="circle"
-                        onClick={onOpenFrcModal}
-                      />
-                    </Stack>
-                  </Stack>
-                </Stack>
-              </li>
-            )}
-            {assignedLimit !== undefined && (
-              <li>
-                <Stack justifyContent="space-between">
-                  <Text
-                    appearance="dark"
-                    size="large"
-                    weight="bold"
-                    type="label"
-                  >
-                    {creditLimitTexts.assignedLimit}
-                  </Text>
-                  <Stack alignItems="center" gap="4px">
-                    <Text appearance="success">$</Text>
-                    {loading ? (
-                      <SkeletonLine width="70px" animated={true} />
-                    ) : (
-                      <Text
-                        weight="bold"
-                        type="body"
-                        size="medium"
-                        appearance="dark"
-                      >
-                        {currencyFormat(assignedLimit, false)}
-                      </Text>
-                    )}
-                  </Stack>
-                </Stack>
-              </li>
-            )}
-          </Stack>
-        </StyledList>
-        <Divider />
-        <Stack alignItems="center">
-          <Icon
-            appearance="help"
-            icon={<MdInfoOutline />}
-            size="16px"
-            spacing="narrow"
-          />
-          <Text margin="0px 5px" size="small">
-            {creditLimitTexts.maxUsableQuote}
-          </Text>
-        </Stack>
+      {error ? (
         <Stack direction="column" alignItems="center">
-          <Text type="headline" size="large" weight="bold" appearance="primary">
-            {currencyFormat(availableLimitWithoutGuarantee, true)}
+          <Icon icon={<MdErrorOutline />} size="32px" appearance="danger" />
+          <Text size="large" weight="bold" appearance="danger">
+            {creditLimitTexts.error.title}
           </Text>
-          <Text type="body" size="small">
-            Monto máximo utilizable
+          <Text size="small" appearance="dark" textAlign="center">
+            {creditLimitTexts.error.message}
           </Text>
         </Stack>
-      </Stack>
+      ) : (
+        <Stack direction="column" gap="24px">
+          <StyledList>
+            <Stack direction="column" gap="12px">
+              {limits.maxCreditLimit !== undefined && (
+                <li>
+                  <Stack justifyContent="space-between">
+                    <Text
+                      appearance="dark"
+                      size="large"
+                      weight="bold"
+                      type="label"
+                    >
+                      {creditLimitTexts.maxPaymentCapacity}
+                    </Text>
+
+                    <Stack alignItems="center">
+                      <Text appearance="success">$</Text>
+                      {loading ? (
+                        <SkeletonLine width="70px" animated={true} />
+                      ) : (
+                        <Text type="body" size="medium" appearance="dark">
+                          {currencyFormat(limits.maxCreditLimit, false)}
+                        </Text>
+                      )}
+                      <Stack margin="0px 0px 0px 5px">
+                        <Icon
+                          appearance="primary"
+                          icon={<MdOutlineVisibility />}
+                          size="16px"
+                          spacing="narrow"
+                          cursorHover={true}
+                          variant="filled"
+                          shape="circle"
+                          onClick={onOpenMaxLimitModal}
+                        />
+                      </Stack>
+                    </Stack>
+                  </Stack>
+                </li>
+              )}
+              {limits.reciprocity !== undefined && (
+                <li>
+                  <Stack justifyContent="space-between">
+                    <Text
+                      appearance="dark"
+                      size="large"
+                      weight="bold"
+                      type="label"
+                    >
+                      {creditLimitTexts.maxReciprocity}
+                    </Text>
+                    <Stack alignItems="center">
+                      <Text appearance="success">$</Text>
+                      {loading ? (
+                        <SkeletonLine width="70px" animated={true} />
+                      ) : (
+                        <Text type="body" size="medium" appearance="dark">
+                          {currencyFormat(limits.reciprocity, false)}
+                        </Text>
+                      )}
+                      <Stack margin="0px 0px 0px 5px">
+                        <Icon
+                          appearance="primary"
+                          icon={<MdOutlineVisibility />}
+                          size="16px"
+                          spacing="narrow"
+                          cursorHover={true}
+                          variant="filled"
+                          shape="circle"
+                          onClick={onOpenReciprocityModal}
+                        />
+                      </Stack>
+                    </Stack>
+                  </Stack>
+                </li>
+              )}
+              {limits.paymentCapacity !== undefined && (
+                <li>
+                  <Stack justifyContent="space-between">
+                    <Text
+                      appearance="dark"
+                      size="large"
+                      weight="bold"
+                      type="label"
+                    >
+                      {creditLimitTexts.maxDebtFRC}
+                    </Text>
+                    <Stack alignItems="center">
+                      <Text appearance="success">$</Text>
+                      {loading ? (
+                        <SkeletonLine width="70px" animated={true} />
+                      ) : (
+                        <Text type="body" size="medium" appearance="dark">
+                          {currencyFormat(limits.paymentCapacity, false)}
+                        </Text>
+                      )}
+                      <Stack margin="0px 0px 0px 5px">
+                        <Icon
+                          appearance="primary"
+                          icon={<MdOutlineVisibility />}
+                          size="16px"
+                          spacing="narrow"
+                          cursorHover
+                          variant="filled"
+                          shape="circle"
+                          onClick={onOpenPaymentCapacityModal}
+                        />
+                      </Stack>
+                    </Stack>
+                  </Stack>
+                </li>
+              )}
+
+              {limits.riskAnalysis !== undefined && (
+                <li>
+                  <Stack justifyContent="space-between">
+                    <Text
+                      appearance="dark"
+                      size="large"
+                      weight="bold"
+                      type="label"
+                    >
+                      {creditLimitTexts.maxIndebtedness}
+                    </Text>
+                    <Stack alignItems="center">
+                      <Text appearance="success">$</Text>
+                      {loading ? (
+                        <SkeletonLine width="70px" animated={true} />
+                      ) : (
+                        <Text type="body" size="medium" appearance="dark">
+                          {currencyFormat(limits.riskAnalysis, false)}
+                        </Text>
+                      )}
+                      <Stack margin="0px 0px 0px 5px">
+                        <Icon
+                          appearance="primary"
+                          icon={<MdOutlineVisibility />}
+                          size="16px"
+                          spacing="narrow"
+                          cursorHover
+                          variant="filled"
+                          shape="circle"
+                          onClick={onOpenFrcModal}
+                        />
+                      </Stack>
+                    </Stack>
+                  </Stack>
+                </li>
+              )}
+              {limits.personalized !== undefined && (
+                <li>
+                  <Stack justifyContent="space-between">
+                    <Text
+                      appearance="dark"
+                      size="large"
+                      weight="bold"
+                      type="label"
+                    >
+                      {creditLimitTexts.assignedLimit}
+                    </Text>
+                    <Stack alignItems="center" gap="4px">
+                      <Text appearance="success">$</Text>
+                      {loading ? (
+                        <SkeletonLine width="70px" animated={true} />
+                      ) : (
+                        <Text
+                          weight="bold"
+                          type="body"
+                          size="medium"
+                          appearance="dark"
+                        >
+                          {currencyFormat(limits.personalized, false)}
+                        </Text>
+                      )}
+                    </Stack>
+                  </Stack>
+                </li>
+              )}
+            </Stack>
+          </StyledList>
+          <Divider />
+          <Stack alignItems="center">
+            <Icon
+              appearance="help"
+              icon={<MdInfoOutline />}
+              size="16px"
+              spacing="narrow"
+            />
+            <Text margin="0px 5px" size="small">
+              {creditLimitTexts.maxUsableQuote}
+            </Text>
+          </Stack>
+          <Stack direction="column" alignItems="center">
+            <Text
+              type="headline"
+              size="large"
+              weight="bold"
+              appearance="primary"
+            >
+              {currencyFormat(0, true)}
+            </Text>
+            <Text type="body" size="small">
+              {creditLimitTexts.maxMount}
+            </Text>
+          </Stack>
+        </Stack>
+      )}
     </BaseModal>
   );
 };
