@@ -336,7 +336,6 @@ export const TableFinancialObligations = (
     [];
 
   const handleRestore = async () => {
-    // CASO 1: Sin servicios (modo local)
     if (!services) {
       if (initialValuesSnapshot.current) {
         handleOnChange(
