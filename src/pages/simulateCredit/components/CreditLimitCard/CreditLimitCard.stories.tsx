@@ -25,12 +25,6 @@ const creditLimitCard: Meta<typeof CreditLimitCard> = {
       },
       description: "Data for the Payment Capacity modal.",
     },
-    scoreData: {
-      control: {
-        type: "object",
-      },
-      description: "Data for the Score modal.",
-    },
   },
 };
 
@@ -38,27 +32,6 @@ export const Default: Story = {
   args: {
     creditLine: 10000000,
     creditLineTxt: "Crediaportes.",
-    creditLimitData: {
-      maxPaymentCapacity: 50000000,
-      maxReciprocity: 40000000,
-      maxDebtFRC: 45000000,
-      assignedLimit: 0,
-      maxUsableLimit: 20000000,
-      availableLimitWithoutGuarantee: 15000000,
-    },
-    scoreData: {
-      totalScore: 150,
-      seniority: 150,
-      centralRisk: 50,
-      employmentStability: 230,
-      maritalStatus: 30,
-      economicActivity: 118,
-      monthlyIncome: 3000000,
-      maxIndebtedness: 50000000,
-      incomeScore: 200,
-      maxLimit: 50000000,
-      totalPortafolio: 10000000,
-    },
   },
 };
 

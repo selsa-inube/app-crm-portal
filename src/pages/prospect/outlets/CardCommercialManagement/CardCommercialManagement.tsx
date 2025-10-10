@@ -22,15 +22,15 @@ import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeduct
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
-
-import { SummaryProspectCredit, tittleOptions } from "./config/config";
-import { StyledCardsCredit, StyledPrint } from "./styles";
 import {
   getUseCaseValue,
   useValidateUseCase,
 } from "@src/hooks/useValidateUseCase";
-import InfoModal from "../../components/InfoModal";
 import { privilegeCrm } from "@src/config/privilege";
+
+import { SummaryProspectCredit, tittleOptions } from "./config/config";
+import { StyledCardsCredit, StyledPrint } from "./styles";
+import InfoModal from "../../components/InfoModal";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -295,18 +295,27 @@ export const CardCommercialManagement = (
           onConfirm={handleConfirm}
           title={tittleOptions.editProduct}
           confirmButtonText={tittleOptions.save}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
           initialValues={{
             creditLine: selectedProduct.lineOfCreditAbbreviatedName || "",
             creditAmount: selectedProduct.loanAmount || 0,
             paymentMethod:
               selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
                 ?.paymentChannelAbbreviatedName || "",
-            paymentCycle: selectedProduct.lineOfCreditAbbreviatedName || "",
+            paymentCycle: selectedProduct.installmentFrequency || "",
             firstPaymentCycle: "",
             termInMonths: selectedProduct.loanTerm || 0,
             amortizationType: "",
             interestRate: selectedProduct.interestRate || 0,
             rateType: "",
+          }}
+          prospectData={{
+            lineOfCredit: selectedProduct.lineOfCreditAbbreviatedName || "",
+            moneyDestination:
+              prospectData!.moneyDestinationAbbreviatedName || "",
+            paymentChannelType:
+              prospectData!.preferredPaymentChannelAbbreviatedName,
           }}
         />
       )}

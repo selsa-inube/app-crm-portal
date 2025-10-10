@@ -10,12 +10,7 @@ import { ScoreModal } from "@components/modals/FrcModal";
 import { PaymentCapacityModal } from "@components/modals/PaymentCapacityModal";
 
 import { StyledContainer } from "./styles";
-import {
-  ICreditLimitData,
-  IdataMaximumCreditLimitService,
-  IPaymentCapacityData,
-  IScoreData,
-} from "./types";
+import { IdataMaximumCreditLimitService, IPaymentCapacityData } from "./types";
 
 export interface CreditLimitProps {
   businessUnitPublicCode: string;
@@ -23,9 +18,7 @@ export interface CreditLimitProps {
   dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
   creditLine: number;
   creditLineTxt: string;
-  creditLimitData: ICreditLimitData;
   paymentCapacityData: IPaymentCapacityData;
-  scoreData: IScoreData;
   isMobile: boolean;
 }
 
@@ -36,9 +29,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
     dataMaximumCreditLimitService,
     creditLine,
     creditLineTxt,
-    creditLimitData,
     paymentCapacityData,
-    scoreData,
     isMobile,
   } = props;
 
@@ -93,7 +84,11 @@ export function CreditLimitCard(props: CreditLimitProps) {
           onOpenPaymentCapacityModal={() => handleOpenModals("paymentCapacity")}
           onOpenReciprocityModal={() => handleOpenModals("reciprocityModal")}
           onOpenFrcModal={() => handleOpenModals("scoreModal")}
-          {...creditLimitData}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+          clientIdentificationNumber={
+            dataMaximumCreditLimitService.identificationDocumentNumber
+          }
         />
       )}
 
@@ -134,9 +129,12 @@ export function CreditLimitCard(props: CreditLimitProps) {
       {openModal === "scoreModal" && (
         <ScoreModal
           handleClose={() => setOpenModal(null)}
-          subTitle="Your Financial Score"
           loading={loading}
-          {...scoreData}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+          clientIdentificationNumber={
+            dataMaximumCreditLimitService.identificationDocumentNumber
+          }
         />
       )}
     </StyledContainer>

@@ -71,3 +71,17 @@ export interface IMaximumCreditLimitReciprocity {
   permanentSavingsBalance: number;
   unsecuredPortfolioObligation: number;
 }
+
+export interface IMaximumCreditLimitAnalysis {
+  assignedCreditLimit: number;
+  creditRiskMultiplier: number;
+  creditRiskScore: number;
+  maxAmountAvailableByCreditRiskAnalysis: number;
+  totalMonthlyIncome: number;
+  totalPortfolioObligation: number;
+}
+
+export interface IMaximumCreditLimitByLineOfCredit {
+  creditLimitCalculationMethodAbbreviatedName: string;
+  creditLimitCalculationMethodValue: number;
+}

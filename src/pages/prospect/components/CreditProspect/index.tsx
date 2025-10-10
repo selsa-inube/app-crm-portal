@@ -203,7 +203,6 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   const handleConfirm = async (values: FormikValues) => {
     if (!prospectData?.prospectId) {
-      console.error("ID no está definido");
       setProspectProducts;
       return;
     }
@@ -213,7 +212,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         prospectId: prospectData.prospectId,
         creditProducts: [
           {
-            lineOfCreditAbbreviatedName: values.creditLine,
+            lineOfCreditAbbreviatedName: values.selectedProducts[0],
           },
         ],
       };
@@ -245,7 +244,13 @@ export function CreditProspect(props: ICreditProspectProps) {
         data?: { description?: string; code?: string };
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
+      let description = code + err?.message + (err?.data?.description || "");
+
+      if (
+        err?.data?.description == "Credit product already exists in prospect"
+      ) {
+        description = "El producto de crédito ya existe en el prospecto";
+      }
       addFlag({
         title: dataCreditProspect.descriptionError,
         description,
@@ -538,10 +543,6 @@ export function CreditProspect(props: ICreditProspectProps) {
         onProspectUpdate(updatedProspect);
       }
 
-      if (onProspectUpdated) {
-        onProspectUpdated();
-      }
-
       setShowEditMessageModal(false);
       handleCloseModal();
 
@@ -550,6 +551,10 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessManagerCode,
         updatedProspect,
       );
+
+      if (onProspectUpdated) {
+        onProspectUpdated();
+      }
 
       addFlag({
         title: "Observaciones actualizadas",
@@ -562,6 +567,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(configModal.observations.errorMessage);
     }
   };
+
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -689,18 +695,11 @@ export function CreditProspect(props: ICreditProspectProps) {
         {openModal === "scoreModal" && (
           <ScoreModal
             handleClose={() => setOpenModal(null)}
-            subTitle="Your Financial Score"
-            totalScore={150}
-            seniority={150}
-            centralRisk={50}
-            employmentStability={230}
-            maritalStatus={30}
-            economicActivity={118}
-            monthlyIncome={3000000}
-            maxIndebtedness={50000000}
-            incomeScore={5.56}
-            maxLimit={22000000}
-            totalPortafolio={1000000}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            clientIdentificationNumber={
+              dataMaximumCreditLimitService.identificationDocumentNumber
+            }
           />
         )}
         {currentModal === "editProductModal" && (

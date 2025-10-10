@@ -8,8 +8,9 @@ interface IStyledModal {
 export const ScrollableContainer = styled.div<IStyledModal>`
   width: ${({ $smallScreen }) => ($smallScreen ? "270px" : "auto")};
   padding: 10px;
-  overflow: auto;
   display: flex;
+  z-index: 1; 
+  position: relative;
   max-height: width: ${({ $smallScreen }) => ($smallScreen ? "auto" : "500px")};
 
   &::-webkit-scrollbar {

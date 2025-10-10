@@ -4,65 +4,40 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-interface IFinancialObligation {
-  balanceObligationTotal: number;
-  duesPaid: number;
-  entity: string;
-  nextPaymentValueTotal: number;
-  obligationNumber: string;
-  outstandingDues: number;
-  paymentMethodName: string;
-  productName: string;
-}
+import { IEffectiveInterestRateResponse } from "./types";
 
-interface IRestorePayload {
-  borrowerIdentificationNumber: string;
-  financialObligations: IFinancialObligation[];
-  justification: string;
-  prospectCode: string;
-}
-
-export const restoreFinancialObligationsByBorrowerId = async (
+export const getEffectiveInterestRate = async (
   businessUnitPublicCode: string,
-  borrowerIdentificationNumber: string,
-  prospectCode: string,
-  financialObligations: IFinancialObligation[],
-  justification: string = "Restauración de obligaciones financieras",
-): Promise<void> => {
+  businessManagerCode: string,
+  lineOfCreditAbbreviatedName: string,
+  clientIdentificationNumber: string,
+): Promise<IEffectiveInterestRateResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
-  const payload: IRestorePayload = {
-    borrowerIdentificationNumber,
-    prospectCode,
-    financialObligations,
-    justification,
-  };
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
-        method: "PATCH",
+        method: "GET",
         headers: {
-          "X-Action": "RestoreFinancialObligationsByBorrowerId",
+          "X-Action": "GetEffectiveInterestRate",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
         },
-        body: JSON.stringify(payload),
         signal: controller.signal,
       };
-
+      console.log(businessUnitPublicCode);
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/effective-interest-rate/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return;
+        return null;
       }
 
       const data = await res.json();
@@ -85,9 +60,11 @@ export const restoreFinancialObligationsByBorrowerId = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo restaurar las fuentes de ingresos.",
+          "Todos los intentos fallaron. No se pudo obtener el la tasa de interés.",
         );
       }
     }
   }
+
+  return null;
 };
