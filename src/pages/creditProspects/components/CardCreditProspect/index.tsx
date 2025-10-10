@@ -12,7 +12,10 @@ import { privilegeCrm } from "@config/privilege";
 import { CardGray } from "@components/cards/CardGray";
 import { IconText } from "@pages/prospect/components/IconText";
 import { currencyFormat } from "@utils/formatData/currency";
-import { capitalizeFirstLetter } from "@utils/formatData/text";
+import {
+  capitalizeFirstLetter,
+  truncateTextToMaxLength,
+} from "@utils/formatData/text";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
@@ -73,7 +76,7 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
               size="24px"
             />
             <Text type="title" size="medium" weight="bold" appearance="dark">
-              {title}
+              {truncateTextToMaxLength(title, 20)}
             </Text>
           </Stack>
           {hasMessage && (

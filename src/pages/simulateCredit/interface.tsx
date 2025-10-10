@@ -343,7 +343,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 <Stack justifyContent="end"></Stack>
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                    stepsAddProspect.generalInformation.id && (
+                    stepsAddProspect.extraordinaryInstallments.id && (
                     <RequirementsNotMet
                       isMobile={isMobile}
                       prospectData={prospectData as IProspect}
@@ -407,7 +407,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                    stepsAddProspect.extraordinaryInstallments.id && (
+                    stepsAddProspect.generalInformation.id && (
                     <ExtraordinaryInstallments
                       isMobile={isMobile}
                       initialValues={formData.extraordinaryInstallments}
