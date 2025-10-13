@@ -11,4 +11,5 @@ export const ModalConfig = {
   collectedValue: "Valor total recogido.",
   title: "Obligaciones recogidas",
   loading: "Cargando...",
+  noSelected: "No hay obligaciones seleccionadas.",
 };

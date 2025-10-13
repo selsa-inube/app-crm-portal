@@ -134,7 +134,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
     useCase: getUseCaseValue("canEditCreditRequest"),
   });
-
+  console.log("data prospect", dataProspect);
   return (
     <div ref={dataPrint}>
       {codeError ? (

@@ -111,6 +111,9 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
     }
   }, [selectedLabels, selectedValues]);
 
+  console.log("data example how is the data to enter de componeten: ", data)
+  console.log("how see de the values on inittial values: ", initialValues)
+
   return (
     <Fieldset heightFieldset="100%">
       <Stack direction="column" gap="24px" padding="16px">
