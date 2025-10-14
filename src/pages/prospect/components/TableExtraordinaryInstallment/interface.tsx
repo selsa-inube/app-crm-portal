@@ -45,6 +45,13 @@ interface ITableExtraordinaryInstallmentProps {
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModalDelete: (value: boolean) => void;
   setIsOpenModalEdit: (value: boolean) => void;
+  setInstallmentState: React.Dispatch<
+    React.SetStateAction<{
+      installmentAmount: number;
+      installmentDate: string;
+      paymentChannelAbbreviatedName: string;
+    }>
+  >;
   handleUpdate: (
     updatedDebtor: TableExtraordinaryInstallmentProps,
   ) => Promise<void>;
@@ -85,8 +92,10 @@ export function TableExtraordinaryInstallmentUI(
     messageError,
     setShowErrorModal,
     setIsOpenModalDelete,
+    setIsOpenModalEdit,
     setSelectedDebtor,
     handleDeleteAction,
+    setInstallmentState,
   } = props;
 
   const {
@@ -180,12 +189,39 @@ export function TableExtraordinaryInstallmentUI(
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
                         }}
+                        handleView={() => {}}
+                        handleEdit={() => {
+                          setSelectedDebtor(row);
+                          setInstallmentState({
+                            installmentAmount: Number(row.value) || 0,
+                            installmentDate:
+                              typeof row.datePayment === "string"
+                                ? row.datePayment
+                                : String(row.datePayment) || "",
+                            paymentChannelAbbreviatedName:
+                              String(row.paymentMethod) || "",
+                          });
+                          setIsOpenModalEdit(true);
+                        }}
                       />
                     ) : (
                       <Detail
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
+                        }}
+                        handleEdit={() => {
+                          setSelectedDebtor(row);
+                          setInstallmentState({
+                            installmentAmount: Number(row.value) || 0,
+                            installmentDate:
+                              typeof row.datePayment === "string"
+                                ? row.datePayment
+                                : String(row.datePayment) || "",
+                            paymentChannelAbbreviatedName:
+                              String(row.paymentMethod) || "",
+                          });
+                          setIsOpenModalEdit(true);
                         }}
                       />
                     )}

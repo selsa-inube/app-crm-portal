@@ -5,6 +5,7 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
+import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -100,6 +101,15 @@ export const TableExtraordinaryInstallment = (
   >([]);
   const [selectedDebtor, setSelectedDebtor] =
     useState<TableExtraordinaryInstallmentProps>({});
+  const [installmentState, setInstallmentState] = useState<{
+    installmentAmount: number;
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  }>({
+    installmentAmount: 0,
+    installmentDate: "",
+    paymentChannelAbbreviatedName: "",
+  });
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
@@ -232,31 +242,56 @@ export const TableExtraordinaryInstallment = (
   };
 
   return (
-    <TableExtraordinaryInstallmentUI
-      loading={loading}
-      visbleHeaders={visbleHeaders}
-      visbleActions={visbleActions}
-      extraordinaryInstallments={extraordinaryInstallments}
-      isMobile={isMobile}
-      selectedDebtor={selectedDebtor}
-      isOpenModalDelete={isOpenModalDelete}
-      isOpenModalEdit={isOpenModalEdit}
-      businessUnitPublicCode={businessUnitPublicCode ?? ""}
-      prospectData={prospectData}
-      showErrorModal={showErrorModal}
-      messageError={messageError}
-      setShowErrorModal={setShowErrorModal}
-      setIsOpenModalDelete={setIsOpenModalDelete}
-      setIsOpenModalEdit={setIsOpenModalEdit}
-      handleUpdate={handleUpdateData}
-      usePagination={paginationProps}
-      setSentData={setSentData ?? (() => {})}
-      handleClose={handleClose}
-      setSelectedDebtor={setSelectedDebtor}
-      handleDelete={handleDelete}
-      service={service}
-      itemIdentifiersForUpdate={itemIdentifiersForUpdate}
-      handleDeleteAction={handleDeleteAction}
-    />
+    <>
+      <TableExtraordinaryInstallmentUI
+        loading={loading}
+        visbleHeaders={visbleHeaders}
+        visbleActions={visbleActions}
+        extraordinaryInstallments={extraordinaryInstallments}
+        isMobile={isMobile}
+        selectedDebtor={selectedDebtor}
+        isOpenModalDelete={isOpenModalDelete}
+        isOpenModalEdit={isOpenModalEdit}
+        businessUnitPublicCode={businessUnitPublicCode ?? ""}
+        prospectData={prospectData}
+        showErrorModal={showErrorModal}
+        messageError={messageError}
+        setShowErrorModal={setShowErrorModal}
+        setIsOpenModalDelete={setIsOpenModalDelete}
+        setIsOpenModalEdit={setIsOpenModalEdit}
+        handleUpdate={handleUpdateData}
+        usePagination={paginationProps}
+        setSentData={setSentData ?? (() => {})}
+        handleClose={handleClose}
+        setSelectedDebtor={setSelectedDebtor}
+        setInstallmentState={setInstallmentState}
+        handleDelete={handleDelete}
+        service={service}
+        itemIdentifiersForUpdate={itemIdentifiersForUpdate}
+        handleDeleteAction={handleDeleteAction}
+      />
+      {isOpenModalEdit && (
+        <AddSeriesModal
+          handleClose={() => setIsOpenModalEdit(false)}
+          onSubmit={(values: {
+            installmentDate: string;
+            paymentChannelAbbreviatedName: string;
+          }) => {
+            const updated: TableExtraordinaryInstallmentProps = {
+              ...selectedDebtor,
+              datePayment: values.installmentDate,
+              paymentMethod: values.paymentChannelAbbreviatedName,
+              value: installmentState.installmentAmount,
+            };
+
+            handleUpdateData(updated);
+          }}
+          installmentState={installmentState}
+          setInstallmentState={setInstallmentState}
+          service={false}
+          isEdit
+        />
+      )}
+    </>
   );
 };

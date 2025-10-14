@@ -2,7 +2,7 @@ import { Formik, Field, Form } from "formik";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MdInfoOutline } from "react-icons/md";
-import { Icon } from "@inubekit/inubekit";
+import { Icon, IOption } from "@inubekit/inubekit";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
@@ -17,11 +17,9 @@ import {
 
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
+import { formatPrimaryDate } from "@utils/formatData/date";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
-import {
-  mockPayAmount,
-  mockPeriodicity,
-} from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
+import { mockPeriodicity } from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
 import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { BaseModal } from "@components/modals/baseModal";
@@ -66,6 +64,7 @@ export function LoanAmount(props: ILoanAmountProps) {
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [payAmountOptions, setPayAmountOptions] = useState<IOption[]>([]);
 
   useEffect(() => {
     get("mockRequest_value")
@@ -92,6 +91,38 @@ export function LoanAmount(props: ILoanAmountProps) {
   const handleCloseModalToggleState = () => {
     setShowInfoModal(false);
   };
+
+  const generatePayAmountOptions = (day: number) => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+
+    const nextTwoMonths = [0, 1].map((offset) => {
+      const date = new Date(currentYear, currentMonth + offset, day);
+      if (date.getDate() !== day) {
+        date.setDate(0);
+      }
+
+      const label = formatPrimaryDate(date);
+      return {
+        id: `${offset + 1}`,
+        label,
+        value: label,
+      };
+    });
+
+    return nextTwoMonths;
+  };
+
+  useEffect(() => {
+    if (initialValues.periodicity.includes(dataAmount.day15)) {
+      setPayAmountOptions(generatePayAmountOptions(15));
+    } else if (initialValues.periodicity.includes(dataAmount.day30)) {
+      setPayAmountOptions(generatePayAmountOptions(30));
+    } else {
+      setPayAmountOptions([]);
+    }
+  }, [initialValues.periodicity]);
 
   return (
     <Fieldset hasOverflow>
@@ -249,7 +280,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                         {() => (
                           <Select
                             id="payAmount"
-                            options={mockPayAmount}
+                            options={payAmountOptions}
                             placeholder={dataAmount.selectOption}
                             name="payAmount"
                             onChange={(_, newValue: string) => {
