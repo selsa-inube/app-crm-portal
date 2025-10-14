@@ -39,12 +39,19 @@ interface CardCommercialManagementProps {
   prospectData?: IProspect;
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
+  onProspectUpdated?: () => void;
 }
 
 export const CardCommercialManagement = (
   props: CardCommercialManagementProps,
 ) => {
-  const { dataRef, onClick, prospectData, onProspectUpdate } = props;
+  const {
+    dataRef,
+    onClick,
+    prospectData,
+    onProspectUpdate,
+    onProspectUpdated,
+  } = props;
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
@@ -67,7 +74,9 @@ export const CardCommercialManagement = (
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>();
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
-  const [consolidatedCredits, setConsolidatedCredits] = useState(prospectData?.consolidatedCredits || []);
+  const [consolidatedCredits, setConsolidatedCredits] = useState(
+    prospectData?.consolidatedCredits || [],
+  );
   const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
     useState(false);
   const [deductibleExpenses, setDeductibleExpenses] = useState<
@@ -203,7 +212,7 @@ export const CardCommercialManagement = (
     if (prospectData) {
       fetchData();
     }
-  }, [businessUnitPublicCode, prospectData?.prospectId]);
+  }, [businessUnitPublicCode, prospectData?.prospectId, prospectData]);
 
   useEffect(() => {
     if (!businessUnitPublicCode || !prospectData?.prospectId) return;
@@ -330,14 +339,15 @@ export const CardCommercialManagement = (
       {showConsolidatedModal && (
         <ConsolidatedCredits
           handleClose={() => {
-            setShowConsolidatedModal(false)
-            setConsolidatedCredits(prospectData?.consolidatedCredits || [])
+            setShowConsolidatedModal(false);
+            setConsolidatedCredits(prospectData?.consolidatedCredits || []);
           }}
           prospectData={prospectData}
           businessUnitPublicCode={businessUnitPublicCode}
           businessManagerCode={businessManagerCode}
           consolidatedCredits={consolidatedCredits}
           setConsolidatedCredits={setConsolidatedCredits}
+          onProspectUpdated={onProspectUpdated}
         />
       )}
       {showDeductibleExpensesModal && (

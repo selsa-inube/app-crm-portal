@@ -662,6 +662,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onClick={() => handleOpenModal("editProductModal")}
             prospectData={prospectData || undefined}
             onProspectUpdate={onProspectUpdate}
+            onProspectUpdated={onProspectUpdated}
           />
         </Stack>
         {currentModal === "creditLimit" && (
