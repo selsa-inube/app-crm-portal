@@ -18,7 +18,13 @@ import {
 import { dataConsolidatedCredit } from "./config";
 
 export interface ICardConsolidatedCreditProps {
-  onUpdateTotal: (oldValue: number, newValue: number, label?: string, title?: string) => void;
+  onUpdateTotal: (
+    oldValue: number,
+    newValue: number,
+    label?: string,
+    title?: string,
+    electedDate?: Date,
+  ) => void;
   title: string;
   code: string;
   expiredValue: number;
@@ -58,12 +64,14 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
 
   const hasInitialValue = initialValue !== undefined && initialValue > 0;
 
-  const [isRadioSelected, setIsRadioSelected] = useState(hasInitialValue || initialType !== undefined);
+  const [isRadioSelected, setIsRadioSelected] = useState(
+    hasInitialValue || initialType !== undefined,
+  );
   const [selectedValue, setSelectedValue] = useState<number | null>(
     hasInitialValue ? initialValue : null,
   );
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(
-    hasInitialValue && initialType ? initialType : null
+    hasInitialValue && initialType ? initialType : null,
   );
   const [showModal, setShowModal] = useState(false);
   const radioRefs = useRef<HTMLInputElement[]>([]);
@@ -88,9 +96,14 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
     },
   ];
 
-  const handleSelectionChange = (value: number, label: string, optionId: string = "") => {
+  const handleSelectionChange = (
+    value: number,
+    label: string,
+    optionId: string = "",
+    optionDate?: Date,
+  ) => {
     if (selectedValue !== value || selectedOptionId !== optionId) {
-      onUpdateTotal(selectedValue || 0, value, label, title);
+      onUpdateTotal(selectedValue || 0, value, label, title, optionDate);
       setSelectedValue(value);
       setSelectedOptionId(optionId);
     }
@@ -98,7 +111,11 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
   };
 
   const handleClearSelection = () => {
-    if (isRadioSelected && selectedValue !== null && selectedOptionId !== null) {
+    if (
+      isRadioSelected &&
+      selectedValue !== null &&
+      selectedOptionId !== null
+    ) {
       onUpdateTotal(selectedValue, 0, selectedOptionId, title);
       setSelectedValue(null);
       setSelectedOptionId(null);
@@ -106,7 +123,7 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
       radioRefs.current.forEach((radio) => {
         if (radio) radio.checked = false;
       });
-      handleRemoveCredit &&  handleRemoveCredit(code);
+      handleRemoveCredit && handleRemoveCredit(code);
     } else if (isRadioSelected && selectedValue !== null) {
       onUpdateTotal(selectedValue, 0);
       setSelectedValue(null);
@@ -167,9 +184,17 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
                   type="radio"
                   name={`paymentOption-${code}`}
                   ref={(el) => (radioRefs.current[index] = el!)}
-                  checked={(selectedOptionId === option.label && isRadioSelected) || undefined}
+                  checked={
+                    (selectedOptionId === option.label && isRadioSelected) ||
+                    undefined
+                  }
                   onChange={() =>
-                    handleSelectionChange(option.value, option.label, option.label)
+                    handleSelectionChange(
+                      option.value,
+                      option.label,
+                      option.label,
+                      option.date,
+                    )
                   }
                 />
                 <Stack direction="column">

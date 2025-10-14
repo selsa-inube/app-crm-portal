@@ -72,7 +72,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         businessUnitPublicCode,
         businessManagerCode,
       );
-
+      console.log("data----:", data);
       setObligationPayment(data ?? null);
     } catch (error) {
       const err = error as {
@@ -155,6 +155,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     code?: string,
     id?: string,
     title?: string,
+    selectedDate?: Date,
   ) => {
     setTotalCollected((prevTotal) => prevTotal - oldValue + newValue);
 
@@ -181,7 +182,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                   consolidatedAmount: 0,
                   consolidatedAmountType:
                     label || credit.consolidatedAmountType,
-                  estimatedDateOfConsolidation: new Date(),
+                  estimatedDateOfConsolidation:
+                    selectedDate || credit.estimatedDateOfConsolidation,
                 }
               : credit,
           );
@@ -200,7 +202,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                   title || credit.lineOfCreditDescription,
                 borrowerIdentificationNumber:
                   id || credit.borrowerIdentificationNumber,
-                estimatedDateOfConsolidation: new Date(),
+                estimatedDateOfConsolidation:
+                  selectedDate || credit.estimatedDateOfConsolidation,
               }
             : credit,
         );
@@ -213,7 +216,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
             creditProductCode: code,
             consolidatedAmount: newValue,
             consolidatedAmountType: label || "",
-            estimatedDateOfConsolidation: new Date(),
+            estimatedDateOfConsolidation: selectedDate || new Date(),
             lineOfCreditDescription: title || "",
             borrowerIdentificationType: code,
             borrowerIdentificationNumber: id || "",
@@ -461,7 +464,13 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                         creditData.options.find((option) => option.date)
                           ?.date ?? new Date()
                       }
-                      onUpdateTotal={(oldValue, newValue, label, title) =>
+                      onUpdateTotal={(
+                        oldValue,
+                        newValue,
+                        label,
+                        title,
+                        selectedDate,
+                      ) =>
                         handleUpdateTotal(
                           oldValue,
                           newValue,
@@ -469,6 +478,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                           creditData.id,
                           creditData.id,
                           title,
+                          selectedDate,
                         )
                       }
                       tags={creditData.tags}
