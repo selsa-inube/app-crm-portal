@@ -13,7 +13,6 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { InvestmentCreditCard } from "@pages/simulateCredit/components/InvestmentCreditCard";
 import { BaseModal } from "@components/modals/baseModal";
 import { CardConsolidatedCredit } from "@pages/simulateCredit/components/CardConsolidatedCredit";
-import { mockConsolidatedCreditModal } from "@mocks/add-prospect/consolidated-credit-modal/consolidatedcreditmodal.mock";
 import { IProspect } from "@services/prospect/types";
 import { getCreditPayments } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
