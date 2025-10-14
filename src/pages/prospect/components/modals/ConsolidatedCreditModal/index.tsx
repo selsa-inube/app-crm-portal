@@ -22,7 +22,7 @@ import { IConsolidatedCredit } from "@services/prospect/types";
 import { updateConsolidatedCredits } from "@services/prospect/updateConsolidatedCredits";
 
 import { ScrollableContainer } from "./styles";
-import { ModalConfig } from "./config";
+import { ModalConfig, feedback } from "./config";
 
 export interface ConsolidatedCreditsProps {
   handleClose: () => void;
@@ -72,7 +72,6 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         businessUnitPublicCode,
         businessManagerCode,
       );
-      console.log("data----:", data);
       setObligationPayment(data ?? null);
     } catch (error) {
       const err = error as {
@@ -84,9 +83,9 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
       const description = code + err?.message + (err?.data?.description || "");
 
       addFlag({
-        title: "Error al cargar obligaciones",
+        title: feedback.fetchDataObligationPayment.title,
         description:
-          description || "No se pudieron cargar las obligaciones de pago",
+          description || feedback.fetchDataObligationPayment.description,
         appearance: "danger",
         duration: 5000,
       });
@@ -319,8 +318,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
       handleClose();
 
       addFlag({
-        title: "Cambios guardados",
-        description: "Los créditos consolidados se actualizaron correctamente",
+        title: feedback.handleSaveChanges.success.title,
+        description: feedback.handleSaveChanges.success.description,
         appearance: "success",
         duration: 4000,
       });
@@ -335,9 +334,9 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         code + (err?.message || "") + (err?.data?.description || "");
 
       addFlag({
-        title: "Error al guardar",
+        title: feedback.handleSaveChanges.error.title,
         description:
-          description || "No se pudieron actualizar los créditos consolidados",
+          description || feedback.handleSaveChanges.error.description,
         appearance: "danger",
         duration: 5000,
       });
