@@ -21,3 +21,7 @@ export interface IExtraInstallmentsAllowedResponse {
 export interface IFinancialObligationsUpdateResponse {
   financialObligationsUpdateRequired: string;
 }
+
+export interface ISearchAllModesOfDisbursementTypes {
+  modesOfDisbursementTypes: string[];
+}

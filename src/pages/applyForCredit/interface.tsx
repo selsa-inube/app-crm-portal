@@ -348,7 +348,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     data={prospectData}
                     customerData={customerData}
                     identificationNumber={customerData?.publicCode || ""}
-                    rule={getRuleByName("ModeOfDisbursementType")}
                     prospectSummaryData={prospectSummaryData}
                   />
                 )}
