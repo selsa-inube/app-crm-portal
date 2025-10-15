@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -56,6 +56,8 @@ export function ApplyForCredit() {
       customerData?.generalAssociateAttributes[0].partnerStatus.substring(2) ??
       "",
   };
+
+  const navigate = useNavigate();
 
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [prospectData, setProspectData] = useState<IProspect>({
@@ -645,6 +647,7 @@ export function ApplyForCredit() {
 
   function handleSubmitClick() {
     setSentModal(true);
+    navigate(`/credit/credit-requests`);
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);

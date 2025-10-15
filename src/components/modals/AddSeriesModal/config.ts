@@ -1,5 +1,6 @@
 export const dataAddSeriesModal = {
   title: "Nueva serie",
+  view: "Ver serie",
   close: "Cerrar",
   cancel: "Cancelar",
   add: "Agregar",

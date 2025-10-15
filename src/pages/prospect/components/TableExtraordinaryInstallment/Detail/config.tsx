@@ -1,4 +1,4 @@
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdOutlineEdit } from "react-icons/md";
 
 interface IAppearance {
   appearance:
@@ -18,6 +18,11 @@ interface IIconConfig extends IAppearance {
 }
 
 export const icons: IIconConfig[] = [
+  {
+    id: "edit",
+    icon: <MdOutlineEdit />,
+    appearance: "dark",
+  },
   {
     id: "delete",
     icon: <MdDeleteOutline />,

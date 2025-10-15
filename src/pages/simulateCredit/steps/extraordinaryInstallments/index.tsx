@@ -61,6 +61,15 @@ export function ExtraordinaryInstallments(
     setExtraordinary(initialValues || []);
   }, [initialValues]);
 
+  const handleUpdate = (updatedDebtor: TableExtraordinaryInstallmentProps) => {
+    setExtraordinary((prev) => {
+      const updated = prev.map((item) =>
+        item.id === updatedDebtor.id ? { ...item, ...updatedDebtor } : item,
+      );
+      return updated;
+    });
+  };
+
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -71,7 +80,8 @@ export function ExtraordinaryInstallments(
     }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [extraordinary, handleOnChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extraordinary]);
 
   const handleSubmit = (installment: {
     installmentDate: string;
@@ -147,6 +157,7 @@ export function ExtraordinaryInstallments(
               extraordinary={extraordinary}
               service={false}
               handleDelete={handleDelete}
+              handleUpdate={handleUpdate}
               businessManagerCode={businessManagerCode}
             />
           </Stack>

@@ -38,7 +38,7 @@ export function NoResultsMessage({ search }: { search: string }) {
   return (
     <StyledNoResults>
       <Text size="medium">
-        {messagesFeedback.notFountResults.title} {search}.
+        {messagesFeedback.notFountResults.title} {search}
       </Text>
       <Text size="medium">{messagesFeedback.notFountResults.description}</Text>
     </StyledNoResults>

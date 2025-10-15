@@ -9,6 +9,8 @@ export const dataAmount = {
   paymentDate: "Fecha de pago",
   selectOption: "Selecciona una opción",
   creditText: "Cupo disponible sin garantía por línea de crédito",
+  day15: "día-15",
+  day30: "día-30",
   placeholderValue: "",
 };
 
