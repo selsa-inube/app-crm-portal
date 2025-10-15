@@ -5,7 +5,6 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
-import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -113,6 +112,7 @@ export const TableExtraordinaryInstallment = (
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
+  const [isOpenModalView, setIsOpenModalView] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
 
@@ -269,29 +269,10 @@ export const TableExtraordinaryInstallment = (
         service={service}
         itemIdentifiersForUpdate={itemIdentifiersForUpdate}
         handleDeleteAction={handleDeleteAction}
+        installmentState={installmentState}
+        isOpenModalView={isOpenModalView}
+        setIsOpenModalView={setIsOpenModalView}
       />
-      {isOpenModalEdit && (
-        <AddSeriesModal
-          handleClose={() => setIsOpenModalEdit(false)}
-          onSubmit={(values: {
-            installmentDate: string;
-            paymentChannelAbbreviatedName: string;
-          }) => {
-            const updated: TableExtraordinaryInstallmentProps = {
-              ...selectedDebtor,
-              datePayment: values.installmentDate,
-              paymentMethod: values.paymentChannelAbbreviatedName,
-              value: installmentState.installmentAmount,
-            };
-
-            handleUpdateData(updated);
-          }}
-          installmentState={installmentState}
-          setInstallmentState={setInstallmentState}
-          service={false}
-          isEdit
-        />
-      )}
     </>
   );
 };
