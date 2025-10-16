@@ -316,7 +316,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       />
                       <ButtonRequirements
                         onClick={() => setIsModalOpenRequirements(true)}
-                        dataCount={validateRequirements.length}
+                        data={validateRequirements}
                       />
                     </>
                   )}
