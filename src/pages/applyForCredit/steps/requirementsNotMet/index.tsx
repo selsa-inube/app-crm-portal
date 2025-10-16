@@ -52,7 +52,11 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
           payload,
         );
         if (data) {
-          setValidateRequirements(data);
+          setValidateRequirements(
+            data.filter(
+              (requirement) => requirement.requirementStatus !== "Aprobado",
+            ),
+          );
         }
       } catch (error) {
         setShowErrorModal(true);
