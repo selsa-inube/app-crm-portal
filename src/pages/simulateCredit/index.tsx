@@ -380,15 +380,15 @@ export function SimulateCredit() {
       return;
     }
     const data: IPaymentCapacity = {
-      clientIdentificationNumber: "16378491",
-      dividends: 0,
-      financialIncome: 0,
-      leases: 0,
-      otherNonSalaryEmoluments: 0,
-      pensionAllowances: 0,
-      periodicSalary: 0,
-      personalBusinessUtilities: 0,
-      professionalFees: 0,
+      clientIdentificationNumber: customerData.publicCode,
+      dividends: formData.sourcesOfIncome?.Dividends ?? 0,
+      financialIncome: formData.sourcesOfIncome?.FinancialIncome ?? 0,
+      leases: formData.sourcesOfIncome?.Leases ?? 0,
+      otherNonSalaryEmoluments: formData.sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0,
+      pensionAllowances: formData.sourcesOfIncome?.PensionAllowances ?? 0,
+      periodicSalary: formData.sourcesOfIncome?.PeriodicSalary ?? 0,
+      personalBusinessUtilities: formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0,
+      professionalFees: formData.sourcesOfIncome?.ProfessionalFees ?? 0,
       livingExpenseToIncomeRatio: 0,
     };
 
@@ -398,6 +398,7 @@ export function SimulateCredit() {
         businessManagerCode,
         data,
       );
+      console.log("paymentCapacity: ", paymentCapacity);
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
@@ -614,6 +615,12 @@ export function SimulateCredit() {
       fetchCapacityAnalysis();
     }
   }, [currentStep]);
+
+  useEffect(() => {
+    if (isCapacityAnalysisModal) {
+      fetchCapacityAnalysis();
+    }
+  }, [isCapacityAnalysisModal]);
 
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;

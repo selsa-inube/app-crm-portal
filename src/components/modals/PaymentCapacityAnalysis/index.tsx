@@ -5,6 +5,7 @@ import {
   IPaymentCapacityResponse,
 } from "@services/creditLimit/types";
 import { currencyFormat } from "@utils/formatData/currency";
+import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
 
 import { BaseModal } from "../baseModal";
 import { PaymentCapacityAnalysisDetails } from "./Details";
@@ -16,25 +17,30 @@ import { ScrollableContainer } from "./styles";
 export interface IPaymentCapacityAnalysisProps {
   isMobile: boolean;
   handleClose: () => void;
+  sourcesOfIncome: ISourcesOfIncomeState;
   paymentCapacity?: IPaymentCapacityResponse | null;
 }
 
 export const PaymentCapacityAnalysis = (
   props: IPaymentCapacityAnalysisProps,
 ) => {
-  const { isMobile, handleClose, paymentCapacity } = props;
+  const { isMobile, 
+    handleClose, 
+    paymentCapacity, 
+    sourcesOfIncome 
+  } = props;
 
   const initialValues: IIncomeDetail = {
-    periodicSalary: 0,
-    otherNonSalaryEmoluments: 0,
-    pensionAllowances: 0,
-    leases: 0,
-    dividends: 0,
-    financialIncome: 0,
-    personalBusinessUtilities: 0,
-    professionalFees: 0,
+    periodicSalary: sourcesOfIncome?.PeriodicSalary ?? 0,
+    otherNonSalaryEmoluments: sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0,
+    pensionAllowances: sourcesOfIncome?.PensionAllowances ?? 0,
+    leases: sourcesOfIncome?.Leases ?? 0,
+    dividends: sourcesOfIncome?.Dividends ?? 0,
+    financialIncome: sourcesOfIncome?.FinancialIncome ?? 0,
+    personalBusinessUtilities: sourcesOfIncome?.PersonalBusinessUtilities ?? 0,
+    professionalFees: sourcesOfIncome?.ProfessionalFees ?? 0,
   };
-
+  console.log("professionalFees: ",  sourcesOfIncome?.ProfessionalFees ?? 0);
   const [currentTab, setCurrentTab] = useState("general");
   const [showModal, setShowModal] = useState(false);
   const [modalInitialValues, setModalInitialValues] = useState<{
@@ -44,11 +50,10 @@ export const PaymentCapacityAnalysis = (
     value: string;
   }>({ concept: "", income: "", reserve: "", value: "" });
 
-  const capacityData =
-    paymentCapacity?.paymentsCapacityResponse?.[0] || initialValues;
-
+  const capacityData = paymentCapacity?.paymentsCapacityResponse?.[0] || initialValues;
+  
   const capacityRatios =
-    paymentCapacity?.livingExpenseToIncomeRatiosResponse?.[0] || initialValues;
+    paymentCapacity?.livingExpenseToIncomeRatiosResponse?.[0] || [] as IIncomeDetail;
 
   const generalPayment = paymentCapacity?.paymentCapacity ?? 0;
   const generalReserve = paymentCapacity?.basicLivingExpenseReserve ?? 0;
@@ -68,6 +73,8 @@ export const PaymentCapacityAnalysis = (
     });
     setShowModal(true);
   };
+
+  console.log(capacityData.professionalFees, " value: currencyFormat(capacityData.professionalFees ?? 0, false) || 0: ",  currencyFormat(capacityData.professionalFees ?? 0, false));
 
   const generalFieldsets: IFieldsetData[] = [
     {

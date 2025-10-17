@@ -572,6 +572,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   isMobile={isMobile}
                   handleClose={() => setIsCapacityAnalysisModal(false)}
                   paymentCapacity={paymentCapacity}
+                  sourcesOfIncome={formData.sourcesOfIncome}
                 />
               )}
               {isCapacityAnalysisWarning && (
