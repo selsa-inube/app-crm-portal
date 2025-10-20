@@ -39,7 +39,7 @@ interface CardCommercialManagementProps {
   prospectData?: IProspect;
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
-  onProspectUpdated?: () => void;
+  onProspectRefreshData?: () => void;
 }
 
 export const CardCommercialManagement = (
@@ -50,7 +50,7 @@ export const CardCommercialManagement = (
     onClick,
     prospectData,
     onProspectUpdate,
-    onProspectUpdated,
+    onProspectRefreshData,
   } = props;
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
@@ -347,7 +347,7 @@ export const CardCommercialManagement = (
           businessManagerCode={businessManagerCode}
           consolidatedCredits={consolidatedCredits}
           setConsolidatedCredits={setConsolidatedCredits}
-          onProspectUpdated={onProspectUpdated}
+          onProspectRefreshData={onProspectRefreshData}
         />
       )}
       {showDeductibleExpensesModal && (

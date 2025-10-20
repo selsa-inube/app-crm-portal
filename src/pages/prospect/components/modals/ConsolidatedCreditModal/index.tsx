@@ -34,7 +34,7 @@ export interface ConsolidatedCreditsProps {
     React.SetStateAction<IConsolidatedCredit[]>
   >;
   consolidatedCredits: IConsolidatedCredit[];
-  onProspectUpdated?: () => void;
+  onProspectRefreshData?: () => void;
 }
 
 export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
@@ -45,7 +45,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     businessManagerCode,
     setConsolidatedCredits,
     consolidatedCredits,
-    onProspectUpdated,
+    onProspectRefreshData,
   } = props;
   const isMobile = useMediaQuery("(max-width:880px)");
   const [editOpen, setEditOpen] = useState(true);
@@ -311,8 +311,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         consolidatedCredits,
       );
 
-      if (onProspectUpdated) {
-        onProspectUpdated();
+      if (onProspectRefreshData) {
+        onProspectRefreshData();
       }
 
       handleClose();
