@@ -90,7 +90,7 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.periodicSalary,
               capacityData.periodicSalary /
-                (capacityRatios.periodicSalary / 100) || 0,
+                (1 - capacityRatios.periodicSalary / 100) || 0,
               capacityData.periodicSalary ?? 0,
               capacityRatios.periodicSalary ?? 0,
             ),
@@ -105,7 +105,7 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.otherNonSalaryEmoluments,
               capacityData.otherNonSalaryEmoluments /
-                (capacityRatios.otherNonSalaryEmoluments / 100) || 0,
+                (1 - capacityRatios.otherNonSalaryEmoluments / 100) || 0,
               capacityData.otherNonSalaryEmoluments ?? 0,
               capacityRatios.otherNonSalaryEmoluments ?? 0,
             ),
@@ -119,7 +119,7 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.pensionPayments,
               capacityData.pensionAllowances /
-                (capacityRatios.pensionAllowances / 100) || 0,
+                (1 - capacityRatios.pensionAllowances / 100) || 0,
               capacityData.pensionAllowances ?? 0,
               capacityRatios.pensionAllowances ?? 0,
             ),
@@ -137,7 +137,7 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.professionalFees,
               capacityData.professionalFees /
-                (capacityRatios.professionalFees / 100) || 0,
+                (1 - capacityRatios.professionalFees / 100) || 0,
               capacityData.professionalFees ?? 0,
               capacityRatios.professionalFees ?? 0,
             ),
@@ -154,7 +154,7 @@ export const PaymentCapacityAnalysis = (
           onShowModal: () =>
             handleShowModal(
               DataCapacityAnalysis.rentals,
-              capacityData.leases / (capacityRatios.leases / 100) || 0,
+              capacityData.leases / (1 - capacityRatios.leases / 100) || 0,
               capacityData.leases ?? 0,
               capacityRatios.leases ?? 0,
             ),
@@ -166,7 +166,8 @@ export const PaymentCapacityAnalysis = (
           onShowModal: () =>
             handleShowModal(
               DataCapacityAnalysis.dividends,
-              capacityData.dividends / (capacityRatios.dividends / 100) || 0,
+              capacityData.dividends / (1 - capacityRatios.dividends / 100) ||
+                0,
               capacityData.dividends ?? 0,
               capacityRatios.dividends ?? 0,
             ),
@@ -180,7 +181,7 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.financialReturns,
               capacityData.financialIncome /
-                (capacityRatios.financialIncome / 100) || 0,
+                (1 - capacityRatios.financialIncome / 100) || 0,
               capacityData.financialIncome ?? 0,
               capacityRatios.financialIncome ?? 0,
             ),
@@ -202,7 +203,7 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.businessUtilities,
               capacityData.personalBusinessUtilities /
-                (capacityRatios.personalBusinessUtilities / 100) || 0,
+                (1 - capacityRatios.personalBusinessUtilities / 100) || 0,
               capacityData.personalBusinessUtilities ?? 0,
               capacityRatios.personalBusinessUtilities ?? 0,
             ),
