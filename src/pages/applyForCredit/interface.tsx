@@ -87,6 +87,7 @@ interface ApplyForCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  creditRequestCode?: string;
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
@@ -125,8 +126,9 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     addToFix,
     businessUnitPublicCode,
     setMessageError,
+    creditRequestCode,
   } = props;
-
+  console.log("sentModal: ", sentModal);
   const [isSelected, setIsSelected] = useState<string>();
   const { prospectCode } = useParams();
 
@@ -435,8 +437,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
               >
                 <Text type="body" size="large">
                   {dataSubmitApplication.modals.fileDescription.replace(
-                    "{numberProspectCode}",
-                    `${prospectData?.prospectCode}` || "",
+                    "{creditRequestCode}",
+                    `${creditRequestCode}` || "",
                   )}
                 </Text>
               </BaseModal>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Stack, Tabs, useFlag } from "@inubekit/inubekit";
+import { Stack, Tabs } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
 import { BaseModal } from "@components/modals/baseModal";
@@ -9,7 +9,7 @@ import { getPropertyValue } from "@utils/mappingData/mappings";
 import { IBorrower } from "@services/prospect/types";
 import { IIncomeSources } from "@services/creditLimit/types";
 
-import { dataEditDebtor, dataTabs, dataReport } from "./config";
+import { dataEditDebtor, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
 import {
   transformFinancialObligations,
@@ -52,20 +52,9 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
 
   const [isModified, setIsModified] = useState(false);
 
-  const { addFlag } = useFlag();
-
   useEffect(() => {
     setEditedBorrower(initialValues);
   }, [initialValues]);
-
-  const handleFlag = () => {
-    addFlag({
-      title: `${dataReport.titleAdd}`,
-      description: `${dataReport.descriptionFlagAdd}`,
-      appearance: "success",
-      duration: 5000,
-    });
-  };
 
   const handleDebtorDataChange = (fieldName: string, value: string) => {
     const propertyMap: { [key: string]: string } = {
@@ -164,8 +153,6 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     if (!initialValues || !incomeData || onUpdate === undefined) return;
 
     onUpdate(editedBorrower, true);
-
-    handleFlag();
   };
 
   const syncObligations = (updatedObligationsList: IObligations[]) => {

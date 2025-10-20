@@ -50,8 +50,7 @@ export const PaymentCapacityAnalysis = (
     paymentCapacity?.paymentsCapacityResponse?.[0] || initialValues;
 
   const capacityRatios =
-    paymentCapacity?.livingExpenseToIncomeRatiosResponse?.[0] ||
-    ([] as IIncomeDetail);
+    paymentCapacity?.livingExpenseToIncomeRatiosResponse?.[0] || initialValues;
 
   const generalPayment = paymentCapacity?.paymentCapacity ?? 0;
   const generalReserve = paymentCapacity?.basicLivingExpenseReserve ?? 0;

@@ -40,6 +40,7 @@ export function ApplyForCredit() {
     useState<IProspectSummaryById>();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [creditRequestCode, setCreditRequestCode] = useState("");
 
   const customerPublicCode: string = customerData.publicCode;
   const { userAccount } =
@@ -414,9 +415,9 @@ export function ApplyForCredit() {
         userAccount,
         submitData,
       );
-      console.log("Solicitud enviada con éxito:", response);
       setSentModal(false);
       setApprovedRequestModal(true);
+      setCreditRequestCode(response?.creditRequestCode || "");
     } catch (error) {
       setSentModal(false);
       handleFlag();
@@ -722,6 +723,7 @@ export function ApplyForCredit() {
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
         setMessageError={setMessageError}
+        creditRequestCode={creditRequestCode}
       />
     </>
   );
