@@ -24,11 +24,7 @@ export interface IPaymentCapacityAnalysisProps {
 export const PaymentCapacityAnalysis = (
   props: IPaymentCapacityAnalysisProps,
 ) => {
-  const { isMobile, 
-    handleClose, 
-    paymentCapacity, 
-    sourcesOfIncome 
-  } = props;
+  const { isMobile, handleClose, paymentCapacity, sourcesOfIncome } = props;
 
   const initialValues: IIncomeDetail = {
     periodicSalary: sourcesOfIncome?.PeriodicSalary ?? 0,
@@ -40,7 +36,7 @@ export const PaymentCapacityAnalysis = (
     personalBusinessUtilities: sourcesOfIncome?.PersonalBusinessUtilities ?? 0,
     professionalFees: sourcesOfIncome?.ProfessionalFees ?? 0,
   };
-  console.log("professionalFees: ",  sourcesOfIncome?.ProfessionalFees ?? 0);
+  console.log("professionalFees: ", sourcesOfIncome?.ProfessionalFees ?? 0);
   const [currentTab, setCurrentTab] = useState("general");
   const [showModal, setShowModal] = useState(false);
   const [modalInitialValues, setModalInitialValues] = useState<{
@@ -50,10 +46,12 @@ export const PaymentCapacityAnalysis = (
     value: string;
   }>({ concept: "", income: "", reserve: "", value: "" });
 
-  const capacityData = paymentCapacity?.paymentsCapacityResponse?.[0] || initialValues;
-  
+  const capacityData =
+    paymentCapacity?.paymentsCapacityResponse?.[0] || initialValues;
+
   const capacityRatios =
-    paymentCapacity?.livingExpenseToIncomeRatiosResponse?.[0] || [] as IIncomeDetail;
+    paymentCapacity?.livingExpenseToIncomeRatiosResponse?.[0] ||
+    ([] as IIncomeDetail);
 
   const generalPayment = paymentCapacity?.paymentCapacity ?? 0;
   const generalReserve = paymentCapacity?.basicLivingExpenseReserve ?? 0;
@@ -74,7 +72,11 @@ export const PaymentCapacityAnalysis = (
     setShowModal(true);
   };
 
-  console.log(capacityData.professionalFees, " value: currencyFormat(capacityData.professionalFees ?? 0, false) || 0: ",  currencyFormat(capacityData.professionalFees ?? 0, false));
+  console.log(
+    capacityData.professionalFees,
+    " value: currencyFormat(capacityData.professionalFees ?? 0, false) || 0: ",
+    currencyFormat(capacityData.professionalFees ?? 0, false),
+  );
 
   const generalFieldsets: IFieldsetData[] = [
     {
@@ -210,7 +212,8 @@ export const PaymentCapacityAnalysis = (
   ];
 
   const payrollIncomeTotal =
-    (capacityData.periodicSalary / (capacityRatios.periodicSalary / 100) || 0) +
+    (capacityData.periodicSalary / (1 - capacityData.periodicSalary / 100) ||
+      0) +
     (capacityData.otherNonSalaryEmoluments /
       (capacityRatios.otherNonSalaryEmoluments / 100) || 0) +
     (capacityData.pensionAllowances /
