@@ -279,7 +279,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Stack width="498px">
+        <Stack width={isMobile ? "100%" : "498px"}>
           <Textfield
             id="amount"
             name="amount"
