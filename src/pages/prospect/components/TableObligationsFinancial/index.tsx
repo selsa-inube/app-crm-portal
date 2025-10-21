@@ -215,7 +215,7 @@ export const TableFinancialObligations = (
       }
     }
   };
-
+  console.log("initialValues: ", initialValues);
   const handleUpdate = async (
     updatedDebtor: ITableFinancialObligationsProps,
   ) => {
@@ -391,9 +391,10 @@ export const TableFinancialObligations = (
       setMessageError(`Error al restaurar: ${error}`);
     }
   };
-
+  console.log("i: ", onProspectUpdate);
   return (
     <TableFinancialObligationsUI
+      initialValuesModalDataProspect={initialValues}
       dataInformation={dataInformation}
       extraDebtors={extraDebtors}
       loading={loading}

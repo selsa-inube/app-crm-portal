@@ -28,7 +28,6 @@ export function ReportCreditsModal({
     const timeout = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timeout);
   }, []);
-
   return (
     <BaseModal
       title={dataReport.title}

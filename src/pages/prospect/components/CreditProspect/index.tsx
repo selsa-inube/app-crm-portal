@@ -7,6 +7,7 @@ import {
   MdOutlinePayments,
   MdOutlinePictureAsPdf,
   MdOutlineShare,
+  MdCheckCircle,
 } from "react-icons/md";
 import {
   Stack,
@@ -16,6 +17,7 @@ import {
   useFlag,
   Spinner,
   Textarea,
+  Text,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -42,6 +44,7 @@ import {
   ICreditProduct,
   IExtraordinaryInstallments,
   IProspect,
+  IProspectSummaryById,
 } from "@services/prospect/types";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IPaymentChannel } from "@services/creditRequest/types";
@@ -83,6 +86,10 @@ interface ICreditProspectProps {
   >;
   onProspectUpdate?: (prospect: IProspect) => void;
   onProspectUpdated?: () => void;
+  prospectSummaryData?: IProspectSummaryById;
+  setProspectSummaryData?: React.Dispatch<
+    React.SetStateAction<IProspectSummaryById>
+  >;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -98,6 +105,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     isMobile,
     isPrint = false,
     showPrint = true,
+    setProspectSummaryData,
+    prospectSummaryData,
   } = props;
 
   const { customerData } = useContext(CustomerContext);
@@ -120,7 +129,9 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showMessageSuccessModal, setShowMessageSuccessModal] = useState(true);
   const [messageError, setMessageError] = useState("");
+
   const [currentIncomeModalData, setCurrentIncomeModalData] = useState<
     IIncomeSources | undefined
   >();
@@ -236,6 +247,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       }
 
       handleCloseModal();
+      setShowMessageSuccessModal(true);
     } catch (error) {
       handleCloseModal();
       const err = error as {
@@ -397,6 +409,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       });
       setOpenModal(null);
     }
+    setShowMessageSuccessModal(true);
   };
 
   useEffect(() => {
@@ -556,12 +569,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         onProspectUpdated();
       }
 
-      addFlag({
-        title: "Observaciones actualizadas",
-        description: "Las observaciones se han guardado correctamente",
-        appearance: "success",
-        duration: 5000,
-      });
+      setShowMessageSuccessModal(true);
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(configModal.observations.errorMessage);
@@ -662,6 +670,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             onClick={() => handleOpenModal("editProductModal")}
             prospectData={prospectData || undefined}
             onProspectUpdate={onProspectUpdate}
+            prospectSummaryData={prospectSummaryData}
+            setProspectSummaryData={setProspectSummaryData}
+            setShowMessageSuccessModal={setShowMessageSuccessModal}
           />
         </Stack>
         {currentModal === "creditLimit" && (
@@ -751,16 +762,25 @@ export function CreditProspect(props: ICreditProspectProps) {
                   alignItems="end"
                   width={isMobile ? "auto" : "100%"}
                   gap="16px"
+                  alignContent="center"
                 >
-                  <Select
-                    label="Deudor"
-                    id="borrower"
-                    name="borrower"
-                    options={borrowerOptions}
-                    value={borrowerOptions[selectedIndex]?.value}
-                    onChange={handleChange}
-                    size="compact"
-                  />
+                  {borrowerOptions.length > 1 ? (
+                    <Select
+                      label="Deudor"
+                      id="borrower"
+                      name="borrower"
+                      options={borrowerOptions}
+                      value={borrowerOptions[selectedIndex]?.value}
+                      onChange={handleChange}
+                      size="compact"
+                    />
+                  ) : (
+                    <Stack height="35px">
+                      <Text size="medium" type="title" appearance="dark">
+                        {borrowerOptions[selectedIndex]?.value || ""}
+                      </Text>
+                    </Stack>
+                  )}
                   <Stack alignItems="center">
                     <Button
                       onClick={() => {
@@ -881,6 +901,26 @@ export function CreditProspect(props: ICreditProspectProps) {
             message={messageError}
           />
         )}
+
+        {showMessageSuccessModal && (
+          <BaseModal
+            title={"Cambios"}
+            nextButton={"Next"}
+            handleNext={() => setShowMessageSuccessModal(false)}
+            handleClose={() => setShowMessageSuccessModal(false)}
+            width={isMobile ? "290px" : "402px"}
+          >
+            <Stack direction="column" alignItems="center" gap="24px">
+              <Icon icon={<MdCheckCircle />} appearance="success" size="68px" />
+              <Stack gap="6px">
+                <Text type="body" size="large">
+                  {"Se guardó con éxito los cambios"}
+                </Text>
+              </Stack>
+            </Stack>
+          </BaseModal>
+        )}
+
         {isModalOpen ? (
           <InfoModal
             onClose={handleInfoModalClose}
