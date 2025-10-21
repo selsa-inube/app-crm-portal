@@ -2,7 +2,7 @@ import { MdCheck } from "react-icons/md";
 import { Stack, Icon, Divider } from "@inubekit/inubekit";
 
 import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
-import img from "./../../assets/images/logoInube.png";
+
 import {
   StyledContainer,
   StyledUl,
