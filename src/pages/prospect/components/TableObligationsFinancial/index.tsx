@@ -391,7 +391,7 @@ export const TableFinancialObligations = (
       setMessageError(`Error al restaurar: ${error}`);
     }
   };
-  console.log("i: ", onProspectUpdate);
+
   return (
     <TableFinancialObligationsUI
       initialValuesModalDataProspect={initialValues}

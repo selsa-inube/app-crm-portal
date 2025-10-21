@@ -470,7 +470,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       {dataSubmitApplication.modals.filed}
                     </Text>
                     <Text type="body" size="large" weight="bold">
-                      {prospectData?.prospectCode}
+                      {creditRequestCode}
                     </Text>
                   </Stack>
                   <Text type="body" size="medium" appearance="gray">

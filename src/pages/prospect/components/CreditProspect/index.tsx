@@ -129,7 +129,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [showMessageSuccessModal, setShowMessageSuccessModal] = useState(true);
+  const [showMessageSuccessModal, setShowMessageSuccessModal] = useState(false);
   const [messageError, setMessageError] = useState("");
 
   const [currentIncomeModalData, setCurrentIncomeModalData] = useState<
@@ -904,8 +904,8 @@ export function CreditProspect(props: ICreditProspectProps) {
 
         {showMessageSuccessModal && (
           <BaseModal
-            title={"Cambios"}
-            nextButton={"Next"}
+            title={configModal.success.title}
+            nextButton={configModal.success.close}
             handleNext={() => setShowMessageSuccessModal(false)}
             handleClose={() => setShowMessageSuccessModal(false)}
             width={isMobile ? "290px" : "402px"}
@@ -914,7 +914,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               <Icon icon={<MdCheckCircle />} appearance="success" size="68px" />
               <Stack gap="6px">
                 <Text type="body" size="large">
-                  {"Se guardó con éxito los cambios"}
+                  {configModal.success.text}
                 </Text>
               </Stack>
             </Stack>

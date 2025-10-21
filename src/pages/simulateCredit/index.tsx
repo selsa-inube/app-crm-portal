@@ -72,6 +72,8 @@ export function SimulateCredit() {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
+  const [sentModal, setSentModal] = useState(false);
+  const [prospectCode, setProspectCode] = useState<string>("");
 
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
@@ -384,10 +386,12 @@ export function SimulateCredit() {
       dividends: formData.sourcesOfIncome?.Dividends ?? 0,
       financialIncome: formData.sourcesOfIncome?.FinancialIncome ?? 0,
       leases: formData.sourcesOfIncome?.Leases ?? 0,
-      otherNonSalaryEmoluments: formData.sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0,
+      otherNonSalaryEmoluments:
+        formData.sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0,
       pensionAllowances: formData.sourcesOfIncome?.PensionAllowances ?? 0,
       periodicSalary: formData.sourcesOfIncome?.PeriodicSalary ?? 0,
-      personalBusinessUtilities: formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0,
+      personalBusinessUtilities:
+        formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0,
       professionalFees: formData.sourcesOfIncome?.ProfessionalFees ?? 0,
       livingExpenseToIncomeRatio: 0,
     };
@@ -398,7 +402,6 @@ export function SimulateCredit() {
         businessManagerCode,
         data,
       );
-      console.log("paymentCapacity: ", paymentCapacity);
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
@@ -576,7 +579,8 @@ export function SimulateCredit() {
         setShowErrorModal?.(true);
         setMessageError?.(messagesError.undefinedCodeProspect);
       } else {
-        navigate(`/credit/prospects/${prospectCode}`);
+        setProspectCode(prospectCode);
+        setSentModal(true);
       }
     } catch (error) {
       setShowErrorModal?.(true);
@@ -828,6 +832,9 @@ export function SimulateCredit() {
         businessManagerCode={businessManagerCode}
         handleModalTryAgain={handleModalTryAgain}
         allowToContinue={allowToContinue}
+        sentModal={sentModal}
+        setSentModal={setSentModal}
+        prospectCode={prospectCode}
       />
       {showConsultingModal && <Consulting />}
     </>

@@ -3,6 +3,8 @@ import {
   MdOutlinePaid,
   MdOutlinePriceChange,
   MdOutlineRule,
+  MdCheckCircle,
+  MdOutlineShare,
 } from "react-icons/md";
 import {
   Stack,
@@ -28,6 +30,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
+import { BaseModal } from "@components/modals/baseModal";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -53,7 +56,7 @@ import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
 import { addConfig, textAddCongfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
-import { messagesError } from "./config/config";
+import { messagesError, dataSubmitApplication } from "./config/config";
 import {
   AlertCapacityAnalysis,
   AlertCreditLimit,
@@ -105,6 +108,9 @@ interface SimulateCreditUIProps {
     field: keyof IFormData,
     newValue: string | number | boolean | string[] | object | null | undefined,
   ) => void;
+  sentModal: boolean;
+  setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
+  prospectCode: string;
   navigate: ReturnType<typeof useNavigate>;
   currentStep: number;
   customerData: ICustomerData;
@@ -202,6 +208,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     isLoadingCreditLimit,
     allowToContinue,
     handleModalTryAgain,
+    sentModal,
+    setSentModal,
+    prospectCode,
   } = props;
 
   return (
@@ -603,6 +612,37 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   isMobile={isMobile}
                   message={messageError}
                 />
+              )}
+              {sentModal && (
+                <BaseModal
+                  title={dataSubmitApplication.modals.filed}
+                  nextButton={dataSubmitApplication.modals.cancel}
+                  handleNext={() => {
+                    setSentModal(false);
+                    navigate(`/credit/prospects/${prospectCode}`);
+                  }}
+                  handleClose={() => {
+                    setSentModal(false);
+                    navigate(`/credit/prospects/${prospectCode}`);
+                  }}
+                  width={isMobile ? "290px" : "402px"}
+                >
+                  <Stack direction="column" alignItems="center" gap="24px">
+                    <Icon
+                      icon={<MdCheckCircle />}
+                      appearance="success"
+                      size="68px"
+                    />
+                    <Stack gap="6px">
+                      <Text type="body" size="large">
+                        {dataSubmitApplication.modals.filed}
+                      </Text>
+                      <Text type="body" size="large" weight="bold">
+                        {prospectCode}
+                      </Text>
+                    </Stack>
+                  </Stack>
+                </BaseModal>
               )}
             </Stack>
           </Stack>
