@@ -20,7 +20,7 @@ import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/ty
 import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
 import { userMenu } from "@config/menuMainConfiguration";
-import img from "@assets/images/fondecom.jpeg";
+
 import {
   StyledAppPage,
   StyledContainer,
