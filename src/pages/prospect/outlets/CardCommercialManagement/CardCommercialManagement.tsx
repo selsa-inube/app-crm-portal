@@ -39,12 +39,19 @@ interface CardCommercialManagementProps {
   prospectData?: IProspect;
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
+  onProspectRefreshData?: () => void;
 }
 
 export const CardCommercialManagement = (
   props: CardCommercialManagementProps,
 ) => {
-  const { dataRef, onClick, prospectData, onProspectUpdate } = props;
+  const {
+    dataRef,
+    onClick,
+    prospectData,
+    onProspectUpdate,
+    onProspectRefreshData,
+  } = props;
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
@@ -67,6 +74,9 @@ export const CardCommercialManagement = (
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>();
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
+  const [consolidatedCredits, setConsolidatedCredits] = useState(
+    prospectData?.consolidatedCredits || [],
+  );
   const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
     useState(false);
   const [deductibleExpenses, setDeductibleExpenses] = useState<
@@ -88,6 +98,13 @@ export const CardCommercialManagement = (
       setProspectProducts(prospectData?.creditProducts);
     }
   }, [prospectData]);
+
+  useEffect(() => {
+    if (prospectData?.consolidatedCredits) {
+      setConsolidatedCredits(prospectData.consolidatedCredits);
+    }
+  }, [prospectData?.consolidatedCredits]);
+
   const isMobile = useMediaQuery("(max-width: 800px)");
 
   const handleDelete = async () => {
@@ -195,7 +212,7 @@ export const CardCommercialManagement = (
     if (prospectData) {
       fetchData();
     }
-  }, [businessUnitPublicCode, prospectData?.prospectId]);
+  }, [businessUnitPublicCode, prospectData?.prospectId, prospectData]);
 
   useEffect(() => {
     if (!businessUnitPublicCode || !prospectData?.prospectId) return;
@@ -321,8 +338,16 @@ export const CardCommercialManagement = (
       )}
       {showConsolidatedModal && (
         <ConsolidatedCredits
-          handleClose={() => setShowConsolidatedModal(false)}
+          handleClose={() => {
+            setShowConsolidatedModal(false);
+            setConsolidatedCredits(prospectData?.consolidatedCredits || []);
+          }}
           prospectData={prospectData}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+          consolidatedCredits={consolidatedCredits}
+          setConsolidatedCredits={setConsolidatedCredits}
+          onProspectRefreshData={onProspectRefreshData}
         />
       )}
       {showDeductibleExpensesModal && (
