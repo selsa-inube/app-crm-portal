@@ -20,7 +20,7 @@ import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/ty
 import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
 import { userMenu } from "@config/menuMainConfiguration";
-
+import img from "@assets/images/fondecom.jpeg";
 import {
   StyledAppPage,
   StyledContainer,
@@ -36,10 +36,10 @@ import {
 } from "./styles";
 import { useNavigationConfig } from "./config/apps.config";
 
-const renderLogo = (imgUrl: string) => {
+const renderLogo = (imgUrl: string, onTheFooter: boolean = false) => {
   return (
     <StyledContentImg to="/home">
-      <StyledLogo src={imgUrl} />
+      <StyledLogo src={imgUrl} onTheFooter={onTheFooter} />
     </StyledContentImg>
   );
 };
@@ -252,7 +252,7 @@ function AppPage(props: IAppPage) {
           isShowMenuOnHeader={showMenuOnHeader}
           showNav={showNav}
         >
-          {renderLogo(eventData.businessManager.urlBrand)}
+          {renderLogo(eventData.businessManager.urlBrand, true)}
         </StyledFooter>
       </Grid>
     </StyledAppPage>

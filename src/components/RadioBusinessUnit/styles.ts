@@ -31,7 +31,7 @@ interface StyledImageProps {
 export const StyledImage = styled.img<StyledImageProps>`
   font-family: Roboto;
   font-size: 14px;
-  width: 100%;
+  max-width: 35%;
   transition: filter 500ms ease-out;
   filter: grayscale(100%);
   display: ${({ $isMobile }) => ($isMobile ? "none" : "block")};
