@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { FormikValues } from "formik";
 import {
   MdOutlineEdit,
@@ -24,6 +24,7 @@ import {
   Button,
   Divider,
   Select,
+  Textfield,
 } from "@inubekit/inubekit";
 
 import { EditFinancialObligationModal } from "@components/modals/editFinancialObligationModal";
@@ -342,6 +343,13 @@ export const TableFinancialObligationsUI = ({
   const handleInfoModalClose = () => {
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    if (borrowerOptions.length === 1) {
+      setSelectedBorrowerIndex(0);
+    }
+  }, [borrowerOptions]);
+
   const renderHeaders = () => {
     return visibleHeaders.map((header, index) =>
       loading ? (
@@ -490,19 +498,33 @@ export const TableFinancialObligationsUI = ({
               {!isMobile && (
                 <Stack>
                   {initialValues?.[0]?.borrowers?.length > 1 ? (
-                    <Select
-                      name="borrower"
-                      id="borrower"
-                      label="Deudor"
-                      placeholder="Selecciona un deudor"
-                      options={borrowerOptions}
-                      value={String(selectedBorrowerIndex)}
-                      onChange={(_, value) =>
-                        setSelectedBorrowerIndex(Number(value))
-                      }
-                      size="wide"
-                      fullwidth={isMobile}
-                    />
+                    borrowerOptions.length === 1 ? (
+                      <Textfield
+                        name="borrower"
+                        id="borrower"
+                        label="Deudor"
+                        placeholder="Selecciona un deudor"
+                        value={borrowerOptions[0]?.label || ""}
+                        size="wide"
+                        readOnly={true}
+                        disabled={true}
+                        fullwidth={isMobile}
+                      />
+                    ) : (
+                      <Select
+                        name="borrower"
+                        id="borrower"
+                        label="Deudor"
+                        placeholder="Selecciona un deudor"
+                        options={borrowerOptions}
+                        value={String(selectedBorrowerIndex)}
+                        onChange={(_, value) =>
+                          setSelectedBorrowerIndex(Number(value))
+                        }
+                        size="wide"
+                        fullwidth={isMobile}
+                      />
+                    )
                   ) : (
                     <Text size="medium" type="title" appearance="dark">
                       {customerData?.fullName}
@@ -514,19 +536,33 @@ export const TableFinancialObligationsUI = ({
               {isMobile && (
                 <Stack padding="0px 0px 10px 0px">
                   {initialValues?.[0]?.borrowers?.length > 1 ? (
-                    <Select
-                      name="borrower"
-                      id="borrower"
-                      label="Deudor"
-                      placeholder="Selecciona un deudor"
-                      options={borrowerOptions}
-                      value={String(selectedBorrowerIndex)}
-                      onChange={(_, value) =>
-                        setSelectedBorrowerIndex(Number(value))
-                      }
-                      size="wide"
-                      fullwidth={isMobile}
-                    />
+                    borrowerOptions.length === 1 ? (
+                      <Textfield
+                        name="borrower"
+                        id="borrower"
+                        label="Deudor"
+                        placeholder="Selecciona un deudor"
+                        value={borrowerOptions[0]?.label || ""}
+                        size="wide"
+                        readOnly={true}
+                        disabled={true}
+                        fullwidth={isMobile}
+                      />
+                    ) : (
+                      <Select
+                        name="borrower"
+                        id="borrower"
+                        label="Deudor"
+                        placeholder="Selecciona un deudor"
+                        options={borrowerOptions}
+                        value={String(selectedBorrowerIndex)}
+                        onChange={(_, value) =>
+                          setSelectedBorrowerIndex(Number(value))
+                        }
+                        size="wide"
+                        fullwidth={isMobile}
+                      />
+                    )
                   ) : (
                     <CardGray
                       label={dataReport.title}
