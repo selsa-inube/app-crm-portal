@@ -26,6 +26,7 @@ import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
+import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 import { dataAmount, dataModalDisableLoanAmount } from "./config";
 
@@ -45,6 +46,7 @@ export interface ILoanAmountProps {
   handleOnChange: (newData: Partial<ILoanAmountProps["initialValues"]>) => void;
   onFormValid: (isValid: boolean) => void;
   obligationPayments: IPayment[] | undefined;
+  paymentChannel: IResponsePaymentDatesChannel[] | null;
 }
 
 export function LoanAmount(props: ILoanAmountProps) {
@@ -56,6 +58,7 @@ export function LoanAmount(props: ILoanAmountProps) {
     requestValue,
     setRequestValue,
     obligationPayments,
+    paymentChannel,
   } = props;
   const { id } = useParams();
   const loanId = parseInt(id || "0", 10);
@@ -67,7 +70,11 @@ export function LoanAmount(props: ILoanAmountProps) {
     ];
   const [showInfoModal, setShowInfoModal] = useState(false);
 
-  useEffect(() => {
+  console.log("initialValues*******", initialValues);
+
+  console.log("paymentChannel*******", paymentChannel);
+
+  /*useEffect(() => {
     get("mockRequest_value")
       .then((data) => {
         if (data && Array.isArray(data)) {
@@ -77,7 +84,7 @@ export function LoanAmount(props: ILoanAmountProps) {
       .catch((error) => {
         console.error("Error fetching money destinations data:", error.message);
       });
-  }, []);
+  }, []);*/
 
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
