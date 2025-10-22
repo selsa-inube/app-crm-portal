@@ -474,8 +474,6 @@ export function SimulateCredit() {
       setMessageError(description);
     }
   };
-  console.log("validacion---> ", formData.selectedProducts);
-
   useEffect(() => {
     if (customerData) {
       fetchCreditLineTerms();

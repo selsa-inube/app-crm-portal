@@ -1,5 +1,5 @@
 import {
-  //environment,
+  environment,
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
@@ -35,7 +35,7 @@ export const GetSearchAllPaymentChannels = async (
       };
 
       const res = await fetch(
-        `http://localhost:8076/icorebanking-vi-crediboard-persistence-process-service/api/payment-channels`,
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/payment-channels`,
         options,
       );
 
