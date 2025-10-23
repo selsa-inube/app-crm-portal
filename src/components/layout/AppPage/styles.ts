@@ -41,7 +41,6 @@ export const StyledContentImg = styled(Link)`
 `;
 
 export const StyledLogo = styled.img`
-  with: 100%;
   height: 100%;
   object-fit: contain;
 `;
@@ -103,6 +102,10 @@ export const StyledFooter = styled.footer<IStyledFooter>`
   height: 50px;
   top: -50px;
   position: relative;
+
+  & > a {
+    height: 40px;
+  }
 `;
 
 export const StyledPrint = styled.div`

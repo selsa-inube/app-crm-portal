@@ -186,13 +186,16 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
   useEffect(() => {
     if (!borrowerId) return;
 
+    const allFieldsFilled = Object.values(formData.personalInfo).every(
+      (value) => value !== "" && value !== null && value !== undefined,
+    );
+
+    if (allFieldsFilled && !isAutoCompleted) {
+      return;
+    }
+
     const fetchIncomeData = async () => {
       try {
-        const response = await getIncomeSourcesById(
-          borrowerId,
-          businessUnitPublicCode || "",
-          businessManagerCode,
-        );
         const customer = await getSearchCustomerByCode(
           borrowerId,
           businessUnitPublicCode || "",
@@ -200,55 +203,55 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           true,
         );
 
+        if (
+          !customer ||
+          !customer.generalAttributeClientNaturalPersons ||
+          customer.generalAttributeClientNaturalPersons.length === 0
+        ) {
+          setIsAutoCompleted(false);
+          return;
+        }
+
+        const response = await getIncomeSourcesById(
+          borrowerId,
+          businessUnitPublicCode || "",
+          businessManagerCode,
+        );
+
         const formattedData = capitalizeKeysExceptSome<IIncomeSources>(
           response as unknown as Record<string, unknown>,
           ["name", "surname", "identificationNumber", "identificationType"],
         );
+
         setIncomeData(formattedData);
 
-        const data = customer?.generalAttributeClientNaturalPersons?.[0];
+        const data = customer.generalAttributeClientNaturalPersons[0];
 
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            personalInfo: {
-              ...prev.personalInfo,
-              tipeOfDocument: data?.typeIdentification || "",
-              documentNumber: prev.personalInfo.documentNumber,
-              firstName: data?.firstNames || "",
-              lastName: data?.lastNames || "",
-              email: data?.emailContact || "",
-              phone: data?.cellPhoneContact || "",
-              sex: data?.gender || "",
-              age: getAge(data?.dateBirth || "").toString(),
-              relation: prev.personalInfo.relation,
-            },
-          }));
-          setIsAutoCompleted(true);
-        } else if (isAutoCompleted) {
-          setFormData((prev) => ({
-            ...prev,
-            personalInfo: {
-              ...prev.personalInfo,
-              tipeOfDocument: "",
-              firstName: "",
-              lastName: "",
-              email: "",
-              phone: "",
-              sex: "",
-              age: "",
-              relation: prev.personalInfo.relation,
-            },
-          }));
-          setIsAutoCompleted(false);
-        }
+        setFormData((prev) => ({
+          ...prev,
+          personalInfo: {
+            ...prev.personalInfo,
+            tipeOfDocument: data?.typeIdentification || "",
+            documentNumber: prev.personalInfo.documentNumber,
+            firstName: data?.firstNames || "",
+            lastName: data?.lastNames || "",
+            email: data?.emailContact || "",
+            phone: data?.cellPhoneContact || "",
+            sex: data?.gender || "",
+            age: getAge(data?.dateBirth || "").toString(),
+            relation: prev.personalInfo.relation,
+          },
+        }));
+
+        setIsAutoCompleted(true);
       } catch (error) {
         handleFlag(error);
+        setIsAutoCompleted(false);
       }
     };
 
     fetchIncomeData();
-  }, [borrowerId, businessUnitPublicCode, isAutoCompleted]);
+  }, [borrowerId, businessUnitPublicCode, businessManagerCode]);
 
   useEffect(() => {
     if (!isAutoCompleted) {

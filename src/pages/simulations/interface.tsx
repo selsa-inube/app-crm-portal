@@ -330,6 +330,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           onProspectUpdated={onProspectUpdated}
                           prospectSummaryData={prospectSummaryData}
                           setProspectSummaryData={setProspectSummaryData}
+                          onProspectRefreshData={onProspectUpdated}
                         />
                       </Fieldset>
                     </StyledScrollPrint>

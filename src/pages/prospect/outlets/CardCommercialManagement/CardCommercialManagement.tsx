@@ -44,6 +44,7 @@ interface CardCommercialManagementProps {
   prospectData?: IProspect;
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
+  onProspectRefreshData?: () => void;
 }
 
 export const CardCommercialManagement = (
@@ -57,6 +58,7 @@ export const CardCommercialManagement = (
     prospectSummaryData,
     setProspectSummaryData,
     setShowMessageSuccessModal,
+    onProspectRefreshData,
   } = props;
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
@@ -79,6 +81,9 @@ export const CardCommercialManagement = (
   const [selectedProductId, setSelectedProductId] = useState("");
 
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
+  const [consolidatedCredits, setConsolidatedCredits] = useState(
+    prospectData?.consolidatedCredits || [],
+  );
   const [showDeductibleExpensesModal, setDeductibleExpensesModal] =
     useState(false);
   const [deductibleExpenses, setDeductibleExpenses] = useState<
@@ -100,6 +105,13 @@ export const CardCommercialManagement = (
       setProspectProducts(prospectData?.creditProducts);
     }
   }, [prospectData]);
+
+  useEffect(() => {
+    if (prospectData?.consolidatedCredits) {
+      setConsolidatedCredits(prospectData.consolidatedCredits);
+    }
+  }, [prospectData?.consolidatedCredits]);
+
   const isMobile = useMediaQuery("(max-width: 800px)");
 
   const handleDelete = async () => {
@@ -335,8 +347,16 @@ export const CardCommercialManagement = (
       )}
       {showConsolidatedModal && (
         <ConsolidatedCredits
-          handleClose={() => setShowConsolidatedModal(false)}
+          handleClose={() => {
+            setShowConsolidatedModal(false);
+            setConsolidatedCredits(prospectData?.consolidatedCredits || []);
+          }}
           prospectData={prospectData}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+          consolidatedCredits={consolidatedCredits}
+          setConsolidatedCredits={setConsolidatedCredits}
+          onProspectRefreshData={onProspectRefreshData}
         />
       )}
       {showDeductibleExpensesModal && (

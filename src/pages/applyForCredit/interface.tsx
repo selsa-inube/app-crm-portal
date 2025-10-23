@@ -164,7 +164,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin="0 auto"
+          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
