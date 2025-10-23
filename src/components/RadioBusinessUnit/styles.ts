@@ -26,12 +26,13 @@ export const StyledRadio = styled.input`
 
 interface StyledImageProps {
   $isMobile: boolean;
+  hasLogo: boolean;
 }
 
 export const StyledImage = styled.img<StyledImageProps>`
   font-family: Roboto;
   font-size: 14px;
-  max-width: 35%;
+  max-width: ${({ hasLogo }) => (hasLogo ? "35%" : "100%")};
   transition: filter 500ms ease-out;
   filter: grayscale(100%);
   display: ${({ $isMobile }) => ($isMobile ? "none" : "block")};
