@@ -10,6 +10,7 @@ import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { useEnums } from "@context/EnumContext";
 import { getEnumByCode } from "@src/config/enums/utils";
+import { IManageErrors } from "@src/pages/simulateCredit/types";
 
 import {
   dataError,
@@ -23,10 +24,17 @@ export interface IRequirementsModalProps {
   isMobile: boolean;
   validateRequirements: IValidateRequirement[];
   isLoading: boolean;
+  errorsManager: IManageErrors;
 }
 
 export function RequirementsModal(props: IRequirementsModalProps) {
-  const { isMobile, validateRequirements, isLoading, handleClose } = props;
+  const {
+    isMobile,
+    validateRequirements,
+    isLoading,
+    handleClose,
+    errorsManager,
+  } = props;
 
   const [modalData, setModalData] = useState<{
     evaluation: string;
@@ -128,13 +136,17 @@ export function RequirementsModal(props: IRequirementsModalProps) {
                 direction="column"
                 alignItems="center"
               >
-                <Icon
-                  icon={<MdCheckCircleOutline />}
-                  appearance={"success"}
-                  size="54px"
-                />
+                {!errorsManager.validateRequirements && (
+                  <Icon
+                    icon={<MdCheckCircleOutline />}
+                    appearance={"success"}
+                    size="54px"
+                  />
+                )}
                 <Text type="title" size="medium" appearance="dark">
-                  {dataError.noData}
+                  {errorsManager.validateRequirements
+                    ? dataError.descriptionError
+                    : dataError.noData}
                 </Text>
               </Stack>
             )}

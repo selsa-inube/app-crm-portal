@@ -96,8 +96,6 @@ export interface IProspect {
   prospectCode: string;
   state: string;
   requestedAmount: number | string;
-  installmentLimit: number | string;
-  termLimit: number | string;
   timeOfCreation?: Date;
   selectedRegularPaymentSchedule: string;
   selectedRateType: string;
@@ -119,6 +117,8 @@ export interface IProspect {
   extraordinaryInstallments?: ISimulateExtraordinaryInstallment[];
   creditProducts: ICreditProduct[];
   outlays: IOutlay[];
+  termLimit?: number | string;
+  installmentLimit?: number | string;
 }
 
 export interface IAddCreditProduct {

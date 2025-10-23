@@ -15,6 +15,10 @@ export interface StepDetails {
   description: string;
 }
 
+export interface IManageErrors {
+  validateRequirements?: boolean;
+}
+
 export interface IStep {
   id: number;
   description: string;

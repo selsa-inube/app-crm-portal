@@ -8,8 +8,8 @@ export const messagesError = {
 
 export const dataSubmitApplication = {
   modals: {
-    filed: "Prospecto creado",
-    fileDescription: "Se ha creado el prospecto {prospectCode}.",
+    filed: "Prospecto",
+    fileDescription: "Se ha creado el prospecto ",
     continue: "Continuar",
     cancel: "Cerrar",
     understand: "Entendido",

@@ -33,6 +33,7 @@ import {
   IFormData,
   IServicesProductSelection,
   titleButtonTextAssited,
+  IManageErrors,
 } from "./types";
 import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
@@ -43,6 +44,7 @@ export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddProspect.generalInformation.id,
   );
+  const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isAlertIncome, setIsAlertIncome] = useState(false);
@@ -215,14 +217,13 @@ export function SimulateCredit() {
             paymentChannelAbbreviatedName: item.paymentMethod as string,
           }))
         : [],
-      installmentLimit:
-        formData.loanConditionState.quotaCapValue || 999999999999,
+      installmentLimit: formData.loanConditionState.quotaCapValue || 0,
       moneyDestinationAbbreviatedName: formData.selectedDestination,
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
       selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
       requestedAmount: formData.loanAmountState.inputValue || 0,
-      termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
+      termLimit: formData.loanConditionState.maximumTermValue || 0,
       prospectId: "",
       prospectCode: "",
       state: "",
@@ -567,6 +568,14 @@ export function SimulateCredit() {
       : titleButtonTextAssited.goNextText;
 
   const handleSubmitClick = async () => {
+    if (simulateData.termLimit === 0) {
+      delete simulateData.termLimit;
+    }
+
+    if (simulateData.installmentLimit === 0) {
+      delete simulateData.installmentLimit;
+    }
+
     try {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
@@ -643,6 +652,11 @@ export function SimulateCredit() {
         if (data) {
           setValidateRequirements(data);
         }
+      } catch (error) {
+        console.log("error: ", error);
+        setErrorsManager((prev) => {
+          return { ...prev, validateRequirements: true };
+        });
       } finally {
         setIsLoading(false);
       }
@@ -835,6 +849,7 @@ export function SimulateCredit() {
         sentModal={sentModal}
         setSentModal={setSentModal}
         prospectCode={prospectCode}
+        errorsManager={errorsManager}
       />
       {showConsultingModal && <Consulting />}
     </>

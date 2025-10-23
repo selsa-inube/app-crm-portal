@@ -128,7 +128,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     setMessageError,
     creditRequestCode,
   } = props;
-  console.log("sentModal: ", sentModal);
+
   const [isSelected, setIsSelected] = useState<string>();
   const { prospectCode } = useParams();
 

@@ -42,6 +42,7 @@ import {
   ICreditLineTerms,
   IServicesProductSelection,
   ISourcesOfIncomeState,
+  IManageErrors,
 } from "./types";
 import { StyledArrowBack, StyledContainerAssisted } from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
@@ -148,6 +149,7 @@ interface SimulateCreditUIProps {
   businessManagerCode: string;
   allowToContinue: boolean;
   handleModalTryAgain: () => void;
+  errorsManager: IManageErrors;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -210,6 +212,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     sentModal,
     setSentModal,
     prospectCode,
+    errorsManager,
   } = props;
 
   return (
@@ -556,6 +559,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   isMobile={isMobile}
                   isLoading={isLoading}
                   validateRequirements={validateRequirements}
+                  errorsManager={errorsManager}
                 />
               )}
               {isCreditLimitModalOpen && (
@@ -634,7 +638,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     />
                     <Stack gap="6px">
                       <Text type="body" size="large">
-                        {dataSubmitApplication.modals.filed}
+                        {dataSubmitApplication.modals.fileDescription}
                       </Text>
                       <Text type="body" size="large" weight="bold">
                         {prospectCode}
