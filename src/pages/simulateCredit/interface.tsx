@@ -558,6 +558,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   dataMaximumCreditLimitService={dataMaximumCreditLimitService}
                   businessUnitPublicCode={businessUnitPublicCode}
                   businessManagerCode={businessManagerCode}
+                  moneyDestination={formData.selectedDestination}
                 />
               )}
               {isCreditLimitWarning && (
