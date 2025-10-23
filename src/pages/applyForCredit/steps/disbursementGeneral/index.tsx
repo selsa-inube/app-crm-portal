@@ -6,7 +6,6 @@ import { Fieldset } from "@components/data/Fieldset";
 import { AppContext } from "@context/AppContext";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect, IProspectSummaryById } from "@services/prospect/types";
-import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 import { DisbursementWithInternalAccount } from "./disbursementWithInternalAccount/index";
 import { DisbursementWithExternalAccount } from "./disbursementWithExternalAccount";
@@ -27,6 +26,7 @@ interface IDisbursementGeneralProps {
   handleTabChange: (id: string) => void;
   customerData?: ICustomerData;
   prospectSummaryData: IProspectSummaryById | undefined;
+  modesOfDisbursement: string[];
 }
 
 interface Tab {
@@ -44,13 +44,13 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     onFormValid,
     handleOnChange,
     handleTabChange,
-    data,
+    modesOfDisbursement,
     customerData,
     prospectSummaryData,
   } = props;
 
   const [tabChanged, setTabChanged] = useState(false);
-  const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
+
   const [validTabs, setValidTabs] = useState<Tab[]>([]);
 
   const formik = useFormik({
@@ -136,31 +136,6 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
       handleTabChange(availableTabs[0].id);
     }
   }, [handleTabChange, modesOfDisbursement, initialValues.amount]);
-
-  useEffect(() => {
-    const fetchCreditRequest = async () => {
-      try {
-        const creditData = await getSearchAllModesOfDisbursementTypes(
-          businessUnitPublicCode,
-          businessManagerCode,
-          data.borrowers[0].borrowerIdentificationNumber,
-          data.creditProducts[0].lineOfCreditAbbreviatedName,
-          data.moneyDestinationAbbreviatedName,
-          data.creditProducts[0].loanAmount.toString(),
-        );
-
-        if (creditData?.modesOfDisbursementTypes) {
-          setModesOfDisbursement(creditData.modesOfDisbursementTypes);
-        } else {
-          setModesOfDisbursement([]);
-        }
-      } catch (error) {
-        setModesOfDisbursement([]);
-      }
-    };
-
-    fetchCreditRequest();
-  }, [businessUnitPublicCode, businessManagerCode, data]);
 
   useEffect(() => {
     fetchTabs();

@@ -27,6 +27,7 @@ import {
   prospectStates,
   tittleOptions,
 } from "./config/config";
+import { getSearchAllModesOfDisbursementTypes } from "@src/services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -58,6 +59,7 @@ export function ApplyForCredit() {
   };
 
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
+  const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
   const [prospectData, setProspectData] = useState<IProspect>({
     prospectId: "",
     prospectCode: "",
@@ -514,6 +516,31 @@ export function ApplyForCredit() {
   }, [businessUnitPublicCode]);
 
   useEffect(() => {
+    const fetchDisbursementData = async () => {
+      try {
+        const creditData = await getSearchAllModesOfDisbursementTypes(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData.borrowers[0].borrowerIdentificationNumber,
+          prospectData.creditProducts[0].lineOfCreditAbbreviatedName,
+          prospectData.moneyDestinationAbbreviatedName,
+          prospectData.creditProducts[0].loanAmount.toString(),
+        );
+
+        if (creditData?.modesOfDisbursementTypes) {
+          setModesOfDisbursement(creditData.modesOfDisbursementTypes);
+        } else {
+          setModesOfDisbursement([]);
+        }
+      } catch (error) {
+        setModesOfDisbursement([]);
+      }
+    };
+
+    fetchDisbursementData();
+  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
+
+  useEffect(() => {
     if (!customerData || !customerPublicCode) return;
     fetchProspectData();
   }, [customerData, fetchProspectData]);
@@ -722,6 +749,7 @@ export function ApplyForCredit() {
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
         setMessageError={setMessageError}
+        modesOfDisbursement={modesOfDisbursement}
       />
     </>
   );
