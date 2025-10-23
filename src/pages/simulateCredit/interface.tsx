@@ -4,7 +4,6 @@ import {
   MdOutlinePriceChange,
   MdOutlineRule,
   MdCheckCircle,
-  MdOutlineShare,
 } from "react-icons/md";
 import {
   Stack,
