@@ -8,7 +8,7 @@ export interface IPaymentCapacity {
   periodicSalary: number;
   personalBusinessUtilities: number;
   professionalFees: number;
-  livingExpenseToIncomeRatio: number;
+  livingExpenseToIncomeRatio?: number;
 }
 
 export interface IIncomeDetail {

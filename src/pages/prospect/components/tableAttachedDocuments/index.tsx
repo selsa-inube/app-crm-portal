@@ -11,7 +11,6 @@ import {
   Tr,
   Icon,
   Text,
-  useFlag,
   Stack,
   Spinner,
 } from "@inubekit/inubekit";
@@ -63,17 +62,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     lastEntryInPage,
   } = usePagination(ruleValues);
 
-  const { addFlag } = useFlag();
-
-  const handleFlag = () => {
-    addFlag({
-      title: `${dataReport.titleFlagDelete}`,
-      description: `${dataReport.descriptionFlagDelete}`,
-      appearance: "success",
-      duration: 5000,
-    });
-  };
-
   const handleOpenAttachment = (rowId: string) => {
     setCurrentRowId(rowId);
     setShowAttachments(true);
@@ -92,7 +80,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     const updated = { ...uploadedFilesByRow };
     delete updated[rowId];
     setUploadedFilesByRow(updated);
-    handleFlag();
   };
 
   const handleConfirmDelete = () => {

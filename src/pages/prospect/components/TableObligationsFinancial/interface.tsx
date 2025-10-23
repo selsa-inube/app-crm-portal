@@ -163,6 +163,7 @@ interface UIProps {
   handleOnChangeExtraBorrowers?: (
     newObligations: IObligationsFinancial[],
   ) => void;
+  initialValuesModalDataProspect: FormikValues | undefined;
 }
 
 export const TableFinancialObligationsUI = ({
@@ -194,6 +195,7 @@ export const TableFinancialObligationsUI = ({
   setShowErrorModal,
   handleRestore,
   handleOnChangeExtraBorrowers,
+  initialValuesModalDataProspect,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -505,7 +507,8 @@ export const TableFinancialObligationsUI = ({
                     />
                   ) : (
                     <Text size="medium" type="title" appearance="dark">
-                      {customerData?.fullName}
+                      {initialValuesModalDataProspect![0]?.borrowers[0]
+                        .borrowerName || ""}
                     </Text>
                   )}
                 </Stack>

@@ -123,6 +123,7 @@ export interface IModesOfDisbursementCredit {
 
 export interface ISubmitCredit {
   clientEmail: string;
+  creditRequestCode: string;
   clientId: string;
   clientIdentificationNumber: string;
   clientIdentificationType: string;
