@@ -231,6 +231,7 @@ export function Borrowers(props: borrowersProps) {
                 onSave={() => {}}
                 businessUnitPublicCode={businessUnitPublicCode}
                 businessManagerCode={businessManagerCode}
+                prospectData={prospectData as IProspect}
               />
             )}
           </Stack>

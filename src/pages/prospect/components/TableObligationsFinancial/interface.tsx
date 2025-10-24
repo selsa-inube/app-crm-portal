@@ -480,7 +480,7 @@ export const TableFinancialObligationsUI = ({
         {handleOnChangeExtraBorrowers === undefined && (
           <>
             <Stack alignItems="center">
-              {!isMobile && (
+              {!isMobile && initialValues?.[0]?.borrowers?.length <= 1 && (
                 <Text size="medium" type="label" weight="bold">
                   {dataReport.title}
                 </Text>
@@ -502,7 +502,7 @@ export const TableFinancialObligationsUI = ({
                       <Textfield
                         name="borrower"
                         id="borrower"
-                        label="Deudor"
+                        label=""
                         placeholder="Selecciona un deudor"
                         value={borrowerOptions[0]?.label || ""}
                         size="wide"
