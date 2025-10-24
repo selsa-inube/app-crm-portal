@@ -5,22 +5,13 @@ import { StyledMenu, StyledMenuItem } from "./styles";
 
 interface MobileMenuProps {
   onClose: () => void;
-  onReject: () => void;
-  onCancel: () => void;
   onAttach: () => void;
   onViewAttachments: () => void;
   onGuarantee: () => void;
 }
 
 function MobileMenu(props: MobileMenuProps) {
-  const {
-    onClose,
-    onReject,
-    onCancel,
-    onAttach,
-    onViewAttachments,
-    onGuarantee,
-  } = props;
+  const { onClose, onAttach, onViewAttachments, onGuarantee } = props;
 
   return (
     <StyledMenu>
@@ -35,16 +26,6 @@ function MobileMenu(props: MobileMenuProps) {
           onClick={onClose}
         />
       </Stack>
-      <StyledMenuItem onClick={onReject}>
-        <Text appearance="dark" size="medium" type="body">
-          Rechazar
-        </Text>
-      </StyledMenuItem>
-      <StyledMenuItem onClick={onCancel}>
-        <Text appearance="dark" size="medium" type="body">
-          Anular
-        </Text>
-      </StyledMenuItem>
       <StyledMenuItem>
         <Text appearance="dark" size="medium" type="body">
           Imprimir
