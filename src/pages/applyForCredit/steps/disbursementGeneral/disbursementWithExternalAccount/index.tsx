@@ -335,32 +335,39 @@ export function DisbursementWithExternalAccount(
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Textfield
-          id="amount"
-          name="amount"
-          label={disbursementGeneral.label}
-          placeholder={disbursementGeneral.place}
-          iconBefore={
-            <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
-          }
-          size="compact"
-          value={validateCurrencyField("amount", formik, false, optionNameForm)}
-          onChange={(e) => {
-            handleChangeWithCurrency(formik, e, optionNameForm);
-          }}
-          onBlur={() => {
-            formik.setFieldTouched(`${optionNameForm}.amount`, true);
-            formik.handleBlur(`amount`);
-          }}
-          status={
-            formik.touched[optionNameForm]?.amount && !isDisabled
-              ? "invalid"
-              : undefined
-          }
-          readOnly={isAmountReadOnly}
-          message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
-          fullwidth
-        />
+        <Stack width={isMobile ? "100%" : "498px"}>
+          <Textfield
+            id="amount"
+            name="amount"
+            label={disbursementGeneral.label}
+            placeholder={disbursementGeneral.place}
+            iconBefore={
+              <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
+            }
+            size="compact"
+            value={validateCurrencyField(
+              "amount",
+              formik,
+              false,
+              optionNameForm,
+            )}
+            onChange={(e) => {
+              handleChangeWithCurrency(formik, e, optionNameForm);
+            }}
+            onBlur={() => {
+              formik.setFieldTouched(`${optionNameForm}.amount`, true);
+              formik.handleBlur(`amount`);
+            }}
+            status={
+              formik.touched[optionNameForm]?.amount && !isDisabled
+                ? "invalid"
+                : undefined
+            }
+            readOnly={isAmountReadOnly}
+            message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
+            fullwidth
+          />
+        </Stack>
         <Stack gap="10px" direction="row" alignItems="center">
           <Checkbox
             id={"featureCheckbox"}
@@ -417,7 +424,7 @@ export function DisbursementWithExternalAccount(
           <Divider dashed />
         </>
       )}
-      <Stack direction="row" gap="16px">
+      <Stack direction={isMobile ? "column" : "row"} gap="16px">
         {banks.length === 1 ? (
           <Textfield
             id={`${optionNameForm}.bank`}

@@ -36,6 +36,7 @@ export const StyledCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: auto;
   padding: 24px 20px;
   gap: 16px;
   border-radius: 8px;

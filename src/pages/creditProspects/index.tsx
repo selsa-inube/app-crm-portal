@@ -27,6 +27,7 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
+import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
@@ -290,12 +291,13 @@ export function CreditProspects() {
               {filteredProspects.map((prospect) => (
                 <CardCreditProspect
                   key={prospect.prospectId}
-                  title={
+                  title={truncateTextToMaxLength(
                     MoneyDestinationTranslations.find(
                       (item) =>
                         item.Code === prospect.moneyDestinationAbbreviatedName,
-                    )?.Code || prospect.moneyDestinationAbbreviatedName
-                  }
+                    )?.Code || prospect.moneyDestinationAbbreviatedName,
+                    20,
+                  )}
                   borrower={prospect.borrowers[0].borrowerName}
                   numProspect={prospect.prospectCode}
                   date={prospect.timeOfCreation}

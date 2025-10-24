@@ -11,4 +11,22 @@ export const ModalConfig = {
   collectedValue: "Valor total recogido.",
   title: "Obligaciones recogidas",
   loading: "Cargando...",
+  noSelected: "No hay obligaciones seleccionadas.",
+};
+
+export const feedback = {
+  fetchDataObligationPayment: {
+    title: "Error al cargar obligaciones",
+    description: "No se pudieron cargar las obligaciones de pago",
+  },
+  handleSaveChanges: {
+    success: {
+      title: "Cambios guardados",
+      description: "Los créditos consolidados se actualizaron correctamente",
+    },
+    error: {
+      title: "Error al guardar cambios",
+      description: "No se pudieron actualizar los créditos consolidados",
+    },
+  },
 };

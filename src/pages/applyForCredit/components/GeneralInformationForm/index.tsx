@@ -206,7 +206,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
         />
       </Grid>
 
-      <Stack width="498px">
+      <Stack width={isMobile ? "100%" : "498px"}>
         {City.length === 1 ? (
           <Textfield
             id={"city"}

@@ -2,7 +2,7 @@ import { Formik, Field, Form } from "formik";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MdInfoOutline } from "react-icons/md";
-import { Icon } from "@inubekit/inubekit";
+import { Icon, IOption } from "@inubekit/inubekit";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
@@ -17,11 +17,9 @@ import {
 
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
+import { formatPrimaryDate } from "@utils/formatData/date";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
-import {
-  mockPayAmount,
-  mockPeriodicity,
-} from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
+import { mockPeriodicity } from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
 import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { BaseModal } from "@components/modals/baseModal";
@@ -66,6 +64,7 @@ export function LoanAmount(props: ILoanAmountProps) {
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [payAmountOptions, setPayAmountOptions] = useState<IOption[]>([]);
 
   useEffect(() => {
     get("mockRequest_value")
@@ -93,13 +92,42 @@ export function LoanAmount(props: ILoanAmountProps) {
     setShowInfoModal(false);
   };
 
-  const getOptionLabel = (
-    options: { id: string; value: string; label: string }[],
-    value: string,
-  ) => {
-    const option = options?.find((opt) => opt.id === value);
-    return option?.label || option?.value || value;
+  const generatePayAmountOptions = (day: number) => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+
+    const nextTwoMonths = [0, 1].map((offset) => {
+      const date = new Date(currentYear, currentMonth + offset, day);
+      if (date.getDate() !== day) {
+        date.setDate(0);
+      }
+
+      const label = formatPrimaryDate(date);
+      return {
+        id: `${offset + 1}`,
+        label,
+        value: label,
+      };
+    });
+
+    return nextTwoMonths;
   };
+
+  useEffect(() => {
+    if (initialValues.periodicity.includes(dataAmount.day15)) {
+      setPayAmountOptions(generatePayAmountOptions(15));
+    } else if (initialValues.periodicity.includes(dataAmount.day30)) {
+      setPayAmountOptions(generatePayAmountOptions(30));
+    } else {
+      setPayAmountOptions([]);
+    }
+  }, [initialValues.periodicity]);
+
+  const allSelectsHaveOneOption =
+    requestValue?.length === 1 &&
+    mockPeriodicity.length === 1 &&
+    payAmountOptions.length === 1;
 
   return (
     <Fieldset hasOverflow>
@@ -117,40 +145,28 @@ export function LoanAmount(props: ILoanAmountProps) {
       >
         {({ values, setFieldValue }) => {
           useEffect(() => {
-            if (
-              requestValue &&
-              requestValue.length === 1 &&
-              !values.paymentPlan
-            ) {
-              const singleOption = requestValue[0];
-              setFieldValue("paymentPlan", singleOption.id);
-              handleOnChange({ paymentPlan: singleOption.id });
+            if (requestValue && requestValue.length === 1) {
+              const onlyOption = requestValue[0];
+              setFieldValue("paymentPlan", onlyOption.value);
+              handleOnChange({ paymentPlan: onlyOption.value });
             }
           }, [requestValue]);
 
           useEffect(() => {
-            if (
-              mockPeriodicity &&
-              mockPeriodicity.length === 1 &&
-              !values.periodicity
-            ) {
-              const singleOption = mockPeriodicity[0];
-              setFieldValue("periodicity", singleOption.id);
-              handleOnChange({ periodicity: singleOption.id });
+            if (mockPeriodicity.length === 1) {
+              const onlyOption = mockPeriodicity[0];
+              setFieldValue("periodicity", onlyOption.value);
+              handleOnChange({ periodicity: onlyOption.value });
             }
-          }, [values.paymentPlan]);
+          }, [mockPeriodicity]);
 
           useEffect(() => {
-            if (
-              mockPayAmount &&
-              mockPayAmount.length === 1 &&
-              !values.payAmount
-            ) {
-              const singleOption = mockPayAmount[0];
-              setFieldValue("payAmount", singleOption.id);
-              handleOnChange({ payAmount: singleOption.id });
+            if (payAmountOptions.length === 1) {
+              const onlyOption = payAmountOptions[0];
+              setFieldValue("payAmount", onlyOption.value);
+              handleOnChange({ payAmount: onlyOption.value });
             }
-          }, [values.paymentPlan]);
+          }, [payAmountOptions]);
 
           return (
             <Form>
@@ -235,124 +251,126 @@ export function LoanAmount(props: ILoanAmountProps) {
                   </Stack>
                 </Stack>
                 <Divider dashed />
-                <Stack direction={isMobile ? "column" : "row"} gap="16px">
-                  <Stack direction="column" width="100%">
-                    <Text
-                      type="label"
-                      size="medium"
-                      weight="bold"
-                      padding="0px 0px 0px 16px"
-                    >
-                      {dataAmount.ordinaryPayment}
-                    </Text>
-                    <Field name="paymentPlan">
-                      {() =>
-                        requestValue && requestValue.length === 1 ? (
-                          <Textfield
-                            id="paymentPlan"
-                            size="compact"
-                            value={getOptionLabel(
-                              requestValue,
-                              values.paymentPlan,
-                            )}
-                            disabled
-                            fullwidth
-                          />
-                        ) : (
-                          <Select
-                            id="paymentPlan"
-                            options={requestValue || []}
-                            placeholder={dataAmount.selectOption}
-                            name="paymentPlan"
-                            onChange={(_, newValue: string) => {
-                              setFieldValue("paymentPlan", newValue);
-                              handleOnChange({ paymentPlan: newValue });
-                            }}
-                            value={values.paymentPlan}
-                            size="compact"
-                            fullwidth={values.paymentPlan ? true : false}
-                          />
-                        )
-                      }
-                    </Field>
-                  </Stack>
-                  {values.paymentPlan && (
-                    <>
-                      <Stack direction="column" width="100%">
-                        <Stack gap="4px">
-                          <Text type="label" size="medium" weight="bold">
-                            {dataAmount.Periodicity}
-                          </Text>
+                {!allSelectsHaveOneOption && (
+                  <Stack direction={isMobile ? "column" : "row"} gap="16px">
+                    <Stack direction="column" width="100%">
+                      <Text
+                        type="label"
+                        size="medium"
+                        weight="bold"
+                        padding="0px 0px 0px 16px"
+                      >
+                        {dataAmount.ordinaryPayment}
+                      </Text>
+                      <Field name="paymentPlan">
+                        {() =>
+                          requestValue && requestValue.length === 1 ? (
+                            <Textfield
+                              id="paymentPlan"
+                              placeholder={dataAmount.selectOption}
+                              name="paymentPlan"
+                              value={requestValue[0]?.label || ""}
+                              size="compact"
+                              readOnly={true}
+                              disabled={true}
+                              fullwidth
+                            />
+                          ) : (
+                            <Select
+                              id="paymentPlan"
+                              options={requestValue || []}
+                              placeholder={dataAmount.selectOption}
+                              name="paymentPlan"
+                              onChange={(_, newValue: string) => {
+                                setFieldValue("paymentPlan", newValue);
+                                handleOnChange({ paymentPlan: newValue });
+                              }}
+                              value={values.paymentPlan}
+                              size="compact"
+                              fullwidth={values.paymentPlan ? true : false}
+                            />
+                          )
+                        }
+                      </Field>
+                    </Stack>
+                    {values.paymentPlan && (
+                      <>
+                        <Stack direction="column" width="100%">
+                          <Stack gap="4px">
+                            <Text type="label" size="medium" weight="bold">
+                              {dataAmount.Periodicity}
+                            </Text>
+                          </Stack>
+                          <Field name="periodicity">
+                            {() =>
+                              mockPeriodicity.length === 1 ? (
+                                <Textfield
+                                  id="periodicity"
+                                  placeholder={dataAmount.selectOption}
+                                  name="periodicity"
+                                  value={mockPeriodicity[0]?.label || ""}
+                                  size="compact"
+                                  readOnly={true}
+                                  disabled={true}
+                                  fullwidth
+                                />
+                              ) : (
+                                <Select
+                                  id="periodicity"
+                                  options={mockPeriodicity}
+                                  placeholder={dataAmount.selectOption}
+                                  name="periodicity"
+                                  onChange={(_, newValue: string) => {
+                                    setFieldValue("periodicity", newValue);
+                                    handleOnChange({ periodicity: newValue });
+                                  }}
+                                  value={values.periodicity}
+                                  size="compact"
+                                  fullwidth={true}
+                                />
+                              )
+                            }
+                          </Field>
                         </Stack>
-                        <Field name="periodicity">
-                          {() =>
-                            mockPeriodicity && mockPeriodicity.length === 1 ? (
-                              <Textfield
-                                id="periodicity"
-                                size="compact"
-                                value={getOptionLabel(
-                                  mockPeriodicity,
-                                  values.periodicity,
-                                )}
-                                disabled
-                                fullwidth
-                              />
-                            ) : (
-                              <Select
-                                id="periodicity"
-                                options={mockPeriodicity}
-                                placeholder={dataAmount.selectOption}
-                                name="periodicity"
-                                onChange={(_, newValue: string) => {
-                                  setFieldValue("periodicity", newValue);
-                                  handleOnChange({ periodicity: newValue });
-                                }}
-                                value={values.periodicity}
-                                size="compact"
-                                fullwidth={true}
-                              />
-                            )
-                          }
-                        </Field>
-                      </Stack>
-                      <Stack direction="column" width="100%">
-                        <Text type="label" size="medium" weight="bold">
-                          {dataAmount.paymentDate}
-                        </Text>
-                        <Field name="payAmount">
-                          {() =>
-                            mockPayAmount && mockPayAmount.length === 1 ? (
-                              <Textfield
-                                id="payAmount"
-                                size="compact"
-                                value={getOptionLabel(
-                                  mockPayAmount,
-                                  values.payAmount,
-                                )}
-                                disabled
-                                fullwidth
-                              />
-                            ) : (
-                              <Select
-                                id="payAmount"
-                                options={mockPayAmount}
-                                placeholder={dataAmount.selectOption}
-                                name="payAmount"
-                                onChange={(_, newValue: string) => {
-                                  setFieldValue("payAmount", newValue);
-                                  handleOnChange({ payAmount: newValue });
-                                }}
-                                value={values.payAmount}
-                                size="compact"
-                                fullwidth={true}
-                              />
-                            )
-                          }
-                        </Field>
-                      </Stack>
-                    </>
-                  )}
-                </Stack>
+                        <Stack direction="column" width="100%">
+                          <Text type="label" size="medium" weight="bold">
+                            {dataAmount.paymentDate}
+                          </Text>
+                          <Field name="payAmount">
+                            {() =>
+                              payAmountOptions.length === 1 ? (
+                                <Textfield
+                                  id="payAmount"
+                                  placeholder={dataAmount.selectOption}
+                                  name="payAmount"
+                                  value={payAmountOptions[0]?.label || ""}
+                                  size="compact"
+                                  readOnly={true}
+                                  disabled={true}
+                                  fullwidth
+                                />
+                              ) : (
+                                <Select
+                                  id="payAmount"
+                                  options={payAmountOptions}
+                                  placeholder={dataAmount.selectOption}
+                                  name="payAmount"
+                                  onChange={(_, newValue: string) => {
+                                    setFieldValue("payAmount", newValue);
+                                    handleOnChange({ payAmount: newValue });
+                                  }}
+                                  value={values.payAmount}
+                                  size="compact"
+                                  fullwidth={true}
+                                />
+                              )
+                            }
+                          </Field>
+                        </Stack>
+                      </>
+                    )}
+                  </Stack>
+                )}
               </Stack>
               {showInfoModal && (
                 <BaseModal

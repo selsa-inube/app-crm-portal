@@ -206,6 +206,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                                 newSelected,
                               );
                             }}
+                            isMobile={isMobile}
                           />
                         </Stack>
                       ),

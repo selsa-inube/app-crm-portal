@@ -44,8 +44,11 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
     documentNumber: Yup.number().required(""),
     firstName: Yup.string().required(""),
     lastName: Yup.string().required(""),
-    email: Yup.string().email("").required(""),
-    phone: Yup.number().required(""),
+    email: Yup.string()
+      .email("")
+      .matches(/^[\w.%+-]+@[\w.-]+\.(COM|CO|ES)$/, "")
+      .required(""),
+    phone: Yup.string().required("").matches(/^\d+$/, "").min(10, ""),
     sex: Yup.string().required(""),
     age: Yup.number().min(0, "").required(""),
     relation: Yup.string().required(""),
@@ -184,7 +187,9 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           type="email"
           label={dataAddModal.labelEmail}
           placeholder={dataAddModal.placeHolderEmail}
-          onChange={formik.handleChange}
+          onChange={(event) =>
+            formik.setFieldValue("email", event.target.value.toUpperCase())
+          }
           onBlur={formik.handleBlur}
           value={formik.values.email}
           size="compact"
