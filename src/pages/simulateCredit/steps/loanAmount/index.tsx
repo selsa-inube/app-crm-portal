@@ -1,8 +1,8 @@
 import { Formik, Field, Form } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { MdInfoOutline } from "react-icons/md";
-import { Icon, IOption } from "@inubekit/inubekit";
+import { Icon } from "@inubekit/inubekit";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
@@ -17,13 +17,12 @@ import {
 
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
-import { formatPrimaryDate } from "@utils/formatData/date";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
-import { mockPeriodicity } from "@mocks/add-prospect/payment-channel/paymentchannel.mock";
-import { get } from "@mocks/utils/dataMock.service";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
+import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import { formatPrimaryDate } from "@utils/formatData/date";
 
 import { dataAmount, dataModalDisableLoanAmount } from "./config";
 
@@ -43,6 +42,7 @@ export interface ILoanAmountProps {
   handleOnChange: (newData: Partial<ILoanAmountProps["initialValues"]>) => void;
   onFormValid: (isValid: boolean) => void;
   obligationPayments: IPayment[] | undefined;
+  paymentChannel: IResponsePaymentDatesChannel[] | null;
 }
 
 export function LoanAmount(props: ILoanAmountProps) {
@@ -51,9 +51,8 @@ export function LoanAmount(props: ILoanAmountProps) {
     isMobile,
     handleOnChange,
     onFormValid,
-    requestValue,
-    setRequestValue,
     obligationPayments,
+    paymentChannel,
   } = props;
   const { id } = useParams();
   const loanId = parseInt(id || "0", 10);
@@ -64,20 +63,6 @@ export function LoanAmount(props: ILoanAmountProps) {
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
   const [showInfoModal, setShowInfoModal] = useState(false);
-  const [payAmountOptions, setPayAmountOptions] = useState<IOption[]>([]);
-
-  useEffect(() => {
-    get("mockRequest_value")
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setRequestValue(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching money destinations data:", error.message);
-      });
-  }, []);
-
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
     paymentPlan: Yup.string().required(""),
@@ -91,38 +76,32 @@ export function LoanAmount(props: ILoanAmountProps) {
   const handleCloseModalToggleState = () => {
     setShowInfoModal(false);
   };
+  const selectedChannel = paymentChannel?.find(
+    (channel) => channel.abbreviatedName === initialValues.paymentPlan,
+  );
+  const selectedCycle = selectedChannel?.regularCycles?.find(
+    (cycle) => cycle.cycleName === initialValues.periodicity,
+  );
+  const payAmountOptions =
+    selectedCycle?.detailOfPaymentDate?.map((date, index) => ({
+      id: `${date}-${index}`,
+      value: date,
+      label: formatPrimaryDate(new Date(date)),
+    })) || [];
 
-  const generatePayAmountOptions = (day: number) => {
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+  const periodicityOptions =
+    selectedChannel?.regularCycles?.map((cycle, index) => ({
+      id: `${cycle.cycleName}-${index}`,
+      value: cycle.cycleName,
+      label: cycle.cycleName,
+    })) || [];
 
-    const nextTwoMonths = [0, 1].map((offset) => {
-      const date = new Date(currentYear, currentMonth + offset, day);
-      if (date.getDate() !== day) {
-        date.setDate(0);
-      }
-
-      const label = formatPrimaryDate(date);
-      return {
-        id: `${offset + 1}`,
-        label,
-        value: label,
-      };
-    });
-
-    return nextTwoMonths;
-  };
-
-  useEffect(() => {
-    if (initialValues.periodicity.includes(dataAmount.day15)) {
-      setPayAmountOptions(generatePayAmountOptions(15));
-    } else if (initialValues.periodicity.includes(dataAmount.day30)) {
-      setPayAmountOptions(generatePayAmountOptions(30));
-    } else {
-      setPayAmountOptions([]);
-    }
-  }, [initialValues.periodicity]);
+  const paymentChannelOptions =
+    paymentChannel?.map((channel, index) => ({
+      id: `${channel.abbreviatedName}-${channel.paymentChannel}-${index}`,
+      value: channel.abbreviatedName,
+      label: `${channel.abbreviatedName}`,
+    })) || [];
 
   return (
     <Fieldset hasOverflow>
@@ -133,7 +112,11 @@ export function LoanAmount(props: ILoanAmountProps) {
         validate={(values) => {
           const numericValue =
             parseFloat(String(values.inputValue).replace(/[^0-9]/g, "")) || 0;
-          const isValid = numericValue > 0 && values.paymentPlan.trim() !== "";
+          const isValid =
+            numericValue > 0 &&
+            values.paymentPlan.trim() !== "" &&
+            values.periodicity.trim() !== "" &&
+            values.payAmount.trim() !== "";
           onFormValid(isValid);
         }}
         validateOnMount={true}
@@ -232,12 +215,18 @@ export function LoanAmount(props: ILoanAmountProps) {
                     {() => (
                       <Select
                         id="paymentPlan"
-                        options={requestValue || []}
+                        options={paymentChannelOptions}
                         placeholder={dataAmount.selectOption}
                         name="paymentPlan"
                         onChange={(_, newValue: string) => {
                           setFieldValue("paymentPlan", newValue);
-                          handleOnChange({ paymentPlan: newValue });
+                          setFieldValue("periodicity", "");
+                          setFieldValue("payAmount", "");
+                          handleOnChange({
+                            paymentPlan: newValue,
+                            periodicity: "",
+                            payAmount: "",
+                          });
                         }}
                         value={values.paymentPlan}
                         size="compact"
@@ -258,12 +247,16 @@ export function LoanAmount(props: ILoanAmountProps) {
                         {() => (
                           <Select
                             id="periodicity"
-                            options={mockPeriodicity}
+                            options={periodicityOptions}
                             placeholder={dataAmount.selectOption}
                             name="periodicity"
                             onChange={(_, newValue: string) => {
                               setFieldValue("periodicity", newValue);
-                              handleOnChange({ periodicity: newValue });
+                              setFieldValue("payAmount", "");
+                              handleOnChange({
+                                periodicity: newValue,
+                                payAmount: "",
+                              });
                             }}
                             value={values.periodicity}
                             size="compact"
@@ -272,28 +265,30 @@ export function LoanAmount(props: ILoanAmountProps) {
                         )}
                       </Field>
                     </Stack>
-                    <Stack direction="column" width="100%">
-                      <Text type="label" size="medium" weight="bold">
-                        {dataAmount.paymentDate}
-                      </Text>
-                      <Field name="payAmount">
-                        {() => (
-                          <Select
-                            id="payAmount"
-                            options={payAmountOptions}
-                            placeholder={dataAmount.selectOption}
-                            name="payAmount"
-                            onChange={(_, newValue: string) => {
-                              setFieldValue("payAmount", newValue);
-                              handleOnChange({ payAmount: newValue });
-                            }}
-                            value={values.payAmount}
-                            size="compact"
-                            fullwidth={true}
-                          />
-                        )}
-                      </Field>
-                    </Stack>
+                    {values.periodicity && (
+                      <Stack direction="column" width="100%">
+                        <Text type="label" size="medium" weight="bold">
+                          {dataAmount.paymentDate}
+                        </Text>
+                        <Field name="payAmount">
+                          {() => (
+                            <Select
+                              id="payAmount"
+                              options={payAmountOptions}
+                              placeholder={dataAmount.selectOption}
+                              name="payAmount"
+                              onChange={(_, newValue: string) => {
+                                setFieldValue("payAmount", newValue);
+                                handleOnChange({ payAmount: newValue });
+                              }}
+                              value={values.payAmount}
+                              size="compact"
+                              fullwidth={true}
+                            />
+                          )}
+                        </Field>
+                      </Stack>
+                    )}
                   </>
                 )}
               </Stack>

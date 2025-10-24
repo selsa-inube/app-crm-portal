@@ -27,6 +27,11 @@ import { getAdditionalBorrowersAllowed } from "@services/lineOfCredit/getAdditio
 import { getExtraInstallmentsAllowed } from "@services/lineOfCredit/getExtraInstallmentsAllowed";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IValidateRequirement } from "@services/requirement/types";
+import { GetSearchAllPaymentChannels } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber";
+import {
+  IPaymentDatesChannel,
+  IResponsePaymentDatesChannel,
+} from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import {
@@ -64,6 +69,9 @@ export function SimulateCredit() {
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
   );
+  const [paymentChannel, setPaymentChannel] = useState<
+    IResponsePaymentDatesChannel[] | null
+  >(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [allowToContinue, setAllowToContinue] = useState(true);
@@ -380,7 +388,7 @@ export function SimulateCredit() {
       return;
     }
     const data: IPaymentCapacity = {
-      clientIdentificationNumber: "16378491",
+      clientIdentificationNumber: customerData.publicCode,
       dividends: 0,
       financialIncome: 0,
       leases: 0,
@@ -428,6 +436,44 @@ export function SimulateCredit() {
     }
   };
 
+  const fetchDataPaymentDatesCycle = async () => {
+    if (!customerPublicCode) {
+      return;
+    }
+    const data: IPaymentDatesChannel = {
+      clientIdentificationNumber: customerData.publicCode,
+      clientIdentificationType:
+        customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
+      moneyDestination: formData.selectedDestination,
+      Dividends: 0,
+      FinancialIncome: 0,
+      Leases: 0,
+      OtherNonSalaryEmoluments: 0,
+      PensionAllowances: 0,
+      PeriodicSalary: 0,
+      PersonalBusinessUtilities: 0,
+      ProfessionalFees: 0,
+      linesOfCredit: formData.selectedProducts,
+    };
+    try {
+      const dataPaymentDates = await GetSearchAllPaymentChannels(
+        businessUnitPublicCode,
+        businessManagerCode,
+        data,
+      );
+      setPaymentChannel(dataPaymentDates ?? null);
+    } catch (error: unknown) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+      setShowErrorModal(true);
+      setMessageError(description);
+    }
+  };
   useEffect(() => {
     if (customerData) {
       fetchCreditLineTerms();
@@ -612,8 +658,9 @@ export function SimulateCredit() {
       fetchDataClientPortfolio();
       fetchDataObligationPayment();
       fetchCapacityAnalysis();
+      fetchDataPaymentDatesCycle();
     }
-  }, [currentStep]);
+  }, [currentStep, formData.selectedProducts]);
 
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
@@ -821,6 +868,7 @@ export function SimulateCredit() {
         businessManagerCode={businessManagerCode}
         handleModalTryAgain={handleModalTryAgain}
         allowToContinue={allowToContinue}
+        paymentChannel={paymentChannel}
       />
       {showConsultingModal && <Consulting />}
     </>
