@@ -517,6 +517,14 @@ export function ApplyForCredit() {
 
   useEffect(() => {
     const fetchDisbursementData = async () => {
+      if (
+        !prospectData.borrowers?.[0]?.borrowerIdentificationNumber ||
+        !prospectData.creditProducts?.[0]?.lineOfCreditAbbreviatedName ||
+        !prospectData.moneyDestinationAbbreviatedName
+      ) {
+        return;
+      }
+
       try {
         const creditData = await getSearchAllModesOfDisbursementTypes(
           businessUnitPublicCode,
@@ -527,13 +535,22 @@ export function ApplyForCredit() {
           prospectData.creditProducts[0].loanAmount.toString(),
         );
 
-        if (creditData?.modesOfDisbursementTypes) {
+        if (
+          creditData?.modesOfDisbursementTypes &&
+          creditData.modesOfDisbursementTypes.length > 0
+        ) {
           setModesOfDisbursement(creditData.modesOfDisbursementTypes);
+          setCodeError(null);
+          setAddToFix([]);
         } else {
           setModesOfDisbursement([]);
+          setCodeError(1014);
+          setAddToFix(["ModeOfDisbursementType"]);
         }
       } catch (error) {
         setModesOfDisbursement([]);
+        setCodeError(1014);
+        setAddToFix(["ModeOfDisbursementType"]);
       }
     };
 
