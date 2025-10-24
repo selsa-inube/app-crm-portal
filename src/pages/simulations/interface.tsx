@@ -328,7 +328,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           setSentData={setSentData}
                           setRequestValue={setRequestValue}
                           onProspectUpdate={setProspectData}
-                          onProspectUpdated={onProspectUpdated}
+                          onProspectRefreshData={onProspectUpdated}
                         />
                       </Fieldset>
                     </StyledScrollPrint>

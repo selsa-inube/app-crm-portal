@@ -217,3 +217,7 @@ export interface IRemoveProspect {
 export interface IRemoveProspectResponse {
   prospectId: string;
 }
+
+export interface IGuaranteesRequiredByCreditProspect {
+  warranty: string;
+}

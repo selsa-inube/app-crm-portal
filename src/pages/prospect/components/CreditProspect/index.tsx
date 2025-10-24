@@ -82,7 +82,7 @@ interface ICreditProspectProps {
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
   onProspectUpdate?: (prospect: IProspect) => void;
-  onProspectUpdated?: () => void;
+  onProspectRefreshData?: () => void;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -94,7 +94,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     onProspectUpdate,
     sentData,
     setSentData,
-    onProspectUpdated,
+    onProspectRefreshData,
     isMobile,
     isPrint = false,
     showPrint = true,
@@ -552,8 +552,8 @@ export function CreditProspect(props: ICreditProspectProps) {
         updatedProspect,
       );
 
-      if (onProspectUpdated) {
-        onProspectUpdated();
+      if (onProspectRefreshData) {
+        onProspectRefreshData();
       }
 
       addFlag({
@@ -662,6 +662,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onClick={() => handleOpenModal("editProductModal")}
             prospectData={prospectData || undefined}
             onProspectUpdate={onProspectUpdate}
+            onProspectRefreshData={onProspectRefreshData}
           />
         </Stack>
         {currentModal === "creditLimit" && (
@@ -819,7 +820,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onChange={onChanges}
             debtor={form.borrower}
             prospectData={prospectData ? [prospectData] : undefined}
-            onProspectUpdate={onProspectUpdated}
+            onProspectUpdate={onProspectRefreshData}
           />
         )}
 
