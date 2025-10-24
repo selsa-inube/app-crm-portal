@@ -6,7 +6,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { IBorrower } from "@services/prospect/types";
+import { IBorrower, IProspect } from "@services/prospect/types";
 import { IIncomeSources } from "@services/creditLimit/types";
 
 import { dataEditDebtor, dataTabs, dataReport } from "./config";
@@ -30,6 +30,7 @@ interface IDebtorEditModalProps {
   onUpdate?: (updatedBorrower: IBorrower, isSave?: boolean) => void;
   businessUnit?: string;
   businessUnitId?: string;
+  prospectData: IProspect | undefined;
 }
 
 export function DebtorEditModal(props: IDebtorEditModalProps) {
@@ -39,6 +40,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     publicCode,
     businessUnitPublicCode,
     businessManagerCode,
+    prospectData,
     handleClose,
     onUpdate,
   } = props;
@@ -250,6 +252,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             publicCode={publicCode}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
+            prospectData={prospectData}
           />
         )}
         {currentTab === "obligations" && (

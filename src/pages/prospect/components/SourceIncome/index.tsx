@@ -15,6 +15,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
 import { restoreIncomeInformationByBorrowerId } from "@services/prospect/restoreIncomeInformationByBorrowerId";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { IProspect } from "@services/prospect/types";
 
 import {
   IncomeEmployment,
@@ -48,6 +49,7 @@ interface ISourceIncomeProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   isLoadingCreditLimit?: boolean;
+  prospectData: IProspect | undefined;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
@@ -58,7 +60,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
     disabled,
     showEdit = true,
     data,
-    selectedIndex,
     customerData = {} as ICustomerData,
     initialDataForRestore,
     borrowerOptions,
@@ -66,6 +67,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     businessUnitPublicCode,
     businessManagerCode,
     onRestore,
+    prospectData,
   } = props;
 
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -272,7 +274,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
       setIsOpenModal(false);
     }
   };
-
   return (
     <StyledContainer $smallScreen={isMobile}>
       <Stack
@@ -294,7 +295,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                   {incomeCardData.borrower}
                 </Text>
                 <Text type="title" size="medium">
-                  {borrowerOptions?.[selectedIndex || 0]?.value}
+                  {prospectData?.borrowers[0]?.borrowerName}
                 </Text>
               </Stack>
             )}
@@ -400,6 +401,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
           borrowerOptions={borrowerOptions}
           businessUnitPublicCode={businessUnitPublicCode}
           businessManagerCode={businessManagerCode}
+          prospectData={prospectData}
         />
       )}
       {showErrorModal && (

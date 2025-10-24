@@ -108,6 +108,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               onDataChange={handleIncomeChange}
               businessUnitPublicCode={businessUnitPublicCode}
               businessManagerCode={businessManagerCode}
+              prospectData={prospectData}
             />
           )}
         {currentStepsNumber &&

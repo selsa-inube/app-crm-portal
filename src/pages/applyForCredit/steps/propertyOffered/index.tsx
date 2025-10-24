@@ -130,6 +130,21 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
     }
   }, [formik.values, handleOnChange]);
 
+  // Auto-seleccionar opciones únicas
+  useEffect(() => {
+    if (optionsOfferedType.length === 1) {
+      const onlyOption = optionsOfferedType[0];
+      formik.setFieldValue("type", onlyOption.value);
+    }
+  }, [optionsOfferedType]);
+
+  useEffect(() => {
+    if (optionsOfferedstate.length === 1) {
+      const onlyOption = optionsOfferedstate[0];
+      formik.setFieldValue("state", onlyOption.value);
+    }
+  }, [optionsOfferedstate]);
+
   if (!shouldRender && !isLoading) {
     return null;
   }
@@ -166,30 +181,60 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
           autoRows="auto"
           gap="20px"
         >
-          <Select
-            name="type"
-            id="type"
-            label={dataProperty.labelType}
-            placeholder={dataProperty.placeHolderType}
-            size="compact"
-            options={optionsOfferedType}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.type}
-            fullwidth
-          />
-          <Select
-            name="state"
-            id="state"
-            label={dataProperty.labelState}
-            placeholder={dataProperty.placeHolderState}
-            size="compact"
-            options={optionsOfferedstate}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.state}
-            fullwidth
-          />
+          {optionsOfferedType.length === 1 ? (
+            <Textfield
+              name="type"
+              id="type"
+              label={dataProperty.labelType}
+              placeholder={dataProperty.placeHolderType}
+              size="compact"
+              value={optionsOfferedType[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              name="type"
+              id="type"
+              label={dataProperty.labelType}
+              placeholder={dataProperty.placeHolderType}
+              size="compact"
+              options={optionsOfferedType}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.type}
+              fullwidth
+            />
+          )}
+
+          {optionsOfferedstate.length === 1 ? (
+            <Textfield
+              name="state"
+              id="state"
+              label={dataProperty.labelState}
+              placeholder={dataProperty.placeHolderState}
+              size="compact"
+              value={optionsOfferedstate[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              name="state"
+              id="state"
+              label={dataProperty.labelState}
+              placeholder={dataProperty.placeHolderState}
+              size="compact"
+              options={optionsOfferedstate}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.state}
+              fullwidth
+            />
+          )}
+
           <Textfield
             name="antique"
             id="antique"
@@ -203,6 +248,7 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             disabled={formik.values.state === "nuevo"}
             fullwidth
           />
+
           <Textfield
             name="estimated"
             id="estimated"
@@ -216,6 +262,7 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             fullwidth
           />
         </Grid>
+
         <Textarea
           name="description"
           id="description"

@@ -434,6 +434,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
+                      prospectData={prospectData}
                     />
                   )}
                 {currentStepsNumber &&
@@ -455,6 +456,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       creditLimitData={creditLimitData}
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
+                      prospectData={prospectData}
                     />
                   )}
                 {currentStepsNumber &&
