@@ -18,7 +18,7 @@ export interface CreditLimitProps {
   dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
   creditLine: number;
   creditLineTxt: string;
-  paymentCapacityData: IPaymentCapacityData;
+  paymentCapacityData?: IPaymentCapacityData;
   isMobile: boolean;
 }
 
@@ -118,7 +118,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
-      {openModal === "paymentCapacity" && (
+      {openModal === "paymentCapacity" && paymentCapacityData && (
         <PaymentCapacityModal
           isMobile={isMobile}
           handleClose={() => setOpenModal(null)}

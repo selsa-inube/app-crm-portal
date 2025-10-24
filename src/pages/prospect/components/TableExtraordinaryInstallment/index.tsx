@@ -100,9 +100,19 @@ export const TableExtraordinaryInstallment = (
   >([]);
   const [selectedDebtor, setSelectedDebtor] =
     useState<TableExtraordinaryInstallmentProps>({});
+  const [installmentState, setInstallmentState] = useState<{
+    installmentAmount: number;
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  }>({
+    installmentAmount: 0,
+    installmentDate: "",
+    paymentChannelAbbreviatedName: "",
+  });
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
+  const [isOpenModalView, setIsOpenModalView] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
 
@@ -232,31 +242,37 @@ export const TableExtraordinaryInstallment = (
   };
 
   return (
-    <TableExtraordinaryInstallmentUI
-      loading={loading}
-      visbleHeaders={visbleHeaders}
-      visbleActions={visbleActions}
-      extraordinaryInstallments={extraordinaryInstallments}
-      isMobile={isMobile}
-      selectedDebtor={selectedDebtor}
-      isOpenModalDelete={isOpenModalDelete}
-      isOpenModalEdit={isOpenModalEdit}
-      businessUnitPublicCode={businessUnitPublicCode ?? ""}
-      prospectData={prospectData}
-      showErrorModal={showErrorModal}
-      messageError={messageError}
-      setShowErrorModal={setShowErrorModal}
-      setIsOpenModalDelete={setIsOpenModalDelete}
-      setIsOpenModalEdit={setIsOpenModalEdit}
-      handleUpdate={handleUpdateData}
-      usePagination={paginationProps}
-      setSentData={setSentData ?? (() => {})}
-      handleClose={handleClose}
-      setSelectedDebtor={setSelectedDebtor}
-      handleDelete={handleDelete}
-      service={service}
-      itemIdentifiersForUpdate={itemIdentifiersForUpdate}
-      handleDeleteAction={handleDeleteAction}
-    />
+    <>
+      <TableExtraordinaryInstallmentUI
+        loading={loading}
+        visbleHeaders={visbleHeaders}
+        visbleActions={visbleActions}
+        extraordinaryInstallments={extraordinaryInstallments}
+        isMobile={isMobile}
+        selectedDebtor={selectedDebtor}
+        isOpenModalDelete={isOpenModalDelete}
+        isOpenModalEdit={isOpenModalEdit}
+        businessUnitPublicCode={businessUnitPublicCode ?? ""}
+        prospectData={prospectData}
+        showErrorModal={showErrorModal}
+        messageError={messageError}
+        setShowErrorModal={setShowErrorModal}
+        setIsOpenModalDelete={setIsOpenModalDelete}
+        setIsOpenModalEdit={setIsOpenModalEdit}
+        handleUpdate={handleUpdateData}
+        usePagination={paginationProps}
+        setSentData={setSentData ?? (() => {})}
+        handleClose={handleClose}
+        setSelectedDebtor={setSelectedDebtor}
+        setInstallmentState={setInstallmentState}
+        handleDelete={handleDelete}
+        service={service}
+        itemIdentifiersForUpdate={itemIdentifiersForUpdate}
+        handleDeleteAction={handleDeleteAction}
+        installmentState={installmentState}
+        isOpenModalView={isOpenModalView}
+        setIsOpenModalView={setIsOpenModalView}
+      />
+    </>
   );
 };

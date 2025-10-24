@@ -108,6 +108,10 @@ export const StyledFooter = styled.footer<IStyledFooter>`
   height: 50px;
   top: -50px;
   position: relative;
+
+  & > a {
+    height: 40px;
+  }
 `;
 
 export const StyledPrint = styled.div`

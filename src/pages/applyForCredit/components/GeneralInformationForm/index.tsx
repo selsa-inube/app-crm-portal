@@ -150,7 +150,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           type="email"
         />
       </Grid>
-      <Stack width="498px">
+      <Stack width={isMobile ? "100%" : "498px"}>
         <Select
           id={"city"}
           name={`${optionNameForm}.city`}

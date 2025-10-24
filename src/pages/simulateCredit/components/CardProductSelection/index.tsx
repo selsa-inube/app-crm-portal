@@ -31,7 +31,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
   } = props;
 
   return (
-    <Stack width={isMobile ? "250px" : "455px"} direction="column">
+    <Stack width={isMobile ? "80vw" : "455px"} direction="column">
       <Stack gap="4px">
         <input
           type={typeCheck ? typeCheck : "checkbox"}
