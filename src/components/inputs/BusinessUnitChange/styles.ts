@@ -38,7 +38,8 @@ export const StyledContainerOption = styled.div`
 
 export const StyledImg = styled.img`
   position: relative;
-  width: 75px;
+  max-width: 75px;
+  max-height: 45px;
   height: auto;
   left: 5px;
   padding: 12px 12px 12px 8px;

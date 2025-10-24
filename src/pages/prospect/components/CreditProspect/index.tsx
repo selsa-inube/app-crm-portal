@@ -673,7 +673,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
             dataMaximumCreditLimitService={dataMaximumCreditLimitService}
-            moneyDestination={prospectData?.moneyDestinationAbbreviatedName || ""}
+            moneyDestination={
+              prospectData?.moneyDestinationAbbreviatedName || ""
+            }
           />
         )}
         {openModal === "paymentCapacity" && (
