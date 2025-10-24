@@ -69,6 +69,7 @@ export interface ICreditProduct {
   installmentFrequency: string;
   interestRateDueType: string;
   interestRate: number;
+  schedule: string;
   fixedPoints: number;
   loanTerm: number;
   ordinaryInstallmentsForPrincipal: IOrdinaryInstallmentsForPrincipal[];

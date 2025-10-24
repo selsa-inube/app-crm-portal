@@ -5,7 +5,7 @@ import { IOptions } from "./types";
 
 interface MenuProspectProps {
   options: IOptions[];
-  onMouseLeave: () => void;
+  onMouseLeave?: () => void;
   only?: boolean;
 }
 

@@ -16,6 +16,8 @@ export const getCreditRequestByCode = async (
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
+  // console.log(businessUnitPublicCode, businessManagerCode, userAccount, params, "pepe")
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();

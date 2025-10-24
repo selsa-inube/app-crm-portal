@@ -36,6 +36,7 @@ export function CreditApplications() {
   const [selectedRequestCode, setSelectedRequestCode] = useState<string | null>(
     null,
   );
+  console.log(creditRequestData, "creditRequestData");
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -72,6 +73,7 @@ export function CreditApplications() {
             textInSearch: search,
           },
         );
+        console.log(creditData, "creditData");
         setCreditRequestData(creditData);
       } catch {
         setCodeError(1022);
