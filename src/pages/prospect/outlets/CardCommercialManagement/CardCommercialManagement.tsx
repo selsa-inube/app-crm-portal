@@ -37,6 +37,7 @@ interface CardCommercialManagementProps {
   dataRef: React.RefObject<HTMLDivElement>;
   onClick: () => void;
   prospectData?: IProspect;
+  showAddProduct?: boolean;
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
   onProspectRefreshData?: () => void;
@@ -49,6 +50,7 @@ export const CardCommercialManagement = (
     dataRef,
     onClick,
     prospectData,
+    showAddProduct = true,
     onProspectUpdate,
     onProspectRefreshData,
   } = props;
@@ -273,9 +275,11 @@ export const CardCommercialManagement = (
               }
             />
           ))}
-          <StyledPrint>
-            <NewCreditProductCard onClick={onClick} />
-          </StyledPrint>
+          {showAddProduct && (
+            <StyledPrint>
+              <NewCreditProductCard onClick={onClick} />
+            </StyledPrint>
+          )}
         </Stack>
       </StyledCardsCredit>
       {isMobile && <Divider />}

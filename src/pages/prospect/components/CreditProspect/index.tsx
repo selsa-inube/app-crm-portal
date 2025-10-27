@@ -78,6 +78,8 @@ interface ICreditProspectProps {
   >;
   isPrint?: boolean;
   showPrint?: boolean;
+  showAddButtons?: boolean;
+  showAddProduct?: boolean;
   setRequestValue?: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -98,6 +100,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     isMobile,
     isPrint = false,
     showPrint = true,
+    showAddButtons = true,
+    showAddProduct = true,
   } = props;
 
   const { customerData } = useContext(CustomerContext);
@@ -574,54 +578,60 @@ export function CreditProspect(props: ICreditProspectProps) {
         {!isMobile && (
           <StyledPrint>
             <Stack gap="16px" justifyContent="end" alignItems="center">
-              <Stack alignItems="center" gap="4px">
-                <Button
-                  type="button"
-                  appearance="primary"
-                  spacing="compact"
-                  iconBefore={
-                    <Icon
-                      icon={<MdOutlineAdd />}
-                      appearance="light"
-                      size="18px"
-                      spacing="narrow"
-                    />
-                  }
-                  disabled={canEditCreditRequest}
-                  onClick={() => handleOpenModal("editProductModal")}
-                >
-                  {dataCreditProspect.addProduct}
-                </Button>
-                {!prospectData?.creditProducts[0].extraordinaryInstallments && (
-                  <Icon
-                    icon={<MdOutlineInfo />}
-                    appearance="primary"
-                    size="16px"
-                    cursorHover
-                    onClick={handleInfo}
-                  />
-                )}
-              </Stack>
-              {!hasExtraordinaryInstallments(prospectData as IProspect) && (
-                <Button
-                  type="button"
-                  appearance="primary"
-                  spacing="compact"
-                  variant="outlined"
-                  iconBefore={
-                    <Icon
-                      icon={<MdOutlinePayments />}
+              {showAddButtons && (
+                <>
+                  <Stack alignItems="center" gap="4px">
+                    <Button
+                      type="button"
                       appearance="primary"
-                      size="18px"
-                      spacing="narrow"
-                    />
-                  }
-                  onClick={() => handleOpenModal("extraPayments")}
-                >
-                  {dataCreditProspect.extraPayment}
-                </Button>
+                      spacing="compact"
+                      iconBefore={
+                        <Icon
+                          icon={<MdOutlineAdd />}
+                          appearance="light"
+                          size="18px"
+                          spacing="narrow"
+                        />
+                      }
+                      disabled={canEditCreditRequest}
+                      onClick={() => handleOpenModal("editProductModal")}
+                    >
+                      {dataCreditProspect.addProduct}
+                    </Button>
+                    {!prospectData?.creditProducts[0]
+                      .extraordinaryInstallments && (
+                      <Icon
+                        icon={<MdOutlineInfo />}
+                        appearance="primary"
+                        size="16px"
+                        cursorHover
+                        onClick={handleInfo}
+                      />
+                    )}
+                  </Stack>
+                  {!hasExtraordinaryInstallments(prospectData as IProspect) && (
+                    <Button
+                      type="button"
+                      appearance="primary"
+                      spacing="compact"
+                      variant="outlined"
+                      iconBefore={
+                        <Icon
+                          icon={<MdOutlinePayments />}
+                          appearance="primary"
+                          size="18px"
+                          spacing="narrow"
+                        />
+                      }
+                      onClick={() => handleOpenModal("extraPayments")}
+                    >
+                      {dataCreditProspect.extraPayment}
+                    </Button>
+                  )}
+
+                  <StyledVerticalDivider />
+                </>
               )}
-              <StyledVerticalDivider />
               <StyledContainerIcon>
                 {showPrint && (
                   <Stack gap="8px">
@@ -663,6 +673,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             prospectData={prospectData || undefined}
             onProspectUpdate={onProspectUpdate}
             onProspectRefreshData={onProspectRefreshData}
+            showAddProduct={showAddProduct}
           />
         </Stack>
         {currentModal === "creditLimit" && (

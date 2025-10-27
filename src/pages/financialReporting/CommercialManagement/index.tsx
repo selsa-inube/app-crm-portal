@@ -769,6 +769,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                     setLocalProspectData(prospect);
                     setRefreshKey((prev) => prev + 1);
                   }}
+                  showAddButtons={false}
+                  showAddProduct={false}
                 />
               )}
             </Stack>

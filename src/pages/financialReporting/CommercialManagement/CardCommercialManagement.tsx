@@ -149,7 +149,7 @@ export const CardCommercialManagement = (
 
   return (
     <div ref={dataRef}>
-      <StyledCardsCredit $isMobile={isMobile}>
+      {/* <StyledCardsCredit $isMobile={isMobile}>
         <Stack
           gap="24px"
           width="fit-content"
@@ -190,7 +190,7 @@ export const CardCommercialManagement = (
             <NewCreditProductCard onClick={onClick} />
           </StyledPrint>
         </Stack>
-      </StyledCardsCredit>
+      </StyledCardsCredit> */}
       {isMobile && <Divider />}
       <Stack
         gap="24px"
