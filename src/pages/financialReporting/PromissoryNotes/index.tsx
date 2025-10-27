@@ -52,6 +52,7 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const creditRequestCode = id;
 
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
@@ -62,8 +63,8 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
         const data = await getCreditRequestByCode(
           businessUnitPublicCode,
           businessManagerCode,
-          id,
           userAccount,
+          { creditRequestCode },
         );
         setCreditRequests(data[0] as ICreditRequest);
       } catch (error) {
@@ -159,7 +160,6 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
       title={errorMessages.PromissoryNotes.titleCard}
       heightFieldset="100%"
       hasTable
-      // hasError={!creditRequets ? true : false}
       hasOverflow={isMobile}
     >
       {!creditRequets || showRetry ? (
@@ -190,9 +190,6 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
             }}
             isFirstTable
             infoItems={infoItems}
-            // hideSecondColumnOnTablet={false}
-            // hideSecondColumnOnMobile={false}
-            // showUserIconOnTablet={false}
           />
 
           {showModal && (

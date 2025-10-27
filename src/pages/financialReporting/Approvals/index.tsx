@@ -41,14 +41,15 @@ export const Approvals = (props: IApprovalsProps) => {
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const creditRequestCode = id;
 
   const fetchCreditRequest = useCallback(async () => {
     try {
       const data = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
-        id,
         userAccount,
+        { creditRequestCode },
       );
       setRequests(data[0] as ICreditRequest);
     } catch (error) {

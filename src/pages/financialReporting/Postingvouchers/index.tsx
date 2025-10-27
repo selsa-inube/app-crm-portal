@@ -40,6 +40,7 @@ export const Postingvouchers = (props: IApprovalsProps) => {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const creditRequestCode = id;
 
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
@@ -48,8 +49,8 @@ export const Postingvouchers = (props: IApprovalsProps) => {
       const data = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
-        id,
         userAccount,
+        { creditRequestCode },
       );
       setRequests(data[0] as ICreditRequest);
     } catch (error) {
@@ -117,8 +118,6 @@ export const Postingvouchers = (props: IApprovalsProps) => {
               isStyleMobile: true,
             }}
             isFirstTable={true}
-            // hideSecondColumnOnMobile={false}
-            // showUserIconOnTablet={false}
           />
         )}
       </Fieldset>

@@ -41,6 +41,7 @@ export const Management = ({ id, isMobile, updateData }: IManagementProps) => {
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const creditRequestCode = id;
 
   const chatContentRef = useRef<HTMLDivElement>(null);
 
@@ -53,8 +54,8 @@ export const Management = ({ id, isMobile, updateData }: IManagementProps) => {
       const data = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
-        id,
         userAccount,
+        { creditRequestCode },
       );
       setCreditRequest(data[0] as ICreditRequest);
     } catch (error) {

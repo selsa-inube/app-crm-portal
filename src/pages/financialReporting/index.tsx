@@ -162,8 +162,6 @@ export const FinancialReporting = () => {
     }
   };
 
-  console.log(businessUnitPublicCode, businessManagerCode, creditRequestCode);
-
   const fetchProspectData = async () => {
     try {
       const result = await getSearchProspectByCode(
@@ -317,8 +315,6 @@ export const FinancialReporting = () => {
   const handleSharePdfModal = () => {
     setPdfState({ isGenerating: false, blob: null, showShareModal: false });
   };
-
-  console.log(dataProspect, "dataprospect");
 
   return (
     <div ref={dataCommercialManagementRef}>

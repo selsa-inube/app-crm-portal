@@ -117,13 +117,6 @@ export function Simulations() {
     return cleaned;
   };
 
-  console.log(
-    businessUnitPublicCode,
-    businessManagerCode,
-    prospectCode!,
-    "dataaaaaaaa",
-  );
-
   const fetchProspectData = async () => {
     try {
       const result = await getSearchProspectByCode(

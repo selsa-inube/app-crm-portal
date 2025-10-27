@@ -422,7 +422,6 @@ export const tittleOptions = {
   titleCreditId: "No. Rad.: ",
   titleDestination: "Destino: ",
   tittleAmount: "Valor: ",
-  titleProfile: "Ver perfil crediticio",
   titleDisbursement: "Medios de desembolso",
   titleCall: "Llamada",
   titleVideoCall: "Videollamada",

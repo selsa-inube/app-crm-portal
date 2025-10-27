@@ -758,43 +758,45 @@ export function CreditProspect(props: ICreditProspectProps) {
               </Stack>
             ) : (
               <>
-                <Stack
-                  justifyContent="space-between"
-                  alignItems="end"
-                  width={isMobile ? "auto" : "100%"}
-                  gap="16px"
-                >
-                  <Select
-                    label="Deudor"
-                    id="borrower"
-                    name="borrower"
-                    options={borrowerOptions}
-                    value={borrowerOptions[selectedIndex]?.value}
-                    onChange={handleChange}
-                    size="compact"
-                  />
-                  <Stack alignItems="center">
-                    <Button
-                      onClick={() => {
-                        setOpenModal("IncomeModalEdit");
-                      }}
-                      disabled={canEditCreditRequest}
-                    >
-                      {dataCreditProspect.edit}
-                    </Button>
-                    {canEditCreditRequest ? (
-                      <Icon
-                        icon={<MdOutlineInfo />}
-                        appearance="primary"
-                        size="16px"
-                        cursorHover
-                        onClick={handleInfo}
-                      />
-                    ) : (
-                      <></>
-                    )}
+                {showAddButtons === true && (
+                  <Stack
+                    justifyContent="space-between"
+                    alignItems="end"
+                    width={isMobile ? "auto" : "100%"}
+                    gap="16px"
+                  >
+                    <Select
+                      label="Deudor"
+                      id="borrower"
+                      name="borrower"
+                      options={borrowerOptions}
+                      value={borrowerOptions[selectedIndex]?.value}
+                      onChange={handleChange}
+                      size="compact"
+                    />
+                    <Stack alignItems="center">
+                      <Button
+                        onClick={() => {
+                          setOpenModal("IncomeModalEdit");
+                        }}
+                        disabled={canEditCreditRequest}
+                      >
+                        {dataCreditProspect.edit}
+                      </Button>
+                      {canEditCreditRequest ? (
+                        <Icon
+                          icon={<MdOutlineInfo />}
+                          appearance="primary"
+                          size="16px"
+                          cursorHover
+                          onClick={handleInfo}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </Stack>
                   </Stack>
-                </Stack>
+                )}
                 <IncomeDebtor
                   initialValues={
                     dataProspect[0]?.borrowers?.find(
@@ -832,6 +834,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             debtor={form.borrower}
             prospectData={prospectData ? [prospectData] : undefined}
             onProspectUpdate={onProspectRefreshData}
+            showAddButton={showAddButtons}
           />
         )}
 
@@ -842,6 +845,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             sentData={sentData}
             setSentData={setSentData}
             businessUnitPublicCode={businessUnitPublicCode}
+            showAddButton={showAddButtons}
           />
         )}
 

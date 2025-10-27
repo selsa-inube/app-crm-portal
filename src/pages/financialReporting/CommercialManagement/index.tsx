@@ -154,8 +154,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
         const data = await getCreditRequestByCode(
           businessUnitPublicCode,
           businessManagerCode,
-          creditRequestCode,
           userAccount,
+          { creditRequestCode },
         );
         setRequests(data[0] as ICreditRequest);
       } catch (error) {
@@ -268,8 +268,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
       )?.propertyValue || "",
   };
 
-  console.log(prospectData, "prospect");
-
   return (
     <>
       <Fieldset
@@ -357,13 +355,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                     <>
                       <StyledPrint>
                         <Stack gap="16px">
-                          <Button
-                            type="link"
-                            spacing="compact"
-                            path={`/extended-card/${creditRequestCode}/credit-profile`}
-                          >
-                            {tittleOptions.titleProfile}
-                          </Button>
                           <Stack gap="2px" alignItems="center">
                             <Button
                               type="button"
@@ -420,16 +411,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
               </Stack>
               {isMobile && (
                 <>
-                  <StyledPrint>
-                    <Button
-                      type="link"
-                      spacing="compact"
-                      path={`/extended-card/${creditRequestCode}/credit-profile`}
-                      fullwidth
-                    >
-                      {tittleOptions.titleProfile}
-                    </Button>
-                  </StyledPrint>
                   <StyledPrint>
                     <Button
                       type="button"
@@ -594,19 +575,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 dataMaximumCreditLimitService={dataMaximumCreditLimitService}
               />
             )}
-            {/* {currentModal === "IncomeModal" && (
-              <IncomeBorrowersModal
-                borrowersProspect={borrowersProspect}
-                borrowerOptions={borrowerOptions}
-                selectedIndex={selectedIndex}
-                dataProspect={dataProspect}
-                selectedBorrower={selectedBorrower}
-                isMobile={isMobile}
-                handleCloseModal={handleCloseModal}
-                handleChange={handleChangeIncome}
-                setOpenModal={setOpenModal}
-              />
-            )} */}
             {currentModal === "reportCreditsModal" && (
               <ReportCreditsModal
                 onChange={onChangesReportCredit}
