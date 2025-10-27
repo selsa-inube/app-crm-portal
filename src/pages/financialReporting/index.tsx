@@ -73,7 +73,6 @@ const removeErrorByIdServices = (
 
 export const FinancialReporting = () => {
   const [data, setData] = useState({} as ICreditRequest);
-  const [showAttachments, setShowAttachments] = useState(false);
   const [attachDocuments, setAttachDocuments] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [collapse, setCollapse] = useState(false);
@@ -89,7 +88,6 @@ export const FinancialReporting = () => {
   const [document, setDocument] = useState<IListdataProps["data"]>([]);
 
   const [dataProspect, setDataProspect] = useState<IProspect>();
-  const [idProspect, setIdProspect] = useState("");
   const [pdfState, setPdfState] = useState({
     isGenerating: false,
     blob: null as Blob | null,
@@ -252,7 +250,6 @@ export const FinancialReporting = () => {
   };
 
   const handleOnAttach = () => {
-    setShowAttachments(true);
     setShowMenu(false);
   };
 
@@ -431,7 +428,7 @@ export const FinancialReporting = () => {
               </Stack>
               <StyledPageBreak />
               <StyledPageBreak />
-              {/* {attachDocuments && (
+              {attachDocuments && (
                 <ListModal
                   title="Ver Adjuntos"
                   handleClose={() => setAttachDocuments(false)}
@@ -440,17 +437,13 @@ export const FinancialReporting = () => {
                   isViewing={true}
                   dataDocument={document}
                 />
-              )} */}
+              )}
             </>
           </ContainerSections>
           {showGuarantee && (
             <OfferedGuaranteeModal
               handleClose={() => setShowGuarantee(false)}
               isMobile={isMobile}
-              // prospectData={dataProspect!}
-              // businessUnitPublicCode={businessUnitPublicCode}
-              // requestId={data.creditRequestId!}
-              // businessManagerCode={businessManagerCode}
             />
           )}
           {showMenu && isMobile && (

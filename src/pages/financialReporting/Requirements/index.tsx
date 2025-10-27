@@ -16,7 +16,6 @@ import {
 } from "./config";
 import { MappedRequirements, RequirementType } from "./types";
 import { errorMessages } from "../config";
-import { IPackagesOfRequirementsById } from "@src/services/requirementsPackages/types";
 import { getAllPackagesOfRequirementsById } from "@src/services/requirementsPackages/packagesOfRequirements";
 import { TraceDetailModal } from "@src/components/modals/TraceDetailModal";
 
@@ -52,9 +51,6 @@ export const Requirements = (props: IRequirementsProps) => {
     [],
   );
   const [error, setError] = useState(false);
-  const [rawRequirements, setRawRequirements] = useState<
-    IPackagesOfRequirementsById[]
-  >([]);
 
   useEffect(() => {
     const fetchRequirements = async () => {
@@ -68,9 +64,6 @@ export const Requirements = (props: IRequirementsProps) => {
           businessManagerCode,
           creditRequestCode,
         );
-        setRawRequirements(data);
-
-        console.log(data, "rawRequirements");
 
         if (!Array.isArray(data) || data.length === 0) {
           throw new Error("No hay requisitos disponibles.");

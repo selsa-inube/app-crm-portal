@@ -140,23 +140,12 @@ interface Action {
   content: (data: IEntries) => JSX.Element;
 }
 
-export const desktopActions = (
-  actionsApprovals: Action[],
-  handleNotificationClick?: (data: IEntries) => void,
-  handleErrorClick?: (data: IEntries) => void,
-) => {
+export const desktopActions = (actionsApprovals: Action[]) => {
   return actionsApprovals.map((action) => ({
     id: action.id,
     actionName: action.actionName,
     content: (data: IEntries) => {
-      const handleClick = () => {
-        if (action.id === approvalsConfig.ids.notifications) {
-          handleNotificationClick(data);
-        } else if (action.id === approvalsConfig.ids.error) {
-          handleErrorClick(data);
-        }
-      };
-      return <Icon {...action.content(data).props} onClick={handleClick} />;
+      return <Icon {...action.content(data).props} onClick={() => {}} />;
     },
   }));
 };
