@@ -88,6 +88,8 @@ function EditProductModal(props: EditProductModalProps) {
     prospectData,
   } = props;
 
+  const [showSuccessFlag, setShowSuccessFlag] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
   const [incrementType, setIncrementType] = useState<
     "value" | "percentage" | null
@@ -751,6 +753,7 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 value={formik.values.amortizationType}
                 fullwidth
+                disabled={isLoadingAmortizationTypes}
               />
               {showIncrementField && (
                 <Textfield
