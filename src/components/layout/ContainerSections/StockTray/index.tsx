@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MdOutlineChevronLeft, MdMenu, MdOutlineInfo } from "react-icons/md";
 import { Stack, Icon, Button } from "@inubekit/inubekit";
 
@@ -34,14 +33,7 @@ interface IStockTrayProps {
 
 export const StockTray = (props: IStockTrayProps) => {
   const { navigation, isMobile, actionButtons } = props;
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleInfo = () => {
-    setIsModalOpen(true);
-  };
-  const handleInfoModalClose = () => {
-    setIsModalOpen(false);
-  };
   const { disabledButton: canReject } = useValidateUseCase({
     useCase: getUseCaseValue("canReject"),
   });
@@ -94,7 +86,6 @@ export const StockTray = (props: IStockTrayProps) => {
                     appearance="primary"
                     size="16px"
                     cursorHover
-                    onClick={handleInfo}
                   />
                 )}
               </Stack>
@@ -105,7 +96,6 @@ export const StockTray = (props: IStockTrayProps) => {
                     appearance="primary"
                     size="16px"
                     cursorHover
-                    onClick={handleInfo}
                   />
                 )}
               </Stack>
@@ -127,7 +117,6 @@ export const StockTray = (props: IStockTrayProps) => {
                     appearance="primary"
                     size="16px"
                     cursorHover
-                    onClick={handleInfo}
                   />
                 )}
               </Stack>

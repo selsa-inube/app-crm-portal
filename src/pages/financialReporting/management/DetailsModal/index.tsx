@@ -3,6 +3,7 @@ import { Stack, useMediaQuery } from "@inubekit/inubekit";
 import { CardGray } from "@components/cards/CardGray";
 import { validationMessages } from "@validations/validationMessages";
 import { BaseModal } from "@components/modals/baseModal";
+import { ITraceType } from "@services/creditRequest/types";
 
 import { txtLabels } from "./config";
 

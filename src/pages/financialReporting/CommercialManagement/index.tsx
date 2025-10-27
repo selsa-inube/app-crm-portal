@@ -18,7 +18,6 @@ import {
   Divider,
   useMediaQuery,
   Button,
-  useFlag,
 } from "@inubekit/inubekit";
 import { MenuProspect } from "@components/navigation/MenuProspect";
 import {
@@ -44,7 +43,7 @@ import { CreditLimitModal } from "@pages/prospect/components/modals/CreditLimitM
 import { IncomeModal } from "@pages/prospect/components/modals/IncomeModal";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 
-import { titlesModal } from "../ToDo/config";
+import { titlesModal } from "./config/config";
 import { errorMessages } from "../config";
 import { incomeOptions, menuOptions, tittleOptions } from "./config/config";
 import {
@@ -102,8 +101,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
-  const [localProspectData, setLocalProspectData] =
-    useState<IProspect>(prospectData);
+
   const [internal, setInternal] = useState<IModeOfDisbursement | null>(null);
   const [external, setExternal] = useState<IModeOfDisbursement | null>(null);
   const [checkEntity, setCheckEntity] = useState<IModeOfDisbursement | null>(
@@ -134,7 +132,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   });
 
   const navigation = useNavigate();
-  const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 720px)");
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -148,11 +145,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
 
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-
-  useEffect(() => {
-    console.log("prospectData   ", prospectData);
-    setLocalProspectData(prospectData);
-  }, [prospectData]);
 
   const handleOpenModal = (modalName: string) => {
     setModalHistory((prevHistory) => [...prevHistory, modalName]);
@@ -357,23 +349,9 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     }
   };
 
-  const borrowerOptions =
-    borrowersProspect?.borrowers?.map((borrower) => ({
-      id: crypto.randomUUID(),
-      label: borrower.borrowerName,
-      value: borrower.borrowerName,
-    })) ?? [];
-
   useEffect(() => {
     setDataProspect(prospectData ? [prospectData] : []);
   }, [prospectData]);
-
-  const handleChangeIncome = (_name: string, value: string) => {
-    const index = borrowersProspect?.borrowers?.findIndex(
-      (borrower) => borrower.borrowerName === value,
-    );
-    setSelectedIndex(index ?? 0);
-  };
 
   useEffect(() => {
     if (selectedBorrower) {
@@ -765,8 +743,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   sentData={sentData}
                   setSentData={setSentData}
                   setRequestValue={setRequestValue}
-                  onProspectUpdate={(prospect) => {
-                    setLocalProspectData(prospect);
+                  onProspectUpdate={() => {
                     setRefreshKey((prev) => prev + 1);
                   }}
                   showAddButtons={false}

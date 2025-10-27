@@ -9,6 +9,7 @@ import info from "@assets/images/info.svg";
 import { IEntries } from "@components/data/TableBoard/types";
 
 import { approvalsConfig } from "./configApprovalTexts";
+import { IApprovals } from "../../Approvals/types";
 
 const handleData = (data: IEntries) => {
   console.log("function that receives data", data);

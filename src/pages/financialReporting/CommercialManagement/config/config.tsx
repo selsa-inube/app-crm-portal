@@ -432,3 +432,11 @@ export const tittleOptions = {
   descriptionError: "No se han podido guardar los cambios.",
   deductibleExpensesErrorTitle: "Error al cargar gastos descontables",
 };
+
+export const titlesModal = {
+  title: "Información",
+  subTitle: "¿Porque está deshabilitado?",
+  description:
+    "No cuentas con los privilegios necesarios para ejecutar esta acción.",
+  textButtonNext: "Entendido",
+};

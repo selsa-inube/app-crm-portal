@@ -418,22 +418,19 @@ export const FinancialReporting = () => {
                       />
                     </BlockPdfSection>
                   </Stack>
-                  <Stack
-                    direction="column"
-                    height={isMobile ? "auto" : "163px"}
-                  >
-                    <BlockPdfSection className="pdf-block">
-                      <Postingvouchers
-                        user={creditRequestCode!}
-                        id={creditRequestCode!}
-                        isMobile={isMobile}
-                      />
-                    </BlockPdfSection>
-                  </Stack>
-                  <StyledPageBreak />
-                  <StyledPageBreak />
                 </StyledScreenPrint>
               </Stack>
+              <Stack direction="column" height={isMobile ? "auto" : "163px"}>
+                <BlockPdfSection className="pdf-block">
+                  <Postingvouchers
+                    user={creditRequestCode!}
+                    id={creditRequestCode!}
+                    isMobile={isMobile}
+                  />
+                </BlockPdfSection>
+              </Stack>
+              <StyledPageBreak />
+              <StyledPageBreak />
               {/* {attachDocuments && (
                 <ListModal
                   title="Ver Adjuntos"
