@@ -147,16 +147,6 @@ export const StockTray = (props: IStockTrayProps) => {
           </Stack>
         </StyledPrint>
       )}
-      {/* {isModalOpen && (
-        <InfoModal
-          onClose={handleInfoModalClose}
-          title={privilegeCrediboard.title}
-          subtitle={privilegeCrediboard.subtitle}
-          description={privilegeCrediboard.description}
-          nextButtonText={privilegeCrediboard.nextButtonText}
-          isMobile={isMobile}
-        />
-      )} */}
     </Stack>
   );
 };
