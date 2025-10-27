@@ -7,6 +7,7 @@ import {
   useMediaQuery,
   Select,
   Textfield,
+  useFlag,
 } from "@inubekit/inubekit";
 import { useState, useEffect, useContext } from "react";
 
@@ -30,14 +31,19 @@ import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagemen
 import { validateIncrement } from "@services/prospect/validateIncrement";
 import { IValidateIncrementRequest } from "@services/prospect/validateIncrement/types";
 
-import { interestRateTypeMap } from "./config";
 import { ScrollableContainer } from "./styles";
 import {
+  interestRateTypeMap,
   termInMonthsOptions,
   amortizationTypeOptions,
   rateTypeOptions,
   VALIDATED_NUMBER_REGEX,
   messagesErrorValidations,
+  fieldLabels,
+  fieldPlaceholders,
+  validationMessages,
+  flagMessages,
+  REPAYMENT_STRUCTURES_WITH_INCREMENT,
   repaymentStructureMap,
 } from "./config";
 
@@ -56,24 +62,9 @@ interface EditProductModalProps {
   };
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
-
-interface IRuleDecision {
-  decisionId?: string;
-  typeDecision?: string;
-  value?: string | { from: number; to: number };
-  ruleDataType?: "Alphabetical" | "Numerical" | "Range" | "Monetary";
-  ruleName?: string;
-  howToSetTheDecision?: string;
-  coverage?: number;
-  effectiveFrom?: string;
-  validUntil?: string;
-}
-
-const REPAYMENT_STRUCTURES_WITH_INCREMENT = {
-  VALUE_INCREMENT: "Pagos valor de incremento",
-  PERCENTAGE_INCREMENT: "Pagos con porcentaje de incremento",
-};
 
 function EditProductModal(props: EditProductModalProps) {
   const {
@@ -86,10 +77,10 @@ function EditProductModal(props: EditProductModalProps) {
     businessUnitPublicCode,
     businessManagerCode,
     prospectData,
+    setShowErrorModal,
+    setMessageError,
   } = props;
 
-  const [showSuccessFlag, setShowSuccessFlag] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string>("");
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
   const [incrementType, setIncrementType] = useState<
     "value" | "percentage" | null
@@ -127,6 +118,7 @@ function EditProductModal(props: EditProductModalProps) {
 
   const isMobile = useMediaQuery("(max-width: 550px)");
   const { customerData } = useContext(CustomerContext);
+  const { addFlag } = useFlag();
 
   useEffect(() => {
     const loadPaymentOptions = async () => {
@@ -197,13 +189,11 @@ function EditProductModal(props: EditProductModalProps) {
           ],
         };
 
-        const response = await postBusinessUnitRules(
+        const decisions = await postBusinessUnitRules(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
         );
-
-        const decisions = response as unknown as IRuleDecision[];
 
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
           const options = decisions
@@ -220,7 +210,6 @@ function EditProductModal(props: EditProductModalProps) {
           setAmortizationTypesList(amortizationTypeOptions);
         }
       } catch (error) {
-        console.error("Error cargando tipos de amortización:", error);
         setAmortizationTypesList(amortizationTypeOptions);
       } finally {
         setIsLoadingAmortizationTypes(false);
@@ -246,13 +235,11 @@ function EditProductModal(props: EditProductModalProps) {
           ],
         };
 
-        const response = await postBusinessUnitRules(
+        const decisions = await postBusinessUnitRules(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
         );
-
-        const decisions = response as unknown as IRuleDecision[];
 
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
           const options = decisions
@@ -269,7 +256,6 @@ function EditProductModal(props: EditProductModalProps) {
           setRateTypesList(rateTypeOptions);
         }
       } catch (error) {
-        console.error("Error cargando tipos de tasa:", error);
         setRateTypesList(rateTypeOptions);
       } finally {
         setIsLoadingRateTypes(false);
@@ -360,13 +346,11 @@ function EditProductModal(props: EditProductModalProps) {
         ],
       };
 
-      const response = await postBusinessUnitRules(
+      const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
       );
-
-      const decisions = response as unknown as IRuleDecision[];
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
         const decision = decisions[0];
@@ -376,7 +360,7 @@ function EditProductModal(props: EditProductModalProps) {
 
           if (amount < from || amount > to) {
             setLoanAmountError(
-              `El monto ingresado es $${amount.toLocaleString()}. Debe estar entre $${from.toLocaleString()} y $${to.toLocaleString()}`,
+              validationMessages.loanAmountOutOfRange(amount, from, to),
             );
           }
         } else if (typeof decision.value === "string") {
@@ -384,16 +368,15 @@ function EditProductModal(props: EditProductModalProps) {
 
           if (!isNaN(maxAmount) && amount > maxAmount) {
             setLoanAmountError(
-              `El monto ingresado es $${amount.toLocaleString()}. El máximo permitido es $${maxAmount.toLocaleString()}`,
+              validationMessages.loanAmountExceedsMax(amount, maxAmount),
             );
           }
         }
       } else {
-        setLoanAmountError("No se pudo validar el monto del crédito");
+        setLoanAmountError(validationMessages.loanAmountValidationFailed);
       }
     } catch (error) {
-      console.error("Error validando monto del crédito:", error);
-      setLoanAmountError("Error al validar el monto del crédito");
+      setLoanAmountError(messagesErrorValidations.validateLoanAmount);
     }
   };
 
@@ -416,13 +399,11 @@ function EditProductModal(props: EditProductModalProps) {
         ],
       };
 
-      const response = await postBusinessUnitRules(
+      const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
       );
-
-      const decisions = response as unknown as IRuleDecision[];
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
         const decision = decisions[0];
@@ -432,7 +413,7 @@ function EditProductModal(props: EditProductModalProps) {
 
           if (term < from || term > to) {
             setLoanTermError(
-              `El plazo ingresado es ${term} meses. Debe estar entre ${from} y ${to} meses`,
+              validationMessages.loanTermOutOfRange(term, from, to),
             );
           }
         } else if (typeof decision.value === "string") {
@@ -441,17 +422,16 @@ function EditProductModal(props: EditProductModalProps) {
             const [min, max] = rangeParts.map(Number);
             if (!isNaN(min) && !isNaN(max) && (term < min || term > max)) {
               setLoanTermError(
-                `El plazo ingresado es ${term} meses. Debe estar entre ${min} y ${max} meses`,
+                validationMessages.loanTermOutOfRange(term, min, max),
               );
             }
           }
         }
       } else {
-        setLoanTermError("No se pudo validar el plazo");
+        setLoanTermError(validationMessages.loanTermValidationFailed);
       }
     } catch (error) {
-      console.error("Error validando plazo:", error);
-      setLoanTermError("Error al validar el plazo");
+      setLoanTermError(validationMessages.loanTermValidationError);
     }
   };
   const validateInterestRate = async (rate: number): Promise<void> => {
@@ -470,12 +450,15 @@ function EditProductModal(props: EditProductModalProps) {
 
       if (rate <= periodicInterestRateMin || rate >= periodicInterestRateMax) {
         setInterestRateError(
-          `La tasa ingresada es ${rate}% mensual. Debe estar entre ${periodicInterestRateMin.toFixed(2)}% y ${periodicInterestRateMax.toFixed(2)}% mensual`,
+          validationMessages.interestRateOutOfRange(
+            rate,
+            periodicInterestRateMin,
+            periodicInterestRateMax,
+          ),
         );
       }
     } catch (error) {
-      console.error("Error validando tasa de interés:", error);
-      setInterestRateError("Error al validar la tasa de interés");
+      setInterestRateError(validationMessages.interestRateValidationError);
     }
   };
 
@@ -524,7 +507,6 @@ function EditProductModal(props: EditProductModalProps) {
   ) => {
     formik.setFieldValue(name, value);
 
-    // Verificar si la opción seleccionada requiere campo de incremento
     if (value === REPAYMENT_STRUCTURES_WITH_INCREMENT.VALUE_INCREMENT) {
       setShowIncrementField(true);
       setIncrementType("value");
@@ -545,7 +527,10 @@ function EditProductModal(props: EditProductModalProps) {
     }
   };
 
-  const validateIncrementValue = async (value: string): Promise<void> => {
+  const validateIncrementValue = async (
+    value: string,
+    formik: FormikProps<FormikValues>,
+  ): Promise<void> => {
     if (!incrementType || !value) {
       setIncrementError("");
       return;
@@ -557,18 +542,17 @@ function EditProductModal(props: EditProductModalProps) {
       const numericValue = Number(value.replace(/[^0-9.]/g, ""));
 
       if (isNaN(numericValue) || numericValue <= 0) {
-        setIncrementError("El valor debe ser mayor a 0");
+        setIncrementError(validationMessages.incrementMustBePositive);
         return;
       }
 
-      // TODO: Llamar al servicio cuando esté disponible
       const payload: IValidateIncrementRequest = {
         lineOfCredit: prospectData.lineOfCredit,
         moneyDestination: prospectData.moneyDestination,
         amortizationType: formik.values.amortizationType,
         incrementType: incrementType,
         incrementValue: numericValue,
-        loanAmount: Number(ormik.values.creditAmount) || 0,
+        loanAmount: Number(formik.values.creditAmount) || 0,
       };
 
       const response = await validateIncrement(
@@ -580,21 +564,66 @@ function EditProductModal(props: EditProductModalProps) {
       if (!response.isValid) {
         if (incrementType === "value") {
           setIncrementError(
-            `El valor debe estar entre $${response.minValue.toLocaleString()} y $${response.maxValue.toLocaleString()}`,
+            validationMessages.incrementValueRange(
+              response.minValue,
+              response.maxValue,
+            ),
           );
         } else {
           setIncrementError(
-            `El porcentaje debe estar entre ${response.minValue}% y ${response.maxValue}%`,
+            validationMessages.incrementPercentageRange(
+              response.minValue,
+              response.maxValue,
+            ),
           );
         }
       } else {
         setIncrementError("");
       }
     } catch (error) {
-      console.error("Error validando incremento:", error);
-      setIncrementError("Error al validar el incremento");
+      setIncrementError(validationMessages.incrementValidationError);
     } finally {
       setIsValidatingIncrement(false);
+    }
+  };
+
+  const onSubmitHandler = (
+    values: FormikValues,
+    formikHelpers: FormikHelpers<FormikValues>,
+  ) => {
+    try {
+      const submitValues = {
+        ...values,
+        ...(showIncrementField &&
+          incrementValue && {
+            incrementValue: Number(incrementValue.replace(/[^0-9.]/g, "")),
+            incrementType: incrementType,
+          }),
+      };
+
+      onConfirm(submitValues);
+
+      addFlag({
+        title: flagMessages.changesSavedTitle,
+        description: flagMessages.changesSavedDescription,
+        appearance: "success",
+        duration: 5000,
+      });
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status?: number;
+        data?: { description?: string; code?: string };
+      };
+
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description =
+        code + (err?.message || "") + (err?.data?.description || "");
+
+      setShowErrorModal(true);
+      setMessageError(description);
+    } finally {
+      formikHelpers.setSubmitting(false);
     }
   };
 
@@ -619,6 +648,7 @@ function EditProductModal(props: EditProductModalProps) {
       ) => {
         onConfirm(values);
         formikHelpers.setSubmitting(false);
+        onSubmitHandler(values, formikHelpers);
       }}
     >
       {(formik) => (
@@ -642,7 +672,10 @@ function EditProductModal(props: EditProductModalProps) {
           finalDivider={true}
           width={isMobile ? "290px" : "500px"}
         >
-          <ScrollableContainer $smallScreen={isMobile}>
+          <ScrollableContainer
+            $smallScreen={isMobile}
+            showIncrementField={showIncrementField}
+          >
             <Stack
               direction="column"
               gap="24px"
@@ -651,7 +684,7 @@ function EditProductModal(props: EditProductModalProps) {
               margin="0px 0px 30px 0"
             >
               <Textfield
-                label="Monto del crédito"
+                label={fieldLabels.creditAmount}
                 name="creditAmount"
                 id="creditAmount"
                 placeholder="Monto solicitado"
@@ -759,13 +792,15 @@ function EditProductModal(props: EditProductModalProps) {
                 <Textfield
                   label={
                     incrementType === "value"
-                      ? "Valor de incremento"
-                      : "Porcentaje de incremento"
+                      ? fieldLabels.incrementValue
+                      : fieldLabels.incrementPercentage
                   }
                   name="incrementValue"
                   id="incrementValue"
                   placeholder={
-                    incrementType === "value" ? "Ej: 50000" : "Ej: 5"
+                    incrementType === "value"
+                      ? fieldPlaceholders.incrementValue
+                      : fieldPlaceholders.incrementPercentage
                   }
                   value={incrementValue}
                   status={
@@ -777,7 +812,9 @@ function EditProductModal(props: EditProductModalProps) {
                   }
                   message={
                     incrementError ||
-                    (isValidatingIncrement ? "Validando..." : "")
+                    (isValidatingIncrement
+                      ? validationMessages.incrementValidating
+                      : "")
                   }
                   iconBefore={
                     incrementType === "value" ? (
@@ -802,14 +839,13 @@ function EditProductModal(props: EditProductModalProps) {
                     const value = event.target.value;
                     setIncrementValue(value);
 
-                    // Validar después de un pequeño delay (debounce)
                     const timeoutId = setTimeout(() => {
-                      validateIncrementValue(value);
+                      validateIncrementValue(value, formik);
                     }, 500);
 
                     return () => clearTimeout(timeoutId);
                   }}
-                  onBlur={() => validateIncrementValue(incrementValue)}
+                  onBlur={() => validateIncrementValue(incrementValue, formik)}
                   fullwidth
                 />
               )}

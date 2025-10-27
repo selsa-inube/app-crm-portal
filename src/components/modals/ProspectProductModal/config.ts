@@ -156,16 +156,96 @@ export const messagesErrorValidations = {
 export const VALIDATED_NUMBER_REGEX = /[^0-9]/g;
 
 export const repaymentStructureMap: Record<string, string> = {
-  "FixedInstallment": "Cuota integral fija",
-  "ConstantAmortization": "Abonos fijos a capital",
-  "GeometricGradientRepayment": "Gradiente geométrico",
-  "ArithmeticGradientRepayment": "Gradiente aritmético",
+  FixedInstallment: "Cuota integral fija",
+  ConstantAmortization: "Abonos fijos a capital",
+  GeometricGradientRepayment: "Gradiente geométrico",
+  ArithmeticGradientRepayment: "Gradiente aritmético",
+  ValueIncrementPayments: "Pagos valor de incremento",
+  PercentageIncrementPayments: "Pagos con porcentaje de incremento",
 };
 
 export const interestRateTypeMap: Record<string, string> = {
-  "VariableInterestRate": "Tasa variable",
-  "FixedInterestRate": "Tasa fija",
+  VariableInterestRate: "Tasa variable",
+  FixedInterestRate: "Tasa fija",
 };
+
+export const fieldLabels = {
+  creditAmount: "Monto del crédito",
+  termInMonths: "Plazo en meses",
+  amortizationType: "Tipo de amortización",
+  incrementValue: "Valor de incremento",
+  incrementPercentage: "Porcentaje de incremento",
+  interestRate: "Tasa de interés",
+  rateType: "Tipo de tasa",
+  paymentMethod: "Método de pago",
+  paymentCycle: "Ciclo de pago",
+  firstPaymentCycle: "Primer ciclo de pago",
+  creditLine: "Línea de crédito",
+  ordinaryPayment: "Cuota ordinaria mensual",
+};
+
+export const fieldPlaceholders = {
+  incrementValue: "Ej: 50000",
+  incrementPercentage: "Ej: 5",
+  creditAmount: "Ingrese el monto",
+  interestRate: "Ingrese la tasa",
+};
+
+export const validationMessages = {
+  incrementRequired: "El valor de incremento es requerido",
+  incrementMustBePositive: "El valor debe ser mayor a 0",
+  incrementValidating: "Validando...",
+  incrementValueRange: (min: number, max: number) =>
+    `El valor debe estar entre $${min.toLocaleString()} y $${max.toLocaleString()}`,
+  incrementPercentageRange: (min: number, max: number) =>
+    `El porcentaje debe estar entre ${min}% y ${max}%`,
+  incrementValidationError: "Error al validar el incremento",
+  loanAmountOutOfRange: (amount: number, min: number, max: number) =>
+    `El monto ingresado es $${amount.toLocaleString()}. Debe estar entre $${min.toLocaleString()} y $${max.toLocaleString()}`,
+  loanAmountExceedsMax: (amount: number, max: number) =>
+    `El monto ingresado es $${amount.toLocaleString()}. El máximo permitido es $${max.toLocaleString()}`,
+  loanAmountValidationFailed: "No se pudo validar el monto del crédito",
+  loanAmountValidationError: "Error al validar el monto del crédito",
+  loanTermOutOfRange: (term: number, min: number, max: number) =>
+    `El plazo ingresado es ${term} meses. Debe estar entre ${min} y ${max} meses`,
+  loanTermValidationFailed: "No se pudo validar el plazo",
+  loanTermValidationError: "Error al validar el plazo",
+  interestRateOutOfRange: (rate: number, min: number, max: number) =>
+    `La tasa ingresada es ${rate}% mensual. Debe estar entre ${min.toFixed(2)}% y ${max.toFixed(2)}% mensual`,
+  interestRateValidationError: "Error al validar la tasa de interés",
+};
+
+export const flagMessages = {
+  changesSavedTitle: "Cambios guardados",
+  changesSavedDescription:
+    "Los cambios en el producto se han guardado correctamente",
+  saveErrorTitle: "Error al guardar cambios",
+  saveErrorDescription:
+    "No se pudieron guardar los cambios. Por favor, intenta nuevamente.",
+  validateIncrementErrorTitle: "Error al validar incremento",
+  validateIncrementErrorDescription: "Error al validar el incremento",
+  validateAmountErrorTitle: "Error al validar monto",
+  validateAmountErrorDescription:
+    "Error del servidor al validar el monto del crédito",
+  validateTermErrorTitle: "Error al validar plazo",
+  validateTermErrorDescription: "Error al validar el plazo",
+  validateRateErrorTitle: "Error al validar tasa",
+  validateRateErrorDescription: "Error al validar la tasa de interés",
+};
+
+export const errorModalMessages = {
+  saveChangesError: "No se pudieron guardar los cambios",
+  updateViewError: "Error actualizando vista",
+};
+
+export const REPAYMENT_STRUCTURES_WITH_INCREMENT = {
+  VALUE_INCREMENT: "Pagos valor de incremento",
+  PERCENTAGE_INCREMENT: "Pagos con porcentaje de incremento",
+} as const;
+
+export const DEBOUNCE_DELAY = 500;
+
+export const FLAG_DURATION = 5000;
 
 export {
   creditLineOptions,
