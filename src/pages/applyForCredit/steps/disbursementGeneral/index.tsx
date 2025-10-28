@@ -24,9 +24,9 @@ interface IDisbursementGeneralProps {
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
   handleTabChange: (id: string) => void;
-  rule?: string[];
   customerData?: ICustomerData;
   prospectSummaryData: IProspectSummaryById | undefined;
+  modesOfDisbursement: string[];
 }
 
 interface Tab {
@@ -44,12 +44,14 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     onFormValid,
     handleOnChange,
     handleTabChange,
-    rule,
+    modesOfDisbursement,
     customerData,
     prospectSummaryData,
   } = props;
 
   const [tabChanged, setTabChanged] = useState(false);
+
+  const [validTabs, setValidTabs] = useState<Tab[]>([]);
 
   const formik = useFormik({
     initialValues,
@@ -59,8 +61,6 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const userHasChangedTab = useRef(false);
-
-  const [validTabs, setValidTabs] = useState<Tab[]>([]);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -72,16 +72,9 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   }, [formik.values, handleOnChange]);
 
   const getTotalAmount = useCallback(() => {
-    const disbursementForms: (keyof IDisbursementGeneral)[] = [
-      "Internal_account",
-      "External_account",
-      "Certified_check",
-      "Business_check",
-      "Cash",
-    ];
-
-    return disbursementForms.reduce((total, key) => {
-      const disbursementData = formik.values[key];
+    return modesOfDisbursement.reduce((total, modeKey) => {
+      const disbursementData =
+        formik.values[modeKey as keyof IDisbursementGeneral];
       const amount =
         disbursementData &&
         typeof disbursementData === "object" &&
@@ -90,7 +83,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
           : 0;
       return total + Number(amount);
     }, 0);
-  }, [formik.values]);
+  }, [formik.values, modesOfDisbursement]);
 
   useEffect(() => {
     setTabChanged((prev) => !prev);
@@ -126,47 +119,27 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     formik.values.External_account?.bank,
     formik.values.External_account?.accountNumber,
     formik.values.External_account?.accountType,
-    formik.values.External_account?.bank,
   ]);
 
   const fetchTabs = useCallback(() => {
-    const validDisbursements = Array.isArray(rule) ? rule : [];
-
+    if (modesOfDisbursement.length === 0) return;
     const allTabs = Object.values(disbursemenTabs);
-
     const availableTabs = allTabs.filter((tab) =>
-      validDisbursements.includes(tab.id),
+      modesOfDisbursement.includes(tab.id),
     );
-
     setValidTabs(availableTabs);
-
     if (availableTabs.length === 1) {
       const tabId = availableTabs[0].id;
-      if (tabId === disbursemenTabs.internal.id) {
-        formik.setFieldValue("Internal_account.amount", initialValues.amount);
-      }
-      if (tabId === disbursemenTabs.external.id) {
-        formik.setFieldValue("External_account.amount", initialValues.amount);
-      }
-      if (tabId === disbursemenTabs.check.id) {
-        formik.setFieldValue("Certified_check.amount", initialValues.amount);
-      }
-      if (tabId === disbursemenTabs.management.id) {
-        formik.setFieldValue("Business_check.amount", initialValues.amount);
-      }
-      if (tabId === disbursemenTabs.cash.id) {
-        formik.setFieldValue("Cash.amount", initialValues.amount);
-      }
+      formik.setFieldValue(`${tabId}.amount`, initialValues.amount);
     }
-
     if (availableTabs.length > 0 && !userHasChangedTab.current) {
       handleTabChange(availableTabs[0].id);
     }
-  }, [handleTabChange, rule]);
+  }, [handleTabChange, modesOfDisbursement, initialValues.amount]);
 
   useEffect(() => {
     fetchTabs();
-  }, []);
+  }, [fetchTabs]);
 
   const handleManualTabChange = (tabId: string) => {
     userHasChangedTab.current = true;

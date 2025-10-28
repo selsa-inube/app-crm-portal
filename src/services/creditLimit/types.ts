@@ -85,3 +85,8 @@ export interface IMaximumCreditLimitByLineOfCredit {
   creditLimitCalculationMethodAbbreviatedName: string;
   creditLimitCalculationMethodValue: number;
 }
+
+export interface IMaximumCreditLimitByMoneyDestination {
+  creditLimitValue: number;
+  lineOfCredit: string;
+}

@@ -4,7 +4,6 @@ import { Stack, Text, Icon, Spinner } from "@inubekit/inubekit";
 
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
 import { Fieldset } from "@components/data/Fieldset";
-import { ErrorModal } from "@components/modals/ErrorModal";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
