@@ -92,7 +92,19 @@ export interface IGuaranteesCredit {
   pledges: IPledgesCredit;
   transactionOperation: "Insert";
 }
-
+export interface IMaximumCreditLimit {
+  customerCode: string;
+  dividends: number;
+  financialIncome: number;
+  leases: number;
+  lineOfCreditAbbreviatedName: string;
+  moneyDestination: string;
+  otherNonSalaryEmoluments: number;
+  pensionAllowances: number;
+  periodicSalary: number;
+  personalBusinessUtilities: number;
+  professionalFees: number;
+}
 export interface IModesOfDisbursementCredit {
   accountBankCode: string;
   accountBankName: string;

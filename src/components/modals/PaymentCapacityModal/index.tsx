@@ -16,6 +16,7 @@ import {
 
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
+import { IMaximumCreditLimit } from "@services/creditRequest/types";
 
 import { BaseModal } from "../baseModal";
 import { dataTabs, headers, paymentCapacityData } from "./config";
@@ -32,6 +33,7 @@ interface IPaymentCapacityModalProps {
   extraordinary: number;
   extraordinaryQuotes?: CurrentDataRow[];
   handleClose: () => void;
+  maximumCreditLimitData: IMaximumCreditLimit | null;
 }
 
 export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {

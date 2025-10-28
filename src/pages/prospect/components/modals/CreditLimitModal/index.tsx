@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
 import { Icon, Stack, Text } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { CreditLimitCard } from "@pages/simulateCredit/components/CreditLimitCard";
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
-import { IPaymentChannel } from "@services/creditRequest/types";
+import {
+  IMaximumCreditLimit,
+  IPaymentChannel,
+} from "@services/creditRequest/types";
 import { getGlobalLimitByMoneyDestination } from "@services/creditLimit/getGlobalLimitByMoneyDestination";
 import { IMaximumCreditLimitByMoneyDestination } from "@services/creditLimit/types";
+import { postBusinessUnitRules } from "@services/creditLimit/getMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit";
+import { AppContext } from "@context/AppContext";
 import { get } from "@mocks/utils/dataMock.service";
 
 import { dataCreditLimitModal } from "./config";
@@ -48,10 +53,14 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
   }, []);
 
   const [error, setError] = useState(false);
+  const { eventData } = useContext(AppContext);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] = useState<
     IMaximumCreditLimitByMoneyDestination[]
   >([]);
-
+  const [maximumCreditLimitData, setMaximumCreditLimitData] =
+    useState<IMaximumCreditLimit | null>(null);
+  const { userAccount } =
+    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,7 +85,47 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     businessManagerCode,
     dataMaximumCreditLimitService,
   ]);
+  useEffect(() => {
+    const fetchMaximumCreditLimit = async () => {
+      try {
+        const submitData: IMaximumCreditLimit = {
+          customerCode:
+            dataMaximumCreditLimitService.identificationDocumentNumber,
+          dividends: 0,
+          financialIncome: 0,
+          leases: 0,
+          lineOfCreditAbbreviatedName:
+            dataMaximumCreditLimitService.lineOfCreditAbbreviatedName || "",
+          moneyDestination: moneyDestination,
+          otherNonSalaryEmoluments: 0,
+          pensionAllowances: 0,
+          periodicSalary: 0,
+          personalBusinessUtilities: 0,
+          professionalFees: 0,
+        };
 
+        const data = await postBusinessUnitRules(
+          businessUnitPublicCode,
+          businessManagerCode,
+          userAccount,
+          submitData,
+        );
+        if (data) {
+          setMaximumCreditLimitData(data);
+        }
+      } catch (err) {
+        console.error("Error fetching maximum credit limit:", err);
+        setError(true);
+      }
+    };
+
+    fetchMaximumCreditLimit();
+  }, [
+    businessUnitPublicCode,
+    businessManagerCode,
+    moneyDestination,
+    dataMaximumCreditLimitService,
+  ]);
   return (
     <BaseModal
       title={dataCreditLimitModal.title}
@@ -116,6 +165,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 businessManagerCode={businessManagerCode}
                 dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+                maximumCreditLimitData={maximumCreditLimitData}
               />
             ))}
           </Stack>
