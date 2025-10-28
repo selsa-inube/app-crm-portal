@@ -653,7 +653,6 @@ export function SimulateCredit() {
           setValidateRequirements(data);
         }
       } catch (error) {
-        console.log("error: ", error);
         setErrorsManager((prev) => {
           return { ...prev, validateRequirements: true };
         });

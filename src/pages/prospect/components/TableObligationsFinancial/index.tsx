@@ -215,7 +215,7 @@ export const TableFinancialObligations = (
       }
     }
   };
-  console.log("initialValues: ", initialValues);
+
   const handleUpdate = async (
     updatedDebtor: ITableFinancialObligationsProps,
   ) => {

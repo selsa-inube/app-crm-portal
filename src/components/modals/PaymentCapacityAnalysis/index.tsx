@@ -36,7 +36,7 @@ export const PaymentCapacityAnalysis = (
     personalBusinessUtilities: sourcesOfIncome?.PersonalBusinessUtilities ?? 0,
     professionalFees: sourcesOfIncome?.ProfessionalFees ?? 0,
   };
-  console.log("professionalFees: ", sourcesOfIncome?.ProfessionalFees ?? 0);
+
   const [currentTab, setCurrentTab] = useState("general");
   const [showModal, setShowModal] = useState(false);
   const [modalInitialValues, setModalInitialValues] = useState<{
