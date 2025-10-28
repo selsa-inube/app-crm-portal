@@ -8,6 +8,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
 
 import { ISourcesOfIncomeState } from "../../types";
+import { IProspect } from "@src/services/prospect/types";
 
 interface ISourcesOfIncomeProps {
   isMobile: boolean;
@@ -16,6 +17,7 @@ interface ISourcesOfIncomeProps {
   initialValues: ISourcesOfIncomeState;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  prospectData: IProspect | undefined;
   handleOnChange: (newState: Partial<ISourcesOfIncomeState>) => void;
   isLoadingCreditLimit?: boolean;
 }
@@ -28,6 +30,7 @@ export function SourcesOfIncome({
   businessManagerCode,
   handleOnChange,
   isLoadingCreditLimit,
+  prospectData,
 }: ISourcesOfIncomeProps) {
   const [localData, setLocalData] = useState<IIncomeSources | null>(null);
   const hasInitialized = useRef(false);
@@ -74,6 +77,7 @@ export function SourcesOfIncome({
           showEdit
           disabled
           isLoadingCreditLimit={isLoadingCreditLimit}
+          prospectData={prospectData}
         />
       </Stack>
     </Fieldset>

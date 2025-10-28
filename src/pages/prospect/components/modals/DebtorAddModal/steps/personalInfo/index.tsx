@@ -8,6 +8,7 @@ import {
   Select,
   Input,
   Phonefield,
+  Textfield,
 } from "@inubekit/inubekit";
 
 import {
@@ -32,6 +33,7 @@ export interface IAddBorrowedProps {
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IAddBorrowed) => void;
 }
+
 export const AddBorrower = (props: IAddBorrowedProps) => {
   const { initialValues, AutoCompleted, onFormValid, handleOnChange } = props;
 
@@ -83,6 +85,27 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
     onFormValid(formik.isValid);
   }, [formik.isValid, onFormValid]);
 
+  useEffect(() => {
+    if (MockTipeOfDocument.length === 1) {
+      const onlyOption = MockTipeOfDocument[0];
+      formik.setFieldValue("tipeOfDocument", onlyOption.value);
+    }
+  }, [MockTipeOfDocument]);
+
+  useEffect(() => {
+    if (MockTipeOfSex.length === 1) {
+      const onlyOption = MockTipeOfSex[0];
+      formik.setFieldValue("sex", onlyOption.value);
+    }
+  }, [MockTipeOfSex]);
+
+  useEffect(() => {
+    if (MockTipeOfFamily.length === 1) {
+      const onlyOption = MockTipeOfFamily[0];
+      formik.setFieldValue("relation", onlyOption.value);
+    }
+  }, [MockTipeOfFamily]);
+
   return (
     <Stack direction="column">
       <Grid
@@ -90,18 +113,33 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
         autoRows="auto"
         gap="20px"
       >
-        <Select
-          name="tipeOfDocument"
-          id="tipeOfDocument"
-          label={dataAddModal.labelTypeDocument}
-          placeholder={dataAddModal.placeHolderSelect}
-          options={MockTipeOfDocument}
-          onChange={(name, value) => formik.setFieldValue(name, value)}
-          onBlur={formik.handleBlur}
-          value={formik.values.tipeOfDocument}
-          size="compact"
-          fullwidth
-        />
+        {MockTipeOfDocument.length === 1 ? (
+          <Textfield
+            name="tipeOfDocument"
+            id="tipeOfDocument"
+            label={dataAddModal.labelTypeDocument}
+            placeholder={dataAddModal.placeHolderSelect}
+            value={MockTipeOfDocument[0]?.label || ""}
+            size="compact"
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            name="tipeOfDocument"
+            id="tipeOfDocument"
+            label={dataAddModal.labelTypeDocument}
+            placeholder={dataAddModal.placeHolderSelect}
+            options={MockTipeOfDocument}
+            onChange={(name, value) => formik.setFieldValue(name, value)}
+            onBlur={formik.handleBlur}
+            value={formik.values.tipeOfDocument}
+            size="compact"
+            fullwidth
+          />
+        )}
+
         <Input
           name="documentNumber"
           id="documentNumber"
@@ -114,6 +152,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           size="compact"
           fullwidth
         />
+
         <Input
           name="firstName"
           id="firstName"
@@ -127,6 +166,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           readOnly={AutoCompleted}
           fullwidth
         />
+
         <Input
           name="lastName"
           id="lastName"
@@ -140,6 +180,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           readOnly={AutoCompleted}
           fullwidth
         />
+
         <Input
           name="email"
           id="email"
@@ -155,6 +196,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           readOnly={AutoCompleted}
           fullwidth
         />
+
         <Phonefield
           name="phone"
           id="phone"
@@ -167,18 +209,33 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           readOnly={AutoCompleted}
           fullwidth
         />
-        <Select
-          name="sex"
-          id="sex"
-          label={dataAddModal.labelSex}
-          placeholder={dataAddModal.placeHolderSelect}
-          options={MockTipeOfSex}
-          onChange={(name, value) => formik.setFieldValue(name, value)}
-          onBlur={formik.handleBlur}
-          value={formik.values.sex}
-          size="compact"
-          fullwidth
-        />
+        {MockTipeOfSex.length === 1 ? (
+          <Textfield
+            name="sex"
+            id="sex"
+            label={dataAddModal.labelSex}
+            placeholder={dataAddModal.placeHolderSelect}
+            value={MockTipeOfSex[0]?.label || ""}
+            size="compact"
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            name="sex"
+            id="sex"
+            label={dataAddModal.labelSex}
+            placeholder={dataAddModal.placeHolderSelect}
+            options={MockTipeOfSex}
+            onChange={(name, value) => formik.setFieldValue(name, value)}
+            onBlur={formik.handleBlur}
+            value={formik.values.sex}
+            size="compact"
+            fullwidth
+          />
+        )}
+
         <Input
           name="age"
           id="age"
@@ -192,18 +249,32 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           readOnly={AutoCompleted}
           fullwidth
         />
-        <Select
-          name="relation"
-          id="relation"
-          label={dataAddModal.labelRelation}
-          placeholder={dataAddModal.placeHolderSelect}
-          options={MockTipeOfFamily}
-          onChange={(name, value) => formik.setFieldValue(name, value)}
-          onBlur={formik.handleBlur}
-          value={formik.values.relation}
-          size="compact"
-          fullwidth
-        />
+        {MockTipeOfFamily.length === 1 ? (
+          <Textfield
+            name="relation"
+            id="relation"
+            label={dataAddModal.labelRelation}
+            placeholder={dataAddModal.placeHolderSelect}
+            value={MockTipeOfFamily[0]?.label || ""}
+            size="compact"
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            name="relation"
+            id="relation"
+            label={dataAddModal.labelRelation}
+            placeholder={dataAddModal.placeHolderSelect}
+            options={MockTipeOfFamily}
+            onChange={(name, value) => formik.setFieldValue(name, value)}
+            onBlur={formik.handleBlur}
+            value={formik.values.relation}
+            size="compact"
+            fullwidth
+          />
+        )}
       </Grid>
     </Stack>
   );
