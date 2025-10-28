@@ -28,6 +28,7 @@ import {
   prospectStates,
   tittleOptions,
 } from "./config/config";
+import { getSearchAllModesOfDisbursementTypes } from "@src/services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -61,6 +62,7 @@ export function ApplyForCredit() {
   const navigate = useNavigate();
 
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
+  const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
   const [prospectData, setProspectData] = useState<IProspect>({
     prospectId: "",
     prospectCode: "",
@@ -518,6 +520,48 @@ export function ApplyForCredit() {
   }, [businessUnitPublicCode]);
 
   useEffect(() => {
+    const fetchDisbursementData = async () => {
+      if (
+        !prospectData.borrowers?.[0]?.borrowerIdentificationNumber ||
+        !prospectData.creditProducts?.[0]?.lineOfCreditAbbreviatedName ||
+        !prospectData.moneyDestinationAbbreviatedName
+      ) {
+        return;
+      }
+
+      try {
+        const creditData = await getSearchAllModesOfDisbursementTypes(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData.borrowers[0].borrowerIdentificationNumber,
+          prospectData.creditProducts[0].lineOfCreditAbbreviatedName,
+          prospectData.moneyDestinationAbbreviatedName,
+          prospectData.creditProducts[0].loanAmount.toString(),
+        );
+
+        if (
+          creditData?.modesOfDisbursementTypes &&
+          creditData.modesOfDisbursementTypes.length > 0
+        ) {
+          setModesOfDisbursement(creditData.modesOfDisbursementTypes);
+          setCodeError(null);
+          setAddToFix([]);
+        } else {
+          setModesOfDisbursement([]);
+          setCodeError(1014);
+          setAddToFix(["ModeOfDisbursementType"]);
+        }
+      } catch (error) {
+        setModesOfDisbursement([]);
+        setCodeError(1014);
+        setAddToFix(["ModeOfDisbursementType"]);
+      }
+    };
+
+    fetchDisbursementData();
+  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
+
+  useEffect(() => {
     if (!customerData || !customerPublicCode) return;
     fetchProspectData();
   }, [customerData, fetchProspectData]);
@@ -753,6 +797,7 @@ export function ApplyForCredit() {
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
         setMessageError={setMessageError}
+        modesOfDisbursement={modesOfDisbursement}
       />
     </>
   );
