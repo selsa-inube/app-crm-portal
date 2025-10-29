@@ -47,7 +47,7 @@ const BusinessUnitChange = (props: BusinessUnitChangeProps) => {
               </StyledLi>
               {index !== businessUnits.length - 1 && (
                 <Stack width="100%" justifyContent="center">
-                  <Stack width="95%">
+                  <Stack width="95%" padding="3px">
                     <Divider />
                   </Stack>
                 </Stack>
