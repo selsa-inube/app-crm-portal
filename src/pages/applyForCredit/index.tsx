@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -16,6 +16,7 @@ import {
 } from "@services/prospect/types";
 import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
 import { IDocumentsCredit } from "@services/creditRequest/types";
+import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
@@ -27,6 +28,7 @@ import {
   prospectStates,
   tittleOptions,
 } from "./config/config";
+import { getSearchAllModesOfDisbursementTypes } from "@src/services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -57,7 +59,10 @@ export function ApplyForCredit() {
       "",
   };
 
+  const navigate = useNavigate();
+
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
+  const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
   const [prospectData, setProspectData] = useState<IProspect>({
     prospectId: "",
     prospectCode: "",
@@ -207,6 +212,7 @@ export function ApplyForCredit() {
     observations: { relevantObservations: "" },
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [guaranteesRequired, setGuaranteesRequired] = useState<string[]>([]);
 
   const hasBorrowers = Object.keys(prospectData?.borrowers || {}).length;
 
@@ -224,11 +230,11 @@ export function ApplyForCredit() {
   );
 
   const steps = useMemo(() => {
-    if (!valueRule) return Object.values(stepsFilingApplication);
-    const hideMortgage = valueRule["ValidationGuarantee"]?.includes("Mortgage");
-    const hidePledge = valueRule["ValidationGuarantee"]?.includes("Pledge");
-    const hasCoborrower =
-      valueRule["ValidationCoborrower"]?.includes("Codeudor") ?? false;
+    if (!guaranteesRequired) return Object.values(stepsFilingApplication);
+    const hideMortgage = guaranteesRequired.includes("Mortgage");
+    const hidePledge = guaranteesRequired.includes("Pledge");
+    const hasCoborrower = guaranteesRequired.includes("Coborower") ?? false;
+    const hasBond = guaranteesRequired.includes("Bond") ?? false;
 
     return Object.values(stepsFilingApplication)
       .map((step) => {
@@ -247,12 +253,12 @@ export function ApplyForCredit() {
           return false;
         if (step.id === 4 && hideMortgage) return false;
         if (step.id === 5 && hidePledge) return false;
-        if (step.id === 6 && (hasBorrowers >= 1 || bondValue === 0)) {
+        if (step.id === 6 && (hasBorrowers >= 1 || hasBond)) {
           return false;
         }
         return true;
       });
-  }, [valueRule, hasBorrowers, bondValue]);
+  }, [guaranteesRequired, hasBorrowers, bondValue]);
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsFilingApplication.generalInformation.id,
@@ -349,7 +355,7 @@ export function ApplyForCredit() {
   submitData.append("documents", JSON.stringify(metadataArray));
 
   const guarantees = [];
-  if (getRuleByName("ValidationGuarantee")?.includes("Mortgage")) {
+  if (guaranteesRequired.includes("Mortgage")) {
     guarantees.push({
       guaranteeType: "mortgage",
       transactionOperation: "Insert",
@@ -364,7 +370,7 @@ export function ApplyForCredit() {
       ],
     });
   }
-  if (getRuleByName("ValidationGuarantee")?.includes("Pledge")) {
+  if (guaranteesRequired.includes("Pledge")) {
     guarantees.push({
       guaranteeType: "pledge",
       transactionOperation: "Insert",
@@ -514,6 +520,48 @@ export function ApplyForCredit() {
   }, [businessUnitPublicCode]);
 
   useEffect(() => {
+    const fetchDisbursementData = async () => {
+      if (
+        !prospectData.borrowers?.[0]?.borrowerIdentificationNumber ||
+        !prospectData.creditProducts?.[0]?.lineOfCreditAbbreviatedName ||
+        !prospectData.moneyDestinationAbbreviatedName
+      ) {
+        return;
+      }
+
+      try {
+        const creditData = await getSearchAllModesOfDisbursementTypes(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData.borrowers[0].borrowerIdentificationNumber,
+          prospectData.creditProducts[0].lineOfCreditAbbreviatedName,
+          prospectData.moneyDestinationAbbreviatedName,
+          prospectData.creditProducts[0].loanAmount.toString(),
+        );
+
+        if (
+          creditData?.modesOfDisbursementTypes &&
+          creditData.modesOfDisbursementTypes.length > 0
+        ) {
+          setModesOfDisbursement(creditData.modesOfDisbursementTypes);
+          setCodeError(null);
+          setAddToFix([]);
+        } else {
+          setModesOfDisbursement([]);
+          setCodeError(1014);
+          setAddToFix(["ModeOfDisbursementType"]);
+        }
+      } catch (error) {
+        setModesOfDisbursement([]);
+        setCodeError(1014);
+        setAddToFix(["ModeOfDisbursementType"]);
+      }
+    };
+
+    fetchDisbursementData();
+  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
+
+  useEffect(() => {
     if (!customerData || !customerPublicCode) return;
     fetchProspectData();
   }, [customerData, fetchProspectData]);
@@ -606,6 +654,32 @@ export function ApplyForCredit() {
     }
   }, [customerData, prospectData, businessUnitPublicCode]);
 
+  const fetchGuaranteesRequired = useCallback(async () => {
+    try {
+      const response = await getGuaranteesRequiredByCreditProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        prospectCode || "",
+      );
+
+      if (response?.warranty) {
+        const warrantiesArray = response.warranty
+          .split(",")
+          .map((item: string) => item.trim());
+        setGuaranteesRequired(warrantiesArray);
+      }
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(dataSubmitApplication.error);
+    }
+  }, [businessUnitPublicCode, businessManagerCode, prospectCode]);
+
+  useEffect(() => {
+    if (prospectData?.prospectId) {
+      fetchGuaranteesRequired();
+    }
+  }, [prospectData?.prospectId, fetchGuaranteesRequired]);
+
   useEffect(() => {
     if (customerData && prospectData) {
       fetchValidationRulesData();
@@ -645,6 +719,7 @@ export function ApplyForCredit() {
 
   function handleSubmitClick() {
     setSentModal(true);
+    navigate(`/credit/credit-requests`);
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
@@ -722,6 +797,7 @@ export function ApplyForCredit() {
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
         setMessageError={setMessageError}
+        modesOfDisbursement={modesOfDisbursement}
       />
     </>
   );

@@ -78,7 +78,7 @@ const dataInputs = {
   placeHolderFee: "Valor de la cuota",
   labelBalance: "Saldo",
   placeHolderBalance: "Valor total",
-  labelId: "Id",
+  labelId: "Número de obligación",
   placeHolderId: "Identificador",
   labelFeePaid: "Cuotas pagadas",
   palaceHolderFeePaid: "Cuotas pagadas",

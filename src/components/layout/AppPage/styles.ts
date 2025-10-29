@@ -13,6 +13,10 @@ interface IStyledFooter {
   showNav: boolean;
 }
 
+interface IStyledLogo {
+  onTheFooter: boolean;
+}
+
 export const StyledAppPage = styled.div`
   display: inherit;
   box-sizing: border-box;
@@ -35,14 +39,15 @@ export const StyledMain = styled.main`
 `;
 
 export const StyledContentImg = styled(Link)`
-  width: 100px;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
-export const StyledLogo = styled.img`
-  with: 100%;
-  height: 100%;
+export const StyledLogo = styled.img<IStyledLogo>`
+  max-width: 130px;
+  justify-self: center;
+  height: ${({ onTheFooter }) => (onTheFooter ? "50px" : "100%")};
   object-fit: contain;
 `;
 
@@ -103,6 +108,10 @@ export const StyledFooter = styled.footer<IStyledFooter>`
   height: 50px;
   top: -50px;
   position: relative;
+
+  & > a {
+    height: 40px;
+  }
 `;
 
 export const StyledPrint = styled.div`

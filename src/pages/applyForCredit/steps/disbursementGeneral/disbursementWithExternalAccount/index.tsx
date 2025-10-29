@@ -313,6 +313,20 @@ export function DisbursementWithExternalAccount(
     fetchBanks();
   }, [initialValues]);
 
+  useEffect(() => {
+    if (banks.length === 1) {
+      const onlyBank = banks[0];
+      formik.setFieldValue(`${optionNameForm}.bank`, onlyBank.value);
+    }
+  }, [banks]);
+
+  useEffect(() => {
+    if (typeAccount.length === 1) {
+      const onlyType = typeAccount[0];
+      formik.setFieldValue(`${optionNameForm}.accountType`, onlyType.value);
+    }
+  }, [typeAccount]);
+
   return (
     <Stack
       direction="column"
@@ -321,32 +335,39 @@ export function DisbursementWithExternalAccount(
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Textfield
-          id="amount"
-          name="amount"
-          label={disbursementGeneral.label}
-          placeholder={disbursementGeneral.place}
-          iconBefore={
-            <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
-          }
-          size="compact"
-          value={validateCurrencyField("amount", formik, false, optionNameForm)}
-          onChange={(e) => {
-            handleChangeWithCurrency(formik, e, optionNameForm);
-          }}
-          onBlur={() => {
-            formik.setFieldTouched(`${optionNameForm}.amount`, true);
-            formik.handleBlur(`amount`);
-          }}
-          status={
-            formik.touched[optionNameForm]?.amount && !isDisabled
-              ? "invalid"
-              : undefined
-          }
-          readOnly={isAmountReadOnly}
-          message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
-          fullwidth
-        />
+        <Stack width={isMobile ? "100%" : "498px"}>
+          <Textfield
+            id="amount"
+            name="amount"
+            label={disbursementGeneral.label}
+            placeholder={disbursementGeneral.place}
+            iconBefore={
+              <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />
+            }
+            size="compact"
+            value={validateCurrencyField(
+              "amount",
+              formik,
+              false,
+              optionNameForm,
+            )}
+            onChange={(e) => {
+              handleChangeWithCurrency(formik, e, optionNameForm);
+            }}
+            onBlur={() => {
+              formik.setFieldTouched(`${optionNameForm}.amount`, true);
+              formik.handleBlur(`amount`);
+            }}
+            status={
+              formik.touched[optionNameForm]?.amount && !isDisabled
+                ? "invalid"
+                : undefined
+            }
+            readOnly={isAmountReadOnly}
+            message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
+            fullwidth
+          />
+        </Stack>
         <Stack gap="10px" direction="row" alignItems="center">
           <Checkbox
             id={"featureCheckbox"}
@@ -403,33 +424,62 @@ export function DisbursementWithExternalAccount(
           <Divider dashed />
         </>
       )}
-      <Stack direction="row" gap="16px">
-        <Select
-          id={`${optionNameForm}.bank`}
-          name={`${optionNameForm}.bank`}
-          label={disbursemenOptionAccount.labelBank}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={banks}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.bank`, value)
-          }
-          value={formik.values[optionNameForm]?.bank || ""}
-          fullwidth
-        />
-        <Select
-          id={"accountType"}
-          name={`${optionNameForm}.accountType`}
-          label={disbursemenOptionAccount.labelAccountType}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={typeAccount}
-          onBlur={formik.handleBlur}
-          onChange={(name, value) => formik.setFieldValue(name, value)}
-          value={formik.values[optionNameForm]?.accountType || ""}
-          fullwidth
-        />
+      <Stack direction={isMobile ? "column" : "row"} gap="16px">
+        {banks.length === 1 ? (
+          <Textfield
+            id={`${optionNameForm}.bank`}
+            name={`${optionNameForm}.bank`}
+            label={disbursemenOptionAccount.labelBank}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            value={banks[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            id={`${optionNameForm}.bank`}
+            name={`${optionNameForm}.bank`}
+            label={disbursemenOptionAccount.labelBank}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={banks}
+            onBlur={formik.handleBlur}
+            onChange={(_, value) =>
+              formik.setFieldValue(`${optionNameForm}.bank`, value)
+            }
+            value={formik.values[optionNameForm]?.bank || ""}
+            fullwidth
+          />
+        )}
+        {typeAccount.length === 1 ? (
+          <Textfield
+            id={"accountType"}
+            name={`${optionNameForm}.accountType`}
+            label={disbursemenOptionAccount.labelAccountType}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            value={typeAccount[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            id={"accountType"}
+            name={`${optionNameForm}.accountType`}
+            label={disbursemenOptionAccount.labelAccountType}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={typeAccount}
+            onBlur={formik.handleBlur}
+            onChange={(name, value) => formik.setFieldValue(name, value)}
+            value={formik.values[optionNameForm]?.accountType || ""}
+            fullwidth
+          />
+        )}
+
         <Input
           id={"accountNumber"}
           name={`${optionNameForm}.accountNumber`}
@@ -440,7 +490,7 @@ export function DisbursementWithExternalAccount(
           onBlur={formik.handleBlur}
           fullwidth={true}
           size="compact"
-        ></Input>
+        />
       </Stack>
       <Textarea
         id={"description"}

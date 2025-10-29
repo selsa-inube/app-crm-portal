@@ -87,6 +87,7 @@ interface ApplyForCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  modesOfDisbursement: string[];
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
@@ -125,6 +126,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     addToFix,
     businessUnitPublicCode,
     setMessageError,
+    modesOfDisbursement,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -162,7 +164,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin="0 auto"
+          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
@@ -348,8 +350,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     data={prospectData}
                     customerData={customerData}
                     identificationNumber={customerData?.publicCode || ""}
-                    rule={getRuleByName("ModeOfDisbursementType")}
                     prospectSummaryData={prospectSummaryData}
+                    modesOfDisbursement={modesOfDisbursement}
                   />
                 )}
               {currentStepsNumber &&

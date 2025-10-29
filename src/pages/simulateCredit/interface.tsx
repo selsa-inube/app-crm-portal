@@ -28,6 +28,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
+import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -143,6 +144,7 @@ interface SimulateCreditUIProps {
   businessManagerCode: string;
   allowToContinue: boolean;
   handleModalTryAgain: () => void;
+  paymentChannel: IResponsePaymentDatesChannel[] | null;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -202,6 +204,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     isLoadingCreditLimit,
     allowToContinue,
     handleModalTryAgain,
+    paymentChannel,
   } = props;
 
   return (
@@ -434,6 +437,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
+                      prospectData={prospectData}
                     />
                   )}
                 {currentStepsNumber &&
@@ -455,6 +459,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       creditLimitData={creditLimitData}
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
+                      prospectData={prospectData}
                     />
                   )}
                 {currentStepsNumber &&
@@ -509,6 +514,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       requestValue={requestValue}
                       setRequestValue={setRequestValue}
                       obligationPayments={obligationPayments}
+                      paymentChannel={paymentChannel}
                     />
                   )}
                 {currentStepsNumber &&
@@ -558,6 +564,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   dataMaximumCreditLimitService={dataMaximumCreditLimitService}
                   businessUnitPublicCode={businessUnitPublicCode}
                   businessManagerCode={businessManagerCode}
+                  moneyDestination={formData.selectedDestination}
                 />
               )}
               {isCreditLimitWarning && (

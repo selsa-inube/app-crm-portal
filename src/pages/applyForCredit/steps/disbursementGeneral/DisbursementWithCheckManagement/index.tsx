@@ -280,7 +280,7 @@ export function DisbursementWithCheckManagement(
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Stack width="498px">
+        <Stack>
           <Textfield
             iconBefore={
               <MdOutlineAttachMoney color={inube.palette.neutralAlpha.N900A} />

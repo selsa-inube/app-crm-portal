@@ -5,6 +5,7 @@ import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
+import { IProspect } from "@services/prospect/types";
 
 import { dataIncomeModal } from "./config";
 import { IIncome } from "../../SourceIncome/types";
@@ -27,6 +28,7 @@ interface IncomeModalProps {
   creditLimitData?: IIncomeSources | undefined;
   publicCode?: string;
   businessManagerCode: string;
+  prospectData: IProspect | undefined;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
@@ -42,6 +44,7 @@ export function IncomeModal(props: IncomeModalProps) {
     customerData,
     publicCode,
     businessManagerCode,
+    prospectData,
   } = props;
 
   const [formData, setFormData] = useState(initialValues);
@@ -116,6 +119,7 @@ export function IncomeModal(props: IncomeModalProps) {
         publicCode={publicCode || ""}
         businessUnitPublicCode={businessUnitPublicCode}
         businessManagerCode={businessManagerCode}
+        prospectData={prospectData}
       />
     </BaseModal>
   );

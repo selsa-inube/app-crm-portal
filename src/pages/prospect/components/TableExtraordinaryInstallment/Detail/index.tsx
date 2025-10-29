@@ -9,10 +9,11 @@ import InfoModal from "../../InfoModal";
 
 interface IDetailprops {
   handleDelete: () => void;
+  handleEdit: () => void;
 }
 
 export function Detail(props: IDetailprops) {
-  const { handleDelete } = props;
+  const { handleDelete, handleEdit } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
     useCase: getUseCaseValue("canEditCreditRequest"),
@@ -33,10 +34,13 @@ export function Detail(props: IDetailprops) {
           size="16px"
           cursorHover
           appearance={item.appearance}
-          onClick={() =>
-            item.id === "delete" &&
-            (canEditCreditRequest ? handleInfo() : handleDelete())
-          }
+          onClick={() => {
+            if (item.id === "delete") {
+              canEditCreditRequest ? handleInfo() : handleDelete();
+            } else if (item.id === "edit") {
+              canEditCreditRequest ? handleInfo() : handleEdit();
+            }
+          }}
         />
       ))}
       {isModalOpen ? (

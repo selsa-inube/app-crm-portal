@@ -150,6 +150,7 @@ export type CreditRequestParams = {
   creditRequestCode?: string;
   clientIdentificationNumber?: string;
   textInSearch?: string;
+  stage?: string;
 };
 
 export interface ICreditRequests {

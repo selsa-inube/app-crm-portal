@@ -3,65 +3,40 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { IGuaranteesRequiredByCreditProspect } from "../types";
 
-import { CreditRequestParams, ICreditRequest } from "../types";
-import { mapCreditRequestToEntities } from "./mapper";
-
-export const getCreditRequestByCode = async (
+export const getGuaranteesRequiredByCreditProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  userAccount: string,
-  params: CreditRequestParams,
-): Promise<ICreditRequest[]> => {
+  prospectCode: string,
+): Promise<IGuaranteesRequiredByCreditProspect | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-      const queryParams = new URLSearchParams();
-
-      if (params.creditRequestCode) {
-        queryParams.set("creditRequestCode", params.creditRequestCode);
-      }
-
-      if (params.clientIdentificationNumber) {
-        queryParams.set(
-          "clientIdentificationNumber",
-          params.clientIdentificationNumber,
-        );
-      }
-
-      if (params.textInSearch) {
-        queryParams.set("textInSearch", params.textInSearch);
-      }
-
-      if (params.stage) {
-        queryParams.set("stage", params.stage);
-      }
 
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "SearchAllCreditRequestsInProgress",
+          "X-Action": "GetGuaranteesRequiredByCreditProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          "x-user-name": userAccount,
           "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests?${queryParams.toString()}`,
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects/${prospectCode}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return [];
+        return null;
       }
 
       const data = await res.json();
@@ -74,11 +49,7 @@ export const getCreditRequestByCode = async (
         };
       }
 
-      const normalizedCredit = Array.isArray(data)
-        ? mapCreditRequestToEntities(data)
-        : [];
-
-      return normalizedCredit;
+      return data;
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {
@@ -88,11 +59,11 @@ export const getCreditRequestByCode = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudieron obtener los procesos de consulta.",
+          "Todos los intentos fallaron. No se pudo obtener las garantías de la solicitud de crédito.",
         );
       }
     }
   }
 
-  return [];
+  return null;
 };

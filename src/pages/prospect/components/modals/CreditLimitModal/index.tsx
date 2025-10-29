@@ -1,11 +1,13 @@
-import { useEffect } from "react";
-import { Stack, Text } from "@inubekit/inubekit";
+import { useEffect, useState } from "react";
+import { MdErrorOutline } from "react-icons/md";
+import { Icon, Stack, Text } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { CreditLimitCard } from "@pages/simulateCredit/components/CreditLimitCard";
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { IPaymentChannel } from "@services/creditRequest/types";
-import { mockCreditLimit } from "@mocks/add-prospect/modals-amount/modalsAmount.mock";
+import { getGlobalLimitByMoneyDestination } from "@services/creditLimit/getGlobalLimitByMoneyDestination";
+import { IMaximumCreditLimitByMoneyDestination } from "@services/creditLimit/types";
 import { get } from "@mocks/utils/dataMock.service";
 
 import { dataCreditLimitModal } from "./config";
@@ -15,6 +17,7 @@ export interface ICreditLimitModalProps {
   businessManagerCode: string;
   dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
   isMobile: boolean;
+  moneyDestination: string;
   handleClose: () => void;
   setRequestValue: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
@@ -27,11 +30,11 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     businessManagerCode,
     dataMaximumCreditLimitService,
     isMobile,
+    moneyDestination,
     handleClose,
     setRequestValue,
   } = props;
 
-  const creditCardsData = mockCreditLimit;
   useEffect(() => {
     get("mockRequest_value")
       .then((data) => {
@@ -44,6 +47,36 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
       });
   }, []);
 
+  const [error, setError] = useState(false);
+  const [dataMaximumCreditLimit, setDataMaximumCreditLimit] = useState<
+    IMaximumCreditLimitByMoneyDestination[]
+  >([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getGlobalLimitByMoneyDestination(
+          businessUnitPublicCode,
+          businessManagerCode,
+          moneyDestination,
+          dataMaximumCreditLimitService.identificationDocumentNumber,
+        );
+
+        if (data) {
+          setDataMaximumCreditLimit(data);
+        }
+      } catch (err) {
+        setError(true);
+      }
+    };
+
+    fetchData();
+  }, [
+    businessUnitPublicCode,
+    businessManagerCode,
+    dataMaximumCreditLimitService,
+  ]);
+
   return (
     <BaseModal
       title={dataCreditLimitModal.title}
@@ -51,45 +84,55 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
       handleNext={handleClose}
       handleClose={handleClose}
       width={isMobile ? "300px " : "450px"}
-      height={isMobile ? "auto" : "377px"}
       finalDivider={true}
     >
-      <Stack direction="column" gap="26px">
-        <Text appearance="gray" type="body" size="medium" weight="normal">
-          {dataCreditLimitModal.creditText}
-        </Text>
-        <Stack
-          direction={isMobile ? "column" : "row"}
-          gap="24px"
-          margin="0 auto"
-          padding=" 0px 5px"
-        >
-          {creditCardsData.map((item, index) => (
-            <CreditLimitCard
-              key={index}
-              creditLineTxt={item.creditLineTxt}
-              creditLine={item.creditLine}
-              paymentCapacityData={item.paymentCapacityData}
-              isMobile={isMobile}
-              businessUnitPublicCode={businessUnitPublicCode}
-              businessManagerCode={businessManagerCode}
-              dataMaximumCreditLimitService={dataMaximumCreditLimitService}
-            />
-          ))}
-        </Stack>
-        <Text appearance="gray" type="body" size="medium" weight="normal">
-          <Text
-            as="span"
-            appearance="dark"
-            type="body"
-            size="medium"
-            weight="bold"
-          >
-            {dataCreditLimitModal.import}
+      {error ? (
+        <Stack direction="column" alignItems="center">
+          <Icon icon={<MdErrorOutline />} size="32px" appearance="danger" />
+          <Text size="large" weight="bold" appearance="danger">
+            {dataCreditLimitModal.error.title}
           </Text>
-          {dataCreditLimitModal.textImport}
-        </Text>
-      </Stack>
+          <Text size="small" appearance="dark" textAlign="center">
+            {dataCreditLimitModal.error.message}
+          </Text>
+        </Stack>
+      ) : (
+        <Stack direction="column" gap="26px">
+          <Text appearance="gray" type="body" size="medium" weight="normal">
+            {dataCreditLimitModal.creditText}
+          </Text>
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            gap="24px"
+            margin="0 auto"
+            padding=" 0px 5px"
+          >
+            {dataMaximumCreditLimit.map((item, index) => (
+              <CreditLimitCard
+                key={index}
+                creditLineTxt={item.lineOfCredit}
+                creditLine={item.creditLimitValue}
+                isMobile={isMobile}
+                businessUnitPublicCode={businessUnitPublicCode}
+                businessManagerCode={businessManagerCode}
+                dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+              />
+            ))}
+          </Stack>
+          <Text appearance="gray" type="body" size="medium" weight="normal">
+            <Text
+              as="span"
+              appearance="dark"
+              type="body"
+              size="medium"
+              weight="bold"
+            >
+              {dataCreditLimitModal.import}
+            </Text>
+            {dataCreditLimitModal.textImport}
+          </Text>
+        </Stack>
+      )}
     </BaseModal>
   );
 }
