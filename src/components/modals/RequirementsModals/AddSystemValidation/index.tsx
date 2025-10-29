@@ -9,7 +9,11 @@ import { IPackagesOfRequirementsById } from "@services/requirementsPackages/type
 import { dataAddRequirement } from "@pages/financialReporting/Requirements/config";
 
 import { IOptionsSelect } from "../types";
-import { requirementJustificationMap, validationMessages } from "./config";
+import {
+  requirementJustificationMap,
+  systemValidationData,
+  validationMessages,
+} from "./config";
 
 export interface IRequirements {
   optionsRequirement: IOptionsSelect[];
@@ -128,8 +132,8 @@ export function AddSystemValidation(props: IRequirements) {
                 label={dataAddRequirement.labelPaymentMethod}
                 placeholder={
                   options.Requirement.length > 0
-                    ? "Selecciona una opción"
-                    : "No hay disponibles"
+                    ? systemValidationData.selectOption
+                    : systemValidationData.noAvailable
                 }
                 options={options.Requirement}
                 onChange={(name, value) =>

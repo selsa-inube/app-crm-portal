@@ -7,3 +7,8 @@ export const requirementJustificationMap: Record<string, string> = {
 export const validationMessages = {
   requiredField: "Este campo es obligatorio",
 };
+
+export const systemValidationData = {
+  selectOption: "Selecciona una opción",
+  noAvailable: "No hay opciones disponibles",
+};

@@ -12,6 +12,7 @@ import { IPatchOfRequirements } from "@services/requirementsPackages/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { dataAddRequirement } from "@pages/financialReporting/Requirements/config";
 
+import { systemValidationData } from "../AddSystemValidation/config";
 import { IOptionsSelect } from "../types";
 
 export interface IRequirement {
@@ -126,8 +127,8 @@ export function AddRequirement(props: IRequirement) {
                 label={dataAddRequirement.labelPaymentMethod}
                 placeholder={
                   options.Requirement.length > 0
-                    ? "Selecciona una opción"
-                    : "No hay disponibles"
+                    ? systemValidationData.selectOption
+                    : systemValidationData.noAvailable
                 }
                 options={options.Requirement}
                 onChange={(name, value) =>
