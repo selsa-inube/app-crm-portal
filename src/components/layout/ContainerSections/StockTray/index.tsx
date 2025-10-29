@@ -2,10 +2,10 @@ import { MdOutlineChevronLeft, MdMenu, MdOutlineInfo } from "react-icons/md";
 import { Stack, Icon, Button } from "@inubekit/inubekit";
 
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { ICRMPortalData } from "@context/AppContext/types";
 
 import { configButtons } from "../config";
 import { StyledHorizontalDivider, StyledPrint } from "./styled";
-import { ICRMPortalData } from "@src/context/AppContext/types";
 
 interface IActionButtons {
   buttons: {

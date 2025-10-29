@@ -11,18 +11,24 @@ import { useIAuth } from "@inube/iauth-react";
 
 import { OfferedGuaranteeModal } from "@components/modals/OfferedGuaranteeModal";
 import { ErrorAlert } from "@components/ErrorAlert";
-
 import { ListModal } from "@components/modals/ListModal";
 import { MobileMenu } from "@components/modals/MobileMenu";
-
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
-
 import {
   IProspect,
   IExtraordinaryInstallments,
 } from "@services/prospect/types";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
+import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
+import { getSearchAllDocumentsById } from "@services/creditRequest/SearchAllDocuments";
+import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
+import { ContainerSections } from "@components/layout/ContainerSections";
+import { StockTray } from "@components/layout/ContainerSections/StockTray";
+import { ShareModal } from "@components/modals/ShareModal";
+import { patchAssignAccountManager } from "@services/creditRequest/patchAssignAccountManager";
+import { getUnreadErrorsById } from "@services/creditRequest/unreadErrors";
 
 import {
   configHandleactions,
@@ -45,18 +51,6 @@ import { PromissoryNotes } from "./PromissoryNotes";
 import { Postingvouchers } from "./Postingvouchers";
 import { IDocumentData, IErrorService, IErrorsUnread } from "./types";
 import { ComercialManagement } from "./CommercialManagement";
-import {
-  ICreditRequest,
-  IPaymentChannel,
-} from "@src/services/creditRequest/types";
-import { getCreditRequestByCode } from "@src/services/creditRequest/getCreditRequestByCode";
-import { getSearchAllDocumentsById } from "@src/services/creditRequest/SearchAllDocuments";
-import { getSearchProspectByCode } from "@src/services/prospect/SearchAllProspects";
-import { ContainerSections } from "@src/components/layout/ContainerSections";
-import { StockTray } from "@src/components/layout/ContainerSections/StockTray";
-import { ShareModal } from "@src/components/modals/ShareModal";
-import { patchAssignAccountManager } from "@src/services/creditRequest/patchAssignAccountManager";
-import { getUnreadErrorsById } from "@src/services/creditRequest/unreadErrors";
 
 interface IListdataProps {
   data: { id: string; name: string }[];

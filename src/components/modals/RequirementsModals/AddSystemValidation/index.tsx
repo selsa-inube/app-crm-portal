@@ -6,7 +6,7 @@ import { IPatchOfRequirements } from "@services/requirementsPackages/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { CardGray } from "@components/cards/CardGray";
 import { IPackagesOfRequirementsById } from "@services/requirementsPackages/types";
-import { dataAddRequirement } from "@src/pages/financialReporting/Requirements/config";
+import { dataAddRequirement } from "@pages/financialReporting/Requirements/config";
 
 import { IOptionsSelect } from "../types";
 import { requirementJustificationMap, validationMessages } from "./config";

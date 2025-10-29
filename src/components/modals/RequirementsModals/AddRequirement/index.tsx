@@ -10,7 +10,7 @@ import {
 
 import { IPatchOfRequirements } from "@services/requirementsPackages/types";
 import { BaseModal } from "@components/modals/baseModal";
-import { dataAddRequirement } from "@src/pages/financialReporting/Requirements/config";
+import { dataAddRequirement } from "@pages/financialReporting/Requirements/config";
 
 import { IOptionsSelect } from "../types";
 

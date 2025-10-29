@@ -6,9 +6,9 @@ import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
+import { IProspect } from "@services/prospect/types";
 
 import { ISourcesOfIncomeState } from "../../types";
-import { IProspect } from "@src/services/prospect/types";
 
 interface ISourcesOfIncomeProps {
   isMobile: boolean;

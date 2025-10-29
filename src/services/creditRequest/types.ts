@@ -1,4 +1,4 @@
-import { IStaff } from "@src/mocks/staff/types";
+import { IStaff } from "@mocks/staff/types";
 import { IBorrower, IProspect } from "../prospect/types";
 export type DmEtapasPrs =
   | "CUMPLIMIENTO_REQUISITOS"

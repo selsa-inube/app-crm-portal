@@ -11,7 +11,7 @@ import { Stack, Text } from "@inubekit/inubekit";
 
 import { TableBoard } from "@components/data/TableBoard";
 import { IOptions } from "@components/navigation/MenuProspect/types";
-import { Schedule } from "@src/services/enum/schedule";
+import { Schedule } from "@services/enum/schedule";
 
 export const titlesCommercialManagementAccordion = [
   { id: "obligacion", titleName: "", priority: 1 },

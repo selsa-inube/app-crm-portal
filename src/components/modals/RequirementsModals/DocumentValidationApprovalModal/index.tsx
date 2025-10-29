@@ -18,13 +18,13 @@ import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
 import { ListModal } from "@components/modals/ListModal";
 import { DocumentViewer } from "@components/modals/DocumentViewer";
-import { getSearchAllDocumentsById } from "@src/services/creditRequest/SearchAllDocuments";
-import { getSearchDocumentById } from "@src/services/creditRequest/SearchDocumentById";
+import { getSearchAllDocumentsById } from "@services/creditRequest/SearchAllDocuments";
+import { getSearchDocumentById } from "@services/creditRequest/SearchDocumentById";
 import { IPackagesOfRequirementsById } from "@services/requirementsPackages/types";
 import { approveRequirementById } from "@services/requirementsPackages/approveRequirementById";
+
 import { requirementStatus } from "./config";
 import { dataFlags } from "./config";
-
 import { DocumentItem, IApprovalDocumentaries } from "../types";
 import { approvalsConfig, optionButtons, optionsAnswer } from "./config";
 import { StyledScroll } from "./styles";

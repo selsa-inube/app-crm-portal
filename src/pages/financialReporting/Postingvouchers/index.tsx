@@ -7,19 +7,19 @@ import { IEntries } from "@components/data/TableBoard/types";
 import { UnfoundData } from "@components/layout/UnfoundData";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableBoard } from "@components/data/TableBoard";
+import {
+  IAccountingVouchers,
+  ICreditRequest,
+} from "@services/creditRequest/types";
+import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
+import { getAccountingVouchers } from "@services/creditRequest/accountingVouchers";
 
+import { errorMessages, errorObserver } from "../config";
 import {
   actionsPostingvouchers,
   titlesPostingvouchers,
   actionMobile,
 } from "./config";
-import { errorMessages, errorObserver } from "../config";
-import {
-  IAccountingVouchers,
-  ICreditRequest,
-} from "@src/services/creditRequest/types";
-import { getCreditRequestByCode } from "@src/services/creditRequest/getCreditRequestByCode";
-import { getAccountingVouchers } from "@src/services/creditRequest/accountingVouchers";
 
 interface IApprovalsProps {
   user: string;

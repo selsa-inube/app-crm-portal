@@ -14,9 +14,9 @@ import check from "@assets/images/check.svg";
 import close from "@assets/images/close.svg";
 import remove from "@assets/images/remove.svg";
 import { IEntries } from "@components/data/TableBoard/types";
+import { requirementStatus } from "@components/modals/RequirementsModals/DocumentValidationApprovalModal/config";
 
 import { MappedRequirements } from "./types";
-import { requirementStatus } from "@src/components/modals/RequirementsModals/DocumentValidationApprovalModal/config";
 
 export const dataButton = (
   onClick: () => void,

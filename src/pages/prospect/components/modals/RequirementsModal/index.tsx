@@ -9,7 +9,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { useEnums } from "@context/EnumContext";
-import { getEnumByCode } from "@src/config/enums/utils";
+import { getEnumByCode } from "@config/enums/utils";
 
 import {
   dataError,

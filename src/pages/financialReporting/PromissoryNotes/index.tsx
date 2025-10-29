@@ -8,6 +8,14 @@ import { IEntries } from "@components/data/TableBoard/types";
 import { PromissoryNotesModal } from "@components/modals/PromissoryNotesModal";
 import { UnfoundData } from "@components/layout/UnfoundData";
 import { AppContext } from "@context/AppContext";
+import {
+  ICreditRequest,
+  IPayrollDiscountAuthorization,
+  IPromissoryNotes,
+} from "@services/creditRequest/types";
+import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
+import { getPayrollDiscountAuthorizationsById } from "@services/creditRequest/payroll_discount_authorizations";
+import { getPromissoryNotesById } from "@services/creditRequest/promissory_notes";
 
 import {
   appearanceTag,
@@ -18,14 +26,6 @@ import {
   getActionsMobileIcon,
 } from "./config";
 import { errorObserver, errorMessages } from "../config";
-import {
-  ICreditRequest,
-  IPayrollDiscountAuthorization,
-  IPromissoryNotes,
-} from "@src/services/creditRequest/types";
-import { getCreditRequestByCode } from "@src/services/creditRequest/getCreditRequestByCode";
-import { getPayrollDiscountAuthorizationsById } from "@src/services/creditRequest/payroll_discount_authorizations";
-import { getPromissoryNotesById } from "@src/services/creditRequest/promissory_notes";
 
 interface IPromissoryNotesProps {
   id: string;

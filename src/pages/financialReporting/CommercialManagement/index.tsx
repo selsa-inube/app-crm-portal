@@ -54,10 +54,10 @@ import {
   ICreditRequest,
   IModeOfDisbursement,
   IPaymentChannel,
-} from "@src/services/creditRequest/types";
-import { formatPrimaryDate } from "@src/utils/formatData/date";
-import { getCreditRequestByCode } from "@src/services/creditRequest/getCreditRequestByCode";
-import { getModeOfDisbursement } from "@src/services/creditRequest/getModeOfDisbursement";
+} from "@services/creditRequest/types";
+import { formatPrimaryDate } from "@utils/formatData/date";
+import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
+import { getModeOfDisbursement } from "@services/creditRequest/getModeOfDisbursement";
 
 interface ComercialManagementProps {
   data: ICreditRequest;
@@ -573,6 +573,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 businessUnitPublicCode={businessUnitPublicCode}
                 businessManagerCode={businessManagerCode}
                 dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+                moneyDestination={prospectData.moneyDestinationAbbreviatedName}
               />
             )}
             {currentModal === "reportCreditsModal" && (

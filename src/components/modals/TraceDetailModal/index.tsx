@@ -4,7 +4,7 @@ import { Divider, Stack, Text, useFlag } from "@inubekit/inubekit";
 import { CardGray } from "@components/cards/CardGray";
 import { BaseModal } from "@components/modals/baseModal";
 import { Fieldset } from "@components/data/Fieldset";
-import { getSearchDocumentById } from "@src/services/creditRequest/SearchDocumentById";
+import { getSearchDocumentById } from "@services/creditRequest/SearchDocumentById";
 
 import { DocumentViewer } from "../DocumentViewer";
 import { dataTrace } from "./config";

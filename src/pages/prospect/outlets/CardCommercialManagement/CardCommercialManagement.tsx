@@ -22,15 +22,12 @@ import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeduct
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
-import {
-  getUseCaseValue,
-  useValidateUseCase,
-} from "@src/hooks/useValidateUseCase";
-import { privilegeCrm } from "@src/config/privilege";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { privilegeCrm } from "@config/privilege";
 
+import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";
-import InfoModal from "../../components/InfoModal";
 
 interface CardCommercialManagementProps {
   id: string;

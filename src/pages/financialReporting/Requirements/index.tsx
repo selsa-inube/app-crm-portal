@@ -7,6 +7,8 @@ import { Fieldset } from "@components/data/Fieldset";
 import { TableBoard } from "@components/data/TableBoard";
 import { ItemNotFound } from "@components/layout/ItemNotFound";
 import { IAction, IEntries, ITitle } from "@components/data/TableBoard/types";
+import { getAllPackagesOfRequirementsById } from "@services/requirementsPackages/packagesOfRequirements";
+import { TraceDetailModal } from "@components/modals/TraceDetailModal";
 
 import {
   infoItems,
@@ -16,8 +18,6 @@ import {
 } from "./config";
 import { MappedRequirements, RequirementType } from "./types";
 import { errorMessages } from "../config";
-import { getAllPackagesOfRequirementsById } from "@src/services/requirementsPackages/packagesOfRequirements";
-import { TraceDetailModal } from "@src/components/modals/TraceDetailModal";
 
 interface IRequirementsData {
   id: string;
