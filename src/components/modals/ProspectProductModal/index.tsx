@@ -434,6 +434,7 @@ function EditProductModal(props: EditProductModalProps) {
       setLoanTermError(validationMessages.loanTermValidationError);
     }
   };
+
   const validateInterestRate = async (rate: number): Promise<void> => {
     try {
       setInterestRateError("");
@@ -638,6 +639,7 @@ function EditProductModal(props: EditProductModalProps) {
     interestRate: Yup.number().min(0, ""),
     rateType: Yup.string(),
   });
+
   return (
     <Formik
       initialValues={initialValues}

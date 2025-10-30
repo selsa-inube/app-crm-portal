@@ -16,6 +16,7 @@ import {
   useFlag,
   Spinner,
   Textarea,
+  Textfield,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -249,7 +250,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       if (
         err?.data?.description == "Credit product already exists in prospect"
       ) {
-        description = "El producto de crédito ya existe en el prospecto";
+        description = "El producto de crédito ya existe en el prospecto";
       }
       addFlag({
         title: dataCreditProspect.descriptionError,
@@ -475,6 +476,12 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [selectedBorrower]);
 
+  useEffect(() => {
+    if (borrowerOptions.length === 1) {
+      setSelectedIndex(0);
+    }
+  }, [borrowerOptions]);
+
   const generateAndSharePdf = async () => {
     try {
       const pdfBlob = await generatePDF(
@@ -673,7 +680,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
             dataMaximumCreditLimitService={dataMaximumCreditLimitService}
-            moneyDestination={prospectData?.moneyDestinationAbbreviatedName || ""}
+            moneyDestination={
+              prospectData?.moneyDestinationAbbreviatedName || ""
+            }
           />
         )}
         {openModal === "paymentCapacity" && (
@@ -754,15 +763,29 @@ export function CreditProspect(props: ICreditProspectProps) {
                   width={isMobile ? "auto" : "100%"}
                   gap="16px"
                 >
-                  <Select
-                    label="Deudor"
-                    id="borrower"
-                    name="borrower"
-                    options={borrowerOptions}
-                    value={borrowerOptions[selectedIndex]?.value}
-                    onChange={handleChange}
-                    size="compact"
-                  />
+                  {borrowerOptions.length === 1 ? (
+                    <Textfield
+                      label="Deudor"
+                      id="borrower"
+                      name="borrower"
+                      value={borrowerOptions[0]?.label || ""}
+                      size="compact"
+                      readOnly={true}
+                      disabled={true}
+                      fullwidth
+                    />
+                  ) : (
+                    <Select
+                      label="Deudor"
+                      id="borrower"
+                      name="borrower"
+                      options={borrowerOptions}
+                      value={borrowerOptions[selectedIndex]?.value}
+                      onChange={handleChange}
+                      size="compact"
+                    />
+                  )}
+
                   <Stack alignItems="center">
                     <Button
                       onClick={() => {
@@ -812,6 +835,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             publicCode={borrowerOptions[selectedIndex]?.publicCode || ""}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
+            prospectData={prospectData}
           />
         )}
         {currentModal === "reportCreditsModal" && (

@@ -3,65 +3,49 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { ISearchAllModesOfDisbursementTypes } from "../types";
 
-import { CreditRequestParams, ICreditRequest } from "../types";
-import { mapCreditRequestToEntities } from "./mapper";
-
-export const getCreditRequestByCode = async (
+const getSearchAllModesOfDisbursementTypes = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  userAccount: string,
-  params: CreditRequestParams,
-): Promise<ICreditRequest[]> => {
+  clientIdentificationNumber: string,
+  lineOfCreditAbbreviatedName: string,
+  moneyDestinationAbbreviatedName: string,
+  loanAmount: string,
+): Promise<ISearchAllModesOfDisbursementTypes | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
+      const queryParams = new URLSearchParams({
+        clientIdentificationNumber: clientIdentificationNumber || "",
+        lineOfCreditAbbreviatedName: lineOfCreditAbbreviatedName || "",
+        moneyDestinationAbbreviatedName: moneyDestinationAbbreviatedName || "",
+        loanAmount,
+      });
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-      const queryParams = new URLSearchParams();
-
-      if (params.creditRequestCode) {
-        queryParams.set("creditRequestCode", params.creditRequestCode);
-      }
-
-      if (params.clientIdentificationNumber) {
-        queryParams.set(
-          "clientIdentificationNumber",
-          params.clientIdentificationNumber,
-        );
-      }
-
-      if (params.textInSearch) {
-        queryParams.set("textInSearch", params.textInSearch);
-      }
-
-      if (params.stage) {
-        queryParams.set("stage", params.stage);
-      }
-
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "SearchAllCreditRequestsInProgress",
+          "X-Action": "SearchAllModesOfDisbursementTypes",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          "x-user-name": userAccount,
           "X-Process-Manager": businessManagerCode,
         },
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests?${queryParams.toString()}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/?${queryParams.toString()}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return [];
+        return null;
       }
 
       const data = await res.json();
@@ -74,11 +58,7 @@ export const getCreditRequestByCode = async (
         };
       }
 
-      const normalizedCredit = Array.isArray(data)
-        ? mapCreditRequestToEntities(data)
-        : [];
-
-      return normalizedCredit;
+      return data as ISearchAllModesOfDisbursementTypes;
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {
@@ -88,11 +68,13 @@ export const getCreditRequestByCode = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudieron obtener los procesos de consulta.",
+          `Todos los intentos fallaron. No se pudo obtener los tipos de desembolso `,
         );
       }
     }
   }
 
-  return [];
+  return null;
 };
+
+export { getSearchAllModesOfDisbursementTypes };

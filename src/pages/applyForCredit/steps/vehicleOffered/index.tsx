@@ -124,6 +124,13 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
     }
   }, [formik.values, handleOnChange]);
 
+  useEffect(() => {
+    if (optionsOfferedstate.length === 1) {
+      const onlyOption = optionsOfferedstate[0];
+      formik.setFieldValue("state", onlyOption.value);
+    }
+  }, [optionsOfferedstate]);
+
   if (!shouldRender && !isLoading) {
     return null;
   }
@@ -160,18 +167,33 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
           autoRows="auto"
           gap="20px"
         >
-          <Select
-            name="state"
-            id="state"
-            label={dataVehicule.labelState}
-            placeholder={dataVehicule.placeHolderState}
-            size="compact"
-            options={optionsOfferedstate}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.state}
-            fullwidth
-          />
+          {optionsOfferedstate.length === 1 ? (
+            <Textfield
+              name="state"
+              id="state"
+              label={dataVehicule.labelState}
+              placeholder={dataVehicule.placeHolderState}
+              size="compact"
+              value={optionsOfferedstate[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              name="state"
+              id="state"
+              label={dataVehicule.labelState}
+              placeholder={dataVehicule.placeHolderState}
+              size="compact"
+              options={optionsOfferedstate}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.state}
+              fullwidth
+            />
+          )}
+
           <Textfield
             name="model"
             id="model"
@@ -184,6 +206,7 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
             disabled={formik.values.state === "nuevo"}
             fullwidth
           />
+
           <Textfield
             name="value"
             id="value"
@@ -196,6 +219,7 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
             fullwidth
           />
         </Grid>
+
         <Textarea
           name="description"
           id="description"
