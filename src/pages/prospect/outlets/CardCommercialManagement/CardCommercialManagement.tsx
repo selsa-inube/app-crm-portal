@@ -335,6 +335,8 @@ export const CardCommercialManagement = (
             paymentChannelType:
               prospectData!.preferredPaymentChannelAbbreviatedName,
           }}
+          setShowErrorModal={setShowErrorModal}
+          setMessageError={setMessageError}
         />
       )}
       {showConsolidatedModal && (

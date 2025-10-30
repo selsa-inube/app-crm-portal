@@ -287,7 +287,7 @@ export const SummaryProspectCredit = [
       },
       {
         id: "totalRegularInstallment",
-        title: "Cuota ordinaria",
+        title: "Cuota ordinaria mensual",
         miniIcon: true,
         operation: "",
       },
