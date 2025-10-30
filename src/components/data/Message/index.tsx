@@ -6,8 +6,9 @@ import {
   Timestamp,
   IconWrapper,
 } from "./styles";
+import { Stack } from "@inubekit/inubekit";
 export interface MessageProps {
-  type: "sent" | "received";
+  type: "sent" | "received" | "system";
   timestamp: number | string;
   message: string;
   icon?: React.ReactNode;
@@ -28,10 +29,22 @@ export const Message: React.FC<MessageProps> = ({
   return (
     <MessageWrapper type={type}>
       <MessageContent type={type}>
-        <IconWrapper type={type} onClick={onIconClick} role="button">
-          {icon}
-        </IconWrapper>
-        {message}
+        {type === "sent" && (
+          <IconWrapper type={type} onClick={onIconClick} role="button">
+            {icon}
+          </IconWrapper>
+        )}
+        <Stack
+          width="250px"
+          justifyContent={type === "system" ? "center" : "flex-start"}
+        >
+          {message}
+        </Stack>
+        {type !== "sent" && (
+          <IconWrapper type={type} onClick={onIconClick} role="button">
+            {icon}
+          </IconWrapper>
+        )}
       </MessageContent>
       <Timestamp type={type}>{formatDate(timestamp)}</Timestamp>
     </MessageWrapper>

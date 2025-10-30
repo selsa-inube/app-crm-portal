@@ -20,6 +20,7 @@ export interface ExtraordinaryPaymentModalProps {
   businessUnitPublicCode: string;
   prospectData?: IProspect;
   sentData?: IExtraordinaryInstallments | null;
+  showAddButton?: boolean;
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
@@ -33,6 +34,7 @@ export const ExtraordinaryPaymentModal = (
     businessUnitPublicCode,
     prospectData,
     sentData,
+    showAddButton,
     setSentData,
     handleClose,
   } = props;
@@ -86,24 +88,26 @@ export const ExtraordinaryPaymentModal = (
     >
       <Stack gap="24px" direction="column">
         <Stack justifyContent="end">
-          <Button
-            type="button"
-            appearance="primary"
-            spacing="wide"
-            fullwidth={isMobile}
-            iconBefore={
-              <Icon
-                icon={<MdOutlineAdd />}
-                appearance="light"
-                size="18px"
-                spacing="narrow"
-              />
-            }
-            onClick={openAddSeriesModal}
-            disabled={canEditCreditRequest}
-          >
-            {TextLabels.addSeries}
-          </Button>
+          {showAddButton && (
+            <Button
+              type="button"
+              appearance="primary"
+              spacing="wide"
+              fullwidth={isMobile}
+              iconBefore={
+                <Icon
+                  icon={<MdOutlineAdd />}
+                  appearance="light"
+                  size="18px"
+                  spacing="narrow"
+                />
+              }
+              onClick={openAddSeriesModal}
+              disabled={canEditCreditRequest}
+            >
+              {TextLabels.addSeries}
+            </Button>
+          )}
           <Stack alignItems="center">
             {canEditCreditRequest ? (
               <Icon

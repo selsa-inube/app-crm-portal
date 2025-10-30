@@ -26,7 +26,7 @@ import {
 } from "@utils/formatData/currency";
 import { getEffectiveInterestRate } from "@services/prospect/getEffectiveInterestRate";
 import { CustomerContext } from "@context/CustomerContext";
-import { paymentCycleMap } from "@src/pages/prospect/outlets/CardCommercialManagement/config/config";
+import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 
 import { interestRateTypeMap } from "./config";
 import { ScrollableContainer } from "./styles";

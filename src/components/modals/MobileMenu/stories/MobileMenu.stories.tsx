@@ -10,8 +10,6 @@ const meta: Meta<typeof MobileMenu> = {
   component: MobileMenu,
   argTypes: {
     onClose: { action: "Cerrar menú" },
-    onReject: { action: "Rechazar" },
-    onCancel: { action: "Anular" },
     onAttach: { action: "Adjuntar" },
     onViewAttachments: { action: "Ver Adjuntos" },
   },

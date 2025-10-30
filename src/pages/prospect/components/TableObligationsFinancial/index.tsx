@@ -33,6 +33,7 @@ export const TableFinancialObligations = (
     services = true,
     handleOnChangeExtraBorrowers = undefined,
     showOnlyEdit = false,
+    showAddButton = true,
   } = props;
   const [loading] = useState(false);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
@@ -424,6 +425,7 @@ export const TableFinancialObligations = (
       handleRestore={handleRestore}
       handleOnChangeExtraBorrowers={handleOnChangeExtraBorrowers}
       showOnlyEdit={showOnlyEdit}
+      showAddButton={showAddButton}
     />
   );
 };

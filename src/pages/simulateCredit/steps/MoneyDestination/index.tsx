@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
-import { searchAllMoneyDestinationByCustomerCode } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
-import { IMoneyDestination } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
+import { searchAllMoneyDestinationByCustomerCode } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
+import { IMoneyDestination } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
