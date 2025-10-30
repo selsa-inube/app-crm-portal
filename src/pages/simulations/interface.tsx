@@ -126,6 +126,25 @@ export function SimulationsUI(props: SimulationsUIProps) {
     );
     return found?.Code || code;
   };
+
+  const validateProspectOwnership = (): boolean => {
+    if (!dataProspect || !dataHeader) return false;
+
+    const mainBorrower = dataProspect.borrowers?.find(
+      (b) => b.borrowerType === "MainBorrower",
+    );
+
+    if (mainBorrower && dataHeader.publicCode) {
+      return (
+        mainBorrower.borrowerIdentificationNumber === dataHeader.publicCode
+      );
+    }
+
+    return false;
+  };
+
+  const isProspectValid = validateProspectOwnership();
+
   const { disabledButton: canRequestCredit } = useValidateUseCase({
     useCase: getUseCaseValue("canRequestCredit"),
   });
@@ -140,6 +159,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
     <div ref={dataPrint}>
       {codeError ? (
         <ErrorPage errorCode={codeError} addToFix={addToFix || []} />
+      ) : !isProspectValid && dataProspect ? (
+        <ErrorPage errorCode={codeError ?? 1000} addToFix={addToFix} />
       ) : (
         <Stack
           direction="column"

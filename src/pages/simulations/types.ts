@@ -9,4 +9,5 @@ export interface IDataHeader {
   name: string;
   status: string;
   image?: string;
+  publicCode: string;
 }
