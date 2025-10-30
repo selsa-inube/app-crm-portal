@@ -12,6 +12,7 @@ export interface ReportCreditsModalProps {
   options: { id: string; label: string; value: string }[];
   debtor: string;
   prospectData?: IProspect[];
+  showAddButton?: boolean;
   onProspectUpdate?: () => void;
 }
 
@@ -19,6 +20,7 @@ export function ReportCreditsModal({
   handleClose,
   onProspectUpdate,
   prospectData,
+  showAddButton,
 }: ReportCreditsModalProps) {
   const [loading, setLoading] = useState(true);
 
@@ -45,6 +47,7 @@ export function ReportCreditsModal({
               showActions
               initialValues={prospectData}
               onProspectUpdate={onProspectUpdate}
+              showAddButton={showAddButton}
             />
           </>
         )}

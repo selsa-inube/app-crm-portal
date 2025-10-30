@@ -28,7 +28,7 @@ import {
   prospectStates,
   tittleOptions,
 } from "./config/config";
-import { getSearchAllModesOfDisbursementTypes } from "@src/services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
+import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();

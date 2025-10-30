@@ -59,6 +59,7 @@ export interface ITableFinancialObligationsProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  showAddButton?: boolean;
   onProspectUpdate?: () => void;
   setFormState?: React.Dispatch<
     React.SetStateAction<{
@@ -114,6 +115,7 @@ interface UIProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  showAddButton?: boolean;
   setFormState?: React.Dispatch<
     React.SetStateAction<{
       type: string;
@@ -179,6 +181,7 @@ export const TableFinancialObligationsUI = ({
   onProspectUpdate,
   showOnlyEdit,
   services = true,
+  showAddButton = true,
   handleEdit,
   handleDelete,
   handleUpdate,
@@ -574,7 +577,7 @@ export const TableFinancialObligationsUI = ({
               )}
             </>
           )}
-          {!showOnlyEdit && (
+          {!showOnlyEdit && showAddButton === true && (
             <Stack
               justifyContent="end"
               gap="16px"

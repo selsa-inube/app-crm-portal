@@ -17,7 +17,6 @@ import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import { environment } from "@config/environment";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -163,7 +162,9 @@ export function ProspectCredit() {
               backButton={dataCreditProspects.cancel}
               handleBack={() => setIsShowModal(false)}
               handleNext={() => {
-                window.location.href = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}`;
+                navigate(
+                  `/credit/processed-credit-requests/extended-card/${selectedRequestCode}`,
+                );
               }}
               width="400px"
             >

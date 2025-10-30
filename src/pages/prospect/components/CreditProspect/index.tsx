@@ -52,7 +52,7 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { AddProductModal } from "@src/pages/prospect/components/AddProductModal";
+import { AddProductModal } from "@pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
@@ -79,6 +79,8 @@ interface ICreditProspectProps {
   >;
   isPrint?: boolean;
   showPrint?: boolean;
+  showAddButtons?: boolean;
+  showAddProduct?: boolean;
   setRequestValue?: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -99,6 +101,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     isMobile,
     isPrint = false,
     showPrint = true,
+    showAddButtons = true,
+    showAddProduct = true,
   } = props;
 
   const { customerData } = useContext(CustomerContext);
@@ -581,54 +585,60 @@ export function CreditProspect(props: ICreditProspectProps) {
         {!isMobile && (
           <StyledPrint>
             <Stack gap="16px" justifyContent="end" alignItems="center">
-              <Stack alignItems="center" gap="4px">
-                <Button
-                  type="button"
-                  appearance="primary"
-                  spacing="compact"
-                  iconBefore={
-                    <Icon
-                      icon={<MdOutlineAdd />}
-                      appearance="light"
-                      size="18px"
-                      spacing="narrow"
-                    />
-                  }
-                  disabled={canEditCreditRequest}
-                  onClick={() => handleOpenModal("editProductModal")}
-                >
-                  {dataCreditProspect.addProduct}
-                </Button>
-                {!prospectData?.creditProducts[0].extraordinaryInstallments && (
-                  <Icon
-                    icon={<MdOutlineInfo />}
-                    appearance="primary"
-                    size="16px"
-                    cursorHover
-                    onClick={handleInfo}
-                  />
-                )}
-              </Stack>
-              {!hasExtraordinaryInstallments(prospectData as IProspect) && (
-                <Button
-                  type="button"
-                  appearance="primary"
-                  spacing="compact"
-                  variant="outlined"
-                  iconBefore={
-                    <Icon
-                      icon={<MdOutlinePayments />}
+              {showAddButtons && (
+                <>
+                  <Stack alignItems="center" gap="4px">
+                    <Button
+                      type="button"
                       appearance="primary"
-                      size="18px"
-                      spacing="narrow"
-                    />
-                  }
-                  onClick={() => handleOpenModal("extraPayments")}
-                >
-                  {dataCreditProspect.extraPayment}
-                </Button>
+                      spacing="compact"
+                      iconBefore={
+                        <Icon
+                          icon={<MdOutlineAdd />}
+                          appearance="light"
+                          size="18px"
+                          spacing="narrow"
+                        />
+                      }
+                      disabled={canEditCreditRequest}
+                      onClick={() => handleOpenModal("editProductModal")}
+                    >
+                      {dataCreditProspect.addProduct}
+                    </Button>
+                    {!prospectData?.creditProducts[0]
+                      .extraordinaryInstallments && (
+                      <Icon
+                        icon={<MdOutlineInfo />}
+                        appearance="primary"
+                        size="16px"
+                        cursorHover
+                        onClick={handleInfo}
+                      />
+                    )}
+                  </Stack>
+                  {!hasExtraordinaryInstallments(prospectData as IProspect) && (
+                    <Button
+                      type="button"
+                      appearance="primary"
+                      spacing="compact"
+                      variant="outlined"
+                      iconBefore={
+                        <Icon
+                          icon={<MdOutlinePayments />}
+                          appearance="primary"
+                          size="18px"
+                          spacing="narrow"
+                        />
+                      }
+                      onClick={() => handleOpenModal("extraPayments")}
+                    >
+                      {dataCreditProspect.extraPayment}
+                    </Button>
+                  )}
+
+                  <StyledVerticalDivider />
+                </>
               )}
-              <StyledVerticalDivider />
               <StyledContainerIcon>
                 {showPrint && (
                   <Stack gap="8px">
@@ -670,6 +680,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             prospectData={prospectData || undefined}
             onProspectUpdate={onProspectUpdate}
             onProspectRefreshData={onProspectRefreshData}
+            showAddProduct={showAddProduct}
           />
         </Stack>
         {currentModal === "creditLimit" && (
@@ -757,57 +768,59 @@ export function CreditProspect(props: ICreditProspectProps) {
               </Stack>
             ) : (
               <>
-                <Stack
-                  justifyContent="space-between"
-                  alignItems="end"
-                  width={isMobile ? "auto" : "100%"}
-                  gap="16px"
-                >
-                  {borrowerOptions.length === 1 ? (
-                    <Textfield
-                      label="Deudor"
-                      id="borrower"
-                      name="borrower"
-                      value={borrowerOptions[0]?.label || ""}
-                      size="compact"
-                      readOnly={true}
-                      disabled={true}
-                      fullwidth
-                    />
-                  ) : (
-                    <Select
-                      label="Deudor"
-                      id="borrower"
-                      name="borrower"
-                      options={borrowerOptions}
-                      value={borrowerOptions[selectedIndex]?.value}
-                      onChange={handleChange}
-                      size="compact"
-                    />
-                  )}
-
-                  <Stack alignItems="center">
-                    <Button
-                      onClick={() => {
-                        setOpenModal("IncomeModalEdit");
-                      }}
-                      disabled={canEditCreditRequest}
-                    >
-                      {dataCreditProspect.edit}
-                    </Button>
-                    {canEditCreditRequest ? (
-                      <Icon
-                        icon={<MdOutlineInfo />}
-                        appearance="primary"
-                        size="16px"
-                        cursorHover
-                        onClick={handleInfo}
+                {showAddButtons === true && (
+                  <Stack
+                    justifyContent="space-between"
+                    alignItems="end"
+                    width={isMobile ? "auto" : "100%"}
+                    gap="16px"
+                  >
+                    {borrowerOptions.length === 1 ? (
+                      <Textfield
+                        label="Deudor"
+                        id="borrower"
+                        name="borrower"
+                        value={borrowerOptions[0]?.label || ""}
+                        size="compact"
+                        readOnly={true}
+                        disabled={true}
+                        fullwidth
                       />
                     ) : (
-                      <></>
+                      <Select
+                        label="Deudor"
+                        id="borrower"
+                        name="borrower"
+                        options={borrowerOptions}
+                        value={borrowerOptions[selectedIndex]?.value}
+                        onChange={handleChange}
+                        size="compact"
+                      />
                     )}
+
+                    <Stack alignItems="center">
+                      <Button
+                        onClick={() => {
+                          setOpenModal("IncomeModalEdit");
+                        }}
+                        disabled={canEditCreditRequest}
+                      >
+                        {dataCreditProspect.edit}
+                      </Button>
+                      {canEditCreditRequest ? (
+                        <Icon
+                          icon={<MdOutlineInfo />}
+                          appearance="primary"
+                          size="16px"
+                          cursorHover
+                          onClick={handleInfo}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </Stack>
                   </Stack>
-                </Stack>
+                )}
                 <IncomeDebtor
                   initialValues={
                     dataProspect[0]?.borrowers?.find(
@@ -846,6 +859,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             debtor={form.borrower}
             prospectData={prospectData ? [prospectData] : undefined}
             onProspectUpdate={onProspectRefreshData}
+            showAddButton={showAddButtons}
           />
         )}
 
@@ -856,6 +870,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             sentData={sentData}
             setSentData={setSentData}
             businessUnitPublicCode={businessUnitPublicCode}
+            showAddButton={showAddButtons}
           />
         )}
 
