@@ -45,7 +45,7 @@ export const OptionStaffPortal: IOptionStaffPortalItem[] = [
         icon: getIconByName("MdOutlineAssignmentTurnedIn"),
         descriptionUse:
           "Gestiona las solicitudes de crédito tramitadas del cliente.",
-        url: "/credit",
+        url: "/credit/processed-credit-requests",
       },
     ],
   },
