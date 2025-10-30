@@ -192,6 +192,7 @@ export const errorMessages = {
       "Hubo un problema al cargar los datos. Por favor, inténtelo de nuevo más tarde.",
     button: "Volver a intentar",
   },
+  errorCreditRequest: "Error al obtener la solicitud de crédito",
 };
 
 export const labelsAndValuesShare = {
