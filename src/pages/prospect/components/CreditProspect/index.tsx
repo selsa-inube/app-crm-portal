@@ -292,7 +292,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   };
   const selectedBorrower = borrowersProspect?.borrowers?.[selectedIndex];
 
-  function hasExtraordinaryInstallments(dataProspect: IProspect): boolean {
+  const hasExtraordinaryInstallments = (dataProspect: IProspect): boolean => {
     if (
       !dataProspect?.creditProducts ||
       !Array.isArray(dataProspect.creditProducts)
@@ -311,7 +311,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
 
     return false;
-  }
+  };
 
   const handleIncomeSubmit = (updatedData: IIncomeSources) => {
     setCurrentIncomeModalData({ ...updatedData });

@@ -60,8 +60,6 @@ export function ApplyForCredit() {
       "",
   };
 
-  const navigate = useNavigate();
-
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
   const [prospectData, setProspectData] = useState<IProspect>({
@@ -421,10 +419,11 @@ export function ApplyForCredit() {
         userAccount,
         submitData,
       );
-      setSentModal(false);
-      setApprovedRequestModal(true);
+
       setCreditRequestCode(response?.creditRequestCode || "");
+      setApprovedRequestModal(true);
     } catch (error) {
+      console.error("error: ", error);
       setSentModal(false);
       handleFlag();
     }
@@ -720,7 +719,6 @@ export function ApplyForCredit() {
 
   function handleSubmitClick() {
     setSentModal(true);
-    navigate(`/credit/credit-requests`);
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
