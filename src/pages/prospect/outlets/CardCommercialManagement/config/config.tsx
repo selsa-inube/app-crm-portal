@@ -289,7 +289,7 @@ export const SummaryProspectCredit = [
       },
       {
         id: "totalRegularInstallment",
-        title: "Cuota ordinaria",
+        title: "Cuota ordinaria mensual",
         miniIcon: true,
         operation: "",
       },
@@ -371,10 +371,9 @@ export const tittleOptions = {
     "¿Realmente deseas eliminar el gasto descontable.",
 };
 
-
 export const paymentCycleMap: Record<string, string> = {
-  "Weekly": "Cada 10 días",
-  "Biweekly": "Bisemanal",
-  "Semimonthly": "Quincenal",
-  "Monthly": "Mensual",
+  Weekly: "Cada 10 días",
+  Biweekly: "Bisemanal",
+  Semimonthly: "Quincenal",
+  Monthly: "Mensual",
 };
