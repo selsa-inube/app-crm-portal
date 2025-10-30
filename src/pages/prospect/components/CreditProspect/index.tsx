@@ -601,7 +601,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 >
                   {dataCreditProspect.addProduct}
                 </Button>
-                {!prospectData?.creditProducts[0].extraordinaryInstallments && (
+                {canEditCreditRequest && (
                   <Icon
                     icon={<MdOutlineInfo />}
                     appearance="primary"
@@ -626,6 +626,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                     />
                   }
                   onClick={() => handleOpenModal("extraPayments")}
+                  disabled={canEditCreditRequest}
                 >
                   {dataCreditProspect.extraPayment}
                 </Button>
