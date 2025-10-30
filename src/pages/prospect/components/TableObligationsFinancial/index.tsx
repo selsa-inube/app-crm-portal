@@ -395,6 +395,7 @@ export const TableFinancialObligations = (
 
   return (
     <TableFinancialObligationsUI
+      initialValuesModalDataProspect={initialValues}
       dataInformation={dataInformation}
       extraDebtors={extraDebtors}
       loading={loading}

@@ -5,3 +5,14 @@ export const messagesError = {
     "Ocurrio un problema al obtener el codigo del prospecto.",
   tryLater: "Estamos tienendo problemas, intentalo mas tarde.",
 };
+
+export const dataSubmitApplication = {
+  modals: {
+    filed: "Prospecto",
+    fileDescription: "Se ha creado el prospecto ",
+    continue: "Continuar",
+    cancel: "Cerrar",
+    understand: "Entendido",
+    share: "Compartir",
+  },
+};

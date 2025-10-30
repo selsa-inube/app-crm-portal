@@ -33,6 +33,11 @@ interface CardCommercialManagementProps {
   id: string;
   dataRef: React.RefObject<HTMLDivElement>;
   onClick: () => void;
+  setShowMessageSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
+  prospectSummaryData?: IProspectSummaryById;
+  setProspectSummaryData?: React.Dispatch<
+    React.SetStateAction<IProspectSummaryById>
+  >;
   prospectData?: IProspect;
   showAddProduct?: boolean;
   refreshProducts?: () => void;
@@ -49,6 +54,9 @@ export const CardCommercialManagement = (
     prospectData,
     showAddProduct = true,
     onProspectUpdate,
+    prospectSummaryData,
+    setProspectSummaryData,
+    setShowMessageSuccessModal,
     onProspectRefreshData,
   } = props;
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
@@ -70,8 +78,7 @@ export const CardCommercialManagement = (
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [selectedProductId, setSelectedProductId] = useState("");
-  const [prospectSummaryData, setProspectSummaryData] =
-    useState<IProspectSummaryById>();
+
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
   const [consolidatedCredits, setConsolidatedCredits] = useState(
     prospectData?.consolidatedCredits || [],
@@ -131,6 +138,7 @@ export const CardCommercialManagement = (
       }
 
       setShowDeleteModal(false);
+      setShowMessageSuccessModal(true);
     } catch (error) {
       setShowDeleteModal(false);
       const err = error as {
@@ -174,6 +182,7 @@ export const CardCommercialManagement = (
       }
 
       setModalHistory((prev) => prev.slice(0, -1));
+      setShowMessageSuccessModal(true);
     } catch (error) {
       const err = error as {
         message?: string;
@@ -200,7 +209,7 @@ export const CardCommercialManagement = (
           businessManagerCode,
           prospectData?.prospectId || "",
         );
-        if (result) {
+        if (result && setProspectSummaryData) {
           setProspectSummaryData(result);
         }
       } catch (error) {

@@ -4,7 +4,6 @@ import { Stack, Text, Icon, Spinner } from "@inubekit/inubekit";
 
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
 import { Fieldset } from "@components/data/Fieldset";
-import { ErrorModal } from "@components/modals/ErrorModal";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
@@ -52,7 +51,11 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
           payload,
         );
         if (data) {
-          setValidateRequirements(data);
+          setValidateRequirements(
+            data.filter(
+              (requirement) => requirement.requirementStatus !== "Aprobado",
+            ),
+          );
         }
       } catch (error) {
         setShowErrorModal(true);
@@ -110,26 +113,20 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             direction="column"
             alignItems="center"
           >
-            <Icon
-              icon={<MdCheckCircleOutline />}
-              appearance={"success"}
-              size="54px"
-            />
+            {!showErrorModal && (
+              <Icon
+                icon={<MdCheckCircleOutline />}
+                appearance={"success"}
+                size="54px"
+              />
+            )}
+
             <Text type="title" size="medium" appearance="dark">
-              {dataError.noData}
+              {showErrorModal ? dataError.descriptionError : dataError.noData}
             </Text>
           </Stack>
         )}
       </Fieldset>
-      {showErrorModal && (
-        <ErrorModal
-          handleClose={() => {
-            setShowErrorModal(false);
-          }}
-          isMobile={isMobile}
-          message={dataError.descriptionError}
-        />
-      )}
     </>
   );
 }
