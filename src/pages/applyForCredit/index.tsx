@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -45,8 +45,6 @@ export function ApplyForCredit() {
   const [creditRequestCode, setCreditRequestCode] = useState("");
 
   const customerPublicCode: string = customerData.publicCode;
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -416,7 +414,7 @@ export function ApplyForCredit() {
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         businessManagerCode,
-        userAccount,
+        eventData.user.identificationDocumentNumber || "",
         submitData,
       );
 
