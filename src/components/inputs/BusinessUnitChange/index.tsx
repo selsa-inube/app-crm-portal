@@ -45,7 +45,13 @@ const BusinessUnitChange = (props: BusinessUnitChangeProps) => {
                   </Stack>
                 )}
               </StyledLi>
-              {index !== businessUnits.length - 1 && <Divider />}
+              {index !== businessUnits.length - 1 && (
+                <Stack width="100%" justifyContent="center">
+                  <Stack width="95%" padding="3px">
+                    <Divider />
+                  </Stack>
+                </Stack>
+              )}
             </StyledContainerOption>
           ))}
         </StyledUl>

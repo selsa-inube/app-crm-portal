@@ -18,6 +18,7 @@ import {
   Spinner,
   Textarea,
   Text,
+  Textfield,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -54,7 +55,7 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { AddProductModal } from "@src/pages/prospect/components/AddProductModal";
+import { AddProductModal } from "@pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
@@ -81,6 +82,8 @@ interface ICreditProspectProps {
   >;
   isPrint?: boolean;
   showPrint?: boolean;
+  showAddButtons?: boolean;
+  showAddProduct?: boolean;
   setRequestValue?: React.Dispatch<
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
@@ -108,6 +111,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     showPrint = true,
     setProspectSummaryData,
     prospectSummaryData,
+    showAddButtons = true,
+    showAddProduct = true,
   } = props;
 
   const { customerData } = useContext(CustomerContext);
@@ -262,7 +267,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       if (
         err?.data?.description == "Credit product already exists in prospect"
       ) {
-        description = "El producto de crédito ya existe en el prospecto";
+        description = "El producto de crédito ya existe en el prospecto";
       }
       addFlag({
         title: dataCreditProspect.descriptionError,
@@ -489,6 +494,12 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [selectedBorrower]);
 
+  useEffect(() => {
+    if (borrowerOptions.length === 1) {
+      setSelectedIndex(0);
+    }
+  }, [borrowerOptions]);
+
   const generateAndSharePdf = async () => {
     try {
       const pdfBlob = await generatePDF(
@@ -631,7 +642,6 @@ export function CreditProspect(props: ICreditProspectProps) {
                   {dataCreditProspect.extraPayment}
                 </Button>
               )}
-              <StyledVerticalDivider />
               <StyledContainerIcon>
                 {showPrint && (
                   <Stack gap="8px">
@@ -676,6 +686,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             setProspectSummaryData={setProspectSummaryData}
             setShowMessageSuccessModal={setShowMessageSuccessModal}
             onProspectRefreshData={onProspectRefreshData}
+            showAddProduct={showAddProduct}
           />
         </Stack>
         {currentModal === "creditLimit" && (
@@ -763,52 +774,59 @@ export function CreditProspect(props: ICreditProspectProps) {
               </Stack>
             ) : (
               <>
-                <Stack
-                  justifyContent="space-between"
-                  alignItems="end"
-                  width={isMobile ? "auto" : "100%"}
-                  gap="16px"
-                  alignContent="center"
-                >
-                  {borrowerOptions.length > 1 ? (
-                    <Select
-                      label="Deudor"
-                      id="borrower"
-                      name="borrower"
-                      options={borrowerOptions}
-                      value={borrowerOptions[selectedIndex]?.value}
-                      onChange={handleChange}
-                      size="compact"
-                    />
-                  ) : (
-                    <Stack height="35px">
-                      <Text size="medium" type="title" appearance="dark">
-                        {borrowerOptions[selectedIndex]?.value || ""}
-                      </Text>
-                    </Stack>
-                  )}
-                  <Stack alignItems="center">
-                    <Button
-                      onClick={() => {
-                        setOpenModal("IncomeModalEdit");
-                      }}
-                      disabled={canEditCreditRequest}
-                    >
-                      {dataCreditProspect.edit}
-                    </Button>
-                    {canEditCreditRequest ? (
-                      <Icon
-                        icon={<MdOutlineInfo />}
-                        appearance="primary"
-                        size="16px"
-                        cursorHover
-                        onClick={handleInfo}
+                {showAddButtons === true && (
+                  <Stack
+                    justifyContent="space-between"
+                    alignItems="end"
+                    width={isMobile ? "auto" : "100%"}
+                    gap="16px"
+                  >
+                    {borrowerOptions.length === 1 ? (
+                      <Textfield
+                        label="Deudor"
+                        id="borrower"
+                        name="borrower"
+                        value={borrowerOptions[0]?.label || ""}
+                        size="compact"
+                        readOnly={true}
+                        disabled={true}
+                        fullwidth
                       />
                     ) : (
-                      <></>
+                      <Select
+                        label="Deudor"
+                        id="borrower"
+                        name="borrower"
+                        options={borrowerOptions}
+                        value={borrowerOptions[selectedIndex]?.value}
+                        onChange={handleChange}
+                        size="compact"
+                      />
                     )}
+
+                    <Stack alignItems="center">
+                      <Button
+                        onClick={() => {
+                          setOpenModal("IncomeModalEdit");
+                        }}
+                        disabled={canEditCreditRequest}
+                      >
+                        {dataCreditProspect.edit}
+                      </Button>
+                      {canEditCreditRequest ? (
+                        <Icon
+                          icon={<MdOutlineInfo />}
+                          appearance="primary"
+                          size="16px"
+                          cursorHover
+                          onClick={handleInfo}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </Stack>
                   </Stack>
-                </Stack>
+                )}
                 <IncomeDebtor
                   initialValues={
                     dataProspect[0]?.borrowers?.find(
@@ -836,6 +854,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             publicCode={borrowerOptions[selectedIndex]?.publicCode || ""}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
+            prospectData={prospectData}
           />
         )}
         {currentModal === "reportCreditsModal" && (
@@ -846,6 +865,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             debtor={form.borrower}
             prospectData={prospectData ? [prospectData] : undefined}
             onProspectUpdate={onProspectRefreshData}
+            showAddButton={showAddButtons}
           />
         )}
 
@@ -856,6 +876,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             sentData={sentData}
             setSentData={setSentData}
             businessUnitPublicCode={businessUnitPublicCode}
+            showAddButton={showAddButtons}
           />
         )}
 

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { FormikValues } from "formik";
 import {
   MdOutlineEdit,
@@ -24,6 +24,7 @@ import {
   Button,
   Divider,
   Select,
+  Textfield,
 } from "@inubekit/inubekit";
 
 import { EditFinancialObligationModal } from "@components/modals/editFinancialObligationModal";
@@ -58,6 +59,7 @@ export interface ITableFinancialObligationsProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  showAddButton?: boolean;
   onProspectUpdate?: () => void;
   setFormState?: React.Dispatch<
     React.SetStateAction<{
@@ -113,6 +115,7 @@ interface UIProps {
   showActions?: boolean;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
+  showAddButton?: boolean;
   setFormState?: React.Dispatch<
     React.SetStateAction<{
       type: string;
@@ -179,6 +182,7 @@ export const TableFinancialObligationsUI = ({
   onProspectUpdate,
   showOnlyEdit,
   services = true,
+  showAddButton = true,
   handleEdit,
   handleDelete,
   handleUpdate,
@@ -344,6 +348,13 @@ export const TableFinancialObligationsUI = ({
   const handleInfoModalClose = () => {
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    if (borrowerOptions.length === 1) {
+      setSelectedBorrowerIndex(0);
+    }
+  }, [borrowerOptions]);
+
   const renderHeaders = () => {
     return visibleHeaders.map((header, index) =>
       loading ? (
@@ -474,7 +485,7 @@ export const TableFinancialObligationsUI = ({
         {handleOnChangeExtraBorrowers === undefined && (
           <>
             <Stack alignItems="center">
-              {!isMobile && (
+              {!isMobile && initialValues?.[0]?.borrowers?.length <= 1 && (
                 <Text size="medium" type="label" weight="bold">
                   {dataReport.title}
                 </Text>
@@ -492,19 +503,33 @@ export const TableFinancialObligationsUI = ({
               {!isMobile && (
                 <Stack>
                   {initialValues?.[0]?.borrowers?.length > 1 ? (
-                    <Select
-                      name="borrower"
-                      id="borrower"
-                      label="Deudor"
-                      placeholder="Selecciona un deudor"
-                      options={borrowerOptions}
-                      value={String(selectedBorrowerIndex)}
-                      onChange={(_, value) =>
-                        setSelectedBorrowerIndex(Number(value))
-                      }
-                      size="wide"
-                      fullwidth={isMobile}
-                    />
+                    borrowerOptions.length === 1 ? (
+                      <Textfield
+                        name="borrower"
+                        id="borrower"
+                        label=""
+                        placeholder="Selecciona un deudor"
+                        value={borrowerOptions[0]?.label || ""}
+                        size="wide"
+                        readOnly={true}
+                        disabled={true}
+                        fullwidth={isMobile}
+                      />
+                    ) : (
+                      <Select
+                        name="borrower"
+                        id="borrower"
+                        label="Deudor"
+                        placeholder="Selecciona un deudor"
+                        options={borrowerOptions}
+                        value={String(selectedBorrowerIndex)}
+                        onChange={(_, value) =>
+                          setSelectedBorrowerIndex(Number(value))
+                        }
+                        size="wide"
+                        fullwidth={isMobile}
+                      />
+                    )
                   ) : (
                     <Text size="medium" type="title" appearance="dark">
                       {initialValuesModalDataProspect![0]?.borrowers[0]
@@ -517,19 +542,33 @@ export const TableFinancialObligationsUI = ({
               {isMobile && (
                 <Stack padding="0px 0px 10px 0px">
                   {initialValues?.[0]?.borrowers?.length > 1 ? (
-                    <Select
-                      name="borrower"
-                      id="borrower"
-                      label="Deudor"
-                      placeholder="Selecciona un deudor"
-                      options={borrowerOptions}
-                      value={String(selectedBorrowerIndex)}
-                      onChange={(_, value) =>
-                        setSelectedBorrowerIndex(Number(value))
-                      }
-                      size="wide"
-                      fullwidth={isMobile}
-                    />
+                    borrowerOptions.length === 1 ? (
+                      <Textfield
+                        name="borrower"
+                        id="borrower"
+                        label="Deudor"
+                        placeholder="Selecciona un deudor"
+                        value={borrowerOptions[0]?.label || ""}
+                        size="wide"
+                        readOnly={true}
+                        disabled={true}
+                        fullwidth={isMobile}
+                      />
+                    ) : (
+                      <Select
+                        name="borrower"
+                        id="borrower"
+                        label="Deudor"
+                        placeholder="Selecciona un deudor"
+                        options={borrowerOptions}
+                        value={String(selectedBorrowerIndex)}
+                        onChange={(_, value) =>
+                          setSelectedBorrowerIndex(Number(value))
+                        }
+                        size="wide"
+                        fullwidth={isMobile}
+                      />
+                    )
                   ) : (
                     <CardGray
                       label={dataReport.title}
@@ -541,7 +580,7 @@ export const TableFinancialObligationsUI = ({
               )}
             </>
           )}
-          {!showOnlyEdit && (
+          {!showOnlyEdit && showAddButton === true && (
             <Stack
               justifyContent="end"
               gap="16px"

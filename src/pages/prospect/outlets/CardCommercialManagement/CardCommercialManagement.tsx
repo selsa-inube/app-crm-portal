@@ -22,15 +22,12 @@ import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeduct
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
-import {
-  getUseCaseValue,
-  useValidateUseCase,
-} from "@src/hooks/useValidateUseCase";
-import { privilegeCrm } from "@src/config/privilege";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { privilegeCrm } from "@config/privilege";
 
+import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";
-import InfoModal from "../../components/InfoModal";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -42,6 +39,7 @@ interface CardCommercialManagementProps {
     React.SetStateAction<IProspectSummaryById>
   >;
   prospectData?: IProspect;
+  showAddProduct?: boolean;
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
   onProspectRefreshData?: () => void;
@@ -54,6 +52,7 @@ export const CardCommercialManagement = (
     dataRef,
     onClick,
     prospectData,
+    showAddProduct = true,
     onProspectUpdate,
     prospectSummaryData,
     setProspectSummaryData,
@@ -282,9 +281,11 @@ export const CardCommercialManagement = (
               }
             />
           ))}
-          <StyledPrint>
-            <NewCreditProductCard onClick={onClick} />
-          </StyledPrint>
+          {showAddProduct && (
+            <StyledPrint>
+              <NewCreditProductCard onClick={onClick} />
+            </StyledPrint>
+          )}
         </Stack>
       </StyledCardsCredit>
       {isMobile && <Divider />}

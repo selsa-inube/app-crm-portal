@@ -313,6 +313,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       });
     });
   };
+
   const isFormValid = () => {
     if (isEdit) {
       return (
@@ -335,6 +336,28 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       count > 0
     );
   };
+  useEffect(() => {
+    if (paymentMethodOptionsMock.length === 1) {
+      const onlyOption = paymentMethodOptionsMock[0];
+      formik.setFieldValue("paymentChannelAbbreviatedName", onlyOption.value);
+      handleFieldChange("paymentChannelAbbreviatedName", onlyOption.value);
+    }
+  }, [paymentMethodOptionsMock]);
+
+  useEffect(() => {
+    if (frequencyOptionsMock.length === 1) {
+      const onlyOption = frequencyOptionsMock[0];
+      formik.setFieldValue("frequency", onlyOption.value);
+    }
+  }, [frequencyOptionsMock]);
+
+  useEffect(() => {
+    if (paymentDateOptionsMock.length === 1) {
+      const onlyOption = paymentDateOptionsMock[0];
+      formik.setFieldValue("installmentDate", onlyOption.value);
+      handleFieldChange("installmentDate", onlyOption.value);
+    }
+  }, [paymentDateOptionsMock]);
 
   return (
     <BaseModal
@@ -350,18 +373,33 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       disabledNext={!isFormValid()}
     >
       <Stack gap="24px" direction="column">
-        <Select
-          name="paymentChannelAbbreviatedName"
-          id="paymentChannelAbbreviatedName"
-          label={dataAddSeriesModal.labelPaymentMethod}
-          placeholder={dataAddSeriesModal.placeHolderSelect}
-          options={paymentMethodOptionsMock}
-          value={formik.values.paymentChannelAbbreviatedName}
-          onChange={(name, value) => handleFieldChange(name, value)}
-          size="wide"
-          fullwidth
-          required
-        />
+        {paymentMethodOptionsMock.length === 1 ? (
+          <Textfield
+            name="paymentChannelAbbreviatedName"
+            id="paymentChannelAbbreviatedName"
+            label={dataAddSeriesModal.labelPaymentMethod}
+            placeholder={dataAddSeriesModal.placeHolderSelect}
+            value={paymentMethodOptionsMock[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            size="wide"
+            fullwidth
+            required
+          />
+        ) : (
+          <Select
+            name="paymentChannelAbbreviatedName"
+            id="paymentChannelAbbreviatedName"
+            label={dataAddSeriesModal.labelPaymentMethod}
+            placeholder={dataAddSeriesModal.placeHolderSelect}
+            options={paymentMethodOptionsMock}
+            value={formik.values.paymentChannelAbbreviatedName}
+            onChange={(name, value) => handleFieldChange(name, value)}
+            size="wide"
+            fullwidth
+            required
+          />
+        )}
 
         {!isEdit && (
           <Textfield
@@ -403,8 +441,20 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           required
           fullwidth
         />
-
-        {!isEdit && (
+        {frequencyOptionsMock.length === 1 ? (
+          <Textfield
+            name="frequency"
+            id="frequency"
+            label={dataAddSeriesModal.labelFrequency}
+            placeholder={dataAddSeriesModal.placeHolderSelect}
+            value={frequencyOptionsMock[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            size="wide"
+            fullwidth
+            required
+          />
+        ) : (
           <Select
             name="frequency"
             id="frequency"
@@ -418,19 +468,33 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
             required
           />
         )}
-
-        <Select
-          name="installmentDate"
-          id="installmentDate"
-          label={dataAddSeriesModal.labelDate}
-          placeholder={dataAddSeriesModal.placeHolderSelect}
-          options={paymentDateOptionsMock}
-          value={formik.values.installmentDate}
-          onChange={(name, value) => handleFieldChange(name, value)}
-          size="wide"
-          required
-          fullwidth
-        />
+        {paymentDateOptionsMock.length === 1 ? (
+          <Textfield
+            name="installmentDate"
+            id="installmentDate"
+            label={dataAddSeriesModal.labelDate}
+            placeholder={dataAddSeriesModal.placeHolderSelect}
+            value={paymentDateOptionsMock[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            size="wide"
+            fullwidth
+            required
+          />
+        ) : (
+          <Select
+            name="installmentDate"
+            id="installmentDate"
+            label={dataAddSeriesModal.labelDate}
+            placeholder={dataAddSeriesModal.placeHolderSelect}
+            options={paymentDateOptionsMock}
+            value={formik.values.installmentDate}
+            onChange={(name, value) => handleFieldChange(name, value)}
+            size="wide"
+            required
+            fullwidth
+          />
+        )}
       </Stack>
     </BaseModal>
   );
