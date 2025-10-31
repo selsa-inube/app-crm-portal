@@ -5,6 +5,9 @@ export const StyledTable = styled.div`
   max-height: 270px;
   overflow-y: auto;
   overflow-x: hidden;
+  & div {
+    width: auto;
+  }
 
   &::-webkit-scrollbar {
     width: 8px;

@@ -59,6 +59,7 @@ import { AddProductModal } from "@pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
+import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -547,6 +548,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       borrower?.borrowerProperties?.find(
         (property) => property.propertyName === "PeriodicSalary",
       )?.propertyValue || "",
+    lineOfCreditAbbreviatedName: dataProspect?.[0]?.linesOfCredit || "",
   };
 
   const handleCommentsChange = (
@@ -696,7 +698,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             setRequestValue={setRequestValue || (() => {})}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
-            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+            dataMaximumCreditLimitService={
+              dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+            }
             moneyDestination={
               prospectData?.moneyDestinationAbbreviatedName || ""
             }
@@ -707,7 +711,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             handleClose={() => setOpenModal(null)}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
-            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+            dataMaximumCreditLimitService={
+              dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+            }
           />
         )}
         {openModal === "reciprocityModal" && (
