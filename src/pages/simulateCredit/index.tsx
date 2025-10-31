@@ -43,6 +43,7 @@ import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 import { updateFinancialObligationsFormData } from "./utils";
+import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -794,6 +795,7 @@ export function SimulateCredit() {
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       identificationDocumentNumber: customerData.publicCode,
       moneyDestination: formData.selectedDestination,
+      lineOfCreditAbbreviatedName: formData.selectedProducts[0] || "",
       primaryIncomeType:
         typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
           ? formData.sourcesOfIncome.PeriodicSalary.toString()
@@ -857,7 +859,9 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
-        dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+        dataMaximumCreditLimitService={
+          dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+        }
         servicesProductSelection={
           servicesProductSelection as IServicesProductSelection
         }

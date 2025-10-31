@@ -1,51 +1,76 @@
-import { environment } from "@config/environment";
-import { IMaximumCreditLimit } from "@src/services/creditRequest/types";
+import {
+  environment,
+  fetchTimeoutServices,
+  maxRetriesServices,
+} from "@config/environment";
+import { IMaximumCreditLimit } from "@services/creditRequest/types";
 
 const postBusinessUnitRules = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   userAccount: string,
   submitData: IMaximumCreditLimit,
-): Promise<IMaximumCreditLimit> => {
-  const requestUrl = `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits/`;
+): Promise<IMaximumCreditLimit | null> => {
+  const maxRetries = maxRetriesServices;
+  const fetchTimeout = fetchTimeoutServices;
 
-  try {
-    const options: RequestInit = {
-      method: "POST",
-      headers: {
-        "X-Action": "GetMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit",
-        "X-Business-Unit": businessUnitPublicCode,
-        "X-User-Name": userAccount,
-        "Content-type": "application/json; charset=UTF-8",
-        "X-Process-Manager": businessManagerCode,
-      },
-      body: JSON.stringify(submitData),
-    };
-
-    const res = await fetch(requestUrl, options);
-
-    if (res.status === 204) {
-      return {} as IMaximumCreditLimit;
-    }
-
-    let data;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      data = await res.json();
-    } catch (error) {
-      throw new Error("Failed to parse response JSON");
-    }
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
 
-    if (!res.ok) {
-      const errorMessage = `Error al obtener los datos: ${
-        res.status
-      }, Data: ${JSON.stringify(data)}`;
-      throw new Error(errorMessage);
+      const options: RequestInit = {
+        method: "POST",
+        headers: {
+          "X-Action":
+            "GetMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit",
+          "X-Business-Unit": businessUnitPublicCode,
+          "X-User-Name": userAccount,
+          "Content-type": "application/json; charset=UTF-8",
+          "X-Process-Manager": businessManagerCode,
+        },
+        body: JSON.stringify(submitData),
+        signal: controller.signal,
+      };
+
+      const res = await fetch(
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits/`,
+        options,
+      );
+
+      clearTimeout(timeoutId);
+
+      if (res.status === 204) {
+        return null;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw {
+          message: "Ha ocurrido un error: ",
+          status: res.status,
+          data,
+        };
+      }
+
+      return data;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
+        throw new Error(
+          "Todos los intentos fallaron. No se pudo evaluar las reglas de la unidad de negocio.",
+        );
+      }
     }
-    return data;
-  } catch (error) {
-    console.error("Failed to evaluate rule:", error);
-    throw error;
   }
+
+  return null;
 };
 
 export { postBusinessUnitRules };
