@@ -8,6 +8,7 @@ interface ICreditUIProps {
   dataHeader: {
     name: string;
     status: string;
+    image?: string;
   };
   navigate: ReturnType<typeof useNavigate>;
 }

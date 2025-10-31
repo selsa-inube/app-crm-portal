@@ -31,6 +31,7 @@ import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import userImage from "@assets/images/userImage.jpeg";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -64,6 +65,7 @@ import {
   AlertIncome,
 } from "./components/smallModals/modals";
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
+import { IDataHeader } from "../simulations/types";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -115,7 +117,7 @@ interface SimulateCreditUIProps {
   navigate: ReturnType<typeof useNavigate>;
   currentStep: number;
   customerData: ICustomerData;
-  dataHeader: { name: string; status: string };
+  dataHeader: IDataHeader;
   steps: IStep[];
   isCurrentFormValid: boolean;
   isModalOpenRequirements: boolean;
@@ -242,7 +244,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 buttonText="Agregar vinculación"
                 descriptionStatus={dataHeader.status}
                 name={dataHeader.name}
-                profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
+                profileImageUrl={dataHeader.image || userImage}
               />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">

@@ -1,5 +1,6 @@
 export interface ICustomerData {
   customerId: string;
+  image?: string;
   publicCode: string;
   fullName: string;
   natureClient: string;

@@ -41,6 +41,7 @@ export const dataEditProspect = {
   errorRemoveProspect: "No se ha podido eliminar el prospecto de crédito.",
   deleteTitle: "Eliminar prospecto",
   deleteDescription: "¿Realmente deseas eliminar este prospecto de crédito?",
+  addToFix: "Este prospecto no pertenece al cliente actual",
 };
 
 export const titlesModal = {

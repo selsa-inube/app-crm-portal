@@ -63,6 +63,7 @@ export function Simulations() {
     name: customerData.fullName,
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
+    publicCode: customerData.publicCode,
   };
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
 

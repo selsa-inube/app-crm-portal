@@ -32,6 +32,7 @@ interface IHome {
 interface IDataHeader {
   name?: string;
   status?: string;
+  image?: string;
 }
 
 interface IHomeUIProps {

@@ -62,7 +62,7 @@ function BusinessUnitsUI({
           Unidad de Negocios
         </Text>
         <Text size="medium" textAlign="center">
-          Seleccione la Unidad de Negocio
+          Selecciona la Unidad de Negocio
         </Text>
       </Stack>
       <form>
