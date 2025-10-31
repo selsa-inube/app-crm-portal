@@ -26,6 +26,7 @@ import { IPaymentChannel } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { IProspectSummaryById } from "@services/prospect/types";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
@@ -74,6 +75,10 @@ interface SimulationsUIProps {
   generateAndSharePdf: () => void;
   onProspectUpdated?: () => void;
   handleDeleteProspect: () => void;
+  prospectSummaryData?: IProspectSummaryById;
+  setProspectSummaryData?: React.Dispatch<
+    React.SetStateAction<IProspectSummaryById>
+  >;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -108,15 +113,9 @@ export function SimulationsUI(props: SimulationsUIProps) {
     generateAndSharePdf,
     onProspectUpdated,
     handleDeleteProspect,
+    prospectSummaryData,
+    setProspectSummaryData,
   } = props;
-
-  const getTotalLoanAmount = (data: IProspect | undefined): number => {
-    if (!data || !data.creditProducts) return 0;
-
-    return data.creditProducts.reduce((sum, product) => {
-      return sum + (product.loanAmount || 0);
-    }, 0);
-  };
 
   const getDestinationName = (code?: string) => {
     if (!code) return "";
@@ -304,7 +303,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 appearance="primary"
                               >
                                 {currencyFormat(
-                                  getTotalLoanAmount(dataProspect),
+                                  prospectSummaryData?.netAmountToDisburse || 0,
                                 )}
                               </Text>
                             </Stack>
@@ -328,6 +327,9 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           setSentData={setSentData}
                           setRequestValue={setRequestValue}
                           onProspectUpdate={setProspectData}
+                          onProspectUpdated={onProspectUpdated}
+                          prospectSummaryData={prospectSummaryData}
+                          setProspectSummaryData={setProspectSummaryData}
                           onProspectRefreshData={onProspectUpdated}
                         />
                       </Fieldset>

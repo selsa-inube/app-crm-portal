@@ -3,7 +3,6 @@ import {
   MdOutlineMonetizationOn,
   MdOutlineBalance,
   MdOutlineAccountBalanceWallet,
-  MdOutlineEdit,
   MdOutlineRemoveRedEye,
   MdOutlineMessage,
 } from "react-icons/md";
@@ -269,7 +268,6 @@ export const SummaryProspectCredit = [
         id: "totalConsolidatedAmount",
         title: "Obligaciones recogidas",
         miniIcon: true,
-        icon: <MdOutlineEdit />,
         modal: "edit",
         operation: "-",
       },
@@ -289,7 +287,7 @@ export const SummaryProspectCredit = [
       },
       {
         id: "totalRegularInstallment",
-        title: "Cuota ordinaria",
+        title: "Cuota ordinaria mensual",
         miniIcon: true,
         operation: "",
       },
@@ -356,7 +354,6 @@ export const tittleOptions = {
   titleCreditId: "No. Rad.: ",
   titleDestination: "Destino: ",
   tittleAmount: "Valor: ",
-  titleProfile: "Ver perfil crediticio",
   titleDisbursement: "Medios de desembolso",
   titleCall: "Llamada",
   titleVideoCall: "Videollamada",
@@ -371,10 +368,9 @@ export const tittleOptions = {
     "¿Realmente deseas eliminar el gasto descontable.",
 };
 
-
 export const paymentCycleMap: Record<string, string> = {
-  "Weekly": "Cada 10 días",
-  "Biweekly": "Bisemanal",
-  "Semimonthly": "Quincenal",
-  "Monthly": "Mensual",
+  Weekly: "Cada 10 días",
+  Biweekly: "Bisemanal",
+  Semimonthly: "Quincenal",
+  Monthly: "Mensual",
 };

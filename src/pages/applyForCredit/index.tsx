@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -28,7 +28,7 @@ import {
   prospectStates,
   tittleOptions,
 } from "./config/config";
-import { getSearchAllModesOfDisbursementTypes } from "@src/services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
+import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -42,10 +42,9 @@ export function ApplyForCredit() {
     useState<IProspectSummaryById>();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [creditRequestCode, setCreditRequestCode] = useState("");
 
   const customerPublicCode: string = customerData.publicCode;
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -58,8 +57,6 @@ export function ApplyForCredit() {
       customerData?.generalAssociateAttributes[0].partnerStatus.substring(2) ??
       "",
   };
-
-  const navigate = useNavigate();
 
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
@@ -417,13 +414,14 @@ export function ApplyForCredit() {
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         businessManagerCode,
-        userAccount,
+        eventData.user.identificationDocumentNumber || "",
         submitData,
       );
-      console.log("Solicitud enviada con éxito:", response);
-      setSentModal(false);
+
+      setCreditRequestCode(response?.creditRequestCode || "");
       setApprovedRequestModal(true);
     } catch (error) {
+      console.error("error: ", error);
       setSentModal(false);
       handleFlag();
     }
@@ -719,7 +717,6 @@ export function ApplyForCredit() {
 
   function handleSubmitClick() {
     setSentModal(true);
-    navigate(`/credit/credit-requests`);
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
@@ -797,6 +794,7 @@ export function ApplyForCredit() {
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
         setMessageError={setMessageError}
+        creditRequestCode={creditRequestCode}
         modesOfDisbursement={modesOfDisbursement}
       />
     </>

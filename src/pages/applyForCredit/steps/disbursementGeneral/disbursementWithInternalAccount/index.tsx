@@ -337,7 +337,7 @@ export function DisbursementWithInternalAccount(
   }, [currentIdentification]);
 
   useEffect(() => {
-    if (isAmountReadOnly && accountOptions.length === 1) {
+    if (accountOptions.length === 1) {
       const onlyOption = accountOptions[0];
       formik.setFieldValue(`${optionNameForm}.accountNumber`, onlyOption.value);
     }
@@ -440,21 +440,35 @@ export function DisbursementWithInternalAccount(
           <Divider dashed />
         </>
       )}
-      <Stack width={isMobile ? "100%" : "498px"}>
-        <Select
-          id={`${optionNameForm}.accountNumber`}
-          name={`${optionNameForm}.accountNumber`}
-          label={disbursemenOptionAccount.labelAccount}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={accountOptions}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
-          }
-          value={formik.values[optionNameForm]?.accountNumber || ""}
-          fullwidth
-        />
+      <Stack width="498px">
+        {accountOptions.length === 1 ? (
+          <Textfield
+            id={`${optionNameForm}.accountNumber`}
+            name={`${optionNameForm}.accountNumber`}
+            label={disbursemenOptionAccount.labelAccount}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            value={accountOptions[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            id={`${optionNameForm}.accountNumber`}
+            name={`${optionNameForm}.accountNumber`}
+            label={disbursemenOptionAccount.labelAccount}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={accountOptions}
+            onBlur={formik.handleBlur}
+            onChange={(_, value) =>
+              formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
+            }
+            value={formik.values[optionNameForm]?.accountNumber || ""}
+            fullwidth
+          />
+        )}
       </Stack>
       <Textarea
         id={`${optionNameForm}.description`}

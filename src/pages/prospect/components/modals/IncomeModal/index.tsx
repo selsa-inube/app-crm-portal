@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useFlag, useMediaQuery } from "@inubekit/inubekit";
+import { useMediaQuery } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
+import { IProspect } from "@services/prospect/types";
 
 import { dataIncomeModal } from "./config";
 import { IIncome } from "../../SourceIncome/types";
@@ -27,6 +28,7 @@ interface IncomeModalProps {
   creditLimitData?: IIncomeSources | undefined;
   publicCode?: string;
   businessManagerCode: string;
+  prospectData: IProspect | undefined;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
@@ -42,11 +44,11 @@ export function IncomeModal(props: IncomeModalProps) {
     customerData,
     publicCode,
     businessManagerCode,
+    prospectData,
   } = props;
 
   const [formData, setFormData] = useState(initialValues);
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { addFlag } = useFlag();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const { restoreData } = useRestoreIncomeData({
@@ -71,23 +73,10 @@ export function IncomeModal(props: IncomeModalProps) {
 
   const handleSubmit = () => {
     if (!formData) {
-      console.error("formData es undefined o null");
-      addFlag({
-        title: "Error",
-        description: "No hay datos para guardar",
-        appearance: "danger",
-        duration: 5000,
-      });
       return;
     }
     onSubmit(formData as IIncomeSources);
     handleClose();
-    addFlag({
-      title: `${dataIncomeModal.flagTittle}`,
-      description: `${dataIncomeModal.flagDescription}`,
-      appearance: "success",
-      duration: 5000,
-    });
   };
 
   return (
@@ -116,6 +105,7 @@ export function IncomeModal(props: IncomeModalProps) {
         publicCode={publicCode || ""}
         businessUnitPublicCode={businessUnitPublicCode}
         businessManagerCode={businessManagerCode}
+        prospectData={prospectData}
       />
     </BaseModal>
   );
