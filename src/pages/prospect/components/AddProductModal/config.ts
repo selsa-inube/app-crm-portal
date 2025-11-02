@@ -1,4 +1,4 @@
-import { ObjectSchema, AnyObject } from "yup";
+import * as Yup from "yup";
 
 import {
   CreditLine,
@@ -8,6 +8,10 @@ import {
 } from "@services/enum/prospectProduct";
 import { Schedule } from "@services/enum/schedule";
 import { ICustomerData } from "@context/CustomerContext/types";
+import {
+  IPaymentMethod,
+  IPaymentCycle,
+} from "@services/prospect/getPaymentMethods/types";
 
 const creditLineOptions = [
   {
@@ -174,20 +178,6 @@ export type TCreditLineTerms = Record<
     description?: string;
   }
 >;
-
-export interface IFormValues {
-  selectedProducts: string[];
-  creditLine?: string;
-  creditAmount?: number;
-  paymentMethod?: string;
-  paymentCycle?: string;
-  firstPaymentCycle?: string;
-  termInMonths?: number;
-  amortizationType?: string;
-  interestRate?: number;
-  rateType?: string;
-}
-
 export type TRulePrimitiveValue = number | string;
 
 export type TRuleArrayValue = (
@@ -230,13 +220,109 @@ export interface IAddProductModalUIProps {
   title: string;
   confirmButtonText: string;
   initialValues: Partial<IFormValues>;
-  validationSchema: ObjectSchema<IFormValues, AnyObject, IFormValues>;
+  validationSchema: Yup.AnyObjectSchema;
   onConfirm: (values: IFormValues) => void;
   onCloseModal: () => void;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   creditLineTerms: TCreditLineTerms;
   isMobile: boolean;
+  steps: StepDetails[];
+  currentStep: number;
+  currentStepsNumber: StepDetails;
+  isCurrentFormValid: boolean;
+  formData: IFormValues;
+  setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
+  handleFormChange: (updatedValues: Partial<IFormValues>) => void;
+  handleNextStep: () => void;
+  handlePreviousStep: () => void;
+  handleSubmitClick: () => void;
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
+  prospectData: {
+    lineOfCredit: string;
+    moneyDestination: string;
+  };
+  errorModal: boolean;
+  setErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  errorMessage: string;
+}
+
+export interface IStep {
+  id: number;
+  number: number;
+  name: string;
+  description: string;
+}
+
+export const stepsAddProduct = {
+  creditLineSelection: {
+    id: 1,
+    number: 1,
+    name: "Línea de crédito",
+    description: "Selecciona la línea de crédito",
+  },
+  paymentConfiguration: {
+    id: 2,
+    number: 2,
+    name: "Configuración de pago",
+    description: "Configura el medio y ciclo de pago",
+  },
+  amountCapture: {
+    id: 3,
+    number: 3,
+    name: "Monto a solicitar",
+    description: "Ingresa el monto del crédito",
+  },
+  termSelection: {
+    id: 4,
+    number: 4,
+    name: "Plazo",
+    description: "Selecciona el plazo del crédito",
+  },
+};
+
+export const titleButtonTextAssisted = {
+  goBackText: "Atrás",
+  goNextText: "Siguiente",
+  submitText: "Agregar producto",
+};
+
+export const errorMessages = {
+  getPaymentMethods: "Error al obtener los medios de pago",
+};
+
+export interface IFirstPaymentDate {
+  id: string;
+  value: string;
+  label: string;
+}
+
+export interface IPaymentConfiguration {
+  paymentMethod: string;
+  paymentCycle: string;
+  firstPaymentDate: string;
+  availablePaymentMethods: IPaymentMethod[];
+  availablePaymentCycles: IPaymentCycle[];
+  availableFirstPaymentDates: IFirstPaymentDate[];
+}
+
+export interface IFormValues {
+  creditLine: string;
+  creditAmount: number;
+  paymentConfiguration: IPaymentConfiguration;
+  quotaCapValue: number;
+  maximumTermValue: number;
+  quotaCapEnabled: boolean;
+  maximumTermEnabled: boolean;
+  selectedProducts: string[];
+}
+
+export interface StepDetails {
+  id: number;
+  number: number;
+  name: string;
+  description: string;
 }
 
 export {

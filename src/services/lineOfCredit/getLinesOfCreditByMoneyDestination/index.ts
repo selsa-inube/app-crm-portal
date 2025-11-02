@@ -51,7 +51,56 @@ const getLinesOfCreditByMoneyDestination = async (
         };
       }
 
-      return data as ILinesOfCreditByMoneyDestination;
+      return [
+        {
+          abbreviateName: "LIBRE_INVERSION",
+          amortizationType: ["CUOTA_FIJA", "ABONO_CAPITAL"],
+          description: "Crédito de libre inversión para cualquier propósito",
+          maxAmount: 50000000,
+          maxEffectiveInterestRate: 2.5,
+          maxTerm: 60,
+          minAmount: 1000000,
+          minEffectiveInterestRate: 1.2,
+          minTerm: 6,
+        },
+        {
+          abbreviateName: "VEHICULO",
+          amortizationType: ["CUOTA_FIJA"],
+          description: "Crédito para compra de vehículo nuevo o usado",
+          maxAmount: 80000000,
+          maxEffectiveInterestRate: 1.8,
+          maxTerm: 72,
+          minAmount: 5000000,
+          minEffectiveInterestRate: 1.0,
+          minTerm: 12,
+        },
+        {
+          abbreviateName: "VIVIENDA",
+          amortizationType: [
+            "CUOTA_FIJA",
+            "ABONO_CAPITAL",
+            "CUOTA_DECRECIENTE",
+          ],
+          description: "Crédito hipotecario para compra de vivienda",
+          maxAmount: 200000000,
+          maxEffectiveInterestRate: 1.5,
+          maxTerm: 240,
+          minAmount: 20000000,
+          minEffectiveInterestRate: 0.8,
+          minTerm: 60,
+        },
+        {
+          abbreviateName: "EDUCACION",
+          amortizationType: ["CUOTA_FIJA"],
+          description: "Crédito educativo para estudios superiores",
+          maxAmount: 30000000,
+          maxEffectiveInterestRate: 1.0,
+          maxTerm: 48,
+          minAmount: 2000000,
+          minEffectiveInterestRate: 0.5,
+          minTerm: 12,
+        },
+      ] as ILinesOfCreditByMoneyDestination;
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {
