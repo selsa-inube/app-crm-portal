@@ -616,93 +616,91 @@ export function CreditProspect(props: ICreditProspectProps) {
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
-        {!isMobile && (
-          <StyledPrint>
-            <Stack gap="16px" justifyContent="end" alignItems="center">
-              <Stack alignItems="center" gap="4px">
-                <Button
-                  type="button"
-                  appearance="primary"
-                  spacing="compact"
-                  iconBefore={
-                    <Icon
-                      icon={<MdOutlineAdd />}
-                      appearance="light"
-                      size="18px"
-                      spacing="narrow"
-                    />
-                  }
-                  disabled={canEditCreditRequest}
-                  onClick={() => handleOpenModal("editProductModal")}
-                >
-                  {dataCreditProspect.addProduct}
-                </Button>
-                {canEditCreditRequest && (
+        <StyledPrint>
+          <Stack gap="16px" justifyContent="end" alignItems="center">
+            <Stack alignItems="center" gap="4px">
+              <Button
+                type="button"
+                appearance="primary"
+                spacing="compact"
+                iconBefore={
                   <Icon
-                    icon={<MdOutlineInfo />}
-                    appearance="primary"
-                    size="16px"
-                    cursorHover
-                    onClick={handleInfo}
+                    icon={<MdOutlineAdd />}
+                    appearance="light"
+                    size="18px"
+                    spacing="narrow"
                   />
-                )}
-              </Stack>
-              {!hasExtraordinaryInstallments(prospectData as IProspect) && (
-                <Button
-                  type="button"
+                }
+                disabled={canEditCreditRequest}
+                onClick={() => handleOpenModal("editProductModal")}
+              >
+                {dataCreditProspect.addProduct}
+              </Button>
+              {canEditCreditRequest && (
+                <Icon
+                  icon={<MdOutlineInfo />}
                   appearance="primary"
-                  spacing="compact"
-                  variant="outlined"
-                  iconBefore={
-                    <Icon
-                      icon={<MdOutlinePayments />}
-                      appearance="primary"
-                      size="18px"
-                      spacing="narrow"
-                    />
-                  }
-                  onClick={() => handleOpenModal("extraPayments")}
-                  disabled={canEditCreditRequest}
-                >
-                  {dataCreditProspect.extraPayment}
-                </Button>
-              )}
-              <StyledContainerIcon>
-                {showPrint && (
-                  <Stack gap="8px">
-                    <Icon
-                      icon={<MdOutlinePictureAsPdf />}
-                      appearance="primary"
-                      size="24px"
-                      disabled={!isPrint}
-                      cursorHover
-                      onClick={print}
-                    />
-                    <Icon
-                      icon={<MdOutlineShare />}
-                      appearance="primary"
-                      size="24px"
-                      onClick={async () => await generateAndSharePdf()}
-                      cursorHover
-                    />
-                    <StyledVerticalDivider />
-                  </Stack>
-                )}
-                <MenuProspect
-                  only
-                  options={menuOptions(
-                    handleOpenModal,
-                    !prospectProducts?.ordinaryInstallmentsForPrincipal,
-                  )}
-                  onMouseLeave={showMenu}
-                  badges={{
-                    requirements: countRequirementsNotMet(),
-                  }}
+                  size="16px"
+                  cursorHover
+                  onClick={handleInfo}
                 />
-              </StyledContainerIcon>
+              )}
             </Stack>
-          </StyledPrint>
-        )}
+            {!hasExtraordinaryInstallments(prospectData as IProspect) && (
+              <Button
+                type="button"
+                appearance="primary"
+                spacing="compact"
+                variant="outlined"
+                iconBefore={
+                  <Icon
+                    icon={<MdOutlinePayments />}
+                    appearance="primary"
+                    size="18px"
+                    spacing="narrow"
+                  />
+                }
+                onClick={() => handleOpenModal("extraPayments")}
+                disabled={canEditCreditRequest}
+              >
+                {dataCreditProspect.extraPayment}
+              </Button>
+            )}
+            <StyledContainerIcon>
+              {showPrint && (
+                <Stack gap="8px">
+                  <Icon
+                    icon={<MdOutlinePictureAsPdf />}
+                    appearance="primary"
+                    size="24px"
+                    disabled={!isPrint}
+                    cursorHover
+                    onClick={print}
+                  />
+                  <Icon
+                    icon={<MdOutlineShare />}
+                    appearance="primary"
+                    size="24px"
+                    onClick={async () => await generateAndSharePdf()}
+                    cursorHover
+                  />
+                  <StyledVerticalDivider />
+                </Stack>
+              )}
+              <MenuProspect
+                only
+                options={menuOptions(
+                  handleOpenModal,
+                  !prospectProducts?.ordinaryInstallmentsForPrincipal,
+                )}
+                onMouseLeave={showMenu}
+                badges={{
+                  requirements: countRequirementsNotMet(),
+                }}
+              />
+            </StyledContainerIcon>
+          </Stack>
+        </StyledPrint>
         <Stack direction="column">
           <CardCommercialManagement
             id={id!}
