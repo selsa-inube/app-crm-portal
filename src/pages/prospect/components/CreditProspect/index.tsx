@@ -646,7 +646,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 />
               )}
             </Stack>
-            {!hasExtraordinaryInstallments(prospectData as IProspect) && (
+            {hasExtraordinaryInstallments(prospectData as IProspect) && (
               <Button
                 type="button"
                 appearance="primary"
@@ -694,9 +694,13 @@ export function CreditProspect(props: ICreditProspectProps) {
                   !prospectProducts?.ordinaryInstallmentsForPrincipal,
                 )}
                 onMouseLeave={showMenu}
+                isMobile={isMobile}
                 badges={{
                   requirements: countRequirementsNotMet(),
                 }}
+                hasExtraordinaryInstallments={hasExtraordinaryInstallments(
+                  prospectData as IProspect,
+                )}
               />
             </StyledContainerIcon>
           </Stack>

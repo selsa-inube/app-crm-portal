@@ -6,6 +6,7 @@ interface IContainerLabel {
 }
 
 interface IBadgeMenuProspect {
+  isMobile: boolean;
   $data?: number;
 }
 
@@ -53,7 +54,7 @@ export const StyleBadgeMenuProspect = styled.div<IBadgeMenuProspect>`
     content: "${({ $data }) => $data}";
     position: absolute;
     top: -8px;
-    padding-top: 1px;
+    padding-top: ${({ isMobile }) => (isMobile ? "2px" : "1px")};
     right: -4px;
     width: 17px;
     height: 15px;

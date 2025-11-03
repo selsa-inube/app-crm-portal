@@ -11,12 +11,28 @@ import { IOptions } from "./types";
 interface MenuProspectProps {
   options: IOptions[];
   badges: Record<string, number>;
+  isMobile: boolean;
+  hasExtraordinaryInstallments: boolean;
   onMouseLeave?: () => void;
   only?: boolean;
 }
 
 export const MenuProspect = (props: MenuProspectProps) => {
-  const { options, onMouseLeave, only, badges } = props;
+  const {
+    options,
+    onMouseLeave,
+    only,
+    badges,
+    isMobile,
+    hasExtraordinaryInstallments,
+  } = props;
+
+  const shouldShowOption = (option: IOptions) => {
+    if (option.id === "extraPayments" && hasExtraordinaryInstallments) {
+      return false;
+    }
+    return option.visible;
+  };
 
   return (
     <Stack>
@@ -25,7 +41,7 @@ export const MenuProspect = (props: MenuProspectProps) => {
           {options &&
             options.map(
               (option, index) =>
-                option.visible && (
+                shouldShowOption(option) && (
                   <>
                     <StyledA key={index} title={option.title}>
                       <StyledContainerLabel
@@ -42,6 +58,7 @@ export const MenuProspect = (props: MenuProspectProps) => {
                     {badges[option.id as string] > 0 && (
                       <StyleBadgeMenuProspect
                         $data={badges[option.id as string]}
+                        isMobile={isMobile}
                       />
                     )}
                   </>
@@ -54,7 +71,7 @@ export const MenuProspect = (props: MenuProspectProps) => {
           {options &&
             options.map(
               (option, index) =>
-                option.visible && (
+                shouldShowOption(option) && (
                   <StyledContainerLabel key={index} onClick={option.onClick}>
                     <Icon
                       icon={option.icon}

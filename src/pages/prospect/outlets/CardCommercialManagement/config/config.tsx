@@ -337,15 +337,6 @@ export const menuOptions = (
     visible: true,
   },
   {
-    id: "extraPayments",
-    title: "Pagos extras",
-    onClick: () => {
-      handleOpenModal("extraPayments");
-    },
-    icon: <MdOutlinePayments />,
-    visible: visibleExtraPayments,
-  },
-  {
     id: "requirements",
     title: "Requsitos",
     onClick: () => {
@@ -361,6 +352,15 @@ export const menuOptions = (
       handleOpenModal("observations");
     },
     icon: <MdOutlineMessage />,
+    visible: visibleExtraPayments,
+  },
+  {
+    id: "extraPayments",
+    title: "Pagos extras",
+    onClick: () => {
+      handleOpenModal("extraPayments");
+    },
+    icon: <MdOutlinePayments />,
     visible: visibleExtraPayments,
   },
 ];
