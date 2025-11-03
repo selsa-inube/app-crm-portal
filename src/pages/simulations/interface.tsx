@@ -205,7 +205,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     <Button
                       width="189px"
                       iconBefore={<RiFlashlightLine />}
-                      children="Recalcular simulación"
+                      children={labelsRestoreSimulation.button}
                       variant="outlined"
                       spacing="compact"
                       onClick={() => setShowRestoreSimulation(true)}

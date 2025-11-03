@@ -10,9 +10,9 @@ import { IOptions } from "./types";
 
 interface MenuProspectProps {
   options: IOptions[];
-  badges: Record<string, number>;
-  isMobile: boolean;
-  hasExtraordinaryInstallments: boolean;
+  isMobile?: boolean;
+  badges?: Record<string, number>;
+  hasExtraordinaryInstallments?: boolean;
   onMouseLeave?: () => void;
   only?: boolean;
 }
@@ -55,7 +55,8 @@ export const MenuProspect = (props: MenuProspectProps) => {
                         ></Icon>
                       </StyledContainerLabel>
                     </StyledA>
-                    {badges[option.id as string] > 0 && (
+
+                    {badges && badges[option.id as string] > 0 && isMobile && (
                       <StyleBadgeMenuProspect
                         $data={badges[option.id as string]}
                         isMobile={isMobile}

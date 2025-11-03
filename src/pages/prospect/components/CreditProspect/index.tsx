@@ -8,7 +8,6 @@ import {
   MdOutlinePictureAsPdf,
   MdOutlineShare,
   MdCheckCircle,
-  MdOutlineRule,
 } from "react-icons/md";
 import {
   Stack,
@@ -78,7 +77,6 @@ interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
   businessManagerCode: string;
-  validateRequirements: IValidateRequirement[];
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
   setSentData: React.Dispatch<
@@ -99,6 +97,7 @@ interface ICreditProspectProps {
   >;
   onProspectRefreshData?: () => void;
   setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
+  validateRequirements?: IValidateRequirement[];
 }
 
 export function CreditProspect(props: ICreditProspectProps) {

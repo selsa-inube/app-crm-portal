@@ -1,5 +1,3 @@
-import { title } from "@src/mocks/design/themes/cooservunal/typography/title";
-
 export const addConfig = {
   id: 1,
   title: "Prospectos de crédito",
@@ -72,4 +70,5 @@ export const labelsRestoreSimulation = {
   },
   cancel: "Cancelar",
   restore: "Restaurar",
+  button: "Recalcular simulación",
 };
