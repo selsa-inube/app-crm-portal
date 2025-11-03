@@ -8,6 +8,7 @@ import {
   MdOutlinePictureAsPdf,
   MdOutlineShare,
   MdCheckCircle,
+  MdOutlineRule,
 } from "react-icons/md";
 import {
   Stack,
@@ -59,12 +60,14 @@ import { AddProductModal } from "@pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
+import { IValidateRequirement } from "@services/requirement/types";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
   dataCreditProspect,
   labelsAndValuesShare,
   configModal,
+  propertyOfMetRequirement,
 } from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
@@ -75,6 +78,7 @@ interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
   businessManagerCode: string;
+  validateRequirements: IValidateRequirement[];
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
   setSentData: React.Dispatch<
@@ -94,6 +98,7 @@ interface ICreditProspectProps {
     React.SetStateAction<IProspectSummaryById>
   >;
   onProspectRefreshData?: () => void;
+  setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -113,6 +118,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     prospectSummaryData,
     showAddButtons = true,
     showAddProduct = true,
+    setShowRequirements,
+    validateRequirements,
   } = props;
 
   const { customerData } = useContext(CustomerContext);
@@ -168,6 +175,11 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   };
   const handleOpenModal = (modalName: string) => {
+    if (modalName === "requirements" && setShowRequirements) {
+      setShowRequirements(true);
+
+      return;
+    }
     if (modalName === "IncomeModal") {
       fetchCreditLimitData();
     }
@@ -588,6 +600,19 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   };
 
+  const countRequirementsNotMet = () => {
+    if (!validateRequirements) return 0;
+
+    const requirementsOnlyNotMet = validateRequirements.filter(
+      (requirement) =>
+        requirement.requirementStatus !== propertyOfMetRequirement.approve,
+    );
+
+    const requirementsOnlyNotMetCount = requirementsOnlyNotMet.length;
+
+    return requirementsOnlyNotMetCount;
+  };
+
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
@@ -670,6 +695,9 @@ export function CreditProspect(props: ICreditProspectProps) {
                     !prospectProducts?.ordinaryInstallmentsForPrincipal,
                   )}
                   onMouseLeave={showMenu}
+                  badges={{
+                    requirements: countRequirementsNotMet(),
+                  }}
                 />
               </StyledContainerIcon>
             </Stack>

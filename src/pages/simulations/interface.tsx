@@ -12,6 +12,7 @@ import {
   MdOutlineInfo,
   MdOutlineShare,
 } from "react-icons/md";
+import { RiFlashlightLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 
 import { Fieldset } from "@components/data/Fieldset";
@@ -27,7 +28,9 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IProspectSummaryById } from "@services/prospect/types";
+import { IValidateRequirement } from "@services/requirement/types";
 
+import { RequirementsModal } from "../prospect/components/modals/RequirementsModal";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
 import {
@@ -36,7 +39,12 @@ import {
   StyledPrint,
   StyledScrollPrint,
 } from "./styles";
-import { addConfig, dataEditProspect, titlesModal } from "./config";
+import {
+  addConfig,
+  dataEditProspect,
+  titlesModal,
+  labelsRestoreSimulation,
+} from "./config";
 import { IDataHeader } from "./types";
 
 interface SimulationsUIProps {
@@ -73,6 +81,12 @@ interface SimulationsUIProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   generateAndSharePdf: () => void;
+  showRestoreSimulation: boolean;
+  setShowRestoreSimulation: React.Dispatch<React.SetStateAction<boolean>>;
+  handleRestoreSimulation: () => void;
+  showRequirements: boolean;
+  setShowRequirements: React.Dispatch<React.SetStateAction<boolean>>;
+  validateRequirements: IValidateRequirement[];
   onProspectUpdated?: () => void;
   handleDeleteProspect: () => void;
   prospectSummaryData?: IProspectSummaryById;
@@ -115,6 +129,12 @@ export function SimulationsUI(props: SimulationsUIProps) {
     handleDeleteProspect,
     prospectSummaryData,
     setProspectSummaryData,
+    showRestoreSimulation,
+    setShowRestoreSimulation,
+    handleRestoreSimulation,
+    showRequirements,
+    setShowRequirements,
+    validateRequirements,
   } = props;
 
   const getDestinationName = (code?: string) => {
@@ -168,18 +188,30 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     },
                   ]}
                 />
-                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
-                  <Stack gap="8px" alignItems="center" width="100%">
-                    <Icon
-                      icon={<MdArrowBack />}
-                      appearance="dark"
-                      size="20px"
-                    />
-                    <Text type="title" size={isMobile ? "small" : "large"}>
-                      {addConfig.title}
-                    </Text>
+                <Stack>
+                  <StyledArrowBack onClick={() => navigate(addConfig.route)}>
+                    <Stack gap="8px" alignItems="center" width="100%">
+                      <Icon
+                        icon={<MdArrowBack />}
+                        appearance="dark"
+                        size="20px"
+                      />
+                      <Text type="title" size={isMobile ? "small" : "large"}>
+                        {addConfig.title}
+                      </Text>
+                    </Stack>
+                  </StyledArrowBack>
+                  <Stack direction="row-reverse" width="100%">
+                    <Button
+                      width="189px"
+                      iconBefore={<RiFlashlightLine />}
+                      children="Recalcular simulación"
+                      variant="outlined"
+                      spacing="compact"
+                      onClick={() => setShowRestoreSimulation(true)}
+                    ></Button>
                   </Stack>
-                </StyledArrowBack>
+                </Stack>
               </StyledPrint>
               <StyledMarginPrint>
                 <Stack>
@@ -331,6 +363,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           prospectSummaryData={prospectSummaryData}
                           setProspectSummaryData={setProspectSummaryData}
                           onProspectRefreshData={onProspectUpdated}
+                          setShowRequirements={setShowRequirements}
+                          validateRequirements={validateRequirements}
                         />
                       </Fieldset>
                     </StyledScrollPrint>
@@ -450,6 +484,52 @@ export function SimulationsUI(props: SimulationsUIProps) {
           isMobile={isMobile}
           message={messageError}
         />
+      )}
+      {showRequirements && validateRequirements != undefined && (
+        <RequirementsModal
+          handleClose={() => setShowRequirements(false)}
+          isMobile={isMobile}
+          isLoading={false}
+          validateRequirements={
+            validateRequirements || ([] as IValidateRequirement[])
+          }
+          errorsManager={{
+            validateRequirements: validateRequirements?.length > 0,
+          }}
+        />
+      )}
+      {showRestoreSimulation && (
+        <BaseModal
+          title={labelsRestoreSimulation.title}
+          handleBack={() => setShowRestoreSimulation(false)}
+          handleNext={handleRestoreSimulation}
+          disabledNext={canEditCreditRequest}
+          backButton={labelsRestoreSimulation.cancel}
+          nextButton={labelsRestoreSimulation.restore}
+          width={isMobile ? "300px" : "480px"}
+        >
+          <Stack direction="column" gap="16px" alignItems="center">
+            <Icon
+              icon={<RiFlashlightLine />}
+              appearance="primary"
+              spacing="compact"
+              size="68px"
+            />
+            <Text type="body" size="large" appearance="gray">
+              {labelsRestoreSimulation.description}
+            </Text>
+            <Divider dashed={true} />
+            <Stack
+              direction="column"
+              gap="8px"
+              padding={"0 0 0 " + (!isMobile ? "0px" : "20px")}
+            >
+              <li>
+                <Text size="large">{labelsRestoreSimulation.list.itemOne}</Text>
+              </li>
+            </Stack>
+          </Stack>
+        </BaseModal>
       )}
       {showDeleteModal && (
         <BaseModal

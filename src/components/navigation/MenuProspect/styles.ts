@@ -1,7 +1,12 @@
+import { inube } from "@inubekit/inubekit";
 import styled from "styled-components";
 
 interface IContainerLabel {
   $only?: boolean;
+}
+
+interface IBadgeMenuProspect {
+  $data?: number;
 }
 
 const StyledMenu = styled.div`
@@ -35,6 +40,34 @@ const StyledContainerLabel = styled.div<IContainerLabel>`
 
 const StyledA = styled.a`
   text-decoration: none;
+`;
+
+export const StyleBadgeMenuProspect = styled.div<IBadgeMenuProspect>`
+  position: relative;
+  cursor: pointer;
+  & > button {
+    z-index: -1;
+  }
+
+  &::before {
+    content: "${({ $data }) => $data}";
+    position: absolute;
+    top: -8px;
+    padding-top: 1px;
+    right: -4px;
+    width: 17px;
+    height: 15px;
+    background-color: ${({ theme }) =>
+      theme?.palette?.red?.R400 || inube.palette.red.R400};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${({ theme }) =>
+      theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
+    font-size: 12.3px;
+    font-family: Roboto;
+  }
 `;
 
 export { StyledMenu, StyledContainerLabel, StyledA };

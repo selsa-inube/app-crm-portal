@@ -5,6 +5,7 @@ import {
   MdOutlineAccountBalanceWallet,
   MdOutlineRemoveRedEye,
   MdOutlineMessage,
+  MdOutlineRule,
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
@@ -260,7 +261,7 @@ export const SummaryProspectCredit = [
     item: [
       {
         id: "requestedAmount",
-        title: "Monto solicitado",
+        title: "Monto productos de crédito",
         miniIcon: false,
         operation: "-",
       },
@@ -315,24 +316,28 @@ export const menuOptions = (
   visibleExtraPayments: boolean,
 ): IOptions[] => [
   {
+    id: "creditLimit",
     title: "Origen de cupo",
     onClick: () => handleOpenModal("creditLimit"),
     icon: <MdOutlineBalance />,
     visible: true,
   },
   {
+    id: "IncomeModal",
     title: "Fuentes de ingreso",
     onClick: () => handleOpenModal("IncomeModal"),
     icon: <MdOutlineAccountBalanceWallet />,
     visible: true,
   },
   {
+    id: "reportCreditsModal",
     title: "Obligaciones financieras",
     onClick: () => handleOpenModal("reportCreditsModal"),
     icon: <MdOutlineMonetizationOn />,
     visible: true,
   },
   {
+    id: "extraPayments",
     title: "Pagos extras",
     onClick: () => {
       handleOpenModal("extraPayments");
@@ -341,6 +346,16 @@ export const menuOptions = (
     visible: visibleExtraPayments,
   },
   {
+    id: "requirements",
+    title: "Requsitos",
+    onClick: () => {
+      handleOpenModal("requirements");
+    },
+    icon: <MdOutlineRule />,
+    visible: true,
+  },
+  {
+    id: "observations",
     title: "Observaciones",
     onClick: () => {
       handleOpenModal("observations");

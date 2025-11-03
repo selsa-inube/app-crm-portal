@@ -1,3 +1,5 @@
+import { title } from "@src/mocks/design/themes/cooservunal/typography/title";
+
 export const addConfig = {
   id: 1,
   title: "Prospectos de crédito",
@@ -33,7 +35,7 @@ export const addConfig = {
 export const dataEditProspect = {
   creditProspect: "Prospecto de crédito",
   destination: "Destino",
-  value: "Valor solicitado/giro",
+  value: "Valor solicitado",
   delete: "Eliminar prospecto",
   confirm: "Confirmar solicitud",
   errorCredit: "Error al obtener las solicitudes de crédito",
@@ -59,4 +61,15 @@ export const labelsAndValuesShare = {
   fileName: "reporte_comercial.pdf",
   text: "Reporte Comercial para compartir",
   error: "No se pudo compartir el PDF",
+};
+
+export const labelsRestoreSimulation = {
+  title: "Restaurar simulación",
+  description:
+    " La función “Recalcular simulación” no es reversible, se basa en un modelo optimizado y el comportamiento esperado incluye:",
+  list: {
+    itemOne: "Cambio en los datos del prospecto de forma automática.",
+  },
+  cancel: "Cancelar",
+  restore: "Restaurar",
 };

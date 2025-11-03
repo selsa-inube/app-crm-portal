@@ -1,16 +1,22 @@
 import { Stack, Icon, Text } from "@inubekit/inubekit";
 
-import { StyledMenu, StyledContainerLabel, StyledA } from "./styles";
+import {
+  StyledMenu,
+  StyledContainerLabel,
+  StyledA,
+  StyleBadgeMenuProspect,
+} from "./styles";
 import { IOptions } from "./types";
 
 interface MenuProspectProps {
   options: IOptions[];
+  badges: Record<string, number>;
   onMouseLeave?: () => void;
   only?: boolean;
 }
 
 export const MenuProspect = (props: MenuProspectProps) => {
-  const { options, onMouseLeave, only } = props;
+  const { options, onMouseLeave, only, badges } = props;
 
   return (
     <Stack>
@@ -20,15 +26,25 @@ export const MenuProspect = (props: MenuProspectProps) => {
             options.map(
               (option, index) =>
                 option.visible && (
-                  <StyledA key={index} title={option.title}>
-                    <StyledContainerLabel onClick={option.onClick} $only={only}>
-                      <Icon
-                        icon={option.icon}
-                        appearance="primary"
-                        size="24px"
-                      ></Icon>
-                    </StyledContainerLabel>
-                  </StyledA>
+                  <>
+                    <StyledA key={index} title={option.title}>
+                      <StyledContainerLabel
+                        onClick={option.onClick}
+                        $only={only}
+                      >
+                        <Icon
+                          icon={option.icon}
+                          appearance="primary"
+                          size="24px"
+                        ></Icon>
+                      </StyledContainerLabel>
+                    </StyledA>
+                    {badges[option.id as string] > 0 && (
+                      <StyleBadgeMenuProspect
+                        $data={badges[option.id as string]}
+                      />
+                    )}
+                  </>
                 ),
             )}
         </Stack>
