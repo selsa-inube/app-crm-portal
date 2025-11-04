@@ -257,8 +257,8 @@ export function CreditProspects() {
                 templateColumns={canSimulateCredit ? "95% 4%" : "100%"}
                 gap="8px"
                 alignItems="center"
-                width="100%"
-                justifyItems={isMobile ? "center" : "flex-end"}
+                width={isMobile ? "100%" : "auto"}
+                justifyItems={isMobile ? "inherit" : "flex-end"}
               >
                 <Button
                   iconBefore={<MdAdd />}

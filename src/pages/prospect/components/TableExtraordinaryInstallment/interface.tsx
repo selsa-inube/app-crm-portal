@@ -76,6 +76,8 @@ interface ITableExtraordinaryInstallmentProps {
     lastEntryInPage: number;
     paddedCurrentData: TableExtraordinaryInstallmentProps[];
   };
+  openMenuIndex: number | null;
+  setOpenMenuIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setSentData?:
     | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
     | undefined;
@@ -113,6 +115,8 @@ export function TableExtraordinaryInstallmentUI(
     setSelectedDebtor,
     handleDeleteAction,
     setInstallmentState,
+    openMenuIndex,
+    setOpenMenuIndex,
   } = props;
 
   const {
@@ -202,9 +206,16 @@ export function TableExtraordinaryInstallmentUI(
                   <Td key={action.key} type="custom">
                     {isMobile ? (
                       <ActionMobile
+                        isOpen={openMenuIndex === index}
+                        onToggle={() => {
+                          setOpenMenuIndex(
+                            openMenuIndex === index ? null : index,
+                          );
+                        }}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
+                          setOpenMenuIndex(null);
                         }}
                         handleView={() => {
                           setSelectedDebtor(row);
@@ -218,6 +229,7 @@ export function TableExtraordinaryInstallmentUI(
                               String(row.paymentMethod) || "",
                           });
                           setIsOpenModalView(true);
+                          setOpenMenuIndex(null);
                         }}
                         handleEdit={() => {
                           setSelectedDebtor(row);
@@ -231,6 +243,7 @@ export function TableExtraordinaryInstallmentUI(
                               String(row.paymentMethod) || "",
                           });
                           setIsOpenModalEdit(true);
+                          setOpenMenuIndex(null);
                         }}
                       />
                     ) : (
@@ -283,25 +296,27 @@ export function TableExtraordinaryInstallmentUI(
       </Tbody>
 
       {extraordinaryInstallments.length > 0 && !loading && (
-        <Tfoot>
-          <Tr border="bottom">
-            <Td
-              colSpan={visbleHeaders.length + visbleActions.length}
-              type="custom"
-              align="center"
-            >
-              <Pagination
-                firstEntryInPage={firstEntryInPage}
-                lastEntryInPage={lastEntryInPage}
-                totalRecords={totalRecords}
-                handleStartPage={handleStartPage}
-                handlePrevPage={handlePrevPage}
-                handleNextPage={handleNextPage}
-                handleEndPage={handleEndPage}
-              />
-            </Td>
-          </Tr>
-        </Tfoot>
+        <div style={{ zIndex: 1, width: "100%" }}>
+          <Tfoot>
+            <Tr border="bottom">
+              <Td
+                colSpan={visbleHeaders.length + visbleActions.length}
+                type="custom"
+                align="center"
+              >
+                <Pagination
+                  firstEntryInPage={firstEntryInPage}
+                  lastEntryInPage={lastEntryInPage}
+                  totalRecords={totalRecords}
+                  handleStartPage={handleStartPage}
+                  handlePrevPage={handlePrevPage}
+                  handleNextPage={handleNextPage}
+                  handleEndPage={handleEndPage}
+                />
+              </Td>
+            </Tr>
+          </Tfoot>
+        </div>
       )}
       {isOpenModalDelete && (
         <DeleteModal

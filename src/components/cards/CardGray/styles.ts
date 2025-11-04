@@ -6,8 +6,8 @@ export const StyledContainer = styled.div`
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
   border-radius: 8px;
   max-width: 100%;
-`;
-
-export const StyledTextField = styled.div`
-  padding-right: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 12px;
 `;
