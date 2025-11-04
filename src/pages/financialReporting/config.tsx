@@ -199,4 +199,5 @@ export const labelsAndValuesShare = {
   titleOnPdf: "Gestión Comercial",
   fileName: "reporte_comercial.pdf",
   text: "Reporte Comercial para compartir",
+  addLink: "Agregar vinculación",
 };
