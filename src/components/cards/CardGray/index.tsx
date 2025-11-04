@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Stack, Text } from "@inubekit/inubekit";
 
-import { StyledContainer } from "./styles";
+import { StyledContainer, StyledTextField } from "./styles";
 
 export interface ICardGrayProps {
   label: string;
@@ -43,6 +43,7 @@ export function CardGray(props: ICardGrayProps) {
           type="body"
           size={isMobile ? "large" : "medium"}
           appearance={isMobile ? "dark" : "gray"}
+          ellipsis={true}
         >
           {data}
         </Text>
