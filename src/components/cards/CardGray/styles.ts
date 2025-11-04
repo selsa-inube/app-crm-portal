@@ -1,13 +1,15 @@
 import styled from "styled-components";
 import { inube } from "@inubekit/inubekit";
 
-export const StyledContainer = styled.div`
+interface IStyledContainer {
+  isMobile: boolean;
+}
+
+export const StyledContainer = styled.div<IStyledContainer>`
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
   border-radius: 8px;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
+  padding: 6px 16px;
   text-overflow: ellipsis;
-  padding-right: 12px;
+  width: ${({ isMobile }) => (isMobile ? "90%" : "auto")};
 `;

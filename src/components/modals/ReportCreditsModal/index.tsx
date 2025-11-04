@@ -32,7 +32,7 @@ export function ReportCreditsModal({
   }, []);
   return (
     <BaseModal
-      title={dataReport.title}
+      title={dataReport.titleModal}
       nextButton={dataReport.close}
       handleNext={handleClose}
       handleClose={handleClose}

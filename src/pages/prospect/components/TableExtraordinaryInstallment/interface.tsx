@@ -203,7 +203,7 @@ export function TableExtraordinaryInstallmentUI(
                 })}
 
                 {visbleActions.map((action) => (
-                  <Td key={action.key} type="custom">
+                  <Td key={action.key} type="custom" height={"10px"}>
                     {isMobile ? (
                       <ActionMobile
                         isOpen={openMenuIndex === index}
@@ -296,27 +296,25 @@ export function TableExtraordinaryInstallmentUI(
       </Tbody>
 
       {extraordinaryInstallments.length > 0 && !loading && (
-        <div style={{ zIndex: 1, width: "100%" }}>
-          <Tfoot>
-            <Tr border="bottom">
-              <Td
-                colSpan={visbleHeaders.length + visbleActions.length}
-                type="custom"
-                align="center"
-              >
-                <Pagination
-                  firstEntryInPage={firstEntryInPage}
-                  lastEntryInPage={lastEntryInPage}
-                  totalRecords={totalRecords}
-                  handleStartPage={handleStartPage}
-                  handlePrevPage={handlePrevPage}
-                  handleNextPage={handleNextPage}
-                  handleEndPage={handleEndPage}
-                />
-              </Td>
-            </Tr>
-          </Tfoot>
-        </div>
+        <Tfoot>
+          <Tr border="bottom">
+            <Td
+              colSpan={visbleHeaders.length + visbleActions.length}
+              type="custom"
+              align="center"
+            >
+              <Pagination
+                firstEntryInPage={firstEntryInPage}
+                lastEntryInPage={lastEntryInPage}
+                totalRecords={totalRecords}
+                handleStartPage={handleStartPage}
+                handlePrevPage={handlePrevPage}
+                handleNextPage={handleNextPage}
+                handleEndPage={handleEndPage}
+              />
+            </Td>
+          </Tr>
+        </Tfoot>
       )}
       {isOpenModalDelete && (
         <DeleteModal

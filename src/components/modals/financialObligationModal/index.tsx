@@ -24,6 +24,7 @@ import {
   meansPaymentOptions,
   dataInputs,
 } from "./config";
+import { dataReport } from "../ReportCreditsModal/config";
 
 export interface FinancialObligationModalProps {
   onCloseModal: () => void;
@@ -37,7 +38,6 @@ export interface FinancialObligationModalProps {
 function FinancialObligationModal({
   onCloseModal,
   onConfirm,
-  title,
   confirmButtonText,
   iconBefore,
   iconAfter,
@@ -106,7 +106,7 @@ function FinancialObligationModal({
 
   return (
     <BaseModal
-      title={truncateTextToMaxLength(title, 25)}
+      title={truncateTextToMaxLength(dataReport.title, 25)}
       nextButton={confirmButtonText}
       backButton={dataInputs.cancel}
       handleNext={formik.submitForm}

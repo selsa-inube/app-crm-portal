@@ -268,6 +268,7 @@ export const SummaryProspectCredit = [
         id: "totalConsolidatedAmount",
         title: "Obligaciones recogidas",
         miniIcon: true,
+        icon: <MdOutlineRemoveRedEye />,
         modal: "edit",
         operation: "-",
       },
