@@ -19,7 +19,7 @@ interface ICustomerUI {
   options: IOption[];
   showError: boolean;
   selectRef: React.RefObject<HTMLDivElement>;
-  handleChangeAutocomplete: (event: unknown, value: string | null) => void;
+  handleChangeAutocomplete: (event: string, value: string | null) => void;
   handleSubmit: () => void;
   messageError: string;
 }
@@ -35,7 +35,7 @@ export function CustomerUI(props: ICustomerUI) {
     handleSubmit,
     messageError,
   } = props;
-
+  console.log(inputValue, " CustomerUI options: ", options);
   return (
     <Stack
       width="100%"

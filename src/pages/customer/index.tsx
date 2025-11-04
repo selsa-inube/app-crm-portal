@@ -66,10 +66,21 @@ export function Customer() {
       setOptions([]);
     }
   };
-
-  const handleChangeAutocomplete = (_: unknown, value: string | null) => {
+  console.log("options: ", options);
+  const handleChangeAutocomplete = (action: string, value: string | null) => {
     const upperValue = value?.toUpperCase() || "";
     setInputValue(upperValue);
+
+    if (action === "clientSelect" && value === "") {
+      setOptions([]);
+
+      const clickable = selectRef.current?.querySelector("input");
+      if (clickable) {
+        clickable.focus();
+        clickable.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
+      }
+      return;
+    }
 
     setShowError(false);
     if (!value) {
