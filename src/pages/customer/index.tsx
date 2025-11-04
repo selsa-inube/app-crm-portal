@@ -27,7 +27,7 @@ export function Customer() {
 
   const handleSearch = async (value: string) => {
     try {
-      if (value.length < 3) {
+      if (value.length < 1) {
         setOptions([]);
         return;
       }
