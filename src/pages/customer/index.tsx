@@ -15,6 +15,7 @@ export function Customer() {
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [autocompleteKey, setAutocompleteKey] = useState(0);
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
@@ -71,26 +72,17 @@ export function Customer() {
     const upperValue = value?.toUpperCase() || "";
     setInputValue(upperValue);
 
-    if (action === "clientSelect" && value === "") {
-      setOptions([]);
-
-      const clickable = selectRef.current?.querySelector("input");
-      if (clickable) {
-        clickable.focus();
-        clickable.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
-      }
-      return;
-    }
-
     setShowError(false);
     if (!value) {
       setOptions([]);
+      setAutocompleteKey((prev) => prev + 1);
     }
   };
 
   useEffect(() => {
     if (inputValue.trim() === "") {
       setOptions([]);
+      setAutocompleteKey((prev) => prev + 1);
       return;
     }
     handleSearch(inputValue);
@@ -129,6 +121,7 @@ export function Customer() {
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
       messageError={messageError}
+      autocompleteKey={autocompleteKey}
     />
   );
 }
