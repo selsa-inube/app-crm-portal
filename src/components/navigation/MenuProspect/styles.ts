@@ -39,7 +39,7 @@ const StyledContainerLabel = styled.div<IContainerLabel>`
   }
 `;
 
-const StyledA = styled.a`
+const StyledAnchor = styled.a`
   text-decoration: none;
 `;
 
@@ -53,11 +53,10 @@ export const StyleBadgeMenuProspect = styled.div<IBadgeMenuProspect>`
   &::before {
     content: "${({ $data }) => $data}";
     position: absolute;
-    top: -8px;
-    padding-top: ${({ isMobile }) => (isMobile ? "2px" : "1px")};
-    right: -4px;
-    width: 17px;
-    height: 15px;
+    top: -12px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
     background-color: ${({ theme }) =>
       theme?.palette?.red?.R400 || inube.palette.red.R400};
     border-radius: 50%;
@@ -66,9 +65,9 @@ export const StyleBadgeMenuProspect = styled.div<IBadgeMenuProspect>`
     justify-content: center;
     color: ${({ theme }) =>
       theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};
-    font-size: 12.3px;
+    font-size: 14px;
     font-family: Roboto;
   }
 `;
 
-export { StyledMenu, StyledContainerLabel, StyledA };
+export { StyledMenu, StyledContainerLabel, StyledAnchor };

@@ -298,7 +298,7 @@ export function Simulations() {
           businessManagerCode,
           payload,
         );
-        console.log(data);
+
         if (data) {
           setValidateRequirements(data);
         }

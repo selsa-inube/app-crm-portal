@@ -11,8 +11,8 @@ import {
   MdOutlineBeachAccess,
   MdOutlineInfo,
   MdOutlineShare,
+  MdBolt,
 } from "react-icons/md";
-import { RiFlashlightLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 
 import { Fieldset } from "@components/data/Fieldset";
@@ -204,7 +204,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                   <Stack direction="row-reverse" width="100%">
                     <Button
                       width="189px"
-                      iconBefore={<RiFlashlightLine />}
+                      iconBefore={<MdBolt />}
                       children={labelsRestoreSimulation.button}
                       variant="outlined"
                       spacing="compact"
@@ -510,7 +510,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
         >
           <Stack direction="column" gap="16px" alignItems="center">
             <Icon
-              icon={<RiFlashlightLine />}
+              icon={<MdBolt />}
               appearance="primary"
               spacing="compact"
               size="68px"
@@ -537,8 +537,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
           handleBack={() => setShowDeleteModal(false)}
           handleNext={handleDeleteProspect}
           disabledNext={canEditCreditRequest}
-          backButton="Cancelar"
-          nextButton="Eliminar"
+          backButton={dataEditProspect.backButton}
+          nextButton={dataEditProspect.nextButton}
           apparenceNext="danger"
           width={isMobile ? "300px" : "500px"}
         >

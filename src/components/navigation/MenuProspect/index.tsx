@@ -3,7 +3,7 @@ import { Stack, Icon, Text } from "@inubekit/inubekit";
 import {
   StyledMenu,
   StyledContainerLabel,
-  StyledA,
+  StyledAnchor,
   StyleBadgeMenuProspect,
 } from "./styles";
 import { IOptions } from "./types";
@@ -43,7 +43,7 @@ export const MenuProspect = (props: MenuProspectProps) => {
               (option, index) =>
                 shouldShowOption(option) && (
                   <>
-                    <StyledA key={index} title={option.title}>
+                    <StyledAnchor key={index} title={option.title}>
                       <StyledContainerLabel
                         onClick={option.onClick}
                         $only={only}
@@ -54,12 +54,12 @@ export const MenuProspect = (props: MenuProspectProps) => {
                           size="24px"
                         ></Icon>
                       </StyledContainerLabel>
-                    </StyledA>
+                    </StyledAnchor>
 
-                    {badges && badges[option.id as string] > 0 && isMobile && (
+                    {badges && badges[option.id as string] > 0 && (
                       <StyleBadgeMenuProspect
                         $data={badges[option.id as string]}
-                        isMobile={isMobile}
+                        isMobile={isMobile || false}
                       />
                     )}
                   </>
