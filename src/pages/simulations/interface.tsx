@@ -73,6 +73,7 @@ interface SimulationsUIProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   generateAndSharePdf: () => void;
+  userAccount?: string;
   onProspectUpdated?: () => void;
   handleDeleteProspect: () => void;
   prospectSummaryData?: IProspectSummaryById;
@@ -86,6 +87,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     dataHeader,
     isMobile,
     prospectCode,
+    userAccount,
     data,
     dataProspect,
     showMenu,
@@ -331,6 +333,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           prospectSummaryData={prospectSummaryData}
                           setProspectSummaryData={setProspectSummaryData}
                           onProspectRefreshData={onProspectUpdated}
+                          userAccount={userAccount as string}
                         />
                       </Fieldset>
                     </StyledScrollPrint>

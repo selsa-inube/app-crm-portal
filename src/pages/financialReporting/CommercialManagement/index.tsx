@@ -562,6 +562,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   }}
                   showAddButtons={false}
                   showAddProduct={false}
+                  userAccount={userAccount}
                 />
               )}
             </Stack>
@@ -573,6 +574,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 businessUnitPublicCode={businessUnitPublicCode}
                 businessManagerCode={businessManagerCode}
                 dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+                userAccount={userAccount}
                 moneyDestination={prospectData.moneyDestinationAbbreviatedName}
               />
             )}

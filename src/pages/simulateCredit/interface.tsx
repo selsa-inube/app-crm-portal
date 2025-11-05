@@ -151,6 +151,7 @@ interface SimulateCreditUIProps {
   allowToContinue: boolean;
   handleModalTryAgain: () => void;
   errorsManager: IManageErrors;
+  userAccount?: string;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
 }
 
@@ -166,6 +167,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setRequestValue,
     requestValue,
     handleNextStep,
+    userAccount,
     handlePreviousStep,
     handleSubmitClick,
     setShowErrorModal,
@@ -577,6 +579,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   businessUnitPublicCode={businessUnitPublicCode}
                   businessManagerCode={businessManagerCode}
                   moneyDestination={formData.selectedDestination}
+                  userAccount={userAccount as string}
                 />
               )}
               {isCreditLimitWarning && (

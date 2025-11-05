@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
 import { Icon, Stack, Text } from "@inubekit/inubekit";
 
@@ -11,7 +11,6 @@ import {
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { getGlobalLimitByMoneyDestination } from "@services/creditLimit/getGlobalLimitByMoneyDestination";
 import { IMaximumCreditLimitByMoneyDestination } from "@services/creditLimit/types";
-import { AppContext } from "@context/AppContext";
 import { get } from "@mocks/utils/dataMock.service";
 
 import { dataCreditLimitModal } from "./config";
@@ -27,6 +26,7 @@ export interface ICreditLimitModalProps {
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
   paymentCapacityData?: IPaymentCapacityData;
+  userAccount: string;
 }
 
 export function CreditLimitModal(props: ICreditLimitModalProps) {
@@ -38,6 +38,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     moneyDestination,
     handleClose,
     setRequestValue,
+    userAccount,
   } = props;
 
   useState(false);
@@ -54,12 +55,9 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
   }, []);
 
   const [error, setError] = useState(false);
-  const { eventData } = useContext(AppContext);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] = useState<
     IMaximumCreditLimitByMoneyDestination[]
   >([]);
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,6 +125,8 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
                   businessManagerCode={businessManagerCode}
                   dataMaximumCreditLimitService={dataMaximumCreditLimitService}
                   userAccount={userAccount}
+                  setError={setError}
+                  error={error}
                 />
               ))}
             </Stack>

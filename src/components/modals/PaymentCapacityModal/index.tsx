@@ -29,44 +29,55 @@ import {
   paymentCapacityData,
 } from "./config";
 import { StyledTable } from "./styles";
-import { CurrentDataRow } from "./types";
 
 interface IPaymentCapacityModalProps {
   isMobile: boolean;
-  incomeSources: number;
-  subsistenceReserve: number;
-  newPromises: number;
-  lineOfCredit: number;
-  maxValue: number;
-  extraordinary: number;
-  extraordinaryQuotes?: CurrentDataRow[];
   handleClose: () => void;
   businessUnitPublicCode: string;
   businessManagerCode: string;
   userAccount: string;
   dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
+  dividends?: number;
+  financialIncome?: number;
+  leases?: number;
+  otherNonSalaryEmoluments?: number;
+  pensionAllowances?: number;
+  periodicSalary?: number;
+  personalBusinessUtilities?: number;
+  professionalFees?: number;
+  setError: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  error: boolean;
+  loading: boolean;
 }
 
 export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
   const {
     isMobile,
     dataMaximumCreditLimitService,
-    extraordinaryQuotes,
     handleClose,
+    setError,
+    setLoading,
+    loading,
+    error,
     businessUnitPublicCode,
     businessManagerCode,
     userAccount,
+    dividends,
+    financialIncome,
+    leases,
+    otherNonSalaryEmoluments,
+    pensionAllowances,
+    periodicSalary,
+    personalBusinessUtilities,
+    professionalFees,
   } = props;
 
   const [currentTab, setCurrentTab] = useState("ordinary");
   const [maximumCreditLimitData, setMaximumCreditLimitData] =
     useState<IMaximumCreditLimit | null>(null);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  const tabsToRender = extraordinaryQuotes
-    ? dataTabs
-    : dataTabs.filter((tab) => tab.id !== "extraordinary");
+  const tabsToRender = dataTabs.filter((tab) => tab.id !== "extraordinary");
 
   const onChange = (tabId: string) => {
     setCurrentTab(tabId);
@@ -81,17 +92,17 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
         const submitData: IMaximumCreditLimit = {
           customerCode:
             dataMaximumCreditLimitService.identificationDocumentNumber,
-          dividends: 0,
-          financialIncome: 0,
-          leases: 0,
+          dividends: dividends || 0,
+          financialIncome: financialIncome || 0,
+          leases: leases || 0,
           lineOfCreditAbbreviatedName:
             dataMaximumCreditLimitService.lineOfCreditAbbreviatedName || "",
           moneyDestination: dataMaximumCreditLimitService.moneyDestination,
-          otherNonSalaryEmoluments: 0,
-          pensionAllowances: 0,
-          periodicSalary: 0,
-          personalBusinessUtilities: 0,
-          professionalFees: 0,
+          otherNonSalaryEmoluments: otherNonSalaryEmoluments || 0,
+          pensionAllowances: pensionAllowances || 0,
+          periodicSalary: periodicSalary || 0,
+          personalBusinessUtilities: personalBusinessUtilities || 0,
+          professionalFees: professionalFees || 0,
         };
 
         const data = await postBusinessUnitRules(
@@ -116,7 +127,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
 
   const totalExtraordinary =
     (maximumCreditLimitData?.maximumCreditLimitValue || 0) +
-    (extraordinaryQuotes?.reduce(
+    (maximumCreditLimitData?.extraordinaryInstallments?.reduce(
       (sum, quote) => sum + (Number(quote.installmentAmount) || 0),
       0,
     ) || 0);
@@ -279,7 +290,8 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                 </Stack>
               )}
               {currentTab === "extraordinary" &&
-                extraordinaryQuotes !== undefined && (
+                maximumCreditLimitData?.extraordinaryInstallments !==
+                  undefined && (
                   <StyledTable>
                     <Table tableLayout="auto">
                       <Thead>

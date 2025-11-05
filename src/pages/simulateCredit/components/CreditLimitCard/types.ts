@@ -19,12 +19,6 @@ export interface IMaxLimitData {
 }
 
 export interface IPaymentCapacityData {
-  incomeSources: number;
-  subsistenceReserve: number;
-  newPromises: number;
-  lineOfCredit: number;
-  maxValue: number;
-  extraordinary: number;
   extraordinaryQuotes?: CurrentDataRow[];
 }
 

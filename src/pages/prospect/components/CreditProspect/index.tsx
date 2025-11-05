@@ -94,6 +94,7 @@ interface ICreditProspectProps {
   setProspectSummaryData?: React.Dispatch<
     React.SetStateAction<IProspectSummaryById>
   >;
+  userAccount: string;
   onProspectRefreshData?: () => void;
 }
 
@@ -112,6 +113,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     showPrint = true,
     setProspectSummaryData,
     prospectSummaryData,
+    userAccount,
     showAddButtons = true,
     showAddProduct = true,
   } = props;
@@ -704,6 +706,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             moneyDestination={
               prospectData?.moneyDestinationAbbreviatedName || ""
             }
+            userAccount={userAccount}
           />
         )}
         {openModal === "paymentCapacity" && (

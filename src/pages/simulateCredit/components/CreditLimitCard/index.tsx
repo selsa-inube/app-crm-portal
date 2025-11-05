@@ -21,6 +21,8 @@ export interface CreditLimitProps {
   paymentCapacityData?: IPaymentCapacityData;
   isMobile: boolean;
   userAccount: string;
+  setError: React.Dispatch<React.SetStateAction<boolean>>;
+  error: boolean;
 }
 
 export function CreditLimitCard(props: CreditLimitProps) {
@@ -33,6 +35,8 @@ export function CreditLimitCard(props: CreditLimitProps) {
     paymentCapacityData,
     isMobile,
     userAccount,
+    setError,
+    error,
   } = props;
 
   const [creditModal, setCreditModal] = useState(false);
@@ -128,7 +132,10 @@ export function CreditLimitCard(props: CreditLimitProps) {
           businessManagerCode={businessManagerCode}
           userAccount={userAccount}
           dataMaximumCreditLimitService={dataMaximumCreditLimitService}
-          {...paymentCapacityData}
+          setError={setError}
+          setLoading={setLoading}
+          error={error}
+          loading={loading}
         />
       )}
 
