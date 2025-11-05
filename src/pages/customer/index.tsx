@@ -67,8 +67,8 @@ export function Customer() {
       setOptions([]);
     }
   };
-  console.log("options: ", options);
-  const handleChangeAutocomplete = (action: string, value: string | null) => {
+
+  const handleChangeAutocomplete = (__: string, value: string | null) => {
     const upperValue = value?.toUpperCase() || "";
     setInputValue(upperValue);
 
