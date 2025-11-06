@@ -591,6 +591,31 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(configModal.observations.errorMessage);
     }
   };
+  const incomeDataProspect = (prospectData?: IProspect): IIncomeSources => {
+    const borrower = prospectData?.borrowers?.[0];
+    const properties = borrower?.borrowerProperties || [];
+
+    const getValue = (name: string) => getPropertyValue(properties, name) || "";
+
+    const getNumeric = (name: string) => parseFloat(getValue(name)) || 0;
+
+    return {
+      identificationNumber: borrower?.borrowerIdentificationNumber || "",
+      identificationType: borrower?.borrowerIdentificationType || "",
+      name: getValue("name"),
+      surname: getValue("surname"),
+      Dividends: getNumeric("Dividends"),
+      FinancialIncome: getNumeric("FinancialIncome"),
+      Leases: getNumeric("Leases"),
+      OtherNonSalaryEmoluments: getNumeric("OtherNonSalaryEmoluments"),
+      PensionAllowances: getNumeric("PensionAllowances"),
+      PeriodicSalary: getNumeric("PeriodicSalary"),
+      PersonalBusinessUtilities: getNumeric("PersonalBusinessUtilities"),
+      ProfessionalFees: getNumeric("ProfessionalFees"),
+    };
+  };
+
+  const incomeDataValues = incomeDataProspect(prospectData);
 
   return (
     <div ref={dataPrint}>
@@ -707,6 +732,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               prospectData?.moneyDestinationAbbreviatedName || ""
             }
             userAccount={userAccount}
+            incomeData={incomeDataValues}
           />
         )}
         {openModal === "paymentCapacity" && (

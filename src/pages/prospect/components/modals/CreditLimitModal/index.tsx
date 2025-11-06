@@ -10,8 +10,12 @@ import {
 } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { getGlobalLimitByMoneyDestination } from "@services/creditLimit/getGlobalLimitByMoneyDestination";
-import { IMaximumCreditLimitByMoneyDestination } from "@services/creditLimit/types";
+import {
+  IIncomeSources,
+  IMaximumCreditLimitByMoneyDestination,
+} from "@services/creditLimit/types";
 import { get } from "@mocks/utils/dataMock.service";
+import { IFormData } from "@pages/simulateCredit/types";
 
 import { dataCreditLimitModal } from "./config";
 
@@ -27,6 +31,7 @@ export interface ICreditLimitModalProps {
   >;
   paymentCapacityData?: IPaymentCapacityData;
   userAccount: string;
+  incomeData: IFormData | IIncomeSources;
 }
 
 export function CreditLimitModal(props: ICreditLimitModalProps) {
@@ -39,6 +44,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     handleClose,
     setRequestValue,
     userAccount,
+    incomeData,
   } = props;
 
   useState(false);
@@ -127,6 +133,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
                   userAccount={userAccount}
                   setError={setError}
                   error={error}
+                  incomeData={incomeData as IFormData}
                 />
               ))}
             </Stack>

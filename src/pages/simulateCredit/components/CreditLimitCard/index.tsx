@@ -11,6 +11,7 @@ import { PaymentCapacityModal } from "@components/modals/PaymentCapacityModal";
 
 import { StyledContainer } from "./styles";
 import { IdataMaximumCreditLimitService, IPaymentCapacityData } from "./types";
+import { IFormData } from "../../types";
 
 export interface CreditLimitProps {
   businessUnitPublicCode: string;
@@ -23,6 +24,7 @@ export interface CreditLimitProps {
   userAccount: string;
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   error: boolean;
+  incomeData: IFormData;
 }
 
 export function CreditLimitCard(props: CreditLimitProps) {
@@ -37,6 +39,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
     userAccount,
     setError,
     error,
+    incomeData,
   } = props;
 
   const [creditModal, setCreditModal] = useState(false);
@@ -136,6 +139,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
           setLoading={setLoading}
           error={error}
           loading={loading}
+          incomeData={incomeData}
         />
       )}
 
