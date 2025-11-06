@@ -47,7 +47,7 @@ import { updateFinancialObligationsFormData } from "./utils";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
-    /* stepsAddProspect.generalInformation.id */ 10,
+    stepsAddProspect.generalInformation.id,
   );
   const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
