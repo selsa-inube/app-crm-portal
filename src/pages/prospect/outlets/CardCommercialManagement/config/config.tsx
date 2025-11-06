@@ -367,10 +367,3 @@ export const tittleOptions = {
   deletedExpensesErrorDescription:
     "¿Realmente deseas eliminar el gasto descontable.",
 };
-
-export const paymentCycleMap: Record<string, string> = {
-  Weekly: "Cada 10 días",
-  Biweekly: "Bisemanal",
-  Semimonthly: "Quincenal",
-  Monthly: "Mensual",
-};

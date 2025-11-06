@@ -1,9 +1,6 @@
 import * as Yup from "yup";
 
-import {
-  IPaymentMethod,
-  IPaymentCycle,
-} from "@services/prospect/getPaymentMethods/types";
+import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 export interface IFirstPaymentDate {
   id: string;
@@ -15,9 +12,7 @@ export interface IPaymentConfiguration {
   paymentMethod: string;
   paymentCycle: string;
   firstPaymentDate: string;
-  availablePaymentMethods: IPaymentMethod[];
-  availablePaymentCycles: IPaymentCycle[];
-  availableFirstPaymentDates: IFirstPaymentDate[];
+  paymentChannelData: IResponsePaymentDatesChannel[];
 }
 
 export const VALIDATED_NUMBER_REGEX = /[^0-9]/g;
@@ -83,8 +78,17 @@ export interface ITermSelectionValuesMain {
   maximumTermValue: string | number;
 }
 
+export interface IPaymentsOptions {
+  id: string;
+  value: string;
+  label: string;
+}
+
 export interface IPaymentConfigurationUI {
   paymentConfig: IPaymentConfiguration;
+  paymentMethodOptions: IPaymentsOptions[];
+  paymentCycleOptions: IPaymentsOptions[];
+  firstPaymentDateOptions: IPaymentsOptions[];
   paymentConfiguration: {
     paymentMethod: {
       label: string;

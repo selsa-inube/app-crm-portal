@@ -8,10 +8,9 @@ import {
 } from "@services/enum/prospectProduct";
 import { Schedule } from "@services/enum/schedule";
 import { ICustomerData } from "@context/CustomerContext/types";
-import {
-  IPaymentMethod,
-  IPaymentCycle,
-} from "@services/prospect/getPaymentMethods/types";
+import { IProspect } from "@src/services/prospect/types";
+
+import { IPaymentConfiguration } from "./steps/config";
 
 const creditLineOptions = [
   {
@@ -158,6 +157,7 @@ export interface IAddProductModalProps {
   moneyDestination: string;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  dataProspect: IProspect;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   customerData?: ICustomerData;
@@ -268,17 +268,17 @@ export const stepsAddProduct = {
     name: "Configuración de pago",
     description: "Configura el medio y ciclo de pago",
   },
-  amountCapture: {
+  termSelection: {
     id: 3,
     number: 3,
-    name: "Monto a solicitar",
-    description: "Ingresa el monto del crédito",
-  },
-  termSelection: {
-    id: 4,
-    number: 4,
     name: "Plazo",
     description: "Selecciona el plazo del crédito",
+  },
+  amountCapture: {
+    id: 4,
+    number: 4,
+    name: "Monto a solicitar",
+    description: "Ingresa el monto del crédito",
   },
 };
 
@@ -298,15 +298,6 @@ export interface IFirstPaymentDate {
   label: string;
 }
 
-export interface IPaymentConfiguration {
-  paymentMethod: string;
-  paymentCycle: string;
-  firstPaymentDate: string;
-  availablePaymentMethods: IPaymentMethod[];
-  availablePaymentCycles: IPaymentCycle[];
-  availableFirstPaymentDates: IFirstPaymentDate[];
-}
-
 export interface IFormValues {
   creditLine: string;
   creditAmount: number;
@@ -324,6 +315,56 @@ export interface StepDetails {
   name: string;
   description: string;
 }
+
+export interface IBorrowerIncomeData {
+  Dividends: number;
+  FinancialIncome: number;
+  Leases: number;
+  OtherNonSalaryEmoluments: number;
+  PensionAllowances: number;
+  PeriodicSalary: number;
+  PersonalBusinessUtilities: number;
+  ProfessionalFees: number;
+}
+
+export const extractBorrowerIncomeData = (
+  dataProspect: IProspect | undefined,
+): IBorrowerIncomeData => {
+  const defaultIncomeData: IBorrowerIncomeData = {
+    Dividends: 0,
+    FinancialIncome: 0,
+    Leases: 0,
+    OtherNonSalaryEmoluments: 0,
+    PensionAllowances: 0,
+    PeriodicSalary: 0,
+    PersonalBusinessUtilities: 0,
+    ProfessionalFees: 0,
+  };
+
+  if (!dataProspect?.borrowers) {
+    return defaultIncomeData;
+  }
+
+  const mainBorrower = dataProspect.borrowers.find(
+    (borrower) => borrower.borrowerType === "MainBorrower",
+  );
+
+  if (!mainBorrower?.borrowerProperties) {
+    return defaultIncomeData;
+  }
+
+  const result: IBorrowerIncomeData = { ...defaultIncomeData };
+
+  mainBorrower.borrowerProperties.forEach((prop) => {
+    const propertyName = prop.propertyName as keyof IBorrowerIncomeData;
+
+    if (propertyName in result) {
+      result[propertyName] = parseFloat(prop.propertyValue) || 0;
+    }
+  });
+
+  return result;
+};
 
 export {
   creditLineOptions,

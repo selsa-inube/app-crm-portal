@@ -77,6 +77,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
             disableNext={!isCurrentFormValid}
             disableSubmit={!isCurrentFormValid}
             size={isMobile ? "small" : "large"}
+            showCurrentStepNumber={false}
           />
 
           <Divider />

@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { useEffect } from "react";
 
 import { currencyFormat } from "@utils/formatData/currency";
 
@@ -20,10 +21,31 @@ export function TermSelection(props: ITermSelection) {
     onFormValid,
   } = props;
 
+  useEffect(() => {
+    if (!quotaCapEnabled && !maximumTermEnabled) {
+      onChange({
+        quotaCapValue: 0,
+        maximumTermValue: 0,
+        quotaCapEnabled: true,
+        maximumTermEnabled: false,
+      });
+    }
+
+    if (quotaCapEnabled && maximumTermEnabled) {
+      onChange({
+        quotaCapValue: quotaCapValue,
+        maximumTermValue: 0,
+        quotaCapEnabled: true,
+        maximumTermEnabled: false,
+      });
+    }
+  }, []);
+
   const initialValues: ITermSelectionValuesMain = {
     toggles: {
-      quotaCapToggle: quotaCapEnabled,
-      maximumTermToggle: maximumTermEnabled,
+      quotaCapToggle: quotaCapEnabled !== undefined ? quotaCapEnabled : true,
+      maximumTermToggle:
+        maximumTermEnabled !== undefined ? maximumTermEnabled : false,
     },
     quotaCapValue: quotaCapEnabled ? currencyFormat(quotaCapValue) : "",
     maximumTermValue: maximumTermEnabled ? maximumTermValue : "",
@@ -60,16 +82,17 @@ export function TermSelection(props: ITermSelection) {
   };
 
   const handleQuotaCapToggleChange = (
-    isChecked: boolean,
+    isChecked: boolean = true,
     setFieldValue: (field: string, value: string | number | boolean) => void,
     values: ITermSelectionValuesMain,
   ) => {
     setFieldValue("toggles.quotaCapToggle", isChecked);
-    setFieldValue("toggles.maximumTermToggle", false);
-    setFieldValue("maximumTermValue", "");
+    setFieldValue("toggles.maximumTermToggle", !isChecked);
 
     if (!isChecked) {
       setFieldValue("quotaCapValue", "");
+    } else {
+      setFieldValue("maximumTermValue", "");
     }
 
     const quotaCapNumeric = isChecked
@@ -82,7 +105,7 @@ export function TermSelection(props: ITermSelection) {
       quotaCapValue: quotaCapNumeric,
       maximumTermValue: 0,
       quotaCapEnabled: isChecked,
-      maximumTermEnabled: false,
+      maximumTermEnabled: !isChecked,
     });
   };
 
@@ -122,17 +145,21 @@ export function TermSelection(props: ITermSelection) {
     setFieldValue: (field: string, value: string | number | boolean) => void,
     values: ITermSelectionValuesMain,
   ) => {
-    setFieldValue("toggles.quotaCapToggle", false);
+    setFieldValue("toggles.quotaCapToggle", !isChecked);
     setFieldValue("toggles.maximumTermToggle", isChecked);
-    setFieldValue("quotaCapValue", "");
-    setFieldValue("maximumTermValue", isChecked ? values.maximumTermValue : "");
+
+    if (!isChecked) {
+      setFieldValue("maximumTermValue", "");
+    } else {
+      setFieldValue("quotaCapValue", "");
+    }
 
     const termNumeric = isChecked ? Number(values.maximumTermValue) : 0;
 
     onChange({
       quotaCapValue: 0,
       maximumTermValue: termNumeric,
-      quotaCapEnabled: false,
+      quotaCapEnabled: !isChecked,
       maximumTermEnabled: isChecked,
     });
   };

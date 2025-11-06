@@ -5,8 +5,7 @@ import { useMediaQuery } from "@inubekit/inubekit";
 
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
-import { getPaymentMethods } from "@services/prospect/getPaymentMethods";
-import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
+import { GetSearchAllPaymentChannels } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber";
 
 import {
   IAddProductModalProps,
@@ -14,6 +13,7 @@ import {
   IFormValues,
   stepsAddProduct,
   errorMessages,
+  extractBorrowerIncomeData,
 } from "./config";
 import { AddProductModalUI } from "./interface";
 
@@ -30,6 +30,7 @@ function AddProductModal(props: IAddProductModalProps) {
     businessUnitPublicCode,
     customerData,
     businessManagerCode,
+    dataProspect,
   } = props;
 
   const [errorModal, setErrorModal] = useState(false);
@@ -38,7 +39,7 @@ function AddProductModal(props: IAddProductModalProps) {
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddProduct.creditLineSelection.id,
   );
-  const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
+  const [isCurrentFormValid, setIsCurrentFormValid] = useState(false);
   const [formData, setFormData] = useState<IFormValues>({
     creditLine: "",
     creditAmount: 0,
@@ -46,13 +47,11 @@ function AddProductModal(props: IAddProductModalProps) {
       paymentMethod: "",
       paymentCycle: "",
       firstPaymentDate: "",
-      availablePaymentMethods: [],
-      availablePaymentCycles: [],
-      availableFirstPaymentDates: [],
+      paymentChannelData: [],
     },
     quotaCapValue: 0,
     maximumTermValue: 0,
-    quotaCapEnabled: false,
+    quotaCapEnabled: true,
     maximumTermEnabled: false,
     selectedProducts: [],
   });
@@ -94,89 +93,53 @@ function AddProductModal(props: IAddProductModalProps) {
 
   useEffect(() => {
     const loadPaymentOptions = async () => {
-      /* if (!formData.creditLine) return; */
+      if (!formData.creditLine || !customerData?.publicCode) return;
 
       try {
-        const response = await getPaymentMethods(
+        const incomeData = extractBorrowerIncomeData(dataProspect);
+
+        const paymentChannelRequest = {
+          clientIdentificationNumber: customerData.publicCode,
+          clientIdentificationType:
+            customerData.generalAttributeClientNaturalPersons[0]
+              .typeIdentification,
+          moneyDestination: moneyDestination,
+          ...incomeData,
+          linesOfCredit: formData.selectedProducts,
+        };
+
+        const response = await GetSearchAllPaymentChannels(
           businessUnitPublicCode,
           businessManagerCode,
-          formData.creditLine,
+          paymentChannelRequest,
         );
-        console.log("getPaymentMethods: ", response);
-        if (!response) {
+
+        if (!response || response.length === 0) {
           throw new Error(errorMessages.getPaymentMethods);
         }
 
-        const mappedPaymentCycles = response.paymentCycles.map((cycle) => ({
-          ...cycle,
-          label: paymentCycleMap[cycle.value] || cycle.label,
-        }));
-
-        const mappedFirstPaymentCycles = response.firstPaymentCycles.map(
-          (cycle) => ({
-            ...cycle,
-            label: paymentCycleMap[cycle.value] || cycle.label,
-          }),
-        );
-
         setFormData((prev) => ({
           ...prev,
           paymentConfiguration: {
             ...prev.paymentConfiguration,
-            availablePaymentMethods: response.paymentMethods,
-            availablePaymentCycles: mappedPaymentCycles,
-            availableFirstPaymentDates: mappedFirstPaymentCycles,
+            paymentChannelData: response,
           },
         }));
-
-        if (
-          response.paymentMethods.length === 1 &&
-          mappedPaymentCycles.length === 1 &&
-          mappedFirstPaymentCycles.length === 1
-        ) {
-          setFormData((prev) => ({
-            ...prev,
-            paymentConfiguration: {
-              ...prev.paymentConfiguration,
-              paymentMethod: response.paymentMethods[0].value,
-              paymentCycle: mappedPaymentCycles[0].value,
-              firstPaymentDate: mappedFirstPaymentCycles[0].value,
-            },
-          }));
-        }
       } catch (error) {
-        setFormData((prev) => ({
-          ...prev,
-          paymentConfiguration: {
-            ...prev.paymentConfiguration,
-            availablePaymentMethods: [
-              { id: "1", value: "transfer", label: "Transferencia" },
-              /*               { id: "2", value: "debit", label: "Débito automático" },
-              { id: "3", value: "cash", label: "Efectivo" }, */
-            ],
-            availablePaymentCycles: [
-              { id: "1", value: "monthly", label: "Mensual" },
-              /*               { id: "2", value: "biweekly", label: "Quincenal" },
-              { id: "3", value: "weekly", label: "Semanal" }, */
-            ],
-            availableFirstPaymentDates: [
-              { id: "1", value: "immediate", label: "Inmediato" },
-              /*               { id: "2", value: "30days", label: "30 días" },
-              { id: "3", value: "60days", label: "60 días" }, */
-            ],
-          },
-        }));
-        console.log("error getPaymentMethods: ", error);
         setErrorMessage(errorMessages.getPaymentMethods);
         setErrorModal(true);
       }
     };
+
     loadPaymentOptions();
   }, [
     formData.creditLine,
+    formData.selectedProducts,
     businessUnitPublicCode,
     businessManagerCode,
-    currentStep,
+    customerData,
+    moneyDestination,
+    dataProspect,
   ]);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
@@ -187,40 +150,16 @@ function AddProductModal(props: IAddProductModalProps) {
     (step: { number: number }) => step.number === currentStep,
   ) || { id: 0, number: 0, name: "", description: "" };
 
-  const shouldSkipPaymentConfiguration = (): boolean => {
-    const config = formData.paymentConfiguration;
-
-    /*     return (
-      config.availablePaymentMethods.length === 1 &&
-      config.availablePaymentCycles.length === 1 &&
-      config.availableFirstPaymentDates.length === 1 &&
-      config.paymentMethod !== "" &&
-      config.paymentCycle !== "" &&
-      config.firstPaymentDate !== ""
-    ); */
-
-    return false;
-  };
-
   const handleNextStep = () => {
     if (currentStep === stepsAddProduct.creditLineSelection.id) {
-      if (shouldSkipPaymentConfiguration()) {
-        setCurrentStep(stepsAddProduct.amountCapture.id);
-      } else {
-        setCurrentStep(stepsAddProduct.paymentConfiguration.id);
-      }
+      setCurrentStep(stepsAddProduct.paymentConfiguration.id);
     } else if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const handlePreviousStep = () => {
-    if (
-      currentStep === stepsAddProduct.amountCapture.id &&
-      shouldSkipPaymentConfiguration()
-    ) {
-      setCurrentStep(stepsAddProduct.creditLineSelection.id);
-    } else if (currentStep > 1) {
+    if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
     setIsCurrentFormValid(true);

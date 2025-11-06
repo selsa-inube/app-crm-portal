@@ -2,8 +2,9 @@ import { Formik, Form, Field } from "formik";
 import { Stack, Text, Divider, Toggle, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
+import { loanData } from "@pages/simulateCredit/steps/loanCondition/config";
 
-import { ITermSelectionUI, loanData } from "../config";
+import { ITermSelectionUI } from "../config";
 
 export function TermSelectionUI(props: ITermSelectionUI) {
   const {
@@ -105,77 +106,83 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                     </Stack>
                   </Stack>
                 </Stack>
-                <Stack direction="column" gap="16px">
-                  <Divider dashed />
-                  <Text
-                    type="body"
-                    size="medium"
-                    appearance={
-                      !values.toggles.quotaCapToggle ? "dark" : "gray"
-                    }
-                  >
-                    {loanData.maximumTermTitle}
-                  </Text>
-                  <Stack
-                    gap="16px"
-                    alignItems={isMobile ? "initial" : "center"}
-                    direction={isMobile ? "column" : "row"}
-                  >
-                    <Stack gap="8px" alignItems="center">
-                      <Field
-                        name="toggles.maximumTermToggle"
-                        type="checkbox"
-                        as={Toggle}
-                        checked={values.toggles.maximumTermToggle}
-                        disabled={values.toggles.quotaCapToggle}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          handleMaximumTermToggleChange(
-                            e.target.checked,
-                            setFieldValue,
-                            values,
-                          );
-                        }}
-                      />
-                      <Text
-                        type="label"
-                        size="large"
-                        weight="bold"
-                        appearance={
-                          values.toggles.maximumTermToggle
-                            ? "success"
-                            : "danger"
-                        }
-                      >
-                        {values.toggles.maximumTermToggle
-                          ? loanData.yes
-                          : loanData.no}
-                      </Text>
-                    </Stack>
+                {!values.toggles.quotaCapToggle && (
+                  <Stack direction="column" gap="16px">
+                    <Divider dashed />
+                    <Text
+                      type="body"
+                      size="medium"
+                      appearance={
+                        !values.toggles.quotaCapToggle ? "dark" : "gray"
+                      }
+                    >
+                      {loanData.maximumTermTitle}
+                    </Text>
+                    <Stack
+                      gap="16px"
+                      alignItems={isMobile ? "initial" : "center"}
+                      direction={isMobile ? "column" : "row"}
+                    >
+                      <Stack gap="8px" alignItems="center">
+                        <Field
+                          name="toggles.maximumTermToggle"
+                          type="checkbox"
+                          as={Toggle}
+                          checked={values.toggles.maximumTermToggle}
+                          disabled={values.toggles.quotaCapToggle}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>,
+                          ) => {
+                            handleMaximumTermToggleChange(
+                              e.target.checked,
+                              setFieldValue,
+                              values,
+                            );
+                          }}
+                        />
+                        <Text
+                          type="label"
+                          size="large"
+                          weight="bold"
+                          appearance={
+                            values.toggles.maximumTermToggle
+                              ? "success"
+                              : "danger"
+                          }
+                        >
+                          {values.toggles.maximumTermToggle
+                            ? loanData.yes
+                            : loanData.no}
+                        </Text>
+                      </Stack>
 
-                    <Stack width={isMobile ? "100%" : "auto"}>
-                      <Textfield
-                        id="maximumTerm"
-                        name="maximumTermValue"
-                        label={loanData.maximumTermLabel}
-                        placeholder={loanData.maximumTermPlaceholder}
-                        size="compact"
-                        type="number"
-                        disabled={!values.toggles.maximumTermToggle}
-                        fullwidth={isMobile}
-                        value={values.maximumTermValue}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          handleMaximumTermValueChange(
-                            Number(e.target.value),
-                            setFieldValue,
-                          );
-                        }}
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          handleBlur(e)
-                        }
-                      />
+                      <Stack width={isMobile ? "100%" : "auto"}>
+                        <Textfield
+                          id="maximumTerm"
+                          name="maximumTermValue"
+                          label={loanData.maximumTermLabel}
+                          placeholder={loanData.maximumTermPlaceholder}
+                          size="compact"
+                          type="number"
+                          disabled={!values.toggles.maximumTermToggle}
+                          fullwidth={isMobile}
+                          value={values.maximumTermValue}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>,
+                          ) => {
+                            handleMaximumTermValueChange(
+                              Number(e.target.value),
+                              setFieldValue,
+                            );
+                          }}
+                          onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            handleBlur(e)
+                          }
+                        />
+                      </Stack>
                     </Stack>
                   </Stack>
-                </Stack>
+                )}
               </Stack>
             </Fieldset>
           </Stack>
