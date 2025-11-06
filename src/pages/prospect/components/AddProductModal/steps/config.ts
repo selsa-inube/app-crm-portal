@@ -101,6 +101,9 @@ export interface IPaymentConfigurationUI {
   handlePaymentMethodChange: (value: string) => void;
   handlePaymentCycleChange: (value: string) => void;
   handleFirstPaymentDateChange: (value: string) => void;
+  hasOnlyOnePaymentMethod: boolean;
+  hasOnlyOnePaymentCycle: boolean;
+  hasOnlyOneFirstPaymentDate: boolean;
 }
 
 export interface IPaymentConfigurationMain {

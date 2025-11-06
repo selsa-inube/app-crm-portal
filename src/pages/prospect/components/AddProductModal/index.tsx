@@ -94,7 +94,7 @@ function AddProductModal(props: IAddProductModalProps) {
 
   useEffect(() => {
     const loadPaymentOptions = async () => {
-      if (!formData.creditLine) return;
+      /* if (!formData.creditLine) return; */
 
       try {
         const response = await getPaymentMethods(
@@ -102,7 +102,7 @@ function AddProductModal(props: IAddProductModalProps) {
           businessManagerCode,
           formData.creditLine,
         );
-
+        console.log("getPaymentMethods: ", response);
         if (!response) {
           throw new Error(errorMessages.getPaymentMethods);
         }
@@ -150,36 +150,34 @@ function AddProductModal(props: IAddProductModalProps) {
           paymentConfiguration: {
             ...prev.paymentConfiguration,
             availablePaymentMethods: [
-              {
-                id: "0",
-                value: "No hay opciones disponibles", // sorry for this, but that is only a mocks a witing to remove when we have the services working correctly :)
-                label: "No hay opciones disponibles",
-              },
+              { id: "1", value: "transfer", label: "Transferencia" },
+              /*               { id: "2", value: "debit", label: "Débito automático" },
+              { id: "3", value: "cash", label: "Efectivo" }, */
             ],
             availablePaymentCycles: [
-              {
-                id: "0",
-                value: "No hay opciones disponibles",
-                label: "No hay opciones disponibles",
-              },
+              { id: "1", value: "monthly", label: "Mensual" },
+              /*               { id: "2", value: "biweekly", label: "Quincenal" },
+              { id: "3", value: "weekly", label: "Semanal" }, */
             ],
             availableFirstPaymentDates: [
-              {
-                id: "0",
-                value: "No hay opciones disponibles",
-                label: "No hay opciones disponibles",
-              },
+              { id: "1", value: "immediate", label: "Inmediato" },
+              /*               { id: "2", value: "30days", label: "30 días" },
+              { id: "3", value: "60days", label: "60 días" }, */
             ],
           },
         }));
-
+        console.log("error getPaymentMethods: ", error);
         setErrorMessage(errorMessages.getPaymentMethods);
         setErrorModal(true);
       }
     };
-
     loadPaymentOptions();
-  }, [formData.creditLine, businessUnitPublicCode, businessManagerCode]);
+  }, [
+    formData.creditLine,
+    businessUnitPublicCode,
+    businessManagerCode,
+    currentStep,
+  ]);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
 
@@ -192,14 +190,16 @@ function AddProductModal(props: IAddProductModalProps) {
   const shouldSkipPaymentConfiguration = (): boolean => {
     const config = formData.paymentConfiguration;
 
-    return (
+    /*     return (
       config.availablePaymentMethods.length === 1 &&
       config.availablePaymentCycles.length === 1 &&
       config.availableFirstPaymentDates.length === 1 &&
       config.paymentMethod !== "" &&
       config.paymentCycle !== "" &&
       config.firstPaymentDate !== ""
-    );
+    ); */
+
+    return false;
   };
 
   const handleNextStep = () => {
