@@ -58,6 +58,7 @@ import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
 import { incomeCardData } from "@components/cards/IncomeCard/config";
 import { IValidateRequirement } from "@services/requirement/types";
+import { StyledDivider } from "@components/layout/Divider/styles";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -629,8 +630,18 @@ export function CreditProspect(props: ICreditProspectProps) {
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
         <StyledPrint>
-          <Stack gap="16px" justifyContent="end" alignItems="center">
-            <Stack alignItems="center" gap="4px">
+          <Stack
+            gap="16px"
+            justifyContent="end"
+            alignItems={isMobile ? "center" : "normal"}
+            direction={isMobile ? "column" : "row"}
+          >
+            <Stack
+              alignItems={isMobile ? "center" : "normal"}
+              gap="4px"
+              direction={isMobile ? "column" : "row"}
+              width={isMobile ? "100%" : "auto"}
+            >
               <Button
                 type="button"
                 appearance="primary"
@@ -645,6 +656,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 }
                 disabled={canEditCreditRequest}
                 onClick={() => handleOpenModal("editProductModal")}
+                fullwidth={isMobile}
               >
                 {dataCreditProspect.addProduct}
               </Button>
@@ -674,29 +686,35 @@ export function CreditProspect(props: ICreditProspectProps) {
                 }
                 onClick={() => handleOpenModal("extraPayments")}
                 disabled={canEditCreditRequest}
+                fullwidth={isMobile}
               >
                 {dataCreditProspect.extraPayment}
               </Button>
             )}
+            {isMobile && <StyledDivider />}
             <StyledContainerIcon>
               {showPrint && (
                 <Stack gap="8px">
-                  <Icon
-                    icon={<MdOutlinePictureAsPdf />}
-                    appearance="primary"
-                    size="24px"
-                    disabled={!isPrint}
-                    cursorHover
-                    onClick={print}
-                  />
-                  <Icon
-                    icon={<MdOutlineShare />}
-                    appearance="primary"
-                    size="24px"
-                    onClick={async () => await generateAndSharePdf()}
-                    cursorHover
-                  />
-                  <StyledVerticalDivider />
+                  {!isMobile && (
+                    <>
+                      <Icon
+                        icon={<MdOutlinePictureAsPdf />}
+                        appearance="primary"
+                        size="24px"
+                        disabled={!isPrint}
+                        cursorHover
+                        onClick={print}
+                      />
+                      <Icon
+                        icon={<MdOutlineShare />}
+                        appearance="primary"
+                        size="24px"
+                        onClick={async () => await generateAndSharePdf()}
+                        cursorHover
+                      />
+                      <StyledVerticalDivider />
+                    </>
+                  )}
                 </Stack>
               )}
               <MenuProspect
