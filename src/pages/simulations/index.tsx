@@ -35,7 +35,8 @@ export function Simulations() {
   const [showCreditRequest, setShowCreditRequest] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
-  const [showRestoreSimulation, setShowRestoreSimulation] = useState(false);
+  const [showRecalculateSimulation, setShowRecalculateSimulation] =
+    useState(false);
   const [showRequirements, setShowRequirements] = useState(false);
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>({} as IProspectSummaryById);
@@ -342,8 +343,8 @@ export function Simulations() {
     }
   };
 
-  const handleRestoreSimulation = () => {
-    setShowRestoreSimulation(false);
+  const handleRecalculateSimulation = () => {
+    setShowRecalculateSimulation(false);
   };
 
   return (
@@ -381,9 +382,9 @@ export function Simulations() {
       generateAndSharePdf={generateAndSharePdf}
       prospectSummaryData={prospectSummaryData}
       setProspectSummaryData={setProspectSummaryData}
-      showRestoreSimulation={showRestoreSimulation}
-      setShowRestoreSimulation={setShowRestoreSimulation}
-      handleRestoreSimulation={handleRestoreSimulation}
+      showRecalculateSimulation={showRecalculateSimulation}
+      setShowRecalculateSimulation={setShowRecalculateSimulation}
+      handleRecalculateSimulation={handleRecalculateSimulation}
       showRequirements={showRequirements}
       setShowRequirements={setShowRequirements}
       validateRequirements={validateRequirements}

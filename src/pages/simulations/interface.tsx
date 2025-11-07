@@ -81,9 +81,9 @@ interface SimulationsUIProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   generateAndSharePdf: () => void;
-  showRestoreSimulation: boolean;
-  setShowRestoreSimulation: React.Dispatch<React.SetStateAction<boolean>>;
-  handleRestoreSimulation: () => void;
+  showRecalculateSimulation: boolean;
+  setShowRecalculateSimulation: React.Dispatch<React.SetStateAction<boolean>>;
+  handleRecalculateSimulation: () => void;
   showRequirements: boolean;
   setShowRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements: IValidateRequirement[];
@@ -129,9 +129,9 @@ export function SimulationsUI(props: SimulationsUIProps) {
     handleDeleteProspect,
     prospectSummaryData,
     setProspectSummaryData,
-    showRestoreSimulation,
-    setShowRestoreSimulation,
-    handleRestoreSimulation,
+    showRecalculateSimulation,
+    setShowRecalculateSimulation,
+    handleRecalculateSimulation,
     showRequirements,
     setShowRequirements,
     validateRequirements,
@@ -208,7 +208,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                       children={labelsRecalculateSimulation.button}
                       variant="outlined"
                       spacing="compact"
-                      onClick={() => setShowRestoreSimulation(true)}
+                      onClick={() => setShowRecalculateSimulation(true)}
                     ></Button>
                   </Stack>
                 </Stack>
@@ -498,14 +498,14 @@ export function SimulationsUI(props: SimulationsUIProps) {
           }}
         />
       )}
-      {showRestoreSimulation && (
+      {showRecalculateSimulation && (
         <BaseModal
           title={labelsRecalculateSimulation.title}
-          handleBack={() => setShowRestoreSimulation(false)}
-          handleNext={handleRestoreSimulation}
+          handleBack={() => setShowRecalculateSimulation(false)}
+          handleNext={handleRecalculateSimulation}
           disabledNext={canEditCreditRequest}
           backButton={labelsRecalculateSimulation.cancel}
-          nextButton={labelsRecalculateSimulation.restore}
+          nextButton={labelsRecalculateSimulation.recalculate}
           width={isMobile ? "300px" : "480px"}
         >
           <Stack direction="column" gap="16px" alignItems="center">

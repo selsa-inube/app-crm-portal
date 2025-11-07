@@ -71,6 +71,6 @@ export const labelsRecalculateSimulation = {
     itemOne: "Cambio en los datos del prospecto de forma automática.",
   },
   cancel: "Cancelar",
-  restore: "Recalcular",
+  recalculate: "Recalcular",
   button: "Recalcular simulación",
 };
