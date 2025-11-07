@@ -200,9 +200,9 @@ export function SourceIncome(props: ISourceIncomeProps) {
       identificationType: "",
       name: values.borrower.split(" ")[0] || "",
       surname: values.borrower.split(" ").slice(1).join(" ") || "",
-      Leases: parseCurrencyString(values.capital[0] || "1"),
-      Dividends: parseCurrencyString(values.capital[1] || "1"),
-      FinancialIncome: parseCurrencyString(values.capital[2] || "1"),
+      Leases: parseCurrencyString(values.capital[0] || "0"),
+      Dividends: parseCurrencyString(values.capital[1] || "0"),
+      FinancialIncome: parseCurrencyString(values.capital[2] || "0"),
       PeriodicSalary: parseCurrencyString(values.employment[0] || "0"),
       OtherNonSalaryEmoluments: parseCurrencyString(
         values.employment[1] || "0",

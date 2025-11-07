@@ -6,6 +6,7 @@ import { Accordion } from "@components/data/Accordion";
 
 import { StyledScrollContainer } from "./styles";
 import { IDataVerificationStep } from "./types";
+import { verificationDebtorAddModalConfig } from "./config";
 
 interface IVerificationDebtorAddModalUIProps {
   dataVerificationStep: IDataVerificationStep[];
@@ -52,7 +53,7 @@ export const VerificationDebtorAddModalUI = (
                         iconBefore={<MdArrowBack />}
                         onClick={() => setCurrentStep(section.stepNumber)}
                       >
-                        Regresar a este paso
+                        {verificationDebtorAddModalConfig.back}
                       </Button>
                     </Stack>
                   </>
@@ -80,7 +81,7 @@ export const VerificationDebtorAddModalUI = (
                         iconBefore={<MdArrowBack />}
                         onClick={() => setCurrentStep(section.stepNumber)}
                       >
-                        Regresar a este paso
+                        {verificationDebtorAddModalConfig.back}
                       </Button>
                     </Stack>
                   </>

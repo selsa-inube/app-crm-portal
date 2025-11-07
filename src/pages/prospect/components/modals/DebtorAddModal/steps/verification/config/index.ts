@@ -29,4 +29,5 @@ export const verificationDebtorAddModalConfig = {
     incomeInfo: 2,
     financialObligations: 3,
   },
+  back: "Regresar a este paso",
 };

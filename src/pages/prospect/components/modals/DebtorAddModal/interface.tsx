@@ -66,13 +66,13 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     <BaseModal
       title={title}
       nextButton={
-        currentStepsNumber === steps[2]
+        currentStepsNumber === steps[3]
           ? titleButtonTextAssited.submitText
           : titleButtonTextAssited.goNextText
       }
       backButton={titleButtonTextAssited.goBackText}
       handleNext={
-        currentStepsNumber === steps[2] ? handleSubmitClick : handleNextStep
+        currentStepsNumber === steps[3] ? handleSubmitClick : handleNextStep
       }
       handleBack={handlePreviousStep}
       handleClose={handleClose}

@@ -1,5 +1,5 @@
 export const dataAddModal = {
-  labelTypeDocument: "cccc",
+  labelTypeDocument: "Tipo de documento",
   labelNumberDocument: "Numero de documento",
   labelName: "Nombres",
   labelLastName: "Apellidos",

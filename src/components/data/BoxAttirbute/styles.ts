@@ -4,7 +4,6 @@ import styled from "styled-components";
 export const StyledBoxAttribute = styled.div`
   display: flex;
   justify-content: space-between;
-  gap
   word-wrap: break-word;
   white-space: normal;
   overflow-wrap: break-word;
