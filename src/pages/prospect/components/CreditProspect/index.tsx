@@ -642,24 +642,26 @@ export function CreditProspect(props: ICreditProspectProps) {
               direction={isMobile ? "column" : "row"}
               width={isMobile ? "100%" : "auto"}
             >
-              <Button
-                type="button"
-                appearance="primary"
-                spacing="compact"
-                iconBefore={
-                  <Icon
-                    icon={<MdOutlineAdd />}
-                    appearance="light"
-                    size="18px"
-                    spacing="narrow"
-                  />
-                }
-                disabled={canEditCreditRequest}
-                onClick={() => handleOpenModal("editProductModal")}
-                fullwidth={isMobile}
-              >
-                {dataCreditProspect.addProduct}
-              </Button>
+              {showAddProduct && (
+                <Button
+                  type="button"
+                  appearance="primary"
+                  spacing="compact"
+                  iconBefore={
+                    <Icon
+                      icon={<MdOutlineAdd />}
+                      appearance="light"
+                      size="18px"
+                      spacing="narrow"
+                    />
+                  }
+                  disabled={canEditCreditRequest}
+                  onClick={() => handleOpenModal("editProductModal")}
+                  fullwidth={isMobile}
+                >
+                  {dataCreditProspect.addProduct}
+                </Button>
+              )}
               {canEditCreditRequest && (
                 <Icon
                   icon={<MdOutlineInfo />}
@@ -920,7 +922,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             options={incomeOptions}
             onChange={onChanges}
             debtor={form.borrower}
-            prospectData={prospectData ? [prospectData] : undefined}
+            prospectData={prospectData ? [prospectData] : []}
             onProspectUpdate={onProspectRefreshData}
             showAddButton={showAddButtons}
           />
@@ -942,7 +944,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             title={configModal.observations.title}
             handleClose={handleCloseModal}
             handleNext={() => {
-              setEditedComments(prospectData!.clientComments || "");
+              setEditedComments(
+                prospectData ? prospectData!.clientComments : "",
+              );
               setShowEditMessageModal(true);
             }}
             nextButton={configModal.observations.modify}
@@ -952,7 +956,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             <Stack direction="column" gap="16px">
               <CardGray
                 label={configModal.observations.labelTextarea}
-                placeHolder={prospectData!.clientComments || ""}
+                placeHolder={prospectData ? prospectData!.clientComments : ""}
                 apparencePlaceHolder="gray"
               />
             </Stack>
