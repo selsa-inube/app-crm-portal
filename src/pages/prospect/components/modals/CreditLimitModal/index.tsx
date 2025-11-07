@@ -133,7 +133,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
                   userAccount={userAccount}
                   setError={setError}
                   error={error}
-                  incomeData={incomeData as IFormData}
+                  incomeData={incomeData as IIncomeSources}
                 />
               ))}
             </Stack>

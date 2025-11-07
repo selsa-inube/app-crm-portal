@@ -579,7 +579,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   businessUnitPublicCode={businessUnitPublicCode}
                   businessManagerCode={businessManagerCode}
                   moneyDestination={formData.selectedDestination}
-                  incomeData={formData}
+                  incomeData={formData.sourcesOfIncome}
                   userAccount={userAccount as string}
                 />
               )}

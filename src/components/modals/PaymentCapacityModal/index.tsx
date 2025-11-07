@@ -20,7 +20,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { IMaximumCreditLimit } from "@services/creditRequest/types";
 import { postBusinessUnitRules } from "@services/creditLimit/getMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit";
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
-import { IFormData } from "@pages/simulateCredit/types";
+import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
 
 import { BaseModal } from "../baseModal";
 import {
@@ -38,19 +38,11 @@ interface IPaymentCapacityModalProps {
   businessManagerCode: string;
   userAccount: string;
   dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
-  dividends?: number;
-  financialIncome?: number;
-  leases?: number;
-  otherNonSalaryEmoluments?: number;
-  pensionAllowances?: number;
-  periodicSalary?: number;
-  personalBusinessUtilities?: number;
-  professionalFees?: number;
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   error: boolean;
   loading: boolean;
-  incomeData: IFormData;
+  incomeData: ISourcesOfIncomeState;
 }
 
 export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
@@ -87,19 +79,17 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
         const submitData: IMaximumCreditLimit = {
           customerCode:
             dataMaximumCreditLimitService.identificationDocumentNumber,
-          dividends: incomeData.sourcesOfIncome.Dividends || 0,
-          financialIncome: incomeData.sourcesOfIncome.FinancialIncome || 0,
-          leases: incomeData.sourcesOfIncome.Leases || 0,
+          dividends: incomeData.Dividends || 0,
+          financialIncome: incomeData.FinancialIncome || 0,
+          leases: incomeData.Leases || 0,
           lineOfCreditAbbreviatedName:
             dataMaximumCreditLimitService.lineOfCreditAbbreviatedName || "",
           moneyDestination: dataMaximumCreditLimitService.moneyDestination,
-          otherNonSalaryEmoluments:
-            incomeData.sourcesOfIncome.OtherNonSalaryEmoluments || 0,
-          pensionAllowances: incomeData.sourcesOfIncome.PensionAllowances || 0,
-          periodicSalary: incomeData.sourcesOfIncome.PeriodicSalary || 0,
-          personalBusinessUtilities:
-            incomeData.sourcesOfIncome.PersonalBusinessUtilities || 0,
-          professionalFees: incomeData.sourcesOfIncome.ProfessionalFees || 0,
+          otherNonSalaryEmoluments: incomeData.OtherNonSalaryEmoluments || 0,
+          pensionAllowances: incomeData.PensionAllowances || 0,
+          periodicSalary: incomeData.PeriodicSalary || 0,
+          personalBusinessUtilities: incomeData.PersonalBusinessUtilities || 0,
+          professionalFees: incomeData.ProfessionalFees || 0,
         };
 
         const data = await postBusinessUnitRules(
