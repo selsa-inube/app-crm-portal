@@ -43,7 +43,7 @@ import {
   addConfig,
   dataEditProspect,
   titlesModal,
-  labelsRestoreSimulation,
+  labelsRecalculateSimulation,
 } from "./config";
 import { IDataHeader } from "./types";
 
@@ -205,7 +205,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     <Button
                       width="189px"
                       iconBefore={<MdBolt />}
-                      children={labelsRestoreSimulation.button}
+                      children={labelsRecalculateSimulation.button}
                       variant="outlined"
                       spacing="compact"
                       onClick={() => setShowRestoreSimulation(true)}
@@ -500,12 +500,12 @@ export function SimulationsUI(props: SimulationsUIProps) {
       )}
       {showRestoreSimulation && (
         <BaseModal
-          title={labelsRestoreSimulation.title}
+          title={labelsRecalculateSimulation.title}
           handleBack={() => setShowRestoreSimulation(false)}
           handleNext={handleRestoreSimulation}
           disabledNext={canEditCreditRequest}
-          backButton={labelsRestoreSimulation.cancel}
-          nextButton={labelsRestoreSimulation.restore}
+          backButton={labelsRecalculateSimulation.cancel}
+          nextButton={labelsRecalculateSimulation.restore}
           width={isMobile ? "300px" : "480px"}
         >
           <Stack direction="column" gap="16px" alignItems="center">
@@ -516,7 +516,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
               size="68px"
             />
             <Text type="body" size="large" appearance="gray">
-              {labelsRestoreSimulation.description}
+              {labelsRecalculateSimulation.description}
             </Text>
             <Divider dashed={true} />
             <Stack
@@ -525,7 +525,9 @@ export function SimulationsUI(props: SimulationsUIProps) {
               padding={"0 0 0 " + (!isMobile ? "0px" : "20px")}
             >
               <li>
-                <Text size="large">{labelsRestoreSimulation.list.itemOne}</Text>
+                <Text size="large">
+                  {labelsRecalculateSimulation.list.itemOne}
+                </Text>
               </li>
             </Stack>
           </Stack>

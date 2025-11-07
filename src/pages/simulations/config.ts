@@ -63,7 +63,7 @@ export const labelsAndValuesShare = {
   error: "No se pudo compartir el PDF",
 };
 
-export const labelsRestoreSimulation = {
+export const labelsRecalculateSimulation = {
   title: "Restaurar simulación",
   description:
     " La función “Recalcular simulación” no es reversible, se basa en un modelo optimizado y el comportamiento esperado incluye:",
@@ -71,6 +71,6 @@ export const labelsRestoreSimulation = {
     itemOne: "Cambio en los datos del prospecto de forma automática.",
   },
   cancel: "Cancelar",
-  restore: "Restaurar",
+  restore: "Recalcular",
   button: "Recalcular simulación",
 };
