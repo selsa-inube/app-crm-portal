@@ -38,6 +38,7 @@ import {
   StyledMarginPrint,
   StyledPrint,
   StyledScrollPrint,
+  StyledRecalculate,
 } from "./styles";
 import {
   addConfig,
@@ -201,15 +202,32 @@ export function SimulationsUI(props: SimulationsUIProps) {
                       </Text>
                     </Stack>
                   </StyledArrowBack>
-                  <Stack direction="row-reverse" width="100%">
-                    <Button
-                      width="189px"
-                      iconBefore={<MdBolt />}
-                      children={labelsRecalculateSimulation.button}
-                      variant="outlined"
-                      spacing="compact"
-                      onClick={() => setShowRecalculateSimulation(true)}
-                    ></Button>
+                  <Stack
+                    direction="row-reverse"
+                    width="100%"
+                    justifyContent="end"
+                  >
+                    {!isMobile ? (
+                      <Button
+                        width={isMobile ? "auto " : "189px"}
+                        iconBefore={<MdBolt />}
+                        children={
+                          isMobile ? "" : labelsRecalculateSimulation.button
+                        }
+                        variant="outlined"
+                        spacing="compact"
+                        onClick={() => setShowRecalculateSimulation(true)}
+                      />
+                    ) : (
+                      <Icon
+                        icon={<MdBolt />}
+                        appearance="primary"
+                        size="25px"
+                        cursorHover
+                        onClick={() => setShowRecalculateSimulation(true)}
+                        variant="outlined"
+                      />
+                    )}
                   </Stack>
                 </Stack>
               </StyledPrint>

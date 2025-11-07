@@ -20,6 +20,7 @@ const StyledMenu = styled.div`
   position: absolute;
   right: 1px;
   width: 227px;
+  justify-content: space-between;
 `;
 
 const StyledContainerLabel = styled.div<IContainerLabel>`

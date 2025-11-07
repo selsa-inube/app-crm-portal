@@ -64,7 +64,7 @@ export const labelsAndValuesShare = {
 };
 
 export const labelsRecalculateSimulation = {
-  title: "Restaurar simulación",
+  title: "Recalcular simulación",
   description:
     " La función “Recalcular simulación” no es reversible, se basa en un modelo optimizado y el comportamiento esperado incluye:",
   list: {

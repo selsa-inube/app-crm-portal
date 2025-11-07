@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { inube } from "@inubekit/inubekit";
 
 export const StyledPrint = styled.div`
   display: flex;
@@ -32,4 +33,16 @@ export const StyledScrollPrint = styled.div`
 
     overflow: hidden !important;
   }
+`;
+
+export const StyledRecalculate = styled.div`
+  cursor: pointer;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid
+    ${({ theme }) => theme?.palette?.neutral?.N0 || inube.palette.blue.B400};
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
