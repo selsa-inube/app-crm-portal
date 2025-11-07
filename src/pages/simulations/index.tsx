@@ -15,6 +15,8 @@ import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequest
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { RemoveProspect } from "@services/prospect/removeProspect";
+import { patchValidateRequirements } from "@services/requirement/validateRequirements";
+import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
 
 import { ruleConfig } from "../applyForCredit/config/configRules";
@@ -33,8 +35,14 @@ export function Simulations() {
   const [showCreditRequest, setShowCreditRequest] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [showRecalculateSimulation, setShowRecalculateSimulation] =
+    useState(false);
+  const [showRequirements, setShowRequirements] = useState(false);
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>({} as IProspectSummaryById);
+  const [validateRequirements, setValidateRequirements] = useState<
+    IValidateRequirement[]
+  >([]);
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { prospectCode } = useParams();
@@ -278,6 +286,37 @@ export function Simulations() {
     }
   }, [customerData, dataProspect, fetchValidationRulesData]);
 
+  useEffect(() => {
+    if (!customerData?.customerId || !dataProspect) return;
+    const payload = {
+      clientIdentificationNumber: customerData.publicCode,
+      prospect: { ...dataProspect },
+    };
+    const handleSubmit = async () => {
+      try {
+        const data = await patchValidateRequirements(
+          businessUnitPublicCode,
+          businessManagerCode,
+          payload,
+        );
+
+        if (data) {
+          setValidateRequirements(data);
+        }
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError("");
+      }
+    };
+
+    handleSubmit();
+  }, [
+    customerData?.customerId,
+    dataProspect,
+    businessUnitPublicCode,
+    businessManagerCode,
+  ]);
+
   const handleInfo = () => {
     setIsModalOpen(true);
   };
@@ -302,6 +341,10 @@ export function Simulations() {
       setCodeError(1022);
       setAddToFix([dataEditProspect.errorRemoveProspect]);
     }
+  };
+
+  const handleRecalculateSimulation = () => {
+    setShowRecalculateSimulation(false);
   };
 
   return (
@@ -339,6 +382,12 @@ export function Simulations() {
       generateAndSharePdf={generateAndSharePdf}
       prospectSummaryData={prospectSummaryData}
       setProspectSummaryData={setProspectSummaryData}
+      showRecalculateSimulation={showRecalculateSimulation}
+      setShowRecalculateSimulation={setShowRecalculateSimulation}
+      handleRecalculateSimulation={handleRecalculateSimulation}
+      showRequirements={showRequirements}
+      setShowRequirements={setShowRequirements}
+      validateRequirements={validateRequirements}
     />
   );
 }

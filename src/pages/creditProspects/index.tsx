@@ -11,6 +11,7 @@ import {
   Text,
   Textarea,
   useMediaQuery,
+  Grid,
 } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -252,7 +253,13 @@ export function CreditProspects() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
               />
-              <Stack alignItems="center" gap="6x">
+              <Grid
+                templateColumns={canSimulateCredit ? "95% 4%" : "100%"}
+                gap="8px"
+                alignItems="center"
+                width={isMobile ? "100%" : "auto"}
+                justifyItems={isMobile ? "inherit" : "flex-end"}
+              >
                 <Button
                   iconBefore={<MdAdd />}
                   type="link"
@@ -275,7 +282,7 @@ export function CreditProspects() {
                     onClick={handleInfo}
                   />
                 )}
-              </Stack>
+              </Grid>
             </Stack>
             <Stack
               wrap="wrap"

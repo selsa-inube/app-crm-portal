@@ -160,7 +160,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
 
   return (
     <Fieldset>
-      <Stack padding="16px">
+      <Stack padding="1px">
         <TableAttachedDocuments
           isMobile={isMobile}
           uploadedFilesByRow={initialValues}
