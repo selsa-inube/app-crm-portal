@@ -761,7 +761,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             nextButton={dataCreditProspect.close}
             handleNext={handleCloseModal}
             handleClose={handleCloseModal}
-            width={isMobile ? "auto" : "448px"}
+            width={isMobile ? "280px" : "448px"}
           >
             {isLoadingCreditLimit ? (
               <Stack
@@ -788,14 +788,16 @@ export function CreditProspect(props: ICreditProspectProps) {
                 {showAddButtons === true && (
                   <Stack
                     justifyContent="space-between"
-                    alignItems="end"
+                    alignItems={isMobile ? "normal" : "end"}
                     width={isMobile ? "auto" : "100%"}
+                    direction={isMobile ? "column" : "row"}
                     gap="16px"
                   >
                     {borrowerOptions.length === 1 ? (
                       <CardGray
                         label={incomeCardData.borrower}
                         placeHolder={borrowerOptions[0]?.label || ""}
+                        isMobile={isMobile}
                       />
                     ) : (
                       <Select
@@ -815,6 +817,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                           setOpenModal("IncomeModalEdit");
                         }}
                         disabled={canEditCreditRequest}
+                        fullwidth={isMobile}
                       >
                         {dataCreditProspect.edit}
                       </Button>
