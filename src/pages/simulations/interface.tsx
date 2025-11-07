@@ -11,6 +11,7 @@ import {
   MdOutlineBeachAccess,
   MdOutlineInfo,
   MdOutlineShare,
+  MdBolt,
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +28,9 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IProspectSummaryById } from "@services/prospect/types";
+import { IValidateRequirement } from "@services/requirement/types";
 
+import { RequirementsModal } from "../prospect/components/modals/RequirementsModal";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
 import {
@@ -36,7 +39,12 @@ import {
   StyledPrint,
   StyledScrollPrint,
 } from "./styles";
-import { addConfig, dataEditProspect, titlesModal } from "./config";
+import {
+  addConfig,
+  dataEditProspect,
+  titlesModal,
+  labelsRecalculateSimulation,
+} from "./config";
 import { IDataHeader } from "./types";
 
 interface SimulationsUIProps {
@@ -74,6 +82,12 @@ interface SimulationsUIProps {
   >;
   generateAndSharePdf: () => void;
   userAccount?: string;
+  showRecalculateSimulation: boolean;
+  setShowRecalculateSimulation: React.Dispatch<React.SetStateAction<boolean>>;
+  handleRecalculateSimulation: () => void;
+  showRequirements: boolean;
+  setShowRequirements: React.Dispatch<React.SetStateAction<boolean>>;
+  validateRequirements: IValidateRequirement[];
   onProspectUpdated?: () => void;
   handleDeleteProspect: () => void;
   prospectSummaryData?: IProspectSummaryById;
@@ -117,6 +131,12 @@ export function SimulationsUI(props: SimulationsUIProps) {
     handleDeleteProspect,
     prospectSummaryData,
     setProspectSummaryData,
+    showRecalculateSimulation,
+    setShowRecalculateSimulation,
+    handleRecalculateSimulation,
+    showRequirements,
+    setShowRequirements,
+    validateRequirements,
   } = props;
 
   const getDestinationName = (code?: string) => {
@@ -170,18 +190,30 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     },
                   ]}
                 />
-                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
-                  <Stack gap="8px" alignItems="center" width="100%">
-                    <Icon
-                      icon={<MdArrowBack />}
-                      appearance="dark"
-                      size="20px"
-                    />
-                    <Text type="title" size={isMobile ? "small" : "large"}>
-                      {addConfig.title}
-                    </Text>
+                <Stack>
+                  <StyledArrowBack onClick={() => navigate(addConfig.route)}>
+                    <Stack gap="8px" alignItems="center" width="100%">
+                      <Icon
+                        icon={<MdArrowBack />}
+                        appearance="dark"
+                        size="20px"
+                      />
+                      <Text type="title" size={isMobile ? "small" : "large"}>
+                        {addConfig.title}
+                      </Text>
+                    </Stack>
+                  </StyledArrowBack>
+                  <Stack direction="row-reverse" width="100%">
+                    <Button
+                      width="189px"
+                      iconBefore={<MdBolt />}
+                      children={labelsRecalculateSimulation.button}
+                      variant="outlined"
+                      spacing="compact"
+                      onClick={() => setShowRecalculateSimulation(true)}
+                    ></Button>
                   </Stack>
-                </StyledArrowBack>
+                </Stack>
               </StyledPrint>
               <StyledMarginPrint>
                 <Stack>
@@ -334,6 +366,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           setProspectSummaryData={setProspectSummaryData}
                           onProspectRefreshData={onProspectUpdated}
                           userAccount={userAccount as string}
+                          setShowRequirements={setShowRequirements}
+                          validateRequirements={validateRequirements}
                         />
                       </Fieldset>
                     </StyledScrollPrint>
@@ -454,14 +488,62 @@ export function SimulationsUI(props: SimulationsUIProps) {
           message={messageError}
         />
       )}
+      {showRequirements && validateRequirements != undefined && (
+        <RequirementsModal
+          handleClose={() => setShowRequirements(false)}
+          isMobile={isMobile}
+          isLoading={false}
+          validateRequirements={
+            validateRequirements || ([] as IValidateRequirement[])
+          }
+          errorsManager={{
+            validateRequirements: validateRequirements?.length > 0,
+          }}
+        />
+      )}
+      {showRecalculateSimulation && (
+        <BaseModal
+          title={labelsRecalculateSimulation.title}
+          handleBack={() => setShowRecalculateSimulation(false)}
+          handleNext={handleRecalculateSimulation}
+          disabledNext={canEditCreditRequest}
+          backButton={labelsRecalculateSimulation.cancel}
+          nextButton={labelsRecalculateSimulation.recalculate}
+          width={isMobile ? "300px" : "480px"}
+        >
+          <Stack direction="column" gap="16px" alignItems="center">
+            <Icon
+              icon={<MdBolt />}
+              appearance="primary"
+              spacing="compact"
+              size="68px"
+            />
+            <Text type="body" size="large" appearance="gray">
+              {labelsRecalculateSimulation.description}
+            </Text>
+            <Divider dashed={true} />
+            <Stack
+              direction="column"
+              gap="8px"
+              padding={"0 0 0 " + (!isMobile ? "0px" : "20px")}
+            >
+              <li>
+                <Text size="large">
+                  {labelsRecalculateSimulation.list.itemOne}
+                </Text>
+              </li>
+            </Stack>
+          </Stack>
+        </BaseModal>
+      )}
       {showDeleteModal && (
         <BaseModal
           title={dataEditProspect.deleteTitle}
           handleBack={() => setShowDeleteModal(false)}
           handleNext={handleDeleteProspect}
           disabledNext={canEditCreditRequest}
-          backButton="Cancelar"
-          nextButton="Eliminar"
+          backButton={dataEditProspect.backButton}
+          nextButton={dataEditProspect.nextButton}
           apparenceNext="danger"
           width={isMobile ? "300px" : "500px"}
         >

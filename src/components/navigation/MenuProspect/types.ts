@@ -3,6 +3,7 @@ interface IOptions {
   onClick: () => void;
   icon: JSX.Element;
   visible: boolean;
+  id?: string;
 }
 
 export type { IOptions };
