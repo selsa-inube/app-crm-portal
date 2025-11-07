@@ -611,16 +611,14 @@ export const TableFinancialObligationsUI = ({
                   )}
                 </Stack>
               </Stack>
-              <Stack>
-                <Stack gap="2px">
-                  <Button
-                    children={dataReport.addObligations}
-                    iconBefore={<MdAdd />}
-                    disabled={canEditCreditRequest}
-                    fullwidth={isMobile}
-                    onClick={() => setOpenModal(true)}
-                  />
-                </Stack>
+              <Stack gap="2px">
+                <Button
+                  children={dataReport.addObligations}
+                  iconBefore={<MdAdd />}
+                  disabled={canEditCreditRequest}
+                  fullwidth={isMobile}
+                  onClick={() => setOpenModal(true)}
+                />
                 <Stack alignItems="center">
                   {canEditCreditRequest ? (
                     <Icon
