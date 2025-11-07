@@ -18,7 +18,7 @@ export interface IStep {
   name?: string;
 }
 
-interface PersonalInfo {
+export interface PersonalInfo {
   tipeOfDocument: string;
   documentNumber: string;
   firstName: string;

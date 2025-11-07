@@ -50,12 +50,17 @@ interface ISourceIncomeProps {
   businessManagerCode: string;
   isLoadingCreditLimit?: boolean;
   prospectData: IProspect | undefined;
+  onCapitalTotalChange?: (total: number) => void;
+  onEmploymentTotalChange?: (total: number) => void;
+  onBusinessesTotalChange?: (total: number) => void;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
   const {
     openModal,
     onDataChange,
+    onEmploymentTotalChange,
+    onBusinessesTotalChange,
     ShowSupport,
     disabled,
     showEdit = true,
@@ -68,6 +73,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     businessManagerCode,
     onRestore,
     prospectData,
+    onCapitalTotalChange,
   } = props;
 
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -158,15 +164,45 @@ export function SourceIncome(props: ISourceIncomeProps) {
     return sumCapital + sumEmployment + sumBusinesses;
   };
 
+  useEffect(() => {
+    if (!borrowerIncome) return;
+
+    const sumCapital =
+      borrowerIncome.capital.reduce(
+        (acc, val) => acc + parseCurrencyString(val),
+        0,
+      ) ?? 0;
+
+    const sumEmployment =
+      borrowerIncome.employment.reduce(
+        (acc, val) => acc + parseCurrencyString(val),
+        0,
+      ) ?? 0;
+
+    const sumBusinesses =
+      borrowerIncome.businesses.reduce(
+        (acc, val) => acc + parseCurrencyString(val),
+        0,
+      ) ?? 0;
+
+    onCapitalTotalChange?.(sumCapital);
+    onEmploymentTotalChange?.(sumEmployment);
+    onBusinessesTotalChange?.(sumBusinesses);
+  }, [
+    borrowerIncome,
+    onCapitalTotalChange,
+    onEmploymentTotalChange,
+    onBusinessesTotalChange,
+  ]);
   function mapToIncomeSources(values: IIncome): IIncomeSources {
     return {
       identificationNumber: values.borrower_id,
       identificationType: "",
       name: values.borrower.split(" ")[0] || "",
       surname: values.borrower.split(" ").slice(1).join(" ") || "",
-      Leases: parseCurrencyString(values.capital[0] || "0"),
-      Dividends: parseCurrencyString(values.capital[1] || "0"),
-      FinancialIncome: parseCurrencyString(values.capital[2] || "0"),
+      Leases: parseCurrencyString(values.capital[0] || "1"),
+      Dividends: parseCurrencyString(values.capital[1] || "1"),
+      FinancialIncome: parseCurrencyString(values.capital[2] || "1"),
       PeriodicSalary: parseCurrencyString(values.employment[0] || "0"),
       OtherNonSalaryEmoluments: parseCurrencyString(
         values.employment[1] || "0",
