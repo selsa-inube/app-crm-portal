@@ -1,4 +1,11 @@
-import { useContext, useState, useEffect, useCallback, useRef } from "react";
+import {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
@@ -15,6 +22,8 @@ import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequest
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { RemoveProspect } from "@services/prospect/removeProspect";
+import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
 import { ruleConfig } from "../applyForCredit/config/configRules";
 import { evaluateRule } from "../applyForCredit/evaluateRule";
@@ -63,6 +72,78 @@ export function Simulations() {
     publicCode: customerData.publicCode,
   };
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
+
+  const getTotalLoanAmount = useCallback(
+    (data: IProspect | undefined): number => {
+      if (!data || !data.creditProducts) return 0;
+
+      return data.creditProducts.reduce((sum, product) => {
+        return sum + (product.loanAmount || 0);
+      }, 0);
+    },
+    [],
+  );
+  const getDestinationName = useCallback((code?: string) => {
+    if (!code) return "";
+    const found = MoneyDestinationTranslations.find(
+      (item) => item.Code === code,
+    );
+    return found?.Code || code;
+  }, []);
+
+  const getMainBorrowerName = useCallback(
+    (data: IProspect | undefined): string => {
+      if (!data) return "";
+      const mainBorrower = data.borrowers.find(
+        (b) => b.borrowerType === "MainBorrower",
+      );
+      return mainBorrower?.borrowerName || "";
+    },
+    [],
+  );
+
+  const processedData = useMemo(
+    () => ({
+      totalLoanAmount: getTotalLoanAmount(dataProspect),
+      destinationName: getDestinationName(
+        data?.moneyDestinationAbbreviatedName,
+      ),
+      mainBorrowerName: getMainBorrowerName(data),
+    }),
+    [
+      dataProspect,
+      data,
+      getTotalLoanAmount,
+      getDestinationName,
+      getMainBorrowerName,
+    ],
+  );
+
+  const { disabledButton: canRequestCredit } = useValidateUseCase({
+    useCase: getUseCaseValue("canRequestCredit"),
+  });
+  const { disabledButton: canDeleteCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canDeleteCreditRequest"),
+  });
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+
+  const validateProspectOwnership = useCallback((): boolean => {
+    if (!dataProspect || !dataHeader) return false;
+
+    const mainBorrower = dataProspect.borrowers?.find(
+      (b) => b.borrowerType === "MainBorrower",
+    );
+
+    if (mainBorrower && dataHeader.publicCode) {
+      return (
+        mainBorrower.borrowerIdentificationNumber === dataHeader.publicCode
+      );
+    }
+
+    return false;
+  }, [dataProspect, dataHeader]);
 
   const fetchValidateCreditRequest = useCallback(async () => {
     if (!prospectCode) return;
@@ -138,6 +219,15 @@ export function Simulations() {
   useEffect(() => {
     fetchProspectData();
   }, [businessUnitPublicCode, sentData]);
+
+  useEffect(() => {
+    if (dataProspect && !codeError) {
+      const isValid = validateProspectOwnership();
+      if (!isValid) {
+        setCodeError(1015);
+      }
+    }
+  }, [dataProspect, validateProspectOwnership, codeError]);
 
   const generateAndSharePdf = async () => {
     try {
@@ -283,6 +373,7 @@ export function Simulations() {
   if (prospectCode === undefined) {
     navigate(`/credit/prospects`);
   }
+
   const handleDeleteProspect = async () => {
     if (!dataProspect) return;
 
@@ -318,6 +409,7 @@ export function Simulations() {
       showErrorModal={showErrorModal}
       messageError={messageError}
       businessManagerCode={businessManagerCode}
+      setShowDeleteModal={setShowDeleteModal}
       setShowErrorModal={setShowErrorModal}
       setShowMenu={setShowMenu}
       handleSubmitClick={handleSubmitClick}
@@ -333,8 +425,11 @@ export function Simulations() {
       navigate={navigate}
       handleDeleteProspect={handleDeleteProspect}
       showDeleteModal={showDeleteModal}
-      setShowDeleteModal={setShowDeleteModal}
       generateAndSharePdf={generateAndSharePdf}
+      canRequestCredit={canRequestCredit}
+      canDeleteCreditRequest={canDeleteCreditRequest}
+      canEditCreditRequest={canEditCreditRequest}
+      processedData={processedData}
     />
   );
 }

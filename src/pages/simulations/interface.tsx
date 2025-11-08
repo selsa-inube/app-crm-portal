@@ -25,8 +25,6 @@ import {
 } from "@services/prospect/types";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
-import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
-import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
@@ -38,6 +36,12 @@ import {
 } from "./styles";
 import { addConfig, dataEditProspect, titlesModal } from "./config";
 import { IDataHeader } from "./types";
+
+interface ProcessedData {
+  totalLoanAmount: number;
+  destinationName: string;
+  mainBorrowerName: string;
+}
 
 interface SimulationsUIProps {
   dataHeader: IDataHeader;
@@ -55,6 +59,10 @@ interface SimulationsUIProps {
   messageError: string;
   showDeleteModal: boolean;
   businessManagerCode: string;
+  canRequestCredit: boolean;
+  canDeleteCreditRequest: boolean;
+  canEditCreditRequest: boolean;
+  processedData: ProcessedData;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
@@ -82,7 +90,6 @@ export function SimulationsUI(props: SimulationsUIProps) {
     dataHeader,
     isMobile,
     prospectCode,
-    data,
     dataProspect,
     showMenu,
     codeError,
@@ -94,6 +101,10 @@ export function SimulationsUI(props: SimulationsUIProps) {
     messageError,
     showDeleteModal,
     businessManagerCode,
+    canRequestCredit,
+    canDeleteCreditRequest,
+    canEditCreditRequest,
+    processedData,
     setShowDeleteModal,
     setShowErrorModal,
     navigate,
@@ -111,56 +122,10 @@ export function SimulationsUI(props: SimulationsUIProps) {
     handleDeleteProspect,
   } = props;
 
-  const getTotalLoanAmount = (data: IProspect | undefined): number => {
-    if (!data || !data.creditProducts) return 0;
-
-    return data.creditProducts.reduce((sum, product) => {
-      return sum + (product.loanAmount || 0);
-    }, 0);
-  };
-
-  const getDestinationName = (code?: string) => {
-    if (!code) return "";
-    const found = MoneyDestinationTranslations.find(
-      (item) => item.Code === code,
-    );
-    return found?.Code || code;
-  };
-
-  const validateProspectOwnership = (): boolean => {
-    if (!dataProspect || !dataHeader) return false;
-
-    const mainBorrower = dataProspect.borrowers?.find(
-      (b) => b.borrowerType === "MainBorrower",
-    );
-
-    if (mainBorrower && dataHeader.publicCode) {
-      return (
-        mainBorrower.borrowerIdentificationNumber === dataHeader.publicCode
-      );
-    }
-
-    return false;
-  };
-
-  const isProspectValid = validateProspectOwnership();
-
-  const { disabledButton: canRequestCredit } = useValidateUseCase({
-    useCase: getUseCaseValue("canRequestCredit"),
-  });
-  const { disabledButton: canDeleteCreditRequest } = useValidateUseCase({
-    useCase: getUseCaseValue("canDeleteCreditRequest"),
-  });
-  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
-    useCase: getUseCaseValue("canEditCreditRequest"),
-  });
-
   return (
     <div ref={dataPrint}>
       {codeError ? (
         <ErrorPage errorCode={codeError} addToFix={addToFix || []} />
-      ) : !isProspectValid && dataProspect ? (
-        <ErrorPage errorCode={codeError ?? 1000} addToFix={addToFix} />
       ) : (
         <Stack
           direction="column"
@@ -204,6 +169,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                   </Stack>
                 </StyledArrowBack>
               </StyledPrint>
+
               <StyledMarginPrint>
                 <Stack>
                   <Stack
@@ -247,7 +213,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               appearance="primary"
                               size="20px"
                               cursorHover
-                              onClick={() => generateAndSharePdf()}
+                              onClick={generateAndSharePdf}
                             />
                           </StyledPrint>
                         </Stack>
@@ -282,9 +248,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                   width="100%"
                                 >
                                   <Text type="title" size="large">
-                                    {getDestinationName(
-                                      data?.moneyDestinationAbbreviatedName,
-                                    )}
+                                    {processedData.destinationName}
                                   </Text>
                                   <Text
                                     type="body"
@@ -304,11 +268,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                             width="40%"
                           >
                             <Text type="title" size="large" textAlign="center">
-                              {
-                                data?.borrowers.find(
-                                  (b) => b.borrowerType === "MainBorrower",
-                                )?.borrowerName
-                              }
+                              {processedData.mainBorrowerName}
                             </Text>
                             <Text type="body" size="small" appearance="gray">
                               Cliente
@@ -326,16 +286,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 weight="bold"
                                 size="large"
                                 appearance="primary"
-                              ></Text>
-                              <Text
-                                type="headline"
-                                weight="bold"
-                                size="large"
-                                appearance="primary"
                               >
-                                {currencyFormat(
-                                  getTotalLoanAmount(dataProspect),
-                                )}
+                                {currencyFormat(processedData.totalLoanAmount)}
                               </Text>
                             </Stack>
                             <Text type="body" size="small" appearance="gray">
@@ -345,6 +297,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         </Stack>
                       </Stack>
                     </Fieldset>
+
                     <StyledScrollPrint>
                       <Fieldset>
                         <CreditProspect
@@ -362,6 +315,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         />
                       </Fieldset>
                     </StyledScrollPrint>
+
                     <StyledPrint>
                       <Stack
                         gap="10px"
@@ -414,49 +368,43 @@ export function SimulationsUI(props: SimulationsUIProps) {
                   {showMenu && <Stack></Stack>}
                 </Stack>
               </StyledMarginPrint>
+
               {isModalOpen && (
-                <>
-                  <BaseModal
-                    title={titlesModal.title}
-                    nextButton={titlesModal.textButtonNext}
-                    handleNext={() => setIsModalOpen(false)}
-                    handleClose={() => setIsModalOpen(false)}
-                    width={isMobile ? "290px" : "400px"}
-                  >
-                    <Stack gap="16px" direction="column">
-                      <Text weight="bold" size="large">
-                        {titlesModal.subTitle}
-                      </Text>
-                      <Stack direction="column" gap="8px">
-                        <ul>
-                          {
-                            <li>
-                              <Text
-                                weight="normal"
-                                size="medium"
-                                appearance="gray"
-                              >
-                                {titlesModal.titlePrivileges}
-                              </Text>
-                            </li>
-                          }
-                          {dataProspect?.state === "Submitted" && (
-                            <li>
-                              <Text
-                                weight="normal"
-                                size="medium"
-                                appearance="gray"
-                              >
-                                {titlesModal.titleSubmitted}
-                              </Text>
-                            </li>
-                          )}
-                        </ul>
-                      </Stack>
+                <BaseModal
+                  title={titlesModal.title}
+                  nextButton={titlesModal.textButtonNext}
+                  handleNext={() => setIsModalOpen(false)}
+                  handleClose={() => setIsModalOpen(false)}
+                  width={isMobile ? "290px" : "400px"}
+                >
+                  <Stack gap="16px" direction="column">
+                    <Text weight="bold" size="large">
+                      {titlesModal.subTitle}
+                    </Text>
+                    <Stack direction="column" gap="8px">
+                      <ul>
+                        <li>
+                          <Text weight="normal" size="medium" appearance="gray">
+                            {titlesModal.titlePrivileges}
+                          </Text>
+                        </li>
+                        {dataProspect?.state === "Submitted" && (
+                          <li>
+                            <Text
+                              weight="normal"
+                              size="medium"
+                              appearance="gray"
+                            >
+                              {titlesModal.titleSubmitted}
+                            </Text>
+                          </li>
+                        )}
+                      </ul>
                     </Stack>
-                  </BaseModal>
-                </>
+                  </Stack>
+                </BaseModal>
               )}
+
               {showCreditRequest && (
                 <BaseModal
                   title={titlesModal.title}
@@ -472,6 +420,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
           </Stack>
         </Stack>
       )}
+
       {showErrorModal && (
         <ErrorModal
           handleClose={() => setShowErrorModal(false)}
@@ -479,6 +428,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
           message={messageError}
         />
       )}
+
       {showDeleteModal && (
         <BaseModal
           title={dataEditProspect.deleteTitle}
@@ -496,3 +446,5 @@ export function SimulationsUI(props: SimulationsUIProps) {
     </div>
   );
 }
+
+export type { SimulationsUIProps, ProcessedData };
