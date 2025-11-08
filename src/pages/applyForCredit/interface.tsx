@@ -87,6 +87,7 @@ interface ApplyForCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  creditRequestCode?: string;
   modesOfDisbursement: string[];
   customerData?: ICustomerData;
   codeError?: number | null;
@@ -126,6 +127,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     addToFix,
     businessUnitPublicCode,
     setMessageError,
+    creditRequestCode,
     modesOfDisbursement,
   } = props;
 
@@ -163,7 +165,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
       ) : (
         <Stack
           direction="column"
-          width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
+          width={isMobile ? "calc(100% - 5px)" : "min(100% - 40px, 1064px)"}
           margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
@@ -431,14 +433,19 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 title={dataSubmitApplication.modals.file}
                 nextButton={dataSubmitApplication.modals.continue}
                 backButton={dataSubmitApplication.modals.cancel}
-                handleNext={handleSubmit}
+                handleNext={() => {
+                  handleSubmit();
+                }}
+                handleClose={() => {
+                  setSentModal(false);
+                }}
                 handleBack={() => setSentModal(false)}
                 width={isMobile ? "290px" : "402px"}
               >
                 <Text type="body" size="large">
                   {dataSubmitApplication.modals.fileDescription.replace(
                     "{numberProspectCode}",
-                    `${prospectData?.prospectCode}` || "",
+                    `${prospectCode}` || "",
                   )}
                 </Text>
               </BaseModal>
@@ -455,7 +462,10 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     size="16px"
                   />
                 }
-                handleNext={() => setApprovedRequestModal(false)}
+                handleNext={() => {
+                  setApprovedRequestModal(false);
+                  navigate("/credit/credit-requests");
+                }}
                 handleClose={() => setApprovedRequestModal(false)}
                 width={isMobile ? "290px" : "402px"}
               >
@@ -470,7 +480,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       {dataSubmitApplication.modals.filed}
                     </Text>
                     <Text type="body" size="large" weight="bold">
-                      {prospectData?.prospectCode}
+                      {creditRequestCode}
                     </Text>
                   </Stack>
                   <Text type="body" size="medium" appearance="gray">

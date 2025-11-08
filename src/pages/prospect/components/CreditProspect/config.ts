@@ -25,4 +25,13 @@ export const configModal = {
     labelTextarea: "Observaciones del prospecto",
     errorMessage: "Error al guardar las observaciones",
   },
+  success: {
+    title: "Cambios",
+    text: "Se guardó con éxito los cambios.",
+    close: "Cerrar",
+  },
+};
+
+export const propertyOfMetRequirement = {
+  approve: "Aprobado",
 };

@@ -38,6 +38,7 @@ import {
   IFormData,
   IServicesProductSelection,
   titleButtonTextAssited,
+  IManageErrors,
 } from "./types";
 import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
@@ -48,6 +49,7 @@ export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddProspect.generalInformation.id,
   );
+  const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isAlertIncome, setIsAlertIncome] = useState(false);
@@ -80,6 +82,8 @@ export function SimulateCredit() {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
+  const [sentModal, setSentModal] = useState(false);
+  const [prospectCode, setProspectCode] = useState<string>("");
 
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
@@ -221,14 +225,13 @@ export function SimulateCredit() {
             paymentChannelAbbreviatedName: item.paymentMethod as string,
           }))
         : [],
-      installmentLimit:
-        formData.loanConditionState.quotaCapValue || 999999999999,
+      installmentLimit: formData.loanConditionState.quotaCapValue || 0,
       moneyDestinationAbbreviatedName: formData.selectedDestination,
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
       selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
       requestedAmount: formData.loanAmountState.inputValue || 0,
-      termLimit: formData.loanConditionState.maximumTermValue || 999999999999,
+      termLimit: formData.loanConditionState.maximumTermValue || 0,
       prospectId: "",
       prospectCode: "",
       state: "",
@@ -389,14 +392,16 @@ export function SimulateCredit() {
     }
     const data: IPaymentCapacity = {
       clientIdentificationNumber: customerData.publicCode,
-      dividends: 0,
-      financialIncome: 0,
-      leases: 0,
-      otherNonSalaryEmoluments: 0,
-      pensionAllowances: 0,
-      periodicSalary: 0,
-      personalBusinessUtilities: 0,
-      professionalFees: 0,
+      dividends: formData.sourcesOfIncome?.Dividends ?? 0,
+      financialIncome: formData.sourcesOfIncome?.FinancialIncome ?? 0,
+      leases: formData.sourcesOfIncome?.Leases ?? 0,
+      otherNonSalaryEmoluments:
+        formData.sourcesOfIncome?.OtherNonSalaryEmoluments ?? 0,
+      pensionAllowances: formData.sourcesOfIncome?.PensionAllowances ?? 0,
+      periodicSalary: formData.sourcesOfIncome?.PeriodicSalary ?? 0,
+      personalBusinessUtilities:
+        formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0,
+      professionalFees: formData.sourcesOfIncome?.ProfessionalFees ?? 0,
       livingExpenseToIncomeRatio: 0,
     };
 
@@ -609,6 +614,14 @@ export function SimulateCredit() {
       : titleButtonTextAssited.goNextText;
 
   const handleSubmitClick = async () => {
+    if (simulateData.termLimit === 0) {
+      delete simulateData.termLimit;
+    }
+
+    if (simulateData.installmentLimit === 0) {
+      delete simulateData.installmentLimit;
+    }
+
     try {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
@@ -621,7 +634,8 @@ export function SimulateCredit() {
         setShowErrorModal?.(true);
         setMessageError?.(messagesError.undefinedCodeProspect);
       } else {
-        navigate(`/credit/prospects/${prospectCode}`);
+        setProspectCode(prospectCode);
+        setSentModal(true);
       }
     } catch (error) {
       setShowErrorModal?.(true);
@@ -663,6 +677,12 @@ export function SimulateCredit() {
   }, [currentStep, formData.selectedProducts]);
 
   useEffect(() => {
+    if (isCapacityAnalysisModal) {
+      fetchCapacityAnalysis();
+    }
+  }, [isCapacityAnalysisModal]);
+
+  useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
     const payload = {
       clientIdentificationNumber: customerData.publicCode,
@@ -679,6 +699,10 @@ export function SimulateCredit() {
         if (data) {
           setValidateRequirements(data);
         }
+      } catch (error) {
+        setErrorsManager((prev) => {
+          return { ...prev, validateRequirements: true };
+        });
       } finally {
         setIsLoading(false);
       }
@@ -868,6 +892,10 @@ export function SimulateCredit() {
         businessManagerCode={businessManagerCode}
         handleModalTryAgain={handleModalTryAgain}
         allowToContinue={allowToContinue}
+        sentModal={sentModal}
+        setSentModal={setSentModal}
+        prospectCode={prospectCode}
+        errorsManager={errorsManager}
         paymentChannel={paymentChannel}
       />
       {showConsultingModal && <Consulting />}

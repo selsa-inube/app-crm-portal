@@ -17,6 +17,8 @@ function RadioBusinessUnit(props: RadioBusinessUnitProps) {
   const mediaQueries = ["(max-width: 532px)", "(max-width: 460px)"];
   const matches = useMediaQueries(mediaQueries);
   const isMobile = useMediaQuery("(max-width: 532px)");
+  const hasLogo = logo !== "" && logo !== undefined;
+
   return (
     <StyledRadioBusinessUnit>
       <Grid
@@ -38,7 +40,12 @@ function RadioBusinessUnit(props: RadioBusinessUnitProps) {
           onChange={handleChange}
         />
         <Text size="medium">{label}</Text>
-        <StyledImage $isMobile={isMobile} src={logo} alt="Logo de empresa" />
+        <StyledImage
+          hasLogo={hasLogo}
+          $isMobile={isMobile}
+          src={logo}
+          alt="Logo de empresa"
+        />
       </Grid>
     </StyledRadioBusinessUnit>
   );

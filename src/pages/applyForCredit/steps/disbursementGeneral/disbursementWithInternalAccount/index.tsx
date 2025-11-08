@@ -29,6 +29,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { IProspectSummaryById } from "@services/prospect/types";
+import { CardGray } from "@components/cards/CardGray";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
@@ -337,7 +338,7 @@ export function DisbursementWithInternalAccount(
   }, [currentIdentification]);
 
   useEffect(() => {
-    if (isAmountReadOnly && accountOptions.length === 1) {
+    if (accountOptions.length === 1) {
       const onlyOption = accountOptions[0];
       formik.setFieldValue(`${optionNameForm}.accountNumber`, onlyOption.value);
     }
@@ -351,7 +352,7 @@ export function DisbursementWithInternalAccount(
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Stack width={isMobile ? "100%" : "498px"}>
+        <Stack>
           <Textfield
             id="amount"
             name="amount"
@@ -440,21 +441,29 @@ export function DisbursementWithInternalAccount(
           <Divider dashed />
         </>
       )}
-      <Stack width={isMobile ? "100%" : "498px"}>
-        <Select
-          id={`${optionNameForm}.accountNumber`}
-          name={`${optionNameForm}.accountNumber`}
-          label={disbursemenOptionAccount.labelAccount}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={accountOptions}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
-          }
-          value={formik.values[optionNameForm]?.accountNumber || ""}
-          fullwidth
-        />
+      <Stack>
+        {accountOptions.length === 1 ? (
+          <CardGray
+            label={disbursemenOptionAccount.labelAccount}
+            placeHolder={accountOptions[0]?.label || ""}
+            isMobile={isMobile}
+          />
+        ) : (
+          <Select
+            id={`${optionNameForm}.accountNumber`}
+            name={`${optionNameForm}.accountNumber`}
+            label={disbursemenOptionAccount.labelAccount}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={accountOptions}
+            onBlur={formik.handleBlur}
+            onChange={(_, value) =>
+              formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
+            }
+            value={formik.values[optionNameForm]?.accountNumber || ""}
+            fullwidth
+          />
+        )}
       </Stack>
       <Textarea
         id={`${optionNameForm}.description`}

@@ -22,21 +22,24 @@ import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeduct
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
-import {
-  getUseCaseValue,
-  useValidateUseCase,
-} from "@src/hooks/useValidateUseCase";
-import { privilegeCrm } from "@src/config/privilege";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { privilegeCrm } from "@config/privilege";
 
+import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
 import { StyledCardsCredit, StyledPrint } from "./styles";
-import InfoModal from "../../components/InfoModal";
 
 interface CardCommercialManagementProps {
   id: string;
   dataRef: React.RefObject<HTMLDivElement>;
   onClick: () => void;
+  setShowMessageSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
+  prospectSummaryData?: IProspectSummaryById;
+  setProspectSummaryData?: React.Dispatch<
+    React.SetStateAction<IProspectSummaryById>
+  >;
   prospectData?: IProspect;
+  showAddProduct?: boolean;
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
   onProspectRefreshData?: () => void;
@@ -49,7 +52,11 @@ export const CardCommercialManagement = (
     dataRef,
     onClick,
     prospectData,
+    showAddProduct = true,
     onProspectUpdate,
+    prospectSummaryData,
+    setProspectSummaryData,
+    setShowMessageSuccessModal,
     onProspectRefreshData,
   } = props;
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
@@ -71,8 +78,7 @@ export const CardCommercialManagement = (
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [selectedProductId, setSelectedProductId] = useState("");
-  const [prospectSummaryData, setProspectSummaryData] =
-    useState<IProspectSummaryById>();
+
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
   const [consolidatedCredits, setConsolidatedCredits] = useState(
     prospectData?.consolidatedCredits || [],
@@ -132,6 +138,7 @@ export const CardCommercialManagement = (
       }
 
       setShowDeleteModal(false);
+      setShowMessageSuccessModal(true);
     } catch (error) {
       setShowDeleteModal(false);
       const err = error as {
@@ -175,6 +182,7 @@ export const CardCommercialManagement = (
       }
 
       setModalHistory((prev) => prev.slice(0, -1));
+      setShowMessageSuccessModal(true);
     } catch (error) {
       const err = error as {
         message?: string;
@@ -201,7 +209,7 @@ export const CardCommercialManagement = (
           businessManagerCode,
           prospectData?.prospectId || "",
         );
-        if (result) {
+        if (result && setProspectSummaryData) {
           setProspectSummaryData(result);
         }
       } catch (error) {
@@ -273,9 +281,11 @@ export const CardCommercialManagement = (
               }
             />
           ))}
-          <StyledPrint>
-            <NewCreditProductCard onClick={onClick} />
-          </StyledPrint>
+          {showAddProduct && (
+            <StyledPrint>
+              <NewCreditProductCard onClick={onClick} />
+            </StyledPrint>
+          )}
         </Stack>
       </StyledCardsCredit>
       {isMobile && <Divider />}
@@ -334,6 +344,8 @@ export const CardCommercialManagement = (
             paymentChannelType:
               prospectData!.preferredPaymentChannelAbbreviatedName,
           }}
+          setShowErrorModal={setShowErrorModal}
+          setMessageError={setMessageError}
         />
       )}
       {showConsolidatedModal && (

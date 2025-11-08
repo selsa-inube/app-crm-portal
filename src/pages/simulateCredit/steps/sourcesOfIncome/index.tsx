@@ -6,6 +6,7 @@ import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
+import { IProspect } from "@services/prospect/types";
 
 import { ISourcesOfIncomeState } from "../../types";
 
@@ -16,6 +17,7 @@ interface ISourcesOfIncomeProps {
   initialValues: ISourcesOfIncomeState;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  prospectData: IProspect | undefined;
   handleOnChange: (newState: Partial<ISourcesOfIncomeState>) => void;
   isLoadingCreditLimit?: boolean;
 }
@@ -28,6 +30,7 @@ export function SourcesOfIncome({
   businessManagerCode,
   handleOnChange,
   isLoadingCreditLimit,
+  prospectData,
 }: ISourcesOfIncomeProps) {
   const [localData, setLocalData] = useState<IIncomeSources | null>(null);
   const hasInitialized = useRef(false);
@@ -74,6 +77,7 @@ export function SourcesOfIncome({
           showEdit
           disabled
           isLoadingCreditLimit={isLoadingCreditLimit}
+          prospectData={prospectData}
         />
       </Stack>
     </Fieldset>

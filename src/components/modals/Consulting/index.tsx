@@ -18,6 +18,12 @@ export function Consulting(props: iConsultingProps) {
   const { portalId = "portal" } = props;
 
   const node = document.getElementById(portalId ?? "portal");
+
+  if (node) {
+    node.style.position = "relative";
+    node.style.zIndex = "3";
+  }
+
   if (!node) {
     throw new Error(
       "The portal node is not defined. This can occur when the specific node used to render the portal has not been defined correctly.",

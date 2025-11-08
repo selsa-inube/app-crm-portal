@@ -56,9 +56,9 @@ export interface IListdataProps {
 export interface IListModalProps {
   title: string;
   buttonLabel: string;
-  uploadedFiles: IFile[];
+  uploadedFiles?: IFile[];
   handleClose: () => void;
-  setUploadedFiles: (files: IFile[]) => void;
+  setUploadedFiles?: (files: IFile[]) => void;
   onlyDocumentReceived?: boolean;
   nameRuleValue?: string;
   handleSubmit?: () => void;
@@ -133,6 +133,8 @@ export const ListModal = (props: IListModalProps) => {
   }>({ name: "", url: "" });
 
   useEffect(() => {
+    if (!uploadedFiles) return;
+
     if (pendingFiles.length === 1 && uploadedFiles?.length > 0) {
       keepUploadedFiles();
     }
@@ -356,6 +358,8 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const onDeleteOneFile = (id: string) => {
+    if (!setUploadedFiles || !uploadedFiles) return;
+
     const newUploadedFiles = uploadedFiles.map((file: IFile) => {
       if (file.id === id) {
         return { ...file, selectedToDelete: true };
@@ -381,6 +385,8 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const keepUploadedFiles = () => {
+    if (!setUploadedFiles || !uploadedFiles) return;
+
     const updatedUploadedFiles = markFilesAsUploaded(uploadedFiles);
     const mergedFiles = [...updatedUploadedFiles, ...pendingFiles];
 
@@ -389,6 +395,8 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const handleCancelDeleteFile = () => {
+    if (!setUploadedFiles || !uploadedFiles) return;
+
     const cancelDeleteUploadedFiles = markFilesProcessDelete(
       uploadedFiles,
       false,
@@ -402,7 +410,7 @@ export const ListModal = (props: IListModalProps) => {
     setUploadedFiles([...cancelDeleteUploadedFiles, ...returnFilesUploaded]);
   };
   const handleCancel = () => {
-    if (!pendingFiles) return;
+    if (!setUploadedFiles || !uploadedFiles || !pendingFiles) return;
 
     const alreadyFilesMarkedAsUploaded = pendingFiles.filter(
       (file) => file.wasAlreadyAttached,
@@ -418,7 +426,7 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const deleteFilesUploaded = () => {
-    if (!uploadedFiles) return;
+    if (!uploadedFiles || !setUploadedFiles) return;
     const newUploadedFiles = uploadedFiles.filter(
       (file) => !file.selectedToDelete,
     );
@@ -549,7 +557,7 @@ export const ListModal = (props: IListModalProps) => {
                                   fileInputRef.current.value = "";
                                 }
                               }}
-                              uploadedFiles={uploadedFiles}
+                              uploadedFiles={uploadedFiles || []}
                               setSelectedDocument={setSelectedDocument}
                               setOpenViewer={setOpenViewer}
                               isMobile={isMobile}

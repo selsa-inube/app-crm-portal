@@ -37,6 +37,10 @@ export const getCreditRequestByCode = async (
         queryParams.set("textInSearch", params.textInSearch);
       }
 
+      if (params.stage) {
+        queryParams.set("stage", params.stage);
+      }
+
       const options: RequestInit = {
         method: "GET",
         headers: {

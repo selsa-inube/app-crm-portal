@@ -115,6 +115,7 @@ export const TableExtraordinaryInstallment = (
   const [isOpenModalView, setIsOpenModalView] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
 
   const paginationProps = usePagination(extraordinaryInstallments);
 
@@ -272,6 +273,8 @@ export const TableExtraordinaryInstallment = (
         installmentState={installmentState}
         isOpenModalView={isOpenModalView}
         setIsOpenModalView={setIsOpenModalView}
+        setOpenMenuIndex={setOpenMenuIndex}
+        openMenuIndex={openMenuIndex}
       />
     </>
   );

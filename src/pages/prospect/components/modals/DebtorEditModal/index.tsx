@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { Stack, Tabs, useFlag } from "@inubekit/inubekit";
+import { Stack, Tabs } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { IBorrower } from "@services/prospect/types";
+import { IBorrower, IProspect } from "@services/prospect/types";
 import { IIncomeSources } from "@services/creditLimit/types";
 
-import { dataEditDebtor, dataTabs, dataReport } from "./config";
+import { dataEditDebtor, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
 import {
   transformFinancialObligations,
@@ -30,6 +30,7 @@ interface IDebtorEditModalProps {
   onUpdate?: (updatedBorrower: IBorrower, isSave?: boolean) => void;
   businessUnit?: string;
   businessUnitId?: string;
+  prospectData: IProspect | undefined;
 }
 
 export function DebtorEditModal(props: IDebtorEditModalProps) {
@@ -39,6 +40,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     publicCode,
     businessUnitPublicCode,
     businessManagerCode,
+    prospectData,
     handleClose,
     onUpdate,
   } = props;
@@ -52,20 +54,9 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
 
   const [isModified, setIsModified] = useState(false);
 
-  const { addFlag } = useFlag();
-
   useEffect(() => {
     setEditedBorrower(initialValues);
   }, [initialValues]);
-
-  const handleFlag = () => {
-    addFlag({
-      title: `${dataReport.titleAdd}`,
-      description: `${dataReport.descriptionFlagAdd}`,
-      appearance: "success",
-      duration: 5000,
-    });
-  };
 
   const handleDebtorDataChange = (fieldName: string, value: string) => {
     const propertyMap: { [key: string]: string } = {
@@ -164,8 +155,6 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     if (!initialValues || !incomeData || onUpdate === undefined) return;
 
     onUpdate(editedBorrower, true);
-
-    handleFlag();
   };
 
   const syncObligations = (updatedObligationsList: IObligations[]) => {
@@ -250,6 +239,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             publicCode={publicCode}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
+            prospectData={prospectData}
           />
         )}
         {currentTab === "obligations" && (

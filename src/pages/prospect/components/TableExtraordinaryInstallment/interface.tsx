@@ -76,6 +76,8 @@ interface ITableExtraordinaryInstallmentProps {
     lastEntryInPage: number;
     paddedCurrentData: TableExtraordinaryInstallmentProps[];
   };
+  openMenuIndex: number | null;
+  setOpenMenuIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setSentData?:
     | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
     | undefined;
@@ -113,6 +115,8 @@ export function TableExtraordinaryInstallmentUI(
     setSelectedDebtor,
     handleDeleteAction,
     setInstallmentState,
+    openMenuIndex,
+    setOpenMenuIndex,
   } = props;
 
   const {
@@ -199,12 +203,19 @@ export function TableExtraordinaryInstallmentUI(
                 })}
 
                 {visbleActions.map((action) => (
-                  <Td key={action.key} type="custom">
+                  <Td key={action.key} type="custom" height={"10px"}>
                     {isMobile ? (
                       <ActionMobile
+                        isOpen={openMenuIndex === index}
+                        onToggle={() => {
+                          setOpenMenuIndex(
+                            openMenuIndex === index ? null : index,
+                          );
+                        }}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
+                          setOpenMenuIndex(null);
                         }}
                         handleView={() => {
                           setSelectedDebtor(row);
@@ -218,6 +229,7 @@ export function TableExtraordinaryInstallmentUI(
                               String(row.paymentMethod) || "",
                           });
                           setIsOpenModalView(true);
+                          setOpenMenuIndex(null);
                         }}
                         handleEdit={() => {
                           setSelectedDebtor(row);
@@ -231,6 +243,7 @@ export function TableExtraordinaryInstallmentUI(
                               String(row.paymentMethod) || "",
                           });
                           setIsOpenModalEdit(true);
+                          setOpenMenuIndex(null);
                         }}
                       />
                     ) : (
