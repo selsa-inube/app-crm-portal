@@ -19,34 +19,43 @@ export function CardGray(props: ICardGrayProps) {
     placeHolder = "",
     data = "",
     isMobile = false,
-    height = "",
     apparencePlaceHolder = "dark",
     placeHolderTag = false,
   } = props;
 
   return (
-    <StyledContainer>
-      <Stack justifyContent="space-between" padding="6px 16px" height={height}>
-        <Stack direction="column">
-          <Text type="label" weight="bold" size="medium" appearance="dark">
-            {label}
-          </Text>
-          {!placeHolderTag ? (
-            <Text type="body" size="medium" appearance={apparencePlaceHolder}>
-              {placeHolder}
-            </Text>
-          ) : (
-            <Stack>{placeHolder}</Stack>
-          )}
-        </Stack>
+    <StyledContainer isMobile={isMobile}>
+      <Stack direction="column">
         <Text
-          type="body"
-          size={isMobile ? "large" : "medium"}
-          appearance={isMobile ? "dark" : "gray"}
+          type="label"
+          weight="bold"
+          size="medium"
+          appearance="dark"
+          ellipsis={true}
         >
-          {data}
+          {label}
         </Text>
+        {!placeHolderTag ? (
+          <Text
+            type="body"
+            size="medium"
+            appearance={apparencePlaceHolder}
+            ellipsis={true}
+          >
+            {placeHolder}
+          </Text>
+        ) : (
+          <Stack>{placeHolder}</Stack>
+        )}
       </Stack>
+      <Text
+        type="body"
+        size={isMobile ? "large" : "medium"}
+        appearance={isMobile ? "dark" : "gray"}
+        ellipsis={true}
+      >
+        {data}
+      </Text>
     </StyledContainer>
   );
 }

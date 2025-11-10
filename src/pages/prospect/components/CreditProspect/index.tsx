@@ -7,7 +7,6 @@ import {
   MdOutlinePayments,
   MdOutlinePictureAsPdf,
   MdOutlineShare,
-  MdCheckCircle,
 } from "react-icons/md";
 import {
   Stack,
@@ -17,8 +16,6 @@ import {
   useFlag,
   Spinner,
   Textarea,
-  Text,
-  Textfield,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -59,12 +56,16 @@ import { AddProductModal } from "@pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
+import { incomeCardData } from "@components/cards/IncomeCard/config";
+import { IValidateRequirement } from "@services/requirement/types";
+import { StyledDivider } from "@components/layout/Divider/styles";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
   dataCreditProspect,
   labelsAndValuesShare,
   configModal,
+  propertyOfMetRequirement,
 } from "./config";
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
@@ -94,6 +95,8 @@ interface ICreditProspectProps {
     React.SetStateAction<IProspectSummaryById>
   >;
   onProspectRefreshData?: () => void;
+  setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
+  validateRequirements?: IValidateRequirement[];
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -113,6 +116,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     prospectSummaryData,
     showAddButtons = true,
     showAddProduct = true,
+    setShowRequirements,
+    validateRequirements,
   } = props;
 
   const { customerData } = useContext(CustomerContext);
@@ -147,6 +152,25 @@ export function CreditProspect(props: ICreditProspectProps) {
   const { addFlag } = useFlag();
   const dataPrint = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (showMessageSuccessModal) {
+      addFlag({
+        title: configModal.success.title,
+        description: configModal.success.text,
+        appearance: "success",
+        duration: 5000,
+      });
+
+      const timeoutId = setTimeout(() => {
+        setShowMessageSuccessModal(false);
+      }, 5000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [showMessageSuccessModal]);
+
   const fetchCreditLimitData = async () => {
     if (!customerPublicCode) return;
 
@@ -168,6 +192,11 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   };
   const handleOpenModal = (modalName: string) => {
+    if (modalName === "requirements" && setShowRequirements) {
+      setShowRequirements(true);
+
+      return;
+    }
     if (modalName === "IncomeModal") {
       fetchCreditLimitData();
     }
@@ -269,12 +298,8 @@ export function CreditProspect(props: ICreditProspectProps) {
       ) {
         description = "El producto de crédito ya existe en el prospecto";
       }
-      addFlag({
-        title: dataCreditProspect.descriptionError,
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -588,13 +613,36 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   };
 
+  const countRequirementsNotMet = () => {
+    if (!validateRequirements) return 0;
+
+    const requirementsOnlyNotMet = validateRequirements.filter(
+      (requirement) =>
+        requirement.requirementStatus !== propertyOfMetRequirement.approve,
+    );
+
+    const requirementsOnlyNotMetCount = requirementsOnlyNotMet.length;
+
+    return requirementsOnlyNotMetCount;
+  };
+
   return (
     <div ref={dataPrint}>
       <Stack direction="column" gap="24px">
-        {!isMobile && (
-          <StyledPrint>
-            <Stack gap="16px" justifyContent="end" alignItems="center">
-              <Stack alignItems="center" gap="4px">
+        <StyledPrint>
+          <Stack
+            gap="16px"
+            justifyContent="end"
+            alignItems={isMobile ? "center" : "normal"}
+            direction={isMobile ? "column" : "row"}
+          >
+            <Stack
+              alignItems={isMobile ? "center" : "normal"}
+              gap="4px"
+              direction={isMobile ? "column" : "row"}
+              width={isMobile ? "100%" : "auto"}
+            >
+              {showAddProduct && (
                 <Button
                   type="button"
                   appearance="primary"
@@ -609,72 +657,86 @@ export function CreditProspect(props: ICreditProspectProps) {
                   }
                   disabled={canEditCreditRequest}
                   onClick={() => handleOpenModal("editProductModal")}
+                  fullwidth={isMobile}
                 >
                   {dataCreditProspect.addProduct}
                 </Button>
-                {canEditCreditRequest && (
-                  <Icon
-                    icon={<MdOutlineInfo />}
-                    appearance="primary"
-                    size="16px"
-                    cursorHover
-                    onClick={handleInfo}
-                  />
-                )}
-              </Stack>
-              {!hasExtraordinaryInstallments(prospectData as IProspect) && (
-                <Button
-                  type="button"
-                  appearance="primary"
-                  spacing="compact"
-                  variant="outlined"
-                  iconBefore={
-                    <Icon
-                      icon={<MdOutlinePayments />}
-                      appearance="primary"
-                      size="18px"
-                      spacing="narrow"
-                    />
-                  }
-                  onClick={() => handleOpenModal("extraPayments")}
-                  disabled={canEditCreditRequest}
-                >
-                  {dataCreditProspect.extraPayment}
-                </Button>
               )}
-              <StyledContainerIcon>
-                {showPrint && (
-                  <Stack gap="8px">
-                    <Icon
-                      icon={<MdOutlinePictureAsPdf />}
-                      appearance="primary"
-                      size="24px"
-                      disabled={!isPrint}
-                      cursorHover
-                      onClick={print}
-                    />
-                    <Icon
-                      icon={<MdOutlineShare />}
-                      appearance="primary"
-                      size="24px"
-                      onClick={async () => await generateAndSharePdf()}
-                      cursorHover
-                    />
-                    <StyledVerticalDivider />
-                  </Stack>
-                )}
-                <MenuProspect
-                  only
-                  options={menuOptions(
-                    handleOpenModal,
-                    !prospectProducts?.ordinaryInstallmentsForPrincipal,
-                  )}
-                  onMouseLeave={showMenu}
+              {canEditCreditRequest && (
+                <Icon
+                  icon={<MdOutlineInfo />}
+                  appearance="primary"
+                  size="16px"
+                  cursorHover
+                  onClick={handleInfo}
                 />
-              </StyledContainerIcon>
+              )}
             </Stack>
-          </StyledPrint>
-        )}
+            {hasExtraordinaryInstallments(prospectData as IProspect) && (
+              <Button
+                type="button"
+                appearance="primary"
+                spacing="compact"
+                variant="outlined"
+                iconBefore={
+                  <Icon
+                    icon={<MdOutlinePayments />}
+                    appearance="primary"
+                    size="18px"
+                    spacing="narrow"
+                  />
+                }
+                onClick={() => handleOpenModal("extraPayments")}
+                disabled={canEditCreditRequest}
+                fullwidth={isMobile}
+              >
+                {dataCreditProspect.extraPayment}
+              </Button>
+            )}
+            {isMobile && <StyledDivider />}
+            <StyledContainerIcon>
+              {showPrint && (
+                <Stack gap="8px">
+                  {!isMobile && (
+                    <>
+                      <Icon
+                        icon={<MdOutlinePictureAsPdf />}
+                        appearance="primary"
+                        size="24px"
+                        disabled={!isPrint}
+                        cursorHover
+                        onClick={print}
+                      />
+                      <Icon
+                        icon={<MdOutlineShare />}
+                        appearance="primary"
+                        size="24px"
+                        onClick={async () => await generateAndSharePdf()}
+                        cursorHover
+                      />
+                      <StyledVerticalDivider />
+                    </>
+                  )}
+                </Stack>
+              )}
+              <MenuProspect
+                only
+                options={menuOptions(
+                  handleOpenModal,
+                  !prospectProducts?.ordinaryInstallmentsForPrincipal,
+                )}
+                onMouseLeave={showMenu}
+                isMobile={isMobile}
+                badges={{
+                  requirements: countRequirementsNotMet(),
+                }}
+                hasExtraordinaryInstallments={hasExtraordinaryInstallments(
+                  prospectData as IProspect,
+                )}
+              />
+            </StyledContainerIcon>
+          </Stack>
+        </StyledPrint>
         <Stack direction="column">
           <CardCommercialManagement
             id={id!}
@@ -750,7 +812,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             nextButton={dataCreditProspect.close}
             handleNext={handleCloseModal}
             handleClose={handleCloseModal}
-            width={isMobile ? "auto" : "448px"}
+            width={isMobile ? "280px" : "448px"}
           >
             {isLoadingCreditLimit ? (
               <Stack
@@ -777,20 +839,16 @@ export function CreditProspect(props: ICreditProspectProps) {
                 {showAddButtons === true && (
                   <Stack
                     justifyContent="space-between"
-                    alignItems="end"
+                    alignItems={isMobile ? "normal" : "end"}
                     width={isMobile ? "auto" : "100%"}
+                    direction={isMobile ? "column" : "row"}
                     gap="16px"
                   >
                     {borrowerOptions.length === 1 ? (
-                      <Textfield
-                        label="Deudor"
-                        id="borrower"
-                        name="borrower"
-                        value={borrowerOptions[0]?.label || ""}
-                        size="compact"
-                        readOnly={true}
-                        disabled={true}
-                        fullwidth
+                      <CardGray
+                        label={incomeCardData.borrower}
+                        placeHolder={borrowerOptions[0]?.label || ""}
+                        isMobile={isMobile}
                       />
                     ) : (
                       <Select
@@ -810,6 +868,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                           setOpenModal("IncomeModalEdit");
                         }}
                         disabled={canEditCreditRequest}
+                        fullwidth={isMobile}
                       >
                         {dataCreditProspect.edit}
                       </Button>
@@ -863,7 +922,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             options={incomeOptions}
             onChange={onChanges}
             debtor={form.borrower}
-            prospectData={prospectData ? [prospectData] : undefined}
+            prospectData={prospectData ? [prospectData] : []}
             onProspectUpdate={onProspectRefreshData}
             showAddButton={showAddButtons}
           />
@@ -885,7 +944,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             title={configModal.observations.title}
             handleClose={handleCloseModal}
             handleNext={() => {
-              setEditedComments(prospectData!.clientComments || "");
+              setEditedComments(
+                prospectData ? prospectData!.clientComments : "",
+              );
               setShowEditMessageModal(true);
             }}
             nextButton={configModal.observations.modify}
@@ -895,7 +956,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             <Stack direction="column" gap="16px">
               <CardGray
                 label={configModal.observations.labelTextarea}
-                placeHolder={prospectData!.clientComments || ""}
+                placeHolder={prospectData ? prospectData!.clientComments : ""}
                 apparencePlaceHolder="gray"
               />
             </Stack>
@@ -927,25 +988,6 @@ export function CreditProspect(props: ICreditProspectProps) {
             isMobile={isMobile}
             message={messageError}
           />
-        )}
-
-        {showMessageSuccessModal && (
-          <BaseModal
-            title={configModal.success.title}
-            nextButton={configModal.success.close}
-            handleNext={() => setShowMessageSuccessModal(false)}
-            handleClose={() => setShowMessageSuccessModal(false)}
-            width={isMobile ? "290px" : "402px"}
-          >
-            <Stack direction="column" alignItems="center" gap="24px">
-              <Icon icon={<MdCheckCircle />} appearance="success" size="68px" />
-              <Stack gap="6px">
-                <Text type="body" size="large">
-                  {configModal.success.text}
-                </Text>
-              </Stack>
-            </Stack>
-          </BaseModal>
         )}
 
         {isModalOpen ? (

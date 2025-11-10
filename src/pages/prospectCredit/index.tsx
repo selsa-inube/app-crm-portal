@@ -12,7 +12,6 @@ import {
 
 import { ICreditRequest } from "@services/creditRequest/types";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
-import { BaseModal } from "@components/modals/baseModal/index.tsx";
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
@@ -30,10 +29,6 @@ export function ProspectCredit() {
   const [search, setSearch] = useState("");
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
-  );
-  const [isShowModal, setIsShowModal] = useState(false);
-  const [selectedRequestCode, setSelectedRequestCode] = useState<string | null>(
-    null,
   );
 
   const [searchParams] = useSearchParams();
@@ -142,8 +137,9 @@ export function ProspectCredit() {
                     toDo={creditRequest.taskToBeDone}
                     hasMessage={creditRequest.unreadNovelties === "Y"}
                     onCardClick={() => {
-                      setSelectedRequestCode(creditRequest.creditRequestCode);
-                      setIsShowModal(true);
+                      navigate(
+                        `/credit/processed-credit-requests/extended-card/${creditRequest.creditRequestCode}`,
+                      );
                     }}
                   />
                 ))}
@@ -155,22 +151,6 @@ export function ProspectCredit() {
               </Stack>
             </Stack>
           </Fieldset>
-          {isShowModal && (
-            <BaseModal
-              title={dataCreditProspects.creditApplication}
-              nextButton={dataCreditProspects.accept}
-              backButton={dataCreditProspects.cancel}
-              handleBack={() => setIsShowModal(false)}
-              handleNext={() => {
-                navigate(
-                  `/credit/processed-credit-requests/extended-card/${selectedRequestCode}`,
-                );
-              }}
-              width="400px"
-            >
-              <Text>{dataCreditProspects.sure}</Text>
-            </BaseModal>
-          )}
         </Stack>
       )}
     </>

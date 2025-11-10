@@ -32,7 +32,7 @@ export const OptionStaffPortal: IOptionStaffPortalItem[] = [
       },
       {
         id: "Solicitudes tramitadas",
-        url: "/credit",
+        url: "/credit/processed-credit-requests",
       },
     ],
   },

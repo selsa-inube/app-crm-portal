@@ -26,7 +26,7 @@ export const headers: {
 ];
 
 export const dataReport = {
-  title: "Deudor",
+  title: "Obligaciones financieras",
   description: "Camilo Alberto Rincon Jaramillo",
   addObligations: "Agregar obligaciones",
   noData: "No existen obligaciones financieras",

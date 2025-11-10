@@ -7,7 +7,6 @@ import {
   useMediaQuery,
   Select,
   Textfield,
-  useFlag,
 } from "@inubekit/inubekit";
 import { useState, useEffect, useContext } from "react";
 
@@ -42,7 +41,6 @@ import {
   fieldLabels,
   fieldPlaceholders,
   validationMessages,
-  flagMessages,
   REPAYMENT_STRUCTURES_WITH_INCREMENT,
   repaymentStructureMap,
 } from "./config";
@@ -118,7 +116,6 @@ function EditProductModal(props: EditProductModalProps) {
 
   const isMobile = useMediaQuery("(max-width: 550px)");
   const { customerData } = useContext(CustomerContext);
-  const { addFlag } = useFlag();
 
   useEffect(() => {
     const loadPaymentOptions = async () => {
@@ -603,13 +600,6 @@ function EditProductModal(props: EditProductModalProps) {
       };
 
       onConfirm(submitValues);
-
-      addFlag({
-        title: flagMessages.changesSavedTitle,
-        description: flagMessages.changesSavedDescription,
-        appearance: "success",
-        duration: 5000,
-      });
     } catch (error) {
       const err = error as {
         message?: string;

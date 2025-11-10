@@ -31,3 +31,7 @@ export const configModal = {
     close: "Cerrar",
   },
 };
+
+export const propertyOfMetRequirement = {
+  approve: "Aprobado",
+};

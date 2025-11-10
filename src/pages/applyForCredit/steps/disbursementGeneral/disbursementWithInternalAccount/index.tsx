@@ -29,6 +29,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { IProspectSummaryById } from "@services/prospect/types";
+import { CardGray } from "@components/cards/CardGray";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
@@ -351,7 +352,7 @@ export function DisbursementWithInternalAccount(
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Stack width={isMobile ? "100%" : "498px"}>
+        <Stack>
           <Textfield
             id="amount"
             name="amount"
@@ -440,18 +441,12 @@ export function DisbursementWithInternalAccount(
           <Divider dashed />
         </>
       )}
-      <Stack width="498px">
+      <Stack>
         {accountOptions.length === 1 ? (
-          <Textfield
-            id={`${optionNameForm}.accountNumber`}
-            name={`${optionNameForm}.accountNumber`}
+          <CardGray
             label={disbursemenOptionAccount.labelAccount}
-            placeholder={disbursemenOptionAccount.placeOption}
-            size="compact"
-            value={accountOptions[0]?.label || ""}
-            readOnly={true}
-            disabled={true}
-            fullwidth
+            placeHolder={accountOptions[0]?.label || ""}
+            isMobile={isMobile}
           />
         ) : (
           <Select
