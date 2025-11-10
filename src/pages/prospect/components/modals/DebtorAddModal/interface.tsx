@@ -93,6 +93,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
           disableNext={!isCurrentFormValid}
           disableSubmit={!isCurrentFormValid}
           size={isMobile ? "small" : "large"}
+          showCurrentStepNumber={false}
         />
         <Divider />
         {currentStepsNumber &&

@@ -16,9 +16,9 @@ export const verificationDebtorAddModalConfig = {
   incomeInfo: {
     title: "Fuentes de ingreso",
     fields: {
-      totalEmploymentIncome: "Total ingresos laborales",
-      totalCapitalIncome: "Total ingresos de capital",
-      totalBusinessIncome: "Total ingresos de negocios",
+      totalEmploymentIncome: "Rentas de trabajo",
+      totalCapitalIncome: "Rentas de Capital",
+      totalBusinessIncome: "Otros Ingresos variables",
     },
   },
   financialObligations: {
