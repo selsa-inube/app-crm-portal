@@ -9,7 +9,10 @@ import {
 
 import { CreditCard } from "@components/cards/CreditCard";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
-import { OptionStaffPortal } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
+import {
+  getIconByName,
+  OptionStaffPortal,
+} from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 
 import { addConfig } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
@@ -48,10 +51,10 @@ const CreditUI = (props: ICreditUIProps) => {
         const match = backendSubs.find((opt) => opt.publicCode === sub.id);
 
         return {
-          key: sub.id,
-          icon: sub.icon,
-          title: match?.abbreviatedName || sub.id,
-          subtitle: match?.descriptionUse || sub.descriptionUse,
+          key: match?.optionStaffId,
+          icon: getIconByName(match?.iconReference || ""),
+          title: match?.abbreviatedName,
+          subtitle: match?.descriptionUse,
           url: sub.url ?? "",
           isDisabled: !match,
         };

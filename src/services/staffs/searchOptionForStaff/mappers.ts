@@ -9,6 +9,7 @@ const mapStaffOptionToEntity = (
     optionStaffId: data.optionStaffId as string,
     parentOptionId: data.parentOptionId as string,
     publicCode: data.publicCode as string,
+    iconReference: data.iconReference as string,
     subOption: data.subOption as IStaffSubOption,
   };
   return buildResend;
