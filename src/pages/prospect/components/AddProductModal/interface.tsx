@@ -1,4 +1,11 @@
-import { Stack, Text, Grid, Divider, Assisted } from "@inubekit/inubekit";
+import {
+  Stack,
+  Text,
+  Grid,
+  Divider,
+  Assisted,
+  SkeletonLine,
+} from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
@@ -11,6 +18,7 @@ import {
   IAddProductModalUIProps,
   titleButtonTextAssisted,
   stepsAddProduct,
+  noAvailablePaymentMethods,
 } from "./config";
 import { PaymentConfiguration } from "./steps/PaymentConfiguration";
 import { AmountCapture } from "./steps/AmountCapture";
@@ -39,6 +47,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
     errorMessage,
     setErrorModal,
     errorModal,
+    loading,
   } = props;
 
   return (
@@ -60,7 +69,14 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
         handleClose={onCloseModal}
         disabledNext={!isCurrentFormValid}
         disabledBack={currentStepsNumber.id === steps[0].id}
-        iconBeforeNext={iconBefore}
+        iconBeforeNext={
+          (currentStepsNumber.id === steps[steps.length - 1].id
+            ? titleButtonTextAssisted.submitText
+            : titleButtonTextAssisted.goNextText) ===
+          titleButtonTextAssisted.submitText
+            ? iconBefore
+            : undefined
+        }
         iconAfterNext={iconAfter}
         finalDivider={true}
         width="auto"
@@ -84,64 +100,83 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
 
           {currentStepsNumber.id === stepsAddProduct.creditLineSelection.id && (
             <ScrollableContainer $smallScreen={isMobile}>
-              <Grid
-                gap="16px"
-                padding={isMobile ? "0px 6px" : "0px 12px"}
-                templateColumns={`repeat(1, ${isMobile ? "auto" : "455px"})`}
-                autoRows="200px"
-                justifyContent="center"
-                alignContent="center"
-              >
-                {Object.keys(creditLineTerms).length > 0 ? (
-                  Object.entries(creditLineTerms).map(
-                    ([lineName, terms], index) => (
-                      <Stack key={index} direction="row" width="auto">
-                        <CardProductSelection
-                          isMobile={isMobile}
-                          typeCheck="radio"
-                          key={lineName}
-                          amount={terms.LoanAmountLimit}
-                          rate={terms.RiskFreeInterestRate}
-                          term={terms.LoanTermLimit}
-                          description={lineName}
-                          disabled={false}
-                          isSelected={formData.selectedProducts.includes(
-                            lineName,
-                          )}
-                          onSelect={() => {
-                            handleFormChange({
-                              selectedProducts: [lineName],
-                              creditLine: lineName,
-                            });
-                          }}
-                        />
-                      </Stack>
-                    ),
-                  )
-                ) : (
-                  <Text type="body" size="medium">
-                    {messageNotFound}
-                  </Text>
-                )}
-              </Grid>
+              {loading ? (
+                <SkeletonLine animated width="100%" height="160px" />
+              ) : (
+                <Grid
+                  gap="16px"
+                  padding={isMobile ? "0px 6px" : "0px 12px"}
+                  templateColumns={`repeat(1, ${isMobile ? "auto" : "455px"})`}
+                  autoRows="200px"
+                  justifyContent="center"
+                  alignContent="center"
+                >
+                  {Object.keys(creditLineTerms).length > 0 ? (
+                    Object.entries(creditLineTerms).map(
+                      ([lineName, terms], index) => (
+                        <Stack key={index} direction="row" width="auto">
+                          <CardProductSelection
+                            isMobile={isMobile}
+                            typeCheck="radio"
+                            key={lineName}
+                            amount={terms.LoanAmountLimit}
+                            rate={terms.RiskFreeInterestRate}
+                            term={terms.LoanTermLimit}
+                            description={lineName}
+                            disabled={false}
+                            isSelected={formData.selectedProducts.includes(
+                              lineName,
+                            )}
+                            onSelect={() => {
+                              handleFormChange({
+                                selectedProducts: [lineName],
+                                creditLine: lineName,
+                              });
+                            }}
+                          />
+                        </Stack>
+                      ),
+                    )
+                  ) : (
+                    <Text type="body" size="medium">
+                      {messageNotFound}
+                    </Text>
+                  )}
+                </Grid>
+              )}
             </ScrollableContainer>
           )}
 
-          {currentStepsNumber.id ===
-            stepsAddProduct.paymentConfiguration.id && (
-            <PaymentConfiguration
-              paymentConfig={formData.paymentConfiguration}
-              onChange={(config) => {
-                handleFormChange({
-                  paymentConfiguration: {
-                    ...formData.paymentConfiguration,
-                    ...config,
-                  },
-                });
-              }}
-              onFormValid={setIsCurrentFormValid}
-            />
-          )}
+          {currentStepsNumber.id === stepsAddProduct.paymentConfiguration.id &&
+            !loading &&
+            formData.paymentConfiguration.paymentChannelData.length > 0 && (
+              <PaymentConfiguration
+                paymentConfig={formData.paymentConfiguration}
+                onChange={(config) => {
+                  handleFormChange({
+                    paymentConfiguration: {
+                      ...formData.paymentConfiguration,
+                      ...config,
+                    },
+                  });
+                }}
+                onFormValid={setIsCurrentFormValid}
+              />
+            )}
+
+          {currentStepsNumber.id === stepsAddProduct.paymentConfiguration.id &&
+            !loading &&
+            formData.paymentConfiguration.paymentChannelData.length === 0 && (
+              <Text
+                type="body"
+                size="medium"
+                children={noAvailablePaymentMethods}
+                margin="10px 0 0 10px"
+              />
+            )}
+
+          {currentStepsNumber.id === stepsAddProduct.paymentConfiguration.id &&
+            loading && <SkeletonLine animated width="100%" height="60px" />}
 
           {currentStepsNumber.id === stepsAddProduct.amountCapture.id && (
             <AmountCapture

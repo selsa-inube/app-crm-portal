@@ -36,6 +36,7 @@ function AddProductModal(props: IAddProductModalProps) {
   const [errorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [creditLineTerms, setCreditLineTerms] = useState<TCreditLineTerms>({});
+  const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddProduct.creditLineSelection.id,
   );
@@ -62,6 +63,7 @@ function AddProductModal(props: IAddProductModalProps) {
         customerData?.generalAttributeClientNaturalPersons?.[0];
       if (!clientInfo?.associateType) return;
 
+      setLoading(true);
       const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
         businessUnitPublicCode,
         businessManagerCode,
@@ -87,11 +89,13 @@ function AddProductModal(props: IAddProductModalProps) {
         }
       });
 
+      setLoading(false);
       setCreditLineTerms(result);
     })();
   }, [businessUnitPublicCode]);
 
   useEffect(() => {
+    if (currentStep !== stepsAddProduct.paymentConfiguration.id) return;
     const loadPaymentOptions = async () => {
       if (!formData.creditLine || !customerData?.publicCode) return;
 
@@ -108,6 +112,7 @@ function AddProductModal(props: IAddProductModalProps) {
           linesOfCredit: formData.selectedProducts,
         };
 
+        setLoading(true);
         const response = await GetSearchAllPaymentChannels(
           businessUnitPublicCode,
           businessManagerCode,
@@ -117,7 +122,7 @@ function AddProductModal(props: IAddProductModalProps) {
         if (!response || response.length === 0) {
           throw new Error(errorMessages.getPaymentMethods);
         }
-
+        setLoading(false);
         setFormData((prev) => ({
           ...prev,
           paymentConfiguration: {
@@ -128,19 +133,29 @@ function AddProductModal(props: IAddProductModalProps) {
       } catch (error) {
         setErrorMessage(errorMessages.getPaymentMethods);
         setErrorModal(true);
+        setLoading(false);
       }
     };
 
     loadPaymentOptions();
-  }, [
-    formData.creditLine,
-    formData.selectedProducts,
-    businessUnitPublicCode,
-    businessManagerCode,
-    customerData,
-    moneyDestination,
-    dataProspect,
-  ]);
+  }, [currentStep]);
+
+  useEffect(() => {
+    const validateCurrentStep = () => {
+      if (currentStep === stepsAddProduct.creditLineSelection.id) {
+        const isValid = formData.selectedProducts.length > 0;
+        setIsCurrentFormValid(isValid);
+      } else if (currentStep === stepsAddProduct.paymentConfiguration.id) {
+        const isValid =
+          !!formData.paymentConfiguration.paymentMethod &&
+          !!formData.paymentConfiguration.paymentCycle &&
+          !!formData.paymentConfiguration.firstPaymentDate;
+        setIsCurrentFormValid(isValid);
+      }
+    };
+
+    validateCurrentStep();
+  }, [formData, currentStep]);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
 
@@ -216,6 +231,7 @@ function AddProductModal(props: IAddProductModalProps) {
       handleSubmitClick={handleSubmitClick}
       businessUnitPublicCode={businessUnitPublicCode}
       businessManagerCode={businessManagerCode}
+      loading={loading}
       prospectData={{
         lineOfCredit: formData.creditLine,
         moneyDestination: moneyDestination,

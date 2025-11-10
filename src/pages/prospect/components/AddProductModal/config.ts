@@ -246,6 +246,7 @@ export interface IAddProductModalUIProps {
   errorModal: boolean;
   setErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   errorMessage: string;
+  loading: boolean;
 }
 
 export interface IStep {
@@ -291,6 +292,8 @@ export const titleButtonTextAssisted = {
 export const errorMessages = {
   getPaymentMethods: "Error al obtener los medios de pago",
 };
+
+export const noAvailablePaymentMethods = "No hay medios de pago disponibles";
 
 export interface IFirstPaymentDate {
   id: string;

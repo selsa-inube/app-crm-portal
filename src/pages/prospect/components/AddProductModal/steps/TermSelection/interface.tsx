@@ -58,7 +58,6 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                         name="toggles.quotaCapToggle"
                         type="checkbox"
                         as={Toggle}
-                        disabled={values.toggles.maximumTermToggle}
                         checked={values.toggles.quotaCapToggle}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           handleQuotaCapToggleChange(
@@ -90,7 +89,6 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                         placeholder={loanData.quotaCapPlaceholder}
                         size="compact"
                         type="text"
-                        disabled={!values.toggles.quotaCapToggle}
                         fullwidth={isMobile}
                         value={values.quotaCapValue}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

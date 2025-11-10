@@ -7,7 +7,6 @@ import { paymentConfiguration, IPaymentConfigurationMain } from "../config";
 
 export function PaymentConfiguration(props: IPaymentConfigurationMain) {
   const { paymentConfig, onChange, onFormValid } = props;
-  console.log("paymentConfig: ", paymentConfig);
   const paymentMethodOptions = useMemo(() => {
     return (
       paymentConfig.paymentChannelData?.map((channel, index) => ({
@@ -17,7 +16,7 @@ export function PaymentConfiguration(props: IPaymentConfigurationMain) {
       })) || []
     );
   }, [paymentConfig.paymentChannelData]);
-  console.log("paymentMethodOptions : ", paymentMethodOptions);
+
   const selectedChannel = paymentConfig.paymentChannelData?.find(
     (channel) => channel.abbreviatedName === paymentConfig.paymentMethod,
   );
