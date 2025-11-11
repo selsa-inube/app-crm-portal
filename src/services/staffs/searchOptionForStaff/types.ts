@@ -11,5 +11,6 @@ export interface IOptionStaff {
   optionStaffId: string;
   parentOptionId: string;
   publicCode: string;
+  iconReference: string;
   subOption: IStaffSubOption;
 }

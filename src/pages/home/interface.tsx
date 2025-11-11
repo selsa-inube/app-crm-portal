@@ -4,8 +4,11 @@ import { Title } from "@components/layout/Title";
 import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { InteractiveBox } from "@components/cards/interactiveBox";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
-import { OptionStaffPortal } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 import userImage from "@assets/images/userImage.jpeg";
+import {
+  getIconByName,
+  OptionStaffPortal,
+} from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import {
@@ -50,10 +53,10 @@ const HomeUI = (props: IHomeUIProps) => {
       );
 
       return {
-        id: configItem.id,
-        abbreviatedName: match?.abbreviatedName || configItem.id,
-        descriptionUse: match?.descriptionUse || configItem.descriptionUse,
-        icon: configItem.icon,
+        id: match?.optionStaffId ?? "",
+        abbreviatedName: match?.abbreviatedName ?? "",
+        descriptionUse: match?.descriptionUse ?? "",
+        icon: getIconByName(match?.iconReference || ""),
         url: configItem.url,
         isDisabled: !match,
       };
