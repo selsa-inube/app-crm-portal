@@ -106,7 +106,8 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
                 <Grid
                   gap="16px"
                   padding={isMobile ? "0px 6px" : "0px 12px"}
-                  templateColumns={`repeat(1, ${isMobile ? "auto" : "455px"})`}
+                  templateColumns={`repeat(1, 
+                    ${isMobile ? "auto" : "455px"})`}
                   autoRows="200px"
                   justifyContent="center"
                   alignContent="center"

@@ -30,12 +30,7 @@ export function TermSelectionUI(props: ITermSelectionUI) {
     >
       {({ values, handleBlur, setFieldValue }) => (
         <Form>
-          <Stack
-            direction="column"
-            gap="16px"
-            padding="0px 16px"
-            height="300px"
-          >
+          <Stack direction="column" gap="16px" padding="0px 16px">
             <Fieldset>
               <Stack direction="column" gap="16px" padding="16px">
                 <Stack direction="column" gap="16px">
@@ -59,9 +54,11 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                         type="checkbox"
                         as={Toggle}
                         checked={values.toggles.quotaCapToggle}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>,
+                        ) => {
                           handleQuotaCapToggleChange(
-                            e.target.checked,
+                            event.target.checked,
                             setFieldValue,
                             values,
                           );
@@ -89,16 +86,19 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                         placeholder={loanData.quotaCapPlaceholder}
                         size="compact"
                         type="text"
+                        disabled={!values.toggles.quotaCapToggle}
                         fullwidth={isMobile}
                         value={values.quotaCapValue}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>,
+                        ) => {
                           handleQuotaCapValueChange(
-                            e.target.value,
+                            event.target.value,
                             setFieldValue,
                           );
                         }}
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          handleBlur(e)
+                        onBlur={(event: React.ChangeEvent<HTMLInputElement>) =>
+                          handleBlur(event)
                         }
                       />
                     </Stack>
@@ -129,10 +129,10 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                           checked={values.toggles.maximumTermToggle}
                           disabled={values.toggles.quotaCapToggle}
                           onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>,
+                            event: React.ChangeEvent<HTMLInputElement>,
                           ) => {
                             handleMaximumTermToggleChange(
-                              e.target.checked,
+                              event.target.checked,
                               setFieldValue,
                               values,
                             );
@@ -166,16 +166,16 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                           fullwidth={isMobile}
                           value={values.maximumTermValue}
                           onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>,
+                            event: React.ChangeEvent<HTMLInputElement>,
                           ) => {
                             handleMaximumTermValueChange(
-                              Number(e.target.value),
+                              Number(event.target.value),
                               setFieldValue,
                             );
                           }}
-                          onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            handleBlur(e)
-                          }
+                          onBlur={(
+                            event: React.ChangeEvent<HTMLInputElement>,
+                          ) => handleBlur(event)}
                         />
                       </Stack>
                     </Stack>
