@@ -4,6 +4,7 @@ import { Title } from "@components/layout/Title";
 import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { InteractiveBox } from "@components/cards/interactiveBox";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+import userImage from "@assets/images/userImage.jpeg";
 import {
   getIconByName,
   OptionStaffPortal,
@@ -95,7 +96,7 @@ const HomeUI = (props: IHomeUIProps) => {
                 buttonText="Agregar vinculación"
                 descriptionStatus={dataHeader.status}
                 name={dataHeader.name ?? ""}
-                profileImageUrl="…"
+                profileImageUrl={dataHeader.image || userImage}
               />
             </StyledGeneralHeader>
             <StyledTitle $smallScreen={smallScreen}>
