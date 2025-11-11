@@ -316,15 +316,30 @@ export const TableFinancialObligationsUI = ({
         outstandingDues: values.term || "",
       };
 
-      const currentObligations = Array.isArray(initialValues)
-        ? initialValues
-        : initialValues
-          ? [initialValues]
-          : [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let currentObligations: any[] = [];
 
-      const updatedInitialValues = [...currentObligations, newObligation];
+      if (Array.isArray(initialValues)) {
+        currentObligations = [...initialValues];
+      } else if (initialValues && Array.isArray(initialValues.obligations)) {
+        currentObligations = [...initialValues.obligations];
+      } else if (initialValues) {
+        currentObligations = [initialValues];
+      }
 
-      handleOnChange(updatedInitialValues);
+      const updatedObligations = [...currentObligations, newObligation];
+
+      if (Array.isArray(initialValues)) {
+        handleOnChange(updatedObligations);
+      } else if (initialValues && typeof initialValues === "object") {
+        const updatedInitialValues = {
+          ...initialValues,
+          obligations: updatedObligations,
+        };
+        handleOnChange(updatedInitialValues);
+      } else {
+        handleOnChange(updatedObligations);
+      }
       setOpenModal(false);
       setRefreshKey?.((prev) => prev + 1);
     }

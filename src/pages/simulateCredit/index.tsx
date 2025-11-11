@@ -712,13 +712,17 @@ export function SimulateCredit() {
   }, [currentStep, businessUnitPublicCode]);
 
   useEffect(() => {
-    if (clientPortfolio) {
+    if (
+      clientPortfolio &&
+      (!formData.obligationsFinancial ||
+        Object.keys(formData.obligationsFinancial).length === 0)
+    ) {
       setFormData((prevState) => ({
         ...prevState,
         obligationsFinancial: clientPortfolio,
       }));
     }
-  }, [clientPortfolio]);
+  }, [clientPortfolio, formData.obligationsFinancial]);
 
   useEffect(() => {
     fetchRulesByProducts();
