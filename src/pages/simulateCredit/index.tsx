@@ -182,17 +182,17 @@ export function SimulateCredit() {
       }));
 
     const financialObligationProperties =
-      formData.obligationsFinancial?.obligations?.map((ob) => ({
+      formData.obligationsFinancial?.obligations?.map((obligation) => ({
         propertyName: textAddCongfig.financialObligation,
         propertyValue: [
-          ob.productName,
-          ob.nextPaymentValueTotal,
-          ob.balanceObligationTotal,
-          ob.entity,
-          ob.paymentMethodName,
-          ob.obligationNumber,
-          ob.duesPaid || "0",
-          ob.outstandingDues || "0",
+          obligation.productName,
+          obligation.nextPaymentValueTotal,
+          obligation.balanceObligationTotal,
+          obligation.entity,
+          obligation.paymentMethodName,
+          obligation.obligationNumber,
+          obligation.duesPaid || "0",
+          obligation.outstandingDues || "0",
         ]
           .filter((x) => x !== undefined && x !== null)
           .join(", "),
@@ -857,6 +857,21 @@ export function SimulateCredit() {
       formData.sourcesOfIncome?.PeriodicSalary,
     ],
   );
+
+  useEffect(() => {
+    if (formData.generalToggleChecked) {
+      const all = Object.keys(creditLineTerms);
+      setFormData((prev) => ({
+        ...prev,
+        selectedProducts: all,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        selectedProducts: [],
+      }));
+    }
+  }, [formData.generalToggleChecked, formData.togglesState]);
 
   return (
     <>

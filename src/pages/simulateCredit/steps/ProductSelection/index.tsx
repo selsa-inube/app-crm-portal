@@ -74,17 +74,6 @@ export function ProductSelection(props: IProductSelectionProps) {
     onFormValid(isValid);
   }, [generalToggleChecked, selectedProducts, onFormValid]);
 
-  useEffect(() => {
-    if (generalToggleChecked) {
-      const allProductValues = Object.keys(creditLineTerms);
-      setSelectedProducts(allProductValues);
-      handleFormDataChange("selectedProducts", allProductValues);
-    } else {
-      setSelectedProducts([]);
-      handleFormDataChange("selectedProducts", []);
-    }
-  }, [generalToggleChecked]);
-
   const allQuestions = Object.entries(electionData.questions).map(
     ([key, question], index) => ({ key, question, index }),
   );

@@ -316,15 +316,14 @@ export const TableFinancialObligationsUI = ({
         outstandingDues: values.term || "",
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let currentObligations: any[] = [];
+      let currentObligations: IObligationsFinancial[] = [];
 
       if (Array.isArray(initialValues)) {
         currentObligations = [...initialValues];
       } else if (initialValues && Array.isArray(initialValues.obligations)) {
         currentObligations = [...initialValues.obligations];
       } else if (initialValues) {
-        currentObligations = [initialValues];
+        currentObligations = [initialValues as IObligationsFinancial];
       }
 
       const updatedObligations = [...currentObligations, newObligation];
