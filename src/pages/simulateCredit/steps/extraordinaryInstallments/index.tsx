@@ -61,15 +61,6 @@ export function ExtraordinaryInstallments(
     setExtraordinary(initialValues || []);
   }, [initialValues]);
 
-  const handleUpdate = (updatedDebtor: TableExtraordinaryInstallmentProps) => {
-    setExtraordinary((prev) => {
-      const updated = prev.map((item) =>
-        item.id === updatedDebtor.id ? { ...item, ...updatedDebtor } : item,
-      );
-      return updated;
-    });
-  };
-
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -157,7 +148,6 @@ export function ExtraordinaryInstallments(
               extraordinary={extraordinary}
               service={false}
               handleDelete={handleDelete}
-              handleUpdate={handleUpdate}
               businessManagerCode={businessManagerCode}
             />
           </Stack>

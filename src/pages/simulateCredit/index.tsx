@@ -535,7 +535,11 @@ export function SimulateCredit() {
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       stepsAddProspect.sourcesIncome.id,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      servicesProductSelection?.financialObligation.includes("Y")
+        ? stepsAddProspect.obligationsFinancial.id
+        : togglesState[1]
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
       togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
@@ -585,7 +589,11 @@ export function SimulateCredit() {
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.sourcesIncome.id,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      servicesProductSelection?.financialObligation.includes("Y")
+        ? stepsAddProspect.obligationsFinancial.id
+        : togglesState[1]
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
       togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
@@ -666,9 +674,13 @@ export function SimulateCredit() {
       setIsLoadingCreditLimit(false);
     }
   };
+
   useEffect(() => {
-    if (currentStep === stepsAddProspect.productSelection.id) {
+    if (currentStep === stepsAddProspect.generalInformation.id) {
       fetchCreditLimit();
+    }
+
+    if (currentStep === stepsAddProspect.productSelection.id) {
       fetchDataClientPortfolio();
       fetchDataObligationPayment();
       fetchCapacityAnalysis();

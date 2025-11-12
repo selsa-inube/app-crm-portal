@@ -212,6 +212,7 @@ export function CreditProspects() {
   const handleConfirmProspect = () => {
     navigate(`/credit/apply-for-credit/${selectedProspect?.prospectCode}`);
   };
+
   return (
     <>
       <Stack
@@ -307,7 +308,9 @@ export function CreditProspects() {
                     )?.Code || prospect.moneyDestinationAbbreviatedName,
                     20,
                   )}
-                  borrower={prospect.borrowers[0].borrowerName}
+                  borrower={
+                    prospect.clientManagerName || dataCreditProspects.none
+                  }
                   numProspect={prospect.prospectCode}
                   date={prospect.timeOfCreation}
                   value={prospect.requestedAmount}

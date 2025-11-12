@@ -42,6 +42,7 @@ export const dataCreditProspects = {
   close: "Cerrar",
   modify: "Modificar observaciones",
   preanalysis: "Comentarios del pre-análisis",
+  none: "none",
 };
 
 export const errorMessage = {

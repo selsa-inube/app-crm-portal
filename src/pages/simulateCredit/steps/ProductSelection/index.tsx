@@ -110,8 +110,14 @@ export function ProductSelection(props: IProductSelectionProps) {
       state = getQuestionState(fullRules.extraInstallement);
     }
     if (key === "updateFinancialObligations") {
-      state = getQuestionState(fullRules.financialObligation);
+      const currentValue = fullRules.financialObligation;
+      if (currentValue.includes("N")) {
+        state = "enabled";
+      } else if (currentValue.includes("Y")) {
+        state = "hidden";
+      }
     }
+
     if (key === "includeAditionalBorrowers") {
       state = getQuestionState(fullRules.aditionalBorrowers);
     }

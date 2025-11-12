@@ -37,8 +37,10 @@ function MoneyDestination(props: IMoneyDestinationProps) {
 
   const [moneyDestinations, setMoneyDestinations] =
     useState<IMoneyDestination[]>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     searchAllMoneyDestinationByCustomerCode(
       businessUnitPublicCode,
       businessManagerCode,
@@ -65,6 +67,9 @@ function MoneyDestination(props: IMoneyDestinationProps) {
         setMessageError(
           `Error fetching money destinations data:, ${error.message}`,
         );
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [businessUnitPublicCode]);
 
@@ -111,6 +116,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
           showErrorModal={showErrorModal}
           messageError={messageError}
           groupedDestinations={groupedDestinations}
+          loading={loading}
         />
       )}
     </Formik>
