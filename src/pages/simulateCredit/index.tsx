@@ -44,6 +44,7 @@ import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 import { updateFinancialObligationsFormData } from "./utils";
+import { textAddCongfig } from "./config/addConfig";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -172,22 +173,44 @@ export function SimulateCredit() {
     },
   });
 
-  const onlyBorrowerData = useMemo(
-    () => ({
+  const onlyBorrowerData = useMemo(() => {
+    const numericIncomeProperties = Object.entries(formData.sourcesOfIncome)
+      .filter(([_, value]) => typeof value === "number" && !isNaN(value))
+      .map(([key, value]) => ({
+        propertyName: key,
+        propertyValue: String(value),
+      }));
+
+    const financialObligationProperties =
+      formData.obligationsFinancial?.obligations?.map((ob) => ({
+        propertyName: textAddCongfig.financialObligation,
+        propertyValue: [
+          ob.productName,
+          ob.nextPaymentValueTotal,
+          ob.balanceObligationTotal,
+          ob.entity,
+          ob.paymentMethodName,
+          ob.obligationNumber,
+          ob.duesPaid || "0",
+          ob.outstandingDues || "0",
+        ]
+          .filter((x) => x !== undefined && x !== null)
+          .join(", "),
+      })) || [];
+
+    return {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
-      borrowerType: "MainBorrower",
-      borrowerName: "Lenis Poveda",
+      borrowerType: textAddCongfig.mainBorrower,
+      borrowerName: customerData.fullName,
+
       borrowerProperties: [
-        {
-          propertyName: "PeriodicSalary",
-          propertyValue: "4500000",
-        },
+        ...numericIncomeProperties,
+        ...financialObligationProperties,
       ],
-    }),
-    [customerData],
-  );
+    };
+  }, [customerData, formData.sourcesOfIncome, formData.obligationsFinancial]);
 
   const simulateData: IProspect = useMemo(
     () => ({
