@@ -154,6 +154,7 @@ interface SimulateCreditUIProps {
   handleModalTryAgain: () => void;
   errorsManager: IManageErrors;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
+  loadingQuestions: boolean;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -218,6 +219,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     prospectCode,
     errorsManager,
     paymentChannel,
+    loadingQuestions,
   } = props;
 
   return (
@@ -419,6 +421,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           servicesProductSelection.extraInstallement,
                       }}
                       creditLineTerms={creditLineTerms!}
+                      loadingQuestions={loadingQuestions}
                     />
                   )}
                 {currentStepsNumber &&

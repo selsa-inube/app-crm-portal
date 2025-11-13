@@ -23,6 +23,7 @@ export const configModal = {
     cancel: "Cancelar",
     modify: "Modificar observaciones",
     labelTextarea: "Observaciones del prospecto",
+    preApproval: "Comentarios de la pre-aprobación",
     errorMessage: "Error al guardar las observaciones",
   },
   success: {

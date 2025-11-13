@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { MdInfoOutline } from "react-icons/md";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
-import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
+import {
+  Stack,
+  Text,
+  Toggle,
+  Divider,
+  Icon,
+  SkeletonLine,
+} from "@inubekit/inubekit";
 
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
@@ -35,6 +42,7 @@ interface IProductSelectionProps {
   choiceMoneyDestination: string;
   servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
+  loadingQuestions: boolean;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -51,6 +59,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     servicesQuestion,
     choiceMoneyDestination,
     creditLineTerms,
+    loadingQuestions,
   } = props;
   const validationSchema = Yup.object().shape({
     selectedProducts: Yup.array().when("generalToggleChecked", {
@@ -224,6 +233,13 @@ export function ProductSelection(props: IProductSelectionProps) {
                   )}
                 </Stack>
               </Fieldset>
+            )}
+            {loadingQuestions && (
+              <>
+                <SkeletonLine height="58px" />
+                <SkeletonLine height="58px" />
+                <SkeletonLine height="58px" />
+              </>
             )}
             {filteredQuestions.length > 0 && (
               <Fieldset>

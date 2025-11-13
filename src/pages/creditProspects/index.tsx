@@ -394,6 +394,11 @@ export function CreditProspects() {
                 placeHolderTag={true}
               />
               <CardGray
+                label={dataCreditProspects.preApproval}
+                placeHolder={selectedProspect?.clientManagerObservation || ""}
+                apparencePlaceHolder="gray"
+              />
+              <CardGray
                 label={dataCreditProspects.clientComments}
                 placeHolder={
                   commentsByProspectId[selectedProspect?.prospectId || ""] ||
