@@ -70,7 +70,6 @@ interface ApplyForCreditUIProps {
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
   businessManagerCode: string;
-  getRuleByName: (name: string) => string[];
   prospectSummaryData?: IProspectSummaryById;
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
   setApprovedRequestModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -92,6 +91,7 @@ interface ApplyForCreditUIProps {
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
+  guaranteesRequired: string[];
 }
 
 export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
@@ -108,7 +108,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     sentModal,
     approvedRequestModal,
     businessManagerCode,
-    getRuleByName,
     setSentModal,
     setApprovedRequestModal,
     handleFormChange,
@@ -129,6 +128,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     setMessageError,
     creditRequestCode,
     modesOfDisbursement,
+    guaranteesRequired,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -292,7 +292,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       })
                     }
                     prospectData={prospectData as IProspectBorrower}
-                    valueRule={getRuleByName("ValidationCoBorrower")}
+                    valueRule={guaranteesRequired}
                     businessManagerCode={businessManagerCode}
                   />
                 )}
@@ -306,8 +306,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ propertyOffered: values })
                     }
-                    businessUnitPublicCode={businessUnitPublicCode}
-                    businessManagerCode={businessManagerCode}
                   />
                 )}
 
@@ -321,8 +319,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ vehicleOffered: values })
                     }
-                    businessUnitPublicCode={businessUnitPublicCode}
-                    businessManagerCode={businessManagerCode}
                   />
                 )}
               {currentStepsNumber &&
