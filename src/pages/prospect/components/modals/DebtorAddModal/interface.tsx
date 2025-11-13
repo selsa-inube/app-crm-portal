@@ -6,6 +6,7 @@ import { TableFinancialObligations } from "@pages/prospect/components/TableOblig
 import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { IProspect } from "@services/prospect/types";
+import { ICustomerData } from "@context/CustomerContext/types";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";
@@ -25,6 +26,13 @@ interface DebtorAddModalUIProps {
   prospectData: IProspect;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  financialObligationsData: {
+    customerName: string;
+    customerIdentificationType: string;
+    customerIdentificationNumber: string;
+    obligations: string[];
+  };
+  setFinancialObligationsData: React.Dispatch<React.SetStateAction<string[]>>;
   handleFormChange: (updatedValues: Partial<FormData>) => void;
   handleIncomeChange: (updatedValues: Partial<IIncomeSources>) => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
@@ -33,6 +41,7 @@ interface DebtorAddModalUIProps {
   handleSubmitClick: () => void;
   handleClose: () => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
+  customerData?: ICustomerData;
 }
 
 export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
@@ -48,6 +57,8 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     prospectData,
     businessUnitPublicCode,
     businessManagerCode,
+    financialObligationsData,
+    setFinancialObligationsData,
     handleFormChange,
     handleIncomeChange,
     setCurrentStep,
@@ -56,6 +67,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     handleSubmitClick,
     handleClose,
     setIsCurrentFormValid,
+    customerData,
   } = props;
 
   const [totalCapitalIncome, setTotalCapitalIncome] = useState<number>(0);
@@ -106,6 +118,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
                 handleFormChange({ personalInfo: values })
               }
               AutoCompleted={AutoCompleted}
+              customerData={customerData!}
             />
           )}
         {currentStepsNumber &&
@@ -126,7 +139,15 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
           currentStepsNumber.id === stepsAddBorrower.BorrowerData.id && (
             <TableFinancialObligations
               showActions={true}
-              initialValues={prospectData}
+              initialValues={
+                financialObligationsData.obligations.length > 0
+                  ? financialObligationsData.obligations
+                  : []
+              }
+              services={false}
+              handleOnChange={(values) =>
+                setFinancialObligationsData(Array.isArray(values) ? values : [])
+              }
             />
           )}
         {currentStepsNumber &&

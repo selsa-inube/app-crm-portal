@@ -28,7 +28,6 @@ export const getEffectiveInterestRate = async (
         },
         signal: controller.signal,
       };
-      console.log(businessUnitPublicCode);
       const res = await fetch(
         `${environment.ICOREBANKING_API_URL_QUERY}/lines-of-credit/effective-interest-rate/${lineOfCreditAbbreviatedName}/${clientIdentificationNumber}`,
         options,

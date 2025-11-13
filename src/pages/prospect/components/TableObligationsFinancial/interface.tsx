@@ -235,13 +235,15 @@ export const TableFinancialObligationsUI = ({
   const { customerData } = useContext(CustomerContext);
 
   const borrowerOptions =
-    initialValues?.[0]?.borrowers?.map(
-      (borrower: IBorrowerDataFinancial, index: number) => ({
-        id: String(index),
-        value: String(index),
-        label: borrower.borrowerName,
-      }),
-    ) || [];
+    services && initialValues?.[0]?.borrowers
+      ? initialValues[0].borrowers.map(
+          (borrower: IBorrowerDataFinancial, index: number) => ({
+            id: String(index),
+            value: String(index),
+            label: borrower.borrowerName,
+          }),
+        )
+      : [];
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -485,11 +487,13 @@ export const TableFinancialObligationsUI = ({
         {handleOnChangeExtraBorrowers === undefined && (
           <>
             <Stack alignItems="center">
-              {!isMobile && initialValues?.[0]?.borrowers?.length <= 1 && (
-                <Text size="medium" type="label" weight="bold">
-                  {dataReport.title}
-                </Text>
-              )}
+              {!isMobile &&
+                services &&
+                initialValues?.[0]?.borrowers?.length <= 1 && (
+                  <Text size="medium" type="label" weight="bold">
+                    {dataReport.title}
+                  </Text>
+                )}
             </Stack>
           </>
         )}
@@ -502,7 +506,7 @@ export const TableFinancialObligationsUI = ({
             <>
               {!isMobile && (
                 <Stack>
-                  {initialValues?.[0]?.borrowers?.length > 1 ? (
+                  {services && initialValues?.[0]?.borrowers?.length > 1 ? (
                     borrowerOptions.length === 1 ? (
                       <Textfield
                         name="borrower"
@@ -530,18 +534,18 @@ export const TableFinancialObligationsUI = ({
                         fullwidth={isMobile}
                       />
                     )
-                  ) : (
+                  ) : services ? (
                     <Text size="medium" type="title" appearance="dark">
-                      {initialValuesModalDataProspect![0]?.borrowers[0]
-                        .borrowerName || ""}
+                      {initialValuesModalDataProspect?.[0]?.borrowers?.[0]
+                        ?.borrowerName || ""}
                     </Text>
-                  )}
+                  ) : null}
                 </Stack>
               )}
 
               {isMobile && (
                 <Stack padding="0px 0px 10px 0px">
-                  {initialValues?.[0]?.borrowers?.length > 1 ? (
+                  {services && initialValues?.[0]?.borrowers?.length > 1 ? (
                     borrowerOptions.length === 1 ? (
                       <Textfield
                         name="borrower"
@@ -569,13 +573,13 @@ export const TableFinancialObligationsUI = ({
                         fullwidth={isMobile}
                       />
                     )
-                  ) : (
+                  ) : services ? (
                     <CardGray
                       label={dataReport.title}
                       placeHolder={customerData?.fullName}
                       isMobile={true}
                     />
-                  )}
+                  ) : null}
                 </Stack>
               )}
             </>
