@@ -16,8 +16,6 @@ import {
   IExtraordinaryInstallments,
 } from "@services/prospect/types";
 import { AppContext } from "@context/AppContext";
-import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
@@ -28,10 +26,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
 
-import { ruleConfig } from "../applyForCredit/config/configRules";
-import { evaluateRule } from "../applyForCredit/evaluateRule";
 import { SimulationsUI } from "./interface";
-import { ICondition, Irule } from "../simulateCredit/types";
 import { dataEditProspect, labelsAndValuesShare } from "./config";
 
 export function Simulations() {
@@ -57,7 +52,6 @@ export function Simulations() {
   const { prospectCode } = useParams();
 
   const dataCreditRef = useRef<ICreditRequest>();
-  const valueRuleRef = useRef<{ [ruleName: string]: string[] }>({});
   const dataPrint = useRef<HTMLDivElement>(null);
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -191,25 +185,6 @@ export function Simulations() {
     navigate(`/credit/apply-for-credit/${prospectCode}`);
   };
 
-  const cleanConditions = (
-    rule: Irule | null | undefined,
-  ): Irule | null | undefined => {
-    if (!rule) return rule;
-
-    const cleaned = { ...rule };
-
-    if (Array.isArray(cleaned.conditions)) {
-      const hasValidCondition = cleaned.conditions.some(
-        (c: ICondition) =>
-          c.value !== undefined && c.value !== null && c.value !== "",
-      );
-      if (!hasValidCondition) {
-        Reflect.deleteProperty(cleaned, "conditions");
-      }
-    }
-    return cleaned;
-  };
-
   const fetchProspectData = async () => {
     try {
       const result = await getSearchProspectByCode(
@@ -266,116 +241,6 @@ export function Simulations() {
       setMessageError(labelsAndValuesShare.error);
     }
   };
-
-  const fetchValidationRules = useCallback(async () => {
-    const rulesToCheck = ["ValidationGuarantee", "ValidationCoBorrower"];
-    const notDefinedRules: string[] = [];
-    await Promise.all(
-      rulesToCheck.map(async (ruleName) => {
-        try {
-          const rule = cleanConditions(ruleConfig[ruleName]?.({}));
-          if (!rule) return notDefinedRules.push(ruleName);
-          await evaluateRule(
-            rule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            businessManagerCode,
-          );
-        } catch (error) {
-          const errorResponse = error as { response?: { status: number } };
-          if (errorResponse.response?.status === 400) {
-            notDefinedRules.push(ruleName);
-          }
-        }
-      }),
-    );
-
-    if (notDefinedRules.length >= 1) {
-      setCodeError(1013);
-      setAddToFix(notDefinedRules);
-    }
-  }, [businessUnitPublicCode]);
-
-  const fetchValidationRulesData = useCallback(async () => {
-    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    const creditProducts = dataProspect?.creditProducts;
-
-    if (!clientInfo.associateType || !creditProducts?.length || !dataProspect)
-      return;
-
-    const dataRulesBase = {
-      ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      LoanAmount: dataProspect.requestedAmount,
-      PrimaryIncomeType: "",
-      AffiliateSeniority: getMonthsElapsed(
-        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-        0,
-      ),
-    };
-
-    const rulesValidate = ["ValidationGuarantee", "ValidationCoBorrower"];
-
-    for (const product of creditProducts) {
-      if (!product || typeof product !== "object") continue;
-
-      const dataRules = {
-        ...dataRulesBase,
-        LineOfCredit: product.lineOfCreditAbbreviatedName,
-      };
-      await Promise.all(
-        rulesValidate.map(async (ruleName) => {
-          const rule = ruleConfig[ruleName]?.(dataRules);
-          if (!rule) return;
-
-          try {
-            const values = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              businessManagerCode,
-            );
-
-            const extractedValues = Array.isArray(values)
-              ? values
-                  .map((v) =>
-                    typeof v === "string" ? v : (v?.valuesAvailable ?? ""),
-                  )
-                  .filter((val): val is string => val !== "")
-              : [];
-
-            if (
-              ruleName === "ModeOfDisbursementType" &&
-              extractedValues.length === 0
-            ) {
-              setCodeError(1014);
-              setAddToFix([ruleName]);
-              return;
-            }
-
-            valueRuleRef.current = {
-              ...valueRuleRef.current,
-              [ruleName]: extractedValues,
-            };
-          } catch (error) {
-            console.error(
-              `Error evaluando ${ruleName} para producto`,
-              product,
-              error,
-            );
-          }
-        }),
-      );
-    }
-  }, [customerData, dataProspect, businessUnitPublicCode]);
-
-  useEffect(() => {
-    if (customerData && dataProspect) {
-      fetchValidationRules();
-      fetchValidationRulesData();
-    }
-  }, [customerData, dataProspect, fetchValidationRulesData]);
 
   useEffect(() => {
     if (!customerData?.customerId || !dataProspect) return;
