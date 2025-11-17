@@ -85,7 +85,6 @@ export function SimulateCredit() {
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [sentModal, setSentModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
-
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -103,8 +102,8 @@ export function SimulateCredit() {
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const userAccount = eventData.user.identificationDocumentNumber || "";
   const customerPublicCode: string = customerData.publicCode;
-
   const [formState, setFormState] = useState({
     type: "",
     entity: "",
@@ -901,6 +900,7 @@ export function SimulateCredit() {
         prospectCode={prospectCode}
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
+        userAccount={userAccount}
       />
       {showConsultingModal && <Consulting />}
     </>

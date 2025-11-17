@@ -89,7 +89,6 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     businessManagerCode,
     dataMaximumCreditLimitService,
   ]);
-
   return (
     <>
       <BaseModal

@@ -34,7 +34,6 @@ export function CreditLimitCard(props: CreditLimitProps) {
     dataMaximumCreditLimitService,
     creditLine,
     creditLineTxt,
-    paymentCapacityData,
     isMobile,
     userAccount,
     setError,
@@ -62,7 +61,6 @@ export function CreditLimitCard(props: CreditLimitProps) {
       setLoading(false);
     }, 2000);
   };
-
   return (
     <StyledContainer>
       <Stack direction="column" gap="6px" alignItems="center">
@@ -127,7 +125,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
-      {openModal === "paymentCapacity" && paymentCapacityData && (
+      {openModal === "paymentCapacity" && (
         <PaymentCapacityModal
           isMobile={isMobile}
           handleClose={() => setOpenModal(null)}

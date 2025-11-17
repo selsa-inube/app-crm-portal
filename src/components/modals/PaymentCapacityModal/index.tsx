@@ -125,7 +125,6 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
       (sum, installment) => sum + (Number(installment.installmentAmount) || 0),
       0,
     ) || 0);
-
   return (
     <BaseModal
       title="Monto máx. según capacidad de pago"
