@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MdOutlineMoreVert } from "react-icons/md";
 import { Icon } from "@inubekit/inubekit";
 
@@ -8,6 +7,8 @@ export interface ActionMobileProps {
   handleEdit?: () => void;
   handleView?: () => void;
   handleDelete?: () => void;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
 export function ActionMobile(props: ActionMobileProps) {
@@ -15,9 +16,10 @@ export function ActionMobile(props: ActionMobileProps) {
     handleEdit = () => {},
     handleView = () => {},
     handleDelete = () => {},
+    isOpen = false,
+    onToggle = () => {},
   } = props;
 
-  const [modalOpen, setModalOpen] = useState(false);
   return (
     <>
       <Icon
@@ -25,16 +27,25 @@ export function ActionMobile(props: ActionMobileProps) {
         size="16px"
         cursorHover
         appearance="primary"
-        onClick={() => setModalOpen(true)}
+        onClick={onToggle}
         shape="circle"
         variant="filled"
       />
-      {modalOpen && (
+      {isOpen && (
         <ActionModal
-          onClose={() => setModalOpen(false)}
-          handleDelete={handleDelete}
-          handleEdit={handleEdit}
-          handleView={handleView}
+          onClose={onToggle}
+          handleDelete={() => {
+            handleDelete();
+            onToggle();
+          }}
+          handleEdit={() => {
+            handleEdit();
+            onToggle();
+          }}
+          handleView={() => {
+            handleView();
+            onToggle();
+          }}
         />
       )}
     </>

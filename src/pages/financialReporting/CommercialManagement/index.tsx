@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  MdOutlineAdd,
   MdOutlineChevronRight,
   MdOutlineMoreVert,
   MdOutlinePhone,
@@ -29,7 +28,11 @@ import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPayme
 import { DisbursementModal } from "@components/modals/DisbursementModal";
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
-import { IProspect, ICreditProduct } from "@services/prospect/types";
+import {
+  IProspect,
+  ICreditProduct,
+  IProspectSummaryById,
+} from "@services/prospect/types";
 import { CreditProspect } from "@pages/prospect/components/CreditProspect";
 import { AppContext } from "@context/AppContext";
 import { dataTabsDisbursement } from "@components/modals/DisbursementModal/types";
@@ -131,6 +134,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [prospectSummaryData, setProspectSummaryData] =
+    useState<IProspectSummaryById>({} as IProspectSummaryById);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -298,7 +303,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     <>
       <Fieldset
         title={errorMessages.comercialManagement.titleCard}
-        descriptionTitle={errorMessages.comercialManagement.descriptionCard}
+        descriptionTitle={data.stage}
       >
         {!data ? (
           <ItemNotFound
@@ -350,7 +355,10 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                     <Text type="title" size="small">
                       {data.clientName &&
                         capitalizeFirstLetter(
-                          truncateTextToMaxLength(data.moneyDestinationId, 60),
+                          truncateTextToMaxLength(
+                            data.moneyDestinationAbreviatedName,
+                            60,
+                          ),
                         )}
                     </Text>
                   </Stack>
@@ -477,30 +485,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
               {collapse && (
                 <>
                   {isMobile && (
-                    <Stack padding="10px 0px" width="100%">
-                      <Button
-                        type="button"
-                        appearance="primary"
-                        spacing="compact"
-                        fullwidth
-                        iconBefore={
-                          <Icon
-                            icon={<MdOutlineAdd />}
-                            appearance="light"
-                            size="18px"
-                            spacing="narrow"
-                          />
-                        }
-                      >
-                        {tittleOptions.titleAddProduct}
-                      </Button>
-                    </Stack>
-                  )}
-                </>
-              )}
-              {collapse && (
-                <>
-                  {isMobile && (
                     <Stack padding="0px 0px 10px">
                       {prospectProducts?.some(
                         (product) => product.extraordinaryInstallments,
@@ -577,6 +561,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   isMobile={isMobile}
                   prospectData={prospectData}
                   businessManagerCode={businessManagerCode}
+                  prospectSummaryData={prospectSummaryData}
+                  setProspectSummaryData={setProspectSummaryData}
                   showPrint
                   showMenu={() => setShowMenu(false)}
                   isPrint={true}

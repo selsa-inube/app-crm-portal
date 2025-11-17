@@ -15,6 +15,7 @@ export function Customer() {
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [autocompleteKey, setAutocompleteKey] = useState(0);
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
@@ -27,7 +28,7 @@ export function Customer() {
 
   const handleSearch = async (value: string) => {
     try {
-      if (value.length < 3) {
+      if (value.length < 1) {
         setOptions([]);
         return;
       }
@@ -55,17 +56,8 @@ export function Customer() {
           label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
           value: item.publicCode,
         }));
+        setShowError(false);
         setOptions(mappedOptions);
-
-        setTimeout(() => {
-          const clickable = selectRef.current?.querySelector("input");
-          if (clickable) {
-            clickable.focus();
-            clickable.dispatchEvent(
-              new KeyboardEvent("keyup", { bubbles: true }),
-            );
-          }
-        }, 50);
       } else {
         setOptions([]);
       }
@@ -76,18 +68,21 @@ export function Customer() {
     }
   };
 
-  const handleChangeAutocomplete = (_: unknown, value: string | null) => {
+  const handleChangeAutocomplete = (__: string, value: string | null) => {
     const upperValue = value?.toUpperCase() || "";
     setInputValue(upperValue);
+
     setShowError(false);
     if (!value) {
       setOptions([]);
+      setAutocompleteKey((prev) => prev + 1);
     }
   };
 
   useEffect(() => {
     if (inputValue.trim() === "") {
       setOptions([]);
+      setAutocompleteKey((prev) => prev + 1);
       return;
     }
     handleSearch(inputValue);
@@ -112,6 +107,7 @@ export function Customer() {
   };
 
   useEffect(() => {
+    setOptions([]);
     handleSearch(inputValue);
   }, [businessUnitSigla]);
 
@@ -125,6 +121,7 @@ export function Customer() {
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
       messageError={messageError}
+      autocompleteKey={autocompleteKey}
     />
   );
 }
