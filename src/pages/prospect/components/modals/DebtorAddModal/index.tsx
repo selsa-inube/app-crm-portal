@@ -7,8 +7,11 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { getAge } from "@utils/formatData/currency";
 import { IProspect } from "@services/prospect/types";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { getCreditPayments } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment";
+import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
+import { searchPortfolioObligationsById } from "@services/portfolioObligation/SearchGeneralInformationObligation";
+import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 
+import { transformObligationsToBorrowerProperties } from "../DebtorEditModal/utils";
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { DebtorAddModalUI } from "./interface";
 import { FormData } from "./types";
@@ -68,7 +71,9 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     undefined,
   );
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
-  const [financialObligationsData] = useState<string[]>([]);
+  const [financialObligationsData, setFinancialObligationsData] = useState<
+    IObligations[]
+  >([]);
 
   const dataBorrower: BorrowerData[] = [
     {
@@ -112,11 +117,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           propertyName: "PensionAllowances",
           propertyValue: incomeData?.PensionAllowances?.toString() || "0",
         },
-        // Obligaciones financieras capturadas en el formulario
-        ...financialObligationsData.map((obligation) => ({
-          propertyName: "FinancialObligation",
-          propertyValue: obligation,
-        })),
+        ...transformObligationsToBorrowerProperties(financialObligationsData),
         {
           propertyName: "name",
           propertyValue: formData.personalInfo.firstName,
@@ -162,30 +163,6 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
 
   const borrowerId = formData.personalInfo.documentNumber.toString();
 
-  // Función para mapear IPayment[]
-  // const mapPaymentsToObligations = (payments: string[]) => {
-  //   return payments.map((payment) => {
-  //     // Buscar valores en las opciones
-  //     const nextPaymentOption = payment.options.find((opt) =>
-  //       opt.label.includes("Próximo"),
-  //     );
-  //     const totalOption = payment.options.find((opt) =>
-  //       opt.label.includes("total"),
-  //     );
-
-  //     return {
-  //       obligationNumber: payment.id,
-  //       productName: payment.title,
-  //       paymentMethodName: payment.paymentMethodName,
-  //       balanceObligationTotal: totalOption?.value || 0,
-  //       nextPaymentValueTotal: nextPaymentOption?.value || 0,
-  //       entity: "fondecom", // Valor por defecto o extraer de otra fuente
-  //       duesPaid: 0, // Estos valores necesitarían venir de otra fuente
-  //       outstandingDues: 0,
-  //     };
-  //   });
-  // };
-
   function capitalizeKeysExceptSome<T>(
     obj: Record<string, unknown>,
     exclude: string[] = [],
@@ -202,6 +179,51 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
 
     return result as unknown as T;
   }
+
+  const getFinancialObligations = async (publicCode: string) => {
+    const obligations = await getClientPortfolioObligationsById(
+      businessUnitPublicCode || "",
+      businessManagerCode,
+      publicCode,
+    );
+
+    if (!obligations) return;
+
+    const results = await Promise.all(
+      obligations.obligations.map(async (obligation) => {
+        const obligationGeneralInformation =
+          await searchPortfolioObligationsById(
+            businessUnitPublicCode || "",
+            businessManagerCode,
+            obligations.customerIdentificationNumber,
+            obligation.obligationNumber,
+          );
+
+        if (!obligationGeneralInformation) return null;
+
+        return {
+          balanceObligationTotal:
+            obligationGeneralInformation[0].balanceObligation.total,
+          duesPaid: obligationGeneralInformation[0].paidQuotas,
+          entity: obligation.entity,
+          nextPaymentValueTotal:
+            obligationGeneralInformation[0].nextPaymentValue.total,
+          obligationNumber: obligation.obligationNumber,
+          outstandingDues: obligationGeneralInformation[0].pendingQuotas,
+          paymentMethodName: obligationGeneralInformation[0].paymentMethodName,
+          productName: obligationGeneralInformation[0].productName,
+        };
+      }),
+    );
+
+    const allTransformedObligations: IObligations[] = results.filter(
+      (item): item is IObligations => item !== null,
+    );
+
+    setFinancialObligationsData((prev) => {
+      return [...prev, ...allTransformedObligations];
+    });
+  };
 
   useEffect(() => {
     if (!borrowerId) return;
@@ -238,19 +260,8 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           businessManagerCode,
         );
 
-        const obligations = await getCreditPayments(
-          borrowerId,
-          businessUnitPublicCode || "",
-          businessManagerCode,
-        );
-        console.log("obligations", obligations);
+        getFinancialObligations(customer.publicCode);
 
-        // Mapear IPayment[] a la estructura esperada
-        /* const mappedObligations = obligations
-          ? mapPaymentsToObligations(obligations)
-          : [];
-        setFinancialObligationsData(mappedObligations);
-*/
         const formattedData = capitalizeKeysExceptSome<IIncomeSources>(
           response as unknown as Record<string, unknown>,
           ["name", "surname", "identificationNumber", "identificationType"],
@@ -284,7 +295,12 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     };
 
     fetchIncomeData();
-  }, [borrowerId, businessUnitPublicCode, businessManagerCode]);
+  }, [
+    borrowerId,
+    businessUnitPublicCode,
+    businessManagerCode,
+    isAutoCompleted,
+  ]);
 
   useEffect(() => {
     if (!isAutoCompleted) {
@@ -360,8 +376,6 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     });
   };
 
-  // Transformar formData en la estructura de prospectData para los pasos 2 y 3
-  // Si hay datos autocompletados del backend, se mapean en borrowerProperties
   const transformedProspectData: IProspect = {
     ...prospectData,
     borrowers: [
@@ -374,16 +388,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
         borrowerIdentificationNumber:
           formData.personalInfo.documentNumber.toString(),
         borrowerProperties: [
-          // Si hay datos autocompletados, incluir las obligaciones financieras
-          ...financialObligationsData.map(() => ({
-            propertyName: "FinancialObligation",
-            propertyValue: "xxxx",
-            // `${obligation.productName}, ${obligation.balanceObligationTotal}, ${obligation.nextPaymentValueTotal}, ${obligation.entity}, ${obligation.paymentMethodName}, ${obligation.obligationNumber}, ${obligation.duesPaid}, ${obligation.outstandingDues}`,
-          })),
-          // Mantener las propiedades originales del prospectData si existen
-          ...(prospectData?.borrowers?.[0]?.borrowerProperties?.filter(
-            (prop) => prop.propertyName !== "FinancialObligation",
-          ) || []),
+          ...transformObligationsToBorrowerProperties(financialObligationsData),
         ],
       },
     ],
@@ -408,7 +413,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           formData.personalInfo.documentNumber.toString(),
         obligations: financialObligationsData,
       }}
-      setFinancialObligationsData={() => {}}
+      setFinancialObligationsData={setFinancialObligationsData}
       handleFormChange={handleFormChange}
       handleIncomeChange={handleIncomeChange}
       handleNextStep={handleNextStep}

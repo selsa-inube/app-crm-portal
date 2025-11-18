@@ -285,7 +285,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   <Borrowers
                     isMobile={isMobile}
                     onFormValid={setIsCurrentFormValid}
-                    initialValues={formData.borrowerData}
+                    initialValues={prospectData.borrowers}
                     handleOnChange={(values) =>
                       handleFormChange({
                         borrowerData: values as IBorrowerData,

@@ -7,6 +7,7 @@ import { SourceIncome } from "@pages/prospect/components/SourceIncome";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { IProspect } from "@services/prospect/types";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";
@@ -30,9 +31,11 @@ interface DebtorAddModalUIProps {
     customerName: string;
     customerIdentificationType: string;
     customerIdentificationNumber: string;
-    obligations: string[];
+    obligations: IObligations[];
   };
-  setFinancialObligationsData: React.Dispatch<React.SetStateAction<string[]>>;
+  setFinancialObligationsData: React.Dispatch<
+    React.SetStateAction<IObligations[]>
+  >;
   handleFormChange: (updatedValues: Partial<FormData>) => void;
   handleIncomeChange: (updatedValues: Partial<IIncomeSources>) => void;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;

@@ -248,7 +248,7 @@ export function ApplyForCredit() {
       .filter((step) => {
         if (step.id === 3 && hasBorrowers === 1)
           // && hasCoborrower === false) ojo cambiar luego del debug
-          return false;
+          return true;
         if (step.id === 4 && hideMortgage) return false;
         if (step.id === 5 && hidePledge) return false;
         if (step.id === 6 && (hasBorrowers >= 1 || hasBond)) {

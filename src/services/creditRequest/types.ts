@@ -23,6 +23,17 @@ export interface IObligations {
     productName: string;
   }[];
 }
+
+export interface IObligationsByClient {
+  balanceObligationTotal: number;
+  duesPaid: number;
+  entity: string;
+  nextPaymentValueTotal: number;
+  obligationNumber: string;
+  outstandingDues: number;
+  paymentMethodName: string;
+  productName: string;
+}
 export interface IValidateRequirement {
   borrowerName: string;
   documentalRequirement: string[];
