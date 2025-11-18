@@ -230,7 +230,7 @@ export function ApplyForCredit() {
     if (!guaranteesRequired) return Object.values(stepsFilingApplication);
     const hideMortgage = guaranteesRequired.includes("Mortgage");
     const hidePledge = guaranteesRequired.includes("Pledge");
-    const hasCoborrower = true; //guaranteesRequired.includes("Coborower") ?? false; ojo se deja en true para ver el paso
+    const hasCoborrower = guaranteesRequired.includes("Coborower") ?? false;
     const hasBond = guaranteesRequired.includes("Bond") ?? false;
 
     return Object.values(stepsFilingApplication)
@@ -246,9 +246,7 @@ export function ApplyForCredit() {
         return step;
       })
       .filter((step) => {
-        if (step.id === 3 && hasBorrowers === 1)
-          // && hasCoborrower === false) ojo cambiar luego del debug
-          return true;
+        if (step.id === 3 && hasBorrowers === 1) return false;
         if (step.id === 4 && hideMortgage) return false;
         if (step.id === 5 && hidePledge) return false;
         if (step.id === 6 && (hasBorrowers >= 1 || hasBond)) {
