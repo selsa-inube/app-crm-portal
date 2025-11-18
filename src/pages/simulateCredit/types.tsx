@@ -129,6 +129,7 @@ export interface IFormData {
     value: number;
     totalCollected: number;
     selectedValues: Record<string, number>;
+    selectedLabels?: Record<string, string>;
   };
   consolidatedCreditArray?: IConsolidatedCreditItem[];
   sourcesOfIncome: ISourcesOfIncomeState;

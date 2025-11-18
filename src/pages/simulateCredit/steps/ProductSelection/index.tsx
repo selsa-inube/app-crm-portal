@@ -234,14 +234,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                 </Stack>
               </Fieldset>
             )}
-            {loadingQuestions && (
-              <>
-                <SkeletonLine height="58px" />
-                <SkeletonLine height="58px" />
-                <SkeletonLine height="58px" />
-              </>
-            )}
-            {filteredQuestions.length > 0 && (
+            {filteredQuestions.length > 0 && !loadingQuestions ? (
               <Fieldset>
                 {filteredQuestions.map(
                   ({ key, question, index }, filteredIndex) => (
@@ -316,6 +309,12 @@ export function ProductSelection(props: IProductSelectionProps) {
                   ),
                 )}
               </Fieldset>
+            ) : (
+              <>
+                <SkeletonLine height="58px" />
+                <SkeletonLine height="58px" />
+                <SkeletonLine height="58px" />
+              </>
             )}
           </Stack>
           {showInfoModal && (

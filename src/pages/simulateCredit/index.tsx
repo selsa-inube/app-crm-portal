@@ -913,6 +913,7 @@ export function SimulateCredit() {
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
         loadingQuestions={loadingQuestions}
+        showSelectsLoanAmount={!formData.togglesState[0]}
       />
       {showConsultingModal && <Consulting />}
     </>

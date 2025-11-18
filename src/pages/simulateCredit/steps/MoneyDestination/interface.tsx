@@ -31,7 +31,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
 
   return (
     <>
-      <Fieldset>
+      <Fieldset heightFieldset="400px" alignContent={false}>
         <Stack direction="column" padding="0 16px">
           {loading ? (
             <Stack direction="column" gap="12px">
