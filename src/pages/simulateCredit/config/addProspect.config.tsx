@@ -41,7 +41,7 @@ export const stepsAddProspect = {
     id: 7,
     number: 7,
     name: "Deudores",
-    description: "Actualiza los deudores",
+    description: "Registra los deudores.",
   },
   loanConditions: {
     id: 8,

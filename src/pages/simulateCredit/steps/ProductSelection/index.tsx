@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { MdInfoOutline } from "react-icons/md";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
-import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
+import {
+  Stack,
+  Text,
+  Toggle,
+  Divider,
+  Icon,
+  SkeletonLine,
+} from "@inubekit/inubekit";
 
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
@@ -35,6 +42,7 @@ interface IProductSelectionProps {
   choiceMoneyDestination: string;
   servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
+  loadingQuestions: boolean;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -51,6 +59,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     servicesQuestion,
     choiceMoneyDestination,
     creditLineTerms,
+    loadingQuestions,
   } = props;
   const validationSchema = Yup.object().shape({
     selectedProducts: Yup.array().when("generalToggleChecked", {
@@ -110,8 +119,14 @@ export function ProductSelection(props: IProductSelectionProps) {
       state = getQuestionState(fullRules.extraInstallement);
     }
     if (key === "updateFinancialObligations") {
-      state = getQuestionState(fullRules.financialObligation);
+      const currentValue = fullRules.financialObligation;
+      if (currentValue.includes("N")) {
+        state = "enabled";
+      } else if (currentValue.includes("Y")) {
+        state = "hidden";
+      }
     }
+
     if (key === "includeAditionalBorrowers") {
       state = getQuestionState(fullRules.aditionalBorrowers);
     }
@@ -219,7 +234,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                 </Stack>
               </Fieldset>
             )}
-            {filteredQuestions.length > 0 && (
+            {filteredQuestions.length > 0 && !loadingQuestions ? (
               <Fieldset>
                 {filteredQuestions.map(
                   ({ key, question, index }, filteredIndex) => (
@@ -294,6 +309,12 @@ export function ProductSelection(props: IProductSelectionProps) {
                   ),
                 )}
               </Fieldset>
+            ) : (
+              <>
+                <SkeletonLine height="58px" />
+                <SkeletonLine height="58px" />
+                <SkeletonLine height="58px" />
+              </>
             )}
           </Stack>
           {showInfoModal && (

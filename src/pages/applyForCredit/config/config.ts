@@ -27,6 +27,9 @@ export const dataSubmitApplication = {
     destination: "Destino: ",
   },
   error: "Ha ocurrido un error al cargar garantías de la solicitud de crédito.",
+  creditProducts: "Productos de crédito:",
+  prospect: "Prospecto",
+  net: "Neto a girar:",
 };
 export const prospectStates = {
   CREATED: "Created",

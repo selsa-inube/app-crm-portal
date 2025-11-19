@@ -33,9 +33,9 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
       handleClose={handleClose}
       finalDivider={true}
       width={isMobile ? "290px" : "912px"}
-      height={isMobile ? "auto" : "680px"}
+      height={isMobile ? "auto" : "750px"}
     >
-      <Stack direction="column" height={isMobile ? "auto" : "510px"} gap="24px">
+      <Stack direction="column" height={isMobile ? "auto" : "590px"} gap="24px">
         <Tabs
           scroll={isMobile}
           selectedTab={currentTab}

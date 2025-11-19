@@ -84,6 +84,7 @@ export function SimulateCredit() {
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [sentModal, setSentModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
 
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
@@ -310,7 +311,7 @@ export function SimulateCredit() {
   const fetchRulesByProducts = useCallback(async () => {
     if (!formData.selectedProducts || formData.selectedProducts.length === 0)
       return;
-
+    setLoadingQuestions(true);
     try {
       const results = await Promise.all(
         formData.selectedProducts.map(async (product) => {
@@ -359,8 +360,10 @@ export function SimulateCredit() {
       setShowErrorModal(true);
       setMessageError(messagesError.tryLater);
       setAllowToContinue(false);
+    } finally {
+      setLoadingQuestions(false);
     }
-  }, [formData.selectedProducts]);
+  }, [formData.selectedProducts, stepsAddProspect.productSelection.id]);
 
   const fetchDataClientPortfolio = async () => {
     if (!customerPublicCode) {
@@ -535,7 +538,11 @@ export function SimulateCredit() {
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       stepsAddProspect.sourcesIncome.id,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      servicesProductSelection?.financialObligation.includes("Y")
+        ? stepsAddProspect.obligationsFinancial.id
+        : togglesState[1]
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
       togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
@@ -585,7 +592,11 @@ export function SimulateCredit() {
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.sourcesIncome.id,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      servicesProductSelection?.financialObligation.includes("Y")
+        ? stepsAddProspect.obligationsFinancial.id
+        : togglesState[1]
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
       togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
@@ -666,9 +677,13 @@ export function SimulateCredit() {
       setIsLoadingCreditLimit(false);
     }
   };
+
   useEffect(() => {
-    if (currentStep === stepsAddProspect.productSelection.id) {
+    if (currentStep === stepsAddProspect.generalInformation.id) {
       fetchCreditLimit();
+    }
+
+    if (currentStep === stepsAddProspect.productSelection.id) {
       fetchDataClientPortfolio();
       fetchDataObligationPayment();
       fetchCapacityAnalysis();
@@ -897,6 +912,8 @@ export function SimulateCredit() {
         prospectCode={prospectCode}
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
+        loadingQuestions={loadingQuestions}
+        showSelectsLoanAmount={!formData.togglesState[0]}
       />
       {showConsultingModal && <Consulting />}
     </>

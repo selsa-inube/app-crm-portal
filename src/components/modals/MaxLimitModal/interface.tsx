@@ -58,7 +58,8 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                 ) : (
                   <Text type="body" size="medium">
                     {currencyFormat(
-                      dataMaximumCreditLimitService.customerCreditLimitInLineOfCredit,
+                      dataMaximumCreditLimitService.customerCreditLimitInLineOfCredit ||
+                        0,
                       false,
                     )}
                   </Text>
@@ -76,7 +77,8 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                 ) : (
                   <Text type="body" size="medium">
                     {currencyFormat(
-                      dataMaximumCreditLimitService.customerTotalObligationsInLineOfCredit,
+                      dataMaximumCreditLimitService.customerTotalObligationsInLineOfCredit ||
+                        0,
                       false,
                     )}
                   </Text>
@@ -102,7 +104,8 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                 {loading
                   ? incomeModalConfig.loading
                   : currencyFormat(
-                      dataMaximumCreditLimitService.lineOfCreditLoanAmountLimitRegulation,
+                      dataMaximumCreditLimitService.lineOfCreditLoanAmountLimitRegulation ||
+                        0,
                       false,
                     )}
               </Text>
