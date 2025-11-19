@@ -14,7 +14,6 @@ import {
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { CardGray } from "@components/cards/CardGray";
 import { dataAddSeriesModal } from "@components/modals/AddSeriesModal/config";
@@ -38,9 +37,7 @@ interface ITableExtraordinaryInstallmentProps {
   visbleActions: { key: string; label: string }[];
   extraordinaryInstallments: TableExtraordinaryInstallmentProps[];
   isMobile: boolean;
-  selectedDebtor: TableExtraordinaryInstallmentProps;
   isOpenModalDelete: boolean;
-  isOpenModalEdit: boolean;
   prospectData: IProspect | undefined;
   businessUnitPublicCode: string;
   service: boolean;
@@ -55,7 +52,6 @@ interface ITableExtraordinaryInstallmentProps {
   setIsOpenModalView: (value: boolean) => void;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModalDelete: (value: boolean) => void;
-  setIsOpenModalEdit: (value: boolean) => void;
   setInstallmentState: React.Dispatch<
     React.SetStateAction<{
       installmentAmount: number;
@@ -63,9 +59,6 @@ interface ITableExtraordinaryInstallmentProps {
       paymentChannelAbbreviatedName: string;
     }>
   >;
-  handleUpdate: (
-    updatedDebtor: TableExtraordinaryInstallmentProps,
-  ) => Promise<void>;
   usePagination: {
     totalRecords: number;
     handleStartPage: () => void;
@@ -103,15 +96,11 @@ export function TableExtraordinaryInstallmentUI(
     usePagination,
     showErrorModal,
     messageError,
-    isOpenModalEdit,
     isOpenModalView,
-    selectedDebtor,
     installmentState,
     setIsOpenModalView,
-    handleUpdate,
     setShowErrorModal,
     setIsOpenModalDelete,
-    setIsOpenModalEdit,
     setSelectedDebtor,
     handleDeleteAction,
     setInstallmentState,
@@ -231,39 +220,12 @@ export function TableExtraordinaryInstallmentUI(
                           setIsOpenModalView(true);
                           setOpenMenuIndex(null);
                         }}
-                        handleEdit={() => {
-                          setSelectedDebtor(row);
-                          setInstallmentState({
-                            installmentAmount: Number(row.value) || 0,
-                            installmentDate:
-                              typeof row.datePayment === "string"
-                                ? row.datePayment
-                                : String(row.datePayment) || "",
-                            paymentChannelAbbreviatedName:
-                              String(row.paymentMethod) || "",
-                          });
-                          setIsOpenModalEdit(true);
-                          setOpenMenuIndex(null);
-                        }}
                       />
                     ) : (
                       <Detail
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
-                        }}
-                        handleEdit={() => {
-                          setSelectedDebtor(row);
-                          setInstallmentState({
-                            installmentAmount: Number(row.value) || 0,
-                            installmentDate:
-                              typeof row.datePayment === "string"
-                                ? row.datePayment
-                                : String(row.datePayment) || "",
-                            paymentChannelAbbreviatedName:
-                              String(row.paymentMethod) || "",
-                          });
-                          setIsOpenModalEdit(true);
                         }}
                       />
                     )}
@@ -328,27 +290,6 @@ export function TableExtraordinaryInstallmentUI(
           handleClose={() => setShowErrorModal(false)}
           isMobile={isMobile}
           message={messageError}
-        />
-      )}
-      {isOpenModalEdit && (
-        <AddSeriesModal
-          handleClose={() => setIsOpenModalEdit(false)}
-          onSubmit={(values: {
-            installmentDate: string;
-            paymentChannelAbbreviatedName: string;
-          }) => {
-            const updated: TableExtraordinaryInstallmentProps = {
-              ...selectedDebtor,
-              datePayment: values.installmentDate,
-              paymentMethod: values.paymentChannelAbbreviatedName,
-              value: installmentState.installmentAmount,
-            };
-            handleUpdate(updated);
-          }}
-          installmentState={installmentState}
-          setInstallmentState={setInstallmentState}
-          service={false}
-          isEdit
         />
       )}
       {isOpenModalView && (

@@ -956,6 +956,13 @@ export function CreditProspect(props: ICreditProspectProps) {
           >
             <Stack direction="column" gap="16px">
               <CardGray
+                label={configModal.observations.preApproval}
+                placeHolder={
+                  prospectData ? prospectData.clientManagerObservation : ""
+                }
+                apparencePlaceHolder="gray"
+              />
+              <CardGray
                 label={configModal.observations.labelTextarea}
                 placeHolder={prospectData ? prospectData!.clientComments : ""}
                 apparencePlaceHolder="gray"

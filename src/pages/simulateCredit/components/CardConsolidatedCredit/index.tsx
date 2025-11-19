@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Tag, Button, ITag, Icon } from "@inubekit/inubekit";
 
@@ -73,6 +73,12 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(
     hasInitialValue && initialType ? initialType : null,
   );
+  useEffect(() => {
+    const has = initialValue !== undefined && initialValue > 0;
+    setIsRadioSelected(has || initialType !== undefined);
+    setSelectedValue(has ? initialValue : null);
+    setSelectedOptionId(initialType ?? null);
+  }, [initialValue, initialType]);
   const [showModal, setShowModal] = useState(false);
   const radioRefs = useRef<HTMLInputElement[]>([]);
 

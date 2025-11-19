@@ -17,6 +17,7 @@ import {
   City,
 } from "@mocks/filing-application/disbursement-general/disbursementgeneral.mock";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { dataGeneralInformationForm } from "./config";
 
 interface IGeneralInformationFormProps {
   formik: FormikValues;
@@ -53,7 +54,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
   return (
     <>
       <Grid
-        templateColumns={isMobile ? "1fr" : "repeat(4, 1fr)"}
+        templateColumns={isMobile ? "1fr" : "repeat(2, 1fr)"}
         gap="16px"
         autoRows="auto"
       >
@@ -98,12 +99,12 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           type="number"
           size="compact"
           status={
-            formik.values[optionNameForm]?.identification ===
+            formik.values[optionNameForm]?.identification.toString() ===
             customerData?.publicCode
               ? "invalid"
               : undefined
           }
-          message="El número de identificación ingresado no puede coincidir con el suyo"
+          message={dataGeneralInformationForm.message}
         />
 
         <Input

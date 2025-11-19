@@ -98,7 +98,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
       nextButton={creditLimitTexts.close}
       handleNext={handleClose}
       width={isMobile ? "280px" : "550px"}
-      height={isMobile ? "auto" : "497px"}
+      height={isMobile ? "auto" : "477px"}
       handleBack={handleClose}
       finalDivider={true}
     >
@@ -113,9 +113,9 @@ export const CreditLimit = (props: ICreditLimitProps) => {
           </Text>
         </Stack>
       ) : (
-        <Stack direction="column" gap="24px">
+        <Stack direction="column" gap="24px" height="310px">
           <StyledList>
-            <Stack direction="column" gap="12px">
+            <Stack direction="column" gap="12px" height="160px">
               {limits.maxCreditLimit !== undefined && (
                 <li>
                   <Stack justifyContent="space-between">
@@ -134,7 +134,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                         <SkeletonLine width="70px" animated={true} />
                       ) : (
                         <Text type="body" size="medium" appearance="dark">
-                          {currencyFormat(limits.maxCreditLimit, false)}
+                          {currencyFormat(limits.maxCreditLimit || 0, false)}
                         </Text>
                       )}
                       <Stack margin="0px 0px 0px 5px">
@@ -170,7 +170,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                         <SkeletonLine width="70px" animated={true} />
                       ) : (
                         <Text type="body" size="medium" appearance="dark">
-                          {currencyFormat(limits.reciprocity, false)}
+                          {currencyFormat(limits.reciprocity || 0, false)}
                         </Text>
                       )}
                       <Stack margin="0px 0px 0px 5px">
@@ -206,7 +206,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                         <SkeletonLine width="70px" animated={true} />
                       ) : (
                         <Text type="body" size="medium" appearance="dark">
-                          {currencyFormat(limits.paymentCapacity, false)}
+                          {currencyFormat(limits.paymentCapacity || 0, false)}
                         </Text>
                       )}
                       <Stack margin="0px 0px 0px 5px">
@@ -243,7 +243,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                         <SkeletonLine width="70px" animated={true} />
                       ) : (
                         <Text type="body" size="medium" appearance="dark">
-                          {currencyFormat(limits.riskAnalysis, false)}
+                          {currencyFormat(limits.riskAnalysis || 0, false)}
                         </Text>
                       )}
                       <Stack margin="0px 0px 0px 5px">
@@ -284,7 +284,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                           size="medium"
                           appearance="dark"
                         >
-                          {currencyFormat(limits.personalized, false)}
+                          {currencyFormat(limits.personalized || 0, false)}
                         </Text>
                       )}
                     </Stack>
@@ -302,7 +302,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
               spacing="narrow"
             />
             <Text margin="0px 5px" size="small">
-              {creditLimitTexts.maxUsableQuote}
+              {creditLimitTexts.maxUsableQuote || 0}
             </Text>
           </Stack>
           <Stack direction="column" alignItems="center">
@@ -315,7 +315,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
               {currencyFormat(0, true)}
             </Text>
             <Text type="body" size="small">
-              {creditLimitTexts.maxMount}
+              {creditLimitTexts.maxMount || 0}
             </Text>
           </Stack>
         </Stack>

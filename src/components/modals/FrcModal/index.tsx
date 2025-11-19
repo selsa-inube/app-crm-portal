@@ -118,7 +118,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                   size="medium"
                   appearance="primary"
                 >
-                  {dataMaximumCreditLimitReciprocity.creditRiskScore}
+                  {dataMaximumCreditLimitReciprocity.creditRiskScore || 0}
                 </Text>
                 {loading ? (
                   <SkeletonLine width="70px" animated={true} />
@@ -293,7 +293,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               ) : (
                 <Text>
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.totalMonthlyIncome,
+                    dataMaximumCreditLimitReciprocity.totalMonthlyIncome || 0,
                     false,
                   )}
                 </Text>
@@ -308,7 +308,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               <SkeletonLine width="70px" animated={true} />
             ) : (
               <Text type="body" size="large">
-                x{dataMaximumCreditLimitReciprocity.creditRiskMultiplier}
+                x{dataMaximumCreditLimitReciprocity.creditRiskMultiplier || 0}
               </Text>
             )}
           </Stack>
@@ -324,7 +324,8 @@ export const ScoreModal = (props: ScoreModalProps) => {
               ) : (
                 <Text>
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.maxAmountAvailableByCreditRiskAnalysis,
+                    dataMaximumCreditLimitReciprocity.maxAmountAvailableByCreditRiskAnalysis ||
+                      0,
                     false,
                   )}
                 </Text>
@@ -342,7 +343,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               ) : (
                 <Text>
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.assignedCreditLimit,
+                    dataMaximumCreditLimitReciprocity.assignedCreditLimit || 0,
                     false,
                   )}
                 </Text>
@@ -369,7 +370,8 @@ export const ScoreModal = (props: ScoreModalProps) => {
                 >
                   $
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.totalPortfolioObligation,
+                    dataMaximumCreditLimitReciprocity.totalPortfolioObligation ||
+                      0,
                     false,
                   )}
                 </Text>
