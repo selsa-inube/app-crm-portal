@@ -31,30 +31,42 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
     <>
       <Fieldset>
         <Stack direction="column" padding="0 16px">
-          {Object.entries(groupedDestinations).map(([type, group]) => (
-            <CardDeployMoneyDestination key={type} title={type}>
-              <Stack
-                direction="row"
-                wrap="wrap"
-                justifyContent={isTablet ? "center" : "initial"}
-                padding="0 8px"
-                gap="12px"
-              >
-                {group.map((money) => (
-                  <MoneyDestinationCard
-                    key={money.moneyDestinationId}
-                    id={money.moneyDestinationId}
-                    name={money.abbreviatedName}
-                    value={money.descriptionUse}
-                    label={money.abbreviatedName}
-                    icon={money.iconReference}
-                    handleChange={() => handleChange(money.abbreviatedName)}
-                    isSelected={selectedDestination === money.abbreviatedName}
-                  />
-                ))}
-              </Stack>
-            </CardDeployMoneyDestination>
-          ))}
+          {Object.entries(groupedDestinations)
+            .sort(([destinationA], [destinationB]) =>
+              destinationA.localeCompare(destinationB),
+            )
+            .map(([type, group]) => (
+              <CardDeployMoneyDestination key={type} title={type}>
+                <Stack
+                  direction="row"
+                  wrap="wrap"
+                  justifyContent={isTablet ? "center" : "initial"}
+                  padding="0 8px"
+                  gap="12px"
+                >
+                  {group
+                    .sort((groupA, groupB) =>
+                      groupA.abbreviatedName.localeCompare(
+                        groupB.abbreviatedName,
+                      ),
+                    )
+                    .map((money) => (
+                      <MoneyDestinationCard
+                        key={money.moneyDestinationId}
+                        id={money.moneyDestinationId}
+                        name={money.abbreviatedName}
+                        value={money.descriptionUse}
+                        label={money.abbreviatedName}
+                        icon={money.iconReference}
+                        handleChange={() => handleChange(money.abbreviatedName)}
+                        isSelected={
+                          selectedDestination === money.abbreviatedName
+                        }
+                      />
+                    ))}
+                </Stack>
+              </CardDeployMoneyDestination>
+            ))}
         </Stack>
       </Fieldset>
       {showErrorModal && (

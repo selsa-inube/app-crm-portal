@@ -24,7 +24,7 @@ export function CardGray(props: ICardGrayProps) {
   } = props;
 
   return (
-    <StyledContainer isMobile={isMobile}>
+    <StyledContainer $isMobile={isMobile}>
       <Stack direction="column">
         <Text
           type="label"
