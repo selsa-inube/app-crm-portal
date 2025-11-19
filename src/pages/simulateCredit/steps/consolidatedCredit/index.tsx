@@ -20,6 +20,7 @@ interface IConsolidatedCreditProps {
     value: number;
     totalCollected: number;
     selectedValues: Record<string, number>;
+    selectedLabels?: Record<string, string>;
   };
   isMobile: boolean;
   onChange?: (
@@ -32,6 +33,9 @@ interface IConsolidatedCreditProps {
       estimatedDateOfConsolidation: string;
       lineOfCreditDescription: string;
     }[],
+    selectedValuesMap?: Record<string, number>,
+    totalCollectedValue?: number,
+    selectedLabelsMap?: Record<string, string>,
   ) => void;
   data?: IPayment[];
 }
@@ -44,7 +48,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
   );
 
   const [selectedLabels, setSelectedLabels] = useState<Record<string, string>>(
-    {},
+    initialValues.selectedLabels || {},
   );
   const [selectedValues, setSelectedValues] = useState<Record<string, number>>(
     initialValues.selectedValues || {},
@@ -107,9 +111,14 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
 
   useEffect(() => {
     if (onChange) {
-      onChange(buildSelectedArray());
+      onChange(
+        buildSelectedArray(),
+        selectedValues,
+        totalCollected,
+        selectedLabels,
+      );
     }
-  }, [selectedLabels, selectedValues]);
+  }, [selectedLabels, selectedValues, totalCollected]);
 
   return (
     <Fieldset heightFieldset="100%">
@@ -184,6 +193,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
                   }
                   tags={creditData.tags}
                   initialValue={initialValues.selectedValues[creditData.id]}
+                  initialType={initialValues.selectedLabels?.[creditData.id]}
                   isMobile={isMobile}
                   allowCustomValue={creditData.allowCustomValue}
                 />

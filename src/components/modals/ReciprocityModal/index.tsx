@@ -106,7 +106,8 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
                 ) : (
                   <Text type="body" size="medium">
                     {currencyFormat(
-                      dataMaximumCreditLimitReciprocity.permanentSavingsBalance,
+                      dataMaximumCreditLimitReciprocity.permanentSavingsBalance ||
+                        0,
                       false,
                     )}
                   </Text>
@@ -124,7 +125,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
                   <Text type="body" size="medium">
                     x
                     {currencyFormat(
-                      dataMaximumCreditLimitReciprocity.allowedUsageCount,
+                      dataMaximumCreditLimitReciprocity.allowedUsageCount || 0,
                       false,
                     )}
                   </Text>
@@ -147,7 +148,8 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
                 ) : (
                   <Text type="body" size="medium">
                     {currencyFormat(
-                      dataMaximumCreditLimitReciprocity.assignedCreditLimit,
+                      dataMaximumCreditLimitReciprocity.assignedCreditLimit ||
+                        0,
                       false,
                     )}
                   </Text>
@@ -167,7 +169,8 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
                 ) : (
                   <Text type="body" size="medium">
                     {currencyFormat(
-                      dataMaximumCreditLimitReciprocity.unsecuredPortfolioObligation,
+                      dataMaximumCreditLimitReciprocity.unsecuredPortfolioObligation ||
+                        0,
                       false,
                     )}
                   </Text>
@@ -195,7 +198,8 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
               >
                 $
                 {currencyFormat(
-                  dataMaximumCreditLimitReciprocity.maxAmountAvailableByReciprocity,
+                  dataMaximumCreditLimitReciprocity.maxAmountAvailableByReciprocity ||
+                    0,
                   false,
                 )}
               </Text>

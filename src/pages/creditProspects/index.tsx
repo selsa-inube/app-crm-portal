@@ -11,6 +11,7 @@ import {
   Text,
   Textarea,
   useMediaQuery,
+  Grid,
 } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -28,6 +29,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
+import userImage from "@assets/images/userImage.jpeg";
 
 import { addConfig, dataCreditProspects } from "./config";
 import { StyledArrowBack } from "./styles";
@@ -43,6 +45,7 @@ export function CreditProspects() {
     name: customerData.fullName,
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
+    image: customerData.image,
   };
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -209,6 +212,7 @@ export function CreditProspects() {
   const handleConfirmProspect = () => {
     navigate(`/credit/apply-for-credit/${selectedProspect?.prospectCode}`);
   };
+
   return (
     <>
       <Stack
@@ -221,7 +225,7 @@ export function CreditProspects() {
           buttonText="Agregar vinculación"
           descriptionStatus={dataHeader.status}
           name={dataHeader.name}
-          profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
+          profileImageUrl={dataHeader.image || userImage}
         />
         <Breadcrumbs crumbs={addConfig.crumbs} />
         <StyledArrowBack
@@ -252,7 +256,13 @@ export function CreditProspects() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
               />
-              <Stack alignItems="center" gap="6x">
+              <Grid
+                templateColumns={canSimulateCredit ? "95% 4%" : "100%"}
+                gap="8px"
+                alignItems="center"
+                width={isMobile ? "100%" : "auto"}
+                justifyItems={isMobile ? "inherit" : "flex-end"}
+              >
                 <Button
                   iconBefore={<MdAdd />}
                   type="link"
@@ -275,7 +285,7 @@ export function CreditProspects() {
                     onClick={handleInfo}
                   />
                 )}
-              </Stack>
+              </Grid>
             </Stack>
             <Stack
               wrap="wrap"
@@ -298,7 +308,9 @@ export function CreditProspects() {
                     )?.Code || prospect.moneyDestinationAbbreviatedName,
                     20,
                   )}
-                  borrower={prospect.borrowers[0].borrowerName}
+                  borrower={
+                    prospect.clientManagerName || dataCreditProspects.none
+                  }
                   numProspect={prospect.prospectCode}
                   date={prospect.timeOfCreation}
                   value={prospect.requestedAmount}
@@ -380,6 +392,11 @@ export function CreditProspects() {
                 }
                 apparencePlaceHolder="gray"
                 placeHolderTag={true}
+              />
+              <CardGray
+                label={dataCreditProspects.preApproval}
+                placeHolder={selectedProspect?.clientManagerObservation || ""}
+                apparencePlaceHolder="gray"
               />
               <CardGray
                 label={dataCreditProspects.clientComments}

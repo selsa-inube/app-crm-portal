@@ -1,15 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Grid,
-  Select,
-  Stack,
-  Textarea,
-  Textfield,
-  Text,
-  Spinner,
-} from "@inubekit/inubekit";
+import { Grid, Select, Stack, Textarea, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import {
@@ -20,34 +12,19 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
-import { IBusinessUnitRules } from "@services/businessUnitRules/types";
 
 import { dataProperty } from "./config";
 import { IPropertyOffered } from "../../types";
-import { dataError } from "../requirementsNotMet/config";
 
 interface IPropertyOfferedProps {
   isMobile: boolean;
   initialValues: IPropertyOffered;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IPropertyOffered) => void;
-  businessUnitPublicCode: string;
-  businessManagerCode: string;
 }
 
 export function PropertyOffered(props: IPropertyOfferedProps) {
-  const {
-    isMobile,
-    initialValues,
-    onFormValid,
-    handleOnChange,
-    businessUnitPublicCode,
-    businessManagerCode,
-  } = props;
-
-  const [shouldRender, setShouldRender] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isMobile, initialValues, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
     type: Yup.string(),
@@ -68,54 +45,9 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
 
   const prevValues = useRef(formik.values);
 
-  const checkGuaranteeRule = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await postBusinessUnitRules(
-        businessUnitPublicCode,
-        businessManagerCode,
-        { ruleName: "GuaranteeRequirements" } as IBusinessUnitRules,
-      );
-
-      const values = response?.conditions || response;
-      let extractedValues: string[] = [];
-
-      if (Array.isArray(values)) {
-        extractedValues = values
-          .map((item) => {
-            if (typeof item === "object" && item !== null && "value" in item) {
-              return item.value;
-            }
-            if (typeof item === "string") {
-              return item;
-            }
-            return null;
-          })
-          .filter((val): val is string => val !== null && val !== "");
-      }
-
-      const includesMortgage = extractedValues.some(
-        (val) => val.toLowerCase() === "mortgage",
-      );
-      setShouldRender(includesMortgage);
-      setIsLoading(false);
-    } catch (error) {
-      setShouldRender(false);
-      setIsLoading(false);
-    }
-  }, [businessUnitPublicCode, businessManagerCode]);
-
   useEffect(() => {
-    checkGuaranteeRule();
-  }, [checkGuaranteeRule]);
-
-  useEffect(() => {
-    if (shouldRender) {
-      onFormValid(formik.isValid);
-    } else {
-      onFormValid(true);
-    }
-  }, [formik.isValid, shouldRender, onFormValid]);
+    onFormValid(formik.isValid);
+  }, [formik.isValid, onFormValid]);
 
   useEffect(() => {
     if (
@@ -129,45 +61,6 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
       prevValues.current = formik.values;
     }
   }, [formik.values, handleOnChange]);
-
-  // Auto-seleccionar opciones únicas
-  useEffect(() => {
-    if (optionsOfferedType.length === 1) {
-      const onlyOption = optionsOfferedType[0];
-      formik.setFieldValue("type", onlyOption.value);
-    }
-  }, [optionsOfferedType]);
-
-  useEffect(() => {
-    if (optionsOfferedstate.length === 1) {
-      const onlyOption = optionsOfferedstate[0];
-      formik.setFieldValue("state", onlyOption.value);
-    }
-  }, [optionsOfferedstate]);
-
-  if (!shouldRender && !isLoading) {
-    return null;
-  }
-
-  if (isLoading) {
-    return (
-      <Fieldset>
-        <Stack
-          gap="16px"
-          padding="16px"
-          margin={isMobile ? "8px" : "16px"}
-          justifyContent="center"
-          direction="column"
-          alignItems="center"
-        >
-          <Spinner />
-          <Text type="title" size="medium" appearance="dark">
-            {dataError.loadRequirements}
-          </Text>
-        </Stack>
-      </Fieldset>
-    );
-  }
 
   return (
     <Fieldset>
@@ -234,7 +127,6 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
               fullwidth
             />
           )}
-
           <Textfield
             name="antique"
             id="antique"
@@ -248,7 +140,6 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             disabled={formik.values.state === "nuevo"}
             fullwidth
           />
-
           <Textfield
             name="estimated"
             id="estimated"
@@ -262,7 +153,6 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             fullwidth
           />
         </Grid>
-
         <Textarea
           name="description"
           id="description"

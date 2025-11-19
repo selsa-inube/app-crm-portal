@@ -1,4 +1,11 @@
-import { useContext, useState, useEffect, useCallback, useRef } from "react";
+import {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
@@ -9,18 +16,17 @@ import {
   IExtraordinaryInstallments,
 } from "@services/prospect/types";
 import { AppContext } from "@context/AppContext";
-import { getMonthsElapsed } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { RemoveProspect } from "@services/prospect/removeProspect";
+import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { patchValidateRequirements } from "@services/requirement/validateRequirements";
+import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
 
-import { ruleConfig } from "../applyForCredit/config/configRules";
-import { evaluateRule } from "../applyForCredit/evaluateRule";
 import { SimulationsUI } from "./interface";
-import { ICondition, Irule } from "../simulateCredit/types";
 import { dataEditProspect, labelsAndValuesShare } from "./config";
 
 export function Simulations() {
@@ -33,14 +39,19 @@ export function Simulations() {
   const [showCreditRequest, setShowCreditRequest] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [showRecalculateSimulation, setShowRecalculateSimulation] =
+    useState(false);
+  const [showRequirements, setShowRequirements] = useState(false);
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>({} as IProspectSummaryById);
+  const [validateRequirements, setValidateRequirements] = useState<
+    IValidateRequirement[]
+  >([]);
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { prospectCode } = useParams();
 
   const dataCreditRef = useRef<ICreditRequest>();
-  const valueRuleRef = useRef<{ [ruleName: string]: string[] }>({});
   const dataPrint = useRef<HTMLDivElement>(null);
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -63,8 +74,81 @@ export function Simulations() {
     name: customerData.fullName,
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
+    publicCode: customerData.publicCode,
   };
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
+
+  const getTotalLoanAmount = useCallback(
+    (data: IProspect | undefined): number => {
+      if (!data || !data.creditProducts) return 0;
+
+      return data.creditProducts.reduce((sum, product) => {
+        return sum + (product.loanAmount || 0);
+      }, 0);
+    },
+    [],
+  );
+  const getDestinationName = useCallback((code?: string) => {
+    if (!code) return "";
+    const found = MoneyDestinationTranslations.find(
+      (item) => item.Code === code,
+    );
+    return found?.Code || code;
+  }, []);
+
+  const getMainBorrowerName = useCallback(
+    (data: IProspect | undefined): string => {
+      if (!data) return "";
+      const mainBorrower = data.borrowers.find(
+        (b) => b.borrowerType === "MainBorrower",
+      );
+      return mainBorrower?.borrowerName || "";
+    },
+    [],
+  );
+
+  const processedData = useMemo(
+    () => ({
+      totalLoanAmount: getTotalLoanAmount(dataProspect),
+      destinationName: getDestinationName(
+        data?.moneyDestinationAbbreviatedName,
+      ),
+      mainBorrowerName: getMainBorrowerName(data),
+    }),
+    [
+      dataProspect,
+      data,
+      getTotalLoanAmount,
+      getDestinationName,
+      getMainBorrowerName,
+    ],
+  );
+
+  const { disabledButton: canRequestCredit } = useValidateUseCase({
+    useCase: getUseCaseValue("canRequestCredit"),
+  });
+  const { disabledButton: canDeleteCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canDeleteCreditRequest"),
+  });
+  const { disabledButton: canEditCreditRequest } = useValidateUseCase({
+    useCase: getUseCaseValue("canEditCreditRequest"),
+  });
+
+  const validateProspectOwnership = useCallback((): boolean => {
+    if (!dataProspect || !dataHeader) return false;
+
+    const mainBorrower = dataProspect.borrowers?.find(
+      (b) => b.borrowerType === "MainBorrower",
+    );
+
+    if (mainBorrower && dataHeader.publicCode) {
+      return (
+        mainBorrower.borrowerIdentificationNumber === dataHeader.publicCode
+      );
+    }
+
+    return false;
+  }, [dataProspect, dataHeader]);
 
   const fetchValidateCreditRequest = useCallback(async () => {
     if (!prospectCode) return;
@@ -101,25 +185,6 @@ export function Simulations() {
     navigate(`/credit/apply-for-credit/${prospectCode}`);
   };
 
-  const cleanConditions = (
-    rule: Irule | null | undefined,
-  ): Irule | null | undefined => {
-    if (!rule) return rule;
-
-    const cleaned = { ...rule };
-
-    if (Array.isArray(cleaned.conditions)) {
-      const hasValidCondition = cleaned.conditions.some(
-        (c: ICondition) =>
-          c.value !== undefined && c.value !== null && c.value !== "",
-      );
-      if (!hasValidCondition) {
-        Reflect.deleteProperty(cleaned, "conditions");
-      }
-    }
-    return cleaned;
-  };
-
   const fetchProspectData = async () => {
     try {
       const result = await getSearchProspectByCode(
@@ -140,6 +205,15 @@ export function Simulations() {
   useEffect(() => {
     fetchProspectData();
   }, [businessUnitPublicCode, sentData]);
+
+  useEffect(() => {
+    if (dataProspect && !codeError) {
+      const isValid = validateProspectOwnership();
+      if (!isValid) {
+        setCodeError(1015);
+      }
+    }
+  }, [dataProspect, validateProspectOwnership, codeError]);
 
   const generateAndSharePdf = async () => {
     try {
@@ -168,115 +242,36 @@ export function Simulations() {
     }
   };
 
-  const fetchValidationRules = useCallback(async () => {
-    const rulesToCheck = ["ValidationGuarantee", "ValidationCoBorrower"];
-    const notDefinedRules: string[] = [];
-    await Promise.all(
-      rulesToCheck.map(async (ruleName) => {
-        try {
-          const rule = cleanConditions(ruleConfig[ruleName]?.({}));
-          if (!rule) return notDefinedRules.push(ruleName);
-          await evaluateRule(
-            rule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            businessManagerCode,
-          );
-        } catch (error) {
-          const errorResponse = error as { response?: { status: number } };
-          if (errorResponse.response?.status === 400) {
-            notDefinedRules.push(ruleName);
-          }
+  useEffect(() => {
+    if (!customerData?.customerId || !dataProspect) return;
+    const payload = {
+      clientIdentificationNumber: customerData.publicCode,
+      prospect: { ...dataProspect },
+    };
+    const handleSubmit = async () => {
+      try {
+        const data = await patchValidateRequirements(
+          businessUnitPublicCode,
+          businessManagerCode,
+          payload,
+        );
+
+        if (data) {
+          setValidateRequirements(data);
         }
-      }),
-    );
-
-    if (notDefinedRules.length >= 1) {
-      setCodeError(1013);
-      setAddToFix(notDefinedRules);
-    }
-  }, [businessUnitPublicCode]);
-
-  const fetchValidationRulesData = useCallback(async () => {
-    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    const creditProducts = dataProspect?.creditProducts;
-
-    if (!clientInfo.associateType || !creditProducts?.length || !dataProspect)
-      return;
-
-    const dataRulesBase = {
-      ClientType: clientInfo.associateType?.substring(0, 1) || "",
-      LoanAmount: dataProspect.requestedAmount,
-      PrimaryIncomeType: "",
-      AffiliateSeniority: getMonthsElapsed(
-        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-        0,
-      ),
+      } catch (error) {
+        setShowErrorModal(true);
+        setMessageError("");
+      }
     };
 
-    const rulesValidate = ["ValidationGuarantee", "ValidationCoBorrower"];
-
-    for (const product of creditProducts) {
-      if (!product || typeof product !== "object") continue;
-
-      const dataRules = {
-        ...dataRulesBase,
-        LineOfCredit: product.lineOfCreditAbbreviatedName,
-      };
-      await Promise.all(
-        rulesValidate.map(async (ruleName) => {
-          const rule = ruleConfig[ruleName]?.(dataRules);
-          if (!rule) return;
-
-          try {
-            const values = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              businessManagerCode,
-            );
-
-            const extractedValues = Array.isArray(values)
-              ? values
-                  .map((v) =>
-                    typeof v === "string" ? v : (v?.valuesAvailable ?? ""),
-                  )
-                  .filter((val): val is string => val !== "")
-              : [];
-
-            if (
-              ruleName === "ModeOfDisbursementType" &&
-              extractedValues.length === 0
-            ) {
-              setCodeError(1014);
-              setAddToFix([ruleName]);
-              return;
-            }
-
-            valueRuleRef.current = {
-              ...valueRuleRef.current,
-              [ruleName]: extractedValues,
-            };
-          } catch (error) {
-            console.error(
-              `Error evaluando ${ruleName} para producto`,
-              product,
-              error,
-            );
-          }
-        }),
-      );
-    }
-  }, [customerData, dataProspect, businessUnitPublicCode]);
-
-  useEffect(() => {
-    if (customerData && dataProspect) {
-      fetchValidationRules();
-      fetchValidationRulesData();
-    }
-  }, [customerData, dataProspect, fetchValidationRulesData]);
+    handleSubmit();
+  }, [
+    customerData?.customerId,
+    dataProspect,
+    businessUnitPublicCode,
+    businessManagerCode,
+  ]);
 
   const handleInfo = () => {
     setIsModalOpen(true);
@@ -285,6 +280,7 @@ export function Simulations() {
   if (prospectCode === undefined) {
     navigate(`/credit/prospects`);
   }
+
   const handleDeleteProspect = async () => {
     if (!dataProspect) return;
 
@@ -304,6 +300,10 @@ export function Simulations() {
     }
   };
 
+  const handleRecalculateSimulation = () => {
+    setShowRecalculateSimulation(false);
+  };
+
   return (
     <SimulationsUI
       dataHeader={dataHeader}
@@ -320,6 +320,7 @@ export function Simulations() {
       showErrorModal={showErrorModal}
       messageError={messageError}
       businessManagerCode={businessManagerCode}
+      setShowDeleteModal={setShowDeleteModal}
       setShowErrorModal={setShowErrorModal}
       setShowMenu={setShowMenu}
       handleSubmitClick={handleSubmitClick}
@@ -335,10 +336,19 @@ export function Simulations() {
       navigate={navigate}
       handleDeleteProspect={handleDeleteProspect}
       showDeleteModal={showDeleteModal}
-      setShowDeleteModal={setShowDeleteModal}
       generateAndSharePdf={generateAndSharePdf}
+      canRequestCredit={canRequestCredit}
+      canDeleteCreditRequest={canDeleteCreditRequest}
+      canEditCreditRequest={canEditCreditRequest}
+      processedData={processedData}
       prospectSummaryData={prospectSummaryData}
       setProspectSummaryData={setProspectSummaryData}
+      showRecalculateSimulation={showRecalculateSimulation}
+      setShowRecalculateSimulation={setShowRecalculateSimulation}
+      handleRecalculateSimulation={handleRecalculateSimulation}
+      showRequirements={showRequirements}
+      setShowRequirements={setShowRequirements}
+      validateRequirements={validateRequirements}
     />
   );
 }

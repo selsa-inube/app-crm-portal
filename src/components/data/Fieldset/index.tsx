@@ -26,6 +26,7 @@ interface IFieldsetProps {
   borderColor?: string;
   showFieldset?: boolean;
   padding?: string;
+  alignContent?: boolean;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -45,6 +46,7 @@ export const Fieldset = (props: IFieldsetProps) => {
     borderColor = "normal",
     showFieldset = true,
     padding = "0 0 16px 0",
+    alignContent,
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -108,6 +110,7 @@ export const Fieldset = (props: IFieldsetProps) => {
         $isClickable={isClickable}
         $borderColor={borderColor}
         $showFieldset={showFieldset}
+        $alignContent={alignContent}
       >
         {children}
       </StyledContainerFieldset>

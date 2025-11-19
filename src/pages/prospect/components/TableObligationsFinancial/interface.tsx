@@ -318,15 +318,29 @@ export const TableFinancialObligationsUI = ({
         outstandingDues: values.term || "",
       };
 
-      const currentObligations = Array.isArray(initialValues)
-        ? initialValues
-        : initialValues
-          ? [initialValues]
-          : [];
+      let currentObligations: IObligationsFinancial[] = [];
 
-      const updatedInitialValues = [...currentObligations, newObligation];
+      if (Array.isArray(initialValues)) {
+        currentObligations = [...initialValues];
+      } else if (initialValues && Array.isArray(initialValues.obligations)) {
+        currentObligations = [...initialValues.obligations];
+      } else if (initialValues) {
+        currentObligations = [initialValues as IObligationsFinancial];
+      }
 
-      handleOnChange(updatedInitialValues);
+      const updatedObligations = [...currentObligations, newObligation];
+
+      if (Array.isArray(initialValues)) {
+        handleOnChange(updatedObligations);
+      } else if (initialValues && typeof initialValues === "object") {
+        const updatedInitialValues = {
+          ...initialValues,
+          obligations: updatedObligations,
+        };
+        handleOnChange(updatedInitialValues);
+      } else {
+        handleOnChange(updatedObligations);
+      }
       setOpenModal(false);
       setRefreshKey?.((prev) => prev + 1);
     }
@@ -615,16 +629,14 @@ export const TableFinancialObligationsUI = ({
                   )}
                 </Stack>
               </Stack>
-              <Stack>
-                <Stack gap="2px">
-                  <Button
-                    children={dataReport.addObligations}
-                    iconBefore={<MdAdd />}
-                    disabled={canEditCreditRequest}
-                    fullwidth={isMobile}
-                    onClick={() => setOpenModal(true)}
-                  />
-                </Stack>
+              <Stack gap="2px">
+                <Button
+                  children={dataReport.addObligations}
+                  iconBefore={<MdAdd />}
+                  disabled={canEditCreditRequest}
+                  fullwidth={isMobile}
+                  onClick={() => setOpenModal(true)}
+                />
                 <Stack alignItems="center">
                   {canEditCreditRequest ? (
                     <Icon

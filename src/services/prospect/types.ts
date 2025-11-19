@@ -220,5 +220,5 @@ export interface IRemoveProspectResponse {
 }
 
 export interface IGuaranteesRequiredByCreditProspect {
-  warranty: string;
+  warranty: { warranty: string }[] | string;
 }
