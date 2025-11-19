@@ -44,6 +44,7 @@ import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
 import { updateFinancialObligationsFormData } from "./utils";
+import { textAddCongfig } from "./config/addConfig";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -173,22 +174,44 @@ export function SimulateCredit() {
     },
   });
 
-  const onlyBorrowerData = useMemo(
-    () => ({
+  const onlyBorrowerData = useMemo(() => {
+    const numericIncomeProperties = Object.entries(formData.sourcesOfIncome)
+      .filter(([_, value]) => typeof value === "number" && !isNaN(value))
+      .map(([key, value]) => ({
+        propertyName: key,
+        propertyValue: String(value),
+      }));
+
+    const financialObligationProperties =
+      formData.obligationsFinancial?.obligations?.map((obligation) => ({
+        propertyName: textAddCongfig.financialObligation,
+        propertyValue: [
+          obligation.productName,
+          obligation.nextPaymentValueTotal,
+          obligation.balanceObligationTotal,
+          obligation.entity,
+          obligation.paymentMethodName,
+          obligation.obligationNumber,
+          obligation.duesPaid || "0",
+          obligation.outstandingDues || "0",
+        ]
+          .filter((x) => x !== undefined && x !== null)
+          .join(", "),
+      })) || [];
+
+    return {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
-      borrowerType: "MainBorrower",
-      borrowerName: "Lenis Poveda",
+      borrowerType: textAddCongfig.mainBorrower,
+      borrowerName: customerData.fullName,
+
       borrowerProperties: [
-        {
-          propertyName: "PeriodicSalary",
-          propertyValue: "4500000",
-        },
+        ...numericIncomeProperties,
+        ...financialObligationProperties,
       ],
-    }),
-    [customerData],
-  );
+    };
+  }, [customerData, formData.sourcesOfIncome, formData.obligationsFinancial]);
 
   const simulateData: IProspect = useMemo(
     () => ({
@@ -727,13 +750,17 @@ export function SimulateCredit() {
   }, [currentStep, businessUnitPublicCode]);
 
   useEffect(() => {
-    if (clientPortfolio) {
+    if (
+      clientPortfolio &&
+      (!formData.obligationsFinancial ||
+        Object.keys(formData.obligationsFinancial).length === 0)
+    ) {
       setFormData((prevState) => ({
         ...prevState,
         obligationsFinancial: clientPortfolio,
       }));
     }
-  }, [clientPortfolio]);
+  }, [clientPortfolio, formData.obligationsFinancial]);
 
   useEffect(() => {
     fetchRulesByProducts();
@@ -845,6 +872,21 @@ export function SimulateCredit() {
       formData.sourcesOfIncome?.PeriodicSalary,
     ],
   );
+
+  useEffect(() => {
+    if (formData.generalToggleChecked) {
+      const all = Object.keys(creditLineTerms);
+      setFormData((prev) => ({
+        ...prev,
+        selectedProducts: all,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        selectedProducts: [],
+      }));
+    }
+  }, [formData.generalToggleChecked, formData.togglesState]);
 
   return (
     <>
