@@ -226,13 +226,17 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
   };
 
   useEffect(() => {
-    if (!borrowerId) return;
+    if (!borrowerId || isCurrentFormValid) return;
 
     const allFieldsFilled = Object.values(formData.personalInfo).every(
       (value) => value !== "" && value !== null && value !== undefined,
     );
 
-    if (allFieldsFilled && !isAutoCompleted) {
+    if (
+      !allFieldsFilled &&
+      customerData?.publicCode.toString() ===
+        formData.personalInfo.documentNumber.toString()
+    ) {
       return;
     }
 
@@ -299,6 +303,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     borrowerId,
     businessUnitPublicCode,
     businessManagerCode,
+    isCurrentFormValid,
     isAutoCompleted,
   ]);
 

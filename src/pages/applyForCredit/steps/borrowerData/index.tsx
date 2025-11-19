@@ -53,12 +53,7 @@ export function Borrowers(props: borrowersProps) {
     valueRule,
     businessManagerCode,
   } = props;
-  console.log(
-    "#### initialValues: ",
-    initialValues,
-    " prospectData: ",
-    prospectData,
-  );
+
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
   const [isModalEdit, setIsModalEdit] = useState(false);

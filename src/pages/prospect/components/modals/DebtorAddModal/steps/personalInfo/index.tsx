@@ -49,7 +49,9 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
 
   const validationSchema = Yup.object({
     tipeOfDocument: Yup.string().required(""),
-    documentNumber: Yup.number().required(""),
+    documentNumber: Yup.number()
+      .required("")
+      .notOneOf([Number(customerData?.publicCode)], ""),
     firstName: Yup.string().required(""),
     lastName: Yup.string().required(""),
     email: Yup.string()
@@ -113,7 +115,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
       formik.setFieldValue("relation", onlyOption.value);
     }
   }, [MockTipeOfFamily]);
-  console.log("formik.values---> ", formik.values);
+
   return (
     <Stack direction="column">
       <Grid
