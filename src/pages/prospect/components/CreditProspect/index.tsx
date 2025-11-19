@@ -804,6 +804,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessUnitPublicCode={businessUnitPublicCode}
             customerData={customerData}
             businessManagerCode={businessManagerCode}
+            dataProspect={prospectData as IProspect}
           />
         )}
         {currentModal === "IncomeModal" && (

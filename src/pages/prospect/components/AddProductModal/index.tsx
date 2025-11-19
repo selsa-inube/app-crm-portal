@@ -5,8 +5,16 @@ import { useMediaQuery } from "@inubekit/inubekit";
 
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
+import { GetSearchAllPaymentChannels } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber";
 
-import { IAddProductModalProps, TCreditLineTerms } from "./config";
+import {
+  IAddProductModalProps,
+  TCreditLineTerms,
+  IFormValues,
+  stepsAddProduct,
+  errorMessages,
+  extractBorrowerIncomeData,
+} from "./config";
 import { AddProductModalUI } from "./interface";
 
 function AddProductModal(props: IAddProductModalProps) {
@@ -22,9 +30,32 @@ function AddProductModal(props: IAddProductModalProps) {
     businessUnitPublicCode,
     customerData,
     businessManagerCode,
+    dataProspect,
   } = props;
 
+  const [errorModal, setErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [creditLineTerms, setCreditLineTerms] = useState<TCreditLineTerms>({});
+  const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState<number>(
+    stepsAddProduct.creditLineSelection.id,
+  );
+  const [isCurrentFormValid, setIsCurrentFormValid] = useState(false);
+  const [formData, setFormData] = useState<IFormValues>({
+    creditLine: "",
+    creditAmount: 0,
+    paymentConfiguration: {
+      paymentMethod: "",
+      paymentCycle: "",
+      firstPaymentDate: "",
+      paymentChannelData: [],
+    },
+    quotaCapValue: 0,
+    maximumTermValue: 0,
+    quotaCapEnabled: true,
+    maximumTermEnabled: false,
+    selectedProducts: [],
+  });
 
   useEffect(() => {
     (async () => {
@@ -32,6 +63,7 @@ function AddProductModal(props: IAddProductModalProps) {
         customerData?.generalAttributeClientNaturalPersons?.[0];
       if (!clientInfo?.associateType) return;
 
+      setLoading(true);
       const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
         businessUnitPublicCode,
         businessManagerCode,
@@ -57,22 +89,118 @@ function AddProductModal(props: IAddProductModalProps) {
         }
       });
 
+      setLoading(false);
       setCreditLineTerms(result);
     })();
   }, [businessUnitPublicCode]);
 
+  useEffect(() => {
+    if (currentStep !== stepsAddProduct.paymentConfiguration.id) return;
+    const loadPaymentOptions = async () => {
+      if (!formData.creditLine || !customerData?.publicCode) return;
+
+      try {
+        const incomeData = extractBorrowerIncomeData(dataProspect);
+
+        const paymentChannelRequest = {
+          clientIdentificationNumber: customerData.publicCode,
+          clientIdentificationType:
+            customerData.generalAttributeClientNaturalPersons[0]
+              .typeIdentification,
+          moneyDestination: moneyDestination,
+          ...incomeData,
+          linesOfCredit: formData.selectedProducts,
+        };
+
+        setLoading(true);
+        const response = await GetSearchAllPaymentChannels(
+          businessUnitPublicCode,
+          businessManagerCode,
+          paymentChannelRequest,
+        );
+
+        if (!response || response.length === 0) {
+          throw new Error(errorMessages.getPaymentMethods);
+        }
+        setLoading(false);
+        setFormData((prev) => ({
+          ...prev,
+          paymentConfiguration: {
+            ...prev.paymentConfiguration,
+            paymentChannelData: response,
+          },
+        }));
+      } catch (error) {
+        setErrorMessage(errorMessages.getPaymentMethods);
+        setErrorModal(true);
+        setLoading(false);
+      }
+    };
+
+    loadPaymentOptions();
+  }, [currentStep]);
+
+  useEffect(() => {
+    const validateCurrentStep = () => {
+      if (currentStep === stepsAddProduct.creditLineSelection.id) {
+        const isValid = formData.selectedProducts.length > 0;
+        setIsCurrentFormValid(isValid);
+      } else if (currentStep === stepsAddProduct.paymentConfiguration.id) {
+        const isValid =
+          !!formData.paymentConfiguration.paymentMethod &&
+          !!formData.paymentConfiguration.paymentCycle &&
+          !!formData.paymentConfiguration.firstPaymentDate;
+        setIsCurrentFormValid(isValid);
+      }
+    };
+
+    validateCurrentStep();
+  }, [formData, currentStep]);
+
   const isMobile = useMediaQuery("(max-width: 550px)");
+
+  const steps = Object.values(stepsAddProduct);
+
+  const currentStepsNumber = steps.find(
+    (step: { number: number }) => step.number === currentStep,
+  ) || { id: 0, number: 0, name: "", description: "" };
+
+  const handleNextStep = () => {
+    if (currentStep === stepsAddProduct.creditLineSelection.id) {
+      setCurrentStep(stepsAddProduct.paymentConfiguration.id);
+    } else if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+    setIsCurrentFormValid(true);
+  };
+
+  const handleSubmitClick = () => {
+    onConfirm(formData);
+    onCloseModal();
+  };
+
+  const handleFormChange = (updatedValues: Partial<IFormValues>) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...updatedValues,
+    }));
+  };
 
   const validationSchema = Yup.object({
     creditLine: Yup.string(),
     creditAmount: Yup.number(),
-    paymentMethod: Yup.string(),
-    paymentCycle: Yup.string(),
-    firstPaymentCycle: Yup.string(),
+    paymentConfiguration: Yup.object({
+      paymentMethod: Yup.string(),
+      paymentCycle: Yup.string(),
+      firstPaymentDate: Yup.string(),
+    }),
     termInMonths: Yup.number(),
-    amortizationType: Yup.string(),
-    interestRate: Yup.number().min(0, ""),
-    rateType: Yup.string(),
     selectedProducts: Yup.array()
       .of(Yup.string().required())
       .default([])
@@ -91,6 +219,26 @@ function AddProductModal(props: IAddProductModalProps) {
       iconAfter={iconAfter}
       creditLineTerms={creditLineTerms}
       isMobile={isMobile}
+      steps={steps}
+      currentStep={currentStep}
+      currentStepsNumber={currentStepsNumber}
+      isCurrentFormValid={isCurrentFormValid}
+      formData={formData}
+      setIsCurrentFormValid={setIsCurrentFormValid}
+      handleFormChange={handleFormChange}
+      handleNextStep={handleNextStep}
+      handlePreviousStep={handlePreviousStep}
+      handleSubmitClick={handleSubmitClick}
+      businessUnitPublicCode={businessUnitPublicCode}
+      businessManagerCode={businessManagerCode}
+      loading={loading}
+      prospectData={{
+        lineOfCredit: formData.creditLine,
+        moneyDestination: moneyDestination,
+      }}
+      errorMessage={errorMessage}
+      setErrorModal={setErrorModal}
+      errorModal={errorModal}
     />
   );
 }
