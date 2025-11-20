@@ -35,9 +35,9 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
         <Stack direction="column" padding="0 16px">
           {loading ? (
             <Stack direction="column" gap="12px">
-              <SkeletonLine height="58px" />
-              <SkeletonLine height="58px" />
-              <SkeletonLine height="58px" />
+              <SkeletonLine animated={true} />
+              <SkeletonLine animated={true} />
+              <SkeletonLine animated={true} />
             </Stack>
           ) : (
             Object.entries(groupedDestinations)

@@ -305,9 +305,9 @@ export function ProductSelection(props: IProductSelectionProps) {
               </Fieldset>
             ) : (
               <>
-                <SkeletonLine height="58px" />
-                <SkeletonLine height="58px" />
-                <SkeletonLine height="58px" />
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
               </>
             )}
           </Stack>
