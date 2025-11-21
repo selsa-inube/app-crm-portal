@@ -272,7 +272,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
         (property) => property.propertyName === "PeriodicSalary",
       )?.propertyValue || "",
   };
-
+  console.log("testing...");
   return (
     <>
       <Fieldset

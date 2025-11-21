@@ -132,6 +132,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [creditLimitError, setCreditLimitError] = useState<string | null>(null);
   const [modalHistory, setModalHistory] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState<string | null>(null);
   const [dataProspect, setDataProspect] = useState<IProspect[]>([]);
   const [incomeData, setIncomeData] = useState<Record<string, IIncomeSources>>(
@@ -254,6 +255,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
 
     try {
+      setIsLoading(true);
       const payload: IAddCreditProduct = {
         prospectId: prospectData.prospectId,
         creditProducts: [
@@ -280,11 +282,10 @@ export function CreditProspect(props: ICreditProspectProps) {
           onProspectUpdate(updatedProspect);
         }
       }
-
+      setIsLoading(false);
       handleCloseModal();
       setShowMessageSuccessModal(true);
     } catch (error) {
-      handleCloseModal();
       const err = error as {
         message?: string;
         status: number;
@@ -298,6 +299,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       ) {
         description = "El producto de crédito ya existe en el prospecto";
       }
+      setIsLoading(false);
       setShowErrorModal(true);
       setMessageError(description);
     }
@@ -805,6 +807,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             customerData={customerData}
             businessManagerCode={businessManagerCode}
             dataProspect={prospectData as IProspect}
+            isLoading={isLoading}
           />
         )}
         {currentModal === "IncomeModal" && (

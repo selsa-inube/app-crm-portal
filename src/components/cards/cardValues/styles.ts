@@ -28,6 +28,9 @@ export const Container = styled.div<IStyledCollapseIcon>`
 
   @media print {
     height: 100%;
+    width: 100% !important;
+    overflow-y: visible !important;
+    height: auto !important;
   }
 `;
 export const IconWrapper = styled.div`

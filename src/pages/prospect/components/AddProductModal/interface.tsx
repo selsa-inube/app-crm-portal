@@ -48,6 +48,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
     setErrorModal,
     errorModal,
     loading,
+    isLoading,
   } = props;
 
   return (
@@ -81,6 +82,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
         finalDivider={true}
         width="auto"
         height="100%"
+        isLoading={isLoading}
       >
         <Stack direction="column" gap="16px">
           <Assisted

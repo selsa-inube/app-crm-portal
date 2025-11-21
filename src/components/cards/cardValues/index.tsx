@@ -1,7 +1,5 @@
 import { Stack, Icon, Text } from "@inubekit/inubekit";
 
-import { parseCunstomFormat } from "@utils/formatData/currency";
-
 import { Container, IconWrapper, ContentWrapper, StyledPrint } from "./styles";
 
 export interface CardValuesProps {
@@ -58,7 +56,11 @@ export function CardValues(props: CardValuesProps) {
               </Text>
               <Stack gap="8px" alignItems="center">
                 <Text size="large" weight="bold" appearance="dark" type="body">
-                  {parseCunstomFormat(item.amount)}
+                  {Math.trunc(Number(item.amount)).toLocaleString("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                    minimumFractionDigits: 0,
+                  })}
                 </Text>
                 {item.miniIcon && showMiniIcons && (
                   <StyledPrint>

@@ -25,7 +25,9 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
       {hasOnlyOnePaymentMethod ? (
         <CardGray
           label={dataAmount.ordinaryPayment}
-          placeHolder={paymentMethodOptions[0]?.label || ""}
+          placeHolder={
+            paymentMethodOptions[0]?.label || "No hay opciones disponibles."
+          }
         />
       ) : (
         <Select
@@ -49,7 +51,9 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
           {hasOnlyOnePaymentCycle ? (
             <CardGray
               label={dataAmount.Periodicity}
-              placeHolder={paymentCycleOptions[0]?.label || ""}
+              placeHolder={
+                paymentCycleOptions[0]?.label || "No hay opciones disponibles."
+              }
             />
           ) : (
             <Select
@@ -75,7 +79,10 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
           {hasOnlyOneFirstPaymentDate ? (
             <CardGray
               label={dataAmount.paymentDate}
-              placeHolder={firstPaymentDateOptions[0]?.label || ""}
+              placeHolder={
+                firstPaymentDateOptions[0]?.label ||
+                "No hay opciones disponibles."
+              }
             />
           ) : (
             <Select
