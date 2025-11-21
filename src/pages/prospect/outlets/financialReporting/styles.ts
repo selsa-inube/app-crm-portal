@@ -43,8 +43,9 @@ export const StyledScreenPrint = styled.div<IStyledToast>`
 
   @media print {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 35px;
+    overflow-y: visible !important;
+    height: auto !important;
+    width: 100% !important;
   }
 
   & > div:nth-child(2),
@@ -53,12 +54,18 @@ export const StyledScreenPrint = styled.div<IStyledToast>`
   & > div:nth-child(6) {
     @media print {
       height: 100%;
+      overflow-y: visible !important;
+      height: auto !important;
+      width: 100% !important;
     }
   }
 
   & > div:nth-child(2) {
     @media print {
       margin-top: 35px;
+      overflow-y: visible !important;
+      height: auto !important;
+      width: 100% !important;
     }
   }
 `;
@@ -66,6 +73,9 @@ export const StyledScreenPrint = styled.div<IStyledToast>`
 export const StyledPageBreak = styled.div`
   @media print {
     page-break-before: always;
+    overflow-y: visible !important;
+    height: auto !important;
+    width: 100% !important;
   }
 `;
 
@@ -75,6 +85,9 @@ export const StyledMarginPrint = styled.div<IStyledToast>`
     @page {
       margin: 1in 0.85in 1in 1in;
     }
+    overflow-y: visible !important;
+    height: auto !important;
+    width: 100% !important;
     margin: -15px 0 0 0;
   }
 `;

@@ -34,6 +34,13 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
 export const StyledFieldset = styled.div`
   padding: "4px";
   position: relative;
+
+  @media print {
+    border: none;
+    overflow-y: visible !important;
+    height: auto !important;
+    width: 100% !important;
+  }
 `;
 
 export const StyledCardsCredit = styled.div<IStyledCardsCredit>`
@@ -72,7 +79,10 @@ export const StyledCardsCredit = styled.div<IStyledCardsCredit>`
     & > div {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
+      min-width: 100%;
     }
+    overflow-y: visible !important;
+    height: auto !important;
   }
 `;
 
