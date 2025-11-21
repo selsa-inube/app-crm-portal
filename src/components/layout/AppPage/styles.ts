@@ -99,13 +99,12 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
-  display: ${({ $showNav }) => (!$showNav ? "none" : "inline-flex")};
   justify-content: center;
   align-content: center;
   align-items: center;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
-  width: ${({ showNav, $nav }) => (showNav && !$nav ? "200px" : "auto")};
+  width: ${({ $showNav, $nav }) => ($showNav && !$nav ? "200px" : "auto")};
   height: 50px;
   top: -50px;
   position: relative;
