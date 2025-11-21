@@ -43,7 +43,6 @@ import {
 import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
-import { updateFinancialObligationsFormData } from "./utils";
 import { textAddCongfig } from "./config/addConfig";
 
 export function SimulateCredit() {
@@ -332,8 +331,6 @@ export function SimulateCredit() {
   ]);
 
   const fetchRulesByProducts = useCallback(async () => {
-    if (!formData.selectedProducts || formData.selectedProducts.length === 0)
-      return;
     setLoadingQuestions(true);
     try {
       const results = await Promise.all(
@@ -386,7 +383,7 @@ export function SimulateCredit() {
     } finally {
       setLoadingQuestions(false);
     }
-  }, [formData.selectedProducts, stepsAddProspect.productSelection.id]);
+  }, [formData.selectedProducts]);
 
   const fetchDataClientPortfolio = async () => {
     if (!customerPublicCode) {
@@ -762,9 +759,16 @@ export function SimulateCredit() {
     }
   }, [clientPortfolio, formData.obligationsFinancial]);
 
+  const stableSelectedProducts = useMemo(
+    () => formData.selectedProducts,
+    [formData.selectedProducts.join(",")],
+  );
+
   useEffect(() => {
-    fetchRulesByProducts();
-  }, [formData.selectedProducts, fetchRulesByProducts]);
+    if (stableSelectedProducts.length > 0) {
+      fetchRulesByProducts();
+    }
+  }, [stableSelectedProducts]);
 
   useEffect(() => {
     const isExtraBorrowersStep =
@@ -797,18 +801,6 @@ export function SimulateCredit() {
       handleFormDataChange("borrowerData", { borrowers: updatedBorrowers });
     }
   }, [currentStepsNumber, customerData]);
-
-  useEffect(() => {
-    const isFinancialStep =
-      currentStepsNumber?.id === stepsAddProspect.obligationsFinancial.id;
-    if (!isFinancialStep) return;
-
-    const newObligations = updateFinancialObligationsFormData(
-      formData.borrowerData.borrowers,
-    );
-
-    handleFormDataChange("obligationsFinancial", newObligations);
-  }, [currentStepsNumber]);
 
   useEffect(() => {
     const mainBorrower = formData.borrowerData.borrowers.find(

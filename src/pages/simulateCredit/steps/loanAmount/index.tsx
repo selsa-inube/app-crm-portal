@@ -1,10 +1,9 @@
 import { Formik, Field, Form } from "formik";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { MdInfoOutline } from "react-icons/md";
+import { MdInfoOutline, MdOutlineAttachMoney } from "react-icons/md";
 import { Icon } from "@inubekit/inubekit";
 import * as Yup from "yup";
-import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   Stack,
   Text,
@@ -16,6 +15,7 @@ import {
 } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
+import { CardGray } from "@components/cards/CardGray";
 import { currencyFormat } from "@utils/formatData/currency";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
 import { IPaymentChannel } from "@services/creditRequest/types";
@@ -76,41 +76,7 @@ export function LoanAmount(props: ILoanAmountProps) {
   const userHaveObligationPayments =
     obligationPayments && obligationPayments.length > 0;
 
-  const handleCloseModalToggleState = () => {
-    setShowInfoModal(false);
-  };
-
-  const selectedChannel = paymentChannel?.find(
-    (channel) => channel.abbreviatedName === initialValues.paymentPlan,
-  );
-  const selectedCycle = selectedChannel?.regularCycles?.find(
-    (cycle) => cycle.cycleName === initialValues.periodicity,
-  );
-  const payAmountOptions =
-    selectedCycle?.detailOfPaymentDate?.map((date, index) => ({
-      id: `${date}-${index}`,
-      value: date,
-      label: formatPrimaryDate(new Date(date)),
-    })) || [];
-
-  const periodicityOptions =
-    selectedChannel?.regularCycles?.map((cycle, index) => ({
-      id: `${cycle.cycleName}-${index}`,
-      value: cycle.cycleName,
-      label: cycle.cycleName,
-    })) || [];
-
-  const paymentChannelOptions =
-    paymentChannel?.map((channel, index) => ({
-      id: `${channel.abbreviatedName}-${channel.paymentChannel}-${index}`,
-      value: channel.abbreviatedName,
-      label: `${channel.abbreviatedName}`,
-    })) || [];
-
-  const allSelectsHaveOneOption =
-    paymentChannelOptions.length === 1 &&
-    periodicityOptions.length === 1 &&
-    payAmountOptions.length === 1;
+  const handleCloseModalToggleState = () => setShowInfoModal(false);
 
   return (
     <Fieldset hasOverflow>
@@ -137,32 +103,95 @@ export function LoanAmount(props: ILoanAmountProps) {
         validateOnMount={true}
       >
         {({ values, setFieldValue }) => {
+          const flatChannels = useMemo(() => {
+            return (
+              paymentChannel?.flatMap((item) => item.paymentChannels) ?? []
+            );
+          }, [paymentChannel]);
+
+          const paymentChannelOptions = useMemo(() => {
+            const unique = new Map(
+              flatChannels.map((ch) => [ch.abbreviatedName, ch]),
+            );
+
+            return Array.from(unique.values()).map((channel, index) => ({
+              id: `${channel.abbreviatedName}-${index}`,
+              value: channel.abbreviatedName,
+              label: channel.abbreviatedName,
+            }));
+          }, [flatChannels]);
+
+          const selectedChannel = useMemo(() => {
+            return flatChannels.find(
+              (channel) =>
+                channel.abbreviatedName === initialValues.paymentPlan,
+            );
+          }, [flatChannels, initialValues.paymentPlan]);
+
+          const periodicityOptions = useMemo(() => {
+            if (!selectedChannel) return [];
+            const unique = Array.from(
+              new Map(
+                selectedChannel.regularCycles.map((cycle) => [
+                  cycle.periodicity,
+                  cycle.periodicity,
+                ]),
+              ).values(),
+            );
+
+            return unique.map((period, i) => ({
+              id: `${period}-${i}`,
+              value: period,
+              label: period,
+            }));
+          }, [selectedChannel]);
+
+          const selectedCycle = useMemo(() => {
+            return selectedChannel?.regularCycles.find(
+              (cycle) => cycle.periodicity === initialValues.periodicity,
+            );
+          }, [selectedChannel, initialValues.periodicity]);
+
+          const payAmountOptions = useMemo(() => {
+            if (!selectedCycle) return [];
+
+            return Array.from(new Set(selectedCycle.detailOfPaymentDate)).map(
+              (date, index) => ({
+                id: `${date}-${index}`,
+                value: date,
+                label: formatPrimaryDate(new Date(date)),
+              }),
+            );
+          }, [selectedCycle]);
+
           useEffect(() => {
             if (paymentChannelOptions.length === 1) {
               const onlyOption = paymentChannelOptions[0];
               setFieldValue("paymentPlan", onlyOption.value);
-              handleOnChange({
-                paymentPlan: onlyOption.value,
-              });
+              handleOnChange({ paymentPlan: onlyOption.value });
             }
           }, [paymentChannelOptions]);
 
           useEffect(() => {
-            if (periodicityOptions.length === 1 && values.paymentPlan) {
+            if (periodicityOptions.length === 1 && values.paymentPlan !== "") {
               const onlyOption = periodicityOptions[0];
               setFieldValue("periodicity", onlyOption.value);
-              handleOnChange({
-                periodicity: onlyOption.value,
-              });
+              handleOnChange({ periodicity: onlyOption.value });
             }
           }, [periodicityOptions, values.paymentPlan]);
+
           useEffect(() => {
-            if (payAmountOptions.length === 1 && values.periodicity) {
+            if (payAmountOptions.length === 1 && values.periodicity !== "") {
               const onlyOption = payAmountOptions[0];
               setFieldValue("payAmount", onlyOption.value);
               handleOnChange({ payAmount: onlyOption.value });
             }
           }, [payAmountOptions, values.periodicity]);
+
+          const allSelectsHaveOneOption =
+            paymentChannelOptions.length === 1 &&
+            periodicityOptions.length === 1 &&
+            payAmountOptions.length === 1;
 
           return (
             <Form>
@@ -194,15 +223,12 @@ export function LoanAmount(props: ILoanAmountProps) {
                         value={values.inputValue}
                         placeholder={dataAmount.placeholderValue}
                         onChange={(e) => {
-                          const rawValue =
+                          const raw =
                             parseFloat(e.target.value.replace(/[^0-9]/g, "")) ||
                             0;
-                          const formattedValue = currencyFormat(
-                            rawValue,
-                            false,
-                          );
-                          setFieldValue("inputValue", formattedValue);
-                          handleOnChange({ inputValue: rawValue });
+                          const formatted = currencyFormat(raw, false);
+                          setFieldValue("inputValue", formatted);
+                          handleOnChange({ inputValue: raw });
                         }}
                       />
                     )}
@@ -229,9 +255,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                           icon={<MdInfoOutline />}
                           appearance="primary"
                           size="16px"
-                          onClick={() => {
-                            setShowInfoModal(true);
-                          }}
+                          onClick={() => setShowInfoModal(true)}
                           cursorHover
                         />
                       </Stack>
@@ -251,47 +275,45 @@ export function LoanAmount(props: ILoanAmountProps) {
                     <Divider dashed />
                     <Stack direction={isMobile ? "column" : "row"} gap="16px">
                       <Stack direction="column" width="100%">
-                        <Text
-                          type="label"
-                          size="medium"
-                          weight="bold"
-                          padding="0px 0px 0px 16px"
-                        >
-                          {dataAmount.ordinaryPayment}
-                        </Text>
                         <Field name="paymentPlan">
                           {() =>
                             paymentChannelOptions.length === 1 ? (
-                              <Textfield
-                                id="paymentPlan"
-                                placeholder={dataAmount.selectOption}
-                                name="paymentPlan"
-                                value={paymentChannelOptions[0]?.label || ""}
-                                size="compact"
-                                readOnly={true}
-                                disabled={true}
-                                fullwidth
+                              <CardGray
+                                label={dataAmount.ordinaryPayment}
+                                placeHolder={
+                                  paymentChannelOptions[0]?.label || ""
+                                }
                               />
                             ) : (
-                              <Select
-                                id="paymentPlan"
-                                options={paymentChannelOptions}
-                                placeholder={dataAmount.selectOption}
-                                name="paymentPlan"
-                                onChange={(_, newValue: string) => {
-                                  setFieldValue("paymentPlan", newValue);
-                                  setFieldValue("periodicity", "");
-                                  setFieldValue("payAmount", "");
-                                  handleOnChange({
-                                    paymentPlan: newValue,
-                                    periodicity: "",
-                                    payAmount: "",
-                                  });
-                                }}
-                                value={values.paymentPlan}
-                                size="compact"
-                                fullwidth={values.paymentPlan ? true : false}
-                              />
+                              <>
+                                <Text
+                                  type="label"
+                                  size="medium"
+                                  weight="bold"
+                                  padding="0px 0px 0px 16px"
+                                >
+                                  {dataAmount.ordinaryPayment}
+                                </Text>
+                                <Select
+                                  id="paymentPlan"
+                                  name="paymentPlan"
+                                  options={paymentChannelOptions}
+                                  placeholder={dataAmount.selectOption}
+                                  value={values.paymentPlan}
+                                  size="compact"
+                                  fullwidth
+                                  onChange={(_, newValue: string) => {
+                                    setFieldValue("paymentPlan", newValue);
+                                    setFieldValue("periodicity", "");
+                                    setFieldValue("payAmount", "");
+                                    handleOnChange({
+                                      paymentPlan: newValue,
+                                      periodicity: "",
+                                      payAmount: "",
+                                    });
+                                  }}
+                                />
+                              </>
                             )
                           }
                         </Field>
@@ -299,78 +321,83 @@ export function LoanAmount(props: ILoanAmountProps) {
                       {values.paymentPlan && (
                         <>
                           <Stack direction="column" width="100%">
-                            <Stack gap="4px">
-                              <Text type="label" size="medium" weight="bold">
-                                {dataAmount.Periodicity}
-                              </Text>
-                            </Stack>
                             <Field name="periodicity">
                               {() =>
                                 periodicityOptions.length === 1 ? (
-                                  <Textfield
-                                    id="periodicity"
-                                    placeholder={dataAmount.selectOption}
-                                    name="periodicity"
-                                    value={periodicityOptions[0]?.label || ""}
-                                    size="compact"
-                                    readOnly={true}
-                                    disabled={true}
-                                    fullwidth
+                                  <CardGray
+                                    label={dataAmount.Periodicity}
+                                    placeHolder={
+                                      periodicityOptions[0]?.label || ""
+                                    }
                                   />
                                 ) : (
-                                  <Select
-                                    id="periodicity"
-                                    options={periodicityOptions}
-                                    placeholder={dataAmount.selectOption}
-                                    name="periodicity"
-                                    onChange={(_, newValue: string) => {
-                                      setFieldValue("periodicity", newValue);
-                                      setFieldValue("payAmount", "");
-                                      handleOnChange({
-                                        periodicity: newValue,
-                                        payAmount: "",
-                                      });
-                                    }}
-                                    value={values.periodicity}
-                                    size="compact"
-                                    fullwidth={true}
-                                  />
+                                  <>
+                                    <Text
+                                      type="label"
+                                      size="medium"
+                                      weight="bold"
+                                    >
+                                      {dataAmount.Periodicity}
+                                    </Text>
+                                    <Select
+                                      id="periodicity"
+                                      name="periodicity"
+                                      options={periodicityOptions}
+                                      placeholder={dataAmount.selectOption}
+                                      value={values.periodicity}
+                                      size="compact"
+                                      fullwidth
+                                      onChange={(_, newValue: string) => {
+                                        setFieldValue("periodicity", newValue);
+                                        setFieldValue("payAmount", "");
+                                        handleOnChange({
+                                          periodicity: newValue,
+                                          payAmount: "",
+                                        });
+                                      }}
+                                    />
+                                  </>
                                 )
                               }
                             </Field>
                           </Stack>
                           {values.periodicity && (
                             <Stack direction="column" width="100%">
-                              <Text type="label" size="medium" weight="bold">
-                                {dataAmount.paymentDate}
-                              </Text>
                               <Field name="payAmount">
                                 {() =>
                                   payAmountOptions.length === 1 ? (
-                                    <Textfield
-                                      id="payAmount"
-                                      placeholder={dataAmount.selectOption}
-                                      name="payAmount"
-                                      value={payAmountOptions[0]?.label || ""}
-                                      size="compact"
-                                      readOnly={true}
-                                      disabled={true}
-                                      fullwidth
+                                    <CardGray
+                                      label={dataAmount.paymentDate}
+                                      placeHolder={
+                                        payAmountOptions[0]?.label || ""
+                                      }
                                     />
                                   ) : (
-                                    <Select
-                                      id="payAmount"
-                                      options={payAmountOptions}
-                                      placeholder={dataAmount.selectOption}
-                                      name="payAmount"
-                                      onChange={(_, newValue: string) => {
-                                        setFieldValue("payAmount", newValue);
-                                        handleOnChange({ payAmount: newValue });
-                                      }}
-                                      value={values.payAmount}
-                                      size="compact"
-                                      fullwidth={true}
-                                    />
+                                    <>
+                                      {" "}
+                                      <Text
+                                        type="label"
+                                        size="medium"
+                                        weight="bold"
+                                      >
+                                        {dataAmount.paymentDate}
+                                      </Text>
+                                      <Select
+                                        id="payAmount"
+                                        name="payAmount"
+                                        options={payAmountOptions}
+                                        placeholder={dataAmount.selectOption}
+                                        value={values.payAmount}
+                                        size="compact"
+                                        fullwidth
+                                        onChange={(_, newValue: string) => {
+                                          setFieldValue("payAmount", newValue);
+                                          handleOnChange({
+                                            payAmount: newValue,
+                                          });
+                                        }}
+                                      />
+                                    </>
                                   )
                                 }
                               </Field>

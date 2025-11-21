@@ -14,11 +14,24 @@ export interface IPaymentDatesChannel {
 }
 
 export interface IResponsePaymentDatesChannel {
-  abbreviatedName: string;
-  payingEntityName: string;
-  payingIdentification: string;
-  paymentChannel: string;
-  regularCycles: IRegularCycle[];
+  creditLine: string;
+  paymentChannels: [
+    {
+      abbreviatedName: string;
+      payingEntityName: string;
+      payingIdentification: string;
+      paymentChannel: string;
+      regularCycles: [
+        {
+          cycleName: string;
+          detailOfPaymentDate: [];
+          firstDayOfTheCycle: string;
+          paymentChannel: string;
+          periodicity: string;
+        },
+      ];
+    },
+  ];
 }
 
 export interface IRegularCycle {

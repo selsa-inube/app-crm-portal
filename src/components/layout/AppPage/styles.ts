@@ -9,12 +9,11 @@ interface IStyledCollapseIcon {
 
 interface IStyledFooter {
   $nav: boolean;
-  isShowMenuOnHeader: boolean;
-  showNav: boolean;
+  $showNav: boolean;
 }
 
 interface IStyledLogo {
-  onTheFooter: boolean;
+  $onTheFooter: boolean;
 }
 
 export const StyledAppPage = styled.div`
@@ -49,7 +48,7 @@ export const StyledContentImg = styled(Link)`
 export const StyledLogo = styled.img<IStyledLogo>`
   max-width: 130px;
   justify-self: center;
-  height: ${({ onTheFooter }) => (onTheFooter ? "50px" : "100%")};
+  height: ${({ $onTheFooter }) => ($onTheFooter ? "50px" : "100%")};
   object-fit: contain;
 `;
 
@@ -100,6 +99,7 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
+  display: ${({ $showNav }) => (!$showNav ? "none" : "inline-flex")};
   justify-content: center;
   align-content: center;
   align-items: center;
