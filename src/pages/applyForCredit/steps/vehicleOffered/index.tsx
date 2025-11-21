@@ -24,11 +24,11 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
   const { isMobile, initialValues, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
-    state: Yup.string(),
+    state: Yup.string().required(),
     model: Yup.lazy((_, { parent }) =>
-      parent.state === "nuevo" ? Yup.number() : Yup.number(),
+      parent.state === "nuevo" ? Yup.number() : Yup.number().required(),
     ),
-    value: Yup.number(),
+    value: Yup.number().required(),
     description: Yup.string().max(200),
   });
 

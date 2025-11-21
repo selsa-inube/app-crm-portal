@@ -27,12 +27,12 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
   const { isMobile, initialValues, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
-    type: Yup.string(),
-    state: Yup.string(),
+    type: Yup.string().required(),
+    state: Yup.string().required(),
     antique: Yup.lazy((_, { parent }) =>
-      parent.state === "nuevo" ? Yup.number() : Yup.number(),
+      parent.state === "nuevo" ? Yup.number() : Yup.number().required(),
     ),
-    estimated: Yup.number(),
+    estimated: Yup.number().required(),
     description: Yup.string().max(200),
   });
 

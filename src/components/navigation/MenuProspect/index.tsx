@@ -18,14 +18,8 @@ interface MenuProspectProps {
 }
 
 export const MenuProspect = (props: MenuProspectProps) => {
-  const {
-    options,
-    onMouseLeave,
-    only,
-    badges,
-    isMobile,
-    hasExtraordinaryInstallments,
-  } = props;
+  const { options, onMouseLeave, only, badges, hasExtraordinaryInstallments } =
+    props;
 
   const shouldShowOption = (option: IOptions) => {
     if (option.id === "extraPayments" && hasExtraordinaryInstallments) {
@@ -42,8 +36,8 @@ export const MenuProspect = (props: MenuProspectProps) => {
             options.map(
               (option, index) =>
                 shouldShowOption(option) && (
-                  <>
-                    <StyledAnchor key={index} title={option.title}>
+                  <Stack direction="column" key={index}>
+                    <StyledAnchor title={option.title}>
                       <StyledContainerLabel
                         onClick={option.onClick}
                         $only={only}
@@ -59,10 +53,9 @@ export const MenuProspect = (props: MenuProspectProps) => {
                     {badges && badges[option.id as string] > 0 && (
                       <StyleBadgeMenuProspect
                         $data={badges[option.id as string]}
-                        isMobile={isMobile || false}
                       />
                     )}
-                  </>
+                  </Stack>
                 ),
             )}
         </Stack>

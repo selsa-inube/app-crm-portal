@@ -7,50 +7,69 @@ import { paymentConfiguration, IPaymentConfigurationMain } from "../config";
 
 export function PaymentConfiguration(props: IPaymentConfigurationMain) {
   const { paymentConfig, onChange, onFormValid } = props;
-  const paymentMethodOptions = useMemo(() => {
+  const flatChannels = useMemo(() => {
     return (
-      paymentConfig.paymentChannelData?.map((channel, index) => ({
-        id: `${channel.abbreviatedName}-${channel.paymentChannel}-${index}`,
-        value: channel.abbreviatedName,
-        label: channel.abbreviatedName,
-      })) || []
+      paymentConfig.paymentChannelData?.flatMap(
+        (item) => item.paymentChannels,
+      ) ?? []
     );
   }, [paymentConfig.paymentChannelData]);
 
-  const selectedChannel = paymentConfig.paymentChannelData?.find(
-    (channel) => channel.abbreviatedName === paymentConfig.paymentMethod,
-  );
+  const paymentMethodOptions = useMemo(() => {
+    const unique = new Map(flatChannels.map((ch) => [ch.abbreviatedName, ch]));
+
+    return Array.from(unique.values()).map((channel, index) => ({
+      id: `${channel.abbreviatedName}-${index}`,
+      value: channel.abbreviatedName,
+      label: channel.abbreviatedName,
+    }));
+  }, [flatChannels]);
+
+  const selectedChannel = useMemo(() => {
+    return flatChannels.find(
+      (ch) => ch.abbreviatedName === paymentConfig.paymentMethod,
+    );
+  }, [flatChannels, paymentConfig.paymentMethod]);
 
   const paymentCycleOptions = useMemo(() => {
-    return (
-      selectedChannel?.regularCycles?.map((cycle, index) => ({
-        id: `${cycle.cycleName}-${index}`,
-        value: cycle.cycleName,
-        label: cycle.cycleName,
-      })) || []
+    if (!selectedChannel) return [];
+
+    const unique = Array.from(
+      new Map(
+        selectedChannel.regularCycles.map((cycle) => [
+          cycle.periodicity,
+          cycle.periodicity,
+        ]),
+      ).values(),
     );
+
+    return unique.map((period, index) => ({
+      id: `${period}-${index}`,
+      value: period,
+      label: period,
+    }));
   }, [selectedChannel]);
 
-  const selectedCycle = selectedChannel?.regularCycles?.find(
-    (cycle) => cycle.cycleName === paymentConfig.paymentCycle,
-  );
+  const selectedCycle = useMemo(() => {
+    return selectedChannel?.regularCycles.find(
+      (cycle) => cycle.periodicity === paymentConfig.paymentCycle,
+    );
+  }, [selectedChannel, paymentConfig.paymentCycle]);
 
   const firstPaymentDateOptions = useMemo(() => {
-    return (
-      selectedCycle?.detailOfPaymentDate?.map((date, index) => ({
+    if (!selectedCycle) return [];
+
+    return Array.from(new Set(selectedCycle.detailOfPaymentDate)).map(
+      (date, index) => ({
         id: `${date}-${index}`,
         value: date,
         label: formatPrimaryDate(new Date(date)),
-      })) || []
+      }),
     );
   }, [selectedCycle]);
 
   useEffect(() => {
-    const updates: {
-      paymentMethod?: string;
-      paymentCycle?: string;
-      firstPaymentDate?: string;
-    } = {};
+    const updates: Partial<IPaymentConfigurationMain["paymentConfig"]> = {};
 
     if (paymentMethodOptions.length === 1 && !paymentConfig.paymentMethod) {
       updates.paymentMethod = paymentMethodOptions[0].value;
