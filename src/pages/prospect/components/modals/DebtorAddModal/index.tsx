@@ -7,8 +7,7 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { getAge } from "@utils/formatData/currency";
 import { IProspect } from "@services/prospect/types";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
-import { searchPortfolioObligationsById } from "@services/portfolioObligation/SearchGeneralInformationObligation";
+import { getFinancialObligations } from "@pages/simulateCredit/steps/extraDebtors/utils";
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 
 import { transformObligationsToBorrowerProperties } from "../DebtorEditModal/utils";
@@ -180,49 +179,6 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     return result as unknown as T;
   }
 
-  const getFinancialObligations = async (publicCode: string) => {
-    const obligations = await getClientPortfolioObligationsById(
-      businessUnitPublicCode || "",
-      businessManagerCode,
-      publicCode,
-    );
-
-    if (!obligations) return;
-
-    const results = await Promise.all(
-      obligations.obligations.map(async (obligation) => {
-        const obligationGeneralInformation =
-          await searchPortfolioObligationsById(
-            businessUnitPublicCode || "",
-            businessManagerCode,
-            obligations.customerIdentificationNumber,
-            obligation.obligationNumber,
-          );
-
-        if (!obligationGeneralInformation) return null;
-
-        return {
-          balanceObligationTotal:
-            obligationGeneralInformation[0].balanceObligation.total,
-          duesPaid: obligationGeneralInformation[0].paidQuotas,
-          entity: obligation.entity,
-          nextPaymentValueTotal:
-            obligationGeneralInformation[0].nextPaymentValue.total,
-          obligationNumber: obligation.obligationNumber,
-          outstandingDues: obligationGeneralInformation[0].pendingQuotas,
-          paymentMethodName: obligationGeneralInformation[0].paymentMethodName,
-          productName: obligationGeneralInformation[0].productName,
-        };
-      }),
-    );
-
-    const allTransformedObligations: IObligations[] = results.filter(
-      (item): item is IObligations => item !== null,
-    );
-
-    setFinancialObligationsData(allTransformedObligations);
-  };
-
   useEffect(() => {
     if (!borrowerId || isCurrentFormValid) return;
 
@@ -262,7 +218,12 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           businessManagerCode,
         );
 
-        getFinancialObligations(customer.publicCode);
+        const financialObligationsData = await getFinancialObligations(
+          customer.publicCode,
+          businessUnitPublicCode || "",
+          businessManagerCode,
+        );
+        setFinancialObligationsData(financialObligationsData || []);
 
         const formattedData = capitalizeKeysExceptSome<IIncomeSources>(
           response as unknown as Record<string, unknown>,

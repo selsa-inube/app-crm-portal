@@ -9,7 +9,6 @@ import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { postSimulateCredit } from "@services/prospect/simulateCredit";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
-import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
 import { IObligations } from "@services/creditRequest/types";
 import { getCreditPayments } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
@@ -34,6 +33,7 @@ import {
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
+import { getFinancialObligations } from "./steps/extraDebtors/utils";
 import {
   IFormData,
   IServicesProductSelection,
@@ -393,12 +393,20 @@ export function SimulateCredit() {
       return;
     }
     try {
-      const data = await getClientPortfolioObligationsById(
+      const data = await getFinancialObligations(
+        customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
-        customerPublicCode,
       );
-      setClientPortfolio(data);
+
+      setClientPortfolio({
+        customerIdentificationNumber: customerData.publicCode,
+        customerName: customerData.fullName,
+        customerIdentificationType:
+          customerData.generalAttributeClientNaturalPersons?.[0]
+            .typeIdentification || "",
+        obligations: data ? data : [],
+      });
     } catch (error: unknown) {
       const err = error as {
         message?: string;
@@ -801,13 +809,16 @@ export function SimulateCredit() {
   useEffect(() => {
     const isFinancialStep =
       currentStepsNumber?.id === stepsAddProspect.obligationsFinancial.id;
-    if (!isFinancialStep) return;
+    if (isFinancialStep && formData.borrowerData.borrowers.length > 0) {
+      const newObligations = updateFinancialObligationsFormData(
+        formData.borrowerData.borrowers,
+      );
 
-    const newObligations = updateFinancialObligationsFormData(
-      formData.borrowerData.borrowers,
-    );
-
-    handleFormDataChange("obligationsFinancial", newObligations);
+      handleFormDataChange("obligationsFinancial", {
+        ...formData.obligationsFinancial,
+        obligations: newObligations,
+      });
+    }
   }, [currentStepsNumber]);
 
   useEffect(() => {
