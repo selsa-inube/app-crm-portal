@@ -220,9 +220,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       (item): item is IObligations => item !== null,
     );
 
-    setFinancialObligationsData((prev) => {
-      return [...prev, ...allTransformedObligations];
-    });
+    setFinancialObligationsData(allTransformedObligations);
   };
 
   useEffect(() => {
