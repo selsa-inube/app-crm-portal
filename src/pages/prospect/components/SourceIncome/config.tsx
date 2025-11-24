@@ -1,7 +1,9 @@
 import { IncomeCard } from "@components/cards/IncomeCard";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
+import { IProspect, IBorrower } from "@services/prospect/types";
 
+import { IBorrowerIncomeData } from "../AddProductModal/config";
 import { IIncome } from "./types";
 
 interface IncomeProps {
@@ -95,5 +97,39 @@ function getInitialValues(customerData: ICustomerData) {
     businesses: ["0", "0"],
   } as IIncome;
 }
+
+const getMainBorrower = (borrowers: IBorrower[]) => {
+  return borrowers.find((borrower: IBorrower) => {
+    borrower.borrowerType === "MainBorrower";
+  });
+};
+
+export const mapIncomesFromProspect = (prospectData: IProspect) => {
+  const mainBorrower = getMainBorrower(prospectData.borrowers);
+
+  const incomeData: IBorrowerIncomeData = {
+    Leases: 0,
+    Dividends: 0,
+    FinancialIncome: 0,
+    PeriodicSalary: 0,
+    OtherNonSalaryEmoluments: 0,
+    PensionAllowances: 0,
+    ProfessionalFees: 0,
+    PersonalBusinessUtilities: 0,
+  };
+
+  Object.keys(incomeData).forEach((incomeProperty) => {
+    const property = mainBorrower?.borrowerProperties.find(
+      (incomePropertyValue) =>
+        incomePropertyValue.propertyName === incomeProperty,
+    );
+    if (property) {
+      incomeData[incomeProperty as keyof IBorrowerIncomeData] =
+        parseFloat(property.propertyValue) || 0;
+    }
+  });
+
+  return incomeData;
+};
 
 export { IncomeCapital, IncomeEmployment, MicroBusinesses, getInitialValues };
