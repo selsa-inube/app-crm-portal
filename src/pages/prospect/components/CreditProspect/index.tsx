@@ -14,8 +14,8 @@ import {
   Button,
   Select,
   useFlag,
-  Spinner,
   Textarea,
+  SkeletonLine,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -48,7 +48,6 @@ import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
-import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
@@ -59,6 +58,8 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { incomeCardData } from "@components/cards/IncomeCard/config";
 import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
+import { getTotalIncomeByBorrowerInProspect } from "@services/prospect/total-income-by-borrowers/getTotalIncomeByBorrowerInProspect";
+import { Fieldset } from "@components/data/Fieldset";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -71,6 +72,7 @@ import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
 import InfoModal from "../InfoModal";
+import { filterIncomeByBorrower } from "./utils";
 
 interface ICreditProspectProps {
   showMenu: () => void;
@@ -172,19 +174,32 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [showMessageSuccessModal]);
 
+  useEffect(() => {
+    fetchCreditLimitData();
+  }, [selectedIndex]);
+
   const fetchCreditLimitData = async () => {
     if (!customerPublicCode) return;
 
     try {
       setIsLoadingCreditLimit(true);
       setCreditLimitError(null);
-      const result = await getCreditLimit(
-        businessUnitPublicCode,
-        businessManagerCode,
-        customerPublicCode,
+
+      const incomesBorrowersByProspect =
+        await getTotalIncomeByBorrowerInProspect(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData?.prospectCode || "",
+        );
+
+      const incomesFiltered = filterIncomeByBorrower(
+        incomesBorrowersByProspect,
+        prospectData?.borrowers[selectedIndex].borrowerIdentificationNumber ||
+          "",
       );
-      setCreditLimitData(result);
-      setCurrentIncomeModalData(result);
+
+      setCreditLimitData(incomesFiltered);
+      setCurrentIncomeModalData(incomesFiltered);
     } catch (error) {
       console.error("Error al obtener las solicitudes de crédito:", error);
       setCreditLimitError("Error al cargar los datos");
@@ -345,7 +360,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     return false;
   };
 
-  const handleIncomeSubmit = (updatedData: IIncomeSources) => {
+  const handleIncomeSubmit = async (updatedData: IIncomeSources) => {
     setCurrentIncomeModalData({ ...updatedData });
     setCreditLimitData({ ...updatedData });
 
@@ -360,8 +375,8 @@ export function CreditProspect(props: ICreditProspectProps) {
         },
       }));
 
-      setDataProspect((prev) => {
-        return prev.map((prospect) => {
+      const updatedBorrower = () => {
+        return dataProspect.map((prospect) => {
           const updatedBorrowers = prospect.borrowers.map((borrower) => {
             if (borrower.borrowerName === borrowerName) {
               const updatedProperties = [
@@ -439,10 +454,20 @@ export function CreditProspect(props: ICreditProspectProps) {
             borrowers: updatedBorrowers,
           };
         });
-      });
+      };
+
+      setDataProspect(updatedBorrower());
+
+      await updateProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        updatedBorrower()[0],
+      );
+
+      if (onProspectRefreshData) onProspectRefreshData();
+
       setOpenModal(null);
     }
-    setShowMessageSuccessModal(true);
   };
 
   useEffect(() => {
@@ -819,14 +844,21 @@ export function CreditProspect(props: ICreditProspectProps) {
             width={isMobile ? "280px" : "448px"}
           >
             {isLoadingCreditLimit ? (
-              <Stack
-                justifyContent="center"
-                alignItems="center"
-                height="300px"
-                direction="column"
-                gap="16px"
-              >
-                <Spinner />
+              <Stack gap="16px" direction="column">
+                <SkeletonLine width="70%" height="30px" animated />
+                <Fieldset>
+                  <Stack
+                    justifyContent="center"
+                    alignItems="center"
+                    height="120px"
+                    direction="column"
+                    gap="16px"
+                  >
+                    <SkeletonLine width="100%" height="30px" animated />
+                    <SkeletonLine width="100%" height="30px" animated />
+                    <SkeletonLine width="100%" height="30px" animated />
+                  </Stack>
+                </Fieldset>
               </Stack>
             ) : creditLimitError ? (
               <Stack
