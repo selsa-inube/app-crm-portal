@@ -211,7 +211,9 @@ export function ApplyForCredit() {
     if (!guaranteesRequired) return Object.values(stepsFilingApplication);
     const hideMortgage = guaranteesRequired.includes("Mortgage");
     const hidePledge = guaranteesRequired.includes("Pledge");
-    const hasCoborrower = guaranteesRequired.includes("Coborower") ?? false;
+    const hasCoborrower =
+      guaranteesRequired.includes("Coborower") ||
+      guaranteesRequired.includes("Borrower");
     const hasBond = guaranteesRequired.includes("Bond") ?? false;
 
     return Object.values(stepsFilingApplication)
@@ -438,7 +440,6 @@ export function ApplyForCredit() {
 
       if (prospect.state !== prospectStates.CREATED) {
         setCodeError(1012);
-        return;
       }
     } catch (error) {
       setCodeError(1010);
@@ -464,6 +465,8 @@ export function ApplyForCredit() {
           prospectData.moneyDestinationAbbreviatedName,
           prospectData.creditProducts[0].loanAmount.toString(),
         );
+
+        if (codeError) return;
 
         if (
           creditData?.modesOfDisbursementTypes &&

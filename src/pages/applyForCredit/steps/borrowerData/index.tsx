@@ -95,7 +95,7 @@ export function Borrowers(props: borrowersProps) {
       <Stack direction="column" gap="20px">
         <Stack justifyContent="end" margin="0 8px">
           <Button onClick={() => setIsModalAdd(true)} iconBefore={<MdAdd />}>
-            {valueRule?.includes("Codeudor")
+            {valueRule?.includes("Coborrower")
               ? dataSubmitApplication.coBorrowers.borrowerLabel
               : dataSubmitApplication.borrowers.borrowerLabel}
           </Button>
@@ -104,7 +104,7 @@ export function Borrowers(props: borrowersProps) {
           <Stack wrap="wrap" gap="16px">
             {formik.values.borrowers
               .filter((item: FormikValues) =>
-                valueRule.includes("Codeudor")
+                valueRule.includes("Coborrower")
                   ? item.borrowerType !== "MainBorrower"
                   : true,
               )
@@ -158,13 +158,13 @@ export function Borrowers(props: borrowersProps) {
                     setIsModalEdit(true);
                   }}
                   handleDelete={() => setIsModalDelete(true)}
-                  showIcons={valueRule?.includes("Codeudor")}
+                  showIcons={valueRule?.includes("Coborrower")}
                 />
               ))}
             <NewCardBorrower
               onClick={() => setIsModalAdd(true)}
               title={
-                valueRule?.includes("Codeudor")
+                valueRule?.includes("Coborrower")
                   ? dataSubmitApplication.coBorrowers.borrowerLabel
                   : dataSubmitApplication.borrowers.borrowerLabel
               }
@@ -176,7 +176,7 @@ export function Borrowers(props: borrowersProps) {
                 handleClose={() => setIsModalAdd(false)}
                 businessManagerCode={businessManagerCode}
                 title={
-                  valueRule?.includes("Codeudor")
+                  valueRule?.includes("Coborrower")
                     ? dataSubmitApplication.coBorrowers.borrowerLabel
                     : dataSubmitApplication.borrowers.borrowerLabel
                 }
