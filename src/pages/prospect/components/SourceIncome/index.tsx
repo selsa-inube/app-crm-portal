@@ -69,8 +69,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     onRestore,
     prospectData,
   } = props;
-  console.log("prospectData: ", prospectData);
-  console.log("data: ", data);
+
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();

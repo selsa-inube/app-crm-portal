@@ -1,4 +1,4 @@
-import { IIncomeSourceBorrowers } from "@services/prospect/total-income-by-borrowers/getTotalIncomeByBorrowerInProspect/types";
+import { IIncomeSourceBorrowers } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect/types";
 import { IIncomeSources } from "./types";
 
 export const mapIncomeToCreditLimit = (

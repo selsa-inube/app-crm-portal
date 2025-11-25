@@ -58,7 +58,7 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { incomeCardData } from "@components/cards/IncomeCard/config";
 import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
-import { getTotalIncomeByBorrowerInProspect } from "@services/prospect/total-income-by-borrowers/getTotalIncomeByBorrowerInProspect";
+import { getTotalIncomeByBorrowerInProspect } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
 import { Fieldset } from "@components/data/Fieldset";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
