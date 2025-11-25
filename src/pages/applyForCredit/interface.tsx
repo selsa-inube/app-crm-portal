@@ -244,7 +244,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   <Stack width="100%" justifyContent="center">
                     <Text type="body" size="medium" appearance="gray">
                       {`${dataSubmitApplication.cards.destination}
-        ${truncateTextToMaxLength(prospectData.moneyDestinationAbbreviatedName, 22)}`}
+        ${truncateTextToMaxLength(prospectData.moneyDestinationAbbreviatedName, 20)}`}
                     </Text>
                   </Stack>
                   <StyledSeparatorLine />
