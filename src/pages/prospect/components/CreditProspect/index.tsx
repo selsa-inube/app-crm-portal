@@ -38,7 +38,7 @@ import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
 import {
-  IAddCreditProduct,
+  IAddProduct,
   ICreditProduct,
   IExtraordinaryInstallments,
   IProspect,
@@ -256,13 +256,26 @@ export function CreditProspect(props: ICreditProspectProps) {
 
     try {
       setIsLoading(true);
-      const payload: IAddCreditProduct = {
+      const payload: IAddProduct = {
         prospectId: prospectData.prospectId,
-        creditProducts: [
-          {
-            lineOfCreditAbbreviatedName: values.selectedProducts[0],
-          },
-        ],
+        creditProduct: {
+          lineOfCreditAbbreviatedName: values.selectedProducts[0],
+          loanAmount: Number(values.creditAmount),
+          installmentFrequency: values.paymentConfiguration.paymentCycle,
+          interestRate: Number(values.interestRate),
+          loanTerm: Number(values.maximumTermValue),
+          creditProductCode: values.selectedProducts[0],
+          ordinaryInstallmentsForPrincipal: [
+            {
+              installmentAmount: Number(values.installmentAmount) | 1,
+              installmentFrequency: values.paymentConfiguration.paymentCycle,
+              paymentChannelAbbreviatedName:
+                values.paymentConfiguration.paymentMethod,
+            },
+          ],
+        },
+        paymentCycle: values.paymentConfiguration.paymentCycle,
+        firstPaymentCycleDate: values.paymentConfiguration.firstPaymentDate,
       };
 
       await addCreditProduct(
