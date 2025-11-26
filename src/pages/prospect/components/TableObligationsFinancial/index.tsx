@@ -393,32 +393,11 @@ export const TableFinancialObligations = (
         return;
       }
 
-      const financialObligations = initialObligationsSnapshot.current.map(
-        (prop) => {
-          const values =
-            prop.propertyValue
-              ?.toString()
-              .split(",")
-              .map((v) => v.trim()) || [];
-          return {
-            productName: values[0] || "",
-            balanceObligationTotal: parseFloat(values[1]) || 0,
-            nextPaymentValueTotal: parseFloat(values[2]) || 0,
-            entity: values[3] || "",
-            paymentMethodName: values[4] || "",
-            obligationNumber: values[5] || "",
-            duesPaid: parseInt(values[6]) || 0,
-            outstandingDues: parseInt(values[7]) || 0,
-          };
-        },
-      );
-
       await restoreFinancialObligationsByBorrowerId(
         businessUnitPublicCode,
         borrower.borrowerIdentificationNumber || "",
         initialValuesSnapshot.current?.[0]?.prospectCode || "",
-        financialObligations,
-        "Restauración de obligaciones financieras a valores iniciales",
+        "Restore financial obligations",
       );
 
       setRefreshKey?.((prev) => prev + 1);

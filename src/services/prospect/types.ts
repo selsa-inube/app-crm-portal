@@ -202,7 +202,7 @@ interface IIncome {
 
 export interface IRefactorIncome {
   borrowerIdentificationNumber: string;
-  income: IIncome;
+  income?: IIncome;
   justification: string;
   prospectCode: string;
 }
