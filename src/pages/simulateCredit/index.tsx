@@ -171,6 +171,10 @@ export function SimulateCredit() {
       name: "",
       surname: "",
     },
+    riskScore: {
+      value: 0,
+      date: "",
+    },
   });
 
   const onlyBorrowerData = useMemo(() => {
@@ -208,9 +212,18 @@ export function SimulateCredit() {
       borrowerProperties: [
         ...numericIncomeProperties,
         ...financialObligationProperties,
+        {
+          propertyName: "creditRiskScore",
+          propertyValue: `${formData.riskScore.value}, ${formData.riskScore.date}`,
+        },
       ],
     };
-  }, [customerData, formData.sourcesOfIncome, formData.obligationsFinancial]);
+  }, [
+    customerData,
+    formData.sourcesOfIncome,
+    formData.obligationsFinancial,
+    formData.riskScore,
+  ]);
 
   const simulateData: IProspect = useMemo(
     () => ({
@@ -558,6 +571,7 @@ export function SimulateCredit() {
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       stepsAddProspect.sourcesIncome.id,
+      stepsAddProspect.riskScore.id,
       servicesProductSelection?.financialObligation.includes("Y")
         ? stepsAddProspect.obligationsFinancial.id
         : togglesState[1]
@@ -612,6 +626,7 @@ export function SimulateCredit() {
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.sourcesIncome.id,
+      stepsAddProspect.riskScore.id,
       servicesProductSelection?.financialObligation.includes("Y")
         ? stepsAddProspect.obligationsFinancial.id
         : togglesState[1]
