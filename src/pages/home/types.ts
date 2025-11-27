@@ -1,8 +1,7 @@
-import { RefObject } from "react";
-
 import { ICRMPortalData } from "@context/AppContext/types";
-import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+import { useNavigate } from "react-router-dom";
+import { IUser } from "../login/types";
 
 interface ICardData {
   id: string;
@@ -39,14 +38,13 @@ interface IHomeUIProps {
   smallScreen: boolean;
   isMobile: boolean;
   username: string;
-  collapse: boolean;
-  businessUnitChangeRef: RefObject<HTMLDivElement>;
-  businessUnitsToTheStaff: IBusinessUnitsPortalStaff[];
-  selectedClient: string;
-  handleLogoClick: (businessUnit: IBusinessUnitsPortalStaff) => void;
   dataHeader: IDataHeader;
   loading: boolean;
   dataOptions: IOptionStaff[];
+  codeError: number | null;
+  addToFix: string[];
+  navigate: ReturnType<typeof useNavigate>;
+  user: IUser;
 }
 
 export type { IHome, ICardData, IBusinessUnitsPortalStaffs, IHomeUIProps };

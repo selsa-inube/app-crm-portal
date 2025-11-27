@@ -14,6 +14,7 @@ import {
   getIconByName,
   OptionStaffPortal,
 } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
+import { ErrorPage } from "@components/layout/ErrorPage";
 
 import { addConfig } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
@@ -30,7 +31,15 @@ type IEnhancedSubOption = {
 };
 
 const CreditUI = (props: ICreditUIProps) => {
-  const { isMobile, dataOptions, dataHeader, navigate } = props;
+  const {
+    isMobile,
+    dataOptions,
+    dataHeader,
+    codeError,
+    addToFix,
+    user,
+    navigate,
+  } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
 
@@ -69,48 +78,64 @@ const CreditUI = (props: ICreditUIProps) => {
 
   return (
     <>
-      <Stack
-        margin={`20px auto ${isMobile || isTablet ? "100px" : "50px"} auto`}
-        width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-        direction="column"
-        gap="24px"
-      >
-        <GeneralHeader
-          descriptionStatus={dataHeader.status}
-          name={dataHeader.name}
-          profileImageUrl={dataHeader.image || userImage}
+      {codeError ? (
+        <ErrorPage
+          onClick={() => {
+            codeError === 1003
+              ? navigate(
+                  `/login/${user.username}/business-units/select-business-unit`,
+                )
+              : navigate("/clients/select-client/");
+          }}
+          errorCode={codeError}
+          addToFix={addToFix}
         />
-        <Breadcrumbs crumbs={addConfig.crumbs} />
-        <Stack gap="64px" direction="column">
-          <StyledArrowBack
-            $isMobile={isMobile}
-            onClick={() => navigate(addConfig.route)}
-          >
-            <Stack gap="8px" alignItems="center" width="100%">
-              <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
-              <Text type="title" size={isMobile ? "small" : "large"}>
-                {addConfig.title}
-              </Text>
+      ) : (
+        <Stack
+          margin={`20px auto ${isMobile || isTablet ? "100px" : "50px"} auto`}
+          width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
+          direction="column"
+          gap="24px"
+        >
+          <GeneralHeader
+            descriptionStatus={dataHeader.status}
+            name={dataHeader.name}
+            profileImageUrl={dataHeader.image || userImage}
+          />
+          <Breadcrumbs crumbs={addConfig.crumbs} />
+          <Stack gap="64px" direction="column">
+            <StyledArrowBack
+              $isMobile={isMobile}
+              onClick={() => navigate(addConfig.route)}
+            >
+              <Stack gap="8px" alignItems="center" width="100%">
+                <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
+                <Text type="title" size={isMobile ? "small" : "large"}>
+                  {addConfig.title}
+                </Text>
+              </Stack>
+            </StyledArrowBack>
+            <Stack
+              direction={isTablet ? "column" : "row"}
+              wrap="wrap"
+              alignItems={isTablet ? "center" : "flex-start"}
+            >
+              {options.map(
+                ({ key, icon, title, subtitle, url, isDisabled }) => (
+                  <CreditCard
+                    key={key}
+                    icon={icon}
+                    title={title}
+                    subtitle={subtitle}
+                    url={url}
+                    isDisabled={isDisabled}
+                  />
+                ),
+              )}
             </Stack>
-          </StyledArrowBack>
-          <Stack
-            direction={isTablet ? "column" : "row"}
-            wrap="wrap"
-            alignItems={isTablet ? "center" : "flex-start"}
-          >
-            {options.map(({ key, icon, title, subtitle, url, isDisabled }) => (
-              <CreditCard
-                key={key}
-                icon={icon}
-                title={title}
-                subtitle={subtitle}
-                url={url}
-                isDisabled={isDisabled}
-              />
-            ))}
           </Stack>
         </Stack>
-      </Stack>
+      )}
     </>
   );
 };

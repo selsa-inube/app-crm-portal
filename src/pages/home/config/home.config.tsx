@@ -6,3 +6,10 @@ export const homeTitleConfig = (username: string) => ({
   icon: <MdOutlineDoorFront />,
   sizeTitle: "large" as const,
 });
+
+export const errorDataCredit = {
+  noBusinessUnit:
+    "No hay una unidad de negocio relacionada con el código del portal.",
+  noSelectClient: "No se ha seleccionado ningún cliente.",
+  noData: "No se han podido obtener las opciones de personal.",
+};

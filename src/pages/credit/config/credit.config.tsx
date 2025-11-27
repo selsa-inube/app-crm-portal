@@ -27,6 +27,13 @@ export const addCredit = {
   subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 };
 
+export const errorDataCredit = {
+  noBusinessUnit:
+    "No hay una unidad de negocio relacionada con el código del portal.",
+  noSelectClient: "No se ha seleccionado ningún cliente.",
+  noData: "No se han podido obtener las opciones de personal.",
+};
+
 interface CreditCardCfg {
   key: string;
   icon: ReactElement;
