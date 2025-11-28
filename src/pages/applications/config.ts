@@ -39,3 +39,7 @@ export const dataError = {
   notCredits:
     "Este cliente aún no tiene ningúna solicitud de crédito en trámite.",
 };
+
+export const redirect = {
+  portalName: "Crediboard",
+};
