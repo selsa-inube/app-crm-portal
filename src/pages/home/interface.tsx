@@ -1,4 +1,4 @@
-import { Stack } from "@inubekit/inubekit";
+import { Stack, Text } from "@inubekit/inubekit";
 
 import { Title } from "@components/layout/Title";
 import { InteractiveBox } from "@components/cards/interactiveBox";
@@ -17,7 +17,7 @@ import {
   StyledTitle,
 } from "./styles";
 import { IHomeUIProps } from "./types";
-import { homeTitleConfig } from "./config/home.config";
+import { errorDataCredit, homeTitleConfig } from "./config/home.config";
 
 export interface IEnhancedOption {
   id: string;
@@ -107,25 +107,31 @@ const HomeUI = (props: IHomeUIProps) => {
                   sizeTitle={homeTitleConfig(username).sizeTitle}
                 />
               </StyledTitle>
-              <StyledContainerCards $smallScreen={smallScreen}>
-                {loading ? (
-                  <>
-                    <InteractiveBox isMobile={smallScreen} isLoading />
-                  </>
-                ) : (
-                  options.map((item, index) => (
-                    <InteractiveBox
-                      key={index}
-                      label={item.abbreviatedName}
-                      description={item.descriptionUse}
-                      icon={item.icon}
-                      url={item.url}
-                      isDisabled={item.isDisabled}
-                      isMobile={smallScreen}
-                    />
-                  ))
-                )}
-              </StyledContainerCards>
+              {options.length === 0 ? (
+                <Text type="title" size="large">
+                  {errorDataCredit.noData}
+                </Text>
+              ) : (
+                <StyledContainerCards $smallScreen={smallScreen}>
+                  {loading ? (
+                    <>
+                      <InteractiveBox isMobile={smallScreen} isLoading />
+                    </>
+                  ) : (
+                    options.map((item, index) => (
+                      <InteractiveBox
+                        key={index}
+                        label={item.abbreviatedName}
+                        description={item.descriptionUse}
+                        icon={item.icon}
+                        url={item.url}
+                        isDisabled={item.isDisabled}
+                        isMobile={smallScreen}
+                      />
+                    ))
+                  )}
+                </StyledContainerCards>
+              )}
             </Stack>
           </Stack>
         </Stack>

@@ -20,6 +20,8 @@ const Credit = () => {
   const [loading, setLoading] = useState(true);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const dataHeader = {
     name: customerData.fullName,
@@ -52,7 +54,7 @@ const Credit = () => {
     }
     if (!optionStaffData || optionStaffData.length === 0) {
       error = 1041;
-      messages.push(errorDataCredit.noData);
+      messages.push(errorDataCredit.errorData);
     }
 
     setCodeError(error);
@@ -68,6 +70,9 @@ const Credit = () => {
       addToFix={addToFix}
       user={user}
       navigate={navigate}
+      showErrorModal={showErrorModal}
+      messageError={messageError}
+      setShowErrorModal={setShowErrorModal}
     />
   );
 };

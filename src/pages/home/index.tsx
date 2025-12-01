@@ -56,7 +56,7 @@ const Home = () => {
     }
     if (!optionStaffData || optionStaffData.length === 0) {
       error = 1041;
-      messages.push(errorDataCredit.noData);
+      messages.push(errorDataCredit.errorData);
     }
 
     setCodeError(error);

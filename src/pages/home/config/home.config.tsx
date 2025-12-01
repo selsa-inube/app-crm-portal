@@ -11,5 +11,6 @@ export const errorDataCredit = {
   noBusinessUnit:
     "No hay una unidad de negocio relacionada con el código del portal.",
   noSelectClient: "No se ha seleccionado ningún cliente.",
-  noData: "No se han podido obtener las opciones de personal.",
+  errorData: "No se han podido obtener las opciones de personal.",
+  noData: "Este cliente aún no tiene funcionalidades disponibles.",
 };

@@ -14,6 +14,9 @@ interface ICreditUIProps {
   codeError: number | null;
   addToFix: string[];
   user: IUser;
+  showErrorModal: boolean;
+  messageError: string;
   navigate: ReturnType<typeof useNavigate>;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export type { ICreditUIProps };

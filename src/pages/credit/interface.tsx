@@ -15,8 +15,10 @@ import {
   OptionStaffPortal,
 } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { Fieldset } from "@components/data/Fieldset";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
-import { addConfig } from "./config/credit.config";
+import { addConfig, errorDataCredit } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -38,7 +40,10 @@ const CreditUI = (props: ICreditUIProps) => {
     codeError,
     addToFix,
     user,
+    showErrorModal,
+    messageError,
     navigate,
+    setShowErrorModal,
   } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
@@ -115,25 +120,63 @@ const CreditUI = (props: ICreditUIProps) => {
                 </Text>
               </Stack>
             </StyledArrowBack>
-            <Stack
-              direction={isTablet ? "column" : "row"}
-              wrap="wrap"
-              alignItems={isTablet ? "center" : "flex-start"}
-            >
-              {options.map(
-                ({ key, icon, title, subtitle, url, isDisabled }) => (
-                  <CreditCard
-                    key={key}
-                    icon={icon}
-                    title={title}
-                    subtitle={subtitle}
-                    url={url}
-                    isDisabled={isDisabled}
-                  />
-                ),
-              )}
-            </Stack>
+            {options.length === 0 ? (
+              <Text type="title" size="large">
+                {errorDataCredit.noData}
+              </Text>
+            ) : (
+              <>
+                {options.length < 9 || isMobile ? (
+                  <Stack
+                    direction={isTablet ? "column" : "row"}
+                    wrap="wrap"
+                    alignItems={isTablet ? "center" : "flex-start"}
+                  >
+                    {options.map(
+                      ({ key, icon, title, subtitle, url, isDisabled }) => (
+                        <CreditCard
+                          key={key}
+                          icon={icon}
+                          title={title}
+                          subtitle={subtitle}
+                          url={url}
+                          isDisabled={isDisabled}
+                        />
+                      ),
+                    )}
+                  </Stack>
+                ) : (
+                  <Fieldset maxHeight={"550px"}>
+                    <Stack
+                      direction={isTablet ? "column" : "row"}
+                      wrap="wrap"
+                      alignItems={isTablet ? "center" : "flex-start"}
+                    >
+                      {options.map(
+                        ({ key, icon, title, subtitle, url, isDisabled }) => (
+                          <CreditCard
+                            key={key}
+                            icon={icon}
+                            title={title}
+                            subtitle={subtitle}
+                            url={url}
+                            isDisabled={isDisabled}
+                          />
+                        ),
+                      )}
+                    </Stack>
+                  </Fieldset>
+                )}
+              </>
+            )}
           </Stack>
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => setShowErrorModal(false)}
+              isMobile={isMobile}
+              message={messageError}
+            />
+          )}
         </Stack>
       )}
     </>
