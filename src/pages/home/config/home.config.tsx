@@ -13,4 +13,5 @@ export const errorDataCredit = {
   noSelectClient: "No se ha seleccionado ningún cliente.",
   errorData: "No se han podido obtener las opciones de personal.",
   noData: "Este cliente aún no tiene funcionalidades disponibles.",
+  noUrl: "No puedes ir a la ruta seleccionada.",
 };

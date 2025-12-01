@@ -43,8 +43,12 @@ interface IHomeUIProps {
   dataOptions: IOptionStaff[];
   codeError: number | null;
   addToFix: string[];
-  navigate: ReturnType<typeof useNavigate>;
+  showErrorModal: boolean;
+  messageError: string;
   user: IUser;
+  navigate: ReturnType<typeof useNavigate>;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export type { IHome, ICardData, IBusinessUnitsPortalStaffs, IHomeUIProps };

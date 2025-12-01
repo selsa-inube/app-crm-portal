@@ -72,7 +72,9 @@ const Credit = () => {
       navigate={navigate}
       showErrorModal={showErrorModal}
       messageError={messageError}
+      setMessageError={setMessageError}
       setShowErrorModal={setShowErrorModal}
+      loading={loading}
     />
   );
 };

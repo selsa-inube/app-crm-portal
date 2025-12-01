@@ -17,6 +17,7 @@ import {
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { InteractiveBox } from "@components/cards/interactiveBox";
 
 import { addConfig, errorDataCredit } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
@@ -42,8 +43,10 @@ const CreditUI = (props: ICreditUIProps) => {
     user,
     showErrorModal,
     messageError,
+    loading,
     navigate,
     setShowErrorModal,
+    setMessageError,
   } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
@@ -120,33 +123,21 @@ const CreditUI = (props: ICreditUIProps) => {
                 </Text>
               </Stack>
             </StyledArrowBack>
-            {options.length === 0 ? (
+            {options.length === 0 && !loading ? (
               <Text type="title" size="large">
                 {errorDataCredit.noData}
               </Text>
             ) : (
               <>
-                {options.length < 9 || isMobile ? (
-                  <Stack
-                    direction={isTablet ? "column" : "row"}
-                    wrap="wrap"
-                    alignItems={isTablet ? "center" : "flex-start"}
-                  >
-                    {options.map(
-                      ({ key, icon, title, subtitle, url, isDisabled }) => (
-                        <CreditCard
-                          key={key}
-                          icon={icon}
-                          title={title}
-                          subtitle={subtitle}
-                          url={url}
-                          isDisabled={isDisabled}
-                        />
-                      ),
-                    )}
+                {loading ? (
+                  <Stack width="300px">
+                    <InteractiveBox isMobile={isTablet} isLoading />
                   </Stack>
                 ) : (
-                  <Fieldset maxHeight={"550px"}>
+                  <Fieldset
+                    maxHeight={"550px"}
+                    showFieldset={options.length > 9}
+                  >
                     <Stack
                       direction={isTablet ? "column" : "row"}
                       wrap="wrap"
@@ -161,6 +152,10 @@ const CreditUI = (props: ICreditUIProps) => {
                             subtitle={subtitle}
                             url={url}
                             isDisabled={isDisabled}
+                            onInvalidUrl={() => {
+                              setMessageError(errorDataCredit.noUrl);
+                              setShowErrorModal(true);
+                            }}
                           />
                         ),
                       )}

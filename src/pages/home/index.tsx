@@ -22,6 +22,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const navigate = useNavigate();
 
@@ -74,6 +76,10 @@ const Home = () => {
       codeError={codeError}
       addToFix={addToFix}
       user={user}
+      showErrorModal={showErrorModal}
+      messageError={messageError}
+      setMessageError={setMessageError}
+      setShowErrorModal={setShowErrorModal}
       navigate={navigate}
     />
   );

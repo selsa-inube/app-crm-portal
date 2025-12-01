@@ -16,7 +16,9 @@ interface ICreditUIProps {
   user: IUser;
   showErrorModal: boolean;
   messageError: string;
+  loading: boolean;
   navigate: ReturnType<typeof useNavigate>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
 export type { ICreditUIProps };

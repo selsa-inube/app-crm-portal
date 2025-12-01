@@ -9,6 +9,7 @@ import {
   OptionStaffPortal,
 } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import {
@@ -38,8 +39,12 @@ const HomeUI = (props: IHomeUIProps) => {
     dataOptions,
     codeError,
     addToFix,
+    showErrorModal,
+    messageError,
     user,
     navigate,
+    setShowErrorModal,
+    setMessageError,
   } = props;
 
   const mergeStaffOptions = (
@@ -127,6 +132,10 @@ const HomeUI = (props: IHomeUIProps) => {
                         url={item.url}
                         isDisabled={item.isDisabled}
                         isMobile={smallScreen}
+                        onInvalidUrl={() => {
+                          setMessageError(errorDataCredit.noUrl);
+                          setShowErrorModal(true);
+                        }}
                       />
                     ))
                   )}
@@ -134,6 +143,13 @@ const HomeUI = (props: IHomeUIProps) => {
               )}
             </Stack>
           </Stack>
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => setShowErrorModal(false)}
+              isMobile={isMobile}
+              message={messageError}
+            />
+          )}
         </Stack>
       )}
     </>
