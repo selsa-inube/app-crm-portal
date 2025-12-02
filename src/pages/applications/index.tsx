@@ -25,6 +25,7 @@ import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
 import { addConfig, dataCreditProspects, dataError } from "./config";
 import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
+import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
@@ -37,6 +38,7 @@ export function CreditApplications() {
   const [selectedRequestCode, setSelectedRequestCode] = useState<string | null>(
     null,
   );
+  const [loading, setLoading] = useState(true);
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -64,6 +66,7 @@ export function CreditApplications() {
     if (!customerData.publicCode) return;
 
     const fetchCreditRequest = async () => {
+      setLoading(true);
       try {
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
@@ -78,6 +81,8 @@ export function CreditApplications() {
       } catch {
         setCodeError(1022);
         setAddToFix([dataCreditProspects.errorCreditRequest]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -92,7 +97,7 @@ export function CreditApplications() {
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/credit")}
           errorCode={codeError}
           addToFix={addToFix}
         />
@@ -128,26 +133,36 @@ export function CreditApplications() {
                 />
               </Stack>
               <Stack wrap="wrap" gap="20px">
-                {creditRequestData.length === 0 && (
+                {creditRequestData.length === 0 && !loading && (
                   <NoResultsMessage search={search} />
                 )}
-                {creditRequestData.map((creditRequest) => (
-                  <SummaryCard
-                    key={creditRequest.creditRequestId}
-                    rad={creditRequest.creditRequestCode}
-                    date={creditRequest.creditRequestDateOfCreation}
-                    name={creditRequest.clientName}
-                    destination={creditRequest.moneyDestinationAbreviatedName}
-                    value={creditRequest.loanAmount}
-                    toDo={creditRequest.taskToBeDone}
-                    hasMessage={creditRequest.unreadNovelties === "Y"}
-                    onCardClick={() => {
-                      setSelectedRequestCode(creditRequest.creditRequestCode);
-                      setIsShowModal(true);
-                    }}
-                  />
-                ))}
-                {creditRequestData.length === 0 && (
+                {loading ? (
+                  <LoadCard />
+                ) : (
+                  <>
+                    {creditRequestData.map((creditRequest) => (
+                      <SummaryCard
+                        key={creditRequest.creditRequestId}
+                        rad={creditRequest.creditRequestCode}
+                        date={creditRequest.creditRequestDateOfCreation}
+                        name={creditRequest.clientName}
+                        destination={
+                          creditRequest.moneyDestinationAbreviatedName
+                        }
+                        value={creditRequest.loanAmount}
+                        toDo={creditRequest.taskToBeDone}
+                        hasMessage={creditRequest.unreadNovelties === "Y"}
+                        onCardClick={() => {
+                          setSelectedRequestCode(
+                            creditRequest.creditRequestCode,
+                          );
+                          setIsShowModal(true);
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+                {creditRequestData.length === 0 && !loading && (
                   <Text type="title" size="large" margin="30px 2px">
                     {dataError.notCredits}
                   </Text>
