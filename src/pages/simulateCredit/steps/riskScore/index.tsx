@@ -37,7 +37,9 @@ export function RiskScore(props: IRiskScoreProps) {
             {riskScoreData.reportedScore}
           </Text>
           <Text type="body" weight="bold" size="small">
-            {formatPrimaryDate(new Date(date))}
+            {date === riskScoreData.date
+              ? riskScoreData.date
+              : formatPrimaryDate(new Date(date))}
           </Text>
         </Stack>
         <Button variant="outlined" iconBefore={<MdOutlineEdit />}>
