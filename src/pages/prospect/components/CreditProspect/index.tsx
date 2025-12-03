@@ -55,6 +55,7 @@ import { AddProductModal } from "@pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
+import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { incomeCardData } from "@components/cards/IncomeCard/config";
 import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
@@ -96,6 +97,7 @@ interface ICreditProspectProps {
   setProspectSummaryData?: React.Dispatch<
     React.SetStateAction<IProspectSummaryById>
   >;
+  userAccount: string;
   onProspectRefreshData?: () => void;
   setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements?: IValidateRequirement[];
@@ -116,6 +118,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     showPrint = true,
     setProspectSummaryData,
     prospectSummaryData,
+    userAccount,
     showAddButtons = true,
     showAddProduct = true,
     setShowRequirements,
@@ -599,6 +602,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       borrower?.borrowerProperties?.find(
         (property) => property.propertyName === "PeriodicSalary",
       )?.propertyValue || "",
+    lineOfCreditAbbreviatedName: dataProspect?.[0]?.linesOfCredit || "",
   };
 
   const handleCommentsChange = (
@@ -639,6 +643,31 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(configModal.observations.errorMessage);
     }
   };
+  const incomeDataProspect = (prospectData?: IProspect): IIncomeSources => {
+    const borrower = prospectData?.borrowers?.[0];
+    const properties = borrower?.borrowerProperties || [];
+
+    const getValue = (name: string) => getPropertyValue(properties, name) || "";
+
+    const getNumeric = (name: string) => parseFloat(getValue(name)) || 0;
+
+    return {
+      identificationNumber: borrower?.borrowerIdentificationNumber || "",
+      identificationType: borrower?.borrowerIdentificationType || "",
+      name: getValue("name"),
+      surname: getValue("surname"),
+      Dividends: getNumeric("Dividends"),
+      FinancialIncome: getNumeric("FinancialIncome"),
+      Leases: getNumeric("Leases"),
+      OtherNonSalaryEmoluments: getNumeric("OtherNonSalaryEmoluments"),
+      PensionAllowances: getNumeric("PensionAllowances"),
+      PeriodicSalary: getNumeric("PeriodicSalary"),
+      PersonalBusinessUtilities: getNumeric("PersonalBusinessUtilities"),
+      ProfessionalFees: getNumeric("ProfessionalFees"),
+    };
+  };
+
+  const incomeDataValues = incomeDataProspect(prospectData);
 
   const countRequirementsNotMet = () => {
     if (!validateRequirements) return 0;
@@ -785,10 +814,14 @@ export function CreditProspect(props: ICreditProspectProps) {
             setRequestValue={setRequestValue || (() => {})}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
-            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+            dataMaximumCreditLimitService={
+              dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+            }
             moneyDestination={
               prospectData?.moneyDestinationAbbreviatedName || ""
             }
+            userAccount={userAccount}
+            incomeData={incomeDataValues}
           />
         )}
         {openModal === "paymentCapacity" && (
@@ -796,7 +829,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             handleClose={() => setOpenModal(null)}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
-            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+            dataMaximumCreditLimitService={
+              dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+            }
           />
         )}
         {openModal === "reciprocityModal" && (

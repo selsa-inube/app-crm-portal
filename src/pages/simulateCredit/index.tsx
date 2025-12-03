@@ -43,6 +43,7 @@ import {
 import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
+import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 import { textAddCongfig } from "./config/addConfig";
 
 export function SimulateCredit() {
@@ -85,7 +86,6 @@ export function SimulateCredit() {
   const [sentModal, setSentModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
   const [loadingQuestions, setLoadingQuestions] = useState(true);
-
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -103,8 +103,8 @@ export function SimulateCredit() {
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const userAccount = eventData.user.identificationDocumentNumber || "";
   const customerPublicCode: string = customerData.publicCode;
-
   const [formState, setFormState] = useState({
     type: "",
     entity: "",
@@ -852,6 +852,7 @@ export function SimulateCredit() {
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       identificationDocumentNumber: customerData.publicCode,
       moneyDestination: formData.selectedDestination,
+      lineOfCreditAbbreviatedName: formData.selectedProducts[0] || "",
       primaryIncomeType:
         typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
           ? formData.sourcesOfIncome.PeriodicSalary.toString()
@@ -930,7 +931,9 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
-        dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+        dataMaximumCreditLimitService={
+          dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+        }
         servicesProductSelection={
           servicesProductSelection as IServicesProductSelection
         }
@@ -946,6 +949,7 @@ export function SimulateCredit() {
         prospectCode={prospectCode}
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
+        userAccount={userAccount}
         loadingQuestions={loadingQuestions}
         showSelectsLoanAmount={!formData.togglesState[0]}
       />

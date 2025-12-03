@@ -91,6 +91,7 @@ interface SimulationsUIProps {
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
   generateAndSharePdf: () => void;
+  userAccount?: string;
   showRecalculateSimulation: boolean;
   setShowRecalculateSimulation: React.Dispatch<React.SetStateAction<boolean>>;
   handleRecalculateSimulation: () => void;
@@ -110,6 +111,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     dataHeader,
     isMobile,
     prospectCode,
+    userAccount,
     dataProspect,
     showMenu,
     codeError,
@@ -380,6 +382,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           prospectSummaryData={prospectSummaryData}
                           setProspectSummaryData={setProspectSummaryData}
                           onProspectRefreshData={onProspectUpdated}
+                          userAccount={userAccount as string}
                           setShowRequirements={setShowRequirements}
                           validateRequirements={validateRequirements}
                         />
