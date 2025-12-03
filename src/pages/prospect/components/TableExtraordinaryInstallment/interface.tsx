@@ -43,6 +43,7 @@ interface ITableExtraordinaryInstallmentProps {
   service: boolean;
   showErrorModal: boolean;
   messageError: string;
+  isLoadingDelete: boolean;
   installmentState: {
     installmentAmount: number;
     installmentDate: string;
@@ -106,6 +107,7 @@ export function TableExtraordinaryInstallmentUI(
     setInstallmentState,
     openMenuIndex,
     setOpenMenuIndex,
+    isLoadingDelete = false,
   } = props;
 
   const {
@@ -283,6 +285,7 @@ export function TableExtraordinaryInstallmentUI(
           handleClose={() => setIsOpenModalDelete(false)}
           handleDelete={handleDeleteAction}
           TextDelete={dataTableExtraordinaryInstallment.content}
+          isLoading={isLoadingDelete}
         />
       )}
       {showErrorModal && (
