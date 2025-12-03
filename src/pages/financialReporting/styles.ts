@@ -49,6 +49,9 @@ export const StyledScreenPrint = styled.div<IStyledToast>`
     display: grid;
     grid-template-columns: 1fr;
     gap: 35px;
+    overflow-y: visible !important;
+    height: auto !important;
+    width: 100%;
   }
 
   & > div:nth-child(2),
@@ -68,8 +71,11 @@ export const StyledScreenPrint = styled.div<IStyledToast>`
 `;
 
 export const StyledPageBreak = styled.div`
-  @media print {
+   {
     page-break-before: always;
+    width: 100% !important;
+    overflow-y: visible !important;
+    height: auto !important;
   }
 `;
 
@@ -79,7 +85,8 @@ export const StyledMarginPrint = styled.div<IStyledToast>`
     @page {
       margin: 1in 0.85in 1in 1in;
     }
-    margin: -15px 0 0 0;
+    overflow-y: visible !important;
+    height: auto !important;
   }
 `;
 

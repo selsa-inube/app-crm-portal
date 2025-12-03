@@ -43,8 +43,8 @@ import {
 import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
 import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
-import { updateFinancialObligationsFormData } from "./utils";
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
+import { textAddCongfig } from "./config/addConfig";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -85,6 +85,7 @@ export function SimulateCredit() {
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [sentModal, setSentModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -172,22 +173,44 @@ export function SimulateCredit() {
     },
   });
 
-  const onlyBorrowerData = useMemo(
-    () => ({
+  const onlyBorrowerData = useMemo(() => {
+    const numericIncomeProperties = Object.entries(formData.sourcesOfIncome)
+      .filter(([_, value]) => typeof value === "number" && !isNaN(value))
+      .map(([key, value]) => ({
+        propertyName: key,
+        propertyValue: String(value),
+      }));
+
+    const financialObligationProperties =
+      formData.obligationsFinancial?.obligations?.map((obligation) => ({
+        propertyName: textAddCongfig.financialObligation,
+        propertyValue: [
+          obligation.productName,
+          obligation.nextPaymentValueTotal,
+          obligation.balanceObligationTotal,
+          obligation.entity,
+          obligation.paymentMethodName,
+          obligation.obligationNumber,
+          obligation.duesPaid || "0",
+          obligation.outstandingDues || "0",
+        ]
+          .filter((x) => x !== undefined && x !== null)
+          .join(", "),
+      })) || [];
+
+    return {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
-      borrowerType: "MainBorrower",
-      borrowerName: "Lenis Poveda",
+      borrowerType: textAddCongfig.mainBorrower,
+      borrowerName: customerData.fullName,
+
       borrowerProperties: [
-        {
-          propertyName: "PeriodicSalary",
-          propertyValue: "4500000",
-        },
+        ...numericIncomeProperties,
+        ...financialObligationProperties,
       ],
-    }),
-    [customerData],
-  );
+    };
+  }, [customerData, formData.sourcesOfIncome, formData.obligationsFinancial]);
 
   const simulateData: IProspect = useMemo(
     () => ({
@@ -308,9 +331,7 @@ export function SimulateCredit() {
   ]);
 
   const fetchRulesByProducts = useCallback(async () => {
-    if (!formData.selectedProducts || formData.selectedProducts.length === 0)
-      return;
-
+    setLoadingQuestions(true);
     try {
       const results = await Promise.all(
         formData.selectedProducts.map(async (product) => {
@@ -359,6 +380,8 @@ export function SimulateCredit() {
       setShowErrorModal(true);
       setMessageError(messagesError.tryLater);
       setAllowToContinue(false);
+    } finally {
+      setLoadingQuestions(false);
     }
   }, [formData.selectedProducts]);
 
@@ -535,7 +558,11 @@ export function SimulateCredit() {
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       stepsAddProspect.sourcesIncome.id,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      servicesProductSelection?.financialObligation.includes("Y")
+        ? stepsAddProspect.obligationsFinancial.id
+        : togglesState[1]
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
       togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
@@ -585,7 +612,11 @@ export function SimulateCredit() {
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.sourcesIncome.id,
-      togglesState[1] ? stepsAddProspect.obligationsFinancial.id : undefined,
+      servicesProductSelection?.financialObligation.includes("Y")
+        ? stepsAddProspect.obligationsFinancial.id
+        : togglesState[1]
+          ? stepsAddProspect.obligationsFinancial.id
+          : undefined,
       togglesState[2] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.loanConditions.id,
       stepsAddProspect.loanAmount.id,
@@ -666,9 +697,13 @@ export function SimulateCredit() {
       setIsLoadingCreditLimit(false);
     }
   };
+
   useEffect(() => {
-    if (currentStep === stepsAddProspect.productSelection.id) {
+    if (currentStep === stepsAddProspect.generalInformation.id) {
       fetchCreditLimit();
+    }
+
+    if (currentStep === stepsAddProspect.productSelection.id) {
       fetchDataClientPortfolio();
       fetchDataObligationPayment();
       fetchCapacityAnalysis();
@@ -712,17 +747,28 @@ export function SimulateCredit() {
   }, [currentStep, businessUnitPublicCode]);
 
   useEffect(() => {
-    if (clientPortfolio) {
+    if (
+      clientPortfolio &&
+      (!formData.obligationsFinancial ||
+        Object.keys(formData.obligationsFinancial).length === 0)
+    ) {
       setFormData((prevState) => ({
         ...prevState,
         obligationsFinancial: clientPortfolio,
       }));
     }
-  }, [clientPortfolio]);
+  }, [clientPortfolio, formData.obligationsFinancial]);
+
+  const stableSelectedProducts = useMemo(
+    () => formData.selectedProducts,
+    [formData.selectedProducts.join(",")],
+  );
 
   useEffect(() => {
-    fetchRulesByProducts();
-  }, [formData.selectedProducts, fetchRulesByProducts]);
+    if (stableSelectedProducts.length > 0) {
+      fetchRulesByProducts();
+    }
+  }, [stableSelectedProducts]);
 
   useEffect(() => {
     const isExtraBorrowersStep =
@@ -755,18 +801,6 @@ export function SimulateCredit() {
       handleFormDataChange("borrowerData", { borrowers: updatedBorrowers });
     }
   }, [currentStepsNumber, customerData]);
-
-  useEffect(() => {
-    const isFinancialStep =
-      currentStepsNumber?.id === stepsAddProspect.obligationsFinancial.id;
-    if (!isFinancialStep) return;
-
-    const newObligations = updateFinancialObligationsFormData(
-      formData.borrowerData.borrowers,
-    );
-
-    handleFormDataChange("obligationsFinancial", newObligations);
-  }, [currentStepsNumber]);
 
   useEffect(() => {
     const mainBorrower = formData.borrowerData.borrowers.find(
@@ -831,6 +865,21 @@ export function SimulateCredit() {
       formData.sourcesOfIncome?.PeriodicSalary,
     ],
   );
+
+  useEffect(() => {
+    if (formData.generalToggleChecked) {
+      const all = Object.keys(creditLineTerms);
+      setFormData((prev) => ({
+        ...prev,
+        selectedProducts: all,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        selectedProducts: [],
+      }));
+    }
+  }, [formData.generalToggleChecked, formData.togglesState]);
 
   return (
     <>
@@ -901,6 +950,8 @@ export function SimulateCredit() {
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
         userAccount={userAccount}
+        loadingQuestions={loadingQuestions}
+        showSelectsLoanAmount={!formData.togglesState[0]}
       />
       {showConsultingModal && <Consulting />}
     </>

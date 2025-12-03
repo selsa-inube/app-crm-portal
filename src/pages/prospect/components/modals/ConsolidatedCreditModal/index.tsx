@@ -52,6 +52,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
   );
+  const [isLoading, setLoading] = useState(false);
   const [sortedObligationPayment, setSortedObligationPayment] = useState<
     IPayment[]
   >([]);
@@ -305,6 +306,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     }
 
     try {
+      setLoading(true);
       await updateConsolidatedCredits(
         businessUnitPublicCode,
         prospectData.prospectId,
@@ -323,6 +325,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         appearance: "success",
         duration: 4000,
       });
+      setLoading(false);
     } catch (error) {
       const err = error as {
         message?: string;
@@ -332,7 +335,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description =
         code + (err?.message || "") + (err?.data?.description || "");
-
+      setLoading(false);
       addFlag({
         title: feedback.handleSaveChanges.error.title,
         description:
@@ -354,6 +357,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
       handleBack={handleClose}
       finalDivider={true}
       backButton={ModalConfig.close}
+      isLoading={isLoading}
     >
       <Stack direction="column" gap="24px">
         <Stack
@@ -396,6 +400,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
             gap="16px"
             height={isMobile ? "auto" : "420px"}
             padding="0px 0px 0px 2px"
+            margin="0 10px 0 0"
           >
             {editOpen ? (
               <>
@@ -427,7 +432,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                   autoRows="auto"
                   templateColumns={isMobile ? "1fr" : "repeat(2, 1fr)"}
                   gap="16px"
-                  width="0%"
+                  width="100%"
+                  margin="0 20px 0 0"
                 >
                   {sortedObligationPayment.map((creditData) => (
                     <CardConsolidatedCredit

@@ -27,7 +27,6 @@ export interface TableExtraordinaryInstallmentProps {
   >;
   handleClose?: () => void;
   handleDelete?: (id: string) => void;
-  handleUpdate?: (updatedDebtor: TableExtraordinaryInstallmentProps) => void;
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
@@ -83,7 +82,6 @@ export const TableExtraordinaryInstallment = (
     setSentData,
     handleClose,
     handleDelete,
-    handleUpdate,
   } = props;
 
   const headers = headersTableExtraordinaryInstallment;
@@ -111,7 +109,6 @@ export const TableExtraordinaryInstallment = (
   });
   const [loading, setLoading] = useState(true);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
-  const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
   const [isOpenModalView, setIsOpenModalView] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -193,25 +190,6 @@ export const TableExtraordinaryInstallment = (
     }
   }, [extraordinary]);
 
-  const handleUpdateData = async (
-    updatedDebtor: TableExtraordinaryInstallmentProps,
-  ) => {
-    if (!service && typeof handleUpdate === "function") {
-      handleUpdate(updatedDebtor);
-      setIsOpenModalEdit(false);
-      return;
-    }
-    try {
-      const updatedDebtors = extraordinaryInstallments.map((debtor) =>
-        debtor.id === updatedDebtor.id ? updatedDebtor : debtor,
-      );
-      setExtraordinaryInstallments(updatedDebtors);
-      setIsOpenModalEdit(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleDeleteAction = async () => {
     if (handleDelete && selectedDebtor.id) {
       handleDelete(selectedDebtor.id as string);
@@ -250,17 +228,13 @@ export const TableExtraordinaryInstallment = (
         visbleActions={visbleActions}
         extraordinaryInstallments={extraordinaryInstallments}
         isMobile={isMobile}
-        selectedDebtor={selectedDebtor}
         isOpenModalDelete={isOpenModalDelete}
-        isOpenModalEdit={isOpenModalEdit}
         businessUnitPublicCode={businessUnitPublicCode ?? ""}
         prospectData={prospectData}
         showErrorModal={showErrorModal}
         messageError={messageError}
         setShowErrorModal={setShowErrorModal}
         setIsOpenModalDelete={setIsOpenModalDelete}
-        setIsOpenModalEdit={setIsOpenModalEdit}
-        handleUpdate={handleUpdateData}
         usePagination={paginationProps}
         setSentData={setSentData ?? (() => {})}
         handleClose={handleClose}

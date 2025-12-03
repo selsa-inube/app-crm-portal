@@ -155,6 +155,8 @@ interface SimulateCreditUIProps {
   errorsManager: IManageErrors;
   userAccount?: string;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
+  loadingQuestions: boolean;
+  showSelectsLoanAmount: boolean;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -220,6 +222,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     prospectCode,
     errorsManager,
     paymentChannel,
+    loadingQuestions,
+    showSelectsLoanAmount,
   } = props;
 
   return (
@@ -421,6 +425,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           servicesProductSelection.extraInstallement,
                       }}
                       creditLineTerms={creditLineTerms!}
+                      loadingQuestions={loadingQuestions}
                     />
                   )}
                 {currentStepsNumber &&
@@ -530,6 +535,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       setRequestValue={setRequestValue}
                       obligationPayments={obligationPayments}
                       paymentChannel={paymentChannel}
+                      showSelects={showSelectsLoanAmount}
                     />
                   )}
                 {currentStepsNumber &&
@@ -539,9 +545,27 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     <ConsolidatedCredit
                       initialValues={formData.consolidatedCreditSelections}
                       isMobile={isMobile}
-                      onChange={(items) =>
-                        handleFormDataChange("consolidatedCreditArray", items)
-                      }
+                      onChange={(
+                        items,
+                        selectedValuesMap,
+                        total,
+                        selectedLabelsMap,
+                      ) => {
+                        handleFormDataChange("consolidatedCreditArray", items);
+                        handleFormDataChange("consolidatedCreditSelections", {
+                          ...formData.consolidatedCreditSelections,
+                          selectedValues: selectedValuesMap ?? {},
+                          totalCollected:
+                            total ??
+                            formData.consolidatedCreditSelections
+                              .totalCollected,
+                          selectedLabels:
+                            selectedLabelsMap ??
+                            formData.consolidatedCreditSelections
+                              .selectedLabels ??
+                            {},
+                        });
+                      }}
                       data={obligationPayments}
                     />
                   )}

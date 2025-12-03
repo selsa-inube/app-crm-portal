@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { MdInfoOutline } from "react-icons/md";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
-import { Stack, Text, Toggle, Divider, Icon } from "@inubekit/inubekit";
+import {
+  Stack,
+  Text,
+  Toggle,
+  Divider,
+  Icon,
+  SkeletonLine,
+} from "@inubekit/inubekit";
 
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
@@ -35,6 +42,7 @@ interface IProductSelectionProps {
   choiceMoneyDestination: string;
   servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
+  loadingQuestions: boolean;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -51,6 +59,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     servicesQuestion,
     choiceMoneyDestination,
     creditLineTerms,
+    loadingQuestions,
   } = props;
   const validationSchema = Yup.object().shape({
     selectedProducts: Yup.array().when("generalToggleChecked", {
@@ -73,17 +82,6 @@ export function ProductSelection(props: IProductSelectionProps) {
     const isValid = generalToggleChecked || selectedProducts.length > 0;
     onFormValid(isValid);
   }, [generalToggleChecked, selectedProducts, onFormValid]);
-
-  useEffect(() => {
-    if (generalToggleChecked) {
-      const allProductValues = Object.keys(creditLineTerms);
-      setSelectedProducts(allProductValues);
-      handleFormDataChange("selectedProducts", allProductValues);
-    } else {
-      setSelectedProducts([]);
-      handleFormDataChange("selectedProducts", []);
-    }
-  }, [generalToggleChecked]);
 
   const allQuestions = Object.entries(electionData.questions).map(
     ([key, question], index) => ({ key, question, index }),
@@ -110,8 +108,14 @@ export function ProductSelection(props: IProductSelectionProps) {
       state = getQuestionState(fullRules.extraInstallement);
     }
     if (key === "updateFinancialObligations") {
-      state = getQuestionState(fullRules.financialObligation);
+      const currentValue = fullRules.financialObligation;
+      if (currentValue.includes("N")) {
+        state = "enabled";
+      } else if (currentValue.includes("Y")) {
+        state = "hidden";
+      }
     }
+
     if (key === "includeAditionalBorrowers") {
       state = getQuestionState(fullRules.aditionalBorrowers);
     }
@@ -178,26 +182,32 @@ export function ProductSelection(props: IProductSelectionProps) {
                   wrap="wrap"
                 >
                   {Object.keys(creditLineTerms).length > 0 ? (
-                    Object.entries(creditLineTerms).map(
-                      ([lineName, terms], index) => (
-                        <Stack key={index} direction="column">
+                    Object.entries(creditLineTerms)
+                      .sort(([creditLineA], [creditLineB]) =>
+                        creditLineA.localeCompare(creditLineB),
+                      )
+                      .map(([creditLineName, creditLineTermsValues]) => (
+                        <Stack key={creditLineName} direction="column">
                           <CardProductSelection
-                            key={lineName}
-                            amount={terms.LoanAmountLimit}
-                            rate={terms.RiskFreeInterestRate}
-                            term={terms.LoanTermLimit}
-                            description={lineName}
+                            key={creditLineName}
+                            amount={creditLineTermsValues.LoanAmountLimit}
+                            rate={creditLineTermsValues.RiskFreeInterestRate}
+                            term={creditLineTermsValues.LoanTermLimit}
+                            description={creditLineName}
                             disabled={generalToggleChecked}
                             isSelected={values.selectedProducts.includes(
-                              lineName,
+                              creditLineName,
                             )}
                             onSelect={() => {
                               const newSelected =
-                                values.selectedProducts.includes(lineName)
+                                values.selectedProducts.includes(creditLineName)
                                   ? values.selectedProducts.filter(
-                                      (id) => id !== lineName,
+                                      (id) => id !== creditLineName,
                                     )
-                                  : [...values.selectedProducts, lineName];
+                                  : [
+                                      ...values.selectedProducts,
+                                      creditLineName,
+                                    ];
 
                               setFieldValue("selectedProducts", newSelected);
                               setSelectedProducts(newSelected);
@@ -209,8 +219,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                             isMobile={isMobile}
                           />
                         </Stack>
-                      ),
-                    )
+                      ))
                   ) : (
                     <Text type="body" size="medium">
                       {electionData.load}
@@ -219,7 +228,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                 </Stack>
               </Fieldset>
             )}
-            {filteredQuestions.length > 0 && (
+            {filteredQuestions.length > 0 && !loadingQuestions ? (
               <Fieldset>
                 {filteredQuestions.map(
                   ({ key, question, index }, filteredIndex) => (
@@ -294,6 +303,12 @@ export function ProductSelection(props: IProductSelectionProps) {
                   ),
                 )}
               </Fieldset>
+            ) : (
+              <>
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
+              </>
             )}
           </Stack>
           {showInfoModal && (

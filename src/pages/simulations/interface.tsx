@@ -37,6 +37,7 @@ import {
   StyledMarginPrint,
   StyledPrint,
   StyledScrollPrint,
+  StyledPrintContainerHeader,
 } from "./styles";
 import {
   addConfig,
@@ -276,85 +277,91 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           </StyledPrint>
                         </Stack>
                         <Divider dashed />
-                        <Stack
-                          justifyContent="space-between"
-                          alignItems="center"
-                          direction={isMobile ? "column" : "row"}
-                          gap="16px"
-                        >
+                        <StyledPrintContainerHeader>
                           <Stack
-                            gap="8px"
-                            direction="column"
+                            justifyContent="space-between"
                             alignItems="center"
-                            width="30%"
+                            direction={isMobile ? "column" : "row"}
+                            gap="16px"
                           >
-                            <Stack gap="8px" width="100%">
-                              <Icon
-                                icon={<MdOutlineBeachAccess />}
-                                appearance="dark"
-                                size="28px"
-                              />
-                              <Stack
-                                direction="column"
-                                alignItems="center"
-                                gap="8px"
-                              >
+                            <Stack
+                              gap="8px"
+                              direction="column"
+                              alignItems="center"
+                              width="30%"
+                            >
+                              <Stack gap="8px" width="100%">
+                                <Icon
+                                  icon={<MdOutlineBeachAccess />}
+                                  appearance="dark"
+                                  size="28px"
+                                />
                                 <Stack
                                   direction="column"
                                   alignItems="center"
                                   gap="8px"
-                                  width="100%"
                                 >
-                                  <Text type="title" size="large">
-                                    {processedData.destinationName}
-                                  </Text>
-                                  <Text
-                                    type="body"
-                                    size="small"
-                                    appearance="gray"
+                                  <Stack
+                                    direction="column"
+                                    alignItems="center"
+                                    gap="8px"
+                                    width="100%"
                                   >
-                                    {dataEditProspect.destination}
-                                  </Text>
+                                    <Text type="title" size="large">
+                                      {processedData.destinationName}
+                                    </Text>
+                                    <Text
+                                      type="body"
+                                      size="small"
+                                      appearance="gray"
+                                    >
+                                      {dataEditProspect.destination}
+                                    </Text>
+                                  </Stack>
                                 </Stack>
                               </Stack>
                             </Stack>
-                          </Stack>
-                          <Stack
-                            direction="column"
-                            alignItems="center"
-                            gap="8px"
-                            width="40%"
-                          >
-                            <Text type="title" size="large" textAlign="center">
-                              {processedData.mainBorrowerName}
-                            </Text>
-                            <Text type="body" size="small" appearance="gray">
-                              Cliente
-                            </Text>
-                          </Stack>
-                          <Stack
-                            direction="column"
-                            alignItems="center"
-                            gap="8px"
-                            width="30%"
-                          >
-                            <Stack gap="8px">
+                            <Stack
+                              direction="column"
+                              alignItems="center"
+                              gap="8px"
+                              width="40%"
+                            >
                               <Text
-                                type="headline"
-                                weight="bold"
+                                type="title"
                                 size="large"
-                                appearance="primary"
+                                textAlign="center"
                               >
-                                {currencyFormat(
-                                  prospectSummaryData?.netAmountToDisburse || 0,
-                                )}
+                                {processedData.mainBorrowerName}
+                              </Text>
+                              <Text type="body" size="small" appearance="gray">
+                                Cliente
                               </Text>
                             </Stack>
-                            <Text type="body" size="small" appearance="gray">
-                              {dataEditProspect.value}
-                            </Text>
+                            <Stack
+                              direction="column"
+                              alignItems="center"
+                              gap="8px"
+                              width="30%"
+                            >
+                              <Stack gap="8px">
+                                <Text
+                                  type="headline"
+                                  weight="bold"
+                                  size="large"
+                                  appearance="primary"
+                                >
+                                  {currencyFormat(
+                                    prospectSummaryData?.requestedAmount || 0,
+                                  )}
+                                </Text>
+                              </Stack>
+                              <Text type="body" size="small" appearance="gray">
+                                {dataEditProspect.value}
+                              </Text>
+                            </Stack>
                           </Stack>
-                        </Stack>
+                        </StyledPrintContainerHeader>
                       </Stack>
                     </Fieldset>
 

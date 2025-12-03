@@ -299,6 +299,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   };
 
   const incomeDataValues = incomeDataProspect(prospectData);
+
   return (
     <>
       <Fieldset

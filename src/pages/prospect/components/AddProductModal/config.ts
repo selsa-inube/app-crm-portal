@@ -1,4 +1,4 @@
-import { ObjectSchema, AnyObject } from "yup";
+import * as Yup from "yup";
 
 import {
   CreditLine,
@@ -8,6 +8,9 @@ import {
 } from "@services/enum/prospectProduct";
 import { Schedule } from "@services/enum/schedule";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { IProspect } from "@src/services/prospect/types";
+
+import { IPaymentConfiguration } from "./steps/config";
 
 const creditLineOptions = [
   {
@@ -154,6 +157,8 @@ export interface IAddProductModalProps {
   moneyDestination: string;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  dataProspect: IProspect;
+  isLoading: boolean;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   customerData?: ICustomerData;
@@ -174,20 +179,6 @@ export type TCreditLineTerms = Record<
     description?: string;
   }
 >;
-
-export interface IFormValues {
-  selectedProducts: string[];
-  creditLine?: string;
-  creditAmount?: number;
-  paymentMethod?: string;
-  paymentCycle?: string;
-  firstPaymentCycle?: string;
-  termInMonths?: number;
-  amortizationType?: string;
-  interestRate?: number;
-  rateType?: string;
-}
-
 export type TRulePrimitiveValue = number | string;
 
 export type TRuleArrayValue = (
@@ -230,14 +221,155 @@ export interface IAddProductModalUIProps {
   title: string;
   confirmButtonText: string;
   initialValues: Partial<IFormValues>;
-  validationSchema: ObjectSchema<IFormValues, AnyObject, IFormValues>;
+  validationSchema: Yup.AnyObjectSchema;
   onConfirm: (values: IFormValues) => void;
   onCloseModal: () => void;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   creditLineTerms: TCreditLineTerms;
   isMobile: boolean;
+  steps: StepDetails[];
+  currentStep: number;
+  currentStepsNumber: StepDetails;
+  isCurrentFormValid: boolean;
+  formData: IFormValues;
+  setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
+  handleFormChange: (updatedValues: Partial<IFormValues>) => void;
+  handleNextStep: () => void;
+  handlePreviousStep: () => void;
+  handleSubmitClick: () => void;
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
+  prospectData: {
+    lineOfCredit: string;
+    moneyDestination: string;
+  };
+  errorModal: boolean;
+  setErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  errorMessage: string;
+  loading: boolean;
+  isLoading: boolean;
 }
+
+export interface IStep {
+  id: number;
+  number: number;
+  name: string;
+  description: string;
+}
+
+export const stepsAddProduct = {
+  creditLineSelection: {
+    id: 1,
+    number: 1,
+    name: "Línea de crédito",
+    description: "Selecciona la línea de crédito",
+  },
+  paymentConfiguration: {
+    id: 2,
+    number: 2,
+    name: "Configuración de pago",
+    description: "Configura el medio y ciclo de pago",
+  },
+  termSelection: {
+    id: 3,
+    number: 3,
+    name: "Plazo",
+    description: "Selecciona el plazo del crédito",
+  },
+  amountCapture: {
+    id: 4,
+    number: 4,
+    name: "Monto a solicitar",
+    description: "Ingresa el monto del crédito",
+  },
+};
+
+export const titleButtonTextAssisted = {
+  goBackText: "Atrás",
+  goNextText: "Siguiente",
+  submitText: "Agregar producto",
+};
+
+export const errorMessages = {
+  getPaymentMethods: "Error al obtener los medios de pago",
+};
+
+export const noAvailablePaymentMethods = "No hay medios de pago disponibles";
+
+export interface IFirstPaymentDate {
+  id: string;
+  value: string;
+  label: string;
+}
+
+export interface IFormValues {
+  creditLine: string;
+  creditAmount: number;
+  paymentConfiguration: IPaymentConfiguration;
+  quotaCapValue: number;
+  maximumTermValue: number;
+  quotaCapEnabled: boolean;
+  maximumTermEnabled: boolean;
+  selectedProducts: string[];
+}
+
+export interface StepDetails {
+  id: number;
+  number: number;
+  name: string;
+  description: string;
+}
+
+export interface IBorrowerIncomeData {
+  Dividends: number;
+  FinancialIncome: number;
+  Leases: number;
+  OtherNonSalaryEmoluments: number;
+  PensionAllowances: number;
+  PeriodicSalary: number;
+  PersonalBusinessUtilities: number;
+  ProfessionalFees: number;
+}
+
+export const extractBorrowerIncomeData = (
+  dataProspect: IProspect | undefined,
+): IBorrowerIncomeData => {
+  const defaultIncomeData: IBorrowerIncomeData = {
+    Dividends: 0,
+    FinancialIncome: 0,
+    Leases: 0,
+    OtherNonSalaryEmoluments: 0,
+    PensionAllowances: 0,
+    PeriodicSalary: 0,
+    PersonalBusinessUtilities: 0,
+    ProfessionalFees: 0,
+  };
+
+  if (!dataProspect?.borrowers) {
+    return defaultIncomeData;
+  }
+
+  const mainBorrower = dataProspect.borrowers.find(
+    (borrower) => borrower.borrowerType === "MainBorrower",
+  );
+
+  if (!mainBorrower?.borrowerProperties) {
+    return defaultIncomeData;
+  }
+
+  const result: IBorrowerIncomeData = { ...defaultIncomeData };
+
+  mainBorrower.borrowerProperties.forEach((prop) => {
+    const propertyName = prop.propertyName as keyof IBorrowerIncomeData;
+
+    if (propertyName in result) {
+      result[propertyName] = parseFloat(prop.propertyValue) || 0;
+    }
+  });
+
+  return result;
+};
 
 export {
   creditLineOptions,

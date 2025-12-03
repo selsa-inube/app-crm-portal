@@ -12,6 +12,7 @@ export const getGuaranteesRequiredByCreditProspect = async (
 ): Promise<IGuaranteesRequiredByCreditProspect | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
@@ -29,7 +30,7 @@ export const getGuaranteesRequiredByCreditProspect = async (
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects/${prospectCode}`,
+        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
         options,
       );
 
