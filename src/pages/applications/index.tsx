@@ -9,6 +9,7 @@ import {
   Text,
   useMediaQuery,
 } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { ICreditRequest } from "@services/creditRequest/types";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
@@ -42,6 +43,7 @@ export function CreditApplications() {
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const { user } = useIAuth();
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -89,15 +91,42 @@ export function CreditApplications() {
     fetchCreditRequest();
   }, [customerData.publicCode, search]);
 
+  useEffect(() => {
+    let error = null;
+    const messages: string[] = [];
+
+    if (eventData.businessManager.abbreviatedName.length === 0) {
+      error = 1003;
+      messages.push(dataError.noBusinessUnit);
+    }
+    if (customerData.fullName.length === 0) {
+      error = 1016;
+      messages.push(dataError.noSelectClient);
+    }
+
+    setCodeError(error);
+    setAddToFix(messages);
+  }, [customerData, eventData, loading]);
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+  };
+
+  const handleNavigate = () => {
+    if (codeError === 1003) {
+      navigate(`/login/${user.username}/business-units/select-business-unit`);
+    } else if (codeError === 1016) {
+      navigate("/clients/select-client/");
+    } else {
+      navigate("/credit");
+    }
   };
 
   return (
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigate("/credit")}
+          onClick={handleNavigate}
           errorCode={codeError}
           addToFix={addToFix}
         />
