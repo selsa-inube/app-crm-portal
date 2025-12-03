@@ -74,6 +74,8 @@ export const CardCommercialManagement = (
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
+  const [isProcessingServices, setIsProcessingServices] =
+    useState<boolean>(false);
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const currentModal = modalHistory[modalHistory.length - 1];
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -165,11 +167,14 @@ export const CardCommercialManagement = (
     if (!prospectData || !selectedProduct) return;
 
     try {
+      setIsProcessingServices(true);
       const payload = {
+        prospectId: prospectData.prospectId,
         creditProductCode: selectedProduct.creditProductCode,
         interestRate: Number(values.interestRate),
         loanTerm: Number(values.termInMonths),
-        prospectId: prospectData.prospectId,
+        loanAmount: Number(values.creditAmount),
+        paymentChannelAbbreviatedName: values.paymentMethod,
       };
 
       await updateCreditProduct(
@@ -191,6 +196,7 @@ export const CardCommercialManagement = (
 
       setModalHistory((prev) => prev.slice(0, -1));
       setShowMessageSuccessModal(true);
+      setIsProcessingServices(false);
     } catch (error) {
       const err = error as {
         message?: string;
@@ -199,6 +205,7 @@ export const CardCommercialManagement = (
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
+      setIsProcessingServices(false);
       setShowErrorModal(true);
       setMessageError(description);
     }
@@ -271,12 +278,12 @@ export const CardCommercialManagement = (
                     ?.paymentChannelAbbreviatedName
                 }
                 loanAmount={entry.loanAmount}
-                interestRate={entry.interestRate}
+                interestRate={entry.interestRate || 0}
                 termMonths={entry.loanTerm}
                 periodicFee={
                   entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
                 }
-                schedule={entry.lineOfCreditAbbreviatedName as Schedule}
+                schedule={entry.installmentFrequency as Schedule}
                 onEdit={() =>
                   canEditCreditRequest
                     ? handleInfo()
@@ -324,7 +331,7 @@ export const CardCommercialManagement = (
           <DeleteModal
             handleClose={() => setShowDeleteModal(false)}
             handleDelete={handleDelete}
-            TextDelete={tittleOptions.deletedExpensesErrorDescription} //---------
+            TextDelete={tittleOptions.deletedExpensesErrorDescription}
             isLoading={isLoading}
           />
         )}
@@ -358,6 +365,7 @@ export const CardCommercialManagement = (
             }}
             setShowErrorModal={setShowErrorModal}
             setMessageError={setMessageError}
+            isProcessingServices={isProcessingServices}
           />
         )}
         {showConsolidatedModal && (

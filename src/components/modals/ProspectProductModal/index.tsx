@@ -53,6 +53,7 @@ interface EditProductModalProps {
   initialValues: FormikValues;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  isProcessingServices: boolean;
   prospectData: {
     lineOfCredit: string;
     moneyDestination: string;
@@ -77,6 +78,7 @@ function EditProductModal(props: EditProductModalProps) {
     prospectData,
     setShowErrorModal,
     setMessageError,
+    isProcessingServices,
   } = props;
 
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
@@ -663,6 +665,7 @@ function EditProductModal(props: EditProductModalProps) {
           iconAfterNext={iconAfter}
           finalDivider={true}
           width={isMobile ? "290px" : "500px"}
+          isLoading={isProcessingServices}
         >
           <ScrollableContainer
             $smallScreen={isMobile}
@@ -846,7 +849,7 @@ function EditProductModal(props: EditProductModalProps) {
                 name="interestRate"
                 id="interestRate"
                 placeholder="Ej: 0.9"
-                value={formik.values.interestRate}
+                value={Number(formik.values.interestRate).toFixed(4)}
                 iconAfter={
                   <Icon
                     icon={<MdPercent />}
