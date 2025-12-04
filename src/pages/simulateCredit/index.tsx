@@ -42,8 +42,11 @@ import {
 } from "./types";
 import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
-import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
-import { updateFinancialObligationsFormData } from "./utils";
+import {
+  createMainBorrowerFromFormData,
+  updateFinancialObligationsFormData,
+} from "./steps/extraDebtors/utils";
+import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 import { textAddCongfig } from "./config/addConfig";
 
 export function SimulateCredit() {
@@ -86,7 +89,6 @@ export function SimulateCredit() {
   const [sentModal, setSentModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
   const [loadingQuestions, setLoadingQuestions] = useState(true);
-
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -104,8 +106,8 @@ export function SimulateCredit() {
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const userAccount = eventData.user.identificationDocumentNumber || "";
   const customerPublicCode: string = customerData.publicCode;
-
   const [formState, setFormState] = useState({
     type: "",
     entity: "",
@@ -332,8 +334,6 @@ export function SimulateCredit() {
   ]);
 
   const fetchRulesByProducts = useCallback(async () => {
-    if (!formData.selectedProducts || formData.selectedProducts.length === 0)
-      return;
     setLoadingQuestions(true);
     try {
       const results = await Promise.all(
@@ -386,7 +386,7 @@ export function SimulateCredit() {
     } finally {
       setLoadingQuestions(false);
     }
-  }, [formData.selectedProducts, stepsAddProspect.productSelection.id]);
+  }, [formData.selectedProducts]);
 
   const fetchDataClientPortfolio = async () => {
     if (!customerPublicCode) {
@@ -770,9 +770,16 @@ export function SimulateCredit() {
     }
   }, [clientPortfolio, formData.obligationsFinancial]);
 
+  const stableSelectedProducts = useMemo(
+    () => formData.selectedProducts,
+    [formData.selectedProducts.join(",")],
+  );
+
   useEffect(() => {
-    fetchRulesByProducts();
-  }, [formData.selectedProducts, fetchRulesByProducts]);
+    if (stableSelectedProducts.length > 0) {
+      fetchRulesByProducts();
+    }
+  }, [stableSelectedProducts]);
 
   useEffect(() => {
     const isExtraBorrowersStep =
@@ -871,6 +878,7 @@ export function SimulateCredit() {
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       identificationDocumentNumber: customerData.publicCode,
       moneyDestination: formData.selectedDestination,
+      lineOfCreditAbbreviatedName: formData.selectedProducts[0] || "",
       primaryIncomeType:
         typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
           ? formData.sourcesOfIncome.PeriodicSalary.toString()
@@ -949,7 +957,9 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
-        dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+        dataMaximumCreditLimitService={
+          dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+        }
         servicesProductSelection={
           servicesProductSelection as IServicesProductSelection
         }
@@ -965,6 +975,7 @@ export function SimulateCredit() {
         prospectCode={prospectCode}
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
+        userAccount={userAccount}
         loadingQuestions={loadingQuestions}
         showSelectsLoanAmount={!formData.togglesState[0]}
       />

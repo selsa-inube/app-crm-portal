@@ -3,14 +3,14 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { IMaximumCreditLimit } from "@services/creditRequest/types";
 
-import { IAddCreditProduct, IProspect, IAddProduct } from "../types";
-
-export const addCreditProduct = async (
+const postBusinessUnitRules = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: IAddCreditProduct | IAddProduct,
-): Promise<IProspect | IAddProduct | undefined> => {
+  userAccount: string,
+  submitData: IMaximumCreditLimit,
+): Promise<IMaximumCreditLimit | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -18,27 +18,30 @@ export const addCreditProduct = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+
       const options: RequestInit = {
-        method: "PATCH",
+        method: "POST",
         headers: {
-          "X-Action": "AddCreditProduct",
+          "X-Action":
+            "GetMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit",
           "X-Business-Unit": businessUnitPublicCode,
+          "X-User-Name": userAccount,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(submitData),
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits/`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return;
+        return null;
       }
 
       const data = await res.json();
@@ -61,9 +64,13 @@ export const addCreditProduct = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo agregar el producto de credito.",
+          "Todos los intentos fallaron. No se pudo evaluar las reglas de la unidad de negocio.",
         );
       }
     }
   }
+
+  return null;
 };
+
+export { postBusinessUnitRules };

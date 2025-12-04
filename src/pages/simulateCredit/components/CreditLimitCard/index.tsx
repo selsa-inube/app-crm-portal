@@ -11,6 +11,7 @@ import { PaymentCapacityModal } from "@components/modals/PaymentCapacityModal";
 
 import { StyledContainer } from "./styles";
 import { IdataMaximumCreditLimitService, IPaymentCapacityData } from "./types";
+import { ISourcesOfIncomeState } from "../../types";
 
 export interface CreditLimitProps {
   businessUnitPublicCode: string;
@@ -20,6 +21,10 @@ export interface CreditLimitProps {
   creditLineTxt: string;
   paymentCapacityData?: IPaymentCapacityData;
   isMobile: boolean;
+  userAccount: string;
+  setError: React.Dispatch<React.SetStateAction<boolean>>;
+  error: boolean;
+  incomeData: ISourcesOfIncomeState;
 }
 
 export function CreditLimitCard(props: CreditLimitProps) {
@@ -29,8 +34,11 @@ export function CreditLimitCard(props: CreditLimitProps) {
     dataMaximumCreditLimitService,
     creditLine,
     creditLineTxt,
-    paymentCapacityData,
     isMobile,
+    userAccount,
+    setError,
+    error,
+    incomeData,
   } = props;
 
   const [creditModal, setCreditModal] = useState(false);
@@ -53,7 +61,6 @@ export function CreditLimitCard(props: CreditLimitProps) {
       setLoading(false);
     }, 2000);
   };
-
   return (
     <StyledContainer>
       <Stack direction="column" gap="6px" alignItems="center">
@@ -118,11 +125,19 @@ export function CreditLimitCard(props: CreditLimitProps) {
         />
       )}
 
-      {openModal === "paymentCapacity" && paymentCapacityData && (
+      {openModal === "paymentCapacity" && (
         <PaymentCapacityModal
           isMobile={isMobile}
           handleClose={() => setOpenModal(null)}
-          {...paymentCapacityData}
+          businessUnitPublicCode={businessUnitPublicCode}
+          businessManagerCode={businessManagerCode}
+          userAccount={userAccount}
+          dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+          setError={setError}
+          setLoading={setLoading}
+          error={error}
+          loading={loading}
+          incomeData={incomeData}
         />
       )}
 

@@ -14,8 +14,8 @@ import {
   Button,
   Select,
   useFlag,
-  Spinner,
   Textarea,
+  SkeletonLine,
 } from "@inubekit/inubekit";
 
 import { MenuProspect } from "@components/navigation/MenuProspect";
@@ -38,7 +38,7 @@ import { getPropertyValue } from "@utils/mappingData/mappings";
 import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
 import {
-  IAddCreditProduct,
+  IAddProduct,
   ICreditProduct,
   IExtraordinaryInstallments,
   IProspect,
@@ -48,7 +48,6 @@ import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
-import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
@@ -56,9 +55,12 @@ import { AddProductModal } from "@pages/prospect/components/AddProductModal";
 import { CardGray } from "@components/cards/CardGray";
 import { privilegeCrm } from "@config/privilege";
 import { updateProspect } from "@services/prospect/updateProspect";
+import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { incomeCardData } from "@components/cards/IncomeCard/config";
 import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
+import { getTotalIncomeByBorrowerInProspect } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
+import { Fieldset } from "@components/data/Fieldset";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -71,6 +73,7 @@ import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
 import InfoModal from "../InfoModal";
+import { filterIncomeByBorrower } from "./utils";
 
 interface ICreditProspectProps {
   showMenu: () => void;
@@ -94,6 +97,7 @@ interface ICreditProspectProps {
   setProspectSummaryData?: React.Dispatch<
     React.SetStateAction<IProspectSummaryById>
   >;
+  userAccount: string;
   onProspectRefreshData?: () => void;
   setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements?: IValidateRequirement[];
@@ -114,6 +118,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     showPrint = true,
     setProspectSummaryData,
     prospectSummaryData,
+    userAccount,
     showAddButtons = true,
     showAddProduct = true,
     setShowRequirements,
@@ -132,6 +137,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [creditLimitError, setCreditLimitError] = useState<string | null>(null);
   const [modalHistory, setModalHistory] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState<string | null>(null);
   const [dataProspect, setDataProspect] = useState<IProspect[]>([]);
   const [incomeData, setIncomeData] = useState<Record<string, IIncomeSources>>(
@@ -171,19 +177,32 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [showMessageSuccessModal]);
 
+  useEffect(() => {
+    fetchCreditLimitData();
+  }, [selectedIndex]);
+
   const fetchCreditLimitData = async () => {
     if (!customerPublicCode) return;
 
     try {
       setIsLoadingCreditLimit(true);
       setCreditLimitError(null);
-      const result = await getCreditLimit(
-        businessUnitPublicCode,
-        businessManagerCode,
-        customerPublicCode,
+
+      const incomesBorrowersByProspect =
+        await getTotalIncomeByBorrowerInProspect(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData?.prospectCode || "",
+        );
+
+      const incomesFiltered = filterIncomeByBorrower(
+        incomesBorrowersByProspect,
+        prospectData?.borrowers[selectedIndex].borrowerIdentificationNumber ||
+          "",
       );
-      setCreditLimitData(result);
-      setCurrentIncomeModalData(result);
+
+      setCreditLimitData(incomesFiltered);
+      setCurrentIncomeModalData(incomesFiltered);
     } catch (error) {
       console.error("Error al obtener las solicitudes de crédito:", error);
       setCreditLimitError("Error al cargar los datos");
@@ -254,13 +273,27 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
 
     try {
-      const payload: IAddCreditProduct = {
+      setIsLoading(true);
+      const payload: IAddProduct = {
         prospectId: prospectData.prospectId,
-        creditProducts: [
-          {
-            lineOfCreditAbbreviatedName: values.selectedProducts[0],
-          },
-        ],
+        creditProduct: {
+          lineOfCreditAbbreviatedName: values.selectedProducts[0],
+          loanAmount: Number(values.creditAmount),
+          installmentFrequency: values.paymentConfiguration.paymentCycle,
+          interestRate: Number(values.interestRate),
+          loanTerm: Number(values.maximumTermValue),
+          creditProductCode: values.selectedProducts[0],
+          ordinaryInstallmentsForPrincipal: [
+            {
+              installmentAmount: Number(values.installmentAmount) | 1,
+              installmentFrequency: values.paymentConfiguration.paymentCycle,
+              paymentChannelAbbreviatedName:
+                values.paymentConfiguration.paymentMethod,
+            },
+          ],
+        },
+        paymentCycle: values.paymentConfiguration.paymentCycle,
+        firstPaymentCycleDate: values.paymentConfiguration.firstPaymentDate,
       };
 
       await addCreditProduct(
@@ -280,11 +313,10 @@ export function CreditProspect(props: ICreditProspectProps) {
           onProspectUpdate(updatedProspect);
         }
       }
-
+      setIsLoading(false);
       handleCloseModal();
       setShowMessageSuccessModal(true);
     } catch (error) {
-      handleCloseModal();
       const err = error as {
         message?: string;
         status: number;
@@ -298,6 +330,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       ) {
         description = "El producto de crédito ya existe en el prospecto";
       }
+      setIsLoading(false);
       setShowErrorModal(true);
       setMessageError(description);
     }
@@ -343,7 +376,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     return false;
   };
 
-  const handleIncomeSubmit = (updatedData: IIncomeSources) => {
+  const handleIncomeSubmit = async (updatedData: IIncomeSources) => {
     setCurrentIncomeModalData({ ...updatedData });
     setCreditLimitData({ ...updatedData });
 
@@ -358,8 +391,8 @@ export function CreditProspect(props: ICreditProspectProps) {
         },
       }));
 
-      setDataProspect((prev) => {
-        return prev.map((prospect) => {
+      const updatedBorrower = () => {
+        return dataProspect.map((prospect) => {
           const updatedBorrowers = prospect.borrowers.map((borrower) => {
             if (borrower.borrowerName === borrowerName) {
               const updatedProperties = [
@@ -437,10 +470,20 @@ export function CreditProspect(props: ICreditProspectProps) {
             borrowers: updatedBorrowers,
           };
         });
-      });
+      };
+
+      setDataProspect(updatedBorrower());
+
+      await updateProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        updatedBorrower()[0],
+      );
+
+      if (onProspectRefreshData) onProspectRefreshData();
+
       setOpenModal(null);
     }
-    setShowMessageSuccessModal(true);
   };
 
   useEffect(() => {
@@ -572,6 +615,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       borrower?.borrowerProperties?.find(
         (property) => property.propertyName === "PeriodicSalary",
       )?.propertyValue || "",
+    lineOfCreditAbbreviatedName: dataProspect?.[0]?.linesOfCredit || "",
   };
 
   const handleCommentsChange = (
@@ -612,6 +656,31 @@ export function CreditProspect(props: ICreditProspectProps) {
       setMessageError(configModal.observations.errorMessage);
     }
   };
+  const incomeDataProspect = (prospectData?: IProspect): IIncomeSources => {
+    const borrower = prospectData?.borrowers?.[0];
+    const properties = borrower?.borrowerProperties || [];
+
+    const getValue = (name: string) => getPropertyValue(properties, name) || "";
+
+    const getNumeric = (name: string) => parseFloat(getValue(name)) || 0;
+
+    return {
+      identificationNumber: borrower?.borrowerIdentificationNumber || "",
+      identificationType: borrower?.borrowerIdentificationType || "",
+      name: getValue("name"),
+      surname: getValue("surname"),
+      Dividends: getNumeric("Dividends"),
+      FinancialIncome: getNumeric("FinancialIncome"),
+      Leases: getNumeric("Leases"),
+      OtherNonSalaryEmoluments: getNumeric("OtherNonSalaryEmoluments"),
+      PensionAllowances: getNumeric("PensionAllowances"),
+      PeriodicSalary: getNumeric("PeriodicSalary"),
+      PersonalBusinessUtilities: getNumeric("PersonalBusinessUtilities"),
+      ProfessionalFees: getNumeric("ProfessionalFees"),
+    };
+  };
+
+  const incomeDataValues = incomeDataProspect(prospectData);
 
   const countRequirementsNotMet = () => {
     if (!validateRequirements) return 0;
@@ -758,10 +827,14 @@ export function CreditProspect(props: ICreditProspectProps) {
             setRequestValue={setRequestValue || (() => {})}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
-            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+            dataMaximumCreditLimitService={
+              dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+            }
             moneyDestination={
               prospectData?.moneyDestinationAbbreviatedName || ""
             }
+            userAccount={userAccount}
+            incomeData={incomeDataValues}
           />
         )}
         {openModal === "paymentCapacity" && (
@@ -769,7 +842,9 @@ export function CreditProspect(props: ICreditProspectProps) {
             handleClose={() => setOpenModal(null)}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
-            dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+            dataMaximumCreditLimitService={
+              dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+            }
           />
         )}
         {openModal === "reciprocityModal" && (
@@ -805,6 +880,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             customerData={customerData}
             businessManagerCode={businessManagerCode}
             dataProspect={prospectData as IProspect}
+            isLoading={isLoading}
           />
         )}
         {currentModal === "IncomeModal" && (
@@ -816,14 +892,21 @@ export function CreditProspect(props: ICreditProspectProps) {
             width={isMobile ? "280px" : "448px"}
           >
             {isLoadingCreditLimit ? (
-              <Stack
-                justifyContent="center"
-                alignItems="center"
-                height="300px"
-                direction="column"
-                gap="16px"
-              >
-                <Spinner />
+              <Stack gap="16px" direction="column">
+                <SkeletonLine width="70%" height="30px" animated />
+                <Fieldset>
+                  <Stack
+                    justifyContent="center"
+                    alignItems="center"
+                    height="120px"
+                    direction="column"
+                    gap="16px"
+                  >
+                    <SkeletonLine width="100%" height="30px" animated />
+                    <SkeletonLine width="100%" height="30px" animated />
+                    <SkeletonLine width="100%" height="30px" animated />
+                  </Stack>
+                </Fieldset>
               </Stack>
             ) : creditLimitError ? (
               <Stack

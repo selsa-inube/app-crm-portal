@@ -6,6 +6,7 @@ import {
   MdOutlineRemoveRedEye,
   MdOutlineMessage,
   MdOutlineRule,
+  MdOutlineEdit,
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
@@ -269,7 +270,7 @@ export const SummaryProspectCredit = [
         id: "totalConsolidatedAmount",
         title: "Obligaciones recogidas",
         miniIcon: true,
-        icon: <MdOutlineRemoveRedEye />,
+        icon: <MdOutlineEdit />,
         modal: "edit",
         operation: "-",
       },

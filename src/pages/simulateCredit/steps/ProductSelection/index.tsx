@@ -182,26 +182,32 @@ export function ProductSelection(props: IProductSelectionProps) {
                   wrap="wrap"
                 >
                   {Object.keys(creditLineTerms).length > 0 ? (
-                    Object.entries(creditLineTerms).map(
-                      ([lineName, terms], index) => (
-                        <Stack key={index} direction="column">
+                    Object.entries(creditLineTerms)
+                      .sort(([creditLineA], [creditLineB]) =>
+                        creditLineA.localeCompare(creditLineB),
+                      )
+                      .map(([creditLineName, creditLineTermsValues]) => (
+                        <Stack key={creditLineName} direction="column">
                           <CardProductSelection
-                            key={lineName}
-                            amount={terms.LoanAmountLimit}
-                            rate={terms.RiskFreeInterestRate}
-                            term={terms.LoanTermLimit}
-                            description={lineName}
+                            key={creditLineName}
+                            amount={creditLineTermsValues.LoanAmountLimit}
+                            rate={creditLineTermsValues.RiskFreeInterestRate}
+                            term={creditLineTermsValues.LoanTermLimit}
+                            description={creditLineName}
                             disabled={generalToggleChecked}
                             isSelected={values.selectedProducts.includes(
-                              lineName,
+                              creditLineName,
                             )}
                             onSelect={() => {
                               const newSelected =
-                                values.selectedProducts.includes(lineName)
+                                values.selectedProducts.includes(creditLineName)
                                   ? values.selectedProducts.filter(
-                                      (id) => id !== lineName,
+                                      (id) => id !== creditLineName,
                                     )
-                                  : [...values.selectedProducts, lineName];
+                                  : [
+                                      ...values.selectedProducts,
+                                      creditLineName,
+                                    ];
 
                               setFieldValue("selectedProducts", newSelected);
                               setSelectedProducts(newSelected);
@@ -213,8 +219,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                             isMobile={isMobile}
                           />
                         </Stack>
-                      ),
-                    )
+                      ))
                   ) : (
                     <Text type="body" size="medium">
                       {electionData.load}
@@ -300,9 +305,9 @@ export function ProductSelection(props: IProductSelectionProps) {
               </Fieldset>
             ) : (
               <>
-                <SkeletonLine height="58px" />
-                <SkeletonLine height="58px" />
-                <SkeletonLine height="58px" />
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
               </>
             )}
           </Stack>

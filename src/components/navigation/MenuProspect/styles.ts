@@ -6,7 +6,6 @@ interface IContainerLabel {
 }
 
 interface IBadgeMenuProspect {
-  isMobile: boolean;
   $data?: number;
 }
 

@@ -69,6 +69,9 @@ export const StyledCardsCredit = styled.div<IStyledCardsCredit>`
       display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
+    overflow-y: visible !important;
+    height: auto !important;
+    width: 100% !important;
   }
 `;
 
@@ -90,5 +93,25 @@ export const StyledVerticalDivider = styled.hr`
 export const StyledPrint = styled.div`
   @media print {
     display: none;
+  }
+`;
+
+export const StylePrintCardSummary = styled.div`
+  page-break-inside: avoid;
+  @media print {
+    zoom: 0.77;
+  }
+`;
+
+export const StyledPrintCardProspect = styled.div`
+  @media print {
+    zoom: 0.9;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    margin: 0px !important;
+    gap: 0px !important;
+    width: 100% !important;
   }
 `;

@@ -31,6 +31,7 @@ function AddProductModal(props: IAddProductModalProps) {
     customerData,
     businessManagerCode,
     dataProspect,
+    isLoading,
   } = props;
 
   const [errorModal, setErrorModal] = useState(false);
@@ -113,6 +114,7 @@ function AddProductModal(props: IAddProductModalProps) {
         };
 
         setLoading(true);
+
         const response = await GetSearchAllPaymentChannels(
           businessUnitPublicCode,
           businessManagerCode,
@@ -182,7 +184,6 @@ function AddProductModal(props: IAddProductModalProps) {
 
   const handleSubmitClick = () => {
     onConfirm(formData);
-    onCloseModal();
   };
 
   const handleFormChange = (updatedValues: Partial<IFormValues>) => {
@@ -239,6 +240,7 @@ function AddProductModal(props: IAddProductModalProps) {
       errorMessage={errorMessage}
       setErrorModal={setErrorModal}
       errorModal={errorModal}
+      isLoading={isLoading}
     />
   );
 }

@@ -34,6 +34,7 @@ export interface IBaseModalProps {
   initialDivider?: boolean;
   finalDivider?: boolean;
   portalId?: string;
+  isLoading?: boolean;
 }
 
 export function BaseModal(props: IBaseModalProps) {
@@ -58,6 +59,7 @@ export function BaseModal(props: IBaseModalProps) {
     initialDivider = true,
     finalDivider = false,
     portalId = "portal",
+    isLoading = false,
   } = props;
 
   function getOrCreatePortalNode(id: string): HTMLElement {
@@ -127,6 +129,7 @@ export function BaseModal(props: IBaseModalProps) {
                 iconBefore={iconBeforeNext}
                 appearance={apparenceNext}
                 variant={variantNext}
+                loading={isLoading}
               >
                 {nextButton}
               </Button>

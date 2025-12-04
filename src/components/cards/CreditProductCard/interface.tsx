@@ -62,7 +62,11 @@ function CreditProductCardUI(props: CreditProductCardProps) {
           <Text size="small" appearance="gray" weight="bold">
             {CREDIT_PRODUCT_TEXTS.periodicFee}
           </Text>
-          <Text>{periodicFee === 0 ? "$ 0" : currencyFormat(periodicFee)}</Text>
+          <Text>
+            {periodicFee === 0
+              ? "$ 0"
+              : currencyFormat(Math.trunc(periodicFee))}
+          </Text>
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">

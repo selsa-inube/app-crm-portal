@@ -22,16 +22,16 @@ export interface IConsolidatedCredit {
 }
 
 export interface IOrdinaryInstallmentsForPrincipal {
-  numberOfInstallments: number;
-  installmentFrequency: string;
-  installmentAmountForCapital: number;
-  installmentAmount: number;
-  gradientRate: number;
-  gradientValue: number;
-  gradientFrequency: string;
-  firstGradientDate: Date;
   paymentChannelAbbreviatedName: string;
-  humanChannelPaymentDay: number;
+  installmentFrequency: string;
+  installmentAmount: number;
+  numberOfInstallments?: number;
+  gradientRate?: number;
+  gradientValue?: number;
+  gradientFrequency?: string;
+  firstGradientDate?: Date;
+  installmentAmountForCapital?: number;
+  humanChannelPaymentDay?: number;
 }
 
 export interface IInstallmentsForInterest {
@@ -58,8 +58,8 @@ export interface IAcquiredCashFlow {
   amount: string;
   date: Date;
   paymentChannelAbbreviatedName: string;
-  humanChannelPaymentDay: number;
   flowNumber: number;
+  humanChannelPaymentDay?: number;
 }
 
 export interface ICreditProduct {
@@ -67,16 +67,25 @@ export interface ICreditProduct {
   loanAmount: number;
   lineOfCreditAbbreviatedName: string;
   installmentFrequency: string;
-  interestRateDueType: string;
-  interestRate: number;
-  schedule: string;
-  fixedPoints: number;
   loanTerm: number;
   ordinaryInstallmentsForPrincipal: IOrdinaryInstallmentsForPrincipal[];
-  installmentsForInterest: IInstallmentsForInterest[];
-  extraordinaryInstallments: IExtraordinaryInstallment[];
-  acquiredCashFlows: IAcquiredCashFlow[];
-  referenceIndexForVariableInterestRate: string;
+  interestRateDueType?: string;
+  interestRate?: number;
+  prospectId?: string;
+  schedule?: string;
+  fixedPoints?: number;
+  installmentsForInterest?: IInstallmentsForInterest[];
+  extraordinaryInstallments?: IExtraordinaryInstallment[];
+  acquiredCashFlows?: IAcquiredCashFlow[];
+  referenceIndexForVariableInterestRate?: string;
+}
+
+export interface IAddProduct {
+  creditProduct: ICreditProduct;
+  firstPaymentCycleDate: string | Date;
+  paymentCycle: string;
+  prospectId: string;
+  installmentAmount?: number;
 }
 
 export interface IOutlay {

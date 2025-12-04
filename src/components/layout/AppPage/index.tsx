@@ -37,9 +37,11 @@ import {
 import { useNavigationConfig } from "./config/apps.config";
 
 const renderLogo = (imgUrl: string, onTheFooter: boolean = false) => {
+  if (!imgUrl || !onTheFooter) return undefined;
+
   return (
     <StyledContentImg to="/home">
-      <StyledLogo src={imgUrl} onTheFooter={onTheFooter} />
+      <StyledLogo src={imgUrl} $onTheFooter={onTheFooter} />
     </StyledContentImg>
   );
 };
@@ -247,11 +249,7 @@ function AppPage(props: IAppPage) {
           </Grid>
         </StyledContainer>
 
-        <StyledFooter
-          $nav={isTablet}
-          isShowMenuOnHeader={showMenuOnHeader}
-          showNav={showNav}
-        >
+        <StyledFooter $nav={isTablet} $showNav={showNav}>
           {renderLogo(eventData.businessManager.urlBrand, true)}
         </StyledFooter>
       </Grid>

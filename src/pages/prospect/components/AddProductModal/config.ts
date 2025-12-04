@@ -158,6 +158,7 @@ export interface IAddProductModalProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   dataProspect: IProspect;
+  isLoading: boolean;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   customerData?: ICustomerData;
@@ -247,6 +248,7 @@ export interface IAddProductModalUIProps {
   setErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   errorMessage: string;
   loading: boolean;
+  isLoading: boolean;
 }
 
 export interface IStep {

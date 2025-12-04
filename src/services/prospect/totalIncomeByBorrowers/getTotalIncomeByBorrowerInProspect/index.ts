@@ -4,13 +4,13 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IAddCreditProduct, IProspect, IAddProduct } from "../types";
+import { IIncomeSourceBorrowers } from "./types";
 
-export const addCreditProduct = async (
+export const getTotalIncomeByBorrowerInProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: IAddCreditProduct | IAddProduct,
-): Promise<IProspect | IAddProduct | undefined> => {
+  borrowerCode: string,
+): Promise<IIncomeSourceBorrowers[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -19,33 +19,31 @@ export const addCreditProduct = async (
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
-        method: "PATCH",
+        method: "GET",
         headers: {
-          "X-Action": "AddCreditProduct",
+          "X-Action": "GetTotalIncomeByBorrowerInProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
         },
-        body: JSON.stringify(payload),
         signal: controller.signal,
       };
-
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
+        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/total-income-by-borrowers/${borrowerCode}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return;
+        throw new Error("No hay ingresos disponibles en los deudores.");
       }
 
       const data = await res.json();
 
       if (!res.ok) {
         throw {
-          message: "Ha ocurrido un error: ",
+          message: "Error al obtener los ingresos de los deudores.",
           status: res.status,
           data,
         };
@@ -53,17 +51,16 @@ export const addCreditProduct = async (
 
       return data;
     } catch (error) {
+      console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
-        if (typeof error === "object" && error !== null) {
-          throw {
-            ...(error as object),
-            message: (error as Error).message,
-          };
-        }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo agregar el producto de credito.",
+          "Todos los intentos fallaron. No se pudo traer los ingresos de los deudores.",
         );
       }
     }
   }
+
+  throw new Error(
+    "No se pudo obtener los ingresos después de varios intentos.",
+  );
 };
