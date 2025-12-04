@@ -8,7 +8,6 @@ import { ItemNotFound } from "@components/layout/ItemNotFound";
 import userNotFound from "@assets/images/ItemNotFound.png";
 import { AppContext } from "@context/AppContext";
 import { ICreditRequest, ITraceType } from "@services/creditRequest/types";
-import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { getTraceByCreditRequestId } from "@services/creditRequest/getTraceByCreditRequestId";
 
 import { ChatContent, SkeletonContainer, SkeletonLine } from "./styles";
@@ -16,15 +15,14 @@ import { traceObserver, errorObserver, errorMessages } from "../config";
 import { DetailsModal } from "./DetailsModal";
 
 interface IManagementProps {
-  id: string;
   isMobile: boolean;
+  creditRequest?: ICreditRequest | null;
   updateData?: boolean;
 }
 
-export const Management = ({ id, isMobile, updateData }: IManagementProps) => {
-  const [creditRequest, setCreditRequest] = useState<ICreditRequest | null>(
-    null,
-  );
+export const Management = (props: IManagementProps) => {
+  const { isMobile, updateData, creditRequest } = props;
+
   const [traces, setTraces] = useState<ITraceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,42 +35,13 @@ export const Management = ({ id, isMobile, updateData }: IManagementProps) => {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-
   const businessManagerCode = eventData.businessManager.abbreviatedName;
-  const creditRequestCode = id;
 
   const chatContentRef = useRef<HTMLDivElement>(null);
 
   const notifyError = useCallback((message: string) => {
     errorObserver.notify({ id: "Management", message });
   }, []);
-
-  const fetchCreditRequest = useCallback(async () => {
-    try {
-      const data = await getCreditRequestByCode(
-        businessUnitPublicCode,
-        businessManagerCode,
-        userAccount,
-        { creditRequestCode },
-      );
-      setCreditRequest(data[0] as ICreditRequest);
-    } catch (error) {
-      console.error(error);
-      notifyError((error as Error).message);
-    }
-  }, [
-    businessUnitPublicCode,
-    id,
-    userAccount,
-    notifyError,
-    businessManagerCode,
-  ]);
-
-  useEffect(() => {
-    if (id) fetchCreditRequest();
-  }, [fetchCreditRequest, id]);
 
   const fetchData = useCallback(async () => {
     if (!creditRequest?.creditRequestId) return;

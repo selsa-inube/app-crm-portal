@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useRef, useState, useContext, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Stack,
@@ -23,7 +23,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { getSearchAllDocumentsById } from "@services/creditRequest/SearchAllDocuments";
-import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
+import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { ContainerSections } from "@components/layout/ContainerSections";
 import { StockTray } from "@components/layout/ContainerSections/StockTray";
 import { ShareModal } from "@components/modals/ShareModal";
@@ -79,6 +79,7 @@ export const FinancialReporting = () => {
   const [requestValue, setRequestValue] = useState<IPaymentChannel[]>();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [requests, setRequests] = useState<ICreditRequest | null>(null);
 
   const [showGuarantee, setShowGuarantee] = useState(false);
 
@@ -105,8 +106,6 @@ export const FinancialReporting = () => {
   const [showModal, setShowModal] = useState(false);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
   const { customerData } = useContext(CustomerContext);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
@@ -127,7 +126,7 @@ export const FinancialReporting = () => {
     getCreditRequestByCode(
       businessUnitPublicCode,
       businessManagerCode,
-      userAccount,
+      user.id,
       { creditRequestCode },
     )
       .then((data) => {
@@ -137,12 +136,7 @@ export const FinancialReporting = () => {
         setCodeError(1030);
         setAddToFix([errorMessages.errorCreditRequest]);
       });
-  }, [
-    creditRequestCode,
-    businessUnitPublicCode,
-    userAccount,
-    businessManagerCode,
-  ]);
+  }, [creditRequestCode, businessUnitPublicCode, user.id, businessManagerCode]);
 
   const fetchAndShowDocuments = async () => {
     if (!data?.creditRequestId || !user?.id || !businessUnitPublicCode) return;
@@ -171,7 +165,7 @@ export const FinancialReporting = () => {
 
   const fetchProspectData = async () => {
     try {
-      const result = await getSearchProspectByCode(
+      const result = await getSearchProspectById(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode!,
@@ -184,7 +178,7 @@ export const FinancialReporting = () => {
 
   useEffect(() => {
     fetchProspectData();
-  }, [businessUnitPublicCode, sentData]);
+  }, [businessUnitPublicCode, businessManagerCode, sentData]);
 
   const generateAndSharePdf = async () => {
     setPdfState({ isGenerating: true, blob: null, showShareModal: false });
@@ -272,6 +266,7 @@ export const FinancialReporting = () => {
           data?.creditRequestId ?? "",
           businessUnitPublicCode,
           businessManagerCode,
+          //
           user?.id ?? "",
         );
       } catch (error) {
@@ -283,6 +278,24 @@ export const FinancialReporting = () => {
 
     fetchData();
   }, [data?.creditRequestId, businessUnitPublicCode, user?.id]);
+
+  const fetchCreditRequest = useCallback(async () => {
+    try {
+      const data = await getCreditRequestByCode(
+        businessUnitPublicCode,
+        businessManagerCode,
+        user?.id ?? "",
+        { creditRequestCode },
+      );
+      setRequests(data[0] as ICreditRequest);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [businessUnitPublicCode, user, businessManagerCode]);
+
+  useEffect(() => {
+    fetchCreditRequest();
+  }, [fetchCreditRequest]);
 
   const fetchErrors = async () => {
     if (!data?.creditRequestId || !businessUnitPublicCode) return;
@@ -377,7 +390,7 @@ export const FinancialReporting = () => {
                             data={data}
                             collapse={collapse}
                             setCollapse={setCollapse}
-                            creditRequestCode={creditRequestCode!}
+                            creditRequest={requests}
                             hideContactIcons={true}
                             prospectData={dataProspect!}
                             sentData={null}
@@ -397,7 +410,7 @@ export const FinancialReporting = () => {
                           <Approvals
                             user={creditRequestCode!}
                             isMobile={isMobile}
-                            id={creditRequestCode!}
+                            creditRequest={requests}
                           />
                         </BlockPdfSection>
                       </Stack>
@@ -420,7 +433,7 @@ export const FinancialReporting = () => {
                       <Stack direction="column">
                         <BlockPdfSection className="pdf-block">
                           <Management
-                            id={creditRequestCode!}
+                            creditRequest={requests}
                             isMobile={isMobile}
                           />
                         </BlockPdfSection>
@@ -434,6 +447,7 @@ export const FinancialReporting = () => {
                           <PromissoryNotes
                             id={creditRequestCode!}
                             isMobile={isMobile}
+                            creditRequest={requests}
                           />
                         </BlockPdfSection>
                       </Stack>
@@ -448,6 +462,7 @@ export const FinancialReporting = () => {
                         user={creditRequestCode!}
                         id={creditRequestCode!}
                         isMobile={isMobile}
+                        creditRequest={requests}
                       />
                     </BlockPdfSection>
                   </Stack>

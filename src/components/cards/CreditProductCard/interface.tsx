@@ -21,12 +21,13 @@ function CreditProductCardUI(props: CreditProductCardProps) {
     termMonths,
     periodicFee,
     schedule,
+    showIcons,
     onEdit,
     onDelete,
   } = props;
 
   return (
-    <StyledCreditProductCard>
+    <StyledCreditProductCard $showIcons={showIcons}>
       <Stack direction="column" height="100%" padding="12px" gap="8px">
         <Text size="large" appearance="gray" weight="bold" margin="0px 0px 8px">
           {capitalizeFirstLetter(truncateTextToMaxLength(lineOfCredit, 22))}
@@ -80,25 +81,27 @@ function CreditProductCardUI(props: CreditProductCardProps) {
         </Stack>
       </Stack>
       <Stack direction="column" padding="0px 12px">
-        <StyledPrint>
-          <StyledDivider />
-          <Stack gap="8px" justifyContent="flex-end" padding="8px 0px">
-            <Icon
-              icon={<MdOutlineEdit />}
-              appearance="primary"
-              size="24px"
-              cursorHover
-              onClick={onEdit}
-            />
-            <Icon
-              icon={<MdOutlineDelete />}
-              appearance="primary"
-              size="24px"
-              cursorHover
-              onClick={onDelete}
-            />
-          </Stack>
-        </StyledPrint>
+        {showIcons && (
+          <StyledPrint>
+            <StyledDivider />
+            <Stack gap="8px" justifyContent="flex-end" padding="8px 0px">
+              <Icon
+                icon={<MdOutlineEdit />}
+                appearance="primary"
+                size="24px"
+                cursorHover
+                onClick={onEdit}
+              />
+              <Icon
+                icon={<MdOutlineDelete />}
+                appearance="primary"
+                size="24px"
+                cursorHover
+                onClick={onDelete}
+              />
+            </Stack>
+          </StyledPrint>
+        )}
       </Stack>
     </StyledCreditProductCard>
   );

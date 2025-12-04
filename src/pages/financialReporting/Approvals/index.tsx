@@ -7,7 +7,6 @@ import { IEntries } from "@components/data/TableBoard/types";
 import { ItemNotFound } from "@components/layout/ItemNotFound";
 import { getApprovalsById } from "@services/creditRequest/getApprovals";
 import { ICreditRequest } from "@services/creditRequest/types";
-import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { AppContext } from "@context/AppContext";
 
 import { errorObserver, errorMessages } from "../config";
@@ -23,12 +22,11 @@ import { IApprovals } from "./types";
 interface IApprovalsProps {
   user: string;
   isMobile: boolean;
-  id: string;
+  creditRequest?: ICreditRequest | null;
 }
 
 export const Approvals = (props: IApprovalsProps) => {
-  const { isMobile, id } = props;
-  const [requests, setRequests] = useState<ICreditRequest | null>(null);
+  const { isMobile, creditRequest } = props;
   const [loading, setLoading] = useState(true);
   const [approvalsEntries, setApprovalsEntries] = useState<IEntries[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -36,44 +34,17 @@ export const Approvals = (props: IApprovalsProps) => {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-
   const businessManagerCode = eventData.businessManager.abbreviatedName;
-  const creditRequestCode = id;
-
-  const fetchCreditRequest = useCallback(async () => {
-    try {
-      const data = await getCreditRequestByCode(
-        businessUnitPublicCode,
-        businessManagerCode,
-        userAccount,
-        { creditRequestCode },
-      );
-      setRequests(data[0] as ICreditRequest);
-    } catch (error) {
-      console.error(error);
-      errorObserver.notify({
-        id: "Management",
-        message: (error as Error).message.toString(),
-      });
-    }
-  }, [businessUnitPublicCode, id, userAccount, businessManagerCode]);
-
-  useEffect(() => {
-    if (id) fetchCreditRequest();
-  }, [fetchCreditRequest, id]);
 
   const fetchApprovalsData = useCallback(async () => {
-    if (!requests?.creditRequestId) return;
+    if (!creditRequest?.creditRequestId) return;
     setLoading(true);
     setError(null);
     try {
       const data: IApprovals = await getApprovalsById(
         businessUnitPublicCode,
         businessManagerCode,
-        requests.creditRequestId,
+        creditRequest.creditRequestId,
       );
       if (data && Array.isArray(data)) {
         const entries: IEntries[] = entriesApprovals(data).map((entry) => ({
@@ -92,7 +63,11 @@ export const Approvals = (props: IApprovalsProps) => {
     } finally {
       setLoading(false);
     }
-  }, [businessUnitPublicCode, requests?.creditRequestId, businessManagerCode]);
+  }, [
+    businessUnitPublicCode,
+    creditRequest?.creditRequestId,
+    businessManagerCode,
+  ]);
 
   useEffect(() => {
     fetchApprovalsData();
@@ -112,7 +87,7 @@ export const Approvals = (props: IApprovalsProps) => {
         hasTable
         hasOverflow={isMobile}
       >
-        {!requests || error ? (
+        {!creditRequest || error ? (
           <ItemNotFound
             image={userNotFound}
             title={errorMessages.approval.title}

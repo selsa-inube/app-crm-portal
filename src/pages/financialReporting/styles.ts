@@ -71,7 +71,7 @@ export const StyledScreenPrint = styled.div<IStyledToast>`
 `;
 
 export const StyledPageBreak = styled.div`
-   {
+  @media print {
     page-break-before: always;
     width: 100% !important;
     overflow-y: visible !important;
@@ -81,6 +81,9 @@ export const StyledPageBreak = styled.div`
 
 export const StyledMarginPrint = styled.div<IStyledToast>`
   margin: ${({ $isMobile }) => ($isMobile ? "20px" : "20px 40px")};
+  height: 100%;
+  padding-bottom: 20px;
+
   @media print {
     @page {
       margin: 1in 0.85in 1in 1in;
