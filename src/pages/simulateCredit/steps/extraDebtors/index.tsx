@@ -39,6 +39,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     businessUnitPublicCode,
     businessManagerCode,
     prospectData,
+    customerData,
   } = props;
   const [borrowers, setBorrowers] = useState(() =>
     transformServiceData(initialValues),
@@ -225,6 +226,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               prospectData={{} as IProspect}
               businessManagerCode={businessManagerCode}
               businessUnitPublicCode={businessUnitPublicCode}
+              customerData={customerData}
             />
           )}
 

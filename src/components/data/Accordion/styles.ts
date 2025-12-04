@@ -1,23 +1,22 @@
 import styled from "styled-components";
+import { inube } from "@inubekit/inubekit";
 
-export const StyledDetails = styled.details`
+export const StyledContainer = styled.div`
+  display: flex;
+  padding: 12px 16px;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  align-items: stretch;
   width: 100%;
-  list-style: none;
-  cursor: pointer;
+  border: 1px solid ${inube.palette.neutral.N30};
 `;
 
-export const StyledSummary = styled.summary`
+export const StyledHead = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-`;
-
-interface IStyledCollapseIcon {
-  $collapse: boolean;
-}
-
-export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
-  display: flex;
-  transition: all 500ms ease;
-  transform: ${({ $collapse }) =>
-    $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
+  width: 100%;
+  cursor: pointer;
 `;

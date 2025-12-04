@@ -4,6 +4,8 @@ import { IObligations } from "@pages/prospect/components/TableObligationsFinanci
 import { ICustomerData } from "@context/CustomerContext/types";
 import { unformatCurrency } from "@pages/prospect/components/modals/DebtorEditModal/utils";
 import { IFormData } from "@pages/simulateCredit/types.tsx";
+import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
+import { searchPortfolioObligationsById } from "@services/portfolioObligation/SearchGeneralInformationObligation";
 
 import {
   INCOME_PROPERTY_KEYS,
@@ -110,8 +112,11 @@ export const createMainBorrowerFromFormData = (
 ): IBorrower => {
   const borrowerProperties: { propertyName: string; propertyValue: string }[] =
     [];
-  if (Array.isArray(formData.obligationsFinancial)) {
-    const financialObligations = formData.obligationsFinancial.map(
+  if (
+    formData.obligationsFinancial &&
+    formData.obligationsFinancial.obligations
+  ) {
+    const financialObligations = formData.obligationsFinancial.obligations.map(
       (obligation) => {
         const propertyValue = [
           obligation.productName || "",
@@ -123,7 +128,6 @@ export const createMainBorrowerFromFormData = (
           obligation.duesPaid || 0,
           obligation.outstandingDues || 0,
         ].join(Delimiters.Obligation);
-
         return {
           propertyName: EBorrowerProperty.FinancialObligation,
           propertyValue: propertyValue,
@@ -210,4 +214,50 @@ export const updateFinancialObligationsFormData = (borrowers: IBorrower[]) => {
   });
 
   return transformedObligations;
+};
+
+export const getFinancialObligations = async (
+  publicCode: string,
+  businessUnitPublicCode: string,
+  businessManagerCode: string,
+) => {
+  const obligations = await getClientPortfolioObligationsById(
+    businessUnitPublicCode || "",
+    businessManagerCode,
+    publicCode,
+  );
+
+  if (!obligations || !obligations.obligations) return;
+
+  const results = await Promise.all(
+    obligations.obligations.map(async (obligation) => {
+      const obligationGeneralInformation = await searchPortfolioObligationsById(
+        businessUnitPublicCode || "",
+        businessManagerCode,
+        obligations.customerIdentificationNumber,
+        obligation.obligationNumber,
+      );
+
+      if (!obligationGeneralInformation) return null;
+
+      return {
+        balanceObligationTotal:
+          obligationGeneralInformation[0].balanceObligation.total,
+        duesPaid: obligationGeneralInformation[0].paidQuotas,
+        entity: obligation.entity,
+        nextPaymentValueTotal:
+          obligationGeneralInformation[0].nextPaymentValue.total,
+        obligationNumber: obligation.obligationNumber,
+        outstandingDues: obligationGeneralInformation[0].pendingQuotas,
+        paymentMethodName: obligationGeneralInformation[0].paymentMethodName,
+        productName: obligationGeneralInformation[0].productName,
+      };
+    }),
+  );
+
+  const allTransformedObligations: IObligations[] = results.filter(
+    (item): item is IObligations => item !== null,
+  );
+
+  return allTransformedObligations;
 };

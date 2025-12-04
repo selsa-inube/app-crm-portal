@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { MdAdd } from "react-icons/md";
 import { FormikValues, useFormik } from "formik";
 import { Stack, Button } from "@inubekit/inubekit";
@@ -15,8 +15,9 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { AppContext } from "@context/AppContext";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { IBorrower, IBorrowerProperty } from "@services/creditLimit/types";
-import { IBorrowerData, IDebtorDetail } from "@pages/applyForCredit/types";
+import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { IProspect, IProspectBorrower } from "@services/prospect/types";
+import { transformServiceData } from "@pages/simulateCredit/steps/extraDebtors/utils";
 
 import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
@@ -27,7 +28,7 @@ interface borrowersProps {
   handleOnChange: (values: IProspect | FormikValues) => void;
   onUpdate?: (updatedBorrower: Borrower) => void;
   prospectData: IProspectBorrower;
-  initialValues: IBorrowerData;
+  initialValues: IBorrower[];
   isMobile: boolean;
   valueRule: string[];
   businessManagerCode: string;
@@ -58,7 +59,12 @@ export function Borrowers(props: borrowersProps) {
   const [isModalEdit, setIsModalEdit] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isModalDelete, setIsModalDelete] = useState(false);
-  const [selectedBorrower, setSelectedBorrower] = useState<IDebtorDetail>();
+  const [selectedBorrower, setSelectedBorrower] = useState<IBorrower | null>();
+  const [borrowers, setBorrowers] = useState(
+    transformServiceData(initialValues),
+  );
+  const [selectedDebtorDetail, setSelectedDebtorDetail] =
+    useState<IDebtorDetail | null>(null);
 
   const { businessUnitSigla } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -77,8 +83,8 @@ export function Borrowers(props: borrowersProps) {
   }>({
     initialValues: {
       ...initialValues,
-      borrowers: Array.isArray(initialValues?.borrowers)
-        ? initialValues.borrowers
+      borrowers: Array.isArray(initialValues)
+        ? initialValues
         : dataDebtorDetail,
     },
     enableReinitialize: true,
@@ -89,6 +95,37 @@ export function Borrowers(props: borrowersProps) {
   useEffect(() => {
     handleOnChange(formik.values);
   }, [formik.values, handleOnChange]);
+
+  useEffect(() => {
+    setBorrowers(transformServiceData(initialValues));
+  }, [initialValues]);
+
+  const sortedBorrowers = useMemo(() => {
+    return [...borrowers].sort((borrowerA, borrowerB) => {
+      if (borrowerA.borrowerType === "MainBorrower") return -1;
+      if (borrowerB.borrowerType === "MainBorrower") return 1;
+      return 0;
+    });
+  }, [borrowers]);
+
+  const initialBorrowers = sortedBorrowers.reduce(
+    (acc, item, index) => {
+      acc[`borrower${index + 1}`] = {
+        id: item.id,
+        name: item.name,
+        debtorDetail: item.debtorDetail,
+      };
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        name: string;
+        id: string;
+        debtorDetail: IDebtorDetail;
+      }
+    >,
+  );
 
   return (
     <Fieldset>
@@ -149,7 +186,13 @@ export function Borrowers(props: borrowersProps) {
                     false,
                   )}
                   handleView={() => {
-                    setSelectedBorrower(item as IDebtorDetail);
+                    const borrowerData =
+                      initialBorrowers[`borrower${index + 1}`];
+
+                    if (borrowerData) {
+                      setSelectedDebtorDetail(borrowerData.debtorDetail);
+                    }
+                    setSelectedBorrower(item as IBorrower);
                     setIsModalView(true);
                   }}
                   isMobile={isMobile}
@@ -198,8 +241,8 @@ export function Borrowers(props: borrowersProps) {
                   setEditIndex(null);
                 }}
                 isMobile={isMobile}
-                initialValues={selectedBorrower}
-                properties={{} as IBorrower}
+                initialValues={selectedDebtorDetail as IDebtorDetail}
+                properties={selectedBorrower as IBorrower}
               />
             )}
             {isModalDelete && (
