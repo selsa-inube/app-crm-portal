@@ -117,8 +117,6 @@ export function ProspectCredit() {
     }
   };
 
-  console.log(loading);
-
   return (
     <>
       {codeError ? (
