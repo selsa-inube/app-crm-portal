@@ -164,6 +164,7 @@ export interface ISubmitCredit {
   clientId: string;
   clientIdentificationNumber: string;
   clientIdentificationType: string;
+  clientManagerObservation: string;
   clientName: string;
   clientPhoneNumber: string;
   clientType: string;
