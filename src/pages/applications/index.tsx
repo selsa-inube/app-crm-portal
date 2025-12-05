@@ -19,11 +19,12 @@ import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { environment } from "@config/environment";
 import userImage from "@assets/images/userImage.jpeg";
+import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager/index.tsx";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
-import { addConfig, dataCreditProspects, dataError } from "./config";
+import { addConfig, dataCreditProspects, dataError, redirect } from "./config";
 import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 
 export function CreditApplications() {
@@ -161,8 +162,16 @@ export function CreditApplications() {
               nextButton={dataCreditProspects.accept}
               backButton={dataCreditProspects.cancel}
               handleBack={() => setIsShowModal(false)}
-              handleNext={() => {
-                window.location.href = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}`;
+              handleNext={async () => {
+                const portalId = (
+                  await getStaffPortalsByBusinessManager(
+                    "",
+                    eventData.businessManager.abbreviatedName,
+                    redirect.portalName,
+                  )
+                )[0].staffPortalId;
+                const redirectUrl = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}?portal=${portalId}`;
+                window.location.href = redirectUrl;
               }}
               width="400px"
             >
