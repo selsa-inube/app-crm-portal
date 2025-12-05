@@ -249,6 +249,7 @@ export function ApplyForCredit() {
     vehicleOffered,
     disbursementGeneral,
     attachedDocuments,
+    observations,
   } = formData;
 
   const submitData = new FormData();
@@ -284,6 +285,10 @@ export function ApplyForCredit() {
   submitData.append(
     "clientName",
     `${contactInformation.name} ${contactInformation.lastName}`,
+  );
+  submitData.append(
+    "clientManagerObservation",
+    observations.relevantObservations,
   );
   submitData.append("clientPhoneNumber", contactInformation.phone.toString());
   submitData.append(
