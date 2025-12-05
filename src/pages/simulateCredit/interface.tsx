@@ -66,6 +66,7 @@ import {
 } from "./components/smallModals/modals";
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 import { IDataHeader } from "../simulations/types";
+import { RiskScore } from "./steps/riskScore";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -480,6 +481,17 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       prospectData={prospectData}
+                    />
+                  )}
+                {currentStepsNumber &&
+                  currentStepsNumber.id === stepsAddProspect.riskScore.id && (
+                    <RiskScore
+                      value={formData.riskScore.value}
+                      date={formData.riskScore.date}
+                      isMobile={isMobile}
+                      handleOnChange={(newRisk) =>
+                        handleFormDataChange("riskScore", newRisk)
+                      }
                     />
                   )}
                 {currentStepsNumber &&
