@@ -38,6 +38,9 @@ export const dataCreditProspects = {
 export const dataError = {
   notCredits:
     "Este cliente aún no tiene ningúna solicitud de crédito en trámite.",
+  noBusinessUnit:
+    "No hay una unidad de negocio relacionada con el código del portal.",
+  noSelectClient: "No se ha seleccionado ningún cliente.",
 };
 
 export const redirect = {
