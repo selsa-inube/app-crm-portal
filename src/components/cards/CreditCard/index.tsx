@@ -9,6 +9,7 @@ interface IOptionsCard {
   url?: string;
   width?: string;
   isDisabled?: boolean;
+  onInvalidUrl?: () => void;
 }
 
 export const CreditCard: FC<IOptionsCard> = ({
@@ -18,8 +19,19 @@ export const CreditCard: FC<IOptionsCard> = ({
   url,
   width,
   isDisabled = false,
+  onInvalidUrl,
 }) => (
-  <StyledCreditCard to={url ?? ""} $width={width} $isDisabled={isDisabled}>
+  <StyledCreditCard
+    to={url ?? ""}
+    $width={width}
+    $isDisabled={isDisabled}
+    onClick={(event: React.MouseEvent) => {
+      if (!url) {
+        event.preventDefault();
+        onInvalidUrl && onInvalidUrl();
+      }
+    }}
+  >
     <Stack
       direction="column"
       width={width ?? "194px"}

@@ -122,7 +122,7 @@ export interface IProspect {
   clientManagerObservation: string;
   borrowers: IBorrower[];
   consolidatedCredits: IConsolidatedCredit[];
-  linesOfCredit?: ISimulateLineOfCredit[];
+  linesOfCredit?: ISimulateLineOfCredit[] | string[];
   firstPaymentCycleDate?: string;
   extraordinaryInstallments?: ISimulateExtraordinaryInstallment[];
   creditProducts: ICreditProduct[];

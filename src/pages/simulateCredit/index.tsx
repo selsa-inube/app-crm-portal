@@ -238,9 +238,7 @@ export function SimulateCredit() {
               lineOfCreditDescription: item.lineOfCreditDescription,
             }))
           : [],
-      linesOfCredit: formData.selectedProducts.map((product) => ({
-        lineOfCreditAbbreviatedName: product,
-      })),
+      linesOfCredit: formData.selectedProducts,
       firstPaymentCycleDate: new Date().toISOString(),
       extraordinaryInstallments: Array.isArray(
         formData.extraordinaryInstallments,
@@ -255,9 +253,10 @@ export function SimulateCredit() {
       moneyDestinationAbbreviatedName: formData.selectedDestination,
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
-      selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
+      selectedRegularPaymentSchedule:
+        formData.loanAmountState.periodicity || "",
       requestedAmount: formData.loanAmountState.inputValue || 0,
-      termLimit: formData.loanConditionState.maximumTermValue || 0,
+      termLimit: formData.loanConditionState.maximumTermValue || 120,
       prospectId: "",
       prospectCode: "",
       state: "",
