@@ -17,7 +17,6 @@ export interface IFinancialObligation {
 
 interface IRestorePayload {
   borrowerIdentificationNumber: string;
-  financialObligations: IFinancialObligation[];
   justification: string;
   prospectCode: string;
 }
@@ -26,8 +25,7 @@ export const restoreFinancialObligationsByBorrowerId = async (
   businessUnitPublicCode: string,
   borrowerIdentificationNumber: string,
   prospectCode: string,
-  financialObligations: IFinancialObligation[],
-  justification: string = "Restauración de obligaciones financieras",
+  justification: string,
 ): Promise<void> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -35,7 +33,6 @@ export const restoreFinancialObligationsByBorrowerId = async (
   const payload: IRestorePayload = {
     borrowerIdentificationNumber,
     prospectCode,
-    financialObligations,
     justification,
   };
 
