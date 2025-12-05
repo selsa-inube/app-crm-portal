@@ -19,6 +19,7 @@ export interface IPayment {
   valueToPay?: number;
   lineCode?: string;
   allowCustomValue?: boolean;
+  entity?: string;
 }
 
 const otherValueAvailableDataDomain = {

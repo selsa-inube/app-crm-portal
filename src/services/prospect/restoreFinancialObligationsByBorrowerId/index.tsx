@@ -4,6 +4,17 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
+export interface IFinancialObligation {
+  balanceObligationTotal: number;
+  duesPaid: number;
+  entity: string;
+  nextPaymentValueTotal: number;
+  obligationNumber: string;
+  outstandingDues: number;
+  paymentMethodName: string;
+  productName: string;
+}
+
 interface IRestorePayload {
   borrowerIdentificationNumber: string;
   justification: string;

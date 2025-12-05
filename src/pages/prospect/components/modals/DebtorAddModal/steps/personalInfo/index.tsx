@@ -15,6 +15,7 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
+import { ICustomerData } from "@context/CustomerContext/types";
 import {
   MockTipeOfDocument,
   MockTipeOfFamily,
@@ -32,21 +33,30 @@ export interface IAddBorrowedProps {
   handleClose?: () => void;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IAddBorrowed) => void;
+  customerData: ICustomerData;
 }
 
 export const AddBorrower = (props: IAddBorrowedProps) => {
-  const { initialValues, AutoCompleted, onFormValid, handleOnChange } = props;
+  const {
+    initialValues,
+    AutoCompleted,
+    onFormValid,
+    handleOnChange,
+    customerData,
+  } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
 
   const validationSchema = Yup.object({
     tipeOfDocument: Yup.string().required(""),
-    documentNumber: Yup.number().required(""),
+    documentNumber: Yup.number()
+      .required("")
+      .notOneOf([Number(customerData?.publicCode)], ""),
     firstName: Yup.string().required(""),
     lastName: Yup.string().required(""),
     email: Yup.string()
       .email("")
-      .matches(/^[\w.%+-]+@[\w.-]+\.(COM|CO|ES)$/, "")
+      .matches(/^[\w.%+-]+@[\w.-]+\.(com|co|es|COM|CO|ES)$/i, "")
       .required(""),
     phone: Yup.string().required("").matches(/^\d+$/, "").min(10, ""),
     sex: Yup.string().required(""),
@@ -151,6 +161,12 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           value={validateCurrencyField("documentNumber", formik, false, "")}
           size="compact"
           fullwidth
+          status={
+            formik.values.documentNumber.toString() === customerData?.publicCode
+              ? "invalid"
+              : undefined
+          }
+          message="La identificación ingresada no puede ser la misma del deudor principal"
         />
 
         <Input
@@ -187,9 +203,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           type="email"
           label={dataAddModal.labelEmail}
           placeholder={dataAddModal.placeHolderEmail}
-          onChange={(event) =>
-            formik.setFieldValue("email", event.target.value.toUpperCase())
-          }
+          onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.email}
           size="compact"

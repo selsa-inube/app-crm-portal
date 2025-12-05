@@ -71,12 +71,6 @@ export const PaymentCapacityAnalysis = (
     setShowModal(true);
   };
 
-  console.log(
-    capacityData.professionalFees,
-    " value: currencyFormat(capacityData.professionalFees ?? 0, false) || 0: ",
-    currencyFormat(capacityData.professionalFees ?? 0, false),
-  );
-
   const generalFieldsets: IFieldsetData[] = [
     {
       legend: DataCapacityAnalysis.workRents,
