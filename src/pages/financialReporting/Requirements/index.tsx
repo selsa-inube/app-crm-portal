@@ -149,8 +149,8 @@ export const Requirements = (props: IRequirementsProps) => {
       <Fieldset
         title={errorMessages.Requirements.titleCard}
         heightFieldset="100%"
-        hasTable={!error}
-        hasOverflow={isMobile}
+        hasTable
+        hasOverflow={isMobile || error}
       >
         {error ? (
           <ItemNotFound

@@ -31,6 +31,8 @@ import { patchAssignAccountManager } from "@services/creditRequest/patchAssignAc
 import { getUnreadErrorsById } from "@services/creditRequest/unreadErrors";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { BaseModal } from "@components/modals/baseModal";
+import { environment } from "@config/environment";
 
 import {
   configHandleactions,
@@ -80,6 +82,7 @@ export const FinancialReporting = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [requests, setRequests] = useState<ICreditRequest | null>(null);
+  const [sendCrediboard, setSendCrediboard] = useState(false);
 
   const [showGuarantee, setShowGuarantee] = useState(false);
 
@@ -159,7 +162,8 @@ export const FinancialReporting = () => {
       setDocument(documentsUser);
       setAttachDocuments(true);
     } catch (error) {
-      console.error(error);
+      setMessageError(errorMessages.documents);
+      setShowErrorModal(true);
     }
   };
 
@@ -172,7 +176,12 @@ export const FinancialReporting = () => {
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
     } catch (error) {
+      setMessageError(errorMessages.prospect);
       setShowErrorModal(true);
+      if (creditRequestCode === undefined) {
+        setMessageError(errorMessages.prospect);
+        setShowErrorModal(true);
+      }
     }
   };
 
@@ -266,7 +275,6 @@ export const FinancialReporting = () => {
           data?.creditRequestId ?? "",
           businessUnitPublicCode,
           businessManagerCode,
-          //
           user?.id ?? "",
         );
       } catch (error) {
@@ -287,9 +295,14 @@ export const FinancialReporting = () => {
         user?.id ?? "",
         { creditRequestCode },
       );
+      if (data[0].stage !== "TRAMITADA") {
+        setSendCrediboard(true);
+      }
+
       setRequests(data[0] as ICreditRequest);
     } catch (error) {
-      console.error(error);
+      setCodeError(1022);
+      setAddToFix([errorMessages.errorRemoveProspect]);
     }
   }, [businessUnitPublicCode, user, businessManagerCode]);
 
@@ -336,186 +349,238 @@ export const FinancialReporting = () => {
     setPdfState({ isGenerating: false, blob: null, showShareModal: false });
   };
 
+  useEffect(() => {
+    let error = null;
+    const messages: string[] = [];
+
+    if (eventData.businessManager.abbreviatedName.length === 0) {
+      error = 1003;
+      messages.push(errorMessages.noBusinessUnit);
+    }
+    if (customerData.fullName.length === 0) {
+      error = 1016;
+      messages.push(errorMessages.noSelectClient);
+    }
+
+    setCodeError(error);
+    setAddToFix(messages);
+  }, [customerData, eventData]);
+
+  const handleNavigate = () => {
+    if (codeError === 1003) {
+      navigation(`/login/${user.username}/business-units/select-business-unit`);
+    } else if (codeError === 1016) {
+      navigation("/clients/select-client/");
+    } else {
+      navigation("/credit/processed-credit-requests");
+    }
+  };
+
   return (
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigation("/credit/processed-credit-requests")}
+          onClick={handleNavigate}
           errorCode={codeError}
           addToFix={addToFix}
         />
       ) : (
         <div ref={dataCommercialManagementRef}>
-          <GlobalPdfStyles $isGeneratingPdf={pdfState.isGenerating} />
-          <StyledMarginPrint $isMobile={isMobile}>
-            <GeneralHeader
-              buttonText={labelsAndValuesShare.addLink}
-              descriptionStatus={dataHeader.status}
-              name={dataHeader.name}
-              profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
-            />
-            <Stack direction="column" margin="20px 0 0 0">
-              <Stack justifyContent="center" alignContent="center">
-                <StyledToast $isMobile={isMobile}>
-                  {errorsService.map((error) => (
-                    <ErrorAlert
-                      key={error.id}
-                      message={error.message.toString()}
-                      onClose={() => handleCloseErrorService(error.id)}
+          <Stack
+            direction="column"
+            width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
+            margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
+          >
+            <GlobalPdfStyles $isGeneratingPdf={pdfState.isGenerating} />
+            <StyledMarginPrint $isMobile={isMobile}>
+              <GeneralHeader
+                buttonText={labelsAndValuesShare.addLink}
+                descriptionStatus={dataHeader.status}
+                name={dataHeader.name}
+                profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
+              />
+              <Stack direction="column" margin="20px 0 0 0">
+                <Stack justifyContent="center" alignContent="center">
+                  <StyledToast $isMobile={isMobile}>
+                    {errorsService.map((error) => (
+                      <ErrorAlert
+                        key={error.id}
+                        message={error.message.toString()}
+                        onClose={() => handleCloseErrorService(error.id)}
+                        isMobile={isMobile}
+                      />
+                    ))}
+                  </StyledToast>
+                </Stack>
+                <ContainerSections
+                  isMobile={isMobile}
+                  stockTray={
+                    <StockTray
                       isMobile={isMobile}
+                      actionButtons={handleActions}
+                      navigation={() =>
+                        navigation("/credit/processed-credit-requests")
+                      }
+                      eventData={eventData}
                     />
-                  ))}
-                </StyledToast>
-              </Stack>
-              <ContainerSections
-                isMobile={isMobile}
-                stockTray={
-                  <StockTray
+                  }
+                >
+                  <>
+                    <Stack direction="column" gap="20px">
+                      <Stack direction="column">
+                        <Stack direction="column">
+                          <BlockPdfSection className="pdf-block">
+                            <ComercialManagement
+                              generateAndSharePdf={generateAndSharePdf}
+                              data={data}
+                              collapse={collapse}
+                              setCollapse={setCollapse}
+                              creditRequest={requests}
+                              hideContactIcons={true}
+                              prospectData={dataProspect!}
+                              sentData={null}
+                              setSentData={setSentData}
+                              setRequestValue={setRequestValue}
+                              requestValue={requestValue}
+                            />
+                          </BlockPdfSection>
+                        </Stack>
+                      </Stack>
+                      <StyledScreenPrint $isMobile={isMobile}>
+                        <Stack
+                          direction="column"
+                          height={isMobile ? "auto" : "314px"}
+                        >
+                          <BlockPdfSection className="pdf-block">
+                            <Approvals
+                              user={creditRequestCode!}
+                              isMobile={isMobile}
+                              creditRequest={requests}
+                            />
+                          </BlockPdfSection>
+                        </Stack>
+                        <Stack
+                          direction="column"
+                          height={isMobile ? "auto" : "314px"}
+                        >
+                          <StyledPageBreak />
+                          <BlockPdfSection className="pdf-block">
+                            <Requirements
+                              isMobile={isMobile}
+                              id={data.creditRequestId!}
+                              user={user!.id!}
+                              businessUnitPublicCode={businessUnitPublicCode}
+                              creditRequestCode={data.creditRequestCode!}
+                              businessManagerCode={businessManagerCode}
+                            />
+                          </BlockPdfSection>
+                        </Stack>
+                        <Stack direction="column">
+                          <BlockPdfSection className="pdf-block">
+                            <Management
+                              creditRequest={requests}
+                              isMobile={isMobile}
+                            />
+                          </BlockPdfSection>
+                        </Stack>
+                        <Stack
+                          direction="column"
+                          height={isMobile ? "auto" : "340px"}
+                        >
+                          <StyledPageBreak />
+                          <BlockPdfSection className="pdf-block">
+                            <PromissoryNotes
+                              id={creditRequestCode!}
+                              isMobile={isMobile}
+                              creditRequest={requests}
+                            />
+                          </BlockPdfSection>
+                        </Stack>
+                      </StyledScreenPrint>
+                    </Stack>
+                    <Stack
+                      direction="column"
+                      height={isMobile ? "auto" : "163px"}
+                    >
+                      <BlockPdfSection className="pdf-block">
+                        <Postingvouchers
+                          user={creditRequestCode!}
+                          id={creditRequestCode!}
+                          isMobile={isMobile}
+                          creditRequest={requests}
+                        />
+                      </BlockPdfSection>
+                    </Stack>
+                    <StyledPageBreak />
+                    <StyledPageBreak />
+                    {attachDocuments && (
+                      <ListModal
+                        title="Ver Adjuntos"
+                        handleClose={() => setAttachDocuments(false)}
+                        buttonLabel="Cerrar"
+                        id={data.creditRequestId!}
+                        isViewing={true}
+                        dataDocument={document}
+                      />
+                    )}
+                  </>
+                </ContainerSections>
+                {showGuarantee && (
+                  <OfferedGuaranteeModal
+                    handleClose={() => setShowGuarantee(false)}
                     isMobile={isMobile}
-                    actionButtons={handleActions}
-                    navigation={() =>
-                      navigation("/credit/processed-credit-requests")
-                    }
-                    eventData={eventData}
                   />
+                )}
+                {showMenu && isMobile && (
+                  <MobileMenu
+                    onClose={() => setShowMenu(false)}
+                    onAttach={handleOnAttach}
+                    onViewAttachments={handleOnViewAttachments}
+                    onGuarantee={() => setShowGuarantee(true)}
+                  />
+                )}
+              </Stack>
+            </StyledMarginPrint>
+            {showErrorModal && (
+              <ErrorModal
+                message={messageError}
+                handleClose={handleErrorModal}
+              />
+            )}
+            {pdfState.isGenerating && (
+              <Blanket>
+                <StyledContainerSpinner>
+                  <Spinner size="large" />
+                  <Text size="large" weight="bold">
+                    {errorMessages.share.spinner}
+                  </Text>
+                </StyledContainerSpinner>
+              </Blanket>
+            )}
+            {pdfState.showShareModal && pdfState.blob && (
+              <ShareModal
+                isMobile={isMobile}
+                handleClose={handleSharePdfModal}
+                handleNext={handleSharePdf}
+              />
+            )}
+            {sendCrediboard && (
+              <BaseModal
+                title="Solicitud"
+                width={isMobile ? "300px" : "400px"}
+                nextButton="Aceptar"
+                backButton="Cancelar"
+                handleNext={() => {
+                  window.location.href = `${environment.VITE_CREDIBOARD_URL}/extended-card/${requests?.creditRequestCode}`;
+                }}
+                handleBack={() =>
+                  navigation("/credit/processed-credit-requests")
                 }
               >
-                <>
-                  <Stack direction="column" gap="20px">
-                    <Stack direction="column">
-                      <Stack direction="column">
-                        <BlockPdfSection className="pdf-block">
-                          <ComercialManagement
-                            generateAndSharePdf={generateAndSharePdf}
-                            data={data}
-                            collapse={collapse}
-                            setCollapse={setCollapse}
-                            creditRequest={requests}
-                            hideContactIcons={true}
-                            prospectData={dataProspect!}
-                            sentData={null}
-                            setSentData={setSentData}
-                            setRequestValue={setRequestValue}
-                            requestValue={requestValue}
-                          />
-                        </BlockPdfSection>
-                      </Stack>
-                    </Stack>
-                    <StyledScreenPrint $isMobile={isMobile}>
-                      <Stack
-                        direction="column"
-                        height={isMobile ? "auto" : "277px"}
-                      >
-                        <BlockPdfSection className="pdf-block">
-                          <Approvals
-                            user={creditRequestCode!}
-                            isMobile={isMobile}
-                            creditRequest={requests}
-                          />
-                        </BlockPdfSection>
-                      </Stack>
-                      <Stack
-                        direction="column"
-                        height={isMobile ? "auto" : "277px"}
-                      >
-                        <StyledPageBreak />
-                        <BlockPdfSection className="pdf-block">
-                          <Requirements
-                            isMobile={isMobile}
-                            id={data.creditRequestId!}
-                            user={user!.id!}
-                            businessUnitPublicCode={businessUnitPublicCode}
-                            creditRequestCode={data.creditRequestCode!}
-                            businessManagerCode={businessManagerCode}
-                          />
-                        </BlockPdfSection>
-                      </Stack>
-                      <Stack direction="column">
-                        <BlockPdfSection className="pdf-block">
-                          <Management
-                            creditRequest={requests}
-                            isMobile={isMobile}
-                          />
-                        </BlockPdfSection>
-                      </Stack>
-                      <Stack
-                        direction="column"
-                        height={isMobile ? "auto" : "340px"}
-                      >
-                        <StyledPageBreak />
-                        <BlockPdfSection className="pdf-block">
-                          <PromissoryNotes
-                            id={creditRequestCode!}
-                            isMobile={isMobile}
-                            creditRequest={requests}
-                          />
-                        </BlockPdfSection>
-                      </Stack>
-                    </StyledScreenPrint>
-                  </Stack>
-                  <Stack
-                    direction="column"
-                    height={isMobile ? "auto" : "163px"}
-                  >
-                    <BlockPdfSection className="pdf-block">
-                      <Postingvouchers
-                        user={creditRequestCode!}
-                        id={creditRequestCode!}
-                        isMobile={isMobile}
-                        creditRequest={requests}
-                      />
-                    </BlockPdfSection>
-                  </Stack>
-                  <StyledPageBreak />
-                  <StyledPageBreak />
-                  {attachDocuments && (
-                    <ListModal
-                      title="Ver Adjuntos"
-                      handleClose={() => setAttachDocuments(false)}
-                      buttonLabel="Cerrar"
-                      id={data.creditRequestId!}
-                      isViewing={true}
-                      dataDocument={document}
-                    />
-                  )}
-                </>
-              </ContainerSections>
-              {showGuarantee && (
-                <OfferedGuaranteeModal
-                  handleClose={() => setShowGuarantee(false)}
-                  isMobile={isMobile}
-                />
-              )}
-              {showMenu && isMobile && (
-                <MobileMenu
-                  onClose={() => setShowMenu(false)}
-                  onAttach={handleOnAttach}
-                  onViewAttachments={handleOnViewAttachments}
-                  onGuarantee={() => setShowGuarantee(true)}
-                />
-              )}
-            </Stack>
-          </StyledMarginPrint>
-          {showErrorModal && (
-            <ErrorModal message={messageError} handleClose={handleErrorModal} />
-          )}
-          {pdfState.isGenerating && (
-            <Blanket>
-              <StyledContainerSpinner>
-                <Spinner size="large" />
-                <Text size="large" weight="bold">
-                  {errorMessages.share.spinner}
-                </Text>
-              </StyledContainerSpinner>
-            </Blanket>
-          )}
-          {pdfState.showShareModal && pdfState.blob && (
-            <ShareModal
-              isMobile={isMobile}
-              handleClose={handleSharePdfModal}
-              handleNext={handleSharePdf}
-            />
-          )}
+                <Text>{labelsAndValuesShare.changePortal}</Text>
+              </BaseModal>
+            )}
+          </Stack>
         </div>
       )}
     </>

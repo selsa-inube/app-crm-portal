@@ -85,7 +85,7 @@ export const Approvals = (props: IApprovalsProps) => {
         title={errorMessages.approval.titleCard}
         heightFieldset="100%"
         hasTable
-        hasOverflow={isMobile}
+        hasOverflow={isMobile || !creditRequest || Boolean(error)}
       >
         {!creditRequest || error ? (
           <ItemNotFound

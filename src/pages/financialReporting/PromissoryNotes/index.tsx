@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState, useContext } from "react";
 import { Stack, useFlag, Tag } from "@inubekit/inubekit";
 
-import ItemNotFound from "@assets/images/ItemNotFound.png";
+import userNotFound from "@assets/images/ItemNotFound.png";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableBoard } from "@components/data/TableBoard";
 import { IEntries } from "@components/data/TableBoard/types";
 import { PromissoryNotesModal } from "@components/modals/PromissoryNotesModal";
-import { UnfoundData } from "@components/layout/UnfoundData";
+import { ItemNotFound } from "@components/layout/ItemNotFound";
 import { AppContext } from "@context/AppContext";
 import {
   ICreditRequest,
@@ -136,8 +136,8 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
       hasOverflow={isMobile}
     >
       {!creditRequest || showRetry ? (
-        <UnfoundData
-          image={ItemNotFound}
+        <ItemNotFound
+          image={userNotFound}
           title={errorMessages.PromissoryNotes.title}
           description={
             errorMessages.PromissoryNotes.description || errorMessage
