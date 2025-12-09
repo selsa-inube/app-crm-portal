@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { Stack, Text, Divider, Toggle, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
+import { VALIDATED_NUMBER_REGEX } from "@components/modals/ProspectProductModal/config";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { loanData } from "./config";
@@ -119,7 +120,7 @@ export function LoanCondition(props: ILoanCondition) {
                           ? currencyFormat(
                               Number(
                                 String(values.quotaCapValue).replace(
-                                  /[^0-9]/g,
+                                  VALIDATED_NUMBER_REGEX,
                                   "",
                                 ),
                               ),
