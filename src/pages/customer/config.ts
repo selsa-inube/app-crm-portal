@@ -9,3 +9,5 @@ export enum EErrorMessages {
   NoClientSelected = "Para continuar, primero debes seleccionar un cliente.",
   ClientNotFound = "El cliente no se encuentra registrado.",
 }
+
+export const VALIDATE_BLANK_SPACES_REGEX = /\s/g;

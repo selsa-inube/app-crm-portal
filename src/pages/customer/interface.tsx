@@ -22,7 +22,6 @@ interface ICustomerUI {
   handleChangeAutocomplete: (event: string, value: string | null) => void;
   handleSubmit: () => void;
   messageError: string;
-  autocompleteKey: number;
 }
 
 export function CustomerUI(props: ICustomerUI) {
@@ -35,9 +34,8 @@ export function CustomerUI(props: ICustomerUI) {
     handleChangeAutocomplete,
     handleSubmit,
     messageError,
-    autocompleteKey,
   } = props;
-  console.log(inputValue, " CustomerUI options: ", options);
+
   return (
     <Stack
       width="100%"
@@ -60,7 +58,6 @@ export function CustomerUI(props: ICustomerUI) {
             <Stack alignItems="center" gap="6px">
               <StyledAutomatic ref={selectRef}>
                 <Autocomplete
-                  key={autocompleteKey}
                   id="clientSelect"
                   name="clientSelect"
                   fullwidth
