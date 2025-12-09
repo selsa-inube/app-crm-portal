@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { FormikValues } from "formik";
-import { Stack, Divider, useMediaQuery } from "@inubekit/inubekit";
+import {
+  Stack,
+  Divider,
+  useMediaQuery,
+  SkeletonLine,
+} from "@inubekit/inubekit";
 
 import { CreditProductCard } from "@components/cards/CreditProductCard";
 import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCard";
@@ -24,6 +29,7 @@ import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
+import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
 
 import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
@@ -87,6 +93,7 @@ export const CardCommercialManagement = (
   const [selectedProductId, setSelectedProductId] = useState("");
 
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
+  const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [consolidatedCredits, setConsolidatedCredits] = useState(
     prospectData?.consolidatedCredits || [],
   );
@@ -219,15 +226,18 @@ export const CardCommercialManagement = (
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoadingSummary(true);
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData?.prospectId || "",
         );
+        setIsLoadingSummary(false);
         if (result && setProspectSummaryData) {
           setProspectSummaryData(result);
         }
       } catch (error) {
+        setIsLoadingSummary(false);
         setShowErrorModal(true);
         setMessageError(tittleOptions.descriptionError);
       }
@@ -297,10 +307,72 @@ export const CardCommercialManagement = (
                 }
               />
             ))}
-            {showAddProduct && (
+            {showAddProduct && !isLoading && (
               <StyledPrint>
                 <NewCreditProductCard onClick={onClick} />
               </StyledPrint>
+            )}
+            {isLoading && prospectProducts.length === 0 && (
+              <>
+                {Array(3)
+                  .fill(0)
+                  .map((_, indexContainer) => (
+                    <Stack>
+                      <StyledCreditProductCard isLoading key={indexContainer}>
+                        <Stack
+                          direction="column"
+                          height="100%"
+                          padding="12px"
+                          gap="8px"
+                        >
+                          <SkeletonLine height="40px" width="100%" animated />
+                          <Stack
+                            gap="16px"
+                            direction="column"
+                            margin="16px 0 0 0"
+                          >
+                            <Stack gap="8px" direction="column">
+                              <SkeletonLine
+                                height="10px"
+                                width="90%"
+                                animated
+                              />
+                              <SkeletonLine
+                                height="30px"
+                                width="60%"
+                                animated
+                              />
+                            </Stack>
+                            <Stack gap="8px" direction="column">
+                              <SkeletonLine
+                                height="10px"
+                                width="90%"
+                                animated
+                              />
+                              <SkeletonLine
+                                height="30px"
+                                width="60%"
+                                animated
+                              />
+                            </Stack>
+                            <Stack gap="8px" direction="column">
+                              <SkeletonLine
+                                height="10px"
+                                width="90%"
+                                animated
+                              />
+                              <SkeletonLine
+                                height="30px"
+                                width="60%"
+                                animated
+                              />
+                            </Stack>
+                          </Stack>
+                        </Stack>
+                      </StyledCreditProductCard>
+                    </Stack>
+                  ))}
+              </>
             )}
           </Stack>
         </StyledCardsCredit>
@@ -314,6 +386,7 @@ export const CardCommercialManagement = (
           >
             {SummaryProspectCredit.map((entry, index) => (
               <CardValues
+                isLoading={isLoadingSummary}
                 key={index}
                 items={entry.item.map((item) => ({
                   ...item,

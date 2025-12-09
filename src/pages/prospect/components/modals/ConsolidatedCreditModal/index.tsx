@@ -411,8 +411,13 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                   autoRows="auto"
                   templateColumns={isMobile ? "1fr" : "repeat(2, 1fr)"}
                   gap="16px"
-                  width="0%"
+                  width={consolidatedCredits.length === 0 ? "100%" : "0%"}
                 >
+                  {consolidatedCredits.length === 0 && (
+                    <Text type="body" size="small">
+                      {ModalConfig.noSelected}
+                    </Text>
+                  )}
                   {consolidatedCredits.map((item) => (
                     <InvestmentCreditCard
                       codeValue={item.creditProductCode}
@@ -435,6 +440,11 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                   width="100%"
                   margin="0 20px 0 0"
                 >
+                  {sortedObligationPayment.length === 0 && (
+                    <Text type="body" size="small">
+                      {ModalConfig.newObligationsEmpty}
+                    </Text>
+                  )}
                   {sortedObligationPayment.map((creditData) => (
                     <CardConsolidatedCredit
                       key={creditData.id}

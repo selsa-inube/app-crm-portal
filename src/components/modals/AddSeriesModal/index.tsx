@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   Select,
@@ -84,6 +84,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -181,6 +183,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     extraordinaryInstallments: IExtraordinaryInstallments,
   ) => {
     try {
+      setIsLoading(true);
       await saveExtraordinaryInstallment(
         businessUnitPublicCode,
         businessManagerCode,
@@ -188,8 +191,10 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       );
 
       setSentData?.(extraordinaryInstallments);
+      setIsLoading(false);
       handleClose();
     } catch (error: unknown) {
+      setIsLoading(false);
       const err = error as {
         message?: string;
         status?: number;
@@ -371,6 +376,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       height="auto"
       finalDivider
       disabledNext={!isFormValid()}
+      isLoading={isLoading}
     >
       <Stack gap="24px" direction="column">
         {paymentMethodOptionsMock.length === 1 ? (

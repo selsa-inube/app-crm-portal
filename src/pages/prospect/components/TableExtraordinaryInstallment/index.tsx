@@ -86,6 +86,9 @@ export const TableExtraordinaryInstallment = (
 
   const headers = headersTableExtraordinaryInstallment;
   const isMobile = useMediaQuery("(max-width:880px)");
+
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+
   const visbleHeaders = isMobile
     ? headers.filter((header) => rowsVisbleMobile.includes(header.key))
     : headers;
@@ -196,6 +199,7 @@ export const TableExtraordinaryInstallment = (
       setIsOpenModalDelete(false);
     } else if (service) {
       try {
+        setIsLoadingDelete(true);
         await removeExtraordinaryInstallment(
           businessUnitPublicCode ?? "",
           businessManagerCode || "",
@@ -203,9 +207,11 @@ export const TableExtraordinaryInstallment = (
         );
 
         setSentData?.(itemIdentifiersForUpdate);
+        setIsLoadingDelete(false);
         setIsOpenModalDelete(false);
         handleClose?.();
       } catch (error: unknown) {
+        setIsLoadingDelete(false);
         const err = error as {
           message?: string;
           status?: number;
@@ -249,6 +255,7 @@ export const TableExtraordinaryInstallment = (
         setIsOpenModalView={setIsOpenModalView}
         setOpenMenuIndex={setOpenMenuIndex}
         openMenuIndex={openMenuIndex}
+        isLoadingDelete={isLoadingDelete}
       />
     </>
   );

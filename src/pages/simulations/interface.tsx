@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   Icon,
+  SkeletonLine,
   Stack,
   Text,
 } from "@inubekit/inubekit";
@@ -55,6 +56,7 @@ interface ProcessedData {
 
 interface SimulationsUIProps {
   dataHeader: IDataHeader;
+  isLoading: boolean;
   isMobile: boolean;
   prospectCode: string;
   data: IProspect | undefined;
@@ -104,6 +106,7 @@ interface SimulationsUIProps {
   setProspectSummaryData?: React.Dispatch<
     React.SetStateAction<IProspectSummaryById>
   >;
+  isLoadingDelete?: boolean;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -150,6 +153,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
     showRequirements,
     setShowRequirements,
     validateRequirements,
+    isLoading = false,
+    isLoadingDelete = false,
   } = props;
 
   return (
@@ -291,11 +296,19 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               width="30%"
                             >
                               <Stack gap="8px" width="100%">
-                                <Icon
-                                  icon={<MdOutlineBeachAccess />}
-                                  appearance="dark"
-                                  size="28px"
-                                />
+                                {isLoading ? (
+                                  <SkeletonLine
+                                    animated
+                                    height="40px"
+                                    width="40px"
+                                  />
+                                ) : (
+                                  <Icon
+                                    icon={<MdOutlineBeachAccess />}
+                                    appearance="dark"
+                                    size="28px"
+                                  />
+                                )}
                                 <Stack
                                   direction="column"
                                   alignItems="center"
@@ -307,9 +320,17 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                     gap="8px"
                                     width="100%"
                                   >
-                                    <Text type="title" size="large">
-                                      {processedData.destinationName}
-                                    </Text>
+                                    {isLoading ? (
+                                      <SkeletonLine
+                                        animated
+                                        height="40px"
+                                        width="150px"
+                                      />
+                                    ) : (
+                                      <Text type="title" size="large">
+                                        {processedData?.destinationName}
+                                      </Text>
+                                    )}
                                     <Text
                                       type="body"
                                       size="small"
@@ -327,13 +348,21 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               gap="8px"
                               width="40%"
                             >
-                              <Text
-                                type="title"
-                                size="large"
-                                textAlign="center"
-                              >
-                                {processedData.mainBorrowerName}
-                              </Text>
+                              {isLoading ? (
+                                <SkeletonLine
+                                  animated
+                                  height="40px"
+                                  width="150px"
+                                />
+                              ) : (
+                                <Text
+                                  type="title"
+                                  size="large"
+                                  textAlign="center"
+                                >
+                                  {processedData?.mainBorrowerName}
+                                </Text>
+                              )}
                               <Text type="body" size="small" appearance="gray">
                                 Cliente
                               </Text>
@@ -345,16 +374,24 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               width="30%"
                             >
                               <Stack gap="8px">
-                                <Text
-                                  type="headline"
-                                  weight="bold"
-                                  size="large"
-                                  appearance="primary"
-                                >
-                                  {currencyFormat(
-                                    prospectSummaryData?.requestedAmount || 0,
-                                  )}
-                                </Text>
+                                {isLoading ? (
+                                  <SkeletonLine
+                                    animated
+                                    height="40px"
+                                    width="150px"
+                                  />
+                                ) : (
+                                  <Text
+                                    type="headline"
+                                    weight="bold"
+                                    size="large"
+                                    appearance="primary"
+                                  >
+                                    {currencyFormat(
+                                      prospectSummaryData?.requestedAmount || 0,
+                                    )}
+                                  </Text>
+                                )}
                               </Stack>
                               <Text type="body" size="small" appearance="gray">
                                 {dataEditProspect.value}
@@ -559,6 +596,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
           nextButton={dataEditProspect.nextButton}
           apparenceNext="danger"
           width={isMobile ? "300px" : "500px"}
+          isLoading={isLoadingDelete}
         >
           <Text>{dataEditProspect.deleteDescription}</Text>
         </BaseModal>

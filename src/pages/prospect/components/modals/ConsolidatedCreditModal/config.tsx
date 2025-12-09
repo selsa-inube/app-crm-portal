@@ -4,6 +4,7 @@ export const ModalConfig = {
   terminated: "Próximo vencimiento",
   selectedText: "Obligaciones seleccionadas:",
   newObligations: "Nuevas obligaciones encontradas:",
+  newObligationsEmpty: "No se encontraron nuevas obligaciones.",
   creditInvestment: "Crédito libre inversión",
   close: "Cerrar",
   keep: "Guardar",

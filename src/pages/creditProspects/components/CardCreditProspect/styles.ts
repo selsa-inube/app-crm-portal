@@ -4,12 +4,13 @@ import { inube } from "@inubekit/inubekit";
 interface IStyledContainer {
   disabled?: boolean;
   $isMobile?: boolean;
+  display?: boolean;
 }
 
 export const StyledContainer = styled.div<IStyledContainer>`
   width: 280px;
   height: 338px;
-  display: flex;
+  display: ${({ display }) => (display ? "block" : "flex")};
   flex-direction: column;
   border-radius: 8px;
   outline: 2px solid
