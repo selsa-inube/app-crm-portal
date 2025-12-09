@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
-  useFlag,
   Stack,
   Text,
   Divider,
@@ -77,8 +76,6 @@ export function DisbursementWithExternalAccount(
     useState(identificationNumber);
 
   const prevValues = useRef(formik.values[optionNameForm]);
-
-  const { addFlag } = useFlag();
 
   useEffect(() => {
     onFormValid(formik.isValid);
