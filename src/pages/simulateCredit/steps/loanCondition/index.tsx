@@ -114,7 +114,18 @@ export function LoanCondition(props: ILoanCondition) {
                       type="text"
                       disabled={!values.toggles.quotaCapToggle}
                       fullwidth={isMobile}
-                      value={values.quotaCapValue}
+                      value={
+                        values.quotaCapValue
+                          ? currencyFormat(
+                              Number(
+                                String(values.quotaCapValue).replace(
+                                  /[^0-9]/g,
+                                  "",
+                                ),
+                              ),
+                            )
+                          : ""
+                      }
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const formattedValue = currencyFormat(
                           Number(e.target.value.replace(/[^0-9]/g, "")),
