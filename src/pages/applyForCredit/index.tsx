@@ -422,15 +422,9 @@ export function ApplyForCredit() {
         prospectCode || "",
       );
 
-      if (prospect && typeof prospect === "object") {
-        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
-          setProspectData(prospect);
-        }
-      }
       const mainBorrower = prospect.borrowers.find(
         (borrower) => borrower.borrowerType === "MainBorrower",
       );
-
       if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
         setCodeError(1011);
         return;
@@ -439,6 +433,12 @@ export function ApplyForCredit() {
       if (prospect.state !== prospectStates.CREATED) {
         setCodeError(1012);
         return;
+      }
+
+      if (prospect && typeof prospect === "object") {
+        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
+          setProspectData(prospect);
+        }
       }
     } catch (error) {
       setCodeError(1010);

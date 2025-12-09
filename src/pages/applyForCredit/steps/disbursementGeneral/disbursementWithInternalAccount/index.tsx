@@ -86,9 +86,38 @@ export function DisbursementWithInternalAccount(
     });
   };
 
+  const lastValidState = useRef<boolean | null>(null);
+
   useEffect(() => {
-    onFormValid(formik.isValid);
-  }, [formik.isValid, onFormValid]);
+    const checkValidity = () => {
+      const stepErrors = formik.errors[optionNameForm];
+
+      const hasYupErrors = stepErrors && Object.keys(stepErrors).length > 0;
+
+      const currentValues = formik.values[optionNameForm] || {};
+      const isFormVisible = !currentValues.toggle;
+
+      let failsBusinessRule = false;
+      if (isFormVisible && customerData?.publicCode) {
+        if (
+          String(currentValues.identification) ===
+          String(customerData.publicCode)
+        ) {
+          failsBusinessRule = true;
+        }
+      }
+      const isValid = !hasYupErrors && !failsBusinessRule;
+
+      if (lastValidState.current !== isValid) {
+        lastValidState.current = isValid;
+        onFormValid(isValid);
+      }
+    };
+
+    const timer = setTimeout(checkValidity, 200);
+
+    return () => clearTimeout(timer);
+  }, [formik.errors, formik.values, optionNameForm, customerData, onFormValid]);
 
   useEffect(() => {
     if (formik.values[optionNameForm]) {
@@ -155,7 +184,11 @@ export function DisbursementWithInternalAccount(
       `${optionNameForm}.city`,
       person?.zone?.split("-")[1] || "",
     );
-    setCurrentIdentification(customerData?.publicCode || "");
+
+    const newIdentification = customerData?.publicCode || "";
+    setCurrentIdentification(newIdentification);
+
+    previousIdentificationRef.current = newIdentification;
   };
 
   const clearFields = () => {
@@ -243,6 +276,7 @@ export function DisbursementWithInternalAccount(
         const hasData = customer?.publicCode && data;
         if (hasData && customer.publicCode !== customerData?.publicCode) {
           setCurrentIdentification(identification);
+          previousIdentificationRef.current = identification;
           formik.setFieldValue(
             `${optionNameForm}.documentType`,
             data.typeIdentification || "",
