@@ -133,6 +133,10 @@ export interface IFormData {
   };
   consolidatedCreditArray?: IConsolidatedCreditItem[];
   sourcesOfIncome: ISourcesOfIncomeState;
+  riskScore: {
+    value: number;
+    date: string;
+  };
 }
 
 export interface ICondition {

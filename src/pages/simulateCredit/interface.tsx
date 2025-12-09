@@ -66,6 +66,7 @@ import {
 } from "./components/smallModals/modals";
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 import { IDataHeader } from "../simulations/types";
+import { RiskScore } from "./steps/riskScore";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -153,6 +154,7 @@ interface SimulateCreditUIProps {
   allowToContinue: boolean;
   handleModalTryAgain: () => void;
   errorsManager: IManageErrors;
+  userAccount?: string;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
   loadingQuestions: boolean;
   showSelectsLoanAmount: boolean;
@@ -170,6 +172,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setRequestValue,
     requestValue,
     handleNextStep,
+    userAccount,
     handlePreviousStep,
     handleSubmitClick,
     setShowErrorModal,
@@ -481,6 +484,17 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     />
                   )}
                 {currentStepsNumber &&
+                  currentStepsNumber.id === stepsAddProspect.riskScore.id && (
+                    <RiskScore
+                      value={formData.riskScore.value}
+                      date={formData.riskScore.date}
+                      isMobile={isMobile}
+                      handleOnChange={(newRisk) =>
+                        handleFormDataChange("riskScore", newRisk)
+                      }
+                    />
+                  )}
+                {currentStepsNumber &&
                   currentStepsNumber.id ===
                     stepsAddProspect.obligationsFinancial.id && (
                     <ObligationsFinancial
@@ -603,6 +617,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   businessUnitPublicCode={businessUnitPublicCode}
                   businessManagerCode={businessManagerCode}
                   moneyDestination={formData.selectedDestination}
+                  incomeData={formData.sourcesOfIncome}
+                  userAccount={userAccount as string}
                 />
               )}
               {isCreditLimitWarning && (

@@ -17,4 +17,10 @@ export const stepsAddBorrower = {
     name: "Obligaciones Financieras",
     description: "obligaciones que tiene que pagar el deudor",
   },
+  summary: {
+    id: 4,
+    number: 4,
+    name: "Verificación",
+    description: "Verifica que los datos ingresados sean correctos.",
+  },
 };

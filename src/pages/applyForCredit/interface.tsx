@@ -28,6 +28,7 @@ import {
   IProspectSummaryById,
 } from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
+import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import {
   IBorrowerData,
@@ -229,27 +230,35 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 </Stack>
               ) : (
                 <Stack gap="16px" width="100%" justifyContent="space-between">
-                  <Text
-                    type="body"
-                    size="medium"
-                    weight="bold"
-                    appearance="dark"
-                  >
-                    {`${dataSubmitApplication.prospect} ${prospectData.prospectCode}`}
-                  </Text>
+                  <Stack width="100%">
+                    <Text
+                      type="body"
+                      size="medium"
+                      weight="bold"
+                      appearance="dark"
+                    >
+                      {`${dataSubmitApplication.prospect} ${prospectData.prospectCode}`}
+                    </Text>
+                  </Stack>
                   <StyledSeparatorLine />
-                  <Text type="body" size="medium" appearance="gray">
-                    {`${dataSubmitApplication.cards.destination}
-        ${prospectData.moneyDestinationAbbreviatedName}`}
-                  </Text>
+                  <Stack width="100%" justifyContent="center">
+                    <Text type="body" size="medium" appearance="gray">
+                      {`${dataSubmitApplication.cards.destination}
+        ${truncateTextToMaxLength(prospectData.moneyDestinationAbbreviatedName, 20)}`}
+                    </Text>
+                  </Stack>
                   <StyledSeparatorLine />
-                  <Text type="body" size="medium" appearance="gray">
-                    {`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
-                  </Text>
+                  <Stack width="100%" justifyContent="center">
+                    <Text type="body" size="medium" appearance="gray">
+                      {`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                    </Text>
+                  </Stack>
                   <StyledSeparatorLine />
-                  <Text type="body" size="medium" appearance="gray">
-                    {`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
-                  </Text>
+                  <Stack width="100%" justifyContent="end">
+                    <Text type="body" size="medium" appearance="gray">
+                      {`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                    </Text>
+                  </Stack>
                 </Stack>
               )}
 
@@ -285,7 +294,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   <Borrowers
                     isMobile={isMobile}
                     onFormValid={setIsCurrentFormValid}
-                    initialValues={formData.borrowerData}
+                    initialValues={prospectData.borrowers}
                     handleOnChange={(values) =>
                       handleFormChange({
                         borrowerData: values as IBorrowerData,

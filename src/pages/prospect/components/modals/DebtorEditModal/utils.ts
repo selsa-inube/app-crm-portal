@@ -43,6 +43,28 @@ export const unformatCurrency = (value: number | string): string => {
   return String(value).replace(/\D/g, "");
 };
 
+export const transformObligationsToBorrowerProperties = (
+  newObligations: IObligations[],
+) => {
+  return newObligations.map((obligation: IObligations) => {
+    const propertyValue = [
+      obligation.productName,
+      unformatCurrency(obligation.balanceObligationTotal),
+      unformatCurrency(obligation.nextPaymentValueTotal),
+      obligation.entity,
+      obligation.paymentMethodName,
+      obligation.obligationNumber,
+      obligation.duesPaid,
+      obligation.outstandingDues,
+    ].join(",");
+
+    return {
+      propertyName: "FinancialObligation",
+      propertyValue: propertyValue,
+    };
+  });
+};
+
 export const updateBorrowerPropertiesWithNewObligations = (
   newObligations: IObligations[],
   originalBorrowerProperties: IBorrowerProperty[],
@@ -51,25 +73,8 @@ export const updateBorrowerPropertiesWithNewObligations = (
     (prop) => prop.propertyName !== "FinancialObligation",
   );
 
-  const newFinancialObligationProperties = newObligations.map(
-    (obligation: IObligations) => {
-      const propertyValue = [
-        obligation.productName,
-        unformatCurrency(obligation.balanceObligationTotal),
-        unformatCurrency(obligation.nextPaymentValueTotal),
-        obligation.entity,
-        obligation.paymentMethodName,
-        obligation.obligationNumber,
-        obligation.duesPaid,
-        obligation.outstandingDues,
-      ].join(",");
-
-      return {
-        propertyName: "FinancialObligation",
-        propertyValue: propertyValue,
-      };
-    },
-  );
+  const newFinancialObligationProperties =
+    transformObligationsToBorrowerProperties(newObligations);
 
   return [...newFinancialObligationProperties, ...otherProperties];
 };

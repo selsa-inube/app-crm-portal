@@ -33,6 +33,8 @@ export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
   const [dataProspect, setDataProspect] = useState<IProspect>();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -135,15 +137,15 @@ export function Simulations() {
   });
 
   const validateProspectOwnership = useCallback((): boolean => {
-    if (!dataProspect || !dataHeader) return false;
+    if (!dataProspect || !customerData.publicCode) return false;
 
     const mainBorrower = dataProspect.borrowers?.find(
       (b) => b.borrowerType === "MainBorrower",
     );
 
-    if (mainBorrower && dataHeader.publicCode) {
+    if (mainBorrower && customerData.publicCode) {
       return (
-        mainBorrower.borrowerIdentificationNumber === dataHeader.publicCode
+        mainBorrower.borrowerIdentificationNumber === customerData.publicCode
       );
     }
 
@@ -187,13 +189,16 @@ export function Simulations() {
 
   const fetchProspectData = async () => {
     try {
+      setIsLoading(true);
       const result = await getSearchProspectByCode(
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode!,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       setShowErrorModal(true);
       setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
       setTimeout(() => {
@@ -207,13 +212,13 @@ export function Simulations() {
   }, [businessUnitPublicCode, sentData]);
 
   useEffect(() => {
-    if (dataProspect && !codeError) {
+    if (dataProspect && !codeError && customerData.publicCode) {
       const isValid = validateProspectOwnership();
       if (!isValid) {
         setCodeError(1015);
       }
     }
-  }, [dataProspect, validateProspectOwnership, codeError]);
+  }, [dataProspect, validateProspectOwnership, codeError, customerData]);
 
   const generateAndSharePdf = async () => {
     try {
@@ -285,6 +290,7 @@ export function Simulations() {
     if (!dataProspect) return;
 
     try {
+      setIsLoadingDelete(true);
       await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
         removeProspectsRequest: [
           {
@@ -294,7 +300,9 @@ export function Simulations() {
       });
 
       navigate("/credit/prospects");
+      setIsLoadingDelete(false);
     } catch (error) {
+      setIsLoadingDelete(false);
       setCodeError(1022);
       setAddToFix([dataEditProspect.errorRemoveProspect]);
     }
@@ -349,6 +357,8 @@ export function Simulations() {
       showRequirements={showRequirements}
       setShowRequirements={setShowRequirements}
       validateRequirements={validateRequirements}
+      isLoading={isLoading}
+      isLoadingDelete={isLoadingDelete}
     />
   );
 }

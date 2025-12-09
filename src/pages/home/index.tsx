@@ -1,29 +1,31 @@
 import { useMediaQuery } from "@inubekit/inubekit";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
-import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/types";
 import { useAppContext } from "@hooks/useAppContext";
 
 import { HomeUI } from "./interface";
+import { useNavigate } from "react-router-dom";
+import { useIAuth } from "@inube/iauth-react";
+import { errorDataCredit } from "./config/home.config";
 
 const Home = () => {
-  const { eventData, businessUnitsToTheStaff, setBusinessUnitSigla } =
-    useContext(AppContext);
+  const { eventData } = useContext(AppContext);
   const { customerData } = useContext(CustomerContext);
 
   const smallScreen = useMediaQuery("(max-width: 532px)");
   const isMobile = useMediaQuery("(max-width: 880px)");
   const username = eventData.user.userName.split(" ")[0];
+  const { user } = useIAuth();
 
-  const [collapse, setCollapse] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<string>(
-    eventData.businessUnit.abbreviatedName,
-  );
   const [loading, setLoading] = useState(true);
+  const [codeError, setCodeError] = useState<number | null>(null);
+  const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
-  const businessUnitChangeRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const dataHeader = {
     name: customerData.fullName,
@@ -33,13 +35,6 @@ const Home = () => {
 
   const { optionStaffData } = useAppContext();
 
-  const handleLogoClick = (businessUnit: IBusinessUnitsPortalStaff) => {
-    const selectJSON = JSON.stringify(businessUnit);
-    setBusinessUnitSigla(selectJSON);
-    setSelectedClient(businessUnit.abbreviatedName);
-    setCollapse(false);
-  };
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -47,19 +42,45 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (loading) return;
+
+    let error = null;
+    const messages: string[] = [];
+
+    if (eventData.businessManager.abbreviatedName.length === 0) {
+      error = 1003;
+      messages.push(errorDataCredit.noBusinessUnit);
+    }
+    if (customerData.fullName.length === 0) {
+      error = 1016;
+      messages.push(errorDataCredit.noSelectClient);
+    }
+    if (!optionStaffData || optionStaffData.length === 0) {
+      error = 1041;
+      messages.push(errorDataCredit.errorData);
+    }
+
+    setCodeError(error);
+    setAddToFix(messages);
+  }, [customerData, eventData, optionStaffData, loading]);
+
   return (
     <HomeUI
       smallScreen={smallScreen}
       isMobile={isMobile}
       username={username}
-      collapse={collapse}
-      businessUnitChangeRef={businessUnitChangeRef}
-      businessUnitsToTheStaff={businessUnitsToTheStaff}
-      selectedClient={selectedClient}
-      handleLogoClick={handleLogoClick}
       dataHeader={dataHeader}
       loading={loading}
       dataOptions={optionStaffData}
+      codeError={codeError}
+      addToFix={addToFix}
+      user={user}
+      showErrorModal={showErrorModal}
+      messageError={messageError}
+      setMessageError={setMessageError}
+      setShowErrorModal={setShowErrorModal}
+      navigate={navigate}
     />
   );
 };

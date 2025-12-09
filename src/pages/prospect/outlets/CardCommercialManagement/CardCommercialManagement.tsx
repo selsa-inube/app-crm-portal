@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { FormikValues } from "formik";
-import { Stack, Divider, useMediaQuery } from "@inubekit/inubekit";
+import {
+  Stack,
+  Divider,
+  useMediaQuery,
+  SkeletonLine,
+} from "@inubekit/inubekit";
 
 import { CreditProductCard } from "@components/cards/CreditProductCard";
 import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCard";
@@ -24,6 +29,7 @@ import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
 import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
+import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
 
 import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
@@ -75,6 +81,8 @@ export const CardCommercialManagement = (
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
+  const [isProcessingServices, setIsProcessingServices] =
+    useState<boolean>(false);
   const [modalHistory, setModalHistory] = useState<string[]>([]);
   const currentModal = modalHistory[modalHistory.length - 1];
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -86,6 +94,7 @@ export const CardCommercialManagement = (
   const [selectedProductId, setSelectedProductId] = useState("");
 
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
+  const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [consolidatedCredits, setConsolidatedCredits] = useState(
     prospectData?.consolidatedCredits || [],
   );
@@ -166,11 +175,14 @@ export const CardCommercialManagement = (
     if (!prospectData || !selectedProduct) return;
 
     try {
+      setIsProcessingServices(true);
       const payload = {
+        prospectId: prospectData.prospectId,
         creditProductCode: selectedProduct.creditProductCode,
         interestRate: Number(values.interestRate),
         loanTerm: Number(values.termInMonths),
-        prospectId: prospectData.prospectId,
+        loanAmount: Number(values.creditAmount),
+        paymentChannelAbbreviatedName: values.paymentMethod,
       };
 
       await updateCreditProduct(
@@ -192,6 +204,7 @@ export const CardCommercialManagement = (
 
       setModalHistory((prev) => prev.slice(0, -1));
       setShowMessageSuccessModal(true);
+      setIsProcessingServices(false);
     } catch (error) {
       const err = error as {
         message?: string;
@@ -200,6 +213,7 @@ export const CardCommercialManagement = (
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
+      setIsProcessingServices(false);
       setShowErrorModal(true);
       setMessageError(description);
     }
@@ -213,15 +227,18 @@ export const CardCommercialManagement = (
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoadingSummary(true);
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData?.prospectId || "",
         );
+        setIsLoadingSummary(false);
         if (result && setProspectSummaryData) {
           setProspectSummaryData(result);
         }
       } catch (error) {
+        setIsLoadingSummary(false);
         setShowErrorModal(true);
         setMessageError(tittleOptions.descriptionError);
       }
@@ -272,12 +289,12 @@ export const CardCommercialManagement = (
                     ?.paymentChannelAbbreviatedName
                 }
                 loanAmount={entry.loanAmount}
-                interestRate={entry.interestRate}
+                interestRate={entry.interestRate || 0}
                 termMonths={entry.loanTerm}
                 periodicFee={
                   entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
                 }
-                schedule={entry.lineOfCreditAbbreviatedName as Schedule}
+                schedule={entry.installmentFrequency as Schedule}
                 onEdit={() =>
                   canEditCreditRequest
                     ? handleInfo()
@@ -292,10 +309,72 @@ export const CardCommercialManagement = (
                 showIcons={showAddProduct}
               />
             ))}
-            {showAddProduct && (
+            {showAddProduct && !isLoading && (
               <StyledPrint>
                 <NewCreditProductCard onClick={onClick} />
               </StyledPrint>
+            )}
+            {isLoading && prospectProducts.length === 0 && (
+              <>
+                {Array(3)
+                  .fill(0)
+                  .map((_, indexContainer) => (
+                    <Stack>
+                      <StyledCreditProductCard isLoading key={indexContainer}>
+                        <Stack
+                          direction="column"
+                          height="100%"
+                          padding="12px"
+                          gap="8px"
+                        >
+                          <SkeletonLine height="40px" width="100%" animated />
+                          <Stack
+                            gap="16px"
+                            direction="column"
+                            margin="16px 0 0 0"
+                          >
+                            <Stack gap="8px" direction="column">
+                              <SkeletonLine
+                                height="10px"
+                                width="90%"
+                                animated
+                              />
+                              <SkeletonLine
+                                height="30px"
+                                width="60%"
+                                animated
+                              />
+                            </Stack>
+                            <Stack gap="8px" direction="column">
+                              <SkeletonLine
+                                height="10px"
+                                width="90%"
+                                animated
+                              />
+                              <SkeletonLine
+                                height="30px"
+                                width="60%"
+                                animated
+                              />
+                            </Stack>
+                            <Stack gap="8px" direction="column">
+                              <SkeletonLine
+                                height="10px"
+                                width="90%"
+                                animated
+                              />
+                              <SkeletonLine
+                                height="30px"
+                                width="60%"
+                                animated
+                              />
+                            </Stack>
+                          </Stack>
+                        </Stack>
+                      </StyledCreditProductCard>
+                    </Stack>
+                  ))}
+              </>
             )}
           </Stack>
         </StyledCardsCredit>
@@ -309,6 +388,7 @@ export const CardCommercialManagement = (
           >
             {SummaryProspectCredit.map((entry, index) => (
               <CardValues
+                isLoading={isLoadingSummary}
                 key={index}
                 items={entry.item.map((item) => {
                   let iconToRender = item.icon;
@@ -370,6 +450,7 @@ export const CardCommercialManagement = (
             }}
             setShowErrorModal={setShowErrorModal}
             setMessageError={setMessageError}
+            isProcessingServices={isProcessingServices}
           />
         )}
         {showConsolidatedModal && (

@@ -1,3 +1,4 @@
+import { inube } from "@inubekit/inubekit";
 import styled from "styled-components";
 
 interface IStyledContainer {
@@ -32,16 +33,28 @@ const StyledContainerCards = styled.div<IStyledContainer>`
   box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
-  gap: 32px;
+  gap: 28px;
   justify-content: ${(props) => (props.$smallScreen ? "center" : "flex-start")};
   border: ${(props) => (props.$smallScreen ? "none" : "1px solid #E0E0E0")};
   border-radius: 8px;
   padding: 16px;
+  max-height: ${(props) => (props.$smallScreen ? "auto" : "550px")};
+  overflow-y: auto;
 
   & > * {
     flex: 1 1 calc(25% - 24px);
     min-width: 279px;
     max-width: calc(25% - 24px);
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) =>
+      theme?.palette?.neutral?.N50 || inube.palette.neutral.N50};
+    border-radius: 8px;
   }
 `;
 

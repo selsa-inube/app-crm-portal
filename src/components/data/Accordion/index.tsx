@@ -1,49 +1,49 @@
 import { useState } from "react";
-import { MdOutlineChevronRight } from "react-icons/md";
-import { Stack, Icon, Text } from "@inubekit/inubekit";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { Text, Icon, Divider, useMediaQuery } from "@inubekit/inubekit";
 
-import { StyledDetails, StyledSummary, StyledCollapseIcon } from "./styles";
-
+import { StyledContainer, StyledHead } from "./styles";
 export interface IAccordionProps {
-  name: string;
-  title: React.ReactNode;
-  content?: React.ReactNode;
-  isOpen?: boolean;
+  title: string;
+  defaultOpen?: boolean;
+  children?: JSX.Element | JSX.Element[];
+  dashed?: boolean;
 }
-
 export const Accordion = (props: IAccordionProps) => {
-  const { name, title, content, isOpen } = props;
+  const { title, defaultOpen = true, children, dashed } = props;
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  const [collapse, setCollapse] = useState(false);
+  const handleToggleOpen = () => setIsOpen(!isOpen);
+
+  const isMobile = useMediaQuery("(max-width: 450px)");
 
   return (
-    <Stack width="100%">
-      <StyledDetails name={name} open={isOpen}>
-        <StyledSummary onClick={() => setCollapse(!collapse)}>
-          <StyledCollapseIcon
-            onClick={() => setCollapse(!collapse)}
-            $collapse={collapse}
-          >
-            <Icon
-              icon={<MdOutlineChevronRight />}
-              appearance="dark"
-              size="24px"
-              cursorHover
-              onClick={() => setCollapse(!collapse)}
-            />
-          </StyledCollapseIcon>
-          {typeof title === "string" || typeof title === "number" ? (
-            <Text>{title}</Text>
-          ) : (
-            title
-          )}
-        </StyledSummary>
-        {typeof content === "string" || typeof content === "number" ? (
-          <Text>{content}</Text>
-        ) : (
-          content
-        )}
-      </StyledDetails>
-    </Stack>
+    <StyledContainer>
+      <StyledHead onClick={handleToggleOpen}>
+        <Text
+          type="label"
+          size={isMobile ? "medium" : "large"}
+          appearance="dark"
+          weight="bold"
+        >
+          {title}
+        </Text>
+
+        <Icon
+          icon={isOpen ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
+          appearance="dark"
+          spacing="compact"
+          cursorHover={true}
+          size="24px"
+        />
+      </StyledHead>
+
+      {isOpen && (
+        <>
+          <Divider dashed={dashed} />
+          {children}
+        </>
+      )}
+    </StyledContainer>
   );
 };

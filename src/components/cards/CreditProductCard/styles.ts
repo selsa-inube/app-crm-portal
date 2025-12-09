@@ -4,10 +4,11 @@ import { inube } from "@inubekit/inubekit";
 interface IStyledProduct {
   $new?: boolean;
   $showIcons?: boolean;
+  isLoading?: boolean;
 }
 
 export const StyledCreditProductCard = styled.div<IStyledProduct>`
-  display: flex;
+  display: ${({ isLoading }) => (isLoading ? "block" : "flex")};
   flex-direction: column;
   overflow: hidden;
   width: 217px;

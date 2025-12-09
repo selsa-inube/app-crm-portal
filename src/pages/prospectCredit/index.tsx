@@ -9,6 +9,7 @@ import {
   Text,
   useMediaQuery,
 } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { ICreditRequest } from "@services/creditRequest/types";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
@@ -22,6 +23,7 @@ import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
 import { addConfig, dataCreditProspects, dataError } from "./config";
 import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
+import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function ProspectCredit() {
   const [codeError, setCodeError] = useState<number | null>(null);
@@ -34,6 +36,7 @@ export function ProspectCredit() {
   const [searchParams] = useSearchParams();
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const [loading, setLoading] = useState(true);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -42,6 +45,7 @@ export function ProspectCredit() {
 
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
+  const { user } = useIAuth();
 
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -57,6 +61,7 @@ export function ProspectCredit() {
     if (!customerData.publicCode) return;
 
     const fetchCreditRequest = async () => {
+      setLoading(true);
       try {
         const stage = "TRAMITADA";
 
@@ -73,21 +78,50 @@ export function ProspectCredit() {
       } catch {
         setCodeError(1022);
         setAddToFix([dataCreditProspects.errorCreditRequest]);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCreditRequest();
   }, [customerData.publicCode, search, searchParams]);
 
+  useEffect(() => {
+    let error = null;
+    const messages: string[] = [];
+
+    if (eventData.businessManager.abbreviatedName.length === 0) {
+      error = 1003;
+      messages.push(dataError.noBusinessUnit);
+    }
+    if (customerData.fullName.length === 0) {
+      error = 1016;
+      messages.push(dataError.noSelectClient);
+    }
+
+    setCodeError(error);
+    setAddToFix(messages);
+  }, [customerData, eventData, loading]);
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+  };
+
+  const handleNavigate = () => {
+    if (codeError === 1003) {
+      navigate(`/login/${user.username}/business-units/select-business-unit`);
+    } else if (codeError === 1016) {
+      navigate("/clients/select-client/");
+    } else {
+      navigate("/credit");
+    }
   };
 
   return (
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigate("/home")}
+          onClick={handleNavigate}
           errorCode={codeError}
           addToFix={addToFix}
         />
@@ -123,27 +157,35 @@ export function ProspectCredit() {
                 />
               </Stack>
               <Stack wrap="wrap" gap="20px">
-                {creditRequestData.length === 0 && (
+                {creditRequestData.length === 0 && !loading && (
                   <NoResultsMessage search={search} />
                 )}
-                {creditRequestData.map((creditRequest) => (
-                  <SummaryCard
-                    key={creditRequest.creditRequestId}
-                    rad={creditRequest.creditRequestCode}
-                    date={creditRequest.creditRequestDateOfCreation}
-                    name={creditRequest.clientName}
-                    destination={creditRequest.moneyDestinationAbreviatedName}
-                    value={creditRequest.loanAmount}
-                    toDo={creditRequest.taskToBeDone}
-                    hasMessage={creditRequest.unreadNovelties === "Y"}
-                    onCardClick={() => {
-                      navigate(
-                        `/credit/processed-credit-requests/extended-card/${creditRequest.creditRequestCode}`,
-                      );
-                    }}
-                  />
-                ))}
-                {creditRequestData.length === 0 && (
+                {loading ? (
+                  <LoadCard />
+                ) : (
+                  <>
+                    {creditRequestData.map((creditRequest) => (
+                      <SummaryCard
+                        key={creditRequest.creditRequestId}
+                        rad={creditRequest.creditRequestCode}
+                        date={creditRequest.creditRequestDateOfCreation}
+                        name={creditRequest.clientName}
+                        destination={
+                          creditRequest.moneyDestinationAbreviatedName
+                        }
+                        value={creditRequest.loanAmount}
+                        toDo={creditRequest.taskToBeDone}
+                        hasMessage={creditRequest.unreadNovelties === "Y"}
+                        onCardClick={() => {
+                          navigate(
+                            `/credit/processed-credit-requests/extended-card/${creditRequest.creditRequestCode}`,
+                          );
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+                {creditRequestData.length === 0 && !loading && (
                   <Text type="title" size="large" margin="30px 2px">
                     {dataError.notCredits}
                   </Text>

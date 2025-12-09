@@ -391,3 +391,5 @@ export const paymentCycleMap: Record<string, string> = {
   Semimonthly: "Quincenal",
   Monthly: "Mensual",
 };
+
+export const amountContainerOnSkeletons = 5;

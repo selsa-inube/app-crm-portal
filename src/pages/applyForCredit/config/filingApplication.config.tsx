@@ -51,7 +51,7 @@ export const stepsFilingApplication = {
   observations: {
     id: 9,
     number: 9,
-    name: "Observaciones",
-    description: "Registre observaciones.",
+    name: "Comentarios",
+    description: "Registre comentarios.",
   },
 };

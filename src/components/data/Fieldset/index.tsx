@@ -34,6 +34,7 @@ interface IFieldsetProps {
   padding?: string;
   alignContent?: boolean;
   loading?: boolean;
+  maxHeight?: string;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -55,6 +56,7 @@ export const Fieldset = (props: IFieldsetProps) => {
     padding = "0 0 16px 0",
     alignContent,
     loading,
+    maxHeight,
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -125,6 +127,7 @@ export const Fieldset = (props: IFieldsetProps) => {
         $borderColor={borderColor}
         $showFieldset={showFieldset}
         $alignContent={alignContent}
+        $maxHeight={maxHeight}
       >
         {children}
       </StyledContainerFieldset>

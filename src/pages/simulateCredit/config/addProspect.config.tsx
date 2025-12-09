@@ -31,34 +31,40 @@ export const stepsAddProspect = {
     description:
       "Actualiza las fuentes de ingreso para soportar capacidad de pago.",
   },
-  obligationsFinancial: {
+  riskScore: {
     id: 6,
     number: 6,
+    name: "Score de riesgo",
+    description: "Score de riesgo crediticio consultado.",
+  },
+  obligationsFinancial: {
+    id: 7,
+    number: 7,
     name: "Obligaciones financieras",
     description: "Verifica las obligaciones financieras reportadas.",
   },
   extraBorrowers: {
-    id: 7,
-    number: 7,
+    id: 8,
+    number: 8,
     name: "Deudores",
     description: "Registra los deudores.",
   },
   loanConditions: {
-    id: 8,
-    number: 8,
+    id: 9,
+    number: 9,
     name: "Restricciones de la solicitud",
     description:
       "Registra si el cliente tiene restricciones en el valor de la cuota ordinaria o en el plazo para el pago.",
   },
   loanAmount: {
-    id: 9,
-    number: 9,
+    id: 10,
+    number: 10,
     name: "Valor de la solicitud",
     description: "Registra el valor de la solicitud y el medio de pago.",
   },
   obligationsCollected: {
-    id: 10,
-    number: 10,
+    id: 11,
+    number: 11,
     name: "Obligaciones recogidas",
     description: "Selecciona las obligaciones financieras que serán recogidas.",
   },
