@@ -94,6 +94,7 @@ export const FinancialReporting = () => {
     blob: null as Blob | null,
     showShareModal: false,
   });
+  const [loadingData, setLoadingData] = useState(true);
 
   const { creditRequestCode } = useParams();
   const { user } = useIAuth();
@@ -105,11 +106,12 @@ export const FinancialReporting = () => {
   const dataCommercialManagementRef = useRef<HTMLDivElement>(null);
 
   const [errorsService, setErrorsService] = useState<IErrorService[]>([]);
-  const { businessUnitSigla, eventData } = useContext(AppContext);
+  const { businessUnitSigla, eventData, loadingEventData } =
+    useContext(AppContext);
   const [showModal, setShowModal] = useState(false);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-  const { customerData } = useContext(CustomerContext);
+  const { customerData, loadingCustomerData } = useContext(CustomerContext);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
 
@@ -126,6 +128,7 @@ export const FinancialReporting = () => {
   };
 
   useEffect(() => {
+    setLoadingData(true);
     getCreditRequestByCode(
       businessUnitPublicCode,
       businessManagerCode,
@@ -133,11 +136,19 @@ export const FinancialReporting = () => {
       { creditRequestCode },
     )
       .then((data) => {
-        setData(data[0]);
+        if (data && data.length > 0) {
+          setData(data[0]);
+        } else {
+          setCodeError(1030);
+          setAddToFix([errorMessages.errorCreditRequest]);
+        }
       })
       .catch(() => {
         setCodeError(1030);
         setAddToFix([errorMessages.errorCreditRequest]);
+      })
+      .finally(() => {
+        setLoadingData(false);
       });
   }, [creditRequestCode, businessUnitPublicCode, user.id, businessManagerCode]);
 
@@ -302,7 +313,7 @@ export const FinancialReporting = () => {
       setRequests(data[0] as ICreditRequest);
     } catch (error) {
       setCodeError(1022);
-      setAddToFix([errorMessages.errorRemoveProspect]);
+      setAddToFix([errorMessages.prospect]);
     }
   }, [businessUnitPublicCode, user, businessManagerCode]);
 
@@ -350,6 +361,8 @@ export const FinancialReporting = () => {
   };
 
   useEffect(() => {
+    if (loadingCustomerData || loadingEventData) return;
+
     let error = null;
     const messages: string[] = [];
 
@@ -442,6 +455,7 @@ export const FinancialReporting = () => {
                               setSentData={setSentData}
                               setRequestValue={setRequestValue}
                               requestValue={requestValue}
+                              loadingData={loadingData}
                             />
                           </BlockPdfSection>
                         </Stack>

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
-import { Stack, Text, useMediaQuery, Button } from "@inubekit/inubekit";
+import {
+  Stack,
+  Text,
+  useMediaQuery,
+  Button,
+  SkeletonLine,
+} from "@inubekit/inubekit";
 
 import { StyledContainerFieldset, StyledPrint } from "./styles";
 
@@ -27,6 +33,7 @@ interface IFieldsetProps {
   showFieldset?: boolean;
   padding?: string;
   alignContent?: boolean;
+  loading?: boolean;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -47,6 +54,7 @@ export const Fieldset = (props: IFieldsetProps) => {
     showFieldset = true,
     padding = "0 0 16px 0",
     alignContent,
+    loading,
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -71,20 +79,26 @@ export const Fieldset = (props: IFieldsetProps) => {
       padding={padding}
     >
       <Stack justifyContent={activeButton && "space-between"}>
-        <Stack gap={isMobile ? "12px" : "8px"}>
-          <Text
-            type="title"
-            appearance="gray"
-            size={isMobile ? "medium" : "large"}
-          >
-            {title}
-          </Text>
-          {descriptionTitle && (
-            <Text type="title" ellipsis size={isMobile ? "medium" : "large"}>
-              {descriptionTitle}
+        {loading ? (
+          <Stack width="50%">
+            <SkeletonLine animated />
+          </Stack>
+        ) : (
+          <Stack gap={isMobile ? "12px" : "8px"}>
+            <Text
+              type="title"
+              appearance="gray"
+              size={isMobile ? "medium" : "large"}
+            >
+              {title}
             </Text>
-          )}
-        </Stack>
+            {descriptionTitle && (
+              <Text type="title" ellipsis size={isMobile ? "medium" : "large"}>
+                {descriptionTitle}
+              </Text>
+            )}
+          </Stack>
+        )}
         {activeButton && (
           <Stack>
             <StyledPrint>

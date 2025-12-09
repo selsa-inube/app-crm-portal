@@ -78,6 +78,7 @@ interface ComercialManagementProps {
   hideContactIcons?: boolean;
   requestValue?: IPaymentChannel[];
   creditRequest?: ICreditRequest | null;
+  loadingData?: boolean;
 }
 
 export const ComercialManagement = (props: ComercialManagementProps) => {
@@ -93,6 +94,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     creditRequest,
     setSentData,
     setRequestValue,
+    loadingData,
   } = props;
   const [showMenu, setShowMenu] = useState(false);
   const [infoModal, setInfoModal] = useState(false);
@@ -248,6 +250,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
       <Fieldset
         title={errorMessages.comercialManagement.titleCard}
         descriptionTitle={data.stage}
+        loading={loadingData}
       >
         {!data ? (
           <ItemNotFound
