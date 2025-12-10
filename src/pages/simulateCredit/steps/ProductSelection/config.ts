@@ -17,9 +17,9 @@ export const electionData = {
   load: "Cargando datos...",
   questions: {
     includeExtraordinaryInstallments:
-      "¿Quiere programar abonos especiales a capital para disminuir su pago ordinario o recortar plazo?",
+      "¿Quieres programar abonos especiales a capital para disminuir el pago ordinario o recortar plazo?",
     updateFinancialObligations:
-      "¿Quiere actualizar la información relacionada con las obligaciones financieras del cliente?",
-    includeAditionalBorrowers: "¿Quiere registrar deudores adicionales?",
+      "¿Quieres actualizar la información relacionada con las obligaciones financieras del cliente?",
+    includeAditionalBorrowers: "¿Quieres registrar deudores adicionales?",
   },
 };
