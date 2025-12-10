@@ -119,7 +119,7 @@ export interface IFormData {
     inputValue: number | string;
     toggleChecked: boolean;
     paymentPlan: string;
-    periodicity: string;
+    paymentCycle: string;
     payAmount: string;
   };
   consolidatedCreditSelections: {

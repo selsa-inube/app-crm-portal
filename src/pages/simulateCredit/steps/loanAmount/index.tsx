@@ -31,7 +31,7 @@ export interface ILoanAmountProps {
     inputValue: number | string;
     toggleChecked: boolean;
     paymentPlan: string;
-    periodicity: string;
+    paymentCycle: string;
     payAmount: string;
   };
   isMobile: boolean;
@@ -69,7 +69,7 @@ export function LoanAmount(props: ILoanAmountProps) {
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
     paymentPlan: Yup.string(),
-    periodicity: Yup.string(),
+    paymentCycle: Yup.string(),
     payAmount: Yup.string(),
   });
 
@@ -94,7 +94,7 @@ export function LoanAmount(props: ILoanAmountProps) {
             isValid =
               isValid &&
               values.paymentPlan.trim() !== "" &&
-              values.periodicity.trim() !== "" &&
+              values.paymentCycle.trim() !== "" &&
               values.payAmount.trim() !== "";
           }
 
@@ -128,29 +128,29 @@ export function LoanAmount(props: ILoanAmountProps) {
             );
           }, [flatChannels, initialValues.paymentPlan]);
 
-          const periodicityOptions = useMemo(() => {
+          const paymentCycleOptions = useMemo(() => {
             if (!selectedChannel) return [];
             const unique = Array.from(
               new Map(
                 selectedChannel.regularCycles.map((cycle) => [
-                  cycle.periodicity,
-                  cycle.periodicity,
+                  cycle.cycleName,
+                  cycle.cycleName,
                 ]),
               ).values(),
             );
 
-            return unique.map((period, i) => ({
-              id: `${period}-${i}`,
-              value: period,
-              label: period,
+            return unique.map((name, i) => ({
+              id: `${name}-${i}`,
+              value: name,
+              label: name,
             }));
           }, [selectedChannel]);
 
           const selectedCycle = useMemo(() => {
             return selectedChannel?.regularCycles.find(
-              (cycle) => cycle.periodicity === initialValues.periodicity,
+              (cycle) => cycle.cycleName === initialValues.paymentCycle,
             );
-          }, [selectedChannel, initialValues.periodicity]);
+          }, [selectedChannel, initialValues.paymentCycle]);
 
           const payAmountOptions = useMemo(() => {
             if (!selectedCycle) return [];
@@ -173,24 +173,24 @@ export function LoanAmount(props: ILoanAmountProps) {
           }, [paymentChannelOptions]);
 
           useEffect(() => {
-            if (periodicityOptions.length === 1 && values.paymentPlan !== "") {
-              const onlyOption = periodicityOptions[0];
-              setFieldValue("periodicity", onlyOption.value);
-              handleOnChange({ periodicity: onlyOption.value });
+            if (paymentCycleOptions.length === 1 && values.paymentPlan !== "") {
+              const onlyOption = paymentCycleOptions[0];
+              setFieldValue("paymentCycle", onlyOption.value);
+              handleOnChange({ paymentCycle: onlyOption.value });
             }
-          }, [periodicityOptions, values.paymentPlan]);
+          }, [paymentCycleOptions, values.paymentPlan]);
 
           useEffect(() => {
-            if (payAmountOptions.length === 1 && values.periodicity !== "") {
+            if (payAmountOptions.length === 1 && values.paymentCycle !== "") {
               const onlyOption = payAmountOptions[0];
               setFieldValue("payAmount", onlyOption.value);
               handleOnChange({ payAmount: onlyOption.value });
             }
-          }, [payAmountOptions, values.periodicity]);
+          }, [payAmountOptions, values.paymentCycle]);
 
           const allSelectsHaveOneOption =
             paymentChannelOptions.length === 1 &&
-            periodicityOptions.length === 1 &&
+            paymentCycleOptions.length === 1 &&
             payAmountOptions.length === 1;
 
           return (
@@ -304,11 +304,11 @@ export function LoanAmount(props: ILoanAmountProps) {
                                   fullwidth
                                   onChange={(_, newValue: string) => {
                                     setFieldValue("paymentPlan", newValue);
-                                    setFieldValue("periodicity", "");
+                                    setFieldValue("paymentCycle", "");
                                     setFieldValue("payAmount", "");
                                     handleOnChange({
                                       paymentPlan: newValue,
-                                      periodicity: "",
+                                      paymentCycle: "",
                                       payAmount: "",
                                     });
                                   }}
@@ -321,13 +321,13 @@ export function LoanAmount(props: ILoanAmountProps) {
                       {values.paymentPlan && (
                         <>
                           <Stack direction="column" width="100%">
-                            <Field name="periodicity">
+                            <Field name="paymentCycle">
                               {() =>
-                                periodicityOptions.length === 1 ? (
+                                paymentCycleOptions.length === 1 ? (
                                   <CardGray
-                                    label={dataAmount.Periodicity}
+                                    label={dataAmount.paymentCycle}
                                     placeHolder={
-                                      periodicityOptions[0]?.label || ""
+                                      paymentCycleOptions[0]?.label || ""
                                     }
                                   />
                                 ) : (
@@ -337,21 +337,21 @@ export function LoanAmount(props: ILoanAmountProps) {
                                       size="medium"
                                       weight="bold"
                                     >
-                                      {dataAmount.Periodicity}
+                                      {dataAmount.paymentCycle}
                                     </Text>
                                     <Select
-                                      id="periodicity"
-                                      name="periodicity"
-                                      options={periodicityOptions}
+                                      id="paymentCycle"
+                                      name="paymentCycle"
+                                      options={paymentCycleOptions}
                                       placeholder={dataAmount.selectOption}
-                                      value={values.periodicity}
+                                      value={values.paymentCycle}
                                       size="compact"
                                       fullwidth
                                       onChange={(_, newValue: string) => {
-                                        setFieldValue("periodicity", newValue);
+                                        setFieldValue("paymentCycle", newValue);
                                         setFieldValue("payAmount", "");
                                         handleOnChange({
-                                          periodicity: newValue,
+                                          paymentCycle: newValue,
                                           payAmount: "",
                                         });
                                       }}
@@ -361,7 +361,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                               }
                             </Field>
                           </Stack>
-                          {values.periodicity && (
+                          {values.paymentCycle && (
                             <Stack direction="column" width="100%">
                               <Field name="payAmount">
                                 {() =>
@@ -374,7 +374,6 @@ export function LoanAmount(props: ILoanAmountProps) {
                                     />
                                   ) : (
                                     <>
-                                      {" "}
                                       <Text
                                         type="label"
                                         size="medium"
