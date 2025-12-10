@@ -257,6 +257,21 @@ export function TableExtraordinaryInstallmentUI(
               </Td>
             </Tr>
           )}
+        {loading &&
+          Array.from({ length: 5 }).map((_, rowIndex) => (
+            <Tr key={`skeleton-row-${rowIndex}`}>
+              {visbleHeaders.map((_, colIndex) => (
+                <Td key={`skeleton-cell-${rowIndex}-${colIndex}`} align="left">
+                  <SkeletonLine animated width="100%" />
+                </Td>
+              ))}
+              {visbleActions.map((_, actionIndex) => (
+                <Td key={`skeleton-action-${rowIndex}-${actionIndex}`}>
+                  <SkeletonLine animated width="100%" />
+                </Td>
+              ))}
+            </Tr>
+          ))}
       </Tbody>
 
       {extraordinaryInstallments.length > 0 && !loading && (
