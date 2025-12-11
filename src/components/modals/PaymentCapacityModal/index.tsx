@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdErrorOutline, MdInfoOutline } from "react-icons/md";
 import {
   Divider,
@@ -64,7 +64,17 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
   const [maximumCreditLimitData, setMaximumCreditLimitData] =
     useState<IMaximumCreditLimit | null>(null);
 
-  const tabsToRender = dataTabs.filter((tab) => tab.id !== "extraordinary");
+  const tabsToRender = useMemo(() => {
+    const hasExtraordinary =
+      maximumCreditLimitData?.extraordinaryInstallments &&
+      maximumCreditLimitData.extraordinaryInstallments.length > 0;
+
+    if (hasExtraordinary) {
+      return dataTabs;
+    }
+
+    return dataTabs.filter((tab) => tab.id !== "extraordinary");
+  }, [maximumCreditLimitData]);
 
   const onChange = (tabId: string) => {
     setCurrentTab(tabId);
@@ -74,7 +84,10 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     const fetchMaximumCreditLimit = async () => {
       setLoading(true);
       setError(false);
-
+      console.log(
+        "dataMaximumCreditLimitService: ",
+        dataMaximumCreditLimitService,
+      );
       try {
         const submitData: IMaximumCreditLimit = {
           customerCode:
@@ -95,7 +108,6 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
         const data = await postBusinessUnitRules(
           businessUnitPublicCode,
           businessManagerCode,
-          userAccount,
           submitData,
         );
 
@@ -227,18 +239,17 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                   </Stack>
                   <Stack justifyContent="space-between">
                     <Text type="body" size="medium" appearance="gray">
-                      {paymentCapacityData.lineOfCredit}
+                      {paymentCapacityData.getLineOfCredit(
+                        maximumCreditLimitData?.lineOfCreditAbbreviatedName ||
+                          "",
+                      )}
                     </Text>
                     <Stack alignItems="center" gap="4px">
-                      <Text appearance="success">$</Text>
                       {loading ? (
                         <SkeletonLine width="70px" animated={true} />
                       ) : (
                         <Text type="body" size="small">
-                          {currencyFormat(
-                            maximumCreditLimitData?.maxTerm || 0,
-                            false,
-                          )}
+                          {maximumCreditLimitData?.maxTerm}
                         </Text>
                       )}
                     </Stack>

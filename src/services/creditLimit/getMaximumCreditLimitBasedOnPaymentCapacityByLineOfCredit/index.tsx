@@ -8,7 +8,6 @@ import { IMaximumCreditLimit } from "@services/creditRequest/types";
 const postBusinessUnitRules = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  userAccount: string,
   submitData: IMaximumCreditLimit,
 ): Promise<IMaximumCreditLimit | null> => {
   const maxRetries = maxRetriesServices;
@@ -25,7 +24,6 @@ const postBusinessUnitRules = async (
           "X-Action":
             "GetMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit",
           "X-Business-Unit": businessUnitPublicCode,
-          "X-User-Name": userAccount,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
         },
