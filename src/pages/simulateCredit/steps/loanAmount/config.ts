@@ -12,6 +12,8 @@ export const dataAmount = {
   day15: "día-15",
   day30: "día-30",
   placeholderValue: "",
+  descriptionErrorModal:
+    "La línea de crédito seleccionada no cuenta con medios de pago configurados actualmente. Por favor, intente con otra línea de crédito o comuníquese con un asesor para obtener más información.",
 };
 
 export const dataModalDisableLoanAmount = {
