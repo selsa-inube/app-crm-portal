@@ -3,11 +3,12 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { IProspect } from "../types";
 
 export const recalculateProspect = async (
   businessUnitPublicCode: string,
   prospectCode: string,
-) => {
+): Promise<IProspect | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -45,6 +46,8 @@ export const recalculateProspect = async (
           data,
         };
       }
+
+      return data.borrowers[0];
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {

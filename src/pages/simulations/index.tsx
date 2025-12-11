@@ -312,7 +312,16 @@ export function Simulations() {
   const handleRecalculateSimulation = async () => {
     try {
       setIsLoading(true);
-      await recalculateProspect(businessUnitPublicCode, prospectCode || "");
+      const newDataProspect = await recalculateProspect(
+        businessUnitPublicCode,
+        prospectCode || "",
+      );
+
+      if (newDataProspect === null) {
+        throw new Error();
+      }
+
+      setDataProspect(newDataProspect);
       setShowRecalculateSimulation(false);
     } catch (e) {
       setShowErrorModal(true);
