@@ -560,6 +560,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
           backButton={labelsRecalculateSimulation.cancel}
           nextButton={labelsRecalculateSimulation.recalculate}
           width={isMobile ? "300px" : "480px"}
+          isLoading={isLoading}
         >
           <Stack direction="column" gap="16px" alignItems="center">
             <Icon

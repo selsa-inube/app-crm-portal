@@ -25,6 +25,7 @@ import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
+import { recalculateProspect } from "@services/prospect/recalculateProspect";
 
 import { SimulationsUI } from "./interface";
 import { dataEditProspect, labelsAndValuesShare } from "./config";
@@ -308,8 +309,17 @@ export function Simulations() {
     }
   };
 
-  const handleRecalculateSimulation = () => {
-    setShowRecalculateSimulation(false);
+  const handleRecalculateSimulation = async () => {
+    try {
+      setIsLoading(true);
+      await recalculateProspect(businessUnitPublicCode, prospectCode || "");
+      setShowRecalculateSimulation(false);
+    } catch (e) {
+      setShowErrorModal(true);
+      setMessageError(dataEditProspect.errorRecalculate);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
