@@ -77,7 +77,6 @@ export const TableExtraordinaryInstallment = (
     prospectData,
     businessUnitPublicCode,
     extraordinary,
-    businessManagerCode,
     service = true,
     setSentData,
     handleClose,
@@ -202,7 +201,6 @@ export const TableExtraordinaryInstallment = (
         setIsLoadingDelete(true);
         await removeExtraordinaryInstallment(
           businessUnitPublicCode ?? "",
-          businessManagerCode || "",
           itemIdentifiersForUpdate,
         );
 

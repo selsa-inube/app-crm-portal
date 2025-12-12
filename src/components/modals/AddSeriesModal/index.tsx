@@ -81,7 +81,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     setAddModal,
   } = props;
 
-  const { businessUnitSigla, eventData } = useContext(AppContext);
+  const { businessUnitSigla } = useContext(AppContext);
   const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
 
@@ -89,8 +89,6 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
 
   const formik = useFormik({
     initialValues: {
@@ -186,7 +184,6 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       setIsLoading(true);
       await saveExtraordinaryInstallment(
         businessUnitPublicCode,
-        businessManagerCode,
         extraordinaryInstallments,
       );
 
