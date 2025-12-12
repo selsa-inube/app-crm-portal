@@ -47,6 +47,12 @@ export function ApplyForCredit() {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
+  if (!businessManagerCode && codeError === null) {
+    setCodeError(1003);
+  } else if (!customerPublicCode && codeError === null) {
+    setCodeError(400);
+  }
+
   const dataHeader = {
     name: customerData?.fullName ?? "",
     status:
