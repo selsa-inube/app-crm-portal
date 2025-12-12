@@ -104,6 +104,12 @@ export function RiskScore(props: IRiskScoreProps) {
               value={formik.values.score}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              status={
+                formik.values.score > 950 || formik.values.score < 150
+                  ? "invalid"
+                  : undefined
+              }
+              message={riskScoreData.error}
             />
           </BaseModal>
         )}
