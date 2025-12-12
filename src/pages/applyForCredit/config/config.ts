@@ -42,4 +42,5 @@ export const tittleOptions = {
   descriptionError: "No se han podido guardar los cambios.",
   errorSubmit: "El radicado no se ha podido enviar correctamente.",
   tryLater: "Estamos tienendo problemas, intentalo mas tarde.",
+  errorSummaryProspect: "Error al consultar el resumen del prospecto.",
 };

@@ -595,7 +595,7 @@ export function ApplyForCredit() {
         }
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(JSON.stringify(error));
+        setMessageError(tittleOptions.errorSummaryProspect);
       }
     };
 
