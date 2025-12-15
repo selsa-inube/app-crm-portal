@@ -45,7 +45,7 @@ export const dataCreditProspects = {
   preApproval: "Comentarios de la pre-aprobación",
   notHaveObservations: "No hay observaciones",
   notHaveComments: "No hay comentarios",
-  none: "none",
+  none: "-",
   titleFlagDelete: "Eliminar",
   descriptionFlagDelete: "El prospecto de crédito se ha eliminado",
   titleFlagComment: "Comentarios",

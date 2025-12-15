@@ -29,6 +29,8 @@ import { CustomerContext } from "@context/CustomerContext";
 import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 import { validateIncrement } from "@services/prospect/validateIncrement";
 import { IValidateIncrementRequest } from "@services/prospect/validateIncrement/types";
+import { useEnums } from "@context/EnumContext";
+import { getEnumByCode } from "@config/enums/utils";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -118,6 +120,11 @@ function EditProductModal(props: EditProductModalProps) {
 
   const isMobile = useMediaQuery("(max-width: 550px)");
   const { customerData } = useContext(CustomerContext);
+  const { enums, language, getEnums } = useEnums();
+
+  useEffect(() => {
+    getEnums("repaymentStructure");
+  }, [getEnums]);
 
   useEffect(() => {
     const loadPaymentOptions = async () => {
@@ -194,19 +201,38 @@ function EditProductModal(props: EditProductModalProps) {
           payload,
         );
 
+        const repaymentStructureEnums = enums.repaymentStructure || [];
+
         if (decisions && Array.isArray(decisions) && decisions.length > 0) {
           const options = decisions
             .filter((decision) => typeof decision.value === "string")
-            .map((decision, index) => ({
-              id: decision.decisionId || `${index}`,
-              value: decision.value as string,
-              label:
-                repaymentStructureMap[decision.value as string] ||
-                (decision.value as string),
-            }));
+            .map((decision, index) => {
+              const code = decision.value as string;
+
+              const translatedLabel =
+                getEnumByCode(code, language, repaymentStructureEnums) ||
+                repaymentStructureMap[code] ||
+                code;
+
+              return {
+                id: decision.decisionId || `${index}`,
+                value: code,
+                label: translatedLabel,
+              };
+            });
           setAmortizationTypesList(options);
         } else {
-          setAmortizationTypesList(amortizationTypeOptions);
+          const defaultOptions = repaymentStructureEnums.map((item, index) => ({
+            id: item.code || `${index}`,
+            value: item.code,
+            label: item.value,
+          }));
+
+          setAmortizationTypesList(
+            defaultOptions.length > 0
+              ? defaultOptions
+              : amortizationTypeOptions,
+          );
         }
       } catch (error) {
         setAmortizationTypesList(amortizationTypeOptions);
@@ -215,8 +241,16 @@ function EditProductModal(props: EditProductModalProps) {
       }
     };
 
-    loadAmortizationTypes();
-  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
+    if (enums.repaymentStructure) {
+      loadAmortizationTypes();
+    }
+  }, [
+    businessUnitPublicCode,
+    businessManagerCode,
+    prospectData,
+    enums.repaymentStructure,
+    language,
+  ]);
 
   useEffect(() => {
     const loadRateTypes = async () => {
