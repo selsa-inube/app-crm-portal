@@ -4,7 +4,7 @@ export const dataAmount = {
   amountRequested: "Valor que el cliente espera recibir.",
   currentObligations: "¿Quiere abonar a otras obligaciones vigentes?",
   ordinaryPayment: "Medio de atención plan de pago ordinario",
-  Periodicity: "Periodicidad",
+  paymentCycle: "Ciclo de pagos",
   Requested: "(Requerido)",
   paymentDate: "Fecha de pago",
   selectOption: "Selecciona una opción",

@@ -50,14 +50,14 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
         <>
           {hasOnlyOnePaymentCycle ? (
             <CardGray
-              label={dataAmount.Periodicity}
+              label={dataAmount.paymentCycle}
               placeHolder={
                 paymentCycleOptions[0]?.label || "No hay opciones disponibles."
               }
             />
           ) : (
             <Select
-              label={dataAmount.Periodicity}
+              label={dataAmount.paymentCycle}
               name="paymentCycle"
               id="paymentCycle"
               size="compact"
