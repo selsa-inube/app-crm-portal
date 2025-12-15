@@ -18,6 +18,7 @@ import {
 
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
+import { checkSimulationPrerequisites } from "@src/services/prospect/checkSimulationPrerequisites";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
 import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
@@ -74,6 +75,8 @@ export function CreditProspects() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showEditMessageModal, setShowEditMessageModal] = useState(false);
+  const [isLoadingCheck, setIsLoadingCheck] = useState(false);
+  const [canPerformSimulations, setCanPerformSimulations] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<IProspect | null>(
     null,
   );
@@ -151,6 +154,30 @@ export function CreditProspects() {
       fetchData();
     }
   }, [businessUnitPublicCode, customerData?.publicCode]);
+
+  useEffect(() => {
+    const checkIfClientCanSimulate = async () => {
+      try {
+        setIsLoadingCheck(true);
+
+        const data = await checkSimulationPrerequisites(
+          businessUnitPublicCode,
+          customerData.publicCode,
+        );
+
+        if (data?.canSimulate === "Y") setCanPerformSimulations(true);
+      } catch (error) {
+        setShowErrorModal(true);
+        setErrorModalMessage(
+          `${dataCreditProspects.errorCheckIfCanPerformSimulation}`,
+        );
+      } finally {
+        setIsLoadingCheck(false);
+      }
+    };
+
+    checkIfClientCanSimulate();
+  }, []);
 
   const handleCloseModalNotExistProspect = () => {
     setShowErrorModal(false);
@@ -296,27 +323,40 @@ export function CreditProspects() {
                 width={isMobile ? "100%" : "auto"}
                 justifyItems={isMobile ? "inherit" : "flex-end"}
               >
-                <Button
-                  iconBefore={<MdAdd />}
-                  type="link"
-                  path="../simulate-credit"
-                  fullwidth={isMobile}
-                  disabled={
-                    canSimulateCredit ||
-                    customerData.generalAssociateAttributes[0].partnerStatus !==
-                      "A-Activo"
-                  }
-                >
-                  {dataCreditProspects.simulate}
-                </Button>
-                {canSimulateCredit && (
-                  <Icon
-                    icon={<MdOutlineInfo />}
-                    appearance="primary"
-                    size="16px"
-                    cursorHover
-                    onClick={handleInfo}
-                  />
+                {isLoadingCheck ? (
+                  <SkeletonLine width="155px" height="40px" animated />
+                ) : (
+                  <Stack
+                    gap="8px"
+                    justifyContent="center"
+                    alignContent="center"
+                    alignItems="center"
+                  >
+                    <Button
+                      iconBefore={<MdAdd />}
+                      type="link"
+                      path="../simulate-credit"
+                      fullwidth={isMobile}
+                      disabled={
+                        canSimulateCredit ||
+                        customerData.generalAssociateAttributes[0]
+                          .partnerStatus !== "A-Activo" ||
+                        !canPerformSimulations
+                      }
+                    >
+                      {dataCreditProspects.simulate}
+                    </Button>
+                    {canSimulateCredit ||
+                      (!canPerformSimulations && (
+                        <Icon
+                          icon={<MdOutlineInfo />}
+                          appearance="primary"
+                          size="16px"
+                          cursorHover
+                          onClick={handleInfo}
+                        />
+                      ))}
+                  </Stack>
                 )}
               </Grid>
             </Stack>
@@ -560,7 +600,11 @@ export function CreditProspects() {
           onClose={handleInfoModalClose}
           title={privilegeCrm.title}
           subtitle={privilegeCrm.subtitle}
-          description={privilegeCrm.description}
+          description={
+            !canPerformSimulations
+              ? dataCreditProspects.notMetRequirements
+              : privilegeCrm.description
+          }
           nextButtonText={privilegeCrm.nextButtonText}
           isMobile={isMobile}
         />
