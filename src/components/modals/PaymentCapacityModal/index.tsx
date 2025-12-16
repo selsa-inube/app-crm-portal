@@ -21,6 +21,7 @@ import { IMaximumCreditLimit } from "@services/creditRequest/types";
 import { postBusinessUnitRules } from "@services/creditLimit/getMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit";
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
+import { formatPrimaryDate } from "@src/utils/formatData/date";
 
 import { BaseModal } from "../baseModal";
 import {
@@ -322,7 +323,11 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                                     true,
                                   )}
                                 </Td>
-                                <Td align="center">{row.installmentDate}</Td>
+                                <Td align="center">
+                                  {formatPrimaryDate(
+                                    new Date(row.installmentDate),
+                                  )}
+                                </Td>
                               </Tr>
                             ),
                           )
@@ -337,7 +342,12 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                         )}
                       </Tbody>
                     </Table>
-                    <Stack direction="column" gap="8px" margin="8px 0 0 0">
+                    <Stack
+                      direction="column"
+                      gap="8px"
+                      margin="8px 0 0 0"
+                      height="300px"
+                    >
                       <Text type="body" size="small">
                         {paymentCapacityData.maxValueAmount}
                       </Text>

@@ -318,7 +318,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                   spacing="narrow"
                 />
                 <Text margin="0px 5px" size="small">
-                  {creditLimitTexts.maxUsableQuote || 0}
+                  {creditLimitTexts.maxUsableQuote}
                 </Text>
               </Stack>
               <Stack direction="column" alignItems="center">

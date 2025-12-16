@@ -50,17 +50,18 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
 
   const [isLoading, setIsLoading] = useState(true);
   useState(false);
-  useEffect(() => {
+  /*   useEffect(() => {
     get("mockRequest_value")
       .then((data) => {
         if (data && Array.isArray(data)) {
+          console.log("mockReques ..... ", data);
           setRequestValue(data);
         }
       })
       .catch((error) => {
         console.error("Error fetching money destinations data:", error.message);
       });
-  }, []);
+  }, []); */
 
   const [error, setError] = useState(false);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] = useState<

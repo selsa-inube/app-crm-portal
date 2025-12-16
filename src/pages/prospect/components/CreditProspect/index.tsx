@@ -606,7 +606,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   };
 
   const borrower = dataProspect?.[0]?.borrowers?.[0];
-  console.log("dataProspect: ", dataProspect);
+
   const dataMaximumCreditLimitService = {
     identificationDocumentType: borrower?.borrowerIdentificationType || "",
     identificationDocumentNumber: borrower?.borrowerIdentificationNumber || "",
