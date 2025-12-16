@@ -14,7 +14,6 @@ import {
   IIncomeSources,
   IMaximumCreditLimitByMoneyDestination,
 } from "@services/creditLimit/types";
-import { get } from "@mocks/utils/dataMock.service";
 import { IFormData } from "@pages/simulateCredit/types";
 import { StyledContainer } from "@pages/simulateCredit/components/CreditLimitCard/styles";
 
@@ -43,25 +42,12 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     isMobile,
     moneyDestination,
     handleClose,
-    setRequestValue,
     userAccount,
     incomeData,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
   useState(false);
-  /*   useEffect(() => {
-    get("mockRequest_value")
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          console.log("mockReques ..... ", data);
-          setRequestValue(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching money destinations data:", error.message);
-      });
-  }, []); */
 
   const [error, setError] = useState(false);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] = useState<
