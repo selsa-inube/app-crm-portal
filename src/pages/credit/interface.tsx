@@ -1,4 +1,8 @@
-import { MdArrowBack } from "react-icons/md";
+import {
+  MdArrowBack,
+  MdArrowForwardIos,
+  MdOutlinePriceChange,
+} from "react-icons/md";
 import {
   Breadcrumbs,
   Icon,
@@ -18,8 +22,13 @@ import { ErrorPage } from "@components/layout/ErrorPage";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { InteractiveBox } from "@components/cards/interactiveBox";
+import { BaseModal } from "@components/modals/baseModal";
 
-import { addConfig, errorDataCredit } from "./config/credit.config";
+import {
+  addConfig,
+  advancePaymentModal,
+  errorDataCredit,
+} from "./config/credit.config";
 import { ICreditUIProps } from "./types";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -47,6 +56,9 @@ const CreditUI = (props: ICreditUIProps) => {
     navigate,
     setShowErrorModal,
     setMessageError,
+    isInfoModalOpen,
+    handleOpenInfoModal,
+    handleInfoModalClose,
   } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
@@ -83,6 +95,30 @@ const CreditUI = (props: ICreditUIProps) => {
   const options = mergeSubOptions(
     Array.isArray(dataOptions) ? dataOptions : [dataOptions],
   );
+
+  const handleCardClick = (title: string, url: string) => {
+    if (title === "Adelanto de nómina") {
+      handleOpenInfoModal();
+    } else if (url) {
+      navigate(url);
+    } else {
+      setMessageError(errorDataCredit.noUrl);
+      setShowErrorModal(true);
+    }
+  };
+
+  const advanceOptions = [
+    {
+      icon: <MdOutlinePriceChange />,
+      title: advancePaymentModal.titleRoster,
+      subtitle: advancePaymentModal.subtitleRoster,
+    },
+    {
+      icon: <MdOutlinePriceChange />,
+      title: advancePaymentModal.titleAdvance,
+      subtitle: advancePaymentModal.subtitleAdvance,
+    },
+  ];
 
   return (
     <>
@@ -152,6 +188,7 @@ const CreditUI = (props: ICreditUIProps) => {
                             subtitle={subtitle}
                             url={url}
                             isDisabled={isDisabled}
+                            onClick={() => handleCardClick(title, url)}
                             onInvalidUrl={() => {
                               setMessageError(errorDataCredit.noUrl);
                               setShowErrorModal(true);
@@ -171,6 +208,68 @@ const CreditUI = (props: ICreditUIProps) => {
               isMobile={isMobile}
               message={messageError}
             />
+          )}
+          {isInfoModalOpen && (
+            <BaseModal
+              title={advancePaymentModal.title}
+              apparenceNext="danger"
+              handleBack={handleInfoModalClose}
+              width={isMobile ? "300px" : "450px"}
+            >
+              <Stack direction="column" gap="16px">
+                <Text>{advancePaymentModal.description}</Text>
+
+                {advanceOptions.map((option, index) => (
+                  <Fieldset key={index} padding="0">
+                    <Stack
+                      justifyContent="space-between"
+                      alignItems="center"
+                      padding="0 10px"
+                    >
+                      <Stack
+                        alignItems="center"
+                        gap="12px"
+                        width="calc(100% - 40px)"
+                      >
+                        <Icon
+                          icon={option.icon}
+                          appearance="primary"
+                          size="28px"
+                          spacing="compact"
+                          variant="outlined"
+                        />
+                        <Stack direction="column" gap="4px">
+                          <Text
+                            type="title"
+                            appearance="dark"
+                            size="medium"
+                            weight="bold"
+                          >
+                            {option.title}
+                          </Text>
+                          <Text size="small" appearance="gray">
+                            {option.subtitle}
+                          </Text>
+                        </Stack>
+                      </Stack>
+                      <Icon
+                        icon={<MdArrowForwardIos />}
+                        appearance="primary"
+                        size="18px"
+                        onClick={() => {
+                          const route =
+                            option.title === "Prima"
+                              ? "/credit/bonus"
+                              : "/credit/payroll";
+                          navigate(route);
+                        }}
+                        cursorHover
+                      />
+                    </Stack>
+                  </Fieldset>
+                ))}
+              </Stack>
+            </BaseModal>
           )}
         </Stack>
       )}

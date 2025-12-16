@@ -1,6 +1,9 @@
 import { IObligations } from "@services/creditRequest/types";
-import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
 import { IBorrower } from "@services/prospect/types";
+import { IValidateRequirement } from "@services/requirement/types";
+
+import { IDisbursementGeneral } from "../payrollOrnBonus/types";
+import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
 
 export const titleButtonTextAssited = {
   goBackText: "Anterior",
@@ -136,6 +139,14 @@ export interface IFormData {
   riskScore: {
     value: number;
     date: string;
+  };
+  requestedValue?: string;
+  disbursementGeneral?: IDisbursementGeneral;
+  requirementsValidation?: {
+    requirements: IValidateRequirement[];
+    isValid: boolean;
+    validatedAt: Date | null;
+    unfulfilledCount: number;
   };
 }
 

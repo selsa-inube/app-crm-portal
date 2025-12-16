@@ -10,6 +10,8 @@ import { CreditApplications } from "@pages/applications";
 import { Credit } from "@pages/credit";
 import { FinancialReporting } from "@pages/financialReporting";
 import { ProspectCredit } from "@pages/prospectCredit";
+import { Bonus } from "@pages/payrollOrnBonus/bunus";
+import { Payroll } from "@src/pages/payrollOrnBonus/payRoll";
 
 function CreditRoutes() {
   return (
@@ -17,6 +19,8 @@ function CreditRoutes() {
       <Route path="/" element={<AppPage />}>
         <Route index path="/" element={<Credit />} />
         <Route path="/simulate-credit" element={<SimulateCredit />} />
+        <Route path="/bonus" element={<Bonus />} />
+        <Route path="/payroll" element={<Payroll />} />
         <Route path="/prospects" element={<CreditProspects />} />
         <Route path="/credit-requests" element={<CreditApplications />} />
         <Route path="/prospects/:prospectCode" element={<Simulations />} />

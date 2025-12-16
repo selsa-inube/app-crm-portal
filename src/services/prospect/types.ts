@@ -1,3 +1,6 @@
+import { IDisbursementGeneral } from "@pages/payrollOrnBonus/types";
+import { IValidateRequirement } from "../requirement/types";
+
 export interface IBorrowerProperty {
   propertyName: string;
   propertyValue: string;
@@ -129,6 +132,14 @@ export interface IProspect {
   outlays: IOutlay[];
   termLimit?: number | string;
   installmentLimit?: number | string;
+  requestedValue?: string;
+  disbursementGeneral?: IDisbursementGeneral;
+  requirementsValidation?: {
+    requirements: IValidateRequirement[];
+    isValid: boolean;
+    validatedAt: Date | null;
+    unfulfilledCount: number;
+  };
 }
 
 export interface IAddCreditProduct {

@@ -9,19 +9,11 @@ export const disbursemenTabs = {
     disabled: false,
     label: "Cuenta externa",
   },
-  check: { id: "Certified_check", disabled: false, label: "Cheque entidad" },
-  management: {
-    id: "Business_check",
-    disabled: false,
-    label: "Cheque de gerencia",
-  },
-  cash: { id: "Cash", disabled: false, label: "Dinero en efectivo" },
 };
 
 export const disbursementGeneral = {
   label: "Valor a girar con esta forma de desembolso",
   place: "Ej: 1.000.000",
-  labelValue: "Saldo por desembolsar",
   description: 2000000,
   labelCheck:
     "El valor a girar con esta forma de desembolso es igual al saldo pendiente por desembolsar.",

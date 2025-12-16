@@ -34,6 +34,10 @@ export const OptionStaffPortal: IOptionStaffPortalItem[] = [
         id: "Solicitudes tramitadas",
         url: "/credit/processed-credit-requests",
       },
+      {
+        id: "Adelanto de nómina",
+        url: "/credit",
+      },
     ],
   },
 ];
