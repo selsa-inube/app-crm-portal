@@ -50,9 +50,9 @@ export const dataCreditProspects = {
   descriptionFlagDelete: "El prospecto de crédito se ha eliminado",
   titleFlagComment: "Comentarios",
   descriptionFlagComment: "Los comentarios se han actualizado",
-  errorCheckIfCanPerformSimulation:
+  errorCheckIfSimulationIsAllowed:
     "Error al validar los requisitos para la simulación de crédito.",
-  notMetRequirements:
+  requirementsNotMet:
     "El cliente no cumple con los requisitos para la simulación.",
 };
 

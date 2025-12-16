@@ -169,7 +169,7 @@ export function CreditProspects() {
       } catch (error) {
         setShowErrorModal(true);
         setErrorModalMessage(
-          `${dataCreditProspects.errorCheckIfCanPerformSimulation}`,
+          `${dataCreditProspects.errorCheckIfSimulationIsAllowed}`,
         );
       } finally {
         setIsLoadingCheck(false);
@@ -273,6 +273,8 @@ export function CreditProspects() {
     setLoadingConfirm(false);
   };
 
+  const simulationIsDisabled = canSimulateCredit || !canPerformSimulations;
+
   return (
     <>
       <Stack
@@ -338,24 +340,22 @@ export function CreditProspects() {
                       path="../simulate-credit"
                       fullwidth={isMobile}
                       disabled={
-                        canSimulateCredit ||
+                        simulationIsDisabled ||
                         customerData.generalAssociateAttributes[0]
-                          .partnerStatus !== "A-Activo" ||
-                        !canPerformSimulations
+                          .partnerStatus !== "A-Activo"
                       }
                     >
                       {dataCreditProspects.simulate}
                     </Button>
-                    {canSimulateCredit ||
-                      (!canPerformSimulations && (
-                        <Icon
-                          icon={<MdOutlineInfo />}
-                          appearance="primary"
-                          size="16px"
-                          cursorHover
-                          onClick={handleInfo}
-                        />
-                      ))}
+                    {simulationIsDisabled && (
+                      <Icon
+                        icon={<MdOutlineInfo />}
+                        appearance="primary"
+                        size="16px"
+                        cursorHover
+                        onClick={handleInfo}
+                      />
+                    )}
                   </Stack>
                 )}
               </Grid>
@@ -602,7 +602,7 @@ export function CreditProspects() {
           subtitle={privilegeCrm.subtitle}
           description={
             !canPerformSimulations
-              ? dataCreditProspects.notMetRequirements
+              ? dataCreditProspects.requirementsNotMet
               : privilegeCrm.description
           }
           nextButtonText={privilegeCrm.nextButtonText}
