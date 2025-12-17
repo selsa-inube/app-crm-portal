@@ -12,12 +12,14 @@ import {
   Textarea,
   useMediaQuery,
   Grid,
+  SkeletonLine,
+  useFlag,
 } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
+import { checkSimulationPrerequisites } from "@src/services/prospect/checkSimulationPrerequisites";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
-import { ErrorSearchAllProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode/ErrorSearchAllProspectsByCustomerCode";
 import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
@@ -31,14 +33,22 @@ import { privilegeCrm } from "@config/privilege";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
 import userImage from "@assets/images/userImage.jpeg";
 
-import { addConfig, dataCreditProspects } from "./config";
+import {
+  addConfig,
+  dataCreditProspects,
+  amountLineOnSkeletons,
+  amountContainerOnSkeletons,
+  notFound,
+} from "./config";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CardCreditProspect } from "./components/CardCreditProspect";
 import InfoModal from "../prospect/components/InfoModal";
+import { StyledContainer } from "./components/CardCreditProspect/styles";
 
 export function CreditProspects() {
   const isMobile = useMediaQuery("(max-width:880px)");
+  const { addFlag } = useFlag();
 
   const { customerData } = useContext(CustomerContext);
   const dataHeader = {
@@ -57,10 +67,16 @@ export function CreditProspects() {
   const [prospectSummaryData, setProspectSummaryData] = useState<IProspect[]>(
     [],
   );
+  const [isLoading, setLoading] = useState(true);
+  const [isLoadingConfirm, setLoadingConfirm] = useState(false);
+  const [isLoadingComments, setLoadingComments] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showEditMessageModal, setShowEditMessageModal] = useState(false);
+  const [isLoadingCheck, setIsLoadingCheck] = useState(false);
+  const [canPerformSimulations, setCanPerformSimulations] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<IProspect | null>(
     null,
   );
@@ -71,7 +87,6 @@ export function CreditProspects() {
   >({});
   const [searchTerm, setSearchTerm] = useState("");
   const [errorModalMessage, setErrorModalMessage] = useState("");
-  const [messageSearchResults, setMessageSearchResults] = useState("");
 
   const navigate = useNavigate();
 
@@ -79,6 +94,7 @@ export function CreditProspects() {
     if (!selectedProspect) return;
 
     try {
+      setIsLoadingDelete(true);
       await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
         removeProspectsRequest: [
           {
@@ -93,9 +109,17 @@ export function CreditProspects() {
         ),
       );
 
+      setIsLoadingDelete(false);
       setShowDeleteModal(false);
       setSelectedProspect(null);
+      addFlag({
+        title: dataCreditProspects.titleFlagDelete,
+        description: dataCreditProspects.descriptionFlagDelete,
+        appearance: "success",
+        duration: 5000,
+      });
     } catch (error) {
+      setIsLoadingDelete(false);
       setErrorModalMessage(
         dataCreditProspects.errorRemoveProspect ||
           "Hubo un error al eliminar el prospecto.",
@@ -107,11 +131,13 @@ export function CreditProspects() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const result = await getProspectsByCustomerCode(
           businessUnitPublicCode,
           businessManagerCode,
           customerData.publicCode,
         );
+
         if (result && result.length > 0) {
           if (Array.isArray(result)) {
             setProspectSummaryData(result);
@@ -119,16 +145,39 @@ export function CreditProspects() {
             setProspectSummaryData([result]);
           }
         }
+        setLoading(false);
       } catch (error) {
-        setMessageSearchResults(
-          ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable,
-        );
+        setLoading(false);
       }
     };
     if (customerData?.publicCode && businessUnitPublicCode) {
       fetchData();
     }
   }, [businessUnitPublicCode, customerData?.publicCode]);
+
+  useEffect(() => {
+    const checkIfClientCanSimulate = async () => {
+      try {
+        setIsLoadingCheck(true);
+
+        const data = await checkSimulationPrerequisites(
+          businessUnitPublicCode,
+          customerData.publicCode,
+        );
+
+        if (data?.canSimulate === "Y") setCanPerformSimulations(true);
+      } catch (error) {
+        setShowErrorModal(true);
+        setErrorModalMessage(
+          `${dataCreditProspects.errorCheckIfSimulationIsAllowed}`,
+        );
+      } finally {
+        setIsLoadingCheck(false);
+      }
+    };
+
+    checkIfClientCanSimulate();
+  }, []);
 
   const handleCloseModalNotExistProspect = () => {
     setShowErrorModal(false);
@@ -173,6 +222,7 @@ export function CreditProspects() {
     };
 
     try {
+      setLoadingComments(true);
       const result = await updateProspect(
         businessUnitPublicCode,
         businessManagerCode,
@@ -190,7 +240,15 @@ export function CreditProspects() {
       setShowEditMessageModal(false);
       setShowMessageModal(false);
       setSelectedProspect(result || updatedProspect);
+      setLoadingComments(false);
+      addFlag({
+        title: dataCreditProspects.titleFlagComment,
+        description: dataCreditProspects.descriptionFlagComment,
+        appearance: "success",
+        duration: 5000,
+      });
     } catch (error) {
+      setLoadingComments(false);
       setShowErrorModal(true);
       setErrorModalMessage(dataCreditProspects.errorObservations);
     }
@@ -210,8 +268,12 @@ export function CreditProspects() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleConfirmProspect = () => {
+    setLoadingConfirm(true);
     navigate(`/credit/apply-for-credit/${selectedProspect?.prospectCode}`);
+    setLoadingConfirm(false);
   };
+
+  const simulationIsDisabled = canSimulateCredit || !canPerformSimulations;
 
   return (
     <>
@@ -263,27 +325,38 @@ export function CreditProspects() {
                 width={isMobile ? "100%" : "auto"}
                 justifyItems={isMobile ? "inherit" : "flex-end"}
               >
-                <Button
-                  iconBefore={<MdAdd />}
-                  type="link"
-                  path="../simulate-credit"
-                  fullwidth={isMobile}
-                  disabled={
-                    canSimulateCredit ||
-                    customerData.generalAssociateAttributes[0].partnerStatus !==
-                      "A-Activo"
-                  }
-                >
-                  {dataCreditProspects.simulate}
-                </Button>
-                {canSimulateCredit && (
-                  <Icon
-                    icon={<MdOutlineInfo />}
-                    appearance="primary"
-                    size="16px"
-                    cursorHover
-                    onClick={handleInfo}
-                  />
+                {isLoadingCheck ? (
+                  <SkeletonLine width="155px" height="40px" animated />
+                ) : (
+                  <Stack
+                    gap="8px"
+                    justifyContent="center"
+                    alignContent="center"
+                    alignItems="center"
+                  >
+                    <Button
+                      iconBefore={<MdAdd />}
+                      type="link"
+                      path="../simulate-credit"
+                      fullwidth={isMobile}
+                      disabled={
+                        simulationIsDisabled ||
+                        customerData.generalAssociateAttributes[0]
+                          .partnerStatus !== "A-Activo"
+                      }
+                    >
+                      {dataCreditProspects.simulate}
+                    </Button>
+                    {simulationIsDisabled && (
+                      <Icon
+                        icon={<MdOutlineInfo />}
+                        appearance="primary"
+                        size="16px"
+                        cursorHover
+                        onClick={handleInfo}
+                      />
+                    )}
+                  </Stack>
                 )}
               </Grid>
             </Stack>
@@ -292,53 +365,99 @@ export function CreditProspects() {
               gap="20px"
               justifyContent={isMobile ? "center" : "flex-start"}
             >
-              {messageSearchResults ==
-                ErrorSearchAllProspectsByCustomerCode.NoHaveProspectsAvailable && (
-                <Text type="title" size="small">
-                  {messageSearchResults}
-                </Text>
+              {!isLoading &&
+                filteredProspects.map((prospect) => (
+                  <CardCreditProspect
+                    key={prospect.prospectId}
+                    title={truncateTextToMaxLength(
+                      MoneyDestinationTranslations.find(
+                        (item) =>
+                          item.Code ===
+                          prospect.moneyDestinationAbbreviatedName,
+                      )?.Code || prospect.moneyDestinationAbbreviatedName,
+                      20,
+                    )}
+                    borrower={
+                      prospect.clientManagerName || dataCreditProspects.none
+                    }
+                    numProspect={prospect.prospectCode}
+                    date={prospect.timeOfCreation}
+                    value={prospect.requestedAmount}
+                    iconTitle={
+                      MoneyDestinationTranslations.find(
+                        (item) =>
+                          item.Code ===
+                          prospect.moneyDestinationAbbreviatedName,
+                      )?.Value || "DM_ENUM_EMONEYDESTINATION"
+                    }
+                    isMobile={isMobile}
+                    hasMessage={true}
+                    handleMessage={() => {
+                      setSelectedProspect(prospect);
+                      setShowMessageModal(true);
+                    }}
+                    handleSend={() => {
+                      setShowConfirmModal(true);
+                      setSelectedProspect(prospect);
+                    }}
+                    handleEdit={() =>
+                      navigate(`/credit/prospects/${prospect.prospectCode}`)
+                    }
+                    handleDelete={() => {
+                      setSelectedProspect(prospect);
+                      setShowDeleteModal(true);
+                    }}
+                  />
+                ))}
+
+              {!isLoading && filteredProspects.length === 0 && (
+                <Stack
+                  height="30%"
+                  width="100%"
+                  justifyContent="center"
+                  alignItems="center"
+                  alignContent="center"
+                >
+                  <Text type="title" size="small" textAlign="center">
+                    {notFound}
+                  </Text>
+                </Stack>
               )}
-              {filteredProspects.map((prospect) => (
-                <CardCreditProspect
-                  key={prospect.prospectId}
-                  title={truncateTextToMaxLength(
-                    MoneyDestinationTranslations.find(
-                      (item) =>
-                        item.Code === prospect.moneyDestinationAbbreviatedName,
-                    )?.Code || prospect.moneyDestinationAbbreviatedName,
-                    20,
-                  )}
-                  borrower={
-                    prospect.clientManagerName || dataCreditProspects.none
-                  }
-                  numProspect={prospect.prospectCode}
-                  date={prospect.timeOfCreation}
-                  value={prospect.requestedAmount}
-                  iconTitle={
-                    MoneyDestinationTranslations.find(
-                      (item) =>
-                        item.Code === prospect.moneyDestinationAbbreviatedName,
-                    )?.Value || "DM_ENUM_EMONEYDESTINATION"
-                  }
-                  isMobile={isMobile}
-                  hasMessage={true}
-                  handleMessage={() => {
-                    setSelectedProspect(prospect);
-                    setShowMessageModal(true);
-                  }}
-                  handleSend={() => {
-                    setShowConfirmModal(true);
-                    setSelectedProspect(prospect);
-                  }}
-                  handleEdit={() =>
-                    navigate(`/credit/prospects/${prospect.prospectCode}`)
-                  }
-                  handleDelete={() => {
-                    setSelectedProspect(prospect);
-                    setShowDeleteModal(true);
-                  }}
-                />
-              ))}
+              {isLoading && (
+                <>
+                  {Array(amountContainerOnSkeletons)
+                    .fill(0)
+                    .map((_, indexContainer) => (
+                      <StyledContainer key={indexContainer} display>
+                        <Stack
+                          direction="row"
+                          padding="10px 16px"
+                          gap="12px"
+                          margin="10px 0 0 0"
+                        >
+                          <SkeletonLine width="90%" height="40px" animated />
+                          <SkeletonLine height="40px" width="25%" animated />
+                        </Stack>
+                        {Array(amountLineOnSkeletons)
+                          .fill(0)
+                          .map((_, index) => (
+                            <Stack
+                              key={index}
+                              direction="column"
+                              padding="10px 16px"
+                              gap="12px"
+                            >
+                              <SkeletonLine
+                                width="100%"
+                                height="20px"
+                                animated
+                              />
+                            </Stack>
+                          ))}
+                      </StyledContainer>
+                    ))}
+                </>
+              )}
             </Stack>
           </Stack>
         </Fieldset>
@@ -372,6 +491,7 @@ export function CreditProspects() {
             }
             backButton={dataCreditProspects.close}
             width={isMobile ? "300px" : "500px"}
+            isLoading={isLoadingComments}
           >
             <Stack direction="column" gap="16px">
               <CardGray
@@ -395,7 +515,10 @@ export function CreditProspects() {
               />
               <CardGray
                 label={dataCreditProspects.preApproval}
-                placeHolder={selectedProspect?.clientManagerObservation || ""}
+                placeHolder={
+                  selectedProspect?.clientManagerObservation ||
+                  dataCreditProspects.notHaveComments
+                }
                 apparencePlaceHolder="gray"
               />
               <CardGray
@@ -403,7 +526,7 @@ export function CreditProspects() {
                 placeHolder={
                   commentsByProspectId[selectedProspect?.prospectId || ""] ||
                   selectedProspect?.clientComments ||
-                  ""
+                  dataCreditProspects.notHaveObservations
                 }
                 apparencePlaceHolder="gray"
               />
@@ -418,6 +541,7 @@ export function CreditProspects() {
             nextButton={dataCreditProspects.modify}
             backButton={dataCreditProspects.close}
             width={isMobile ? "300px" : "500px"}
+            isLoading={isLoadingComments}
           >
             <Textarea
               id="comments"
@@ -443,6 +567,7 @@ export function CreditProspects() {
             backButton="Cancelar"
             nextButton="Confirmar"
             width={isMobile ? "300px" : "500px"}
+            isLoading={isLoadingConfirm}
           >
             <Text>{dataCreditProspects.confirmDescription}</Text>
           </BaseModal>
@@ -456,6 +581,7 @@ export function CreditProspects() {
             nextButton="Eliminar"
             apparenceNext="danger"
             width={isMobile ? "300px" : "500px"}
+            isLoading={isLoadingDelete}
           >
             <Text>{dataCreditProspects.deleteDescription}</Text>
           </BaseModal>
@@ -474,7 +600,11 @@ export function CreditProspects() {
           onClose={handleInfoModalClose}
           title={privilegeCrm.title}
           subtitle={privilegeCrm.subtitle}
-          description={privilegeCrm.description}
+          description={
+            !canPerformSimulations
+              ? dataCreditProspects.requirementsNotMet
+              : privilegeCrm.description
+          }
           nextButtonText={privilegeCrm.nextButtonText}
           isMobile={isMobile}
         />

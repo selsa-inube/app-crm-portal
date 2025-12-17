@@ -9,7 +9,6 @@ import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { postSimulateCredit } from "@services/prospect/simulateCredit";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
-import { getClientPortfolioObligationsById } from "@services/creditRequest/getClientPortfolioObligations";
 import { IObligations } from "@services/creditRequest/types";
 import { getCreditPayments } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
@@ -34,6 +33,7 @@ import {
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
+import { getFinancialObligations } from "./steps/extraDebtors/utils";
 import {
   IFormData,
   IServicesProductSelection,
@@ -42,7 +42,11 @@ import {
 } from "./types";
 import { SimulateCreditUI } from "./interface";
 import { messagesError } from "./config/config";
-import { createMainBorrowerFromFormData } from "./steps/extraDebtors/utils";
+import {
+  createMainBorrowerFromFormData,
+  updateFinancialObligationsFormData,
+} from "./steps/extraDebtors/utils";
+import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 import { textAddCongfig } from "./config/addConfig";
 
 export function SimulateCredit() {
@@ -85,7 +89,6 @@ export function SimulateCredit() {
   const [sentModal, setSentModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
   const [loadingQuestions, setLoadingQuestions] = useState(true);
-
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -103,8 +106,8 @@ export function SimulateCredit() {
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const userAccount = eventData.user.identificationDocumentNumber || "";
   const customerPublicCode: string = customerData.publicCode;
-
   const [formState, setFormState] = useState({
     type: "",
     entity: "",
@@ -146,7 +149,7 @@ export function SimulateCredit() {
       inputValue: "",
       toggleChecked: false,
       paymentPlan: "",
-      periodicity: "",
+      paymentCycle: "",
       payAmount: "",
     },
     consolidatedCreditSelections: {
@@ -170,6 +173,10 @@ export function SimulateCredit() {
       identificationType: "",
       name: "",
       surname: "",
+    },
+    riskScore: {
+      value: 0,
+      date: "",
     },
   });
 
@@ -208,9 +215,18 @@ export function SimulateCredit() {
       borrowerProperties: [
         ...numericIncomeProperties,
         ...financialObligationProperties,
+        {
+          propertyName: "creditRiskScore",
+          propertyValue: `${formData.riskScore.value}, ${formData.riskScore.date}`,
+        },
       ],
     };
-  }, [customerData, formData.sourcesOfIncome, formData.obligationsFinancial]);
+  }, [
+    customerData,
+    formData.sourcesOfIncome,
+    formData.obligationsFinancial,
+    formData.riskScore,
+  ]);
 
   const simulateData: IProspect = useMemo(
     () => ({
@@ -235,9 +251,7 @@ export function SimulateCredit() {
               lineOfCreditDescription: item.lineOfCreditDescription,
             }))
           : [],
-      linesOfCredit: formData.selectedProducts.map((product) => ({
-        lineOfCreditAbbreviatedName: product,
-      })),
+      linesOfCredit: formData.selectedProducts,
       firstPaymentCycleDate: new Date().toISOString(),
       extraordinaryInstallments: Array.isArray(
         formData.extraordinaryInstallments,
@@ -252,9 +266,11 @@ export function SimulateCredit() {
       moneyDestinationAbbreviatedName: formData.selectedDestination,
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
-      selectedRegularPaymentSchedule: formData.loanAmountState.payAmount || "",
+      selectedRegularPaymentSchedule:
+        formData.loanAmountState.paymentCycle || "",
+      paymentChannelCycleName: formData.loanAmountState.paymentCycle || "",
       requestedAmount: formData.loanAmountState.inputValue || 0,
-      termLimit: formData.loanConditionState.maximumTermValue || 0,
+      termLimit: formData.loanConditionState.maximumTermValue || 120,
       prospectId: "",
       prospectCode: "",
       state: "",
@@ -390,12 +406,20 @@ export function SimulateCredit() {
       return;
     }
     try {
-      const data = await getClientPortfolioObligationsById(
+      const data = await getFinancialObligations(
+        customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
-        customerPublicCode,
       );
-      setClientPortfolio(data);
+
+      setClientPortfolio({
+        customerIdentificationNumber: customerData.publicCode,
+        customerName: customerData.fullName,
+        customerIdentificationType:
+          customerData.generalAttributeClientNaturalPersons?.[0]
+            .typeIdentification || "",
+        obligations: data ? data : [],
+      });
     } catch (error: unknown) {
       const err = error as {
         message?: string;
@@ -558,6 +582,7 @@ export function SimulateCredit() {
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       stepsAddProspect.sourcesIncome.id,
+      stepsAddProspect.riskScore.id,
       servicesProductSelection?.financialObligation.includes("Y")
         ? stepsAddProspect.obligationsFinancial.id
         : togglesState[1]
@@ -612,6 +637,7 @@ export function SimulateCredit() {
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.sourcesIncome.id,
+      stepsAddProspect.riskScore.id,
       servicesProductSelection?.financialObligation.includes("Y")
         ? stepsAddProspect.obligationsFinancial.id
         : togglesState[1]
@@ -803,6 +829,21 @@ export function SimulateCredit() {
   }, [currentStepsNumber, customerData]);
 
   useEffect(() => {
+    const isFinancialStep =
+      currentStepsNumber?.id === stepsAddProspect.obligationsFinancial.id;
+    if (isFinancialStep && formData.borrowerData.borrowers.length > 0) {
+      const newObligations = updateFinancialObligationsFormData(
+        formData.borrowerData.borrowers,
+      );
+
+      handleFormDataChange("obligationsFinancial", {
+        ...formData.obligationsFinancial,
+        obligations: newObligations,
+      });
+    }
+  }, [currentStepsNumber]);
+
+  useEffect(() => {
     const mainBorrower = formData.borrowerData.borrowers.find(
       (borrower) => borrower.borrowerType === "MainBorrower",
     );
@@ -852,6 +893,7 @@ export function SimulateCredit() {
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       identificationDocumentNumber: customerData.publicCode,
       moneyDestination: formData.selectedDestination,
+      lineOfCreditAbbreviatedName: formData.selectedProducts[0] || "",
       primaryIncomeType:
         typeof formData.sourcesOfIncome?.PeriodicSalary === "number"
           ? formData.sourcesOfIncome.PeriodicSalary.toString()
@@ -930,7 +972,9 @@ export function SimulateCredit() {
         navigate={navigate}
         formState={formState}
         setFormState={setFormState}
-        dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+        dataMaximumCreditLimitService={
+          dataMaximumCreditLimitService as IdataMaximumCreditLimitService
+        }
         servicesProductSelection={
           servicesProductSelection as IServicesProductSelection
         }
@@ -946,6 +990,7 @@ export function SimulateCredit() {
         prospectCode={prospectCode}
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
+        userAccount={userAccount}
         loadingQuestions={loadingQuestions}
         showSelectsLoanAmount={!formData.togglesState[0]}
       />

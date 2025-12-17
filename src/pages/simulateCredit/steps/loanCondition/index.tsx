@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { Stack, Text, Divider, Toggle, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
+import { VALIDATED_NUMBER_REGEX } from "@components/modals/ProspectProductModal/config";
 import { currencyFormat } from "@utils/formatData/currency";
 
 import { loanData } from "./config";
@@ -114,7 +115,18 @@ export function LoanCondition(props: ILoanCondition) {
                       type="text"
                       disabled={!values.toggles.quotaCapToggle}
                       fullwidth={isMobile}
-                      value={values.quotaCapValue}
+                      value={
+                        values.quotaCapValue
+                          ? currencyFormat(
+                              Number(
+                                String(values.quotaCapValue).replace(
+                                  VALIDATED_NUMBER_REGEX,
+                                  "",
+                                ),
+                              ),
+                            )
+                          : ""
+                      }
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const formattedValue = currencyFormat(
                           Number(e.target.value.replace(/[^0-9]/g, "")),

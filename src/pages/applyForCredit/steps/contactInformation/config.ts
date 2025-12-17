@@ -1,6 +1,6 @@
 export const dataContactInformation = {
   cardEmail: "Correo electrónico",
-  cardPhone: "Numero",
+  cardPhone: "Número",
   cardWhatsApp: "Número de WhatsApp",
   placeEmail: "Correo electrónico",
   placePhone: "Número móvil",

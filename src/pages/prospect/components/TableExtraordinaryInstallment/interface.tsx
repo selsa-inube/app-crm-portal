@@ -43,6 +43,7 @@ interface ITableExtraordinaryInstallmentProps {
   service: boolean;
   showErrorModal: boolean;
   messageError: string;
+  isLoadingDelete: boolean;
   installmentState: {
     installmentAmount: number;
     installmentDate: string;
@@ -106,6 +107,7 @@ export function TableExtraordinaryInstallmentUI(
     setInstallmentState,
     openMenuIndex,
     setOpenMenuIndex,
+    isLoadingDelete = false,
   } = props;
 
   const {
@@ -255,6 +257,21 @@ export function TableExtraordinaryInstallmentUI(
               </Td>
             </Tr>
           )}
+        {loading &&
+          Array.from({ length: 5 }).map((_, rowIndex) => (
+            <Tr key={`skeleton-row-${rowIndex}`}>
+              {visbleHeaders.map((_, colIndex) => (
+                <Td key={`skeleton-cell-${rowIndex}-${colIndex}`} align="left">
+                  <SkeletonLine animated width="100%" />
+                </Td>
+              ))}
+              {visbleActions.map((_, actionIndex) => (
+                <Td key={`skeleton-action-${rowIndex}-${actionIndex}`}>
+                  <SkeletonLine animated width="100%" />
+                </Td>
+              ))}
+            </Tr>
+          ))}
       </Tbody>
 
       {extraordinaryInstallments.length > 0 && !loading && (
@@ -283,6 +300,7 @@ export function TableExtraordinaryInstallmentUI(
           handleClose={() => setIsOpenModalDelete(false)}
           handleDelete={handleDeleteAction}
           TextDelete={dataTableExtraordinaryInstallment.content}
+          isLoading={isLoadingDelete}
         />
       )}
       {showErrorModal && (

@@ -33,11 +33,11 @@ export function ContactInformation(props: IContactInformationProps) {
       .matches(/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/)
       .required(""),
     phone: Yup.string()
-      .matches(/^(\+\d{1,3})?\d{10,14}$/, "")
+      .matches(/^(\+\d{1,3})?\d{10,14}$/, "invlid phone number")
       .required(""),
     toggleChecked: Yup.boolean(),
     whatsAppPhone: Yup.string()
-      .matches(/^(\+\d{1,3})?\d{10,14}$/, "")
+      .matches(/^(\+\d{1,3})?\d{10,14}$/, "invlid phone number")
       .when("toggleChecked", {
         is: false,
         then: (schema) => schema.required(""),

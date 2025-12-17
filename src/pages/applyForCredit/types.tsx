@@ -65,6 +65,7 @@ export interface IDebtorDetail {
   relation: string;
   debtorDetail?: Record<string, never>;
   type?: string;
+  borrowerProperties?: Record<string, never>;
 }
 export interface IFormData {
   contactInformation: IContactInformation;

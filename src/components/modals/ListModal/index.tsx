@@ -410,18 +410,19 @@ export const ListModal = (props: IListModalProps) => {
     setUploadedFiles([...cancelDeleteUploadedFiles, ...returnFilesUploaded]);
   };
   const handleCancel = () => {
-    if (!setUploadedFiles || !uploadedFiles || !pendingFiles) return;
+    if (setUploadedFiles && uploadedFiles && pendingFiles) {
+      const alreadyFilesMarkedAsUploaded = pendingFiles.filter(
+        (file) => file.wasAlreadyAttached,
+      );
+      let mergedFiles = [...alreadyFilesMarkedAsUploaded, ...uploadedFiles];
 
-    const alreadyFilesMarkedAsUploaded = pendingFiles.filter(
-      (file) => file.wasAlreadyAttached,
-    );
-    let mergedFiles = [...alreadyFilesMarkedAsUploaded, ...uploadedFiles];
+      mergedFiles = markFilesJustUploaded(mergedFiles);
 
-    mergedFiles = markFilesJustUploaded(mergedFiles);
+      setUploadedFiles(mergedFiles);
+      handleCancelDeleteFile();
+      setPendingFiles([]);
+    }
 
-    setUploadedFiles(mergedFiles);
-    handleCancelDeleteFile();
-    setPendingFiles([]);
     handleClose();
   };
 

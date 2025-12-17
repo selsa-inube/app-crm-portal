@@ -11,8 +11,8 @@ export const optionLocalAccount = [
   },
   {
     id: "account number",
-    label: "Numero de cuenta - Banco de bogotá - 31313131141",
-    value: "numero de cuenta",
+    label: "Número de cuenta - Banco de bogotá - 31313131141",
+    value: "número de cuenta",
   },
 ];
 export const Sex = [

@@ -7,7 +7,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 
 import { CustomerUI } from "./interface";
-import { EErrorMessages } from "./config";
+import { EErrorMessages, VALIDATE_BLANK_SPACES_REGEX } from "./config";
 import { isValidUpperCaseName, isNumericString } from "./utils";
 
 export function Customer() {
@@ -15,7 +15,6 @@ export function Customer() {
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
   const [messageError, setMessageError] = useState("");
-  const [autocompleteKey, setAutocompleteKey] = useState(0);
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
@@ -33,19 +32,21 @@ export function Customer() {
         return;
       }
 
+      const formattedValue = value.replace(VALIDATE_BLANK_SPACES_REGEX, "%");
+
       let response = null;
       if (isNumericString(value)) {
         response = await getCustomerCatalog(
           businessUnitPublicCode,
           businessManagerCode,
           "",
-          value,
+          formattedValue,
         );
       } else if (isValidUpperCaseName(value)) {
         response = await getCustomerCatalog(
           businessUnitPublicCode,
           businessManagerCode,
-          value,
+          formattedValue,
           "",
         );
       }
@@ -57,6 +58,7 @@ export function Customer() {
           value: item.publicCode,
         }));
         setShowError(false);
+
         setOptions(mappedOptions);
       } else {
         setOptions([]);
@@ -75,14 +77,12 @@ export function Customer() {
     setShowError(false);
     if (!value) {
       setOptions([]);
-      setAutocompleteKey((prev) => prev + 1);
     }
   };
 
   useEffect(() => {
     if (inputValue.trim() === "") {
       setOptions([]);
-      setAutocompleteKey((prev) => prev + 1);
       return;
     }
     handleSearch(inputValue);
@@ -107,9 +107,38 @@ export function Customer() {
   };
 
   useEffect(() => {
-    setOptions([]);
-    handleSearch(inputValue);
-  }, [businessUnitSigla]);
+    if (selectRef.current) {
+      const inputIsEmpty = !inputValue || inputValue.trim() === "";
+      const optionsAreEmpty = options.length === 0;
+
+      if (inputIsEmpty && !optionsAreEmpty) return;
+
+      const isAlreadySelected = options.some(
+        (option) => option.value === inputValue || option.label === inputValue,
+      );
+
+      if (isAlreadySelected) return;
+
+      const inputElement = selectRef.current.querySelector("input");
+
+      if (inputElement) {
+        const isFocused = document.activeElement === inputElement;
+
+        if (!inputIsEmpty && !isFocused) return;
+
+        const event = new KeyboardEvent("keyup", {
+          key: "ArrowDown",
+          code: "ArrowDown",
+          keyCode: 40,
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        });
+
+        inputElement.dispatchEvent(event);
+      }
+    }
+  }, [options, businessUnitSigla, inputValue]);
 
   return (
     <CustomerUI
@@ -121,7 +150,6 @@ export function Customer() {
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
       messageError={messageError}
-      autocompleteKey={autocompleteKey}
     />
   );
 }

@@ -47,6 +47,12 @@ export function ApplyForCredit() {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
+  if (!businessManagerCode && codeError === null) {
+    setCodeError(1003);
+  } else if (!customerPublicCode && codeError === null) {
+    setCodeError(400);
+  }
+
   const dataHeader = {
     name: customerData?.fullName ?? "",
     status:
@@ -211,7 +217,9 @@ export function ApplyForCredit() {
     if (!guaranteesRequired) return Object.values(stepsFilingApplication);
     const hideMortgage = guaranteesRequired.includes("Mortgage");
     const hidePledge = guaranteesRequired.includes("Pledge");
-    const hasCoborrower = guaranteesRequired.includes("Coborower") ?? false;
+    const hasCoborrower =
+      guaranteesRequired.includes("Coborower") ||
+      guaranteesRequired.includes("Borrower");
     const hasBond = guaranteesRequired.includes("Bond") ?? false;
 
     return Object.values(stepsFilingApplication)
@@ -247,6 +255,7 @@ export function ApplyForCredit() {
     vehicleOffered,
     disbursementGeneral,
     attachedDocuments,
+    observations,
   } = formData;
 
   const submitData = new FormData();
@@ -282,6 +291,10 @@ export function ApplyForCredit() {
   submitData.append(
     "clientName",
     `${contactInformation.name} ${contactInformation.lastName}`,
+  );
+  submitData.append(
+    "clientManagerObservation",
+    observations.relevantObservations,
   );
   submitData.append("clientPhoneNumber", contactInformation.phone.toString());
   submitData.append(
@@ -422,15 +435,9 @@ export function ApplyForCredit() {
         prospectCode || "",
       );
 
-      if (prospect && typeof prospect === "object") {
-        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
-          setProspectData(prospect);
-        }
-      }
       const mainBorrower = prospect.borrowers.find(
         (borrower) => borrower.borrowerType === "MainBorrower",
       );
-
       if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
         setCodeError(1011);
         return;
@@ -438,7 +445,12 @@ export function ApplyForCredit() {
 
       if (prospect.state !== prospectStates.CREATED) {
         setCodeError(1012);
-        return;
+      }
+
+      if (prospect && typeof prospect === "object") {
+        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
+          setProspectData(prospect);
+        }
       }
     } catch (error) {
       setCodeError(1010);
@@ -464,6 +476,8 @@ export function ApplyForCredit() {
           prospectData.moneyDestinationAbbreviatedName,
           prospectData.creditProducts[0].loanAmount.toString(),
         );
+
+        if (codeError) return;
 
         if (
           creditData?.modesOfDisbursementTypes &&
@@ -595,7 +609,7 @@ export function ApplyForCredit() {
         }
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(JSON.stringify(error));
+        setMessageError(tittleOptions.errorSummaryProspect);
       }
     };
 

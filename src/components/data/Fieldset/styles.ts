@@ -12,6 +12,7 @@ interface IStyledContainerFieldset {
   $borderColor?: string;
   $showFieldset?: boolean;
   $alignContent?: boolean;
+  $maxHeight?: string;
 }
 
 export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
@@ -21,6 +22,7 @@ export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
   overflow-y: ${({ $hasOverflow }) => ($hasOverflow ? "visible" : "auto")};
   box-sizing: border-box;
   height: ${({ $height }) => $height};
+  max-height: ${({ $maxHeight }) => $maxHeight};
   border-radius: 8px;
   border: ${({ $showFieldset }) => ($showFieldset ? "1px solid" : "none")};
   padding-top: ${({ $hasTable }) => !$hasTable && "16px"};

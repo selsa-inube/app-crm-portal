@@ -14,8 +14,12 @@ import {
   getIconByName,
   OptionStaffPortal,
 } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
+import { ErrorPage } from "@components/layout/ErrorPage";
+import { Fieldset } from "@components/data/Fieldset";
+import { ErrorModal } from "@components/modals/ErrorModal";
+import { InteractiveBox } from "@components/cards/interactiveBox";
 
-import { addConfig } from "./config/credit.config";
+import { addConfig, errorDataCredit } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
 import { StyledArrowBack } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -30,7 +34,20 @@ type IEnhancedSubOption = {
 };
 
 const CreditUI = (props: ICreditUIProps) => {
-  const { isMobile, dataOptions, dataHeader, navigate } = props;
+  const {
+    isMobile,
+    dataOptions,
+    dataHeader,
+    codeError,
+    addToFix,
+    user,
+    showErrorModal,
+    messageError,
+    loading,
+    navigate,
+    setShowErrorModal,
+    setMessageError,
+  } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
 
@@ -69,48 +86,94 @@ const CreditUI = (props: ICreditUIProps) => {
 
   return (
     <>
-      <Stack
-        margin={`20px auto ${isMobile || isTablet ? "100px" : "50px"} auto`}
-        width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-        direction="column"
-        gap="24px"
-      >
-        <GeneralHeader
-          descriptionStatus={dataHeader.status}
-          name={dataHeader.name}
-          profileImageUrl={dataHeader.image || userImage}
+      {codeError ? (
+        <ErrorPage
+          onClick={() => {
+            codeError === 1003
+              ? navigate(
+                  `/login/${user.username}/business-units/select-business-unit`,
+                )
+              : navigate("/clients/select-client/");
+          }}
+          errorCode={codeError}
+          addToFix={addToFix}
         />
-        <Breadcrumbs crumbs={addConfig.crumbs} />
-        <Stack gap="64px" direction="column">
-          <StyledArrowBack
-            $isMobile={isMobile}
-            onClick={() => navigate(addConfig.route)}
-          >
-            <Stack gap="8px" alignItems="center" width="100%">
-              <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
-              <Text type="title" size={isMobile ? "small" : "large"}>
-                {addConfig.title}
+      ) : (
+        <Stack
+          margin={`20px auto ${isMobile || isTablet ? "100px" : "50px"} auto`}
+          width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
+          direction="column"
+          gap="24px"
+        >
+          <GeneralHeader
+            descriptionStatus={dataHeader.status}
+            name={dataHeader.name}
+            profileImageUrl={dataHeader.image || userImage}
+          />
+          <Breadcrumbs crumbs={addConfig.crumbs} />
+          <Stack gap="64px" direction="column">
+            <StyledArrowBack
+              $isMobile={isMobile}
+              onClick={() => navigate(addConfig.route)}
+            >
+              <Stack gap="8px" alignItems="center" width="100%">
+                <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
+                <Text type="title" size={isMobile ? "small" : "large"}>
+                  {addConfig.title}
+                </Text>
+              </Stack>
+            </StyledArrowBack>
+            {options.length === 0 && !loading ? (
+              <Text type="title" size="large">
+                {errorDataCredit.noData}
               </Text>
-            </Stack>
-          </StyledArrowBack>
-          <Stack
-            direction={isTablet ? "column" : "row"}
-            wrap="wrap"
-            alignItems={isTablet ? "center" : "flex-start"}
-          >
-            {options.map(({ key, icon, title, subtitle, url, isDisabled }) => (
-              <CreditCard
-                key={key}
-                icon={icon}
-                title={title}
-                subtitle={subtitle}
-                url={url}
-                isDisabled={isDisabled}
-              />
-            ))}
+            ) : (
+              <>
+                {loading ? (
+                  <Stack width="300px">
+                    <InteractiveBox isMobile={isTablet} isLoading />
+                  </Stack>
+                ) : (
+                  <Fieldset
+                    maxHeight={"550px"}
+                    showFieldset={options.length > 9}
+                  >
+                    <Stack
+                      direction={isTablet ? "column" : "row"}
+                      wrap="wrap"
+                      alignItems={isTablet ? "center" : "flex-start"}
+                    >
+                      {options.map(
+                        ({ key, icon, title, subtitle, url, isDisabled }) => (
+                          <CreditCard
+                            key={key}
+                            icon={icon}
+                            title={title}
+                            subtitle={subtitle}
+                            url={url}
+                            isDisabled={isDisabled}
+                            onInvalidUrl={() => {
+                              setMessageError(errorDataCredit.noUrl);
+                              setShowErrorModal(true);
+                            }}
+                          />
+                        ),
+                      )}
+                    </Stack>
+                  </Fieldset>
+                )}
+              </>
+            )}
           </Stack>
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => setShowErrorModal(false)}
+              isMobile={isMobile}
+              message={messageError}
+            />
+          )}
         </Stack>
-      </Stack>
+      )}
     </>
   );
 };

@@ -80,12 +80,12 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
 
   const documentsRequiredByBorrower =
     validDocumentsRequiredByCreditRequest.length
-      ? validDocumentsRequiredByCreditRequest.map((item) => ({
-          borrower: item.borrowerName,
-          value: Array.isArray(item.documentalRequirement)
-            ? item.documentalRequirement.join(", ")
-            : "",
-        }))
+      ? validDocumentsRequiredByCreditRequest.flatMap((item) =>
+          item.documentalRequirement.map((doc) => ({
+            borrower: item.borrowerName,
+            value: doc,
+          })),
+        )
       : [];
 
   return (
