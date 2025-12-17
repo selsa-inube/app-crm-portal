@@ -27,7 +27,6 @@ const environment = {
   CODE_VERIFIER: import.meta.env.VITE_CODE_VERIFIER as string,
   CODE_CHALLENGE: import.meta.env.VITE_CODE_CHALLENGE as string,
   STATE: import.meta.env.VITE_STATE as string,
-  APPLICATION_NAME: import.meta.env.VITE_APPLICATION_NAME as string,
   ORIGINATOR_CODE: import.meta.env.VITE_ORIGINATOR_CODE as string,
 };
 

@@ -55,7 +55,7 @@ export function AuthProvider({ children }: IAuthProvider) {
       codeVerifier={environment.CODE_VERIFIER}
       codeChallenge={environment.CODE_CHALLENGE}
       state={environment.STATE}
-      applicationName={environment.APPLICATION_NAME}
+      applicationName={environment.VITE_STAFF_PORTAL_CATALOG_CODE}
       originatorCode={environment.ORIGINATOR_CODE}
     >
       <AuthContent>{children}</AuthContent>
