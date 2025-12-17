@@ -156,7 +156,7 @@ function AppPage(props: IAppPage) {
   ) {
     navigate(`/login/${user.username}/business-units/select-business-unit`);
   }
-  console.log(eventData.businessUnit.urlLogo);
+
   return (
     <StyledAppPage>
       <Grid templateRows="auto 1fr" height="100vh" justifyContent="unset">
