@@ -88,8 +88,10 @@ export function SimulateCredit() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [sentModal, setSentModal] = useState(false);
+  const [createdProspectModal, setCreatedProspectModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
   const [loadingQuestions, setLoadingQuestions] = useState(true);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -314,43 +316,44 @@ export function SimulateCredit() {
 
     if (!clientInfo?.associateType || !formData.selectedDestination) return;
 
-    const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
-      businessUnitPublicCode,
-      businessManagerCode,
-      formData.selectedDestination,
-      customerData.publicCode,
-    );
+    try {
+      const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
+        businessUnitPublicCode,
+        businessManagerCode,
+        formData.selectedDestination,
+        customerData.publicCode,
+      );
 
-    const linesArray = Array.isArray(lineOfCreditValues)
-      ? lineOfCreditValues
-      : [lineOfCreditValues];
+      const linesArray = Array.isArray(lineOfCreditValues)
+        ? lineOfCreditValues
+        : [lineOfCreditValues];
 
-    const result: Record<
-      string,
-      {
-        LoanAmountLimit: number;
-        LoanTermLimit: number;
-        RiskFreeInterestRate: number;
-      }
-    > = {};
+      const result: Record<
+        string,
+        {
+          LoanAmountLimit: number;
+          LoanTermLimit: number;
+          RiskFreeInterestRate: number;
+        }
+      > = {};
 
-    linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
-      if (line && line.abbreviateName) {
-        result[line.abbreviateName] = {
-          LoanAmountLimit: line.maxAmount,
-          LoanTermLimit: line.maxTerm,
-          RiskFreeInterestRate: line.maxEffectiveInterestRate,
-        };
-      }
-    });
+      linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
+        if (line && line.abbreviateName) {
+          result[line.abbreviateName] = {
+            LoanAmountLimit: line.maxAmount,
+            LoanTermLimit: line.maxTerm,
+            RiskFreeInterestRate: line.maxEffectiveInterestRate,
+          };
+        }
+      });
 
-    setCreditLineTerms(result);
-  }, [
-    customerData,
-    businessUnitPublicCode,
-    formData.selectedDestination,
-    formData.selectedProducts,
-  ]);
+      setCreditLineTerms(result);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
+      setAllowToContinue(false);
+    }
+  }, [customerData, businessUnitPublicCode, formData.selectedDestination]);
 
   const fetchRulesByProducts = useCallback(async () => {
     setLoadingQuestions(true);
@@ -467,6 +470,7 @@ export function SimulateCredit() {
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
     }
   };
 
@@ -608,7 +612,7 @@ export function SimulateCredit() {
       currentStep === stepsAddProspect.loanAmount.id &&
       !formData.loanAmountState.toggleChecked
     ) {
-      handleSubmitClick();
+      setSentModal(true);
       return;
     }
     if (currentStep === stepsAddProspect.loanConditions.id) {
@@ -631,7 +635,7 @@ export function SimulateCredit() {
     } else if (currentStep + 1 <= steps.length && isCurrentFormValid) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === steps.length) {
-      handleSubmitClick();
+      setSentModal(true);
     }
   };
 
@@ -677,6 +681,7 @@ export function SimulateCredit() {
       : titleButtonTextAssited.goNextText;
 
   const handleSubmitClick = async () => {
+    setIsLoadingSubmit(true);
     if (simulateData.termLimit === 0) {
       delete simulateData.termLimit;
     }
@@ -689,6 +694,7 @@ export function SimulateCredit() {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
         businessManagerCode,
+        customerData.publicCode,
         simulateData,
       );
       const prospectCode = response?.prospectCode;
@@ -698,11 +704,14 @@ export function SimulateCredit() {
         setMessageError?.(messagesError.undefinedCodeProspect);
       } else {
         setProspectCode(prospectCode);
-        setSentModal(true);
+        setSentModal(false);
+        setCreatedProspectModal(true);
       }
     } catch (error) {
       setShowErrorModal?.(true);
       setMessageError?.(`${messagesError.handleSubmit}. ${error}`);
+    } finally {
+      setIsLoadingSubmit(false);
     }
   };
 
@@ -770,6 +779,8 @@ export function SimulateCredit() {
         setErrorsManager((prev) => {
           return { ...prev, validateRequirements: true };
         });
+        setShowErrorModal(true);
+        setMessageError(messagesError.tryLater);
       } finally {
         setIsLoading(false);
       }
@@ -924,19 +935,21 @@ export function SimulateCredit() {
   );
 
   useEffect(() => {
-    if (formData.generalToggleChecked) {
-      const all = Object.keys(creditLineTerms);
-      setFormData((prev) => ({
-        ...prev,
-        selectedProducts: all,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        selectedProducts: [],
-      }));
+    if (Object.keys(creditLineTerms).length > 0) {
+      if (formData.generalToggleChecked) {
+        const all = Object.keys(creditLineTerms);
+        setFormData((prev) => ({
+          ...prev,
+          selectedProducts: all,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          selectedProducts: [],
+        }));
+      }
     }
-  }, [formData.generalToggleChecked, formData.togglesState]);
+  }, [formData.generalToggleChecked, formData.togglesState, creditLineTerms]);
 
   return (
     <>
@@ -1003,12 +1016,15 @@ export function SimulateCredit() {
         allowToContinue={allowToContinue}
         sentModal={sentModal}
         setSentModal={setSentModal}
+        createdProspectModal={createdProspectModal}
+        setCreatedProspectModal={setCreatedProspectModal}
         prospectCode={prospectCode}
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
         userAccount={userAccount}
         loadingQuestions={loadingQuestions}
         showSelectsLoanAmount={!formData.togglesState[0]}
+        isLoadingSubmit={isLoadingSubmit}
         handleNavigate={handleNavigate}
       />
       {showConsultingModal && <Consulting />}

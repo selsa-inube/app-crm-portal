@@ -15,6 +15,7 @@ interface MoneyDestinationUIProps {
   groupedDestinations: { [type: string]: IMoneyDestination[] };
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleChange: (value: string) => void;
+  navigate: (path: string) => void;
 }
 
 function MoneyDestinationUI(props: MoneyDestinationUIProps) {
@@ -27,6 +28,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
     groupedDestinations,
     setShowErrorModal,
     handleChange,
+    navigate,
   } = props;
 
   return (
@@ -84,7 +86,9 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
       </Fieldset>
       {showErrorModal && (
         <ErrorModal
-          handleClose={() => setShowErrorModal(false)}
+          handleClose={() => {
+            (setShowErrorModal(false), navigate("/credit/prospects"));
+          }}
           isMobile={isTablet}
           message={messageError}
         />

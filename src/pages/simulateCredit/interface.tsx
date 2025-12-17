@@ -148,6 +148,7 @@ interface SimulateCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   servicesProductSelection: IServicesProductSelection;
+  isLoadingSubmit: boolean;
   isLoadingCreditLimit: boolean;
   paymentCapacity?: IPaymentCapacityResponse | null;
   businessManagerCode: string;
@@ -159,6 +160,8 @@ interface SimulateCreditUIProps {
   paymentChannel: IResponsePaymentDatesChannel[] | null;
   loadingQuestions: boolean;
   showSelectsLoanAmount: boolean;
+  createdProspectModal: boolean;
+  setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -226,6 +229,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     paymentChannel,
     loadingQuestions,
     showSelectsLoanAmount,
+    createdProspectModal,
+    setCreatedProspectModal,
+    isLoadingSubmit,
   } = props;
 
   return (
@@ -356,7 +362,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     ...titleButtonTextAssited,
                     goNextText: assistedButtonText,
                   }}
-                  onSubmitClick={handleSubmitClick}
+                  onSubmitClick={() => setSentModal(true)}
                   disableNext={!isCurrentFormValid}
                   disableSubmit={!isCurrentFormValid}
                   showCurrentStepNumber={false}
@@ -669,13 +675,26 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               {sentModal && (
                 <BaseModal
                   title={dataSubmitApplication.modals.filed}
+                  nextButton={dataSubmitApplication.modals.continue}
+                  backButton={dataSubmitApplication.modals.cancel}
+                  handleBack={() => setSentModal(false)}
+                  handleNext={handleSubmitClick}
+                  width={isMobile ? "290px" : "402px"}
+                  isLoading={isLoadingSubmit}
+                >
+                  <Text>{dataSubmitApplication.modals.sure}</Text>
+                </BaseModal>
+              )}
+              {createdProspectModal && (
+                <BaseModal
+                  title={dataSubmitApplication.modals.filed}
                   nextButton={dataSubmitApplication.modals.cancel}
                   handleNext={() => {
-                    setSentModal(false);
+                    setCreatedProspectModal(false);
                     navigate(`/credit/prospects/${prospectCode}`);
                   }}
                   handleClose={() => {
-                    setSentModal(false);
+                    setCreatedProspectModal(false);
                     navigate(`/credit/prospects/${prospectCode}`);
                   }}
                   width={isMobile ? "290px" : "402px"}

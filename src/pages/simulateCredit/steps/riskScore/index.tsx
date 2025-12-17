@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Stack, Text } from "@inubekit/inubekit";
+import { Button, Input, SkeletonLine, Stack, Text } from "@inubekit/inubekit";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MdOutlineEdit } from "react-icons/md";
@@ -24,6 +24,7 @@ export function RiskScore(props: IRiskScoreProps) {
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = Yup.object({
     score: Yup.number().required(""),
@@ -54,14 +55,25 @@ export function RiskScore(props: IRiskScoreProps) {
     });
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
         <RiskScoreGauge value={value || riskScoreData.value} />
         <Stack gap="4px">
-          <Text type="body" size="small">
-            {riskScoreData.reportedScore}
-          </Text>
+          {isLoading ? (
+            <SkeletonLine />
+          ) : (
+            <Text type="body" size="small">
+              {riskScoreData.reportedScore}
+            </Text>
+          )}
           <Text type="body" weight="bold" size="small">
             {date === riskScoreData.date
               ? formatPrimaryDate(new Date())

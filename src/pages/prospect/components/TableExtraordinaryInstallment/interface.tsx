@@ -266,7 +266,10 @@ export function TableExtraordinaryInstallmentUI(
                 </Td>
               ))}
               {visbleActions.map((_, actionIndex) => (
-                <Td key={`skeleton-action-${rowIndex}-${actionIndex}`}>
+                <Td
+                  key={`skeleton-action-${rowIndex}-${actionIndex}`}
+                  type="custom"
+                >
                   <SkeletonLine animated width="100%" />
                 </Td>
               ))}

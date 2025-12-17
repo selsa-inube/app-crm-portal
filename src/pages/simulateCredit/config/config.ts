@@ -17,5 +17,6 @@ export const dataSubmitApplication = {
     cancel: "Cerrar",
     understand: "Entendido",
     share: "Compartir",
+    sure: "Se creara el prospecto. ¿deseas continuar?",
   },
 };
