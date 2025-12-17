@@ -31,6 +31,7 @@ import {
   IPaymentDatesChannel,
   IResponsePaymentDatesChannel,
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import { useIAuth } from "@inube/iauth-react";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
@@ -104,6 +105,7 @@ export function SimulateCredit() {
   const steps = Object.values(stepsAddProspect);
   const navigate = useNavigate();
 
+  const { user } = useIAuth();
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const userAccount = eventData.user.identificationDocumentNumber || "";
@@ -297,9 +299,13 @@ export function SimulateCredit() {
   }>({});
 
   const fetchCreditLineTerms = useCallback(async () => {
+    if (eventData.businessManager.abbreviatedName.length === 0) {
+      setCodeError(1003);
+      setAddToFix([messagesError.noBusinessUnit]);
+    }
     if (customerData.fullName.length === 0) {
       setCodeError(1016);
-      setAddToFix(["No se ha seleccionado ningún cliente "]);
+      setAddToFix([messagesError.noSelectClient]);
     } else {
       setCodeError(null);
     }
@@ -887,6 +893,16 @@ export function SimulateCredit() {
     navigate("/credit/prospects");
   };
 
+  const handleNavigate = () => {
+    if (codeError === 1003) {
+      navigate(`/login/${user.username}/business-units/select-business-unit`);
+    } else if (codeError === 1016) {
+      navigate("/clients/select-client/");
+    } else {
+      navigate("/credit");
+    }
+  };
+
   const dataMaximumCreditLimitService = useMemo(
     () => ({
       identificationDocumentType:
@@ -993,6 +1009,7 @@ export function SimulateCredit() {
         userAccount={userAccount}
         loadingQuestions={loadingQuestions}
         showSelectsLoanAmount={!formData.togglesState[0]}
+        handleNavigate={handleNavigate}
       />
       {showConsultingModal && <Consulting />}
     </>

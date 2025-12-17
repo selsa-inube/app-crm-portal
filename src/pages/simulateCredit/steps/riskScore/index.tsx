@@ -68,13 +68,18 @@ export function RiskScore(props: IRiskScoreProps) {
               : formatPrimaryDate(new Date(date))}
           </Text>
         </Stack>
-        <Button
-          variant="outlined"
-          iconBefore={<MdOutlineEdit />}
-          onClick={() => setShowEditModal(true)}
-        >
-          {riskScoreData.editScore}
-        </Button>
+        <Stack direction="column" gap="12px">
+          <Button
+            variant="outlined"
+            iconBefore={<MdOutlineEdit />}
+            onClick={() => setShowEditModal(true)}
+          >
+            {riskScoreData.editScore}
+          </Button>
+          <Button variant="none" iconBefore={<MdOutlineEdit />}>
+            {riskScoreData.restore}
+          </Button>
+        </Stack>
         {showErrorModal && (
           <ErrorModal
             handleClose={() => setShowErrorModal(false)}

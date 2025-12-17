@@ -110,8 +110,15 @@ export function LoanAmount(props: ILoanAmountProps) {
           }, [paymentChannel]);
 
           const paymentChannelOptions = useMemo(() => {
+            const validChannels = flatChannels.filter(
+              (channel) => channel && channel.abbreviatedName,
+            );
+
             const unique = new Map(
-              flatChannels.map((ch) => [ch.abbreviatedName, ch]),
+              validChannels.map((channel) => [
+                channel.abbreviatedName,
+                channel,
+              ]),
             );
 
             return Array.from(unique.values()).map((channel, index) => ({

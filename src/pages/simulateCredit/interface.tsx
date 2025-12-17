@@ -153,6 +153,7 @@ interface SimulateCreditUIProps {
   businessManagerCode: string;
   allowToContinue: boolean;
   handleModalTryAgain: () => void;
+  handleNavigate: () => void;
   errorsManager: IManageErrors;
   userAccount?: string;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
@@ -193,7 +194,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     formData,
     selectedProducts,
     isMobile,
-    isTablet,
     prospectData,
     creditLimitData,
     totalIncome,
@@ -220,6 +220,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     handleModalTryAgain,
     sentModal,
     setSentModal,
+    handleNavigate,
     prospectCode,
     errorsManager,
     paymentChannel,
@@ -231,7 +232,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigate("/clients/select-client/")}
+          onClick={handleNavigate}
           errorCode={codeError}
           addToFix={addToFix}
         />
@@ -386,7 +387,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         )
                       }
                       onFormValid={setIsCurrentFormValid}
-                      isTablet={isTablet}
+                      isTablet={isMobile}
                       businessManagerCode={businessManagerCode}
                       clientIdentificationNumber={customerData.publicCode}
                     />

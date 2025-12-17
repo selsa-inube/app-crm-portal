@@ -10,3 +10,11 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
 `;
+
+export const StyledCardContainer = styled.div`
+  cursor: pointer;
+
+  & > div > div {
+    cursor: pointer;
+  }
+`;

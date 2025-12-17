@@ -73,6 +73,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
                           isSelected={
                             selectedDestination === money.abbreviatedName
                           }
+                          isMobile={isTablet}
                         />
                       ))}
                   </Stack>
