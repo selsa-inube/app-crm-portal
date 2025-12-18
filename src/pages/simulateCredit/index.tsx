@@ -771,8 +771,6 @@ export function SimulateCredit() {
     handleSubmit();
   }, [currentStep, businessUnitPublicCode]);
 
-  console.log(formData, "formData");
-
   useEffect(() => {
     if (
       clientPortfolio &&
