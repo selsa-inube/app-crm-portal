@@ -13,13 +13,13 @@ export const StyledContainerAssisted = styled.div<IStyledContainerAssisted>`
       $cursorDisabled ? "not-allowed" : "pointer"};
   }
 `;
-export const StyledContainer = styled.div`
+export const StyledContainer = styled.div<{ $isMobile?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  width: 157px;
+  width: ${({ $isMobile }) => ($isMobile ? "100%" : "157px")};
   height: 50px;
   border-radius: 8px;
   border: 2px solid ${({ theme }) => theme?.palette?.neutral?.N30 || "#0052CC"};

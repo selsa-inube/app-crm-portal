@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MdCheckCircleOutline } from "react-icons/md";
-import { Stack, Text, Icon, Spinner } from "@inubekit/inubekit";
+import { Stack, Text, Icon } from "@inubekit/inubekit";
 
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
 import { Fieldset } from "@components/data/Fieldset";
@@ -88,16 +88,21 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
         {isLoading ? (
           <Stack
             gap="16px"
-            padding="16px"
             margin={isMobile ? "8px" : "16px"}
-            justifyContent="center"
-            direction="column"
-            alignItems="center"
+            direction={isMobile ? "column" : "row"}
+            wrap="wrap"
+            height={isMobile ? "auto" : "324px"}
           >
-            <Spinner />
-            <Text type="title" size="medium" appearance="dark">
-              {dataError.loadRequirements}
-            </Text>
+            {[1, 2, 3].map((index) => (
+              <UnfulfilledRequirements
+                key={index}
+                title={`${dataError.alert} ${index}`}
+                isMobile={isMobile}
+                requirement=""
+                causeNonCompliance=""
+                isLoading={true}
+              />
+            ))}
           </Stack>
         ) : validateRequirements && validateRequirements.length > 0 ? (
           <Stack

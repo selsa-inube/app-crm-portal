@@ -7,7 +7,6 @@ import {
   Assisted,
 } from "@inubekit/inubekit";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { MdArrowBack, MdCheckCircle, MdOutlineRule } from "react-icons/md";
 
 import { ErrorModal } from "@components/modals/ErrorModal";
@@ -32,8 +31,6 @@ import {
 import {
   addConfig,
   dataSubmitApplication,
-  disbursemenTabs,
-  tittleOptions,
   textAddCongfig,
 } from "./config/addConfig";
 import { StyledArrowBack, StyledContainerAssisted } from "../styles";
@@ -91,6 +88,8 @@ interface PayRollUIProps {
   handleSuccessModalClose: () => void;
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   isModalOpenRequirements: boolean;
+  isSelected: string;
+  handleTabChange: (tabId: string) => void;
 }
 
 export function PayRollUI(props: PayRollUIProps) {
@@ -122,7 +121,6 @@ export function PayRollUI(props: PayRollUIProps) {
     showErrorModal,
     setShowErrorModal,
     messageError,
-    setMessageError,
     onRequirementsValidated,
     showSubmitModal,
     setShowSubmitModal,
@@ -136,20 +134,9 @@ export function PayRollUI(props: PayRollUIProps) {
     isModalOpenRequirements,
     isLoading,
     errorsManager,
+    isSelected,
+    handleTabChange,
   } = props;
-
-  const [isSelected, setIsSelected] = useState<string>(
-    disbursemenTabs.internal.id,
-  );
-
-  const handleTabChange = (tabId: string) => {
-    setIsSelected(tabId);
-  };
-
-  if (codeError) {
-    setShowErrorModal(true);
-    setMessageError(tittleOptions.tryLater);
-  }
 
   return (
     <>
@@ -269,7 +256,7 @@ export function PayRollUI(props: PayRollUIProps) {
                       handleOnChange={(values) =>
                         handleFormChange({ disbursementGeneral: values })
                       }
-                      isSelected={isSelected || disbursemenTabs.internal.id}
+                      isSelected={isSelected}
                       handleTabChange={handleTabChange}
                       data={prospectData}
                       customerData={customerData}

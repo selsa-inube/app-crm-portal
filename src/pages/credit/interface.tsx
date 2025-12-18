@@ -97,7 +97,7 @@ const CreditUI = (props: ICreditUIProps) => {
   );
 
   const handleCardClick = (title: string, url: string) => {
-    if (title === "Adelanto de nómina") {
+    if (title === advancePaymentModal.textPayrool) {
       handleOpenInfoModal();
     } else if (url) {
       navigate(url);

@@ -14,7 +14,11 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 
-import { prospectStates } from "./config/addConfig";
+import {
+  prospectStates,
+  disbursemenTabs,
+  tittleOptions,
+} from "./config/addConfig";
 import { IBonusFormData, IProspectSummaryById } from "./types";
 import { titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
@@ -61,6 +65,22 @@ export function Bonus() {
   >([]);
   const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
+
+  const [isSelected, setIsSelected] = useState<string>(
+    disbursemenTabs.internal.id,
+  );
+
+  const handleTabChange = (tabId: string) => {
+    setIsSelected(tabId);
+  };
+
+  useEffect(() => {
+    if (codeError) {
+      setShowErrorModal(true);
+      setMessageError(tittleOptions.tryLater);
+    }
+  }, [codeError]);
+
   const handleNextStep = () => {
     if (currentStep < lastStepId && isCurrentFormValid) {
       setCurrentStep(currentStep + 1);
@@ -271,6 +291,7 @@ export function Bonus() {
     formData.obligationsFinancial,
     formData.riskScore,
   ]);
+
   const simulateData: IProspect = useMemo(
     () => ({
       clientIdentificationNumber: customerData.publicCode,
@@ -328,6 +349,7 @@ export function Bonus() {
     }),
     [formData, onlyBorrowerData],
   );
+
   useEffect(() => {
     if (!customerData?.customerId || !simulateData) return;
     const payload = {
@@ -356,6 +378,7 @@ export function Bonus() {
 
     handleSubmit();
   }, [currentStep, businessUnitPublicCode]);
+
   const handleRequirementsValidated = useCallback(
     (requirements: IValidateRequirement[]) => {
       const unfulfilledRequirements = requirements.filter(
@@ -451,6 +474,7 @@ export function Bonus() {
       setIsLoadingSubmit(false);
     }
   };
+
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
     navigate("/credit");
@@ -609,6 +633,8 @@ export function Bonus() {
       errorsManager={errorsManager}
       setIsModalOpenRequirements={setIsModalOpenRequirements}
       isModalOpenRequirements={isModalOpenRequirements}
+      isSelected={isSelected}
+      handleTabChange={handleTabChange}
     />
   );
 }

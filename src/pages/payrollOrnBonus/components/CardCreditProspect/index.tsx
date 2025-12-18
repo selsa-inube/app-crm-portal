@@ -34,7 +34,6 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
   const {
     title,
     borrower,
-
     date,
     value,
     isMobile,

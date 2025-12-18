@@ -44,6 +44,7 @@ export const advancePaymentModal = {
     "Es un adelanto prima de servicios, que se paga cada 6 meses.",
   description: "Selecciona si necesitas un adelanto de nómina o prima.",
   nextButtonText: "Entendido",
+  textPayrool: "Nómina",
 };
 
 interface CreditCardCfg {

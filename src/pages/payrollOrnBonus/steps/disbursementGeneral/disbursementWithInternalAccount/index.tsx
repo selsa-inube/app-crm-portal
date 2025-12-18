@@ -353,7 +353,11 @@ export function DisbursementWithInternalAccount(
       gap="16px"
       justifyContent="center"
     >
-      <Stack gap="20px" justifyContent="space-between">
+      <Stack
+        gap="20px"
+        justifyContent="space-between"
+        direction={isMobile ? "column" : "row"}
+      >
         <Stack direction="column" gap="10px">
           <Textfield
             id="amount"
@@ -408,7 +412,7 @@ export function DisbursementWithInternalAccount(
             </Text>
           </Stack>
         </Stack>
-        <StyledContainer>
+        <StyledContainer $isMobile={isMobile}>
           <Text type="label" size="small" appearance="dark">
             {disbursementGeneral.labelValue}
           </Text>

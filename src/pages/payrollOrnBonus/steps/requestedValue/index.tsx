@@ -93,7 +93,11 @@ export function RequestedValue(props: IRequestedValueProps) {
           wrap="nowrap"
           direction={isMobile ? "column" : "row"}
         >
-          <Stack direction="column" width={isMobile ? "100%" : "300px"}>
+          <Stack
+            direction="column"
+            width={isMobile ? "100%" : "300px"}
+            alignItems={isMobile ? "center" : "flex-start"}
+          >
             <CardCreditProspect
               title={dataRequestValue.availableQuota}
               titleQuota={dataRequestValue.availableQuotaLabel}
