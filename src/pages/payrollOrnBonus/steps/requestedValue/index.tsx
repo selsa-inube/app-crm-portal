@@ -56,6 +56,13 @@ export function RequestedValue(props: IRequestedValueProps) {
   });
 
   React.useEffect(() => {
+    if (initialAmount) {
+      formik.setFieldTouched("amount", true, true);
+      formik.validateForm();
+    }
+  }, []);
+
+  React.useEffect(() => {
     const isValid = formik.isValid && formik.values.amount !== "";
     onValidationChange(isValid);
   }, [formik.isValid, formik.values.amount, onValidationChange]);
@@ -67,6 +74,9 @@ export function RequestedValue(props: IRequestedValueProps) {
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
     formik.setFieldValue("amount", value);
+    if (!formik.touched.amount) {
+      formik.setFieldTouched("amount", true, false);
+    }
   };
 
   const displayValue = formik.values.amount

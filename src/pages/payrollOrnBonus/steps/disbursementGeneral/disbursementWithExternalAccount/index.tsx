@@ -459,7 +459,12 @@ export function DisbursementWithExternalAccount(
           label={disbursemenOptionAccount.labelAccountNumber}
           placeholder={disbursemenOptionAccount.placeAccountNumber}
           value={formik.values[optionNameForm]?.accountNumber || ""}
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*$/.test(value)) {
+              formik.setFieldValue(`${optionNameForm}.accountNumber`, value);
+            }
+          }}
           onBlur={formik.handleBlur}
           fullwidth={true}
           size="compact"

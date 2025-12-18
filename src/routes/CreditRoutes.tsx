@@ -10,8 +10,9 @@ import { CreditApplications } from "@pages/applications";
 import { Credit } from "@pages/credit";
 import { FinancialReporting } from "@pages/financialReporting";
 import { ProspectCredit } from "@pages/prospectCredit";
-import { Bonus } from "@pages/payrollOrnBonus/bunus";
+
 import { Payroll } from "@src/pages/payrollOrnBonus/payRoll";
+import { Bonus } from "@src/pages/payrollOrnBonus/bunus";
 
 function CreditRoutes() {
   return (

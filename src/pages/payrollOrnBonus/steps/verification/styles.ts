@@ -16,3 +16,10 @@ export const StyledBoxAttribute = styled.div`
   width: 552px;
   border: 1px solid ${inube.palette.neutral.N700};
 `;
+
+export const StyledDivider = styled.div`
+  grid-column: 1 / -1;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 15px 0;
+`;

@@ -18,10 +18,12 @@ export interface IInternalAccount {
   amount: number;
   accountNumber: string;
   description: string;
+  bank?: string;
 }
 
 export interface IMethodOfDisbursement {
   Internal_account: IInternalAccount;
+  External_account: IInternalAccount;
 }
 
 export interface IAdvanceType {
@@ -75,22 +77,74 @@ export const VerificationPayrollOrnBonus = (
   ].filter((attr) => attr.value);
 
   const methodOfDisbursement = [
-    createAttribute(
-      "Valor a girar con esta forma de desembolso",
-      currencyFormat(steps.methodOfDisbursement.Internal_account.amount),
-    ),
-
-    createAttribute(
-      "Cuenta para desembolsar el dinero",
-      steps.methodOfDisbursement.Internal_account.accountNumber,
-    ),
-
-    createAttribute(
-      "Observaciones",
-      steps.methodOfDisbursement.Internal_account.description,
-    ),
+    ...(steps.methodOfDisbursement.Internal_account.amount > 0 ||
+    steps.methodOfDisbursement.Internal_account.accountNumber
+      ? [
+          createAttribute("Tipo de cuenta", "Cuenta interna"),
+          ...(steps.methodOfDisbursement.Internal_account.amount > 0
+            ? [
+                createAttribute(
+                  "Valor a girar con esta forma de desembolso",
+                  currencyFormat(
+                    steps.methodOfDisbursement.Internal_account.amount,
+                  ),
+                ),
+              ]
+            : []),
+          ...(steps.methodOfDisbursement.Internal_account.accountNumber
+            ? [
+                createAttribute(
+                  "Cuenta para desembolsar el dinero",
+                  steps.methodOfDisbursement.Internal_account.accountNumber,
+                ),
+              ]
+            : []),
+          ...(steps.methodOfDisbursement.Internal_account.description
+            ? [
+                createAttribute(
+                  "Observaciones",
+                  steps.methodOfDisbursement.Internal_account.description,
+                ),
+              ]
+            : []),
+        ]
+      : []),
+    ...(steps.methodOfDisbursement.External_account.amount > 0 ||
+    steps.methodOfDisbursement.External_account.accountNumber
+      ? [
+          createAttribute("Tipo de cuenta", "Cuenta externa"),
+          ...(steps.methodOfDisbursement.External_account.amount > 0
+            ? [
+                createAttribute(
+                  "Valor a girar con esta forma de desembolso",
+                  currencyFormat(
+                    steps.methodOfDisbursement.External_account.amount,
+                  ),
+                ),
+              ]
+            : []),
+          ...(steps.methodOfDisbursement.External_account.bank &&
+          steps.methodOfDisbursement.External_account.accountNumber
+            ? [
+                createAttribute(
+                  "Cuenta para desembolsar el dinero",
+                  steps.methodOfDisbursement.External_account.bank +
+                    " - " +
+                    steps.methodOfDisbursement.External_account.accountNumber,
+                ),
+              ]
+            : []),
+          ...(steps.methodOfDisbursement.External_account.description
+            ? [
+                createAttribute(
+                  "Observaciones",
+                  steps.methodOfDisbursement.External_account.description,
+                ),
+              ]
+            : []),
+        ]
+      : []),
   ].filter((attr) => attr.value);
-
   const incomeAttributes: IAttributes[] = [];
 
   if (steps.destinations) {

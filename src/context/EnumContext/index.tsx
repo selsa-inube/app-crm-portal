@@ -51,7 +51,6 @@ export const EnumProvider = ({ children }: { children: ReactNode }) => {
       let rawData: IDomainEnum[] | null = null;
 
       rawData = getMocks(enumName);
-      console.log("rawData: ", rawData);
       if (!rawData) {
         return;
       }
