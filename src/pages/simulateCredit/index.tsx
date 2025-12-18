@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
-import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
@@ -56,7 +55,6 @@ export function SimulateCredit() {
   );
   const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
-  const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isAlertIncome, setIsAlertIncome] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
@@ -525,15 +523,9 @@ export function SimulateCredit() {
       );
       setPaymentChannel(dataPaymentDates ?? null);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
+      setMessageError(messagesError.tryLater);
+      setAllowToContinue(false);
     }
   };
   useEffect(() => {
@@ -614,9 +606,6 @@ export function SimulateCredit() {
     ) {
       setSentModal(true);
       return;
-    }
-    if (currentStep === stepsAddProspect.loanConditions.id) {
-      showConsultingForFiveSeconds();
     }
     if (
       currentStep === stepsAddProspect.sourcesIncome.id &&
@@ -715,13 +704,6 @@ export function SimulateCredit() {
     }
   };
 
-  const showConsultingForFiveSeconds = () => {
-    setShowConsultingModal(true);
-    setTimeout(() => {
-      setShowConsultingModal(false);
-    }, 2000);
-  };
-
   const fetchCreditLimit = async () => {
     try {
       const result = await getCreditLimit(
@@ -788,6 +770,8 @@ export function SimulateCredit() {
 
     handleSubmit();
   }, [currentStep, businessUnitPublicCode]);
+
+  console.log(formData, "formData");
 
   useEffect(() => {
     if (
@@ -1027,7 +1011,6 @@ export function SimulateCredit() {
         isLoadingSubmit={isLoadingSubmit}
         handleNavigate={handleNavigate}
       />
-      {showConsultingModal && <Consulting />}
     </>
   );
 }

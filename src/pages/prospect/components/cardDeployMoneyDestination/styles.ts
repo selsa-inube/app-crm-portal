@@ -13,6 +13,7 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
 
 export const StyledCardContainer = styled.div`
   cursor: pointer;
+  padding: 16px;
 
   & > div > div {
     cursor: pointer;

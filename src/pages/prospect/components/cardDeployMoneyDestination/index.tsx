@@ -20,7 +20,7 @@ export function CardDeployMoneyDestination(
   const collapseMenuRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Fieldset padding="0">
+    <Fieldset padding="0" hasTable={true}>
       <StyledCardContainer onClick={() => setCollapse(!collapse)}>
         <Stack
           padding="0 8px"

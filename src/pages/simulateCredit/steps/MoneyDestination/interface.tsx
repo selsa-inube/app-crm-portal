@@ -52,7 +52,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
                     direction="row"
                     wrap="wrap"
                     justifyContent={isTablet ? "center" : "initial"}
-                    padding="0 8px"
+                    padding="0 16px 16px 16px"
                     gap="12px"
                   >
                     {group
