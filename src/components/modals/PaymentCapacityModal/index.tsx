@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdErrorOutline, MdInfoOutline } from "react-icons/md";
 import {
   Divider,
@@ -21,6 +21,7 @@ import { IMaximumCreditLimit } from "@services/creditRequest/types";
 import { postBusinessUnitRules } from "@services/creditLimit/getMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit";
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
+import { formatPrimaryDate } from "@src/utils/formatData/date";
 
 import { BaseModal } from "../baseModal";
 import {
@@ -64,7 +65,17 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
   const [maximumCreditLimitData, setMaximumCreditLimitData] =
     useState<IMaximumCreditLimit | null>(null);
 
-  const tabsToRender = dataTabs.filter((tab) => tab.id !== "extraordinary");
+  const tabsToRender = useMemo(() => {
+    const hasExtraordinary =
+      maximumCreditLimitData?.extraordinaryInstallments &&
+      maximumCreditLimitData.extraordinaryInstallments.length > 0;
+
+    if (hasExtraordinary) {
+      return dataTabs;
+    }
+
+    return dataTabs.filter((tab) => tab.id !== "extraordinary");
+  }, [maximumCreditLimitData]);
 
   const onChange = (tabId: string) => {
     setCurrentTab(tabId);
@@ -74,7 +85,10 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     const fetchMaximumCreditLimit = async () => {
       setLoading(true);
       setError(false);
-
+      console.log(
+        "dataMaximumCreditLimitService: ",
+        dataMaximumCreditLimitService,
+      );
       try {
         const submitData: IMaximumCreditLimit = {
           customerCode:
@@ -95,7 +109,6 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
         const data = await postBusinessUnitRules(
           businessUnitPublicCode,
           businessManagerCode,
-          userAccount,
           submitData,
         );
 
@@ -161,11 +174,14 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
               padding="0px 8px"
               height="350px"
             >
-              <Tabs
-                selectedTab={currentTab}
-                tabs={tabsToRender}
-                onChange={onChange}
-              />
+              <Stack padding="0" width="100%">
+                <Tabs
+                  selectedTab={currentTab}
+                  tabs={tabsToRender}
+                  onChange={onChange}
+                  scroll={isMobile}
+                />
+              </Stack>
               {currentTab === "ordinary" && (
                 <Stack direction="column" gap="16px">
                   <Stack justifyContent="space-between">
@@ -227,18 +243,17 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                   </Stack>
                   <Stack justifyContent="space-between">
                     <Text type="body" size="medium" appearance="gray">
-                      {paymentCapacityData.lineOfCredit}
+                      {paymentCapacityData.getLineOfCredit(
+                        maximumCreditLimitData?.lineOfCreditAbbreviatedName ||
+                          "",
+                      )}
                     </Text>
                     <Stack alignItems="center" gap="4px">
-                      <Text appearance="success">$</Text>
                       {loading ? (
                         <SkeletonLine width="70px" animated={true} />
                       ) : (
                         <Text type="body" size="small">
-                          {currencyFormat(
-                            maximumCreditLimitData?.maxTerm || 0,
-                            false,
-                          )}
+                          {maximumCreditLimitData?.maxTerm}
                         </Text>
                       )}
                     </Stack>
@@ -311,7 +326,11 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                                     true,
                                   )}
                                 </Td>
-                                <Td align="center">{row.installmentDate}</Td>
+                                <Td align="center">
+                                  {formatPrimaryDate(
+                                    new Date(row.installmentDate),
+                                  )}
+                                </Td>
                               </Tr>
                             ),
                           )
