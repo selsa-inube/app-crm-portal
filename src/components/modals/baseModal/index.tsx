@@ -14,7 +14,7 @@ import { StyledContainer, StyledContainerClose } from "./styles";
 import { dataBaseModal } from "./config";
 
 export interface IBaseModalProps {
-  title: string;
+  title: string | React.ReactNode;
   children: JSX.Element | JSX.Element[];
   handleNext?: () => void;
   handleBack?: () => void;

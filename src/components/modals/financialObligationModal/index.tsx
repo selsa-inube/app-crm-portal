@@ -11,7 +11,6 @@ import {
 } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 import {
   handleChangeWithCurrency,
   validateCurrencyField,
@@ -25,6 +24,7 @@ import {
   dataInputs,
 } from "./config";
 import { dataReport } from "../ReportCreditsModal/config";
+import { TruncatedText } from "../TruncatedTextModal";
 
 export interface FinancialObligationModalProps {
   onCloseModal: () => void;
@@ -106,7 +106,14 @@ function FinancialObligationModal({
 
   return (
     <BaseModal
-      title={truncateTextToMaxLength(dataReport.title, 25)}
+      title={
+        <TruncatedText
+          text={dataReport.title}
+          maxLength={25}
+          size="small"
+          type="headline"
+        />
+      }
       nextButton={confirmButtonText}
       backButton={dataInputs.cancel}
       handleNext={formik.submitForm}

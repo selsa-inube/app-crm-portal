@@ -11,7 +11,6 @@ import {
 import { useState, useEffect, useContext } from "react";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { getPaymentMethods } from "@services/prospect/getPaymentMethods";
 import { IBusinessUnitRules } from "@services/businessUnitRules/types";
@@ -44,6 +43,7 @@ import {
   REPAYMENT_STRUCTURES_WITH_INCREMENT,
   repaymentStructureMap,
 } from "./config";
+import { TruncatedText } from "../TruncatedTextModal";
 
 interface EditProductModalProps {
   onCloseModal: () => void;
@@ -647,7 +647,14 @@ function EditProductModal(props: EditProductModalProps) {
     >
       {(formik) => (
         <BaseModal
-          title={truncateTextToMaxLength(title, 25)}
+          title={
+            <TruncatedText
+              text={title}
+              maxLength={25}
+              size="small"
+              type="headline"
+            />
+          }
           backButton="Cancelar"
           nextButton={confirmButtonText}
           handleNext={formik.submitForm}

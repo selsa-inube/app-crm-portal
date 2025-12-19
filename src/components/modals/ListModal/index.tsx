@@ -19,7 +19,6 @@ import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import { DocumentViewer } from "../DocumentViewer";
 import {
@@ -31,6 +30,7 @@ import {
   StyledModal,
 } from "./styles";
 import { listModalData } from "./config";
+import { TruncatedText } from "../TruncatedTextModal";
 
 export interface IOptionButtons {
   label: string;
@@ -175,7 +175,7 @@ export const ListModal = (props: IListModalProps) => {
       <StyledDocuments>
         {data?.map((element) => (
           <StyledItem key={element.id}>
-            <Text>{truncateTextToMaxLength(element.name, maxLength)}</Text>
+            <TruncatedText text={element.name} maxLength={maxLength} />
             <Icon
               icon={icon}
               appearance="dark"

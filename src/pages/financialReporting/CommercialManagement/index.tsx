@@ -20,7 +20,6 @@ import {
 } from "@inubekit/inubekit";
 import { MenuProspect } from "@components/navigation/MenuProspect";
 import {
-  truncateTextToMaxLength,
   capitalizeFirstLetter,
   capitalizeFirstLetterEachWord,
 } from "@utils/formatData/text";
@@ -52,6 +51,7 @@ import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequest
 import { getModeOfDisbursement } from "@services/creditRequest/getModeOfDisbursement";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import { titlesModal } from "./config/config";
 import { errorMessages } from "../config";
@@ -341,27 +341,26 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   </Stack>
                   {isMobile && (
                     <Stack margin="4px 0px">
-                      <Text type="title" size={!isMobile ? "large" : "medium"}>
-                        {data.clientName &&
-                          capitalizeFirstLetterEachWord(
-                            truncateTextToMaxLength(data.clientName),
-                          )}
-                      </Text>
+                      <TruncatedText
+                        text={data.clientName}
+                        maxLength={50}
+                        type="title"
+                        size={!isMobile ? "large" : "medium"}
+                        transformFn={capitalizeFirstLetterEachWord}
+                      />
                     </Stack>
                   )}
                   <Stack gap={!isMobile ? "4px" : "4px"}>
                     <Text type="title" size="small" appearance="gray">
                       {tittleOptions.titleDestination}
                     </Text>
-                    <Text type="title" size="small">
-                      {data.clientName &&
-                        capitalizeFirstLetter(
-                          truncateTextToMaxLength(
-                            data.moneyDestinationAbreviatedName,
-                            60,
-                          ),
-                        )}
-                    </Text>
+                    <TruncatedText
+                      text={data.moneyDestinationAbreviatedName}
+                      maxLength={60}
+                      type="title"
+                      size="small"
+                      transformFn={capitalizeFirstLetter}
+                    />
                   </Stack>
                   <Stack gap="4px">
                     <Text type="title" size="small" appearance="gray">
@@ -377,12 +376,12 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
 
                 {!isMobile && (
                   <Stack gap="36px">
-                    <Text type="title">
-                      {data.clientName &&
-                        capitalizeFirstLetterEachWord(
-                          truncateTextToMaxLength(data.clientName),
-                        )}
-                    </Text>
+                    <TruncatedText
+                      text={data.clientName}
+                      maxLength={60}
+                      type="title"
+                      transformFn={capitalizeFirstLetterEachWord}
+                    />
                   </Stack>
                 )}
                 <Stack gap="2px">

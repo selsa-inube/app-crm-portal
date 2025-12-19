@@ -36,12 +36,7 @@ export function CardGray(props: ICardGrayProps) {
           {label}
         </Text>
         {!placeHolderTag ? (
-          <Text
-            type="body"
-            size="medium"
-            appearance={apparencePlaceHolder}
-            ellipsis={true}
-          >
+          <Text type="body" size="medium" appearance={apparencePlaceHolder}>
             {placeHolder}
           </Text>
         ) : (
