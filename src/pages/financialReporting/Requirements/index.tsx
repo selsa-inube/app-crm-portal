@@ -50,58 +50,64 @@ export const Requirements = (props: IRequirementsProps) => {
   const [dataRequirements, setDataRequirements] = useState<IRequirementsData[]>(
     [],
   );
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    const fetchRequirements = async () => {
-      try {
-        if (!creditRequestCode) {
-          return;
-        }
+  const fetchRequirements = async () => {
+    setLoading(true);
+    setError(false);
 
-        const data = await getAllPackagesOfRequirementsById(
-          businessUnitPublicCode,
-          businessManagerCode,
-          creditRequestCode,
-        );
-
-        if (!Array.isArray(data) || data.length === 0) {
-          throw new Error("No hay requisitos disponibles.");
-        }
-
-        const mapped: MappedRequirements = {
-          credit_request_id: data[0].uniqueReferenceNumber,
-          SYSTEM_VALIDATION: {},
-          DOCUMENT: {},
-          HUMAN_VALIDATION: {},
-        };
-
-        data.forEach((item) => {
-          item.requirementsByPackage.forEach((req) => {
-            const type = req.typeOfRequirementToEvaluate;
-            const key = req.descriptionUse;
-            const value = req.requirementStatus;
-
-            if (
-              type &&
-              key &&
-              Object.prototype.hasOwnProperty.call(mapped, type)
-            ) {
-              (mapped as MappedRequirements)[type as RequirementType][key] =
-                value;
-            }
-          });
-        });
-
-        const processedEntries = maperEntries(mapped);
-        const processedRequirements = maperDataRequirements(processedEntries);
-        setDataRequirements(processedRequirements);
-      } catch (error) {
-        console.error("Error fetching requirements:", error);
-        setError(true);
+    try {
+      if (!creditRequestCode) {
+        return;
       }
-    };
 
+      const data = await getAllPackagesOfRequirementsById(
+        businessUnitPublicCode,
+        businessManagerCode,
+        creditRequestCode,
+      );
+
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error("No hay requisitos disponibles.");
+      }
+
+      const mapped: MappedRequirements = {
+        credit_request_id: data[0].uniqueReferenceNumber,
+        SYSTEM_VALIDATION: {},
+        DOCUMENT: {},
+        HUMAN_VALIDATION: {},
+      };
+
+      data.forEach((item) => {
+        item.requirementsByPackage.forEach((req) => {
+          const type = req.typeOfRequirementToEvaluate;
+          const key = req.descriptionUse;
+          const value = req.requirementStatus;
+
+          if (
+            type &&
+            key &&
+            Object.prototype.hasOwnProperty.call(mapped, type)
+          ) {
+            (mapped as MappedRequirements)[type as RequirementType][key] =
+              value;
+          }
+        });
+      });
+
+      const processedEntries = maperEntries(mapped);
+      const processedRequirements = maperDataRequirements(processedEntries);
+      setDataRequirements(processedRequirements);
+    } catch (error) {
+      console.error("Error fetching requirements:", error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchRequirements();
   }, [creditRequestCode]);
 
@@ -143,8 +149,8 @@ export const Requirements = (props: IRequirementsProps) => {
       <Fieldset
         title={errorMessages.Requirements.titleCard}
         heightFieldset="100%"
-        hasTable={!error}
-        hasOverflow={isMobile}
+        hasTable
+        hasOverflow={isMobile || error}
       >
         {error ? (
           <ItemNotFound
@@ -152,7 +158,7 @@ export const Requirements = (props: IRequirementsProps) => {
             title={errorMessages.Requirements.title}
             description={errorMessages.Requirements.description}
             buttonDescription={errorMessages.Requirements.button}
-            onRetry={() => setError(false)}
+            onRetry={() => fetchRequirements()}
           />
         ) : (
           dataRequirements.map((item, index) => (
@@ -182,6 +188,7 @@ export const Requirements = (props: IRequirementsProps) => {
               }}
               isFirstTable={index === 0}
               infoItems={infoItems}
+              loading={loading}
             />
           ))
         )}
