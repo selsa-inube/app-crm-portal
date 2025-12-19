@@ -20,6 +20,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { BaseModal } from "@components/modals/baseModal";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
@@ -65,6 +66,7 @@ export function LoanAmount(props: ILoanAmountProps) {
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
@@ -187,6 +189,16 @@ export function LoanAmount(props: ILoanAmountProps) {
               handleOnChange({ payAmount: onlyOption.value });
             }
           }, [payAmountOptions, values.paymentCycle]);
+
+          useEffect(() => {
+            if (
+              showSelects &&
+              paymentChannelOptions.length === 0 &&
+              flatChannels.length === 0
+            ) {
+              setShowErrorModal(true);
+            }
+          }, [showSelects, paymentChannelOptions, flatChannels]);
 
           const allSelectsHaveOneOption =
             paymentChannelOptions.length === 1 &&
@@ -420,6 +432,12 @@ export function LoanAmount(props: ILoanAmountProps) {
                     <Text>{dataModalDisableLoanAmount.description}</Text>
                   </Stack>
                 </BaseModal>
+              )}
+              {showErrorModal && (
+                <ErrorModal
+                  handleClose={() => setShowErrorModal(false)}
+                  message={dataAmount.descriptionErrorModal}
+                />
               )}
             </Form>
           );

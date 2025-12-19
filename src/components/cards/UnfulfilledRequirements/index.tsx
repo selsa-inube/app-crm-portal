@@ -1,5 +1,5 @@
 import { MdWarningAmber } from "react-icons/md";
-import { Stack, Icon, Text, Divider } from "@inubekit/inubekit";
+import { Stack, Icon, Text, Divider, SkeletonLine } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 
@@ -11,12 +11,14 @@ interface IUnfulfilledRequirementsProps {
   hasError?: boolean;
   title?: string;
   isMobile?: boolean;
+  isLoading?: boolean;
 }
 
 export const UnfulfilledRequirements = (
   props: IUnfulfilledRequirementsProps,
 ) => {
-  const { title, requirement, causeNonCompliance, isMobile } = props;
+  const { title, requirement, causeNonCompliance, isMobile, isLoading } = props;
+
   return (
     <Fieldset
       title={title}
@@ -27,20 +29,45 @@ export const UnfulfilledRequirements = (
       <Stack direction="column" gap="16px" padding="0 16px">
         <Stack direction="column" gap="4px">
           <Stack justifyContent="space-between" alignItems="center">
-            <Text ellipsis={true}>{LabelData.requirement}</Text>
-            <Icon icon={<MdWarningAmber />} appearance="warning" size="24px" />
+            {isLoading ? (
+              <>
+                <SkeletonLine width="120px" />
+                <SkeletonLine width="24px" height="24px" />
+              </>
+            ) : (
+              <>
+                <Text ellipsis={true}>{LabelData.requirement}</Text>
+                <Icon
+                  icon={<MdWarningAmber />}
+                  appearance="warning"
+                  size="24px"
+                />
+              </>
+            )}
           </Stack>
           <Divider />
-          <Text appearance="gray" size="medium" type="body" ellipsis={true}>
-            {requirement}
-          </Text>
+          {isLoading ? (
+            <SkeletonLine width="100%" />
+          ) : (
+            <Text appearance="gray" size="medium" type="body" ellipsis={true}>
+              {requirement}
+            </Text>
+          )}
         </Stack>
         <Stack direction="column" gap="4px">
-          <Text ellipsis={true}>{LabelData.causeNonCompliance}</Text>
+          {isLoading ? (
+            <SkeletonLine width="160px" />
+          ) : (
+            <Text ellipsis={true}>{LabelData.causeNonCompliance}</Text>
+          )}
           <Divider />
-          <Text appearance="gray" size="medium" ellipsis>
-            {causeNonCompliance}
-          </Text>
+          {isLoading ? (
+            <SkeletonLine width="100%" />
+          ) : (
+            <Text appearance="gray" size="medium" ellipsis>
+              {causeNonCompliance}
+            </Text>
+          )}
         </Stack>
       </Stack>
     </Fieldset>
