@@ -136,6 +136,7 @@ export function CreditProspects() {
           businessUnitPublicCode,
           businessManagerCode,
           customerData.publicCode,
+          "Created",
         );
 
         if (result && result.length > 0) {
