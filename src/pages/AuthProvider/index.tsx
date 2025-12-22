@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { IAuthProvider } from "@inube/iauth-react";
 
 import { environment } from "@config/environment";
-import { decrypt } from "@utils/encrypt/encrypt";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { usePortalLogic } from "@hooks/usePortalRedirect";
@@ -52,9 +51,12 @@ export function AuthProvider({ children }: IAuthProvider) {
       originatorId={environment.ORIGINATOR_ID}
       callbackUrl={environment.REDIRECT_URI}
       iAuthUrl={environment.IAUTH_URL}
-      clientId={decrypt(authConfig.clientId)}
-      clientSecret={decrypt(authConfig.clientSecret)}
       serviceUrl={environment.IAUTH_SERVICE_URL}
+      codeVerifier={environment.CODE_VERIFIER}
+      codeChallenge={environment.CODE_CHALLENGE}
+      state={environment.STATE}
+      applicationName={environment.VITE_STAFF_PORTAL_CATALOG_CODE}
+      originatorCode={environment.ORIGINATOR_CODE}
     >
       <AuthContent>{children}</AuthContent>
     </IAuthProvider>

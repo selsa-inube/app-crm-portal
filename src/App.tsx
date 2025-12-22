@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -11,7 +11,6 @@ import { FlagProvider } from "@inubekit/inubekit";
 
 import { AppContext, AppContextProvider } from "@context/AppContext";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import { AppPage } from "@components/layout/AppPage";
 import { GlobalStyles } from "@styles/global";
 import { Login } from "@pages/login";
 import { initializeDataDB } from "@mocks/utils/initializeDataDB";
@@ -20,17 +19,17 @@ import { CreditRoutes } from "@routes/CreditRoutes";
 import { HomeRoutes } from "@routes/home";
 import { CustomerContextProvider } from "@context/CustomerContext";
 import { CustomerRoutes } from "@routes/customer";
-import { EnumProvider } from "./context/EnumContext";
 
-import { environment } from "./config/environment";
+import { EnumProvider } from "./context/EnumContext";
 import { AuthProvider } from "./pages/AuthProvider";
 
 function LogOut() {
-  localStorage.clear();
   sessionStorage.clear();
   const { logout } = useIAuth();
-  logout({ logoutParams: { returnTo: environment.GOOGLE_REDIRECT_URI } });
-  return <AppPage />;
+  useEffect(() => {
+    logout();
+  }, [logout]);
+  return null;
 }
 
 function FirstPage() {
