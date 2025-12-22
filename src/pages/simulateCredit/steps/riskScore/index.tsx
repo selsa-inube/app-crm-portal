@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Input, Stack, Text } from "@inubekit/inubekit";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -17,11 +17,14 @@ interface IRiskScoreProps {
   date: string;
   isMobile: boolean;
   handleOnChange: (riskScore: { value: number; date: string }) => void;
+  logo?: string;
+  resetScore?: () => void;
+  newScore?: number | null;
 }
 
 export function RiskScore(props: IRiskScoreProps) {
-  const { value, date, isMobile, handleOnChange } = props;
-
+  const { value, date, isMobile, handleOnChange, logo, resetScore, newScore } =
+    props;
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -32,6 +35,7 @@ export function RiskScore(props: IRiskScoreProps) {
   const formik = useFormik({
     initialValues: {
       score: value || riskScoreData.value,
+      date: date || riskScoreData.date,
     },
     validationSchema,
     enableReinitialize: true,
@@ -47,17 +51,10 @@ export function RiskScore(props: IRiskScoreProps) {
     },
   });
 
-  useEffect(() => {
-    handleOnChange({
-      value: value || riskScoreData.value,
-      date: date || riskScoreData.date,
-    });
-  }, []);
-
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
-        <RiskScoreGauge value={value || riskScoreData.value} />
+        <RiskScoreGauge value={value || riskScoreData.value} logo={logo} />
         <Stack gap="4px">
           <Text type="body" size="small">
             {riskScoreData.reportedScore}
@@ -68,13 +65,20 @@ export function RiskScore(props: IRiskScoreProps) {
               : formatPrimaryDate(new Date(date))}
           </Text>
         </Stack>
-        <Button
-          variant="outlined"
-          iconBefore={<MdOutlineEdit />}
-          onClick={() => setShowEditModal(true)}
-        >
-          {riskScoreData.editScore}
-        </Button>
+        <Stack gap="12px" direction="column" alignItems="center">
+          <Button
+            variant="outlined"
+            iconBefore={<MdOutlineEdit />}
+            onClick={() => setShowEditModal(true)}
+          >
+            {riskScoreData.editScore}
+          </Button>
+          {resetScore && (
+            <Button variant="none" onClick={resetScore} disabled={!newScore}>
+              {riskScoreData.reset}
+            </Button>
+          )}
+        </Stack>
         {showErrorModal && (
           <ErrorModal
             handleClose={() => setShowErrorModal(false)}

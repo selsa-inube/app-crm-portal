@@ -35,6 +35,7 @@ export interface IBaseModalProps {
   finalDivider?: boolean;
   portalId?: string;
   isLoading?: boolean;
+  marginsMobile?: boolean;
 }
 
 export function BaseModal(props: IBaseModalProps) {
@@ -60,6 +61,7 @@ export function BaseModal(props: IBaseModalProps) {
     finalDivider = false,
     portalId = "portal",
     isLoading = false,
+    marginsMobile = false,
   } = props;
 
   function getOrCreatePortalNode(id: string): HTMLElement {
@@ -78,7 +80,7 @@ export function BaseModal(props: IBaseModalProps) {
 
   return createPortal(
     <Blanket>
-      <StyledContainer>
+      <StyledContainer marginsMobile={marginsMobile}>
         <Stack
           direction="column"
           padding="24px"
