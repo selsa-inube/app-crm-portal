@@ -123,6 +123,7 @@ export function Payroll() {
       paymentPlan: "",
       periodicity: "",
       payAmount: "",
+      paymentCycle: "",
     },
     consolidatedCreditArray: [],
     consolidatedCreditSelections: {

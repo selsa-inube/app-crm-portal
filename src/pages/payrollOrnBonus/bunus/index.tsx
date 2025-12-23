@@ -126,6 +126,7 @@ export function Bonus() {
       paymentPlan: "",
       periodicity: "",
       payAmount: "",
+      paymentCycle: "",
     },
     consolidatedCreditArray: [],
     consolidatedCreditSelections: {
