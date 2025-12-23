@@ -132,7 +132,10 @@ export function CreditLimitCard(props: CreditLimitProps) {
           businessUnitPublicCode={businessUnitPublicCode}
           businessManagerCode={businessManagerCode}
           userAccount={userAccount}
-          dataMaximumCreditLimitService={dataMaximumCreditLimitService}
+          dataMaximumCreditLimitService={{
+            ...dataMaximumCreditLimitService,
+            lineOfCreditAbbreviatedName: creditLineTxt,
+          }}
           setError={setError}
           setLoading={setLoading}
           error={error}

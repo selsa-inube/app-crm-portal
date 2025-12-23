@@ -47,6 +47,12 @@ export function ApplyForCredit() {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
+  if (!businessManagerCode && codeError === null) {
+    setCodeError(1003);
+  } else if (!customerPublicCode && codeError === null) {
+    setCodeError(400);
+  }
+
   const dataHeader = {
     name: customerData?.fullName ?? "",
     status:
@@ -429,15 +435,9 @@ export function ApplyForCredit() {
         prospectCode || "",
       );
 
-      if (prospect && typeof prospect === "object") {
-        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
-          setProspectData(prospect);
-        }
-      }
       const mainBorrower = prospect.borrowers.find(
         (borrower) => borrower.borrowerType === "MainBorrower",
       );
-
       if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
         setCodeError(1011);
         return;
@@ -445,6 +445,12 @@ export function ApplyForCredit() {
 
       if (prospect.state !== prospectStates.CREATED) {
         setCodeError(1012);
+      }
+
+      if (prospect && typeof prospect === "object") {
+        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
+          setProspectData(prospect);
+        }
       }
     } catch (error) {
       setCodeError(1010);
@@ -603,7 +609,7 @@ export function ApplyForCredit() {
         }
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(JSON.stringify(error));
+        setMessageError(tittleOptions.errorSummaryProspect);
       }
     };
 

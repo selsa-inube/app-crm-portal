@@ -242,3 +242,8 @@ export interface IRemoveProspectResponse {
 export interface IGuaranteesRequiredByCreditProspect {
   warranty: { warranty: string }[] | string;
 }
+
+export interface simulationPrerequisites {
+  canSimulate: string;
+  creditPlacementChannel: [string];
+}

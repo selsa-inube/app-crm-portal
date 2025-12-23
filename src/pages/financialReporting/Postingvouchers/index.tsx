@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Stack } from "@inubekit/inubekit";
 import { useIAuth } from "@inube/iauth-react";
 
@@ -11,10 +11,9 @@ import {
   IAccountingVouchers,
   ICreditRequest,
 } from "@services/creditRequest/types";
-import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { getAccountingVouchers } from "@services/creditRequest/accountingVouchers";
 
-import { errorMessages, errorObserver } from "../config";
+import { errorMessages } from "../config";
 import {
   actionsPostingvouchers,
   titlesPostingvouchers,
@@ -25,67 +24,43 @@ interface IApprovalsProps {
   user: string;
   id: string;
   isMobile: boolean;
+  creditRequest?: ICreditRequest | null;
 }
 export const Postingvouchers = (props: IApprovalsProps) => {
-  const { id, isMobile } = props;
+  const { isMobile, creditRequest } = props;
   const { user } = useIAuth();
   const [error, setError] = useState(false);
   const [positionsAccountingVouchers, setPositionsAccountingVouchers] =
     useState<IAccountingVouchers[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [requests, setRequests] = useState<ICreditRequest | null>(null);
   const { businessUnitSigla, eventData } = useContext(AppContext);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
-  const creditRequestCode = id;
 
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-  const fetchCreditRequest = useCallback(async () => {
+  const fetchAccountingVouchers = async () => {
+    if (!creditRequest?.creditRequestId) return;
+    setLoading(true);
     try {
-      const data = await getCreditRequestByCode(
+      const vouchers = await getAccountingVouchers(
         businessUnitPublicCode,
         businessManagerCode,
-        userAccount,
-        { creditRequestCode },
+        creditRequest.creditRequestId,
       );
-      setRequests(data[0] as ICreditRequest);
+      setPositionsAccountingVouchers(vouchers);
     } catch (error) {
-      console.error(error);
-      errorObserver.notify({
-        id: "Management",
-        message: (error as Error).message.toString(),
-      });
+      console.error("Error loading accounting vouchers:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [businessUnitPublicCode, id, userAccount, businessManagerCode]);
+  };
 
   useEffect(() => {
-    fetchCreditRequest();
-  }, [fetchCreditRequest]);
-
-  useEffect(() => {
-    const fetchAccountingVouchers = async () => {
-      if (!requests?.creditRequestId) return;
-      setLoading(true);
-      try {
-        const vouchers = await getAccountingVouchers(
-          businessUnitPublicCode,
-          businessManagerCode,
-          requests.creditRequestId,
-        );
-        setPositionsAccountingVouchers(vouchers);
-      } catch (error) {
-        console.error("Error loading accounting vouchers:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAccountingVouchers();
-  }, [user, requests, businessUnitPublicCode, businessManagerCode]);
+  }, [user, creditRequest, businessUnitPublicCode, businessManagerCode]);
+
   return (
     <Stack direction="column">
       <Fieldset
@@ -101,7 +76,7 @@ export const Postingvouchers = (props: IApprovalsProps) => {
             buttonDescription={errorMessages.PromissoryNotes.button}
             onRetry={() => {
               setError(false);
-              fetchCreditRequest();
+              fetchAccountingVouchers();
             }}
           />
         ) : (

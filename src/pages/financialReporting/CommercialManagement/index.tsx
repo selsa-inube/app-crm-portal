@@ -48,7 +48,6 @@ import {
   IPaymentChannel,
 } from "@services/creditRequest/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
-import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { getModeOfDisbursement } from "@services/creditRequest/getModeOfDisbursement";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
@@ -77,10 +76,11 @@ interface ComercialManagementProps {
     React.SetStateAction<IPaymentChannel[] | undefined>
   >;
   generateAndSharePdf: () => void;
-  creditRequestCode: string;
   isPrint?: boolean;
   hideContactIcons?: boolean;
   requestValue?: IPaymentChannel[];
+  creditRequest?: ICreditRequest | null;
+  loadingData?: boolean;
 }
 
 export const ComercialManagement = (props: ComercialManagementProps) => {
@@ -89,13 +89,14 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     isPrint = false,
     collapse,
     setCollapse,
-    creditRequestCode,
     hideContactIcons,
     prospectData,
     generateAndSharePdf,
     sentData,
+    creditRequest,
     setSentData,
     setRequestValue,
+    loadingData,
   } = props;
   const [showMenu, setShowMenu] = useState(false);
   const [infoModal, setInfoModal] = useState(false);
@@ -112,7 +113,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const [checkManagement, setCheckManagement] =
     useState<IModeOfDisbursement | null>(null);
   const [cash, setCash] = useState<IModeOfDisbursement | null>(null);
-  const [requests, setRequests] = useState<ICreditRequest | null>(null);
   const [dataProspect, setDataProspect] = useState<IProspect[]>([]);
 
   const [form, setForm] = useState({
@@ -142,9 +142,6 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-
   const handleOpenModal = (modalName: string) => {
     setModalHistory((prevHistory) => [...prevHistory, modalName]);
   };
@@ -155,39 +152,14 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     }
   }, [prospectData]);
 
-  useEffect(() => {
-    const fetchCreditRequest = async () => {
-      try {
-        const data = await getCreditRequestByCode(
-          businessUnitPublicCode,
-          businessManagerCode,
-          userAccount,
-          { creditRequestCode },
-        );
-        setRequests(data[0] as ICreditRequest);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    if (creditRequestCode) {
-      fetchCreditRequest();
-    }
-  }, [
-    businessUnitPublicCode,
-    creditRequestCode,
-    userAccount,
-    businessManagerCode,
-  ]);
-
   const handleDisbursement = async () => {
-    if (requests?.creditRequestId) {
+    if (creditRequest?.creditRequestId) {
       setLoading(true);
       try {
         const disbursement = await getModeOfDisbursement(
           businessUnitPublicCode,
           businessManagerCode,
-          requests.creditRequestId,
+          creditRequest.creditRequestId,
         );
 
         const internalData =
@@ -305,6 +277,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
       <Fieldset
         title={errorMessages.comercialManagement.titleCard}
         descriptionTitle={data.stage}
+        loading={loadingData}
       >
         {!data ? (
           <ItemNotFound
@@ -575,7 +548,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   }}
                   showAddButtons={false}
                   showAddProduct={false}
-                  userAccount={userAccount}
+                  userAccount={eventData.user.userAccount}
                 />
               )}
             </Stack>
@@ -587,7 +560,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 businessUnitPublicCode={businessUnitPublicCode}
                 businessManagerCode={businessManagerCode}
                 dataMaximumCreditLimitService={dataMaximumCreditLimitService}
-                userAccount={userAccount}
+                userAccount={eventData.user.userAccount}
                 moneyDestination={prospectData.moneyDestinationAbbreviatedName}
                 incomeData={incomeDataValues}
               />

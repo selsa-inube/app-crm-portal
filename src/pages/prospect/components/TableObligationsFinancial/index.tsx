@@ -90,9 +90,11 @@ export const TableFinancialObligations = (
     ? headers.filter(
         (header) =>
           ["type", "balance", "actions"].includes(header.key) &&
-          (showActions || header.key !== "actions"),
+          ((showActions && showAddButton) || header.key !== "actions"),
       )
-    : headers.filter((header) => showActions || header.key !== "actions");
+    : headers.filter(
+        (header) => (showActions && showAddButton) || header.key !== "actions",
+      );
 
   useEffect(() => {
     const data = Array.isArray(initialValues) ? initialValues : [initialValues];

@@ -13,7 +13,7 @@ export const paymentCapacityData = {
   incomeSources: "(+) Total fuentes de ingreso reportadas",
   subsistenceReserve: "(-) Reserva mínima de subsistencia",
   newPromises: "(=) Neto disponible para nuevos compromisos",
-  lineOfCredit: "(x) Plazo máx. en *Nombre línea de crédito*",
+  getLineOfCredit: (nombreLinea: string) => `(x) Plazo máx. en ${nombreLinea}`,
   maxValueDescription: "Monto máximo con cuotas ordinarias",
   maxValueAmount: "Monto máximo calculado para un plazo de 24 meses.",
   maxAmountOridinary: "Monto máximo con cuotas ordinarias",

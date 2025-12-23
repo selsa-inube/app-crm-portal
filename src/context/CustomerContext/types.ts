@@ -24,6 +24,7 @@ export interface ICustomerData {
 
 export interface ICustomerContext {
   customerData: ICustomerData;
+  loadingCustomerData: boolean;
   setCustomerPublicCodeState: (publicCode: string) => void;
   setCustomerData: (data: ICustomerData) => void;
 }

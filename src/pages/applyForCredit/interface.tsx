@@ -153,7 +153,11 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   }
 
   const handleRedirect = () => {
-    navigate(`/credit/prospects`);
+    if (codeError === 400 || codeError === 1003) {
+      navigate(`/clients/select-client/`);
+    } else {
+      navigate(`/credit/prospects`);
+    }
   };
   return (
     <>

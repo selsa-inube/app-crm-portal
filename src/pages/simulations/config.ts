@@ -39,6 +39,7 @@ export const dataEditProspect = {
   errorCredit: "Error al obtener las solicitudes de crédito",
   errorProspect: "Error al obtener el prospecto",
   errorRemoveProspect: "No se ha podido eliminar el prospecto de crédito.",
+  errorRecalculate: "No se ha podido recalcular el prospecto.",
   deleteTitle: "Eliminar prospecto",
   deleteDescription: "¿Realmente deseas eliminar este prospecto de crédito?",
   nextButton: "Eliminar",

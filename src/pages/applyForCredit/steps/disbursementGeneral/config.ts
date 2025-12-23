@@ -56,4 +56,5 @@ export const disbursemenOptionAccount = {
   valueTurnFail:
     "El valor a girar con esta forma de desembolso es diferente de ",
   errorFlagInternal: "Error al obtener cuentas internas",
+  errorBanks: "Error al obtener bancos",
 };

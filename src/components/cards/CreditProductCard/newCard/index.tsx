@@ -31,6 +31,7 @@ export function NewCreditProductCard(props: INewCreditProductCardProps) {
       <StyledCreditProductCard
         onClick={() => (canEditCreditRequest ? handleInfo() : onClick())}
         $new={true}
+        $showIcons={true}
       >
         <Stack direction="column" alignItems="center" margin="auto">
           <Icon icon={<MdOutlineAdd />} appearance="gray" size="45px" />

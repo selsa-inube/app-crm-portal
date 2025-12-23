@@ -3,36 +3,31 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IMaximumCreditLimit } from "@services/creditRequest/types";
+import { IProspect } from "../types";
 
-const postBusinessUnitRules = async (
+export const recalculateProspect = async (
   businessUnitPublicCode: string,
-  businessManagerCode: string,
-  submitData: IMaximumCreditLimit,
-): Promise<IMaximumCreditLimit | null> => {
+  prospectCode: string,
+): Promise<IProspect | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-
       const options: RequestInit = {
         method: "POST",
         headers: {
-          "X-Action":
-            "GetMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit",
+          "X-Action": "RecalculateProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          "X-Process-Manager": businessManagerCode,
         },
-        body: JSON.stringify(submitData),
         signal: controller.signal,
+        body: JSON.stringify({ prospectCode }),
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits/`,
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects/`,
         options,
       );
 
@@ -52,7 +47,7 @@ const postBusinessUnitRules = async (
         };
       }
 
-      return data;
+      return data.borrowers[0];
     } catch (error) {
       if (attempt === maxRetries) {
         if (typeof error === "object" && error !== null) {
@@ -62,7 +57,7 @@ const postBusinessUnitRules = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo evaluar las reglas de la unidad de negocio.",
+          "Todos los intentos fallaron. No se pudo recalcular el prospecto.",
         );
       }
     }
@@ -70,5 +65,3 @@ const postBusinessUnitRules = async (
 
   return null;
 };
-
-export { postBusinessUnitRules };

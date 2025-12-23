@@ -149,7 +149,7 @@ export function SimulateCredit() {
       inputValue: "",
       toggleChecked: false,
       paymentPlan: "",
-      periodicity: "",
+      paymentCycle: "",
       payAmount: "",
     },
     consolidatedCreditSelections: {
@@ -267,7 +267,8 @@ export function SimulateCredit() {
       preferredPaymentChannelAbbreviatedName:
         formData.loanAmountState.paymentPlan || "",
       selectedRegularPaymentSchedule:
-        formData.loanAmountState.periodicity || "",
+        formData.loanAmountState.paymentCycle || "",
+      paymentChannelCycleName: formData.loanAmountState.paymentCycle || "",
       requestedAmount: formData.loanAmountState.inputValue || 0,
       termLimit: formData.loanConditionState.maximumTermValue || 120,
       prospectId: "",

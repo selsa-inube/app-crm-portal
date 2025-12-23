@@ -169,8 +169,7 @@ export const errorMessages = {
   PromissoryNotes: {
     titleCard: "Pagarés y Libranzas",
     title: "No se encontraron documentos de obligación",
-    description:
-      "No hay documentos disponibles relacionados con pagarés o libranzas.",
+    description: "No hay documentos disponibles relacionados.",
     button: "Volver a intentar",
   },
   Postingvouchers: {
@@ -193,6 +192,12 @@ export const errorMessages = {
     button: "Volver a intentar",
   },
   errorCreditRequest: "Error al obtener la solicitud de crédito",
+  prospect: "No pudimos cargar los datos del prospecto.",
+  documents: "No pudimos mostrar los documentos adjuntos.",
+  errorRemoveProspect: "No se ha podido eliminar el prospecto de crédito.",
+  noBusinessUnit:
+    "No hay una unidad de negocio relacionada con el código del portal.",
+  noSelectClient: "No se ha seleccionado ningún cliente.",
 };
 
 export const labelsAndValuesShare = {
@@ -200,4 +205,6 @@ export const labelsAndValuesShare = {
   fileName: "reporte_comercial.pdf",
   text: "Reporte Comercial para compartir",
   addLink: "Agregar vinculación",
+  changePortal:
+    "La solicitud de crédito no esta tramitada. ¿Seguro que deseas continuar a otro portal?",
 };
