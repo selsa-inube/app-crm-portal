@@ -20,7 +20,6 @@ import {
   Icon,
   Text,
   SkeletonLine,
-  SkeletonIcon,
   Button,
   Divider,
   Select,
@@ -171,7 +170,6 @@ interface UIProps {
 
 export const TableFinancialObligationsUI = ({
   dataInformation,
-  extraDebtors,
   loading,
   selectedBorrower,
   visibleHeaders,
@@ -659,7 +657,7 @@ export const TableFinancialObligationsUI = ({
         <Tbody>
           {loading ? (
             renderLoadingRows()
-          ) : extraDebtors.length === 0 ? (
+          ) : dataInformation.length === 0 ? (
             <Tr border="left">
               <Td colSpan={visibleHeaders.length} align="center" type="custom">
                 <Stack
