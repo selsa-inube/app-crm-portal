@@ -124,7 +124,7 @@ export interface IFormData {
     paymentPlan: string;
     paymentCycle: string;
     payAmount: string;
-    periodicity: string;
+    periodicity?: string;
   };
   consolidatedCreditSelections: {
     title: string;
