@@ -31,12 +31,12 @@ export const OptionStaffPortal: IOptionStaffPortalItem[] = [
         url: "/credit/credit-requests",
       },
       {
-        id: "Solicitudes tramitadas",
-        url: "/credit/processed-credit-requests",
-      },
-      {
         id: "Adelanto de nómina",
         url: "/credit",
+      },
+      {
+        id: "Solicitudes tramitadas",
+        url: "/credit/processed-credit-requests",
       },
     ],
   },

@@ -1,7 +1,8 @@
 import {
   MdArrowBack,
   MdArrowForwardIos,
-  MdOutlinePriceChange,
+  MdOutlinePaid,
+  MdOutlinePayments,
 } from "react-icons/md";
 import {
   Breadcrumbs,
@@ -30,7 +31,7 @@ import {
   errorDataCredit,
 } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
-import { StyledArrowBack } from "./styles";
+import { StyledArrowBack, StyledClickableFieldset } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 
 type IEnhancedSubOption = {
@@ -40,6 +41,7 @@ type IEnhancedSubOption = {
   subtitle: string;
   url: string;
   isDisabled: boolean;
+  optionId: string;
 };
 
 const CreditUI = (props: ICreditUIProps) => {
@@ -87,6 +89,7 @@ const CreditUI = (props: ICreditUIProps) => {
           subtitle: match?.descriptionUse,
           url: sub.url ?? "",
           isDisabled: !match,
+          optionId: sub.id,
         };
       });
     });
@@ -96,8 +99,10 @@ const CreditUI = (props: ICreditUIProps) => {
     Array.isArray(dataOptions) ? dataOptions : [dataOptions],
   );
 
-  const handleCardClick = (title: string, url: string) => {
-    if (title === advancePaymentModal.textPayrool) {
+  const handleCardClick = (title: string, url: string, optionId: string) => {
+    if (optionId === "Adelanto de nómina") {
+      handleOpenInfoModal();
+    } else if (title === advancePaymentModal.textPayrool) {
       handleOpenInfoModal();
     } else if (url) {
       navigate(url);
@@ -107,14 +112,19 @@ const CreditUI = (props: ICreditUIProps) => {
     }
   };
 
+  const handleAdvanceOptionClick = (title: string) => {
+    const route = title === "Prima" ? "/credit/bonus" : "/credit/payroll";
+    navigate(route);
+  };
+
   const advanceOptions = [
     {
-      icon: <MdOutlinePriceChange />,
+      icon: <MdOutlinePaid />,
       title: advancePaymentModal.titleRoster,
       subtitle: advancePaymentModal.subtitleRoster,
     },
     {
-      icon: <MdOutlinePriceChange />,
+      icon: <MdOutlinePayments />,
       title: advancePaymentModal.titleAdvance,
       subtitle: advancePaymentModal.subtitleAdvance,
     },
@@ -180,7 +190,15 @@ const CreditUI = (props: ICreditUIProps) => {
                       alignItems={isTablet ? "center" : "flex-start"}
                     >
                       {options.map(
-                        ({ key, icon, title, subtitle, url, isDisabled }) => (
+                        ({
+                          key,
+                          icon,
+                          title,
+                          subtitle,
+                          url,
+                          isDisabled,
+                          optionId,
+                        }) => (
                           <CreditCard
                             key={key}
                             icon={icon}
@@ -188,7 +206,9 @@ const CreditUI = (props: ICreditUIProps) => {
                             subtitle={subtitle}
                             url={url}
                             isDisabled={isDisabled}
-                            onClick={() => handleCardClick(title, url)}
+                            onClick={() =>
+                              handleCardClick(title, url, optionId)
+                            }
                             onInvalidUrl={() => {
                               setMessageError(errorDataCredit.noUrl);
                               setShowErrorModal(true);
@@ -220,53 +240,50 @@ const CreditUI = (props: ICreditUIProps) => {
                 <Text>{advancePaymentModal.description}</Text>
 
                 {advanceOptions.map((option, index) => (
-                  <Fieldset key={index} padding="0">
-                    <Stack
-                      justifyContent="space-between"
-                      alignItems="center"
-                      padding="0 10px"
-                    >
+                  <StyledClickableFieldset
+                    key={index}
+                    onClick={() => handleAdvanceOptionClick(option.title)}
+                  >
+                    <Fieldset padding="0">
                       <Stack
+                        justifyContent="space-between"
                         alignItems="center"
-                        gap="12px"
-                        width="calc(100% - 40px)"
+                        padding="0 10px"
                       >
-                        <Icon
-                          icon={option.icon}
-                          appearance="primary"
-                          size="28px"
-                          spacing="compact"
-                          variant="outlined"
-                        />
-                        <Stack direction="column" gap="4px">
-                          <Text
-                            type="title"
-                            appearance="dark"
-                            size="medium"
-                            weight="bold"
-                          >
-                            {option.title}
-                          </Text>
-                          <Text size="small" appearance="gray">
-                            {option.subtitle}
-                          </Text>
+                        <Stack
+                          alignItems="center"
+                          gap="12px"
+                          width="calc(100% - 40px)"
+                        >
+                          <Icon
+                            icon={option.icon}
+                            appearance="primary"
+                            size="28px"
+                            spacing="compact"
+                            variant="outlined"
+                          />
+                          <Stack direction="column" gap="4px">
+                            <Text
+                              type="title"
+                              appearance="dark"
+                              size="medium"
+                              weight="bold"
+                            >
+                              {option.title}
+                            </Text>
+                            <Text size="small" appearance="gray">
+                              {option.subtitle}
+                            </Text>
+                          </Stack>
                         </Stack>
+                        <Icon
+                          icon={<MdArrowForwardIos />}
+                          appearance="primary"
+                          size="18px"
+                        />
                       </Stack>
-                      <Icon
-                        icon={<MdArrowForwardIos />}
-                        appearance="primary"
-                        size="18px"
-                        onClick={() => {
-                          const route =
-                            option.title === "Prima"
-                              ? "/credit/bonus"
-                              : "/credit/payroll";
-                          navigate(route);
-                        }}
-                        cursorHover
-                      />
-                    </Stack>
-                  </Fieldset>
+                    </Fieldset>
+                  </StyledClickableFieldset>
                 ))}
               </Stack>
             </BaseModal>

@@ -9,6 +9,7 @@ interface IStyledArrowBack {
 export const StyledHeaderContainer = styled.div`
   position: relative;
 `;
+
 export const StyledContentImg = styled(Link)`
   width: 100px;
 `;
@@ -43,6 +44,7 @@ export const StyledCard = styled.label`
     max-height: 110px;
   }
 `;
+
 export const StyledArrowBack = styled.div<IStyledArrowBack>`
   cursor: pointer;
   width: ${($isMobile) => ($isMobile ? "100px" : "500px")};
@@ -57,5 +59,15 @@ export const StyledCreditCard = styled.div`
 
   &:hover {
     opacity: 0.9;
+  }
+`;
+
+export const StyledClickableFieldset = styled.div`
+  > div > div {
+    cursor: pointer;
+    &:hover {
+      background-color: ${({ theme }) =>
+        theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
+    }
   }
 `;

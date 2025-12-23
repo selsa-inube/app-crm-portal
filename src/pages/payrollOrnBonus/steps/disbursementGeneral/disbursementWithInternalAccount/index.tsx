@@ -107,36 +107,44 @@ export function DisbursementWithInternalAccount(
     }
   }, [formik.values, handleOnChange, initialValues, optionNameForm]);
 
-  const totalAmount = getTotalAmount();
-  const isDisabled = totalAmount >= initialValues.amount;
-
-  const parseBaseAmount = (description: string): number => {
+  const parseBaseAmount = (description: string | number): number => {
+    if (typeof description === "number") return description;
     const cleanedString = description.replace(/[$\s.]/g, "").replace(",", ".");
     return parseFloat(cleanedString) || 0;
   };
 
+  const baseAmount = parseBaseAmount(disbursementGeneral.description);
+
+  const totalAmount = getTotalAmount();
+
+  const remainingAmount = baseAmount - totalAmount;
+
   const currentAmount = Number(formik.values[optionNameForm]?.amount || 0);
-  const baseAmount = parseBaseAmount(
-    disbursementGeneral.description.toString(),
-  );
-  const remainingAmount = baseAmount - currentAmount;
-  const isAmountExceeded = currentAmount > baseAmount;
+
+  const isAmountExceeded = totalAmount > baseAmount;
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
     formik.setFieldValue(`${optionNameForm}.check`, isChecked);
 
     if (isChecked) {
-      formik.setFieldValue(`${optionNameForm}.amount`, baseAmount);
+      const otherTabsTotal = totalAmount - currentAmount;
+      const amountToFill = baseAmount - otherTabsTotal;
+      formik.setFieldValue(
+        `${optionNameForm}.amount`,
+        amountToFill > 0 ? amountToFill : 0,
+      );
     } else {
       formik.setFieldValue(`${optionNameForm}.amount`, 0);
     }
   };
 
   const handleCheckboxClick = () => {
-    const remainingToFill = baseAmount - currentAmount;
+    const otherTabsTotal = totalAmount - currentAmount;
+    const remainingToFill = baseAmount - otherTabsTotal;
+
     if (remainingToFill > 0) {
-      formik.setFieldValue(`${optionNameForm}.amount`, baseAmount);
+      formik.setFieldValue(`${optionNameForm}.amount`, remainingToFill);
       formik.setFieldValue(`${optionNameForm}.check`, true);
     }
   };
@@ -219,13 +227,11 @@ export function DisbursementWithInternalAccount(
   }, [identificationValue, currentIdentification, isAutoCompleted]);
 
   useEffect(() => {
-    const currentAmount = Number(formik.values[optionNameForm]?.amount || 0);
-    const totalAmount = props.getTotalAmount();
-
-    if (currentAmount + totalAmount - currentAmount !== initialValues.amount) {
+    const totalAmount = getTotalAmount();
+    if (totalAmount !== baseAmount) {
       formik.setFieldValue(`${optionNameForm}.check`, false);
     }
-  }, [formik.values[optionNameForm]?.amount]);
+  }, [formik.values[optionNameForm]?.amount, getTotalAmount]);
 
   useEffect(() => {
     const identification = formik.values[optionNameForm]?.identification;
@@ -379,8 +385,8 @@ export function DisbursementWithInternalAccount(
               formik.handleBlur(`amount`);
             }}
             status={
-              (formik.touched[optionNameForm]?.amount && !isDisabled) ||
-              isAmountExceeded
+              isAmountExceeded ||
+              (formik.touched[optionNameForm]?.amount && currentAmount === 0)
                 ? "invalid"
                 : undefined
             }
@@ -390,7 +396,7 @@ export function DisbursementWithInternalAccount(
             }
             message={
               isAmountExceeded
-                ? `El monto no puede superar ${currencyFormat(baseAmount)}`
+                ? `El monto total no puede superar ${currencyFormat(baseAmount)}`
                 : `${disbursemenOptionAccount.valueTurnFail}${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`
             }
             fullwidth

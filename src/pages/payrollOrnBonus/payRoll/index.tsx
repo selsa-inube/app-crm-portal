@@ -16,7 +16,6 @@ import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import {
   prospectStates,
   textAddCongfig,
-  tittleOptions,
   disbursemenTabs,
 } from "./config/addConfig";
 import { PayRollUI } from "./interface";
@@ -70,13 +69,6 @@ export function Payroll() {
   const handleTabChange = (tabId: string) => {
     setIsSelected(tabId);
   };
-
-  useEffect(() => {
-    if (codeError) {
-      setShowErrorModal(true);
-      setMessageError(tittleOptions.tryLater);
-    }
-  }, [codeError]);
 
   const handleNextStep = () => {
     if (currentStep < lastStepId && isCurrentFormValid) {

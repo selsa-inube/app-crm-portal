@@ -14,11 +14,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 
-import {
-  prospectStates,
-  disbursemenTabs,
-  tittleOptions,
-} from "./config/addConfig";
+import { prospectStates, disbursemenTabs } from "./config/addConfig";
 import { IBonusFormData, IProspectSummaryById } from "./types";
 import { titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
@@ -73,13 +69,6 @@ export function Bonus() {
   const handleTabChange = (tabId: string) => {
     setIsSelected(tabId);
   };
-
-  useEffect(() => {
-    if (codeError) {
-      setShowErrorModal(true);
-      setMessageError(tittleOptions.tryLater);
-    }
-  }, [codeError]);
 
   const handleNextStep = () => {
     if (currentStep < lastStepId && isCurrentFormValid) {
