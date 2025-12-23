@@ -28,7 +28,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
       setNewSecondScore(null);
     }
   };
-  console.log({ newFirstScore, newSecondScore });
+
   return (
     <ScoreModalProspectUI
       isMobile={isMobile}

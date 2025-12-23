@@ -153,7 +153,7 @@ export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
       </Stack>
       {logo && (
         <StyledContainerLogo>
-          <StyledImgLogo url={logo} />
+          <StyledImgLogo url={logo} alt={DataRiskScore.altImg} />
         </StyledContainerLogo>
       )}
     </Stack>
