@@ -30,6 +30,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const { businessUnitSigla } = useContext(AppContext);
 
   const businessUnitPublicCode: string =
@@ -39,12 +40,13 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     useState<IMoneyDestination[]>();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadMoneyDestinations = (abbreviatedName?: string) => {
     setLoading(true);
     searchAllMoneyDestinationByCustomerCode(
       businessUnitPublicCode,
       businessManagerCode,
       clientIdentificationNumber,
+      abbreviatedName,
     )
       .then((response) => {
         if (response && Array.isArray(response)) {
@@ -71,7 +73,19 @@ function MoneyDestination(props: IMoneyDestinationProps) {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadMoneyDestinations();
   }, [businessUnitPublicCode]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      loadMoneyDestinations(searchTerm || undefined);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   useEffect(() => {
     onFormValid(Boolean(initialValues));
@@ -107,6 +121,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
         <MoneyDestinationUI
           isTablet={isTablet}
           selectedDestination={values.selectedDestination}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
           handleChange={(value: string) => {
             setFieldValue("selectedDestination", value);
             handleOnChange(value);
