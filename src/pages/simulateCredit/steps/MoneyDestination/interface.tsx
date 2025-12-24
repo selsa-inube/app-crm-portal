@@ -14,6 +14,7 @@ interface MoneyDestinationUIProps {
   messageError: string;
   loading: boolean;
   searchTerm: string;
+  hasActiveSearch: boolean;
   groupedDestinations: { [type: string]: IMoneyDestination[] };
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
@@ -28,6 +29,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
     messageError,
     loading,
     searchTerm,
+    hasActiveSearch,
     groupedDestinations,
     setShowErrorModal,
     setSearchTerm,
@@ -59,7 +61,11 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
                 destinationA.localeCompare(destinationB),
               )
               .map(([type, group]) => (
-                <CardDeployMoneyDestination key={type} title={type}>
+                <CardDeployMoneyDestination
+                  key={type}
+                  title={type}
+                  defaultOpen={hasActiveSearch}
+                >
                   <Stack
                     direction="row"
                     wrap="wrap"

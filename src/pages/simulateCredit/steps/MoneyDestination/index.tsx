@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
@@ -40,13 +40,12 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     useState<IMoneyDestination[]>();
   const [loading, setLoading] = useState(true);
 
-  const loadMoneyDestinations = (abbreviatedName?: string) => {
+  const loadMoneyDestinations = () => {
     setLoading(true);
     searchAllMoneyDestinationByCustomerCode(
       businessUnitPublicCode,
       businessManagerCode,
       clientIdentificationNumber,
-      abbreviatedName,
     )
       .then((response) => {
         if (response && Array.isArray(response)) {
@@ -79,13 +78,29 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     loadMoneyDestinations();
   }, [businessUnitPublicCode]);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      loadMoneyDestinations(searchTerm || undefined);
-    }, 500);
+  const filteredDestinations = useMemo(() => {
+    if (!moneyDestinations) return undefined;
 
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+    if (!searchTerm.trim()) {
+      return moneyDestinations;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+
+    return moneyDestinations.filter((destination) => {
+      const nameMatch = destination.abbreviatedName
+        .toLowerCase()
+        .includes(searchLower);
+      const descriptionMatch = destination.descriptionUse
+        ?.toLowerCase()
+        .includes(searchLower);
+      const typeMatch = destination.moneyDestinationType
+        ?.toLowerCase()
+        .includes(searchLower);
+
+      return nameMatch || descriptionMatch || typeMatch;
+    });
+  }, [moneyDestinations, searchTerm]);
 
   useEffect(() => {
     onFormValid(Boolean(initialValues));
@@ -97,8 +112,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
 
   const groupedDestinations: { [type: string]: IMoneyDestination[] } = {};
 
-  if (moneyDestinations) {
-    moneyDestinations.forEach((destination) => {
+  if (filteredDestinations) {
+    filteredDestinations.forEach((destination) => {
       const type =
         destination.moneyDestinationType || dataMoneyDestination.noType;
       if (!groupedDestinations[type]) {
@@ -107,6 +122,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
       groupedDestinations[type].push(destination);
     });
   }
+
+  const hasActiveSearch = searchTerm.trim().length > 0;
 
   return (
     <Formik
@@ -133,6 +150,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
           messageError={messageError}
           groupedDestinations={groupedDestinations}
           loading={loading}
+          hasActiveSearch={hasActiveSearch}
         />
       )}
     </Formik>

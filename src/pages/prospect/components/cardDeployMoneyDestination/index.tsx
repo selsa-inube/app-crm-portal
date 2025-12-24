@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { MdOutlineChevronRight } from "react-icons/md";
 import { Divider, Icon, Stack, Text } from "@inubekit/inubekit";
 
@@ -9,15 +9,20 @@ import { StyledCollapseIcon } from "./styles";
 interface ICardDeployMoneyDestinationProps {
   title: string;
   children?: ReactNode;
+  defaultOpen?: boolean;
 }
 
 export function CardDeployMoneyDestination(
   props: ICardDeployMoneyDestinationProps,
 ) {
-  const { title, children } = props;
+  const { title, children, defaultOpen = false } = props;
 
-  const [collapse, setCollapse] = useState(false);
+  const [collapse, setCollapse] = useState(defaultOpen);
   const collapseMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCollapse(defaultOpen);
+  }, [defaultOpen]);
 
   return (
     <Fieldset padding="0">

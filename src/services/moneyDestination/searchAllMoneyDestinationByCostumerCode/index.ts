@@ -9,17 +9,15 @@ export const searchAllMoneyDestinationByCustomerCode = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   clientIdentificationNumber: string,
-  abbreviatedName?: string,
 ): Promise<IMoneyDestination[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const queryParams = new URLSearchParams({
-        abbreviatedName: abbreviatedName || "",
-      });
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+
       const options: RequestInit = {
         method: "GET",
         headers: {
@@ -32,7 +30,7 @@ export const searchAllMoneyDestinationByCustomerCode = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/money-destinations/${clientIdentificationNumber}?${queryParams.toString()}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/money-destinations/${clientIdentificationNumber}`,
         options,
       );
 
