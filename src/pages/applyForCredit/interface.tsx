@@ -80,6 +80,7 @@ interface ApplyForCreditUIProps {
   handlePreviousStep: () => void;
   handleSubmitClick: () => void;
   handleSubmit: () => void;
+  loading: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   businessUnitPublicCode: string;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
@@ -130,6 +131,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     creditRequestCode,
     modesOfDisbursement,
     guaranteesRequired,
+    loading,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -450,6 +452,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 }}
                 handleBack={() => setSentModal(false)}
                 width={isMobile ? "290px" : "402px"}
+                isLoading={loading}
               >
                 <Text type="body" size="large">
                   {dataSubmitApplication.modals.fileDescription.replace(

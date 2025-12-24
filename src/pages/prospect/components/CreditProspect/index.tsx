@@ -61,6 +61,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
 import { getTotalIncomeByBorrowerInProspect } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
 import { Fieldset } from "@components/data/Fieldset";
+import { dataCreditProspects } from "@pages/creditProspects/config";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -1050,13 +1051,17 @@ export function CreditProspect(props: ICreditProspectProps) {
               <CardGray
                 label={configModal.observations.preApproval}
                 placeHolder={
-                  prospectData ? prospectData.clientManagerObservation : ""
+                  prospectData!.clientManagerObservation ||
+                  dataCreditProspects.notHaveComments
                 }
                 apparencePlaceHolder="gray"
               />
               <CardGray
                 label={configModal.observations.labelTextarea}
-                placeHolder={prospectData ? prospectData!.clientComments : ""}
+                placeHolder={
+                  prospectData!.clientComments ||
+                  dataCreditProspects.notHaveObservations
+                }
                 apparencePlaceHolder="gray"
               />
             </Stack>

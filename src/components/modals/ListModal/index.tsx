@@ -132,6 +132,13 @@ export const ListModal = (props: IListModalProps) => {
     url: string;
   }>({ name: "", url: "" });
 
+  const activePendingFiles = pendingFiles.filter(
+    (file) => !file.selectedToDelete,
+  );
+
+  const activeUploadedFiles =
+    uploadedFiles?.filter((file) => !file.selectedToDelete) || [];
+
   useEffect(() => {
     if (!uploadedFiles) return;
 
@@ -270,14 +277,11 @@ export const ListModal = (props: IListModalProps) => {
 
   const isDisabled = () => {
     if (onlyDocumentReceived) {
-      const totalFiles = pendingFiles.length + (uploadedFiles?.length || 0);
+      const totalFiles = activePendingFiles.length + activeUploadedFiles.length;
       return totalFiles < 1;
     }
 
-    return (
-      pendingFiles.length === 0 &&
-      (!uploadedFiles || uploadedFiles.length === 0)
-    );
+    return activePendingFiles.length === 0 && activeUploadedFiles.length === 0;
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -524,7 +528,7 @@ export const ListModal = (props: IListModalProps) => {
               <Text size="medium" appearance="gray">
                 {listModalData.maximum}
               </Text>
-              {Array.isArray(pendingFiles) && pendingFiles.length > 0 ? (
+              {activePendingFiles.length > 0 ? (
                 <>
                   <Divider dashed />
                   <Stack direction="column" gap="24px">
@@ -576,7 +580,7 @@ export const ListModal = (props: IListModalProps) => {
                 </>
               ) : (
                 Array.isArray(uploadedFiles) &&
-                uploadedFiles.length > 0 && (
+                activeUploadedFiles.length > 0 && (
                   <>
                     <Divider dashed />
                     <Stack direction="column" gap="24px">

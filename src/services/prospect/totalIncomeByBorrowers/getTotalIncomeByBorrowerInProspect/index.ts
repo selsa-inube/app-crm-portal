@@ -36,7 +36,7 @@ export const getTotalIncomeByBorrowerInProspect = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay ingresos disponibles en los deudores.");
+        return [];
       }
 
       const data = await res.json();
