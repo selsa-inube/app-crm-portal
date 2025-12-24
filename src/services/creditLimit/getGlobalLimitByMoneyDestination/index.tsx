@@ -13,13 +13,6 @@ export const getGlobalLimitByMoneyDestination = async (
 ): Promise<IMaximumCreditLimitByMoneyDestination[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
-  return [
-    {
-      creditLimitValue: 2000000,
-      lineOfCredit: "Libre destino",
-    },
-  ];
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
