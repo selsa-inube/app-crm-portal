@@ -4,9 +4,10 @@ export const dataTabs = [
 ];
 
 export const headers = [
-  { label: "Concepto", key: "paymentChannelAbbreviatedName" },
-  { label: "Valor", key: "installmentAmount" },
-  { label: "Fecha", key: "installmentDate" },
+  { label: "Concepto", key: "concept", mobile: true },
+  { label: "Valor", key: "value", mobile: false },
+  { label: "Fecha", key: "date", mobile: false },
+  { label: "Detalles", key: "details", mobile: true },
 ];
 
 export const paymentCapacityData = {
@@ -32,3 +33,10 @@ export const getMaxValueText = (maxAmount: number, maxTerm: number) => (
     <strong>{maxTerm}</strong> meses.
   </>
 );
+
+export const detailsExtraordinaryInstallments = {
+  title: "Detalles",
+  close: "Cerrar",
+  value: "Valor",
+  date: "Fecha",
+};
