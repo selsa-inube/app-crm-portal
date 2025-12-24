@@ -28,7 +28,7 @@ import {
   IProspectSummaryById,
 } from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import {
   IBorrowerData,
@@ -248,22 +248,33 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   </Stack>
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="center">
-                    <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.cards.destination}
-        ${truncateTextToMaxLength(prospectData.moneyDestinationAbbreviatedName, 20)}`}
-                    </Text>
+                    <TruncatedText
+                      text={`${dataSubmitApplication.cards.destination} ${prospectData.moneyDestinationAbbreviatedName}`}
+                      maxLength={30}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
                   </Stack>
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="center">
-                    <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
-                    </Text>
+                    <TruncatedText
+                      text={`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                      maxLength={30}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
                   </Stack>
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="end">
-                    <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
-                    </Text>
+                    <TruncatedText
+                      text={`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                      maxLength={40}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
                   </Stack>
                 </Stack>
               )}
