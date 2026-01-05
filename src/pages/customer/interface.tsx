@@ -6,6 +6,7 @@ import {
   IOption,
   Stack,
   Text,
+  Spinner,
 } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
@@ -15,6 +16,7 @@ import { StyledAutomatic } from "./styles";
 
 interface ICustomerUI {
   isMobile: boolean;
+  loading: boolean;
   inputValue: string;
   options: IOption[];
   showError: boolean;
@@ -22,6 +24,7 @@ interface ICustomerUI {
   handleChangeAutocomplete: (event: string, value: string | null) => void;
   handleSubmit: () => void;
   messageError: string;
+  isValid: boolean;
 }
 
 export function CustomerUI(props: ICustomerUI) {
@@ -34,6 +37,8 @@ export function CustomerUI(props: ICustomerUI) {
     handleChangeAutocomplete,
     handleSubmit,
     messageError,
+    loading,
+    isValid,
   } = props;
 
   return (
@@ -56,7 +61,7 @@ export function CustomerUI(props: ICustomerUI) {
           </Text>
           <Fieldset hasOverflow>
             <Stack alignItems="center" gap="6px">
-              <StyledAutomatic ref={selectRef}>
+              <StyledAutomatic ref={selectRef} loading={loading}>
                 <Autocomplete
                   id="clientSelect"
                   name="clientSelect"
@@ -67,17 +72,31 @@ export function CustomerUI(props: ICustomerUI) {
                   onChange={handleChangeAutocomplete}
                 />
               </StyledAutomatic>
-              {isMobile ? (
+              {isMobile && (!loading || isValid) && (
                 <Icon
                   icon={<MdOutlineArrowForward />}
-                  appearance="primary"
+                  appearance={!isValid ? "gray" : "primary"}
                   variant="filled"
                   spacing="compact"
                   size="40px"
                   onClick={handleSubmit}
                 />
-              ) : (
-                <Button onClick={handleSubmit}>{homeData.continue}</Button>
+              )}
+
+              {!isMobile && (!loading || isValid) && (
+                <Button onClick={handleSubmit} disabled={!isValid}>
+                  {homeData.continue}
+                </Button>
+              )}
+
+              {loading && !isValid && (
+                <Stack
+                  width={isMobile ? "auto" : "120px"}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Spinner />
+                </Stack>
               )}
             </Stack>
             <>

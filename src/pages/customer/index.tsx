@@ -15,6 +15,8 @@ export function Customer() {
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
@@ -35,20 +37,25 @@ export function Customer() {
       const formattedValue = value.replace(VALIDATE_BLANK_SPACES_REGEX, "%");
 
       let response = null;
-      if (isNumericString(value)) {
-        response = await getCustomerCatalog(
-          businessUnitPublicCode,
-          businessManagerCode,
-          "",
-          formattedValue,
-        );
-      } else if (isValidUpperCaseName(value)) {
-        response = await getCustomerCatalog(
-          businessUnitPublicCode,
-          businessManagerCode,
-          formattedValue,
-          "",
-        );
+      try {
+        setLoading(true);
+        if (isNumericString(value)) {
+          response = await getCustomerCatalog(
+            businessUnitPublicCode,
+            businessManagerCode,
+            "",
+            formattedValue,
+          );
+        } else if (isValidUpperCaseName(value)) {
+          response = await getCustomerCatalog(
+            businessUnitPublicCode,
+            businessManagerCode,
+            formattedValue,
+            "",
+          );
+        }
+      } finally {
+        setLoading(false);
       }
 
       if (response && Array.isArray(response) && response.length > 0) {
@@ -86,6 +93,11 @@ export function Customer() {
       return;
     }
     handleSearch(inputValue);
+
+    const isValidOption = options.some(
+      (option) => option.value === inputValue || option.label === inputValue,
+    );
+    setIsValid(isValidOption);
   }, [inputValue]);
 
   const navigate = useNavigate();
@@ -107,6 +119,9 @@ export function Customer() {
   };
 
   useEffect(() => {
+    if (inputValue === "") {
+      setIsValid(false);
+    }
     if (selectRef.current) {
       const inputIsEmpty = !inputValue || inputValue.trim() === "";
       const optionsAreEmpty = options.length === 0;
@@ -150,6 +165,8 @@ export function Customer() {
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
       messageError={messageError}
+      loading={loading}
+      isValid={isValid}
     />
   );
 }
