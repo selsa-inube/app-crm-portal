@@ -77,6 +77,13 @@ export const dataSubmitApplication = {
       cancelButton: "Cancelar",
       sendButton: "Enviar",
     },
+    return: {
+      title: "Regresar",
+      confirmationText:
+        "¿Realmente quieres regresar? Se perderá el avance de tu solicitud.",
+      cancelButton: "Cancelar",
+      sendButton: "Sí, regresar",
+    },
     success: {
       title: "Solicitud ",
       fileDescription: "Solicitud ",

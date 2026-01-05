@@ -90,6 +90,11 @@ interface PayRollUIProps {
   isModalOpenRequirements: boolean;
   isSelected: string;
   handleTabChange: (tabId: string) => void;
+
+  showInfoModal: boolean;
+  handleBackClick: () => void;
+  handleCancelNavigation: () => void;
+  handleNextClick: () => void;
 }
 
 export function PayRollUI(props: PayRollUIProps) {
@@ -136,6 +141,10 @@ export function PayRollUI(props: PayRollUIProps) {
     errorsManager,
     isSelected,
     handleTabChange,
+    showInfoModal,
+    handleBackClick,
+    handleCancelNavigation,
+    handleNextClick,
   } = props;
 
   return (
@@ -166,7 +175,7 @@ export function PayRollUI(props: PayRollUIProps) {
               />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
-                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
+                <StyledArrowBack onClick={handleBackClick}>
                   <Stack gap="8px" alignItems="center" width="100%">
                     <Icon
                       icon={<MdArrowBack />}
@@ -365,6 +374,20 @@ export function PayRollUI(props: PayRollUIProps) {
                   {dataSubmitApplication.modals.success.descriptionSolid}
                 </Text>
               </Stack>
+            </BaseModal>
+          )}
+          {showInfoModal && (
+            <BaseModal
+              title={dataSubmitApplication.modals.return.title}
+              nextButton={dataSubmitApplication.modals.return.sendButton}
+              backButton={dataSubmitApplication.modals.return.cancelButton}
+              width={isMobile ? "auto" : "450px"}
+              handleNext={handleNextClick}
+              handleBack={handleCancelNavigation}
+            >
+              <Text type="body" size="large">
+                {dataSubmitApplication.modals.return.confirmationText}
+              </Text>
             </BaseModal>
           )}
         </Stack>

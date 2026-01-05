@@ -1,3 +1,4 @@
+import React from "react";
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
@@ -447,7 +448,20 @@ export function Payroll() {
       setShowSubmitModal(true);
     }
   };
+  const [showInfoModal, setShowInfoModal] = React.useState(false);
 
+  const handleBackClick = () => {
+    setShowInfoModal(true);
+  };
+
+  const handleCancelNavigation = () => {
+    setShowInfoModal(false);
+  };
+
+  const handleConfirmNavigation = () => {
+    setShowInfoModal(false);
+    navigate("/credit");
+  };
   const handleSubmitBonus = async () => {
     setIsLoadingSubmit(true);
     try {
@@ -626,6 +640,10 @@ export function Payroll() {
       isModalOpenRequirements={isModalOpenRequirements}
       isSelected={isSelected}
       handleTabChange={handleTabChange}
+      showInfoModal={showInfoModal}
+      handleBackClick={handleBackClick}
+      handleCancelNavigation={handleCancelNavigation}
+      handleNextClick={handleConfirmNavigation}
     />
   );
 }
