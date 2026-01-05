@@ -7,7 +7,12 @@ import {
   Assisted,
 } from "@inubekit/inubekit";
 import { useNavigate } from "react-router-dom";
-import { MdArrowBack, MdCheckCircle, MdOutlineRule } from "react-icons/md";
+import {
+  MdArrowBack,
+  MdCheckCircle,
+  MdHighlightOff,
+  MdOutlineRule,
+} from "react-icons/md";
 
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
@@ -77,6 +82,8 @@ interface BonusUIProps {
   onRequirementsValidated: (requirements: IValidateRequirement[]) => void;
   showSubmitModal: boolean;
   setShowSubmitModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showInfoModal: boolean;
+  setShowInfoModal: React.Dispatch<React.SetStateAction<boolean>>;
   showSuccessModal: boolean;
   setShowSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   isLoadingSubmit: boolean;
@@ -90,12 +97,18 @@ interface BonusUIProps {
   isModalOpenRequirements: boolean;
   isSelected: string;
   handleTabChange: (tabId: string) => void;
+  handleNextClick: () => void;
+  handleCancelNavigation: () => void;
+  showExceedQuotaModal: boolean;
+  setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function BonusUI(props: BonusUIProps) {
   const {
     handleNextStep,
     handlePreviousStep,
+    handleCancelNavigation,
+    handleNextClick,
     validateRequirements,
     setCurrentStep,
     navigate,
@@ -122,6 +135,7 @@ export function BonusUI(props: BonusUIProps) {
     setShowErrorModal,
     messageError,
     onRequirementsValidated,
+    showInfoModal,
     showSubmitModal,
     setShowSubmitModal,
     showSuccessModal,
@@ -136,6 +150,8 @@ export function BonusUI(props: BonusUIProps) {
     errorsManager,
     isSelected,
     handleTabChange,
+    showExceedQuotaModal,
+    setShowExceedQuotaModal,
   } = props;
 
   return (
@@ -242,6 +258,7 @@ export function BonusUI(props: BonusUIProps) {
                       onValidationChange={onValidationChange}
                       onAmountChange={onAmountChange}
                       isMobile={isMobile}
+                      onExceedQuota={() => setShowExceedQuotaModal(true)}
                     />
                   )}
                 {currentStepsNumber &&
@@ -365,7 +382,37 @@ export function BonusUI(props: BonusUIProps) {
               </Stack>
             </BaseModal>
           )}
+          {showInfoModal && (
+            <BaseModal
+              title={dataSubmitApplication.return.title}
+              nextButton={dataSubmitApplication.return.sendButton}
+              backButton={dataSubmitApplication.return.cancelButton}
+              width={isMobile ? "auto" : "450px"}
+              handleNext={handleNextClick}
+              handleBack={handleCancelNavigation}
+            >
+              <Text type="body" size="large">
+                {dataSubmitApplication.return.confirmationText}
+              </Text>
+            </BaseModal>
+          )}
         </Stack>
+      )}
+      {showExceedQuotaModal && (
+        <BaseModal
+          title={dataSubmitApplication.showExceedQuotaModal.title}
+          width={isMobile ? "300px" : "450px"}
+          nextButton={dataSubmitApplication.showExceedQuotaModal.nextButton}
+          handleNext={() => setShowExceedQuotaModal(false)}
+          handleClose={() => setShowExceedQuotaModal(false)}
+        >
+          <Stack direction="column" gap="16px" alignItems="center">
+            <Icon appearance="danger" icon={<MdHighlightOff />} size="78px" />
+            <Text type="body" size="medium" weight="normal" appearance="dark">
+              {dataSubmitApplication.showExceedQuotaModal.description}
+            </Text>
+          </Stack>
+        </BaseModal>
       )}
     </>
   );

@@ -23,6 +23,7 @@ import { PayRollUI } from "./interface";
 import { titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
 import { IBonusFormData, IProspectSummaryById } from "./types";
+import { availableQuotaValue } from "../steps/requestedValue";
 
 export function Payroll() {
   const navigate = useNavigate();
@@ -66,12 +67,20 @@ export function Payroll() {
   const [isSelected, setIsSelected] = useState<string>(
     disbursemenTabs.internal.id,
   );
-
+  const [showExceedQuotaModal, setShowExceedQuotaModal] = useState(false);
   const handleTabChange = (tabId: string) => {
     setIsSelected(tabId);
   };
 
   const handleNextStep = () => {
+    if (currentStep === stepsAddBonus.destination.id) {
+      const currentAmount = Number(formData.requestedValue);
+
+      if (currentAmount > availableQuotaValue) {
+        setShowExceedQuotaModal(true);
+        return;
+      }
+    }
     if (currentStep < lastStepId && isCurrentFormValid) {
       setCurrentStep(currentStep + 1);
     }
@@ -610,6 +619,8 @@ export function Payroll() {
       dataHeader={dataHeader}
       steps={steps}
       businessUnitPublicCode={businessUnitPublicCode}
+      showExceedQuotaModal={showExceedQuotaModal}
+      setShowExceedQuotaModal={setShowExceedQuotaModal}
       businessManagerCode={businessManagerCode}
       formData={formData}
       onAmountChange={handleAmountChange}

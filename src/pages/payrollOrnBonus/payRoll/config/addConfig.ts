@@ -2,7 +2,7 @@ export const addConfig = {
   id: 1,
   title: "Adelanto de nómina",
   subtitle: "Es un adelanto de tu salario o nómina mensual.",
-  route: "/credit/prospects",
+  route: "/credit",
   crumbs: [
     {
       path: "/home",
@@ -91,6 +91,12 @@ export const dataSubmitApplication = {
       descriptionSolid:
         "Este proceso será gestionado por uno de nuestros funcionarios, puede tardar algún tiempo mientras se gestiona la aprobación.",
       buttonText: "Entendido",
+    },
+    showExceedQuotaModal: {
+      title: "Acción no permitida",
+      nextButton: "Entendido",
+      description:
+        "La Unidad de negocio no permite solicitar un monto mayor al cupo disponible, prueba con un valor menor o igual a Cupo disponible",
     },
   },
 };

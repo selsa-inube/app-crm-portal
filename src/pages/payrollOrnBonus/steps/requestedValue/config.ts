@@ -1,10 +1,8 @@
 export const dataRequestValue = {
   title: "Valor solicitado",
   place: "Ej: 1.000.000",
-  description:
-    "Tomando en cuenta el valor disponible, por favor escribe. ¿Cuál es el valor solicitado?",
-  availableQuota: "$2.000.000",
-  availableQuotaLabel: "Cupo disponible",
+  availableQuota: "$1.700.000",
+  availableQuotaLabel: "Valor máximo que puedes recibir",
   borrower: "Nómina mensual SELSA",
   interestRate: "1,2% mensual",
   validation: {
@@ -13,5 +11,16 @@ export const dataRequestValue = {
     positive: "El monto debe ser positivo",
     min: "El monto debe ser mayor a 0",
     maxPrefix: "El monto no puede ser mayor al cupo disponible",
+  },
+  modal: {
+    title: "Simulación de cupo",
+    availableOnPayrollLabel: "Disponible en nómina",
+    availableOnPayrollValue: "2.000.000",
+    prepaidInterest: "(-) Intereses anticipados",
+    prepaidInterestValue: "-300.000",
+    maximum: "Valor máximo que puedes recibir",
+    maximumValue: "1.700.000",
+    value: "$",
+    backButton: "Cerrar",
   },
 };

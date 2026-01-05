@@ -7,7 +7,12 @@ import {
   Assisted,
 } from "@inubekit/inubekit";
 import { useNavigate } from "react-router-dom";
-import { MdArrowBack, MdCheckCircle, MdOutlineRule } from "react-icons/md";
+import {
+  MdArrowBack,
+  MdCheckCircle,
+  MdHighlightOff,
+  MdOutlineRule,
+} from "react-icons/md";
 
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { ICustomerData } from "@context/CustomerContext/types";
@@ -90,11 +95,12 @@ interface PayRollUIProps {
   isModalOpenRequirements: boolean;
   isSelected: string;
   handleTabChange: (tabId: string) => void;
-
   showInfoModal: boolean;
   handleBackClick: () => void;
   handleCancelNavigation: () => void;
   handleNextClick: () => void;
+  showExceedQuotaModal: boolean;
+  setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function PayRollUI(props: PayRollUIProps) {
@@ -145,6 +151,8 @@ export function PayRollUI(props: PayRollUIProps) {
     handleBackClick,
     handleCancelNavigation,
     handleNextClick,
+    setShowExceedQuotaModal,
+    showExceedQuotaModal,
   } = props;
 
   return (
@@ -391,6 +399,24 @@ export function PayRollUI(props: PayRollUIProps) {
             </BaseModal>
           )}
         </Stack>
+      )}
+      {showExceedQuotaModal && (
+        <BaseModal
+          title={dataSubmitApplication.modals.showExceedQuotaModal.title}
+          width={isMobile ? "300px" : "450px"}
+          nextButton={
+            dataSubmitApplication.modals.showExceedQuotaModal.nextButton
+          }
+          handleNext={() => setShowExceedQuotaModal(false)}
+          handleClose={() => setShowExceedQuotaModal(false)}
+        >
+          <Stack direction="column" gap="16px" alignItems="center">
+            <Icon appearance="danger" icon={<MdHighlightOff />} size="78px" />
+            <Text type="body" size="medium" weight="normal" appearance="dark">
+              {dataSubmitApplication.modals.showExceedQuotaModal.description}
+            </Text>
+          </Stack>
+        </BaseModal>
       )}
     </>
   );

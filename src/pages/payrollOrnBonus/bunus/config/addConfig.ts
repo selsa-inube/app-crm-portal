@@ -2,7 +2,7 @@ export const addConfig = {
   id: 1,
   title: "Adelanto de prima ",
   subtitle: "Es un adelanto prima de servicios, que se paga cada 6 meses.",
-  route: "/credit/prospects",
+  route: "/credit",
   crumbs: [
     {
       path: "/home",
@@ -81,5 +81,18 @@ export const dataSubmitApplication = {
     code: "#45678822",
     descriptionSolid:
       "Este proceso será gestionado por uno de nuestros funcionarios, puede tardar algún tiempo mientras se gestiona la aprobación.",
+  },
+  return: {
+    title: "Regresar",
+    confirmationText:
+      "¿Realmente quieres regresar? Se perderá el avance de tu solicitud.",
+    cancelButton: "Cancelar",
+    sendButton: "Sí, regresar",
+  },
+  showExceedQuotaModal: {
+    title: "Acción no permitida",
+    nextButton: "Entendido",
+    description:
+      "La Unidad de negocio no permite solicitar un monto mayor al cupo disponible, prueba con un valor menor o igual a Cupo disponible",
   },
 };

@@ -1,5 +1,6 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import React from "react";
 
 import { useMediaQuery } from "@inubekit/inubekit";
 
@@ -20,6 +21,7 @@ import { titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
 import { BonusUI } from "./interface";
 import { textAddCongfig } from "../payRoll/config/addConfig";
+import { availableQuotaValue } from "../steps/requestedValue";
 
 export function Bonus() {
   const navigate = useNavigate();
@@ -65,12 +67,21 @@ export function Bonus() {
   const [isSelected, setIsSelected] = useState<string>(
     disbursemenTabs.internal.id,
   );
-
+  const [showExceedQuotaModal, setShowExceedQuotaModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = React.useState(false);
   const handleTabChange = (tabId: string) => {
     setIsSelected(tabId);
   };
 
   const handleNextStep = () => {
+    if (currentStep === stepsAddBonus.destination.id) {
+      const currentAmount = Number(formData.requestedValue);
+
+      if (currentAmount > availableQuotaValue) {
+        setShowExceedQuotaModal(true);
+        return;
+      }
+    }
     if (currentStep < lastStepId && isCurrentFormValid) {
       setCurrentStep(currentStep + 1);
     }
@@ -469,7 +480,14 @@ export function Bonus() {
     setShowSuccessModal(false);
     navigate("/credit");
   };
+  const handleCancelNavigation = () => {
+    setShowInfoModal(false);
+  };
 
+  const handleConfirmNavigation = () => {
+    setShowInfoModal(false);
+    navigate("/credit");
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -593,6 +611,8 @@ export function Bonus() {
       prospectData={prospectData}
       customerData={customerData as ICustomerData}
       dataHeader={dataHeader}
+      showExceedQuotaModal={showExceedQuotaModal}
+      setShowExceedQuotaModal={setShowExceedQuotaModal}
       steps={steps}
       businessUnitPublicCode={businessUnitPublicCode}
       businessManagerCode={businessManagerCode}
@@ -612,6 +632,8 @@ export function Bonus() {
       onRequirementsValidated={handleRequirementsValidated}
       showSubmitModal={showSubmitModal}
       setShowSubmitModal={setShowSubmitModal}
+      showInfoModal={showInfoModal}
+      setShowInfoModal={setShowInfoModal}
       showSuccessModal={showSuccessModal}
       setShowSuccessModal={setShowSuccessModal}
       isLoadingSubmit={isLoadingSubmit}
@@ -625,6 +647,8 @@ export function Bonus() {
       isModalOpenRequirements={isModalOpenRequirements}
       isSelected={isSelected}
       handleTabChange={handleTabChange}
+      handleNextClick={handleConfirmNavigation}
+      handleCancelNavigation={handleCancelNavigation}
     />
   );
 }

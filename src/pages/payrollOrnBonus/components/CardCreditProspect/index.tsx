@@ -28,6 +28,8 @@ export interface ICardCreditProspectProps {
   handleEdit?: () => void;
   handleDelete?: () => void;
   titleQuota: string;
+  optionIcon?: React.ReactNode;
+  handleOptionClick?: () => void;
 }
 
 export function CardCreditProspect(props: ICardCreditProspectProps) {
@@ -41,6 +43,8 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
     hasMessage,
     titleQuota,
     handleMessage,
+    optionIcon,
+    handleOptionClick,
   } = props;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,15 +65,31 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
                 appearance="dark"
                 size="24px"
               />
-              <Text
-                type="title"
-                size="large"
-                weight="bold"
-                appearance="primary"
-                textAlign="center"
+              <Stack
+                direction="row"
+                gap="8px"
+                alignItems="center"
+                justifyContent="center"
               >
-                {truncateTextToMaxLength(title, 20)}
-              </Text>
+                <Text
+                  type="title"
+                  size="large"
+                  weight="bold"
+                  appearance="primary"
+                  textAlign="center"
+                >
+                  {truncateTextToMaxLength(title, 20)}
+                </Text>
+                {optionIcon && (
+                  <Icon
+                    icon={optionIcon}
+                    appearance="primary"
+                    size="12px"
+                    cursorHover
+                    onClick={handleOptionClick}
+                  />
+                )}
+              </Stack>
             </Stack>
           </Stack>
           {hasMessage && (
