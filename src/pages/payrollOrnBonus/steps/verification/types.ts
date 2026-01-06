@@ -28,3 +28,43 @@ export interface PersonalInfo {
   age: string;
   relation: string;
 }
+export interface IPersonalInfoRequirement {
+  requirementName: string;
+  descriptionEvaluationRequirement: string;
+}
+
+export interface IPersonalInfo {
+  requirements: IPersonalInfoRequirement[];
+}
+
+export interface IInternalAccount {
+  amount: number;
+  accountNumber: string;
+  description: string;
+  accountLabel?: string;
+  bank?: string;
+}
+
+export interface IMethodOfDisbursement {
+  Internal_account: IInternalAccount;
+  External_account: IInternalAccount;
+}
+
+export interface IAdvanceType {
+  type: string;
+  description?: string;
+}
+
+export interface ISteps {
+  personalInfo: IPersonalInfo;
+  destinations: string;
+  methodOfDisbursement: IMethodOfDisbursement;
+  advanceType?: IAdvanceType;
+}
+
+export interface IControllerAccordionProps {
+  steps: ISteps;
+  setCurrentStep: (step: number) => void;
+  destinationOfMoney: number;
+  advanceType?: "payroll" | "bonus";
+}

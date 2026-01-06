@@ -11,6 +11,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@src/services/prospect/types";
 
 import { IPaymentConfiguration } from "./steps/config";
+import { IStepDetails } from "@src/pages/payrollOrnBonus/types";
 
 const creditLineOptions = [
   {
@@ -228,9 +229,9 @@ export interface IAddProductModalUIProps {
   iconAfter?: React.JSX.Element;
   creditLineTerms: TCreditLineTerms;
   isMobile: boolean;
-  steps: StepDetails[];
+  steps: IStepDetails[];
   currentStep: number;
-  currentStepsNumber: StepDetails;
+  currentStepsNumber: IStepDetails;
   isCurrentFormValid: boolean;
   formData: IFormValues;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
@@ -314,12 +315,12 @@ export interface IFormValues {
   selectedProducts: string[];
 }
 
-export interface StepDetails {
-  id: number;
-  number: number;
-  name: string;
-  description: string;
-}
+// export interface IStepDetails {
+//   id: number;
+//   number: number;
+//   name: string;
+//   description: string;
+// }
 
 export interface IBorrowerIncomeData {
   Dividends: number;

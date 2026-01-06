@@ -49,6 +49,12 @@ export const advancePaymentModal = {
     title: "Éxito",
     description: "Operación completada exitosamente",
   },
+  tag: {
+    title: "Prima",
+    subtitle: "Adelanto de nómina",
+    routeBonus: "/credit/bonus",
+    routePayroll: "/credit/payroll",
+  },
 };
 
 interface CreditCardCfg {

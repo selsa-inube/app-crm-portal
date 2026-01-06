@@ -106,7 +106,7 @@ const CreditUI = (props: ICreditUIProps) => {
   );
 
   const handleCardClick = (title: string, url: string, optionId: string) => {
-    if (optionId === "Adelanto de nómina") {
+    if (optionId === advancePaymentModal.tag.subtitle) {
       handleOpenInfoModal();
     } else if (title === advancePaymentModal.textPayrool) {
       handleOpenInfoModal();
@@ -119,7 +119,10 @@ const CreditUI = (props: ICreditUIProps) => {
   };
 
   const handleAdvanceOptionClick = (title: string) => {
-    const route = title === "Prima" ? "/credit/bonus" : "/credit/payroll";
+    const route =
+      title === advancePaymentModal.tag.title
+        ? advancePaymentModal.tag.routeBonus
+        : advancePaymentModal.tag.routePayroll;
     navigate(route);
   };
 

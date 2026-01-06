@@ -15,9 +15,8 @@ import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 
 import { prospectStates, textAddCongfig } from "./config/addConfig";
 import { PayRollUI } from "./interface";
-import { titleButtonTextAssited } from "../types";
+import { IBonusFormData, titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
-import { IBonusFormData } from "./types";
 import { availableQuotaValue } from "../steps/requestedValue";
 
 export function Payroll() {

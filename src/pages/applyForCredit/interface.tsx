@@ -34,7 +34,7 @@ import {
   IBorrowerData,
   IFormData,
   IStep,
-  StepDetails,
+  IStepDetails,
   titleButtonTextAssited,
 } from "./types";
 import {
@@ -59,7 +59,7 @@ import { tittleOptions } from "./config/config";
 
 interface ApplyForCreditUIProps {
   currentStep: number;
-  currentStepsNumber: StepDetails;
+  currentStepsNumber: IStepDetails;
   steps: IStep[];
   isCurrentFormValid: boolean;
   formData: IFormData;

@@ -33,17 +33,17 @@ import { RequestedValue } from "../steps/requestedValue";
 import { DisbursementGeneral } from "../steps/disbursementGeneral";
 import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
-import { IStep, StepDetails, IBonusFormData } from "./types";
+import { IStep, IStepDetails, IBonusFormData } from "../types";
 import {
   addConfig,
   dataSubmitApplication,
   textAddConfig,
 } from "./config/addConfig";
+import { VerificationPayrollOrnBonus } from "../steps/verification";
 import {
   IMethodOfDisbursement,
   IPersonalInfo,
-  VerificationPayrollOrnBonus,
-} from "../steps/verification";
+} from "../steps/verification/types";
 
 interface BonusUIProps {
   handleNextStep: () => void;
@@ -58,7 +58,7 @@ interface BonusUIProps {
   isCurrentFormValid: boolean;
   isMobile: boolean;
   isTablet: boolean;
-  currentStepsNumber?: StepDetails;
+  currentStepsNumber?: IStepDetails;
   assistedButtonText: string;
   codeError: number | null;
   prospectData: IProspect;
@@ -277,6 +277,7 @@ export function BonusUI(props: BonusUIProps) {
                   currentStepsNumber.id === stepsAddBonus.verification.id && (
                     <VerificationPayrollOrnBonus
                       setCurrentStep={setCurrentStep}
+                      advanceType="bonus"
                       destinationOfMoney={Number(formData.requestedValue || 0)}
                       steps={{
                         personalInfo:

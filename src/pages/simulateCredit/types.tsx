@@ -11,7 +11,7 @@ export const titleButtonTextAssited = {
   submitText: "Enviar",
 };
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;
@@ -55,7 +55,7 @@ export interface IPosition {
   n_roles?: string[];
 }
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;

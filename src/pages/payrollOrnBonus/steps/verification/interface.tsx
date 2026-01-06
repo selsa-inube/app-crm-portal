@@ -6,12 +6,11 @@ import { BoxAttribute } from "@components/data/BoxAttirbute";
 import { Accordion } from "@components/data/Accordion";
 
 import { StyledBoxAttribute, StyledScrollContainer } from "./styles";
-import { IDataVerificationStep } from "./types";
+import { IDataVerificationStep, ISteps } from "./types";
 import {
   verificatioModalConfig,
   verificationDebtorAddModalConfig,
 } from "./config";
-import { ISteps } from ".";
 
 interface IVerificationDebtorAddModalUIProps {
   dataVerificationStep: IDataVerificationStep[];

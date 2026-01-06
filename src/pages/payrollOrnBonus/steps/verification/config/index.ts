@@ -34,4 +34,19 @@ export const verificatioModalConfig = {
   description: "Vas a recibir $ 1.700.000",
   titleCredit: "¿Dónde recibirás el dinero?",
   descriptionCredit: "En la cuenta externa Davivienda - 11334466008",
+  receive: {
+    payroll: "Nómina o prima",
+    pay: "Adelanto de nómina",
+    bonus: "Adelanto de prima",
+  },
+  methodOfDisbursement: {
+    title: "Cuenta para desembolsar el dinero",
+    obervervation: "Observaciones",
+    amount: "Valor neto a girar",
+    placeAmount: "1.7000.000",
+  },
+
+  advanceType: {
+    title: "Tipo de adelanto",
+  },
 };

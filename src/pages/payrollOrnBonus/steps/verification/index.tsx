@@ -1,49 +1,16 @@
 import { useMediaQuery } from "@inubekit/inubekit";
 import { currencyFormat } from "@utils/formatData/currency";
 
-import { IAttributes, IDataVerificationStep } from "./types";
+import {
+  IAttributes,
+  IControllerAccordionProps,
+  IDataVerificationStep,
+} from "./types";
 import { VerificationDebtorAddModalUI } from "./interface";
-import { verificationDebtorAddModalConfig } from "./config";
-
-export interface IPersonalInfoRequirement {
-  requirementName: string;
-  descriptionEvaluationRequirement: string;
-}
-
-export interface IPersonalInfo {
-  requirements: IPersonalInfoRequirement[];
-}
-
-export interface IInternalAccount {
-  amount: number;
-  accountNumber: string;
-  description: string;
-  accountLabel?: string;
-  bank?: string;
-}
-
-export interface IMethodOfDisbursement {
-  Internal_account: IInternalAccount;
-  External_account: IInternalAccount;
-}
-
-export interface IAdvanceType {
-  type: string;
-  description?: string;
-}
-
-export interface ISteps {
-  personalInfo: IPersonalInfo;
-  destinations: string;
-  methodOfDisbursement: IMethodOfDisbursement;
-  advanceType?: IAdvanceType;
-}
-
-export interface IControllerAccordionProps {
-  steps: ISteps;
-  setCurrentStep: (step: number) => void;
-  destinationOfMoney: number;
-}
+import {
+  verificatioModalConfig,
+  verificationDebtorAddModalConfig,
+} from "./config";
 
 function createAttribute(
   attributeName: string,
@@ -55,7 +22,7 @@ function createAttribute(
 export const VerificationPayrollOrnBonus = (
   props: IControllerAccordionProps,
 ) => {
-  const { steps, setCurrentStep, destinationOfMoney } = props;
+  const { steps, setCurrentStep, destinationOfMoney, advanceType } = props;
   const isMobile = useMediaQuery("(max-width: 740px)");
 
   const personalInfoAttributes = [
@@ -74,28 +41,26 @@ export const VerificationPayrollOrnBonus = (
   ].filter((attr) => attr.value);
 
   const advanceTypeAttributes = [
-    createAttribute("Nómina o prima", "Adelanto de prima"),
+    createAttribute(
+      verificatioModalConfig.receive.payroll,
+      advanceType === "payroll"
+        ? verificatioModalConfig.receive.pay
+        : verificatioModalConfig.receive.bonus,
+    ),
   ].filter((attr) => attr.value);
 
   const methodOfDisbursement = [
     ...(steps.methodOfDisbursement.Internal_account.amount > 0 ||
     steps.methodOfDisbursement.Internal_account.accountNumber
       ? [
-          createAttribute("Valor neto a girar", "1.7000.000"),
-          ...(steps.methodOfDisbursement.Internal_account.amount > 0
-            ? [
-                createAttribute(
-                  "Valor a girar con esta forma de desembolso",
-                  currencyFormat(
-                    steps.methodOfDisbursement.Internal_account.amount,
-                  ),
-                ),
-              ]
-            : []),
+          createAttribute(
+            verificatioModalConfig.methodOfDisbursement.amount,
+            verificatioModalConfig.methodOfDisbursement.placeAmount,
+          ),
           ...(steps.methodOfDisbursement.Internal_account.accountNumber
             ? [
                 createAttribute(
-                  "Cuenta para desembolsar el dinero",
+                  verificatioModalConfig.methodOfDisbursement.title,
                   steps.methodOfDisbursement.Internal_account.accountLabel ||
                     "",
                 ),
@@ -104,7 +69,7 @@ export const VerificationPayrollOrnBonus = (
           ...(steps.methodOfDisbursement.Internal_account.description
             ? [
                 createAttribute(
-                  "Observaciones",
+                  verificatioModalConfig.methodOfDisbursement.obervervation,
                   steps.methodOfDisbursement.Internal_account.description,
                 ),
               ]
@@ -127,7 +92,7 @@ export const VerificationPayrollOrnBonus = (
     {
       sections: {
         advanceType: {
-          title: "Tipo de adelanto",
+          title: verificatioModalConfig.advanceType.title,
           attributes: advanceTypeAttributes,
           stepNumber: 0,
         },

@@ -27,23 +27,29 @@ import { RequirementsModal } from "@pages/prospect/components/modals/Requirement
 
 import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
-import { IStep, StepDetails, IBonusFormData } from "./types";
+
 import {
   addConfig,
   dataSubmitApplication,
   textAddCongfig,
 } from "./config/addConfig";
 import { StyledArrowBack, StyledContainerAssisted } from "../styles";
-import { IDisbursementGeneral, titleButtonTextAssited } from "../types";
+import {
+  IBonusFormData,
+  IDisbursementGeneral,
+  IStep,
+  IStepDetails,
+  titleButtonTextAssited,
+} from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
 import { RequirementsNotMet } from "../steps/requirementsNotMet";
 import { RequestedValue } from "../steps/requestedValue";
 import { DisbursementGeneral } from "../steps/disbursementGeneral";
+import { VerificationPayrollOrnBonus } from "../steps/verification";
 import {
   IMethodOfDisbursement,
   IPersonalInfo,
-  VerificationPayrollOrnBonus,
-} from "../steps/verification";
+} from "../steps/verification/types";
 
 interface PayRollUIProps {
   handleNextStep: () => void;
@@ -57,7 +63,7 @@ interface PayRollUIProps {
   businessManagerCode: string;
   isCurrentFormValid: boolean;
   isMobile: boolean;
-  currentStepsNumber?: StepDetails;
+  currentStepsNumber?: IStepDetails;
   assistedButtonText: string;
   codeError: number | null;
   prospectData: IProspect;
@@ -280,6 +286,7 @@ export function PayRollUI(props: PayRollUIProps) {
                     <VerificationPayrollOrnBonus
                       setCurrentStep={setCurrentStep}
                       destinationOfMoney={Number(formData.requestedValue || 0)}
+                      advanceType="payroll"
                       steps={{
                         personalInfo:
                           formData.requirementsValidation as IPersonalInfo,

@@ -15,8 +15,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 
 import { prospectStates } from "./config/addConfig";
-import { IBonusFormData } from "./types";
-import { titleButtonTextAssited } from "../types";
+import { IBonusFormData, titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
 import { BonusUI } from "./interface";
 import { textAddCongfig } from "../payRoll/config/addConfig";

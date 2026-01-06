@@ -1,3 +1,5 @@
+import { IValidateRequirement } from "@services/requirement/types";
+
 export const titleButtonTextAssited = {
   goBackText: "Anterior",
   goNextText: "Siguiente",
@@ -34,4 +36,38 @@ interface IPersonData {
   phone: string;
   mail: string;
   city: string;
+}
+
+export interface IStepDetails {
+  id: number;
+  number: number;
+  name: string;
+  description: string;
+}
+
+export interface IBonusFormData {
+  requestedValue: string;
+  disbursementGeneral: IDisbursementGeneral;
+  requirementsValidation?: {
+    requirements: IValidateRequirement[];
+    isValid: boolean;
+    validatedAt: Date | null;
+    unfulfilledCount: number;
+  };
+}
+
+export interface IStep {
+  id: number;
+  description: string;
+  number?: number;
+  name?: string;
+}
+
+export interface IProspectSummaryById {
+  [key: string]: number;
+  requestedAmount: number;
+  deductibleExpenses: number;
+  netAmountToDisburse: number;
+  totalRegularInstallments: number;
+  totalConsolidatedAmount: number;
 }
