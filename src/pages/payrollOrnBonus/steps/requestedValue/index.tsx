@@ -168,14 +168,14 @@ export function RequestedValue(props: IRequestedValueProps) {
       {isModalOpen && (
         <BaseModal
           title={dataRequestValue.modal.title}
-          width="450px"
+          width={isMobile ? "auto" : "450px"}
           height="296px"
           backButton={dataRequestValue.modal.backButton}
           handleBack={handleCloseModal}
           handleClose={handleCloseModal}
         >
           <Stack direction="column" gap="16px">
-            <Box height="122px">
+            <Box height={isMobile ? "auto" : "122px"}>
               <Stack direction="column" gap="12px">
                 <Stack justifyContent="space-between">
                   <Text

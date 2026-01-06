@@ -109,18 +109,9 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
             placeHolder={capitalizeFirstLetter(
               formatPrimaryDate(new Date(date as Date)),
             )}
-            apparencePlaceHolder="gray"
           />
-          <CardGray
-            label={cardCreditData.official}
-            placeHolder={borrower}
-            apparencePlaceHolder="gray"
-          />
-          <CardGray
-            label={cardCreditData.value}
-            placeHolder={value}
-            apparencePlaceHolder="gray"
-          />
+          <CardGray label={cardCreditData.official} placeHolder={borrower} />
+          <CardGray label={cardCreditData.value} placeHolder={value} />
         </Stack>
 
         {isModalOpen ? (

@@ -57,6 +57,7 @@ interface BonusUIProps {
   businessManagerCode: string;
   isCurrentFormValid: boolean;
   isMobile: boolean;
+  isTablet: boolean;
   currentStepsNumber?: StepDetails;
   assistedButtonText: string;
   codeError: number | null;
@@ -66,7 +67,6 @@ interface BonusUIProps {
   onValidationChange: (isValid: boolean) => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormChange: (updatedValues: Partial<IBonusFormData>) => void;
-
   modesOfDisbursement: string[];
   showErrorModal: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -115,6 +115,7 @@ export function BonusUI(props: BonusUIProps) {
     steps,
     isCurrentFormValid,
     isMobile,
+    isTablet,
     codeError,
     modesOfDisbursement,
     addToFix,
@@ -257,6 +258,7 @@ export function BonusUI(props: BonusUIProps) {
                     stepsAddBonus.methodOfDisbursement.id && (
                     <DisbursementGeneral
                       isMobile={isMobile}
+                      isTablet={isTablet}
                       onFormValid={setIsCurrentFormValid}
                       initialValues={
                         formData.disbursementGeneral as IDisbursementGeneral

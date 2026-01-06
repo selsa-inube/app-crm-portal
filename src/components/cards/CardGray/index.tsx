@@ -28,9 +28,9 @@ export function CardGray(props: ICardGrayProps) {
       <Stack direction="column">
         <Text
           type="label"
-          weight="bold"
+          weight="normal"
           size="medium"
-          appearance="dark"
+          appearance="gray"
           ellipsis={true}
         >
           {label}
@@ -39,6 +39,7 @@ export function CardGray(props: ICardGrayProps) {
           <Text
             type="body"
             size="medium"
+            weight="bold"
             appearance={apparencePlaceHolder}
             ellipsis={true}
           >

@@ -93,6 +93,7 @@ interface PayRollUIProps {
   handleBackClick: () => void;
   handleCancelNavigation: () => void;
   handleNextClick: () => void;
+  isTablet: boolean;
   showExceedQuotaModal: boolean;
   setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -106,7 +107,7 @@ export function PayRollUI(props: PayRollUIProps) {
     navigate,
     prospectData,
     currentStepsNumber,
-
+    isTablet,
     handleFormChange,
     businessUnitPublicCode,
     businessManagerCode,
@@ -270,6 +271,7 @@ export function PayRollUI(props: PayRollUIProps) {
                       customerData={customerData}
                       identificationNumber={customerData?.publicCode || ""}
                       modesOfDisbursement={modesOfDisbursement}
+                      isTablet={isTablet}
                     />
                   )}
 

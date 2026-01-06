@@ -14,13 +14,11 @@ interface IDisbursementGeneralProps {
   isMobile: boolean;
   initialValues: IDisbursementGeneral;
   data: IProspect;
-
   identificationNumber: string;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
-
   customerData?: ICustomerData;
-
+  isTablet: boolean;
   modesOfDisbursement: string[];
 }
 
@@ -28,12 +26,12 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   const {
     isMobile,
     initialValues,
-
     identificationNumber,
     onFormValid,
     handleOnChange,
     modesOfDisbursement,
     customerData,
+    isTablet,
   } = props;
 
   const formik = useFormik({
@@ -77,6 +75,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
         <Stack direction="column">
           <DisbursementWithInternalAccount
             isMobile={isMobile}
+            isTablet={isTablet}
             onFormValid={onFormValid}
             initialValues={initialValues}
             handleOnChange={handleOnChange}

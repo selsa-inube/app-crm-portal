@@ -23,6 +23,7 @@ import { availableQuotaValue } from "../steps/requestedValue";
 export function Payroll() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(max-width: 1482px)");
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddBonus.generalInformation.id,
@@ -619,6 +620,7 @@ export function Payroll() {
       handleBackClick={handleBackClick}
       handleCancelNavigation={handleCancelNavigation}
       handleNextClick={handleConfirmNavigation}
+      isTablet={isTablet}
     />
   );
 }

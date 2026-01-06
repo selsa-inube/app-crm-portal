@@ -25,6 +25,7 @@ import { availableQuotaValue } from "../steps/requestedValue";
 export function Bonus() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(max-width: 1482px)");
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddBonus.generalInformation.id,
@@ -576,6 +577,7 @@ export function Bonus() {
       currentStep={currentStep}
       isCurrentFormValid={isCurrentFormValid}
       isMobile={isMobile}
+      isTablet={isTablet}
       currentStepsNumber={currentStepsNumber}
       assistedButtonText={assistedButtonText}
       codeError={null}

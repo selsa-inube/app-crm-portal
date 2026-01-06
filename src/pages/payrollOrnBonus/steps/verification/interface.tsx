@@ -38,8 +38,8 @@ export const VerificationDebtorAddModalUI = (
   return (
     <StyledScrollContainer $hasScroll={hasScroll}>
       <Stack gap="20px" direction="column">
-        <Stack gap="16px">
-          <StyledBoxAttribute>
+        <Stack gap="16px" direction={isMobile ? "column" : "row"}>
+          <StyledBoxAttribute $isMobile={isMobile}>
             <Icon appearance={"primary"} icon={<MdOutlinePaid />}></Icon>
             <Stack direction="column">
               <Text type="title" size="small" appearance="dark" weight="bold">
@@ -50,7 +50,7 @@ export const VerificationDebtorAddModalUI = (
               </Text>
             </Stack>
           </StyledBoxAttribute>
-          <StyledBoxAttribute>
+          <StyledBoxAttribute $isMobile={isMobile}>
             <Icon appearance={"primary"} icon={<MdOutlinePaid />}></Icon>
             <Stack direction="column">
               <Text type="title" size="small" appearance="dark" weight="bold">

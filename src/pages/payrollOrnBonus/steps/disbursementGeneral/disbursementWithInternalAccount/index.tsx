@@ -30,6 +30,7 @@ import { StyledContainer } from "./style";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
+  isTablet: boolean;
   initialValues: IDisbursementGeneral;
   formik: FormikValues;
   optionNameForm: string;
@@ -55,6 +56,7 @@ export function DisbursementWithInternalAccount(
     customerData,
     businessManagerCode,
     getTotalAmount,
+    isTablet,
     onFormValid,
     handleOnChange,
   } = props;
@@ -318,8 +320,9 @@ export function DisbursementWithInternalAccount(
       padding={isMobile ? "4px 10px" : "10px 16px"}
       gap="16px"
       justifyContent="space-between"
+      direction={isTablet ? "column" : "row"}
     >
-      <Stack direction="column" width="459px" gap="16px">
+      <Stack direction="column" width={isTablet ? "auto" : "459px"} gap="16px">
         {!formik.values[optionNameForm]?.toggle && (
           <>
             <GeneralInformationForm
@@ -406,7 +409,10 @@ export function DisbursementWithInternalAccount(
         <Text appearance="primary" type="body" size="large" weight="bold">
           {disbursemenOptionAccount.modal.settlement}
         </Text>
-        <Box height="122px" width="459px">
+        <Box
+          height={isTablet ? "auto" : "122px"}
+          width={isTablet ? "100%" : "459px"}
+        >
           <Stack direction="column" gap="12px">
             <Stack justifyContent="space-between">
               <Text type="label" size="large" weight="bold" appearance="dark">
@@ -469,7 +475,7 @@ export function DisbursementWithInternalAccount(
       {isModalOpen && (
         <BaseModal
           title={disbursemenOptionAccount.modalOb.title}
-          width="450px"
+          width={isMobile ? "auto" : "450px"}
           nextButton={disbursemenOptionAccount.modalOb.nexButton}
           handleNext={() => setIsModalOpen(false)}
           handleClose={() => setIsModalOpen(false)}
