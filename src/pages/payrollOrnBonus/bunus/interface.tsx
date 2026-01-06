@@ -33,12 +33,7 @@ import { RequestedValue } from "../steps/requestedValue";
 import { DisbursementGeneral } from "../steps/disbursementGeneral";
 import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
-import {
-  IStep,
-  StepDetails,
-  IBonusFormData,
-  IProspectSummaryById,
-} from "./types";
+import { IStep, StepDetails, IBonusFormData } from "./types";
 import {
   addConfig,
   dataSubmitApplication,
@@ -71,7 +66,7 @@ interface BonusUIProps {
   onValidationChange: (isValid: boolean) => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormChange: (updatedValues: Partial<IBonusFormData>) => void;
-  prospectSummaryData?: IProspectSummaryById;
+
   modesOfDisbursement: string[];
   showErrorModal: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -95,8 +90,6 @@ interface BonusUIProps {
   handleSuccessModalClose: () => void;
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   isModalOpenRequirements: boolean;
-  isSelected: string;
-  handleTabChange: (tabId: string) => void;
   handleNextClick: () => void;
   handleCancelNavigation: () => void;
   showExceedQuotaModal: boolean;
@@ -114,7 +107,7 @@ export function BonusUI(props: BonusUIProps) {
     navigate,
     prospectData,
     currentStepsNumber,
-    prospectSummaryData,
+
     handleFormChange,
     businessUnitPublicCode,
     businessManagerCode,
@@ -148,8 +141,6 @@ export function BonusUI(props: BonusUIProps) {
     isModalOpenRequirements,
     isLoading,
     errorsManager,
-    isSelected,
-    handleTabChange,
     showExceedQuotaModal,
     setShowExceedQuotaModal,
   } = props;
@@ -273,12 +264,9 @@ export function BonusUI(props: BonusUIProps) {
                       handleOnChange={(values) =>
                         handleFormChange({ disbursementGeneral: values })
                       }
-                      isSelected={isSelected}
-                      handleTabChange={handleTabChange}
                       data={prospectData}
                       customerData={customerData}
                       identificationNumber={customerData?.publicCode || ""}
-                      prospectSummaryData={prospectSummaryData}
                       modesOfDisbursement={modesOfDisbursement}
                     />
                   )}

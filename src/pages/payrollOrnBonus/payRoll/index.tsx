@@ -7,22 +7,17 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { IBorrower, IProspect } from "@services/prospect/types";
-import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
 import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import { IValidateRequirement } from "@services/requirement/types";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 
-import {
-  prospectStates,
-  textAddCongfig,
-  disbursemenTabs,
-} from "./config/addConfig";
+import { prospectStates, textAddCongfig } from "./config/addConfig";
 import { PayRollUI } from "./interface";
 import { titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
-import { IBonusFormData, IProspectSummaryById } from "./types";
+import { IBonusFormData } from "./types";
 import { availableQuotaValue } from "../steps/requestedValue";
 
 export function Payroll() {
@@ -36,8 +31,7 @@ export function Payroll() {
   const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [codeError, setCodeError] = useState<number | null>(null);
-  const [prospectSummaryData, setProspectSummaryData] =
-    useState<IProspectSummaryById>();
+
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
@@ -64,13 +58,8 @@ export function Payroll() {
   >([]);
   const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
-  const [isSelected, setIsSelected] = useState<string>(
-    disbursemenTabs.internal.id,
-  );
+
   const [showExceedQuotaModal, setShowExceedQuotaModal] = useState(false);
-  const handleTabChange = (tabId: string) => {
-    setIsSelected(tabId);
-  };
 
   const handleNextStep = () => {
     if (currentStep === stepsAddBonus.destination.id) {
@@ -494,28 +483,6 @@ export function Payroll() {
     navigate("/credit");
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getSearchProspectSummaryById(
-          businessUnitPublicCode,
-          businessManagerCode,
-          prospectData.prospectId,
-        );
-        if (result) {
-          setProspectSummaryData(result);
-        }
-      } catch (error) {
-        setShowErrorModal(true);
-        setMessageError(JSON.stringify(error));
-      }
-    };
-
-    if (prospectData?.prospectId) {
-      fetchData();
-    }
-  }, [businessUnitPublicCode, prospectData?.prospectId]);
-
   const fetchDisbursementDataForProspect = useCallback(
     async (prospect: IProspect) => {
       if (
@@ -627,7 +594,6 @@ export function Payroll() {
       onValidationChange={handleValidationChange}
       setIsCurrentFormValid={setIsCurrentFormValid}
       handleFormChange={handleFormChange}
-      prospectSummaryData={prospectSummaryData}
       modesOfDisbursement={modesOfDisbursement}
       showErrorModal={showErrorModal}
       messageError={messageError}
@@ -649,8 +615,6 @@ export function Payroll() {
       errorsManager={errorsManager}
       setIsModalOpenRequirements={setIsModalOpenRequirements}
       isModalOpenRequirements={isModalOpenRequirements}
-      isSelected={isSelected}
-      handleTabChange={handleTabChange}
       showInfoModal={showInfoModal}
       handleBackClick={handleBackClick}
       handleCancelNavigation={handleCancelNavigation}

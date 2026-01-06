@@ -8,15 +8,14 @@ import { CustomerContext } from "@context/CustomerContext";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { AppContext } from "@context/AppContext";
 import { IBorrower, IProspect } from "@services/prospect/types";
-import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
 import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import { IValidateRequirement } from "@services/requirement/types";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 
-import { prospectStates, disbursemenTabs } from "./config/addConfig";
-import { IBonusFormData, IProspectSummaryById } from "./types";
+import { prospectStates } from "./config/addConfig";
+import { IBonusFormData } from "./types";
 import { titleButtonTextAssited } from "../types";
 import { stepsAddBonus } from "./config/addBonus.config";
 import { BonusUI } from "./interface";
@@ -34,8 +33,7 @@ export function Bonus() {
   const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [codeError, setCodeError] = useState<number | null>(null);
-  const [prospectSummaryData, setProspectSummaryData] =
-    useState<IProspectSummaryById>();
+
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
@@ -64,14 +62,8 @@ export function Bonus() {
   const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
 
-  const [isSelected, setIsSelected] = useState<string>(
-    disbursemenTabs.internal.id,
-  );
   const [showExceedQuotaModal, setShowExceedQuotaModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = React.useState(false);
-  const handleTabChange = (tabId: string) => {
-    setIsSelected(tabId);
-  };
 
   const handleNextStep = () => {
     if (currentStep === stepsAddBonus.destination.id) {
@@ -488,27 +480,6 @@ export function Bonus() {
     setShowInfoModal(false);
     navigate("/credit");
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getSearchProspectSummaryById(
-          businessUnitPublicCode,
-          businessManagerCode,
-          prospectData.prospectId,
-        );
-        if (result) {
-          setProspectSummaryData(result);
-        }
-      } catch (error) {
-        setShowErrorModal(true);
-        setMessageError(JSON.stringify(error));
-      }
-    };
-
-    if (prospectData?.prospectId) {
-      fetchData();
-    }
-  }, [businessUnitPublicCode, prospectData?.prospectId]);
 
   const fetchDisbursementDataForProspect = useCallback(
     async (prospect: IProspect) => {
@@ -621,7 +592,6 @@ export function Bonus() {
       onValidationChange={handleValidationChange}
       setIsCurrentFormValid={setIsCurrentFormValid}
       handleFormChange={handleFormChange}
-      prospectSummaryData={prospectSummaryData}
       modesOfDisbursement={modesOfDisbursement}
       showErrorModal={showErrorModal}
       messageError={messageError}
@@ -645,8 +615,6 @@ export function Bonus() {
       errorsManager={errorsManager}
       setIsModalOpenRequirements={setIsModalOpenRequirements}
       isModalOpenRequirements={isModalOpenRequirements}
-      isSelected={isSelected}
-      handleTabChange={handleTabChange}
       handleNextClick={handleConfirmNavigation}
       handleCancelNavigation={handleCancelNavigation}
     />

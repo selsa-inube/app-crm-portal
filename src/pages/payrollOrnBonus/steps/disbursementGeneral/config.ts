@@ -43,9 +43,27 @@ export const disbursemenOptionAccount = {
   labelAccountNumber: "Número de cuenta",
   placeAccountNumber: "Ej: 1040 2200 3582",
   observation: "Observaciones",
-  placeObservation: "Cosas extra que deben tenerse en cuenta.",
+  placeObservation: "Aspectos extra que deben tenerse en cuenta.",
   placeOption: "Selecciona una opción",
   valueTurnFail:
     "El valor a girar con esta forma de desembolso es diferente de ",
   errorFlagInternal: "Error al obtener cuentas internas",
+  modal: {
+    title: "Simulación de cupo",
+    availableOnPayrollLabel: "Monto del préstamo a descontar en la nómina",
+    availableOnPayrollValue: "2.000.000",
+    prepaidInterest: "(-) Intereses anticipados",
+    prepaidInterestValue: "-300.000",
+    maximum: "Valor neto a girar",
+    maximumValue: "1.700.000",
+    value: "$",
+    backButton: "Cerrar",
+    settlement: "Liquidación de crédito",
+  },
+  modalOb: {
+    title: "Información",
+    description:
+      "Si la cuenta donde deseas recibir el desembolso no está registrada, utiliza el campo de observaciones para describir la forma de desembolso que requieres. ",
+    nexButton: "Entendido",
+  },
 };

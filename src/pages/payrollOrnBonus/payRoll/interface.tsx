@@ -27,12 +27,7 @@ import { RequirementsModal } from "@pages/prospect/components/modals/Requirement
 
 import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
-import {
-  IStep,
-  StepDetails,
-  IBonusFormData,
-  IProspectSummaryById,
-} from "./types";
+import { IStep, StepDetails, IBonusFormData } from "./types";
 import {
   addConfig,
   dataSubmitApplication,
@@ -71,7 +66,7 @@ interface PayRollUIProps {
   onValidationChange: (isValid: boolean) => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormChange: (updatedValues: Partial<IBonusFormData>) => void;
-  prospectSummaryData?: IProspectSummaryById;
+
   modesOfDisbursement: string[];
   showErrorModal: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -93,8 +88,7 @@ interface PayRollUIProps {
   handleSuccessModalClose: () => void;
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   isModalOpenRequirements: boolean;
-  isSelected: string;
-  handleTabChange: (tabId: string) => void;
+
   showInfoModal: boolean;
   handleBackClick: () => void;
   handleCancelNavigation: () => void;
@@ -112,7 +106,7 @@ export function PayRollUI(props: PayRollUIProps) {
     navigate,
     prospectData,
     currentStepsNumber,
-    prospectSummaryData,
+
     handleFormChange,
     businessUnitPublicCode,
     businessManagerCode,
@@ -145,8 +139,7 @@ export function PayRollUI(props: PayRollUIProps) {
     isModalOpenRequirements,
     isLoading,
     errorsManager,
-    isSelected,
-    handleTabChange,
+
     showInfoModal,
     handleBackClick,
     handleCancelNavigation,
@@ -273,12 +266,9 @@ export function PayRollUI(props: PayRollUIProps) {
                       handleOnChange={(values) =>
                         handleFormChange({ disbursementGeneral: values })
                       }
-                      isSelected={isSelected}
-                      handleTabChange={handleTabChange}
                       data={prospectData}
                       customerData={customerData}
                       identificationNumber={customerData?.publicCode || ""}
-                      prospectSummaryData={prospectSummaryData}
                       modesOfDisbursement={modesOfDisbursement}
                     />
                   )}

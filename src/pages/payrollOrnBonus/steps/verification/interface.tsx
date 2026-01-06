@@ -5,11 +5,7 @@ import { Stack, Grid, Button, Text, Icon } from "@inubekit/inubekit";
 import { BoxAttribute } from "@components/data/BoxAttirbute";
 import { Accordion } from "@components/data/Accordion";
 
-import {
-  StyledBoxAttribute,
-  StyledDivider,
-  StyledScrollContainer,
-} from "./styles";
+import { StyledBoxAttribute, StyledScrollContainer } from "./styles";
 import { IDataVerificationStep } from "./types";
 import {
   verificatioModalConfig,
@@ -97,15 +93,12 @@ export const VerificationDebtorAddModalUI = (
                       autoRows="auto"
                       gap="10px"
                     >
-                      {section.attributes.map((attribute, index) => (
+                      {section.attributes.map((attribute) => (
                         <React.Fragment key={attribute.attribute}>
                           <BoxAttribute
                             attribute={attribute.attribute}
                             value={attribute.value}
                           />
-                          {index < section.attributes.length - 1 &&
-                            section.attributes[index + 1].attribute ===
-                              "Tipo de cuenta" && <StyledDivider />}
                         </React.Fragment>
                       ))}
                     </Grid>

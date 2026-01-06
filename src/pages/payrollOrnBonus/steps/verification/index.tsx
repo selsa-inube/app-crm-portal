@@ -80,7 +80,7 @@ export const VerificationPayrollOrnBonus = (
     ...(steps.methodOfDisbursement.Internal_account.amount > 0 ||
     steps.methodOfDisbursement.Internal_account.accountNumber
       ? [
-          createAttribute("Tipo de cuenta", "Cuenta interna"),
+          createAttribute("Valor neto a girar", "1.7000.000"),
           ...(steps.methodOfDisbursement.Internal_account.amount > 0
             ? [
                 createAttribute(
@@ -104,41 +104,6 @@ export const VerificationPayrollOrnBonus = (
                 createAttribute(
                   "Observaciones",
                   steps.methodOfDisbursement.Internal_account.description,
-                ),
-              ]
-            : []),
-        ]
-      : []),
-    ...(steps.methodOfDisbursement.External_account.amount > 0 ||
-    steps.methodOfDisbursement.External_account.accountNumber
-      ? [
-          createAttribute("Tipo de cuenta", "Cuenta externa"),
-          ...(steps.methodOfDisbursement.External_account.amount > 0
-            ? [
-                createAttribute(
-                  "Valor a girar con esta forma de desembolso",
-                  currencyFormat(
-                    steps.methodOfDisbursement.External_account.amount,
-                  ),
-                ),
-              ]
-            : []),
-          ...(steps.methodOfDisbursement.External_account.bank &&
-          steps.methodOfDisbursement.External_account.accountNumber
-            ? [
-                createAttribute(
-                  "Cuenta para desembolsar el dinero",
-                  steps.methodOfDisbursement.External_account.bank +
-                    " - " +
-                    steps.methodOfDisbursement.External_account.accountNumber,
-                ),
-              ]
-            : []),
-          ...(steps.methodOfDisbursement.External_account.description
-            ? [
-                createAttribute(
-                  "Observaciones",
-                  steps.methodOfDisbursement.External_account.description,
                 ),
               ]
             : []),
