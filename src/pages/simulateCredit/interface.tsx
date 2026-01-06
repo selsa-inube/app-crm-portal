@@ -2,7 +2,6 @@ import {
   MdArrowBack,
   MdOutlinePaid,
   MdOutlinePriceChange,
-  MdOutlineRule,
   MdCheckCircle,
 } from "react-icons/md";
 import {
@@ -46,7 +45,11 @@ import {
   ISourcesOfIncomeState,
   IManageErrors,
 } from "./types";
-import { StyledArrowBack, StyledContainerAssisted } from "./styles";
+import {
+  StyledAnchor,
+  StyledArrowBack,
+  StyledContainerAssisted,
+} from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
 import { ConsolidatedCredit } from "./steps/consolidatedCredit";
@@ -275,81 +278,46 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   </Stack>
                 </StyledArrowBack>
                 <Stack gap="8px">
-                  {isMobile ? (
-                    <>
-                      <Icon
-                        icon={<MdOutlinePriceChange />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if ((currentStepsNumber?.id ?? 0) >= 4) {
-                            setIsCreditLimitModalOpen(true);
-                          } else {
-                            setIsCreditLimitWarning(true);
-                          }
-                        }}
-                      />
-                      <Icon
-                        icon={<MdOutlinePaid />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if (totalIncome === 0) {
-                            setIsCapacityAnalysisWarning(true);
-                          } else {
-                            setIsCapacityAnalysisModal(true);
-                          }
-                        }}
-                      />
-                      <Icon
-                        icon={<MdOutlineRule />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => setIsModalOpenRequirements(true)}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        iconBefore={<MdOutlinePriceChange />}
-                        children={textAddCongfig.buttonQuotas}
-                        appearance="gray"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if ((currentStepsNumber?.id ?? 0) >= 4) {
-                            setIsCreditLimitModalOpen(true);
-                          } else {
-                            setIsCreditLimitWarning(true);
-                          }
-                        }}
-                      />
-                      <Button
-                        spacing="compact"
-                        appearance="gray"
-                        iconBefore={<MdOutlinePaid />}
-                        children={textAddCongfig.buttonPaymentCapacity}
-                        onClick={() => {
-                          if (totalIncome === 0) {
-                            setIsCapacityAnalysisWarning(true);
-                          } else {
-                            setIsCapacityAnalysisModal(true);
-                          }
-                        }}
-                        variant="outlined"
-                      />
-                      <ButtonRequirements
-                        onClick={() => setIsModalOpenRequirements(true)}
-                        data={validateRequirements}
-                      />
-                    </>
-                  )}
+                  <StyledAnchor title={textAddCongfig.buttonQuotas}>
+                    <Icon
+                      icon={<MdOutlinePriceChange />}
+                      appearance="gray"
+                      size="28px"
+                      spacing="compact"
+                      variant="outlined"
+                      cursor="pointer"
+                      onClick={() => {
+                        if ((currentStepsNumber?.id ?? 0) >= 4) {
+                          setIsCreditLimitModalOpen(true);
+                        } else {
+                          setIsCreditLimitWarning(true);
+                        }
+                      }}
+                    />
+                  </StyledAnchor>
+                  <StyledAnchor title={textAddCongfig.buttonPaymentCapacity}>
+                    <Icon
+                      icon={<MdOutlinePaid />}
+                      appearance="gray"
+                      size="28px"
+                      spacing="compact"
+                      variant="outlined"
+                      cursor="pointer"
+                      onClick={() => {
+                        if (totalIncome === 0) {
+                          setIsCapacityAnalysisWarning(true);
+                        } else {
+                          setIsCapacityAnalysisModal(true);
+                        }
+                      }}
+                    />
+                  </StyledAnchor>
+                  <StyledAnchor title={textAddCongfig.requirements}>
+                    <ButtonRequirements
+                      onClick={() => setIsModalOpenRequirements(true)}
+                      data={validateRequirements}
+                    />
+                  </StyledAnchor>
                 </Stack>
               </Stack>
               <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>
