@@ -10,6 +10,7 @@ import {
 
 import { IDomainEnum, TEnumContext } from "@config/enums/types";
 import { requirementStatusData } from "@services/enum/requirements";
+import { repaymentstructure } from "@services/enum/icorebanking-vi-crediboard/erepaymentstructure";
 
 const EnumContext = createContext<TEnumContext>({} as TEnumContext);
 
@@ -37,6 +38,7 @@ export const EnumProvider = ({ children }: { children: ReactNode }) => {
   const getMocks = useCallback((enumName: string): IDomainEnum[] | null => {
     const hardcodedEnums: Record<string, IDomainEnum[]> = {
       requirementStatus: requirementStatusData,
+      repaymentStructure: repaymentstructure,
     };
 
     return hardcodedEnums[enumName] || null;
