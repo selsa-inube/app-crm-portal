@@ -8,9 +8,9 @@ import {
 } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -54,7 +54,14 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
   return (
     <>
       <BaseModal
-        title={truncateTextToMaxLength(title, 25)}
+        title={
+          <TruncatedText
+            text={title}
+            maxLength={25}
+            size="small"
+            type="headline"
+          />
+        }
         nextButton={
           currentStepsNumber.id === steps[steps.length - 1].id
             ? titleButtonTextAssisted.submitText

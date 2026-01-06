@@ -20,7 +20,6 @@ import {
   Icon,
   Text,
   SkeletonLine,
-  SkeletonIcon,
   Button,
   Divider,
   Select,
@@ -36,10 +35,10 @@ import { IObligations } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { CardGray } from "@components/cards/CardGray";
 import { CustomerContext } from "@context/CustomerContext";
-
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { privilegeCrm } from "@config/privilege";
+import { borrowerData } from "@pages/applyForCredit/steps/borrowerData/config";
 
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
@@ -171,7 +170,6 @@ interface UIProps {
 
 export const TableFinancialObligationsUI = ({
   dataInformation,
-  extraDebtors,
   loading,
   selectedBorrower,
   visibleHeaders,
@@ -372,39 +370,41 @@ export const TableFinancialObligationsUI = ({
   }, [borrowerOptions]);
 
   const renderHeaders = () => {
-    return visibleHeaders.map((header, index) =>
-      loading ? (
-        <Td key={index} type="custom">
-          <SkeletonIcon />
-        </Td>
-      ) : (
-        <Th
-          key={index}
-          action={header.action}
-          align="center"
-          style={{ whiteSpace: "nowrap" }}
-        >
-          {header.label}
+    if (loading) {
+      return Array.from({ length: 5 }).map((_, i) => (
+        <Th key={`skeleton-th-${i}`} align="center">
+          <SkeletonLine animated width="80px" />
         </Th>
-      ),
-    );
+      ));
+    }
+    return visibleHeaders.map((header, index: number) => (
+      <Th
+        key={index}
+        action={header.action}
+        align="center"
+        style={{ whiteSpace: "nowrap" }}
+      >
+        {header.label}
+      </Th>
+    ));
   };
 
-  const renderLoadingRow = () => (
-    <Tr>
-      {visibleHeaders.map((_, index) => (
-        <Td key={index} type="custom">
-          <SkeletonLine />
-        </Td>
-      ))}
-    </Tr>
-  );
+  const renderLoadingRows = () =>
+    Array.from({ length: 5 }).map((_, rowIndex) => (
+      <Tr key={`loading-${rowIndex}`}>
+        {visibleHeaders.map((_, colIndex) => (
+          <Td key={`col-${colIndex}`} type="custom">
+            <SkeletonLine animated />
+          </Td>
+        ))}
+      </Tr>
+    ));
 
   const renderDataRows = () =>
     paddedCurrentData.map((prop: IDataInformationItem, rowIndex: number) => {
       if (prop.__isPadding) {
         return (
-          <Tr key={prop.id}>
+          <Tr key={prop.id || rowIndex}>
             {visibleHeaders.map((_, colIndex) => (
               <Td key={colIndex} type="text">
                 &nbsp;
@@ -415,7 +415,6 @@ export const TableFinancialObligationsUI = ({
       }
 
       let values: string[] = [];
-
       if (typeof prop.propertyValue === "string") {
         values = prop.propertyValue.split(",").map((val: string) => val.trim());
       } else if (Array.isArray(prop.propertyValue)) {
@@ -425,6 +424,7 @@ export const TableFinancialObligationsUI = ({
           .filter(([key]) => key !== "id")
           .map(([, value]) => String(value).trim());
       }
+
       return (
         <Tr key={rowIndex}>
           {visibleHeaders.map((header, colIndex) => {
@@ -499,17 +499,15 @@ export const TableFinancialObligationsUI = ({
     >
       <Stack direction="column">
         {handleOnChangeExtraBorrowers === undefined && (
-          <>
-            <Stack alignItems="center">
-              {!isMobile &&
-                services &&
-                initialValues?.[0]?.borrowers?.length <= 1 && (
-                  <Text size="medium" type="label" weight="bold">
-                    {dataReport.title}
-                  </Text>
-                )}
-            </Stack>
-          </>
+          <Stack alignItems="center">
+            {!isMobile &&
+              services &&
+              initialValues?.[0]?.borrowers?.length <= 1 && (
+                <Text size="medium" type="label" weight="bold">
+                  {borrowerData.borrower}
+                </Text>
+              )}
+          </Stack>
         )}
         <Stack
           justifyContent="space-between"
@@ -589,7 +587,7 @@ export const TableFinancialObligationsUI = ({
                     )
                   ) : services ? (
                     <CardGray
-                      label={dataReport.title}
+                      label={borrowerData.borrower}
                       placeHolder={customerData?.fullName}
                       isMobile={true}
                     />
@@ -616,7 +614,7 @@ export const TableFinancialObligationsUI = ({
                   onClick={() => setIsOpenModal(true)}
                 />
                 <Stack alignItems="center">
-                  {canEditCreditRequest ? (
+                  {canEditCreditRequest && (
                     <Icon
                       icon={<MdOutlineInfo />}
                       appearance="primary"
@@ -624,8 +622,6 @@ export const TableFinancialObligationsUI = ({
                       cursorHover
                       onClick={handleInfo}
                     />
-                  ) : (
-                    <></>
                   )}
                 </Stack>
               </Stack>
@@ -638,7 +634,7 @@ export const TableFinancialObligationsUI = ({
                   onClick={() => setOpenModal(true)}
                 />
                 <Stack alignItems="center">
-                  {canEditCreditRequest ? (
+                  {canEditCreditRequest && (
                     <Icon
                       icon={<MdOutlineInfo />}
                       appearance="primary"
@@ -646,8 +642,6 @@ export const TableFinancialObligationsUI = ({
                       cursorHover
                       onClick={handleInfo}
                     />
-                  ) : (
-                    <></>
                   )}
                 </Stack>
               </Stack>
@@ -662,8 +656,8 @@ export const TableFinancialObligationsUI = ({
         </Thead>
         <Tbody>
           {loading ? (
-            renderLoadingRow()
-          ) : extraDebtors.length === 0 ? (
+            renderLoadingRows()
+          ) : dataInformation.length === 0 ? (
             <Tr border="left">
               <Td colSpan={visibleHeaders.length} align="center" type="custom">
                 <Stack
@@ -704,33 +698,6 @@ export const TableFinancialObligationsUI = ({
             </Tr>
           </Tfoot>
         )}
-        {isModalOpenEdit && selectedBorrower && (
-          <EditFinancialObligationModal
-            title={`${dataReport.edit} ${selectedBorrower.type || ""}`}
-            onCloseModal={() => setIsModalOpenEdit(false)}
-            onConfirm={async (updatedDebtor) => {
-              await handleUpdate(updatedDebtor);
-            }}
-            initialValues={selectedBorrower}
-            confirmButtonText={dataReport.save}
-          />
-        )}
-        {isDeleteModal && (
-          <BaseModal
-            title={dataReport.deletion}
-            nextButton={dataReport.delete}
-            backButton={dataReport.cancel}
-            handleNext={() => {
-              handleDelete(selectedBorrower?.propertyValue ?? "");
-              setIsDeleteModal(false);
-            }}
-            handleClose={() => setIsDeleteModal(false)}
-          >
-            <Stack width="400px">
-              <Text>{dataReport.content}</Text>
-            </Stack>
-          </BaseModal>
-        )}
       </Table>
       <Stack gap="15px" justifyContent="center">
         {isOpenModal && (
@@ -764,7 +731,7 @@ export const TableFinancialObligationsUI = ({
           message={messageError}
         />
       )}
-      {isModalOpen ? (
+      {isModalOpen && (
         <InfoModal
           onClose={handleInfoModalClose}
           title={privilegeCrm.title}
@@ -773,16 +740,45 @@ export const TableFinancialObligationsUI = ({
           nextButtonText={privilegeCrm.nextButtonText}
           isMobile={isMobile}
         />
-      ) : (
-        <></>
+      )}
+      {isModalOpenEdit && selectedBorrower && (
+        <EditFinancialObligationModal
+          title={`${dataReport.edit} ${selectedBorrower.type || ""}`}
+          onCloseModal={() => setIsModalOpenEdit(false)}
+          onConfirm={async (updatedDebtor) => {
+            await handleUpdate(updatedDebtor);
+          }}
+          initialValues={selectedBorrower}
+          confirmButtonText={dataReport.save}
+        />
+      )}
+      {isDeleteModal && (
+        <BaseModal
+          title={dataReport.deletion}
+          nextButton={dataReport.delete}
+          backButton={dataReport.cancel}
+          handleNext={() => {
+            handleDelete(selectedBorrower?.propertyValue ?? "");
+            setIsDeleteModal(false);
+          }}
+          handleClose={() => setIsDeleteModal(false)}
+        >
+          <Stack width="400px">
+            <Text>{dataReport.content}</Text>
+          </Stack>
+        </BaseModal>
       )}
       <Stack
         gap="48px"
         direction={!isMobile ? "row" : "column"}
         justifyContent="center"
+        alignItems="center"
       >
         {loading ? (
-          <SkeletonLine />
+          <Stack direction="column" alignItems="center" gap="4px">
+            <SkeletonLine animated width="100px" />
+            <SkeletonLine animated width="140px" />
+          </Stack>
         ) : (
           <NewPrice
             value={totalBalance}
@@ -790,7 +786,10 @@ export const TableFinancialObligationsUI = ({
           />
         )}
         {loading ? (
-          <SkeletonLine />
+          <Stack direction="column" alignItems="center" gap="4px">
+            <SkeletonLine animated width="100px" />
+            <SkeletonLine animated width="140px" />
+          </Stack>
         ) : (
           <NewPrice value={totalFee} label={dataReport.descriptionTotalFee} />
         )}

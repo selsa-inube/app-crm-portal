@@ -112,8 +112,15 @@ export function LoanAmount(props: ILoanAmountProps) {
           }, [paymentChannel]);
 
           const paymentChannelOptions = useMemo(() => {
+            const validChannels = flatChannels.filter(
+              (channel) => channel && channel.abbreviatedName,
+            );
+
             const unique = new Map(
-              flatChannels.map((ch) => [ch.abbreviatedName, ch]),
+              validChannels.map((channel) => [
+                channel.abbreviatedName,
+                channel,
+              ]),
             );
 
             return Array.from(unique.values()).map((channel, index) => ({
@@ -232,14 +239,16 @@ export function LoanAmount(props: ILoanAmountProps) {
                           />
                         }
                         type="text"
-                        value={values.inputValue}
+                        value={currencyFormat(
+                          Number(values.inputValue || 0),
+                          false,
+                        )}
                         placeholder={dataAmount.placeholderValue}
                         onChange={(e) => {
                           const raw =
                             parseFloat(e.target.value.replace(/[^0-9]/g, "")) ||
                             0;
-                          const formatted = currencyFormat(raw, false);
-                          setFieldValue("inputValue", formatted);
+                          setFieldValue("inputValue", raw);
                           handleOnChange({ inputValue: raw });
                         }}
                       />

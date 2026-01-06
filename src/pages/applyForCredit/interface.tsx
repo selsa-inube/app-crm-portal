@@ -28,7 +28,7 @@ import {
   IProspectSummaryById,
 } from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import {
   IBorrowerData,
@@ -80,6 +80,7 @@ interface ApplyForCreditUIProps {
   handlePreviousStep: () => void;
   handleSubmitClick: () => void;
   handleSubmit: () => void;
+  loading: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   businessUnitPublicCode: string;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
@@ -130,6 +131,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     creditRequestCode,
     modesOfDisbursement,
     guaranteesRequired,
+    loading,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -246,22 +248,33 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   </Stack>
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="center">
-                    <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.cards.destination}
-        ${truncateTextToMaxLength(prospectData.moneyDestinationAbbreviatedName, 20)}`}
-                    </Text>
+                    <TruncatedText
+                      text={`${dataSubmitApplication.cards.destination} ${prospectData.moneyDestinationAbbreviatedName}`}
+                      maxLength={30}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
                   </Stack>
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="center">
-                    <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
-                    </Text>
+                    <TruncatedText
+                      text={`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                      maxLength={30}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
                   </Stack>
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="end">
-                    <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
-                    </Text>
+                    <TruncatedText
+                      text={`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                      maxLength={40}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
                   </Stack>
                 </Stack>
               )}
@@ -450,6 +463,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 }}
                 handleBack={() => setSentModal(false)}
                 width={isMobile ? "290px" : "402px"}
+                isLoading={loading}
               >
                 <Text type="body" size="large">
                   {dataSubmitApplication.modals.fileDescription.replace(
