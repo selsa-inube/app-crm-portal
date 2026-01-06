@@ -11,18 +11,21 @@ import {
   verificatioModalConfig,
   verificationDebtorAddModalConfig,
 } from "./config";
+import { ISteps } from ".";
 
 interface IVerificationDebtorAddModalUIProps {
   dataVerificationStep: IDataVerificationStep[];
   keySections: string[];
   isMobile: boolean;
   setCurrentStep: (step: number) => void;
+  steps: ISteps;
 }
 
 export const VerificationDebtorAddModalUI = (
   props: IVerificationDebtorAddModalUIProps,
 ) => {
-  const { dataVerificationStep, keySections, isMobile, setCurrentStep } = props;
+  const { dataVerificationStep, keySections, isMobile, setCurrentStep, steps } =
+    props;
   const totalSections = dataVerificationStep.reduce((count, dataStept) => {
     return (
       count +
@@ -57,7 +60,7 @@ export const VerificationDebtorAddModalUI = (
                 {verificatioModalConfig.titleCredit}
               </Text>
               <Text appearance="gray" size="small">
-                {verificatioModalConfig.descriptionCredit}
+                {steps.methodOfDisbursement.Internal_account.accountLabel}
               </Text>
             </Stack>
           </StyledBoxAttribute>

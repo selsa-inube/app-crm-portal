@@ -45,6 +45,10 @@ export const advancePaymentModal = {
   description: "Selecciona si necesitas un adelanto de nómina o prima.",
   nextButtonText: "Entendido",
   textPayrool: "Nómina",
+  flag: {
+    title: "Éxito",
+    description: "Operación completada exitosamente",
+  },
 };
 
 interface CreditCardCfg {

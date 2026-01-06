@@ -309,6 +309,7 @@ export function DisbursementWithInternalAccount(
     if (accountOptions.length === 1) {
       const onlyOption = accountOptions[0];
       formik.setFieldValue(`${optionNameForm}.accountNumber`, onlyOption.value);
+      formik.setFieldValue(`${optionNameForm}.accountLabel`, onlyOption.label);
     }
   }, [accountOptions]);
   const handleInfoClick = () => {
@@ -351,9 +352,16 @@ export function DisbursementWithInternalAccount(
               size="compact"
               options={accountOptions}
               onBlur={formik.handleBlur}
-              onChange={(_, value) =>
-                formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
-              }
+              onChange={(_, value) => {
+                const selectedOption = accountOptions.find(
+                  (opt) => opt.value === value,
+                );
+                formik.setFieldValue(`${optionNameForm}.accountNumber`, value);
+                formik.setFieldValue(
+                  `${optionNameForm}.accountLabel`,
+                  selectedOption?.label || "",
+                );
+              }}
               value={formik.values[optionNameForm]?.accountNumber || ""}
               fullwidth
             />
@@ -361,12 +369,7 @@ export function DisbursementWithInternalAccount(
         </Stack>
         <StyledContainer>
           <Stack direction="row" gap="8px" alignItems="center">
-            <Text
-              type="body"
-              size="medium"
-              weight="normal"
-              appearance="primary"
-            >
+            <Text type="label" size="medium" weight="bold" appearance="dark">
               {disbursemenOptionAccount.observation}
             </Text>
             <Icon
@@ -383,15 +386,27 @@ export function DisbursementWithInternalAccount(
             size="compact"
             placeholder={disbursemenOptionAccount.placeObservation}
             value={formik.values[optionNameForm]?.description || ""}
-            onChange={(e) =>
-              formik.setFieldValue(
-                `${optionNameForm}.description`,
-                e.target.value,
-              )
-            }
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 500) {
+                formik.setFieldValue(`${optionNameForm}.description`, value);
+              }
+            }}
             maxLength={500}
             onBlur={formik.handleBlur}
             fullwidth
+            status={
+              formik.touched[optionNameForm]?.description &&
+              formik.errors[optionNameForm]?.description
+                ? "invalid"
+                : undefined
+            }
+            message={
+              formik.touched[optionNameForm]?.description &&
+              formik.errors[optionNameForm]?.description
+                ? String(formik.errors[optionNameForm]?.description)
+                : undefined
+            }
           />
         </StyledContainer>
       </Stack>

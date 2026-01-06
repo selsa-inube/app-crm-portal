@@ -23,6 +23,7 @@ interface IPersonData {
   amount: number;
   check: boolean;
   toggle: boolean;
+  accountLabel?: string;
   description: string;
   name: string;
   lastName: string;

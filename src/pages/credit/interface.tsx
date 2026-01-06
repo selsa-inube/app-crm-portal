@@ -4,12 +4,16 @@ import {
   MdOutlinePaid,
   MdOutlinePayments,
 } from "react-icons/md";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+
 import {
   Breadcrumbs,
   Icon,
   Stack,
   useMediaQuery,
   Text,
+  useFlag,
 } from "@inubekit/inubekit";
 
 import { CreditCard } from "@components/cards/CreditCard";
@@ -64,6 +68,8 @@ const CreditUI = (props: ICreditUIProps) => {
   } = props;
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
+  const location = useLocation();
+  const { addFlag } = useFlag();
 
   const mergeSubOptions = (
     backendOptions: IOptionStaff[],
@@ -130,6 +136,18 @@ const CreditUI = (props: ICreditUIProps) => {
     },
   ];
 
+  useEffect(() => {
+    if (location.state?.showSuccessFlag) {
+      addFlag({
+        title: advancePaymentModal.flag.title,
+        description: advancePaymentModal.flag.description,
+        appearance: "success",
+        duration: 5000,
+      });
+
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
   return (
     <>
       {codeError ? (

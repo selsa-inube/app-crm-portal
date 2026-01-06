@@ -31,7 +31,7 @@ export const verificationDebtorAddModalConfig = {
 
 export const verificatioModalConfig = {
   title: "¿Cuánto recibirás?",
-  description: "Vas a recibir $ 2.000.000",
+  description: "Vas a recibir $ 1.700.000",
   titleCredit: "¿Dónde recibirás el dinero?",
   descriptionCredit: "En la cuenta externa Davivienda - 11334466008",
 };

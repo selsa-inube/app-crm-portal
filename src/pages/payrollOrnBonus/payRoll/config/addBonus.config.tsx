@@ -9,13 +9,13 @@ export const stepsAddBonus = {
     id: 2,
     number: 2,
     name: "Valor solicitado",
-    description: "Por favor analiza el valor disponible y solicita un valor.",
+    description: "Indica el valor que necesitas.",
   },
   methodOfDisbursement: {
     id: 3,
     number: 3,
     name: "Forma de desembolso",
-    description: "Configura la forma de desembolso para el valor solicitado.",
+    description: "Configura el desembolso para el valor solicitado.",
   },
   verification: {
     id: 4,

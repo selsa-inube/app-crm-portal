@@ -18,6 +18,7 @@ export interface IInternalAccount {
   amount: number;
   accountNumber: string;
   description: string;
+  accountLabel?: string;
   bank?: string;
 }
 
@@ -95,7 +96,8 @@ export const VerificationPayrollOrnBonus = (
             ? [
                 createAttribute(
                   "Cuenta para desembolsar el dinero",
-                  steps.methodOfDisbursement.Internal_account.accountNumber,
+                  steps.methodOfDisbursement.Internal_account.accountLabel ||
+                    "",
                 ),
               ]
             : []),
@@ -167,6 +169,7 @@ export const VerificationPayrollOrnBonus = (
       keySections={keySections}
       isMobile={isMobile}
       setCurrentStep={setCurrentStep}
+      steps={steps}
     />
   );
 };

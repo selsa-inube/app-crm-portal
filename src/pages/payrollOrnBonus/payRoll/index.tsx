@@ -161,6 +161,7 @@ export function Payroll() {
         check: false,
         toggle: true,
         documentType: "",
+        accountLabel: "",
       },
       External_account: {
         amount: 0,
@@ -481,7 +482,7 @@ export function Payroll() {
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
-    navigate("/credit");
+    navigate("/credit", { state: { showSuccessFlag: true } });
   };
 
   const fetchDisbursementDataForProspect = useCallback(

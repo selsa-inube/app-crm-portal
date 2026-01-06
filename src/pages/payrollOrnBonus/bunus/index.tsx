@@ -471,15 +471,15 @@ export function Bonus() {
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
-    navigate("/credit");
+    navigate("/credit", { state: { showSuccessFlag: true } });
   };
   const handleCancelNavigation = () => {
     setShowInfoModal(false);
   };
 
   const handleConfirmNavigation = () => {
-    setShowInfoModal(false);
-    navigate("/credit");
+    setShowSuccessModal(false);
+    navigate("/credit", { state: { showSuccessFlag: true } });
   };
 
   const fetchDisbursementDataForProspect = useCallback(
