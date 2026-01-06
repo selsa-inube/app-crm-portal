@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
-import { Consulting } from "@components/modals/Consulting";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
@@ -31,6 +30,7 @@ import {
   IPaymentDatesChannel,
   IResponsePaymentDatesChannel,
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import { useIAuth } from "@inube/iauth-react";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
@@ -55,7 +55,6 @@ export function SimulateCredit() {
   );
   const [errorsManager, setErrorsManager] = useState<IManageErrors>({});
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
-  const [showConsultingModal, setShowConsultingModal] = useState(false);
   const [isAlertIncome, setIsAlertIncome] = useState(false);
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
   const [isCreditLimitModalOpen, setIsCreditLimitModalOpen] = useState(false);
@@ -87,8 +86,10 @@ export function SimulateCredit() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [sentModal, setSentModal] = useState(false);
+  const [createdProspectModal, setCreatedProspectModal] = useState(false);
   const [prospectCode, setProspectCode] = useState<string>("");
   const [loadingQuestions, setLoadingQuestions] = useState(true);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -104,6 +105,7 @@ export function SimulateCredit() {
   const steps = Object.values(stepsAddProspect);
   const navigate = useNavigate();
 
+  const { user } = useIAuth();
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const userAccount = eventData.user.identificationDocumentNumber || "";
@@ -297,9 +299,13 @@ export function SimulateCredit() {
   }>({});
 
   const fetchCreditLineTerms = useCallback(async () => {
+    if (eventData.businessManager.abbreviatedName.length === 0) {
+      setCodeError(1003);
+      setAddToFix([messagesError.noBusinessUnitAvaliable]);
+    }
     if (customerData.fullName.length === 0) {
       setCodeError(1016);
-      setAddToFix(["No se ha seleccionado ningún cliente "]);
+      setAddToFix([messagesError.noClientSelected]);
     } else {
       setCodeError(null);
     }
@@ -308,43 +314,44 @@ export function SimulateCredit() {
 
     if (!clientInfo?.associateType || !formData.selectedDestination) return;
 
-    const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
-      businessUnitPublicCode,
-      businessManagerCode,
-      formData.selectedDestination,
-      customerData.publicCode,
-    );
+    try {
+      const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
+        businessUnitPublicCode,
+        businessManagerCode,
+        formData.selectedDestination,
+        customerData.publicCode,
+      );
 
-    const linesArray = Array.isArray(lineOfCreditValues)
-      ? lineOfCreditValues
-      : [lineOfCreditValues];
+      const linesArray = Array.isArray(lineOfCreditValues)
+        ? lineOfCreditValues
+        : [lineOfCreditValues];
 
-    const result: Record<
-      string,
-      {
-        LoanAmountLimit: number;
-        LoanTermLimit: number;
-        RiskFreeInterestRate: number;
-      }
-    > = {};
+      const result: Record<
+        string,
+        {
+          LoanAmountLimit: number;
+          LoanTermLimit: number;
+          RiskFreeInterestRate: number;
+        }
+      > = {};
 
-    linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
-      if (line && line.abbreviateName) {
-        result[line.abbreviateName] = {
-          LoanAmountLimit: line.maxAmount,
-          LoanTermLimit: line.maxTerm,
-          RiskFreeInterestRate: line.maxEffectiveInterestRate,
-        };
-      }
-    });
+      linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
+        if (line && line.abbreviateName) {
+          result[line.abbreviateName] = {
+            LoanAmountLimit: line.maxAmount,
+            LoanTermLimit: line.maxTerm,
+            RiskFreeInterestRate: line.maxEffectiveInterestRate,
+          };
+        }
+      });
 
-    setCreditLineTerms(result);
-  }, [
-    customerData,
-    businessUnitPublicCode,
-    formData.selectedDestination,
-    formData.selectedProducts,
-  ]);
+      setCreditLineTerms(result);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
+      setAllowToContinue(false);
+    }
+  }, [customerData, businessUnitPublicCode, formData.selectedDestination]);
 
   const fetchRulesByProducts = useCallback(async () => {
     setLoadingQuestions(true);
@@ -461,6 +468,7 @@ export function SimulateCredit() {
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
+      setMessageError(messagesError.tryLater);
     }
   };
 
@@ -515,15 +523,9 @@ export function SimulateCredit() {
       );
       setPaymentChannel(dataPaymentDates ?? null);
     } catch (error: unknown) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setMessageError(description);
+      setMessageError(messagesError.tryLater);
+      setAllowToContinue(false);
     }
   };
   useEffect(() => {
@@ -602,11 +604,8 @@ export function SimulateCredit() {
       currentStep === stepsAddProspect.loanAmount.id &&
       !formData.loanAmountState.toggleChecked
     ) {
-      handleSubmitClick();
+      setSentModal(true);
       return;
-    }
-    if (currentStep === stepsAddProspect.loanConditions.id) {
-      showConsultingForFiveSeconds();
     }
     if (
       currentStep === stepsAddProspect.sourcesIncome.id &&
@@ -625,7 +624,7 @@ export function SimulateCredit() {
     } else if (currentStep + 1 <= steps.length && isCurrentFormValid) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === steps.length) {
-      handleSubmitClick();
+      setSentModal(true);
     }
   };
 
@@ -671,6 +670,7 @@ export function SimulateCredit() {
       : titleButtonTextAssited.goNextText;
 
   const handleSubmitClick = async () => {
+    setIsLoadingSubmit(true);
     if (simulateData.termLimit === 0) {
       delete simulateData.termLimit;
     }
@@ -683,6 +683,7 @@ export function SimulateCredit() {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
         businessManagerCode,
+        customerData.publicCode,
         simulateData,
       );
       const prospectCode = response?.prospectCode;
@@ -692,19 +693,15 @@ export function SimulateCredit() {
         setMessageError?.(messagesError.undefinedCodeProspect);
       } else {
         setProspectCode(prospectCode);
-        setSentModal(true);
+        setSentModal(false);
+        setCreatedProspectModal(true);
       }
     } catch (error) {
       setShowErrorModal?.(true);
       setMessageError?.(`${messagesError.handleSubmit}. ${error}`);
+    } finally {
+      setIsLoadingSubmit(false);
     }
-  };
-
-  const showConsultingForFiveSeconds = () => {
-    setShowConsultingModal(true);
-    setTimeout(() => {
-      setShowConsultingModal(false);
-    }, 2000);
   };
 
   const fetchCreditLimit = async () => {
@@ -764,6 +761,8 @@ export function SimulateCredit() {
         setErrorsManager((prev) => {
           return { ...prev, validateRequirements: true };
         });
+        setShowErrorModal(true);
+        setMessageError(messagesError.tryLater);
       } finally {
         setIsLoading(false);
       }
@@ -887,6 +886,16 @@ export function SimulateCredit() {
     navigate("/credit/prospects");
   };
 
+  const handleNavigate = () => {
+    if (codeError === 1003) {
+      navigate(`/login/${user.username}/business-units/select-business-unit`);
+    } else if (codeError === 1016) {
+      navigate("/clients/select-client/");
+    } else {
+      navigate("/credit");
+    }
+  };
+
   const dataMaximumCreditLimitService = useMemo(
     () => ({
       identificationDocumentType:
@@ -908,19 +917,21 @@ export function SimulateCredit() {
   );
 
   useEffect(() => {
-    if (formData.generalToggleChecked) {
-      const all = Object.keys(creditLineTerms);
-      setFormData((prev) => ({
-        ...prev,
-        selectedProducts: all,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        selectedProducts: [],
-      }));
+    if (Object.keys(creditLineTerms).length > 0) {
+      if (formData.generalToggleChecked) {
+        const all = Object.keys(creditLineTerms);
+        setFormData((prev) => ({
+          ...prev,
+          selectedProducts: all,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          selectedProducts: [],
+        }));
+      }
     }
-  }, [formData.generalToggleChecked, formData.togglesState]);
+  }, [formData.generalToggleChecked, formData.togglesState, creditLineTerms]);
 
   return (
     <>
@@ -987,14 +998,17 @@ export function SimulateCredit() {
         allowToContinue={allowToContinue}
         sentModal={sentModal}
         setSentModal={setSentModal}
+        createdProspectModal={createdProspectModal}
+        setCreatedProspectModal={setCreatedProspectModal}
         prospectCode={prospectCode}
         errorsManager={errorsManager}
         paymentChannel={paymentChannel}
         userAccount={userAccount}
         loadingQuestions={loadingQuestions}
         showSelectsLoanAmount={!formData.togglesState[0]}
+        isLoadingSubmit={isLoadingSubmit}
+        handleNavigate={handleNavigate}
       />
-      {showConsultingModal && <Consulting />}
     </>
   );
 }

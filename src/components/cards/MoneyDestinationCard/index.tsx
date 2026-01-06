@@ -1,6 +1,7 @@
 import { Stack, Icon, Text, Grid } from "@inubekit/inubekit";
 
 import { IconText } from "@pages/prospect/components/IconText";
+import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import { StyledMoneyDestinationCard, StyledRadio } from "./styles";
 
@@ -11,11 +12,15 @@ interface MoneyDestinationCardProps {
   label: string;
   icon: string;
   isSelected: boolean;
+  isMobile?: boolean;
   handleChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 function MoneyDestinationCard(props: MoneyDestinationCardProps) {
-  const { id, name, value, label, icon, isSelected, handleChange } = props;
+  const { id, name, value, label, icon, isSelected, isMobile, handleChange } =
+    props;
+
+  const maxLength = isMobile ? 30 : 50;
 
   return (
     <StyledMoneyDestinationCard>
@@ -37,7 +42,7 @@ function MoneyDestinationCard(props: MoneyDestinationCardProps) {
         />
         <Stack gap="12px">
           <Icon appearance="dark" icon={<IconText icon={icon} />} size="20px" />
-          <Text size="medium">{label}</Text>
+          <Text size="medium">{truncateTextToMaxLength(label, maxLength)}</Text>
         </Stack>
       </Grid>
     </StyledMoneyDestinationCard>
