@@ -301,11 +301,11 @@ export function SimulateCredit() {
   const fetchCreditLineTerms = useCallback(async () => {
     if (eventData.businessManager.abbreviatedName.length === 0) {
       setCodeError(1003);
-      setAddToFix([messagesError.noBusinessUnit]);
+      setAddToFix([messagesError.noBusinessUnitAvaliable]);
     }
     if (customerData.fullName.length === 0) {
       setCodeError(1016);
-      setAddToFix([messagesError.noSelectClient]);
+      setAddToFix([messagesError.noClientSelected]);
     } else {
       setCodeError(null);
     }
