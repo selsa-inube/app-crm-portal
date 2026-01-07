@@ -1,1 +1,10 @@
-export const dataButtonRequirements = { requirements: "Requisitos" };
+export const dataButtonRequirements = {
+  requirements: {
+    code: "Requirements",
+    description: "requirements",
+    i18n: {
+      en: "Requirements",
+      es: "Requisitos",
+    },
+  },
+};

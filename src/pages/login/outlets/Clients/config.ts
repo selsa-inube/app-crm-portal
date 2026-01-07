@@ -1,7 +1,21 @@
 export const messagesFeedback = {
-  notFountResults: {
-    title:
-      "No se encontraron resultados para las solicitudes de crédito en trámite.",
-    description: "Por favor, intenta modificando los parámetros de búsqueda.",
+  notFoundResults: {
+    title: {
+      code: "Feedback_NotFoundResults_Title",
+      description: "Title for feedback when no credit applications are found",
+      i18n: {
+        en: "No results found",
+        es: "No se encontraron resultados",
+      },
+    },
+    description: {
+      code: "Feedback_NotFoundResults_Description",
+      description:
+        "Description for feedback when no credit applications are found",
+      i18n: {
+        en: "Please try modifying the search parameters.",
+        es: "Por favor, intenta modificando los parámetros de búsqueda.",
+      },
+    },
   },
 };

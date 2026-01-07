@@ -1,15 +1,75 @@
 export const dataTabs = [
   {
     id: "borrower",
-    label: "Codeudor",
+    label: {
+      code: "Borrower_tab",
+      description: "Co-borrower tab",
+      i18n: {
+        en: "Co-borrower",
+        es: "Codeudor",
+      },
+    },
   },
-  { id: "mortgage", label: "Hipoteca" },
-  { id: "pledge", label: "Pignoración" },
-  { id: "bail", label: "Fianza" },
+  {
+    id: "mortgage",
+    label: {
+      code: "Mortgage_tab",
+      description: "Mortgage tab",
+      i18n: {
+        en: "Mortgage",
+        es: "Hipoteca",
+      },
+    },
+  },
+  {
+    id: "pledge",
+    label: {
+      code: "Pledge_tab",
+      description: "Pledge tab",
+      i18n: {
+        en: "Pledge",
+        es: "Pignoración",
+      },
+    },
+  },
+  {
+    id: "bail",
+    label: {
+      code: "Bail_tab",
+      description: "Bail tab",
+      i18n: {
+        en: "Bail",
+        es: "Fianza",
+      },
+    },
+  },
 ];
 
 export const dataGuarantee = {
-  title: "Garantías ofrecidas",
-  close: "Cerrar",
-  borrower: "Codeudor",
+  title: {
+    code: "Guarantees_title",
+    description: "Offered guarantees",
+    i18n: {
+      en: "Offered guarantees",
+      es: "Garantías ofrecidas",
+    },
+  },
+
+  close: {
+    code: "Close_action",
+    description: "Close action",
+    i18n: {
+      en: "Close",
+      es: "Cerrar",
+    },
+  },
+
+  borrower: {
+    code: "Borrower_label",
+    description: "Co-borrower",
+    i18n: {
+      en: "Co-borrower",
+      es: "Codeudor",
+    },
+  },
 };
