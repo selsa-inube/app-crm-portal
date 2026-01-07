@@ -1,4 +1,6 @@
+import { inube } from "@inubekit/inubekit";
 import { styled } from "styled-components";
+
 interface IStyledContainerAssisted {
   $cursorDisabled: boolean;
 }
@@ -22,5 +24,6 @@ export const StyledContainer = styled.div<{ $isMobile?: boolean }>`
   width: ${({ $isMobile }) => ($isMobile ? "100%" : "157px")};
   height: 50px;
   border-radius: 8px;
-  border: 2px solid ${({ theme }) => theme?.palette?.neutral?.N30 || "#0052CC"};
+  border: 2px solid
+    ${({ theme }) => theme?.palette?.neutral?.N30 || inube.palette.blue.B400};
 `;

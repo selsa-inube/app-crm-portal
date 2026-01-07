@@ -18,6 +18,7 @@ interface IRequirementsNotMetProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   onRequirementsValidated?: (requirements: IValidateRequirement[]) => void;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function RequirementsNotMet(props: IRequirementsNotMetProps) {
@@ -28,6 +29,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     businessUnitPublicCode,
     businessManagerCode,
     onRequirementsValidated,
+    setShowErrorModal,
   } = props;
 
   const [validateRequirements, setValidateRequirements] = useState<
@@ -35,7 +37,6 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
     if (!customerData?.customerId || !prospectData) return;
@@ -65,7 +66,6 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
           }
         }
       } catch (error) {
-        showErrorModal;
         setHasError(true);
         setShowErrorModal(true);
       } finally {

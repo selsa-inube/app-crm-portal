@@ -14,6 +14,7 @@ import * as Yup from "yup";
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
 import { BaseModal } from "@components/modals/baseModal";
+import { unformatCurrency } from "@pages/prospect/components/modals/DebtorEditModal/utils";
 
 import { CardCreditProspect } from "../../components/CardCreditProspect";
 import { dataRequestValue } from "./config";
@@ -27,10 +28,6 @@ interface IRequestedValueProps {
   onExceedQuota?: () => void;
 }
 
-export const availableQuotaValue = Number(
-  dataRequestValue.availableQuota.replace(/\D/g, ""),
-);
-
 const validationSchema = Yup.object({
   amount: Yup.number()
     .required(dataRequestValue.validation.required)
@@ -38,7 +35,9 @@ const validationSchema = Yup.object({
     .positive(dataRequestValue.validation.positive)
     .min(1, dataRequestValue.validation.min),
 });
-
+export const availableQuotaValue = Number(
+  unformatCurrency(dataRequestValue.availableQuota),
+);
 export function RequestedValue(props: IRequestedValueProps) {
   const {
     initialAmount = "",
@@ -76,7 +75,7 @@ export function RequestedValue(props: IRequestedValueProps) {
   }, [formik.values.amount, onAmountChange]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "");
+    const value = unformatCurrency(e.target.value);
     formik.setFieldValue("amount", value);
     if (!formik.touched.amount) {
       formik.setFieldTouched("amount", true, false);

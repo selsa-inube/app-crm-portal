@@ -17,17 +17,7 @@ export interface IDataVerificationStep {
     [key: string]: ISection;
   };
 }
-export interface PersonalInfo {
-  tipeOfDocument: string;
-  documentNumber: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  sex: string;
-  age: string;
-  relation: string;
-}
+
 export interface IPersonalInfoRequirement {
   requirementName: string;
   descriptionEvaluationRequirement: string;

@@ -17,4 +17,9 @@ export const dataError = {
   noData: "El cliente no presenta restricción por requisitos en este momento.",
   loadRequirements: "Cargando requisitos...",
   alert: "Alerta",
+  approved: "aprobado",
+};
+
+export const dataApproved = {
+  approved: "aprobado",
 };

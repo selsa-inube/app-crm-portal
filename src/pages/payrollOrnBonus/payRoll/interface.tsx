@@ -249,6 +249,7 @@ export function PayRollUI(props: PayRollUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       onRequirementsValidated={onRequirementsValidated}
+                      setShowErrorModal={setShowErrorModal}
                     />
                   )}
 

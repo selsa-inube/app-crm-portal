@@ -23,6 +23,7 @@ export const StyledBoxAttribute = styled.div<IStyledContainer>`
 export const StyledDivider = styled.div`
   grid-column: 1 / -1;
   height: 1px;
-  background: #e0e0e0;
+  background-color: ${({ theme }) =>
+    theme?.palette?.neutral?.N40 || inube.palette.neutralAlpha.N40A};
   margin: 15px 0;
 `;

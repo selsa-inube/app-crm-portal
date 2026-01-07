@@ -240,6 +240,7 @@ export function BonusUI(props: BonusUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       onRequirementsValidated={onRequirementsValidated}
+                      setShowErrorModal={setShowErrorModal}
                     />
                   )}
 

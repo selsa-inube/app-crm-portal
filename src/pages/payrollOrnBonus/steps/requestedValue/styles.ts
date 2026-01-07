@@ -1,3 +1,4 @@
+import { inube } from "@inubekit/inubekit";
 import { styled } from "styled-components";
 
 export const StyledDividerWrapper = styled.div`
@@ -11,8 +12,9 @@ export const StyledDividerWrapper = styled.div`
 `;
 
 export const StyledRotatedDivider = styled.div`
-  width: 1px;
+  width: 2px;
   height: 100%;
-  background-color: ${({ theme }) => theme?.palette?.neutral?.N40 || "#E0E0E0"};
+  background-color: ${({ theme }) =>
+    theme?.palette?.neutral?.N40 || inube.palette.neutralAlpha.N40A};
   flex-shrink: 0;
 `;

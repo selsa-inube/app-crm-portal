@@ -46,8 +46,8 @@ export const advancePaymentModal = {
   nextButtonText: "Entendido",
   textPayrool: "Nómina",
   flag: {
-    title: "Éxito",
-    description: "Operación completada exitosamente",
+    title: "Solicitud enviada..",
+    description: "La solocitud se envió con éxito.",
   },
   tag: {
     title: "Prima",
