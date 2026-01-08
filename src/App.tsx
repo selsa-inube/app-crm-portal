@@ -27,6 +27,7 @@ function LogOut() {
   sessionStorage.clear();
   const { logout } = useIAuth();
   useEffect(() => {
+    localStorage.removeItem("businessUnitSigla");
     logout();
   }, [logout]);
   return null;

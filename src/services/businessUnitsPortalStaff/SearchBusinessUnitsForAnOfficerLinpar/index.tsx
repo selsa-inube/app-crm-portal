@@ -24,7 +24,6 @@ const getBusinessUnitsPortalStaff = async (
     }
 
     const data = await res.json();
-
     if (!res.ok) {
       throw new Error(`Error al obtener los datos: ${res.status}`);
     }
