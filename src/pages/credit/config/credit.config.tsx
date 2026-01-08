@@ -54,7 +54,7 @@ export const advancePaymentModal = {
     title: "Prima",
     subtitle: "Adelanto de nómina",
     routeBonus: "/credit/bonus",
-    routePayroll: "/credit/payroll",
+    routePayroll: "/credit/payroll-advance-credit",
   },
 };
 

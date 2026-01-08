@@ -20,7 +20,10 @@ function CreditRoutes() {
         <Route index path="/" element={<Credit />} />
         <Route path="/simulate-credit" element={<SimulateCredit />} />
         <Route path="/bonus" element={<PayrolSpecialBenefitAdvanceCredit />} />
-        <Route path="/payroll" element={<PayrollAdvanceCredit />} />
+        <Route
+          path="/payroll-advance-credit"
+          element={<PayrollAdvanceCredit />}
+        />
         <Route path="/prospects" element={<CreditProspects />} />
         <Route path="/credit-requests" element={<CreditApplications />} />
         <Route path="/prospects/:prospectCode" element={<Simulations />} />

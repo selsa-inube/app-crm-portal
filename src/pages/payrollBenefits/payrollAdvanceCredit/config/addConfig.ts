@@ -17,8 +17,8 @@ export const addConfig = {
       isActive: false,
     },
     {
-      path: "/credit/bonus",
-      label: "Adelanto",
+      path: "/credit/payroll-advance-credit",
+      label: "Crédito por adelanto de nómina",
       id: "/prospectos",
       isActive: false,
     },
