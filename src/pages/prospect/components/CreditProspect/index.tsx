@@ -1054,7 +1054,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   prospectData!.clientManagerObservation ||
                   dataCreditProspects.notHaveComments
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
               />
               <CardGray
                 label={configModal.observations.labelTextarea}
@@ -1062,7 +1062,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   prospectData!.clientComments ||
                   dataCreditProspects.notHaveObservations
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
               />
             </Stack>
           </BaseModal>

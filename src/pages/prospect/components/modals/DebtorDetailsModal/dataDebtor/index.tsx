@@ -30,7 +30,7 @@ export function DataDebtor(props: IDataDebtor) {
       <CardGray
         label={dataDebtor.labelEmail}
         data={initialValues.email}
-        apparencePlaceHolder="gray"
+        appearancePlaceHolder="gray"
       />
       <CardGray label={dataDebtor.labelNumber} data={initialValues.number} />
       <CardGray label={dataDebtor.labelSex} data={initialValues.sex} />

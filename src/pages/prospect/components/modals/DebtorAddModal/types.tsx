@@ -4,7 +4,7 @@ export const titleButtonTextAssited = {
   submitText: "Agregar",
 };
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;
@@ -18,7 +18,7 @@ export interface IStep {
   name?: string;
 }
 
-export interface PersonalInfo {
+export interface IPersonalInfo {
   tipeOfDocument: string;
   documentNumber: string;
   firstName: string;
@@ -31,5 +31,5 @@ export interface PersonalInfo {
 }
 
 export interface FormData {
-  personalInfo: PersonalInfo;
+  personalInfo: IPersonalInfo;
 }

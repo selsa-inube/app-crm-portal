@@ -22,6 +22,7 @@ const Credit = () => {
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   const dataHeader = {
     name: customerData.fullName,
@@ -61,6 +62,14 @@ const Credit = () => {
     setAddToFix(messages);
   }, [customerData, eventData, optionStaffData, loading]);
 
+  const handleInfoModalClose = () => {
+    setIsInfoModalOpen(false);
+  };
+
+  const handleOpenInfoModal = () => {
+    setIsInfoModalOpen(true);
+  };
+
   return (
     <CreditUI
       isMobile={isMobile}
@@ -75,6 +84,9 @@ const Credit = () => {
       setMessageError={setMessageError}
       setShowErrorModal={setShowErrorModal}
       loading={loading}
+      isInfoModalOpen={isInfoModalOpen}
+      handleInfoModalClose={handleInfoModalClose}
+      handleOpenInfoModal={handleOpenInfoModal}
     />
   );
 };

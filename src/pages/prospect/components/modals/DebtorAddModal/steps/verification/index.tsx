@@ -7,13 +7,13 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { IProspect } from "@services/prospect/types";
 
 import { IAttributes, IDataVerificationStep } from "./types";
-import { PersonalInfo } from "../../types";
+import { IPersonalInfo } from "../../types";
 import { VerificationDebtorAddModalUI } from "./interface";
 import { verificationDebtorAddModalConfig } from "./config";
 
 export interface IControllerAccordionProps {
   steps: {
-    personalInfo: PersonalInfo;
+    personalInfo: IPersonalInfo;
     incomeData: IIncomeSources | undefined;
     financialObligations: IProspect;
   };

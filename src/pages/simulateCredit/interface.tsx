@@ -38,7 +38,7 @@ import { stepsAddProspect } from "./config/addProspect.config";
 import {
   IFormData,
   IStep,
-  StepDetails,
+  IStepDetails,
   titleButtonTextAssited,
   ICreditLineTerms,
   IServicesProductSelection,
@@ -136,7 +136,7 @@ interface SimulateCreditUIProps {
   isTablet: boolean;
   validateRequirements: IValidateRequirement[];
   isLoading: boolean;
-  currentStepsNumber?: StepDetails;
+  currentStepsNumber?: IStepDetails;
   prospectData: IProspect | undefined;
   creditLimitData?: IIncomeSources;
   totalIncome: number;
