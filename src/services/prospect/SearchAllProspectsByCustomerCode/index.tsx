@@ -11,6 +11,7 @@ const getProspectsByCustomerCode = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   customerCode: string,
+  state?: string,
 ): Promise<IProspect[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -18,6 +19,9 @@ const getProspectsByCustomerCode = async (
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
+      const queryParams = new URLSearchParams({
+        state: state || "",
+      });
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
         method: "GET",
@@ -31,7 +35,7 @@ const getProspectsByCustomerCode = async (
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/prospect-by-customer/${customerCode}`,
+        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/prospect-by-customer/${customerCode}?${queryParams.toString()}`,
         options,
       );
 

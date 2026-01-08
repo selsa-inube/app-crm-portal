@@ -10,6 +10,7 @@ interface CreditProductCardProps {
   termMonths: number;
   periodicFee: number;
   schedule: Schedule;
+  showIcons?: boolean;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -23,6 +24,7 @@ function CreditProductCard(props: CreditProductCardProps) {
     termMonths,
     periodicFee,
     schedule,
+    showIcons = true,
     onEdit,
     onDelete,
   } = props;
@@ -36,6 +38,7 @@ function CreditProductCard(props: CreditProductCardProps) {
       termMonths={termMonths}
       periodicFee={periodicFee}
       schedule={schedule}
+      showIcons={showIcons}
       onEdit={onEdit}
       onDelete={onDelete}
     />

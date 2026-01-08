@@ -1,6 +1,7 @@
 export const riskScoreData = {
   reportedScore: "El score reportado es del",
   editScore: "Editar score",
+  restore: "Restablecer",
   value: 410,
   date: "2025-12-22T19:09:08.607Z",
   error:

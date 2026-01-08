@@ -92,6 +92,7 @@ interface IAppContext {
   >;
   setOptionStaffData: React.Dispatch<React.SetStateAction<IOptionStaff[]>>;
   optionStaffData?: IOptionStaff[];
+  loadingEventData?: boolean;
 }
 
 export type { ICRMPortalData, IAppContext, IBusinessUnit };

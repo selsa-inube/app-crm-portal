@@ -61,6 +61,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
 import { getTotalIncomeByBorrowerInProspect } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
 import { Fieldset } from "@components/data/Fieldset";
+import { dataCreditProspects } from "@pages/creditProspects/config";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -1011,7 +1012,6 @@ export function CreditProspect(props: ICreditProspectProps) {
             showAddButton={showAddButtons}
           />
         )}
-
         {currentModal === "extraPayments" && (
           <ExtraordinaryPaymentModal
             handleClose={handleCloseModal}
@@ -1027,27 +1027,41 @@ export function CreditProspect(props: ICreditProspectProps) {
           <BaseModal
             title={configModal.observations.title}
             handleClose={handleCloseModal}
-            handleNext={() => {
-              setEditedComments(
-                prospectData ? prospectData!.clientComments : "",
-              );
-              setShowEditMessageModal(true);
-            }}
-            nextButton={configModal.observations.modify}
-            backButton={configModal.observations.cancel}
+            handleNext={
+              showAddButtons
+                ? () => {
+                    setEditedComments(
+                      prospectData ? prospectData!.clientComments : "",
+                    );
+                    setShowEditMessageModal(true);
+                  }
+                : handleCloseModal
+            }
+            nextButton={
+              showAddButtons
+                ? configModal.observations.modify
+                : configModal.observations.cancel
+            }
+            backButton={
+              showAddButtons ? configModal.observations.cancel : undefined
+            }
             width={isMobile ? "300px" : "500px"}
           >
             <Stack direction="column" gap="16px">
               <CardGray
                 label={configModal.observations.preApproval}
                 placeHolder={
-                  prospectData ? prospectData.clientManagerObservation : ""
+                  prospectData!.clientManagerObservation ||
+                  dataCreditProspects.notHaveComments
                 }
                 apparencePlaceHolder="gray"
               />
               <CardGray
                 label={configModal.observations.labelTextarea}
-                placeHolder={prospectData ? prospectData!.clientComments : ""}
+                placeHolder={
+                  prospectData!.clientComments ||
+                  dataCreditProspects.notHaveObservations
+                }
                 apparencePlaceHolder="gray"
               />
             </Stack>

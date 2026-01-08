@@ -20,6 +20,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { loanAmount } from "@mocks/add-prospect/loan-amount/loanAmount.mock";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { BaseModal } from "@components/modals/baseModal";
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
@@ -65,6 +66,7 @@ export function LoanAmount(props: ILoanAmountProps) {
       loanText === "expectToReceive" ? "expectToReceive" : "amountRequested"
     ];
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const LoanAmountValidationSchema = Yup.object({
     inputValue: Yup.string().required(""),
@@ -110,8 +112,15 @@ export function LoanAmount(props: ILoanAmountProps) {
           }, [paymentChannel]);
 
           const paymentChannelOptions = useMemo(() => {
+            const validChannels = flatChannels.filter(
+              (channel) => channel && channel.abbreviatedName,
+            );
+
             const unique = new Map(
-              flatChannels.map((ch) => [ch.abbreviatedName, ch]),
+              validChannels.map((channel) => [
+                channel.abbreviatedName,
+                channel,
+              ]),
             );
 
             return Array.from(unique.values()).map((channel, index) => ({
@@ -188,6 +197,16 @@ export function LoanAmount(props: ILoanAmountProps) {
             }
           }, [payAmountOptions, values.paymentCycle]);
 
+          useEffect(() => {
+            if (
+              showSelects &&
+              paymentChannelOptions.length === 0 &&
+              flatChannels.length === 0
+            ) {
+              setShowErrorModal(true);
+            }
+          }, [showSelects, paymentChannelOptions, flatChannels]);
+
           const allSelectsHaveOneOption =
             paymentChannelOptions.length === 1 &&
             paymentCycleOptions.length === 1 &&
@@ -220,14 +239,16 @@ export function LoanAmount(props: ILoanAmountProps) {
                           />
                         }
                         type="text"
-                        value={values.inputValue}
+                        value={currencyFormat(
+                          Number(values.inputValue || 0),
+                          false,
+                        )}
                         placeholder={dataAmount.placeholderValue}
                         onChange={(e) => {
                           const raw =
                             parseFloat(e.target.value.replace(/[^0-9]/g, "")) ||
                             0;
-                          const formatted = currencyFormat(raw, false);
-                          setFieldValue("inputValue", formatted);
+                          setFieldValue("inputValue", raw);
                           handleOnChange({ inputValue: raw });
                         }}
                       />
@@ -420,6 +441,12 @@ export function LoanAmount(props: ILoanAmountProps) {
                     <Text>{dataModalDisableLoanAmount.description}</Text>
                   </Stack>
                 </BaseModal>
+              )}
+              {showErrorModal && (
+                <ErrorModal
+                  handleClose={() => setShowErrorModal(false)}
+                  message={dataAmount.descriptionErrorModal}
+                />
               )}
             </Form>
           );

@@ -37,7 +37,7 @@ import {
 import { useNavigationConfig } from "./config/apps.config";
 
 const renderLogo = (imgUrl: string, onTheFooter: boolean = false) => {
-  if (!imgUrl || !onTheFooter) return undefined;
+  if (!imgUrl && !onTheFooter) return undefined;
 
   return (
     <StyledContentImg to="/home">
@@ -45,7 +45,6 @@ const renderLogo = (imgUrl: string, onTheFooter: boolean = false) => {
     </StyledContentImg>
   );
 };
-
 interface IAppPage {
   showNav?: boolean;
 }

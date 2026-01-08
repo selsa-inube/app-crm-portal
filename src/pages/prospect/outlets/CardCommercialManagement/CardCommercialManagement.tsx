@@ -39,6 +39,7 @@ import {
   StyledPrintCardProspect,
   StylePrintCardSummary,
 } from "./styles";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -305,6 +306,7 @@ export const CardCommercialManagement = (
                     ? handleInfo()
                     : handleDeleteClick(entry.creditProductCode)
                 }
+                showIcons={showAddProduct}
               />
             ))}
             {showAddProduct && !isLoading && (
@@ -388,10 +390,20 @@ export const CardCommercialManagement = (
               <CardValues
                 isLoading={isLoadingSummary}
                 key={index}
-                items={entry.item.map((item) => ({
-                  ...item,
-                  amount: String(prospectSummaryData?.[item.id] ?? 0),
-                }))}
+                items={entry.item.map((item) => {
+                  let iconToRender = item.icon;
+                  if (
+                    item.id === "totalConsolidatedAmount" &&
+                    !showAddProduct
+                  ) {
+                    iconToRender = <MdOutlineRemoveRedEye />;
+                  }
+                  return {
+                    ...item,
+                    amount: String(prospectSummaryData?.[item.id] ?? 0),
+                    icon: iconToRender,
+                  };
+                })}
                 showIcon={entry.iconEdit}
                 isMobile={isMobile}
                 handleEdit={() => setShowConsolidatedModal(true)}
@@ -453,6 +465,7 @@ export const CardCommercialManagement = (
             consolidatedCredits={consolidatedCredits}
             setConsolidatedCredits={setConsolidatedCredits}
             onProspectRefreshData={onProspectRefreshData}
+            showEdit={showAddProduct}
           />
         )}
         {showDeductibleExpensesModal && (

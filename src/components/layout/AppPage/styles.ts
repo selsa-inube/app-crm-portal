@@ -24,7 +24,9 @@ export const StyledAppPage = styled.div`
 export const StyledContainer = styled.div`
   display: inherit;
   overflow: hidden;
-
+  @media (max-width: 1024px) {
+    overflow-y: auto;
+  }
   @media print {
     overflow: visible !important;
     height: auto !important;
@@ -37,6 +39,9 @@ export const StyledMain = styled.main`
   flex-direction: column;
   height: 100dvh;
   overflow-y: auto;
+  @media (max-width: 1024px) {
+    height: calc(100dvh - 50px);
+  }
 `;
 
 export const StyledContentImg = styled(Link)`

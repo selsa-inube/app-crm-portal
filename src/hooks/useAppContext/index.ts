@@ -44,6 +44,7 @@ function useAppContext() {
   const [optionStaffData, setOptionStaffData] = useState<IOptionStaff[]>([]);
   const [staffUseCases, setStaffUseCases] = useState<string[]>([]);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [loadingEventData, setLoadingEventData] = useState(true);
   const portalId = localStorage.getItem("portalCode");
   let portalCode = "";
   if (portalId) {
@@ -121,6 +122,7 @@ function useAppContext() {
 
   useEffect(() => {
     const fetchStaffData = async () => {
+      setLoadingEventData(true);
       try {
         const userIdentifier = user?.id;
         if (!userIdentifier || isIAuthLoading) {
@@ -156,6 +158,8 @@ function useAppContext() {
         }));
       } catch (error) {
         console.error("Error fetching staff data:", error);
+      } finally {
+        setLoadingEventData(true);
       }
     };
 
@@ -338,6 +342,7 @@ function useAppContext() {
       showErrorModal,
       setShowErrorModal,
       messageError,
+      loadingEventData,
     }),
     [
       eventData,
@@ -348,6 +353,7 @@ function useAppContext() {
       showErrorModal,
       setShowErrorModal,
       messageError,
+      loadingEventData,
     ],
   );
 

@@ -1,6 +1,8 @@
 import { Icon, Stack, Text } from "@inubekit/inubekit";
 import { MdClear } from "react-icons/md";
 
+import { truncateTextToMaxLength } from "@utils/formatData/text";
+
 import { BaseModal } from "../baseModal";
 import { errorModalConfig } from "./config";
 
@@ -34,7 +36,7 @@ export function ErrorModal(props: IErrorModalProps) {
           {errorModalConfig.sorry}
         </Text>
         <Text type="body" size="large" appearance="gray">
-          {message}
+          {truncateTextToMaxLength(message, 100)}
         </Text>
       </Stack>
     </BaseModal>

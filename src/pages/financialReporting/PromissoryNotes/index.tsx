@@ -1,19 +1,18 @@
 import { useCallback, useEffect, useState, useContext } from "react";
 import { Stack, useFlag, Tag } from "@inubekit/inubekit";
 
-import ItemNotFound from "@assets/images/ItemNotFound.png";
+import userNotFound from "@assets/images/ItemNotFound.png";
 import { Fieldset } from "@components/data/Fieldset";
 import { TableBoard } from "@components/data/TableBoard";
 import { IEntries } from "@components/data/TableBoard/types";
 import { PromissoryNotesModal } from "@components/modals/PromissoryNotesModal";
-import { UnfoundData } from "@components/layout/UnfoundData";
+import { ItemNotFound } from "@components/layout/ItemNotFound";
 import { AppContext } from "@context/AppContext";
 import {
   ICreditRequest,
   IPayrollDiscountAuthorization,
   IPromissoryNotes,
 } from "@services/creditRequest/types";
-import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { getPayrollDiscountAuthorizationsById } from "@services/creditRequest/payroll_discount_authorizations";
 import { getPromissoryNotesById } from "@services/creditRequest/promissory_notes";
 
@@ -30,15 +29,13 @@ import { errorObserver, errorMessages } from "../config";
 interface IPromissoryNotesProps {
   id: string;
   isMobile: boolean;
+  creditRequest?: ICreditRequest | null;
 }
 
 export const PromissoryNotes = (props: IPromissoryNotesProps) => {
-  const { id, isMobile } = props;
+  const { isMobile, creditRequest } = props;
   const { addFlag } = useFlag();
 
-  const [creditRequets, setCreditRequests] = useState<ICreditRequest | null>(
-    null,
-  );
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataPromissoryNotes, setDataPromissoryNotes] = useState<IEntries[]>(
@@ -52,36 +49,12 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
-  const creditRequestCode = id;
-
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-
-  useEffect(() => {
-    const fetchCreditRequest = async () => {
-      try {
-        const data = await getCreditRequestByCode(
-          businessUnitPublicCode,
-          businessManagerCode,
-          userAccount,
-          { creditRequestCode },
-        );
-        setCreditRequests(data[0] as ICreditRequest);
-      } catch (error) {
-        errorObserver.notify({
-          id: "Management",
-          message: (error as Error).message,
-        });
-      }
-    };
-    if (id) fetchCreditRequest();
-  }, [businessUnitPublicCode, id, businessManagerCode, userAccount]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     setShowRetry(false);
 
-    if (!creditRequets?.creditRequestId) return;
+    if (!creditRequest?.creditRequestId) return;
 
     try {
       const [payrollDiscountResult, promissoryNotesResult] =
@@ -89,12 +62,12 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
           getPayrollDiscountAuthorizationsById(
             businessUnitPublicCode,
             businessManagerCode,
-            creditRequets.creditRequestId,
+            creditRequest.creditRequestId,
           ),
           getPromissoryNotesById(
             businessUnitPublicCode,
             businessManagerCode,
-            creditRequets.creditRequestId,
+            creditRequest.creditRequestId,
           ),
         ]);
 
@@ -143,11 +116,11 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
     } finally {
       setLoading(false);
     }
-  }, [businessUnitPublicCode, businessManagerCode, creditRequets]);
+  }, [businessUnitPublicCode, businessManagerCode, creditRequest]);
 
   useEffect(() => {
-    if (creditRequets?.creditRequestId) fetchData();
-  }, [fetchData, creditRequets]);
+    if (creditRequest?.creditRequestId) fetchData();
+  }, [fetchData, creditRequest]);
 
   const handleRetry = () => {
     setLoading(true);
@@ -162,9 +135,9 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
       hasTable
       hasOverflow={isMobile}
     >
-      {!creditRequets || showRetry ? (
-        <UnfoundData
-          image={ItemNotFound}
+      {!creditRequest || showRetry ? (
+        <ItemNotFound
+          image={userNotFound}
           title={errorMessages.PromissoryNotes.title}
           description={
             errorMessages.PromissoryNotes.description || errorMessage

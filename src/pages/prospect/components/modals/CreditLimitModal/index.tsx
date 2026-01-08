@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
-import { Icon, Stack, Text } from "@inubekit/inubekit";
+import { Icon, Stack, Text, SkeletonLine } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { CreditLimitCard } from "@pages/simulateCredit/components/CreditLimitCard";
@@ -14,8 +14,8 @@ import {
   IIncomeSources,
   IMaximumCreditLimitByMoneyDestination,
 } from "@services/creditLimit/types";
-import { get } from "@mocks/utils/dataMock.service";
 import { IFormData } from "@pages/simulateCredit/types";
+import { StyledContainer } from "@pages/simulateCredit/components/CreditLimitCard/styles";
 
 import { dataCreditLimitModal } from "./config";
 
@@ -42,23 +42,12 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     isMobile,
     moneyDestination,
     handleClose,
-    setRequestValue,
     userAccount,
     incomeData,
   } = props;
 
+  const [isLoading, setIsLoading] = useState(true);
   useState(false);
-  useEffect(() => {
-    get("mockRequest_value")
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setRequestValue(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching money destinations data:", error.message);
-      });
-  }, []);
 
   const [error, setError] = useState(false);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] = useState<
@@ -68,17 +57,19 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const data = await getGlobalLimitByMoneyDestination(
           businessUnitPublicCode,
           businessManagerCode,
           moneyDestination,
           dataMaximumCreditLimitService.identificationDocumentNumber,
         );
-
+        setIsLoading(false);
         if (data) {
           setDataMaximumCreditLimit(data);
         }
       } catch (err) {
+        setIsLoading(false);
         setError(true);
       }
     };
@@ -135,6 +126,20 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
                   incomeData={incomeData as IIncomeSources}
                 />
               ))}
+              {isLoading &&
+                Array.from({ length: 2 }).map(() => (
+                  <StyledContainer>
+                    <Stack
+                      direction="column"
+                      alignItems="center"
+                      height="60px"
+                      gap="10px"
+                    >
+                      <SkeletonLine width="80%" height="30px" animated />
+                      <SkeletonLine width="40%" height="20px" animated />
+                    </Stack>
+                  </StyledContainer>
+                ))}
             </Stack>
             <Text appearance="gray" type="body" size="medium" weight="normal">
               <Text

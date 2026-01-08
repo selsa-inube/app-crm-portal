@@ -29,7 +29,7 @@ const getSearchProspectById = async (
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests/prospects/${prospectCode}`,
         options,
       );
 

@@ -26,6 +26,7 @@ export function CustomerContextProvider({
 
   const [customerData, setCustomerData] =
     useState<ICustomerData>(initialCustomerData);
+  const [loadingCustomerData, setLoadingCustomerData] = useState(true);
 
   const [customerPublicCodeState, setCustomerPublicCodeState] =
     useState<string>(getInitialPublicCode());
@@ -47,6 +48,7 @@ export function CustomerContextProvider({
     publicCode: string,
     businessUnitPublicCode: string,
   ) => {
+    setLoadingCustomerData(true);
     try {
       const customers = await getSearchCustomerByCode(
         publicCode,
@@ -74,6 +76,8 @@ export function CustomerContextProvider({
       }
     } catch (error) {
       console.error("Error fetching customer data:", error);
+    } finally {
+      setLoadingCustomerData(false);
     }
   };
 
@@ -93,7 +97,12 @@ export function CustomerContextProvider({
 
   return (
     <CustomerContext.Provider
-      value={{ customerData, setCustomerPublicCodeState, setCustomerData }}
+      value={{
+        customerData,
+        loadingCustomerData,
+        setCustomerPublicCodeState,
+        setCustomerData,
+      }}
     >
       {children}
     </CustomerContext.Provider>

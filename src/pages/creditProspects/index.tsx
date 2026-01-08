@@ -30,7 +30,6 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 import userImage from "@assets/images/userImage.jpeg";
 
 import {
@@ -136,6 +135,7 @@ export function CreditProspects() {
           businessUnitPublicCode,
           businessManagerCode,
           customerData.publicCode,
+          "Created",
         );
 
         if (result && result.length > 0) {
@@ -369,14 +369,13 @@ export function CreditProspects() {
                 filteredProspects.map((prospect) => (
                   <CardCreditProspect
                     key={prospect.prospectId}
-                    title={truncateTextToMaxLength(
+                    title={
                       MoneyDestinationTranslations.find(
                         (item) =>
                           item.Code ===
                           prospect.moneyDestinationAbbreviatedName,
-                      )?.Code || prospect.moneyDestinationAbbreviatedName,
-                      20,
-                    )}
+                      )?.Code || prospect.moneyDestinationAbbreviatedName
+                    }
                     borrower={
                       prospect.clientManagerName || dataCreditProspects.none
                     }

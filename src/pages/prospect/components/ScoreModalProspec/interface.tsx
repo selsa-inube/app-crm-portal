@@ -78,6 +78,7 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
               handleResetScores("first");
             }}
             newScore={newFirstScore?.score || null}
+            isProspect={true}
           />
         )}
         {secondScore !== null && (
@@ -104,6 +105,7 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
               handleResetScores("second");
             }}
             newScore={newSecondScore?.score || null}
+            isProspect={true}
           />
         )}
 

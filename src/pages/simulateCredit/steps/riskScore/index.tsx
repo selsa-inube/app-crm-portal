@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Input, Stack, Text } from "@inubekit/inubekit";
+import { useState, useEffect } from "react";
+import { Button, Input, Stack, Text, SkeletonLine } from "@inubekit/inubekit";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MdOutlineEdit } from "react-icons/md";
@@ -20,13 +20,23 @@ interface IRiskScoreProps {
   logo?: string;
   resetScore?: () => void;
   newScore?: number | null;
+  isProspect?: boolean;
 }
 
 export function RiskScore(props: IRiskScoreProps) {
-  const { value, date, isMobile, handleOnChange, logo, resetScore, newScore } =
-    props;
+  const {
+    value,
+    date,
+    isMobile,
+    handleOnChange,
+    logo,
+    resetScore,
+    isProspect = false,
+  } = props;
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [newScore, setNewScore] = useState<number | null>(null);
 
   const validationSchema = Yup.object({
     score: Yup.number().required(""),
@@ -48,17 +58,43 @@ export function RiskScore(props: IRiskScoreProps) {
       });
 
       setShowEditModal(false);
+      setNewScore(num);
     },
   });
+
+  useEffect(() => {
+    if (!isProspect) {
+      handleOnChange({
+        value: value || riskScoreData.value,
+        date: date || riskScoreData.date,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleReset = () => {
+    if (resetScore) resetScore();
+    setNewScore(null);
+  };
 
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
         <RiskScoreGauge value={value || riskScoreData.value} logo={logo} />
         <Stack gap="4px">
-          <Text type="body" size="small">
-            {riskScoreData.reportedScore}
-          </Text>
+          {isLoading ? (
+            <SkeletonLine />
+          ) : (
+            <Text type="body" size="small">
+              {riskScoreData.reportedScore}
+            </Text>
+          )}
           <Text type="body" weight="bold" size="small">
             {date === riskScoreData.date
               ? formatPrimaryDate(new Date())
@@ -73,11 +109,10 @@ export function RiskScore(props: IRiskScoreProps) {
           >
             {riskScoreData.editScore}
           </Button>
-          {resetScore && (
-            <Button variant="none" onClick={resetScore} disabled={!newScore}>
-              {riskScoreData.reset}
-            </Button>
-          )}
+
+          <Button variant="none" onClick={handleReset} disabled={!newScore}>
+            {riskScoreData.reset}
+          </Button>
         </Stack>
         {showErrorModal && (
           <ErrorModal

@@ -35,7 +35,7 @@ export const TableFinancialObligations = (
     showOnlyEdit = false,
     showAddButton = true,
   } = props;
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
   const [selectedBorrower, setSelectedBorrower] =
     useState<ITableFinancialObligationsProps | null>(null);
@@ -90,11 +90,15 @@ export const TableFinancialObligations = (
     ? headers.filter(
         (header) =>
           ["type", "balance", "actions"].includes(header.key) &&
-          (showActions || header.key !== "actions"),
+          ((showActions && showAddButton) || header.key !== "actions"),
       )
-    : headers.filter((header) => showActions || header.key !== "actions");
+    : headers.filter(
+        (header) => (showActions && showAddButton) || header.key !== "actions",
+      );
 
   useEffect(() => {
+    setLoading(true);
+
     const data = Array.isArray(initialValues) ? initialValues : [initialValues];
     if (data && data.length > 0) {
       const borrowerList = Array.isArray(data[0]?.borrowers)
@@ -144,7 +148,16 @@ export const TableFinancialObligations = (
       }
       setExtraDebtors([]);
     }
+
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
   }, [refreshKey, initialValues]);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, [selectedBorrowerIndex]);
 
   useEffect(() => {
     if (initialValues && !initialValuesSnapshot.current) {
@@ -205,7 +218,10 @@ export const TableFinancialObligations = (
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);
+      } finally {
+        setLoading(false);
       }
+
       setRefreshKey?.((prev) => prev + 1);
       onProspectUpdate?.();
     } else {
@@ -299,6 +315,8 @@ export const TableFinancialObligations = (
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${errorMessages.updateMessage}  ${error}`);
+      } finally {
+        setLoading(false);
       }
     } else {
       try {
@@ -393,6 +411,7 @@ export const TableFinancialObligations = (
         return;
       }
 
+      setLoading(true);
       await restoreFinancialObligationsByBorrowerId(
         businessUnitPublicCode,
         borrower.borrowerIdentificationNumber || "",
@@ -405,6 +424,8 @@ export const TableFinancialObligations = (
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(`Error al restaurar: ${error}`);
+    } finally {
+      setLoading(false);
     }
   };
 

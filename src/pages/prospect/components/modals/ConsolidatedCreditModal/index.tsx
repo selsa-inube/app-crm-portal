@@ -34,6 +34,7 @@ export interface ConsolidatedCreditsProps {
     React.SetStateAction<IConsolidatedCredit[]>
   >;
   consolidatedCredits: IConsolidatedCredit[];
+  showEdit?: boolean;
   onProspectRefreshData?: () => void;
 }
 
@@ -45,6 +46,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     businessManagerCode,
     setConsolidatedCredits,
     consolidatedCredits,
+    showEdit = true,
     onProspectRefreshData,
   } = props;
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -349,14 +351,14 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
   return (
     <BaseModal
       title={ModalConfig.title}
-      nextButton={ModalConfig.keep}
-      disabledNext={!hasRealChanges}
-      handleNext={handleSaveChanges}
+      nextButton={showEdit ? ModalConfig.keep : ModalConfig.close}
+      disabledNext={showEdit ? !hasRealChanges : false}
+      handleNext={showEdit ? handleSaveChanges : handleClose}
       width={isMobile ? "300px" : "640px"}
       height={isMobile ? "auto" : "688px"}
       handleBack={handleClose}
       finalDivider={true}
-      backButton={ModalConfig.close}
+      backButton={showEdit ? ModalConfig.close : undefined}
       isLoading={isLoading}
     >
       <Stack direction="column" gap="24px">
@@ -382,16 +384,18 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
               textAlign="center"
             ></Text>
           </Stack>
-          <Button
-            onClick={() => setEditOpen(false)}
-            variant="outlined"
-            appearance="primary"
-            spacing="wide"
-            fullwidth={isMobile}
-            disabled={!editOpen}
-          >
-            {ModalConfig.edit}
-          </Button>
+          {showEdit && (
+            <Button
+              onClick={() => setEditOpen(false)}
+              variant="outlined"
+              appearance="primary"
+              spacing="wide"
+              fullwidth={isMobile}
+              disabled={!editOpen}
+            >
+              {ModalConfig.edit}
+            </Button>
+          )}
         </Stack>
         <Divider dashed />
         <ScrollableContainer>

@@ -148,16 +148,20 @@ interface SimulateCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   servicesProductSelection: IServicesProductSelection;
+  isLoadingSubmit: boolean;
   isLoadingCreditLimit: boolean;
   paymentCapacity?: IPaymentCapacityResponse | null;
   businessManagerCode: string;
   allowToContinue: boolean;
   handleModalTryAgain: () => void;
+  handleNavigate: () => void;
   errorsManager: IManageErrors;
   userAccount?: string;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
   loadingQuestions: boolean;
   showSelectsLoanAmount: boolean;
+  createdProspectModal: boolean;
+  setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -193,7 +197,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     formData,
     selectedProducts,
     isMobile,
-    isTablet,
     prospectData,
     creditLimitData,
     totalIncome,
@@ -220,18 +223,22 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     handleModalTryAgain,
     sentModal,
     setSentModal,
+    handleNavigate,
     prospectCode,
     errorsManager,
     paymentChannel,
     loadingQuestions,
     showSelectsLoanAmount,
+    createdProspectModal,
+    setCreatedProspectModal,
+    isLoadingSubmit,
   } = props;
 
   return (
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigate("/clients/select-client/")}
+          onClick={handleNavigate}
           errorCode={codeError}
           addToFix={addToFix}
         />
@@ -355,7 +362,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     ...titleButtonTextAssited,
                     goNextText: assistedButtonText,
                   }}
-                  onSubmitClick={handleSubmitClick}
+                  onSubmitClick={() => setSentModal(true)}
                   disableNext={!isCurrentFormValid}
                   disableSubmit={!isCurrentFormValid}
                   showCurrentStepNumber={false}
@@ -386,7 +393,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         )
                       }
                       onFormValid={setIsCurrentFormValid}
-                      isTablet={isTablet}
+                      isTablet={isMobile}
                       businessManagerCode={businessManagerCode}
                       clientIdentificationNumber={customerData.publicCode}
                     />
@@ -668,13 +675,26 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               {sentModal && (
                 <BaseModal
                   title={dataSubmitApplication.modals.filed}
+                  nextButton={dataSubmitApplication.modals.continue}
+                  backButton={dataSubmitApplication.modals.cancel}
+                  handleBack={() => setSentModal(false)}
+                  handleNext={handleSubmitClick}
+                  width={isMobile ? "290px" : "402px"}
+                  isLoading={isLoadingSubmit}
+                >
+                  <Text>{dataSubmitApplication.modals.sure}</Text>
+                </BaseModal>
+              )}
+              {createdProspectModal && (
+                <BaseModal
+                  title={dataSubmitApplication.modals.filed}
                   nextButton={dataSubmitApplication.modals.cancel}
                   handleNext={() => {
-                    setSentModal(false);
+                    setCreatedProspectModal(false);
                     navigate(`/credit/prospects/${prospectCode}`);
                   }}
                   handleClose={() => {
-                    setSentModal(false);
+                    setCreatedProspectModal(false);
                     navigate(`/credit/prospects/${prospectCode}`);
                   }}
                   width={isMobile ? "290px" : "402px"}
