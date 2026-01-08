@@ -2,9 +2,24 @@ import { IBorrower } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 
 export const dataExtraDebtors = {
-  AddBorrower: "Agregar deudor",
-  Add: "Agregar",
-  Delete: "¿Realmente deseas eliminar este deudor?",
+  addBorrower: {
+    code: "Add_borrower",
+    description: "Button to add a new borrower",
+    i18n: { en: "Add borrower", es: "Agregar deudor" },
+  },
+  add: {
+    code: "Add",
+    description: "Generic add button",
+    i18n: { en: "Add", es: "Agregar" },
+  },
+  delete: {
+    code: "Delete",
+    description: "Confirmation text for deleting a borrower",
+    i18n: {
+      en: "Are you sure you want to delete this borrower?",
+      es: "¿Realmente deseas eliminar este deudor?",
+    },
+  },
 };
 
 export enum EBorrowerProperty {
