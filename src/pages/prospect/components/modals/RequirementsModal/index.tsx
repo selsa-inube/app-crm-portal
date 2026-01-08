@@ -8,7 +8,8 @@ import { TableBoard } from "@components/data/TableBoard";
 import { Fieldset } from "@components/data/Fieldset";
 import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
-
+import { EnumContext } from "@context/EnumContext";
+import { requirementStatusData } from "@services/enum/requirements";
 import { IManageErrors } from "@pages/simulateCredit/types";
 
 import {
@@ -17,8 +18,6 @@ import {
   getActionsMobileIcon,
   titlesRequirementsModal,
 } from "./config";
-import { EnumContext } from "@src/context/EnumContext";
-import { requirementStatusData } from "@src/services/enum/requirements";
 
 export interface IRequirementsModalProps {
   handleClose: () => void;
