@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useContext } from "react";
 import { Stack, Icon, Tag, Text, Spinner } from "@inubekit/inubekit";
 import { MdCheckCircleOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 
@@ -8,8 +8,8 @@ import { TableBoard } from "@components/data/TableBoard";
 import { Fieldset } from "@components/data/Fieldset";
 import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { useEnums } from "@context/EnumContext";
-import { getEnumByCode } from "@config/enums/utils";
+import { EnumContext } from "@context/EnumContext";
+import { requirementStatusData } from "@services/enum/requirements";
 import { IManageErrors } from "@pages/simulateCredit/types";
 
 import {
@@ -41,49 +41,46 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     description: string;
   } | null>(null);
 
-  const { enums, getEnums, language } = useEnums();
+  const contextValue = useContext(EnumContext);
+  const lang = contextValue?.lang;
   const [showErrorModal, setShowErrorModal] = useState(false);
 
-  useEffect(() => {
-    getEnums("requirementStatus");
-  }, [getEnums]);
-
-  const entries = validateRequirements.map((item, idx) => ({
-    id: `${item.requirementName}-${idx}`,
-    requierement: item.requirementName,
-    tag: (
-      <Tag
-        label={
-          getEnumByCode(
-            item.requirementStatus,
-            language,
-            enums.requirementStatus,
-          ) || item.requirementStatus
-        }
-        appearance={
-          item.requirementStatus === "Aprobado"
-            ? "success"
-            : item.requirementStatus === "Rechazado"
-              ? "danger"
-              : "warning"
-        }
-      />
-    ),
-    action: (
-      <Icon
-        icon={<MdOutlineRemoveRedEye />}
-        appearance="dark"
-        cursorHover
-        onClick={() =>
-          setModalData({
-            evaluation: item.requirementName,
-            description: item.descriptionEvaluationRequirement,
-          })
-        }
-        size="18px"
-      />
-    ),
-  }));
+  const entries = validateRequirements.map((item, idx) => {
+    return {
+      id: `${item.requirementName}-${idx}`,
+      requierement: item.requirementName,
+      tag: (
+        <Tag
+          label={
+            requirementStatusData.find(
+              (status) => status.code === item.requirementStatus,
+            )?.i18n[lang as "es" | "en"] || item.requirementStatus
+          }
+          appearance={
+            item.requirementStatus === "Aprobado"
+              ? "success"
+              : item.requirementStatus === "Rechazado"
+                ? "danger"
+                : "warning"
+          }
+        />
+      ),
+      action: (
+        <Icon
+          icon={<MdOutlineRemoveRedEye />}
+          appearance="dark"
+          cursorHover
+          onClick={() =>
+            setModalData({
+              evaluation: item.requirementName,
+              description: item.descriptionEvaluationRequirement,
+            })
+          }
+          size="18px"
+        />
+      ),
+    };
+  });
 
   return (
     <>
