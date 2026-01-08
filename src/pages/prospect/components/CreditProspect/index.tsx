@@ -73,6 +73,7 @@ import {
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
+import { ScoreModalProspect } from "../ScoreModalProspec";
 import InfoModal from "../InfoModal";
 import { filterIncomeByBorrower } from "./utils";
 
@@ -214,7 +215,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   const handleOpenModal = (modalName: string) => {
     if (modalName === "requirements" && setShowRequirements) {
       setShowRequirements(true);
-
       return;
     }
     if (modalName === "IncomeModal") {
@@ -1066,6 +1066,13 @@ export function CreditProspect(props: ICreditProspectProps) {
               />
             </Stack>
           </BaseModal>
+        )}
+
+        {currentModal === "scores" && (
+          <ScoreModalProspect
+            isMobile={isMobile}
+            handleClose={handleCloseModal}
+          />
         )}
 
         {showEditMessageModal && (
