@@ -1,51 +1,41 @@
-import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import React from "react";
-
+import { useContext, useState, useCallback, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
-import { CustomerContext } from "@context/CustomerContext";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { IBorrower, IProspect } from "@services/prospect/types";
-import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
-import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import { IValidateRequirement } from "@services/requirement/types";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
+import { useBorrowerData } from "@hooks/useBorrowerData";
 
-import { prospectStates } from "./config/addConfig";
+import { PayRollUI } from "./interface";
 import { IBonusFormData, titleButtonTextAssited } from "../types";
-import { stepsAddBonus } from "./config/addBonus.config";
-import { BonusUI } from "./interface";
-import { textAddCongfig } from "../payRoll/config/addConfig";
+import { stepsPayrollSpecialBenefitAdvanceCredit } from "./config/addBonus.config";
 import { availableQuotaValue } from "../steps/requestedValue";
 
-export function Bonus() {
+export function PayrollAdvanceCredit() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
   const [currentStep, setCurrentStep] = useState<number>(
-    stepsAddBonus.generalInformation.id,
+    stepsPayrollSpecialBenefitAdvanceCredit.generalInformation.id,
   );
-  const { prospectCode } = useParams();
-  const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
-  const [addToFix, setAddToFix] = useState<string[]>([]);
-  const [codeError, setCodeError] = useState<number | null>(null);
-
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
   const businessManagerCode = eventData.businessManager.abbreviatedName;
-  const steps = Object.values(stepsAddBonus);
+  const steps = Object.values(stepsPayrollSpecialBenefitAdvanceCredit);
   const { customerData } = useContext(CustomerContext);
 
   const dataHeader = {
@@ -53,7 +43,7 @@ export function Bonus() {
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
   };
-  const customerPublicCode: string = customerData.publicCode;
+
   const lastStepId = steps[steps.length - 1].id;
   const [isLoading, setIsLoading] = useState(true);
   const [validateRequirements, setValidateRequirements] = useState<
@@ -63,10 +53,11 @@ export function Bonus() {
   const [isModalOpenRequirements, setIsModalOpenRequirements] = useState(false);
 
   const [showExceedQuotaModal, setShowExceedQuotaModal] = useState(false);
-  const [showInfoModal, setShowInfoModal] = React.useState(false);
 
   const handleNextStep = () => {
-    if (currentStep === stepsAddBonus.destination.id) {
+    if (
+      currentStep === stepsPayrollSpecialBenefitAdvanceCredit.destination.id
+    ) {
       const currentAmount = Number(formData.requestedValue);
 
       if (currentAmount > availableQuotaValue) {
@@ -164,6 +155,7 @@ export function Bonus() {
         check: false,
         toggle: true,
         documentType: "",
+        accountLabel: "",
       },
       External_account: {
         amount: 0,
@@ -237,53 +229,12 @@ export function Bonus() {
     },
   });
 
-  const onlyBorrowerData = useMemo(() => {
-    const numericIncomeProperties = Object.entries(formData.sourcesOfIncome)
-      .filter(([_, value]) => typeof value === "number" && !isNaN(value))
-      .map(([key, value]) => ({
-        propertyName: key,
-        propertyValue: String(value),
-      }));
-
-    const financialObligationProperties =
-      formData.obligationsFinancial?.obligations?.map((obligation) => ({
-        propertyName: textAddCongfig.financialObligation,
-        propertyValue: [
-          obligation.productName,
-          obligation.nextPaymentValueTotal,
-          obligation.balanceObligationTotal,
-          obligation.entity,
-          obligation.paymentMethodName,
-          obligation.obligationNumber,
-          obligation.duesPaid || "0",
-          obligation.outstandingDues || "0",
-        ]
-          .filter((x) => x !== undefined && x !== null)
-          .join(", "),
-      })) || [];
-
-    return {
-      borrowerIdentificationType:
-        customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
-      borrowerIdentificationNumber: customerData.publicCode,
-      borrowerType: textAddCongfig.mainBorrower,
-      borrowerName: customerData.fullName,
-
-      borrowerProperties: [
-        ...numericIncomeProperties,
-        ...financialObligationProperties,
-        {
-          propertyName: "creditRiskScore",
-          propertyValue: `${formData.riskScore.value}, ${formData.riskScore.date}`,
-        },
-      ],
-    };
-  }, [
+  const onlyBorrowerData = useBorrowerData({
     customerData,
-    formData.sourcesOfIncome,
-    formData.obligationsFinancial,
-    formData.riskScore,
-  ]);
+    sourcesOfIncome: formData.sourcesOfIncome,
+    obligationsFinancial: formData.obligationsFinancial,
+    riskScore: formData.riskScore,
+  });
 
   const simulateData: IProspect = useMemo(
     () => ({
@@ -450,11 +401,25 @@ export function Bonus() {
       setShowSubmitModal(true);
     }
   };
+  const [showInfoModal, setShowInfoModal] = React.useState(false);
 
+  const handleBackClick = () => {
+    setShowInfoModal(true);
+  };
+
+  const handleCancelNavigation = () => {
+    setShowInfoModal(false);
+  };
+
+  const handleConfirmNavigation = () => {
+    setShowInfoModal(false);
+    navigate("/credit");
+  };
   const handleSubmitBonus = async () => {
     setIsLoadingSubmit(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
+
       setShowSubmitModal(false);
       setShowSuccessModal(true);
     } catch (error) {
@@ -472,139 +437,40 @@ export function Bonus() {
     setShowSuccessModal(false);
     navigate("/credit", { state: { showSuccessFlag: true } });
   };
-  const handleCancelNavigation = () => {
-    setShowInfoModal(false);
-  };
-
-  const handleConfirmNavigation = () => {
-    setShowSuccessModal(false);
-    navigate("/credit", { state: { showSuccessFlag: true } });
-  };
-
-  const fetchDisbursementDataForProspect = useCallback(
-    async (prospect: IProspect) => {
-      if (
-        !prospect.borrowers?.[0]?.borrowerIdentificationNumber ||
-        !prospect.creditProducts?.[0]?.lineOfCreditAbbreviatedName ||
-        !prospect.moneyDestinationAbbreviatedName
-      ) {
-        return;
-      }
-
-      try {
-        const creditData = await getSearchAllModesOfDisbursementTypes(
-          businessUnitPublicCode,
-          businessManagerCode,
-          prospect.borrowers[0].borrowerIdentificationNumber,
-          prospect.creditProducts[0].lineOfCreditAbbreviatedName,
-          prospect.moneyDestinationAbbreviatedName,
-          prospect.creditProducts[0].loanAmount.toString(),
-        );
-
-        if (codeError) return;
-
-        if (
-          creditData?.modesOfDisbursementTypes &&
-          creditData.modesOfDisbursementTypes.length > 0
-        ) {
-          setModesOfDisbursement(creditData.modesOfDisbursementTypes);
-          setCodeError(null);
-          setAddToFix([]);
-        } else {
-          setModesOfDisbursement([]);
-          setCodeError(1014);
-          setAddToFix(["ModeOfDisbursementType"]);
-        }
-      } catch (error) {
-        setModesOfDisbursement([]);
-        setCodeError(1014);
-        setAddToFix(["ModeOfDisbursementType"]);
-      }
-    },
-    [businessUnitPublicCode, businessManagerCode, codeError],
-  );
-
-  const fetchProspectData = useCallback(async () => {
-    try {
-      const prospect = await getSearchProspectByCode(
-        businessUnitPublicCode,
-        businessManagerCode,
-        "PC-0231",
-      );
-
-      if (prospect && typeof prospect === "object") {
-        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
-          setProspectData(prospect);
-          await fetchDisbursementDataForProspect(prospect);
-        }
-      }
-
-      const mainBorrower = prospect.borrowers.find(
-        (borrower) => borrower.borrowerType === "MainBorrower",
-      );
-
-      if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
-        setCodeError(1011);
-        return;
-      }
-
-      if (prospect.state !== prospectStates.CREATED) {
-        setCodeError(1012);
-      }
-    } catch (error) {
-      setCodeError(1010);
-    }
-  }, [
-    businessUnitPublicCode,
-    businessManagerCode,
-    customerPublicCode,
-    prospectCode,
-    prospectData,
-    fetchDisbursementDataForProspect,
-  ]);
-
-  useEffect(() => {
-    if (!customerData || !customerPublicCode) return;
-    fetchProspectData();
-  }, [customerData, fetchProspectData]);
 
   return (
-    <BonusUI
+    <PayRollUI
       handleNextStep={handleNextStep}
       handlePreviousStep={handlePreviousStep}
       navigate={navigate}
       currentStep={currentStep}
       isCurrentFormValid={isCurrentFormValid}
       isMobile={isMobile}
-      isTablet={isTablet}
       currentStepsNumber={currentStepsNumber}
       assistedButtonText={assistedButtonText}
       codeError={null}
       prospectData={prospectData}
       customerData={customerData as ICustomerData}
       dataHeader={dataHeader}
-      showExceedQuotaModal={showExceedQuotaModal}
-      setShowExceedQuotaModal={setShowExceedQuotaModal}
       steps={steps}
       businessUnitPublicCode={businessUnitPublicCode}
+      showExceedQuotaModal={showExceedQuotaModal}
+      setShowExceedQuotaModal={setShowExceedQuotaModal}
       businessManagerCode={businessManagerCode}
       formData={formData}
       onAmountChange={handleAmountChange}
       onValidationChange={handleValidationChange}
       setIsCurrentFormValid={setIsCurrentFormValid}
       handleFormChange={handleFormChange}
-      modesOfDisbursement={modesOfDisbursement}
+      setProspectData={setProspectData}
       showErrorModal={showErrorModal}
       messageError={messageError}
-      addToFix={addToFix}
       setShowErrorModal={setShowErrorModal}
       setMessageError={setMessageError}
       setCurrentStep={setCurrentStep}
       onRequirementsValidated={handleRequirementsValidated}
       showSubmitModal={showSubmitModal}
       setShowSubmitModal={setShowSubmitModal}
-      showInfoModal={showInfoModal}
-      setShowInfoModal={setShowInfoModal}
       showSuccessModal={showSuccessModal}
       setShowSuccessModal={setShowSuccessModal}
       isLoadingSubmit={isLoadingSubmit}
@@ -616,8 +482,11 @@ export function Bonus() {
       errorsManager={errorsManager}
       setIsModalOpenRequirements={setIsModalOpenRequirements}
       isModalOpenRequirements={isModalOpenRequirements}
-      handleNextClick={handleConfirmNavigation}
+      showInfoModal={showInfoModal}
+      handleBackClick={handleBackClick}
       handleCancelNavigation={handleCancelNavigation}
+      handleNextClick={handleConfirmNavigation}
+      isTablet={isTablet}
     />
   );
 }

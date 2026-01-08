@@ -1,4 +1,4 @@
-export const stepsAddBonus = {
+export const stepsPayrollSpecialBenefitAdvanceCredit = {
   generalInformation: {
     id: 1,
     number: 1,

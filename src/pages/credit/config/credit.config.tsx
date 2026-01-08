@@ -38,15 +38,16 @@ export const errorDataCredit = {
 export const advancePaymentModal = {
   title: "Nómina o prima",
   titleRoster: "Nómina",
-  subtitleRoster: "Es un adelanto de tu salario o nómina mensual.",
+  subtitleRoster: "Es un adelanto del salario de tu cliente.",
   titleAdvance: "Prima",
   subtitleAdvance:
     "Es un adelanto prima de servicios, que se paga cada 6 meses.",
-  description: "Selecciona si necesitas un adelanto de nómina o prima.",
+  description:
+    "Selecciona esta opción si quieres un adelanto de nómina o de prima para el cliente.",
   nextButtonText: "Entendido",
   textPayrool: "Nómina",
   flag: {
-    title: "Solicitud enviada..",
+    title: "Solicitud enviada.",
     description: "La solocitud se envió con éxito.",
   },
   tag: {

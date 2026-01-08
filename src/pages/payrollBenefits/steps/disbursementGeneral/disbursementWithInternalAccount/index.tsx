@@ -13,7 +13,7 @@ import {
 import { FormikValues } from "formik";
 
 import { IDisbursementGeneral } from "@pages/applyForCredit/types";
-import { disbursementGeneral } from "@pages/applyForCredit/steps/disbursementGeneral/config";
+
 import { GeneralInformationForm } from "@pages/applyForCredit/components/GeneralInformationForm";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
@@ -40,7 +40,6 @@ interface IDisbursementWithInternalAccountProps {
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
-  getTotalAmount: () => number;
 }
 
 export function DisbursementWithInternalAccount(
@@ -55,7 +54,6 @@ export function DisbursementWithInternalAccount(
     businessUnitPublicCode,
     customerData,
     businessManagerCode,
-    getTotalAmount,
     isTablet,
     onFormValid,
     handleOnChange,
@@ -102,13 +100,6 @@ export function DisbursementWithInternalAccount(
     }
   }, [formik.values, handleOnChange, initialValues, optionNameForm]);
 
-  const parseBaseAmount = (description: string | number): number => {
-    if (typeof description === "number") return description;
-    const cleanedString = description.replace(/[$\s.]/g, "").replace(",", ".");
-    return parseFloat(cleanedString) || 0;
-  };
-
-  const baseAmount = parseBaseAmount(disbursementGeneral.description);
   const restoreCustomerDataFields = () => {
     const person = customerData?.generalAttributeClientNaturalPersons?.[0];
 
@@ -185,13 +176,6 @@ export function DisbursementWithInternalAccount(
       setIsAutoCompleted(false);
     }
   }, [identificationValue, currentIdentification, isAutoCompleted]);
-
-  useEffect(() => {
-    const totalAmount = getTotalAmount();
-    if (totalAmount !== baseAmount) {
-      formik.setFieldValue(`${optionNameForm}.check`, false);
-    }
-  }, [formik.values[optionNameForm]?.amount, getTotalAmount]);
 
   useEffect(() => {
     const identification = formik.values[optionNameForm]?.identification;

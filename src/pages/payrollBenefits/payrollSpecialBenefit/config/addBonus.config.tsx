@@ -1,4 +1,4 @@
-export const stepsAddBonus = {
+export const stepsToApplyForPayrollAdvanceCredit = {
   generalInformation: {
     id: 1,
     number: 1,
@@ -9,7 +9,7 @@ export const stepsAddBonus = {
     id: 2,
     number: 2,
     name: "Valor solicitado",
-    description: "Indica el valor que necesitas.",
+    description: "Registra el valor solicitado.",
   },
   methodOfDisbursement: {
     id: 3,

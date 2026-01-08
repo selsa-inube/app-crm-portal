@@ -8,7 +8,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
-import { dataApproved } from "@pages/payrollOrnBonus/steps/requirementsNotMet/config";
+import { dataApproved } from "@pages/payrollBenefits/steps/requirementsNotMet/config";
 
 import { dataError } from "./config";
 

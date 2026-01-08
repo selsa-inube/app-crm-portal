@@ -14,6 +14,7 @@ import {
   MdOutlineRule,
 } from "react-icons/md";
 
+import { ErrorModal } from "@components/modals/ErrorModal";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import userImage from "@assets/images/userImage.jpeg";
@@ -23,29 +24,34 @@ import { ButtonRequirements } from "@pages/prospect/components/buttonRequirement
 import { IProspect } from "@services/prospect/types";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
-import { ErrorModal } from "@components/modals/ErrorModal";
 
-import { StyledArrowBack, StyledContainerAssisted } from "../styles";
-import { IDisbursementGeneral, titleButtonTextAssited } from "../types";
-import { stepsAddBonus } from "./config/addBonus.config";
-import { RequirementsNotMet } from "../steps/requirementsNotMet";
-import { RequestedValue } from "../steps/requestedValue";
-import { DisbursementGeneral } from "../steps/disbursementGeneral";
 import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
-import { IStep, IStepDetails, IBonusFormData } from "../types";
+
 import {
   addConfig,
   dataSubmitApplication,
-  textAddConfig,
+  textAddCongfig,
 } from "./config/addConfig";
+import { StyledArrowBack, StyledContainerAssisted } from "../styles";
+import {
+  IBonusFormData,
+  IDisbursementGeneral,
+  IStep,
+  IStepDetails,
+  titleButtonTextAssited,
+} from "../types";
+import { stepsPayrollSpecialBenefitAdvanceCredit } from "./config/addBonus.config";
+import { RequirementsNotMet } from "../steps/requirementsNotMet";
+import { RequestedValue } from "../steps/requestedValue";
+import { DisbursementGeneral } from "../steps/disbursementGeneral";
 import { VerificationPayrollOrnBonus } from "../steps/verification";
 import {
   IMethodOfDisbursement,
   IPersonalInfo,
 } from "../steps/verification/types";
 
-interface BonusUIProps {
+interface PayRollUIProps {
   handleNextStep: () => void;
   handlePreviousStep: () => void;
   navigate: ReturnType<typeof useNavigate>;
@@ -57,7 +63,6 @@ interface BonusUIProps {
   businessManagerCode: string;
   isCurrentFormValid: boolean;
   isMobile: boolean;
-  isTablet: boolean;
   currentStepsNumber?: IStepDetails;
   assistedButtonText: string;
   codeError: number | null;
@@ -67,18 +72,15 @@ interface BonusUIProps {
   onValidationChange: (isValid: boolean) => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormChange: (updatedValues: Partial<IBonusFormData>) => void;
-  modesOfDisbursement: string[];
+  setProspectData: React.Dispatch<React.SetStateAction<IProspect>>;
   showErrorModal: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   messageError: string;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
-  addToFix?: string[];
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   onRequirementsValidated: (requirements: IValidateRequirement[]) => void;
   showSubmitModal: boolean;
   setShowSubmitModal: React.Dispatch<React.SetStateAction<boolean>>;
-  showInfoModal: boolean;
-  setShowInfoModal: React.Dispatch<React.SetStateAction<boolean>>;
   showSuccessModal: boolean;
   setShowSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   isLoadingSubmit: boolean;
@@ -90,24 +92,26 @@ interface BonusUIProps {
   handleSuccessModalClose: () => void;
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   isModalOpenRequirements: boolean;
-  handleNextClick: () => void;
+
+  showInfoModal: boolean;
+  handleBackClick: () => void;
   handleCancelNavigation: () => void;
+  handleNextClick: () => void;
+  isTablet: boolean;
   showExceedQuotaModal: boolean;
   setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function BonusUI(props: BonusUIProps) {
+export function PayRollUI(props: PayRollUIProps) {
   const {
     handleNextStep,
     handlePreviousStep,
-    handleCancelNavigation,
-    handleNextClick,
     validateRequirements,
     setCurrentStep,
     navigate,
     prospectData,
     currentStepsNumber,
-
+    isTablet,
     handleFormChange,
     businessUnitPublicCode,
     businessManagerCode,
@@ -115,10 +119,7 @@ export function BonusUI(props: BonusUIProps) {
     steps,
     isCurrentFormValid,
     isMobile,
-    isTablet,
     codeError,
-    modesOfDisbursement,
-    addToFix,
     assistedButtonText,
     customerData,
     formData,
@@ -129,7 +130,6 @@ export function BonusUI(props: BonusUIProps) {
     setShowErrorModal,
     messageError,
     onRequirementsValidated,
-    showInfoModal,
     showSubmitModal,
     setShowSubmitModal,
     showSuccessModal,
@@ -142,8 +142,13 @@ export function BonusUI(props: BonusUIProps) {
     isModalOpenRequirements,
     isLoading,
     errorsManager,
-    showExceedQuotaModal,
+
+    showInfoModal,
+    handleBackClick,
+    handleCancelNavigation,
+    handleNextClick,
     setShowExceedQuotaModal,
+    showExceedQuotaModal,
   } = props;
 
   return (
@@ -152,7 +157,6 @@ export function BonusUI(props: BonusUIProps) {
         <ErrorPage
           onClick={() => navigate("/clients/select-client/")}
           errorCode={codeError}
-          addToFix={addToFix}
         />
       ) : (
         <Stack
@@ -167,14 +171,14 @@ export function BonusUI(props: BonusUIProps) {
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
               <GeneralHeader
-                buttonText={textAddConfig.buttonAddLink}
+                buttonText={textAddCongfig.buttonAddLink}
                 descriptionStatus={dataHeader.status}
                 name={dataHeader.name}
                 profileImageUrl={dataHeader.image || userImage}
               />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
-                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
+                <StyledArrowBack onClick={handleBackClick}>
                   <Stack gap="8px" alignItems="center" width="100%">
                     <Icon
                       icon={<MdArrowBack />}
@@ -232,7 +236,8 @@ export function BonusUI(props: BonusUIProps) {
                 <Stack justifyContent="end"></Stack>
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                    stepsAddBonus.generalInformation.id && (
+                    stepsPayrollSpecialBenefitAdvanceCredit.generalInformation
+                      .id && (
                     <RequirementsNotMet
                       isMobile={isMobile}
                       prospectData={prospectData}
@@ -245,21 +250,21 @@ export function BonusUI(props: BonusUIProps) {
                   )}
 
                 {currentStepsNumber &&
-                  currentStepsNumber.id === stepsAddBonus.destination.id && (
+                  currentStepsNumber.id ===
+                    stepsPayrollSpecialBenefitAdvanceCredit.destination.id && (
                     <RequestedValue
                       initialAmount={formData.requestedValue}
                       onValidationChange={onValidationChange}
                       onAmountChange={onAmountChange}
                       isMobile={isMobile}
-                      onExceedQuota={() => setShowExceedQuotaModal(true)}
                     />
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                    stepsAddBonus.methodOfDisbursement.id && (
+                    stepsPayrollSpecialBenefitAdvanceCredit.methodOfDisbursement
+                      .id && (
                     <DisbursementGeneral
                       isMobile={isMobile}
-                      isTablet={isTablet}
                       onFormValid={setIsCurrentFormValid}
                       initialValues={
                         formData.disbursementGeneral as IDisbursementGeneral
@@ -270,16 +275,17 @@ export function BonusUI(props: BonusUIProps) {
                       data={prospectData}
                       customerData={customerData}
                       identificationNumber={customerData?.publicCode || ""}
-                      modesOfDisbursement={modesOfDisbursement}
+                      isTablet={isTablet}
                     />
                   )}
 
                 {currentStepsNumber &&
-                  currentStepsNumber.id === stepsAddBonus.verification.id && (
+                  currentStepsNumber.id ===
+                    stepsPayrollSpecialBenefitAdvanceCredit.verification.id && (
                     <VerificationPayrollOrnBonus
                       setCurrentStep={setCurrentStep}
-                      advanceType="bonus"
                       destinationOfMoney={Number(formData.requestedValue || 0)}
+                      advanceType="payroll"
                       steps={{
                         personalInfo:
                           formData.requirementsValidation as IPersonalInfo,
@@ -297,11 +303,12 @@ export function BonusUI(props: BonusUIProps) {
                   onClick={handlePreviousStep}
                   disabled={currentStepsNumber === steps[0]}
                 >
-                  {textAddConfig.buttonPrevious}
+                  {textAddCongfig.buttonPrevious}
                 </Button>
                 <Button
                   onClick={
-                    currentStepsNumber?.id === stepsAddBonus.verification.id
+                    currentStepsNumber?.id ===
+                    stepsPayrollSpecialBenefitAdvanceCredit.verification.id
                       ? handleSubmitClick
                       : handleNextStep
                   }
@@ -321,17 +328,19 @@ export function BonusUI(props: BonusUIProps) {
           )}
           {showSubmitModal && (
             <BaseModal
-              title={textAddConfig.submitRequestTitle}
+              title={dataSubmitApplication.modals.submit.title}
               handleBack={() => setShowSubmitModal(false)}
               handleNext={handleSubmitBonus}
               disabledNext={false}
-              backButton={textAddConfig.submitRequestCancel}
-              nextButton={textAddConfig.submitRequestConfirm}
+              backButton={dataSubmitApplication.modals.submit.cancelButton}
+              nextButton={dataSubmitApplication.modals.submit.sendButton}
               apparenceNext="primary"
               width={isMobile ? "300px" : "500px"}
               isLoading={isLoadingSubmit}
             >
-              <Text>{textAddConfig.submitRequestQuestion}</Text>
+              <Text>
+                {dataSubmitApplication.modals.submit.confirmationText}
+              </Text>
             </BaseModal>
           )}
           {isModalOpenRequirements && (
@@ -345,11 +354,11 @@ export function BonusUI(props: BonusUIProps) {
           )}
           {showSuccessModal && (
             <BaseModal
-              title={textAddConfig.successModalTitle}
+              title={dataSubmitApplication.modals.success.title}
               handleBack={() => setShowSuccessModal(false)}
               handleNext={handleSuccessModalClose}
               disabledNext={false}
-              nextButton={textAddConfig.successModalButton}
+              nextButton={dataSubmitApplication.modals.success.buttonText}
               width={isMobile ? "300px" : "450px"}
               isLoading={false}
             >
@@ -361,30 +370,30 @@ export function BonusUI(props: BonusUIProps) {
                 />
                 <Stack gap="6px">
                   <Text type="body" size="large">
-                    {dataSubmitApplication.modals.fileDescription}
+                    {dataSubmitApplication.modals.success.fileDescription}
                   </Text>
                   <Text type="body" size="large" weight="bold">
-                    {dataSubmitApplication.modals.code}
+                    {dataSubmitApplication.modals.success.code}
                   </Text>
                 </Stack>
 
                 <Text type="body" size="medium" appearance="gray">
-                  {dataSubmitApplication.modals.descriptionSolid}
+                  {dataSubmitApplication.modals.success.descriptionSolid}
                 </Text>
               </Stack>
             </BaseModal>
           )}
           {showInfoModal && (
             <BaseModal
-              title={dataSubmitApplication.return.title}
-              nextButton={dataSubmitApplication.return.sendButton}
-              backButton={dataSubmitApplication.return.cancelButton}
+              title={dataSubmitApplication.modals.return.title}
+              nextButton={dataSubmitApplication.modals.return.sendButton}
+              backButton={dataSubmitApplication.modals.return.cancelButton}
               width={isMobile ? "auto" : "450px"}
               handleNext={handleNextClick}
               handleBack={handleCancelNavigation}
             >
               <Text type="body" size="large">
-                {dataSubmitApplication.return.confirmationText}
+                {dataSubmitApplication.modals.return.confirmationText}
               </Text>
             </BaseModal>
           )}
@@ -392,16 +401,18 @@ export function BonusUI(props: BonusUIProps) {
       )}
       {showExceedQuotaModal && (
         <BaseModal
-          title={dataSubmitApplication.showExceedQuotaModal.title}
+          title={dataSubmitApplication.modals.showExceedQuotaModal.title}
           width={isMobile ? "300px" : "450px"}
-          nextButton={dataSubmitApplication.showExceedQuotaModal.nextButton}
+          nextButton={
+            dataSubmitApplication.modals.showExceedQuotaModal.nextButton
+          }
           handleNext={() => setShowExceedQuotaModal(false)}
           handleClose={() => setShowExceedQuotaModal(false)}
         >
           <Stack direction="column" gap="16px" alignItems="center">
             <Icon appearance="danger" icon={<MdHighlightOff />} size="78px" />
             <Text type="body" size="medium" weight="normal" appearance="dark">
-              {dataSubmitApplication.showExceedQuotaModal.description}
+              {dataSubmitApplication.modals.showExceedQuotaModal.description}
             </Text>
           </Stack>
         </BaseModal>

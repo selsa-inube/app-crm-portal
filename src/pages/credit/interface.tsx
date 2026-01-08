@@ -119,11 +119,11 @@ const CreditUI = (props: ICreditUIProps) => {
   };
 
   const handleAdvanceOptionClick = (title: string) => {
-    const route =
+    const routePayrollSpecialBenefit =
       title === advancePaymentModal.tag.title
         ? advancePaymentModal.tag.routeBonus
         : advancePaymentModal.tag.routePayroll;
-    navigate(route);
+    navigate(routePayrollSpecialBenefit);
   };
 
   const advanceOptions = [

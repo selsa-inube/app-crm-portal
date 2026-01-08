@@ -2,8 +2,8 @@ import { IObligations } from "@services/creditRequest/types";
 import { IBorrower } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 
-import { IDisbursementGeneral } from "../payrollOrnBonus/types";
 import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
+import { IDisbursementGeneral } from "../payrollBenefits/types";
 
 export const titleButtonTextAssited = {
   goBackText: "Anterior",

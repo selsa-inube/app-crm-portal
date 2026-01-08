@@ -1,4 +1,5 @@
-import { IDisbursementGeneral } from "@pages/payrollOrnBonus/types";
+import { IDisbursementGeneral } from "@pages/payrollBenefits/types";
+
 import { IValidateRequirement } from "../requirement/types";
 
 export interface IBorrowerProperty {

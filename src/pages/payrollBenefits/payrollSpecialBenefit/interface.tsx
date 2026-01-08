@@ -14,7 +14,6 @@ import {
   MdOutlineRule,
 } from "react-icons/md";
 
-import { ErrorModal } from "@components/modals/ErrorModal";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import userImage from "@assets/images/userImage.jpeg";
@@ -24,34 +23,29 @@ import { ButtonRequirements } from "@pages/prospect/components/buttonRequirement
 import { IProspect } from "@services/prospect/types";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
-import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
-import { IDataHeader } from "../../simulations/types";
-
-import {
-  addConfig,
-  dataSubmitApplication,
-  textAddCongfig,
-} from "./config/addConfig";
 import { StyledArrowBack, StyledContainerAssisted } from "../styles";
-import {
-  IBonusFormData,
-  IDisbursementGeneral,
-  IStep,
-  IStepDetails,
-  titleButtonTextAssited,
-} from "../types";
-import { stepsAddBonus } from "./config/addBonus.config";
+import { IDisbursementGeneral, titleButtonTextAssited } from "../types";
+import { stepsToApplyForPayrollAdvanceCredit } from "./config/addBonus.config";
 import { RequirementsNotMet } from "../steps/requirementsNotMet";
 import { RequestedValue } from "../steps/requestedValue";
 import { DisbursementGeneral } from "../steps/disbursementGeneral";
+import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
+import { IDataHeader } from "../../simulations/types";
+import { IStep, IStepDetails, IBonusFormData } from "../types";
+import {
+  addConfig,
+  dataSubmitApplication,
+  textAddConfig,
+} from "./config/addConfig";
 import { VerificationPayrollOrnBonus } from "../steps/verification";
 import {
   IMethodOfDisbursement,
   IPersonalInfo,
 } from "../steps/verification/types";
 
-interface PayRollUIProps {
+interface BonusUIProps {
   handleNextStep: () => void;
   handlePreviousStep: () => void;
   navigate: ReturnType<typeof useNavigate>;
@@ -63,6 +57,7 @@ interface PayRollUIProps {
   businessManagerCode: string;
   isCurrentFormValid: boolean;
   isMobile: boolean;
+  isTablet: boolean;
   currentStepsNumber?: IStepDetails;
   assistedButtonText: string;
   codeError: number | null;
@@ -72,17 +67,17 @@ interface PayRollUIProps {
   onValidationChange: (isValid: boolean) => void;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
   handleFormChange: (updatedValues: Partial<IBonusFormData>) => void;
-
-  modesOfDisbursement: string[];
   showErrorModal: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   messageError: string;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
-  addToFix?: string[];
+  setProspectData: React.Dispatch<React.SetStateAction<IProspect>>;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   onRequirementsValidated: (requirements: IValidateRequirement[]) => void;
   showSubmitModal: boolean;
   setShowSubmitModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showInfoModal: boolean;
+  setShowInfoModal: React.Dispatch<React.SetStateAction<boolean>>;
   showSuccessModal: boolean;
   setShowSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   isLoadingSubmit: boolean;
@@ -94,26 +89,23 @@ interface PayRollUIProps {
   handleSuccessModalClose: () => void;
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   isModalOpenRequirements: boolean;
-
-  showInfoModal: boolean;
-  handleBackClick: () => void;
-  handleCancelNavigation: () => void;
   handleNextClick: () => void;
-  isTablet: boolean;
+  handleCancelNavigation: () => void;
   showExceedQuotaModal: boolean;
   setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function PayRollUI(props: PayRollUIProps) {
+export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
   const {
     handleNextStep,
     handlePreviousStep,
+    handleCancelNavigation,
+    handleNextClick,
     validateRequirements,
     setCurrentStep,
     navigate,
     prospectData,
     currentStepsNumber,
-    isTablet,
     handleFormChange,
     businessUnitPublicCode,
     businessManagerCode,
@@ -121,9 +113,8 @@ export function PayRollUI(props: PayRollUIProps) {
     steps,
     isCurrentFormValid,
     isMobile,
+    isTablet,
     codeError,
-    modesOfDisbursement,
-    addToFix,
     assistedButtonText,
     customerData,
     formData,
@@ -134,6 +125,7 @@ export function PayRollUI(props: PayRollUIProps) {
     setShowErrorModal,
     messageError,
     onRequirementsValidated,
+    showInfoModal,
     showSubmitModal,
     setShowSubmitModal,
     showSuccessModal,
@@ -146,13 +138,8 @@ export function PayRollUI(props: PayRollUIProps) {
     isModalOpenRequirements,
     isLoading,
     errorsManager,
-
-    showInfoModal,
-    handleBackClick,
-    handleCancelNavigation,
-    handleNextClick,
-    setShowExceedQuotaModal,
     showExceedQuotaModal,
+    setShowExceedQuotaModal,
   } = props;
 
   return (
@@ -161,7 +148,6 @@ export function PayRollUI(props: PayRollUIProps) {
         <ErrorPage
           onClick={() => navigate("/clients/select-client/")}
           errorCode={codeError}
-          addToFix={addToFix}
         />
       ) : (
         <Stack
@@ -176,14 +162,14 @@ export function PayRollUI(props: PayRollUIProps) {
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
               <GeneralHeader
-                buttonText={textAddCongfig.buttonAddLink}
+                buttonText={textAddConfig.buttonAddLink}
                 descriptionStatus={dataHeader.status}
                 name={dataHeader.name}
                 profileImageUrl={dataHeader.image || userImage}
               />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
-                <StyledArrowBack onClick={handleBackClick}>
+                <StyledArrowBack onClick={() => navigate(addConfig.route)}>
                   <Stack gap="8px" alignItems="center" width="100%">
                     <Icon
                       icon={<MdArrowBack />}
@@ -241,7 +227,8 @@ export function PayRollUI(props: PayRollUIProps) {
                 <Stack justifyContent="end"></Stack>
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                    stepsAddBonus.generalInformation.id && (
+                    stepsToApplyForPayrollAdvanceCredit.generalInformation
+                      .id && (
                     <RequirementsNotMet
                       isMobile={isMobile}
                       prospectData={prospectData}
@@ -254,19 +241,23 @@ export function PayRollUI(props: PayRollUIProps) {
                   )}
 
                 {currentStepsNumber &&
-                  currentStepsNumber.id === stepsAddBonus.destination.id && (
+                  currentStepsNumber.id ===
+                    stepsToApplyForPayrollAdvanceCredit.destination.id && (
                     <RequestedValue
                       initialAmount={formData.requestedValue}
                       onValidationChange={onValidationChange}
                       onAmountChange={onAmountChange}
                       isMobile={isMobile}
+                      onExceedQuota={() => setShowExceedQuotaModal(true)}
                     />
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
-                    stepsAddBonus.methodOfDisbursement.id && (
+                    stepsToApplyForPayrollAdvanceCredit.methodOfDisbursement
+                      .id && (
                     <DisbursementGeneral
                       isMobile={isMobile}
+                      isTablet={isTablet}
                       onFormValid={setIsCurrentFormValid}
                       initialValues={
                         formData.disbursementGeneral as IDisbursementGeneral
@@ -277,17 +268,16 @@ export function PayRollUI(props: PayRollUIProps) {
                       data={prospectData}
                       customerData={customerData}
                       identificationNumber={customerData?.publicCode || ""}
-                      modesOfDisbursement={modesOfDisbursement}
-                      isTablet={isTablet}
                     />
                   )}
 
                 {currentStepsNumber &&
-                  currentStepsNumber.id === stepsAddBonus.verification.id && (
+                  currentStepsNumber.id ===
+                    stepsToApplyForPayrollAdvanceCredit.verification.id && (
                     <VerificationPayrollOrnBonus
                       setCurrentStep={setCurrentStep}
+                      advanceType="bonus"
                       destinationOfMoney={Number(formData.requestedValue || 0)}
-                      advanceType="payroll"
                       steps={{
                         personalInfo:
                           formData.requirementsValidation as IPersonalInfo,
@@ -305,11 +295,12 @@ export function PayRollUI(props: PayRollUIProps) {
                   onClick={handlePreviousStep}
                   disabled={currentStepsNumber === steps[0]}
                 >
-                  {textAddCongfig.buttonPrevious}
+                  {textAddConfig.buttonPrevious}
                 </Button>
                 <Button
                   onClick={
-                    currentStepsNumber?.id === stepsAddBonus.verification.id
+                    currentStepsNumber?.id ===
+                    stepsToApplyForPayrollAdvanceCredit.verification.id
                       ? handleSubmitClick
                       : handleNextStep
                   }
@@ -329,19 +320,17 @@ export function PayRollUI(props: PayRollUIProps) {
           )}
           {showSubmitModal && (
             <BaseModal
-              title={dataSubmitApplication.modals.submit.title}
+              title={textAddConfig.submitRequestTitle}
               handleBack={() => setShowSubmitModal(false)}
               handleNext={handleSubmitBonus}
               disabledNext={false}
-              backButton={dataSubmitApplication.modals.submit.cancelButton}
-              nextButton={dataSubmitApplication.modals.submit.sendButton}
+              backButton={textAddConfig.submitRequestCancel}
+              nextButton={textAddConfig.submitRequestConfirm}
               apparenceNext="primary"
               width={isMobile ? "300px" : "500px"}
               isLoading={isLoadingSubmit}
             >
-              <Text>
-                {dataSubmitApplication.modals.submit.confirmationText}
-              </Text>
+              <Text>{textAddConfig.submitRequestQuestion}</Text>
             </BaseModal>
           )}
           {isModalOpenRequirements && (
@@ -355,11 +344,11 @@ export function PayRollUI(props: PayRollUIProps) {
           )}
           {showSuccessModal && (
             <BaseModal
-              title={dataSubmitApplication.modals.success.title}
+              title={textAddConfig.successModalTitle}
               handleBack={() => setShowSuccessModal(false)}
               handleNext={handleSuccessModalClose}
               disabledNext={false}
-              nextButton={dataSubmitApplication.modals.success.buttonText}
+              nextButton={textAddConfig.successModalButton}
               width={isMobile ? "300px" : "450px"}
               isLoading={false}
             >
@@ -371,30 +360,30 @@ export function PayRollUI(props: PayRollUIProps) {
                 />
                 <Stack gap="6px">
                   <Text type="body" size="large">
-                    {dataSubmitApplication.modals.success.fileDescription}
+                    {dataSubmitApplication.modals.fileDescription}
                   </Text>
                   <Text type="body" size="large" weight="bold">
-                    {dataSubmitApplication.modals.success.code}
+                    {dataSubmitApplication.modals.code}
                   </Text>
                 </Stack>
 
                 <Text type="body" size="medium" appearance="gray">
-                  {dataSubmitApplication.modals.success.descriptionSolid}
+                  {dataSubmitApplication.modals.descriptionSolid}
                 </Text>
               </Stack>
             </BaseModal>
           )}
           {showInfoModal && (
             <BaseModal
-              title={dataSubmitApplication.modals.return.title}
-              nextButton={dataSubmitApplication.modals.return.sendButton}
-              backButton={dataSubmitApplication.modals.return.cancelButton}
+              title={dataSubmitApplication.return.title}
+              nextButton={dataSubmitApplication.return.sendButton}
+              backButton={dataSubmitApplication.return.cancelButton}
               width={isMobile ? "auto" : "450px"}
               handleNext={handleNextClick}
               handleBack={handleCancelNavigation}
             >
               <Text type="body" size="large">
-                {dataSubmitApplication.modals.return.confirmationText}
+                {dataSubmitApplication.return.confirmationText}
               </Text>
             </BaseModal>
           )}
@@ -402,18 +391,16 @@ export function PayRollUI(props: PayRollUIProps) {
       )}
       {showExceedQuotaModal && (
         <BaseModal
-          title={dataSubmitApplication.modals.showExceedQuotaModal.title}
+          title={dataSubmitApplication.showExceedQuotaModal.title}
           width={isMobile ? "300px" : "450px"}
-          nextButton={
-            dataSubmitApplication.modals.showExceedQuotaModal.nextButton
-          }
+          nextButton={dataSubmitApplication.showExceedQuotaModal.nextButton}
           handleNext={() => setShowExceedQuotaModal(false)}
           handleClose={() => setShowExceedQuotaModal(false)}
         >
           <Stack direction="column" gap="16px" alignItems="center">
             <Icon appearance="danger" icon={<MdHighlightOff />} size="78px" />
             <Text type="body" size="medium" weight="normal" appearance="dark">
-              {dataSubmitApplication.modals.showExceedQuotaModal.description}
+              {dataSubmitApplication.showExceedQuotaModal.description}
             </Text>
           </Stack>
         </BaseModal>

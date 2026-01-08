@@ -509,7 +509,7 @@ export function CreditProspects() {
                     appearance="gray"
                   />
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
                 placeHolderTag={true}
               />
               <CardGray
@@ -518,7 +518,7 @@ export function CreditProspects() {
                   selectedProspect?.clientManagerObservation ||
                   dataCreditProspects.notHaveComments
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
               />
               <CardGray
                 label={dataCreditProspects.clientComments}
@@ -527,7 +527,7 @@ export function CreditProspects() {
                   selectedProspect?.clientComments ||
                   dataCreditProspects.notHaveObservations
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
               />
             </Stack>
           </BaseModal>

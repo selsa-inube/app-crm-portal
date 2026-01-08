@@ -7,7 +7,7 @@ export interface ICardGrayProps {
   label: string;
   placeHolder?: string | ReactNode;
   data?: string | number;
-  apparencePlaceHolder?: "dark" | "gray";
+  appearancePlaceHolder?: "dark" | "gray";
   height?: string;
   isMobile?: boolean;
   placeHolderTag?: boolean;
@@ -19,7 +19,7 @@ export function CardGray(props: ICardGrayProps) {
     placeHolder = "",
     data = "",
     isMobile = false,
-    apparencePlaceHolder = "dark",
+    appearancePlaceHolder = "dark",
     placeHolderTag = false,
   } = props;
 
@@ -40,7 +40,7 @@ export function CardGray(props: ICardGrayProps) {
             type="body"
             size="medium"
             weight="bold"
-            appearance={apparencePlaceHolder}
+            appearance={appearancePlaceHolder}
             ellipsis={true}
           >
             {placeHolder}

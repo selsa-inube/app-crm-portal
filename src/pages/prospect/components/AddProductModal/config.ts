@@ -8,10 +8,10 @@ import {
 } from "@services/enum/prospectProduct";
 import { Schedule } from "@services/enum/schedule";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { IProspect } from "@src/services/prospect/types";
+import { IProspect } from "@services/prospect/types";
+import { IStepDetails } from "@pages/payrollBenefits/types";
 
 import { IPaymentConfiguration } from "./steps/config";
-import { IStepDetails } from "@src/pages/payrollOrnBonus/types";
 
 const creditLineOptions = [
   {

@@ -147,7 +147,7 @@ export function AddSystemValidation(props: IRequirements) {
                 <CardGray
                   label={dataAddRequirement.titleJustification}
                   placeHolder={justificationRequirement}
-                  apparencePlaceHolder="gray"
+                  appearancePlaceHolder="gray"
                   height="108px"
                 />
               )}

@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useEffect, useContext, useCallback } from "react";
+import { useEffect, useContext } from "react";
 import { Stack } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
@@ -19,7 +19,6 @@ interface IDisbursementGeneralProps {
   handleOnChange: (values: IDisbursementGeneral) => void;
   customerData?: ICustomerData;
   isTablet: boolean;
-  modesOfDisbursement: string[];
 }
 
 export function DisbursementGeneral(props: IDisbursementGeneralProps) {
@@ -29,7 +28,6 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     identificationNumber,
     onFormValid,
     handleOnChange,
-    modesOfDisbursement,
     customerData,
     isTablet,
   } = props;
@@ -51,20 +49,6 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     handleOnChange(formik.values);
   }, [formik.values, handleOnChange]);
 
-  const getTotalAmount = useCallback(() => {
-    return modesOfDisbursement.reduce((total, modeKey) => {
-      const disbursementData =
-        formik.values[modeKey as keyof IDisbursementGeneral];
-      const amount =
-        disbursementData &&
-        typeof disbursementData === "object" &&
-        "amount" in disbursementData
-          ? disbursementData.amount || 0
-          : 0;
-      return total + Number(amount);
-    }, 0);
-  }, [formik.values, modesOfDisbursement]);
-
   return (
     <Fieldset>
       <Stack
@@ -81,7 +65,6 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
             handleOnChange={handleOnChange}
             formik={formik}
             optionNameForm="Internal_account"
-            getTotalAmount={getTotalAmount}
             businessUnitPublicCode={businessUnitPublicCode}
             identificationNumber={identificationNumber}
             customerData={customerData}
