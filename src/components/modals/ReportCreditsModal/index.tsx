@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Stack, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
@@ -22,14 +21,8 @@ export function ReportCreditsModal({
   prospectData,
   showAddButton,
 }: ReportCreditsModalProps) {
-  const [loading, setLoading] = useState(true);
-
   const isMobile = useMediaQuery("(max-width:880px)");
 
-  useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timeout);
-  }, []);
   return (
     <BaseModal
       title={dataReport.title}
@@ -40,16 +33,14 @@ export function ReportCreditsModal({
       initialDivider={false}
     >
       <Stack direction="column" gap="16px">
-        {!loading && (
-          <>
-            <TableFinancialObligations
-              showActions
-              initialValues={prospectData}
-              onProspectUpdate={onProspectUpdate}
-              showAddButton={showAddButton}
-            />
-          </>
-        )}
+        <>
+          <TableFinancialObligations
+            showActions
+            initialValues={prospectData}
+            onProspectUpdate={onProspectUpdate}
+            showAddButton={showAddButton}
+          />
+        </>
       </Stack>
     </BaseModal>
   );

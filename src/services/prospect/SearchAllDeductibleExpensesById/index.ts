@@ -37,7 +37,7 @@ const getAllDeductibleExpensesById = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay gastos descontables.");
+        return [];
       }
 
       const data = await res.json();

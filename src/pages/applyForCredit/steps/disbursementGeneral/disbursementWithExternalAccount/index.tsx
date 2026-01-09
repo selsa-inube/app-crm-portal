@@ -11,6 +11,7 @@ import {
   Input,
   Checkbox,
   inube,
+  SkeletonLine,
 } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
@@ -33,6 +34,12 @@ import { getAllBancks } from "@services/bank/SearchAllBank";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { getEnum } from "@services/enum/enumerators/getEnum";
+import { IDomainEnum } from "@config/enums/types";
+import { useEnums } from "@context/EnumContext";
+import { CardGray } from "@components/cards/CardGray";
+
+import { selectDefaultValue, errorMessages } from "./config";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;
@@ -72,10 +79,14 @@ export function DisbursementWithExternalAccount(
   const [alreadyShowMessageErrorBank, setAlreadyShowMessageErrorBank] =
     useState(false);
   const [modalError, setModalError] = useState(false);
+  const [messageError, setMessageError] = useState("");
   const [currentIdentification, setCurrentIdentification] =
     useState(identificationNumber);
+  const [accountOptions, setAccountOptions] = useState<IOptionsSelect[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const prevValues = useRef(formik.values[optionNameForm]);
+  const { language } = useEnums();
 
   useEffect(() => {
     onFormValid(formik.isValid);
@@ -97,6 +108,38 @@ export function DisbursementWithExternalAccount(
       }
     }
   }, [formik.values, handleOnChange, initialValues, optionNameForm]);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        setIsLoading(true);
+        const accounts = await getEnum(businessUnitPublicCode, "AccountType");
+
+        if (accounts === null) {
+          setAccountOptions([selectDefaultValue]);
+          setIsLoading(false);
+          return;
+        }
+
+        const accountsFormated = accounts.map((account: IDomainEnum) => ({
+          id: account.code,
+          label:
+            account.I18nValue?.[language] || account.i18n?.[language] || "",
+          value: account.code,
+        }));
+
+        setAccountOptions(accountsFormated);
+      } catch (error) {
+        setMessageError(errorMessages.accountType);
+        setModalError(true);
+        setAccountOptions([selectDefaultValue]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, [customerData]);
 
   const totalAmount = getTotalAmount();
   const isDisabled = totalAmount >= initialValues.amount;
@@ -287,15 +330,6 @@ export function DisbursementWithExternalAccount(
   }, [formik.values[optionNameForm]?.amount]);
 
   useEffect(() => {
-    /*     const handleFlag = (error: unknown) => {
-          addFlag({
-            title: "Error",
-            description: `Error al cargar los bancos: ${error}`,
-            appearance: "danger",
-            duration: 5000,
-          });
-        }; */
-
     const fetchBanks = async () => {
       try {
         const response = await getAllBancks();
@@ -307,6 +341,7 @@ export function DisbursementWithExternalAccount(
         setBanks(formattedBanks);
       } catch (error) {
         setModalError(true);
+        setMessageError(disbursemenOptionAccount.errorBanks);
       }
     };
 
@@ -326,6 +361,15 @@ export function DisbursementWithExternalAccount(
       formik.setFieldValue(`${optionNameForm}.accountType`, onlyType.value);
     }
   }, [typeAccount]);
+
+  useEffect(() => {
+    if (accountOptions.length === 1) {
+      formik.setFieldValue(
+        `${optionNameForm}.accountType`,
+        accountOptions[0]?.value || accountOptions[0]?.id,
+      );
+    }
+  }, [accountOptions]);
 
   return (
     <>
@@ -463,31 +507,37 @@ export function DisbursementWithExternalAccount(
               fullwidth
             />
           )}
-          {typeAccount.length === 1 ? (
-            <Textfield
-              id={"accountType"}
-              name={`${optionNameForm}.accountType`}
-              label={disbursemenOptionAccount.labelAccountType}
-              placeholder={disbursemenOptionAccount.placeOption}
-              size="compact"
-              value={typeAccount[0]?.label || ""}
-              readOnly={true}
-              disabled={true}
-              fullwidth
-            />
-          ) : (
+
+          {accountOptions.length === 1 && (
+            <Stack width="100%">
+              <CardGray
+                label={disbursemenOptionAccount.labelAccountType}
+                placeHolder={accountOptions[0]?.label || ""}
+                isMobile={true}
+              />
+            </Stack>
+          )}
+
+          {accountOptions.length >= 2 && (
             <Select
               id={"accountType"}
               name={`${optionNameForm}.accountType`}
               label={disbursemenOptionAccount.labelAccountType}
               placeholder={disbursemenOptionAccount.placeOption}
               size="compact"
-              options={typeAccount}
+              options={accountOptions}
               onBlur={formik.handleBlur}
               onChange={(name, value) => formik.setFieldValue(name, value)}
               value={formik.values[optionNameForm]?.accountType || ""}
               fullwidth
             />
+          )}
+
+          {isLoading && (
+            <Stack width="100%" gap="10px" direction="column">
+              <SkeletonLine animated width="50%" height="10px" />
+              <SkeletonLine animated width="100%" height="40px" />
+            </Stack>
           )}
 
           <Input
@@ -516,7 +566,7 @@ export function DisbursementWithExternalAccount(
       {modalError && !alreadyShowMessageErrorBank && (
         <ErrorModal
           isMobile={isMobile}
-          message={disbursemenOptionAccount.errorBanks}
+          message={messageError}
           handleClose={() => {
             setAlreadyShowMessageErrorBank(true);
             setModalError(false);

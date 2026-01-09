@@ -4,6 +4,9 @@ export const messagesError = {
   undefinedCodeProspect:
     "Ocurrio un problema al obtener el codigo del prospecto.",
   tryLater: "Estamos tienendo problemas, intentalo mas tarde.",
+  noBusinessUnitAvaliable:
+    "No hay una unidad de negocio relacionada con el código del portal.",
+  noClientSelected: "No se ha seleccionado ningún cliente.",
 };
 
 export const dataSubmitApplication = {
@@ -14,5 +17,6 @@ export const dataSubmitApplication = {
     cancel: "Cerrar",
     understand: "Entendido",
     share: "Compartir",
+    sure: "Se creará el prospecto. ¿Deseas continuar?",
   },
 };

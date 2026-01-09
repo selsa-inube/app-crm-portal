@@ -4,7 +4,7 @@ import { Divider, Icon, Stack, Text } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 
-import { StyledCollapseIcon } from "./styles";
+import { StyledCardContainer, StyledCollapseIcon } from "./styles";
 
 interface ICardDeployMoneyDestinationProps {
   title: string;
@@ -25,31 +25,33 @@ export function CardDeployMoneyDestination(
   }, [defaultOpen]);
 
   return (
-    <Fieldset padding="0">
-      <Stack padding="0 8px" justifyContent="space-between" alignItems="center">
-        <Text type="label" weight="bold" size="large">
-          {title}
-        </Text>
-        <StyledCollapseIcon
-          $collapse={collapse}
-          onClick={() => setCollapse(!collapse)}
-          ref={collapseMenuRef}
+    <Fieldset padding="0" hasTable={true}>
+      <StyledCardContainer onClick={() => setCollapse(!collapse)}>
+        <Stack
+          padding="0 8px"
+          justifyContent="space-between"
+          alignItems="center"
         >
-          <Icon
-            icon={<MdOutlineChevronRight />}
-            appearance="dark"
-            size="24px"
-            cursorHover
-          />
-        </StyledCollapseIcon>
-      </Stack>
-      <>
-        {collapse && (
-          <Stack padding="12px 8px">
-            <Divider dashed />
-          </Stack>
-        )}
-      </>
+          <Text type="label" weight="bold" size="large">
+            {title}
+          </Text>
+          <StyledCollapseIcon $collapse={collapse} ref={collapseMenuRef}>
+            <Icon
+              icon={<MdOutlineChevronRight />}
+              appearance="dark"
+              size="24px"
+              cursorHover
+            />
+          </StyledCollapseIcon>
+        </Stack>
+        <>
+          {collapse && (
+            <Stack padding="12px 8px">
+              <Divider dashed />
+            </Stack>
+          )}
+        </>
+      </StyledCardContainer>
       <Stack>{collapse && children}</Stack>
     </Fieldset>
   );

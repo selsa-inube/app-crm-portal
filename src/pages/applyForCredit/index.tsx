@@ -39,6 +39,7 @@ export function ApplyForCredit() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [creditRequestCode, setCreditRequestCode] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const customerPublicCode: string = customerData.publicCode;
 
@@ -404,6 +405,7 @@ export function ApplyForCredit() {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         businessManagerCode,
@@ -417,6 +419,8 @@ export function ApplyForCredit() {
       console.error("error: ", error);
       setSentModal(false);
       handleFlag();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -592,7 +596,7 @@ export function ApplyForCredit() {
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
-  const currentStepsNumber = {
+  const currentStepNumber = {
     ...steps[currentStepIndex],
     number: currentStepIndex + 1,
   };
@@ -648,7 +652,7 @@ export function ApplyForCredit() {
         handleNextStep={handleNextStep}
         handlePreviousStep={handlePreviousStep}
         setCurrentStep={setCurrentStep}
-        currentStepsNumber={currentStepsNumber}
+        currentStepNumber={currentStepNumber}
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         setShowErrorModal={setShowErrorModal}
@@ -668,6 +672,7 @@ export function ApplyForCredit() {
         creditRequestCode={creditRequestCode}
         modesOfDisbursement={modesOfDisbursement}
         guaranteesRequired={guaranteesRequired}
+        loading={loading}
       />
     </>
   );

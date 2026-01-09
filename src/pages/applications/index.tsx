@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBack } from "react-icons/md";
 import {
@@ -33,6 +33,7 @@ export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
   );
@@ -41,6 +42,8 @@ export function CreditApplications() {
     null,
   );
   const [loading, setLoading] = useState(true);
+
+  const searchTimeoutRef = useRef<number>(0);
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -66,6 +69,27 @@ export function CreditApplications() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (searchTimeoutRef.current) {
+      window.clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (search.trim() === "") {
+      setDebouncedSearch("");
+      return;
+    }
+
+    searchTimeoutRef.current = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        window.clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [search]);
+
+  useEffect(() => {
     if (!customerData.publicCode) return;
 
     const fetchCreditRequest = async () => {
@@ -77,7 +101,7 @@ export function CreditApplications() {
           userAccount,
           {
             clientIdentificationNumber: customerData.publicCode,
-            textInSearch: search,
+            textInSearch: debouncedSearch,
           },
         );
         setCreditRequestData(creditData);
@@ -90,7 +114,7 @@ export function CreditApplications() {
     };
 
     fetchCreditRequest();
-  }, [customerData.publicCode, search]);
+  }, [customerData.publicCode, debouncedSearch]);
 
   useEffect(() => {
     let error = null;
@@ -159,12 +183,13 @@ export function CreditApplications() {
                   id="keyWord"
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
+                  value={search}
                   onChange={(event) => handleSearch(event)}
                 />
               </Stack>
               <Stack wrap="wrap" gap="20px">
                 {creditRequestData.length === 0 && !loading && (
-                  <NoResultsMessage search={search} />
+                  <NoResultsMessage search={debouncedSearch} />
                 )}
                 {loading ? (
                   <LoadCard />

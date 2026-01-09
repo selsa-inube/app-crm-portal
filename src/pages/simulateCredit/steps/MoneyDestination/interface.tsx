@@ -19,6 +19,7 @@ interface MoneyDestinationUIProps {
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   handleChange: (value: string) => void;
+  navigate: (path: string) => void;
 }
 
 function MoneyDestinationUI(props: MoneyDestinationUIProps) {
@@ -34,6 +35,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
     setShowErrorModal,
     setSearchTerm,
     handleChange,
+    navigate,
   } = props;
 
   return (
@@ -70,7 +72,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
                     direction="row"
                     wrap="wrap"
                     justifyContent={isTablet ? "center" : "initial"}
-                    padding="0 8px"
+                    padding="0 16px 16px 16px"
                     gap="12px"
                   >
                     {group
@@ -93,6 +95,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
                           isSelected={
                             selectedDestination === money.abbreviatedName
                           }
+                          isMobile={isTablet}
                         />
                       ))}
                   </Stack>
@@ -103,7 +106,9 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
       </Fieldset>
       {showErrorModal && (
         <ErrorModal
-          handleClose={() => setShowErrorModal(false)}
+          handleClose={() => {
+            (setShowErrorModal(false), navigate("/credit/prospects"));
+          }}
           isMobile={isTablet}
           message={messageError}
         />

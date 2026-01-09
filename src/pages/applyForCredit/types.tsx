@@ -6,7 +6,7 @@ export const titleButtonTextAssited = {
   submitText: "Radicar",
 };
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;

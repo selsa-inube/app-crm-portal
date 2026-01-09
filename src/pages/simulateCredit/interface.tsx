@@ -2,7 +2,6 @@ import {
   MdArrowBack,
   MdOutlinePaid,
   MdOutlinePriceChange,
-  MdOutlineRule,
   MdCheckCircle,
 } from "react-icons/md";
 import {
@@ -39,14 +38,18 @@ import { stepsAddProspect } from "./config/addProspect.config";
 import {
   IFormData,
   IStep,
-  StepDetails,
+  IStepDetails,
   titleButtonTextAssited,
   ICreditLineTerms,
   IServicesProductSelection,
   ISourcesOfIncomeState,
   IManageErrors,
 } from "./types";
-import { StyledArrowBack, StyledContainerAssisted } from "./styles";
+import {
+  StyledAnchor,
+  StyledArrowBack,
+  StyledContainerAssisted,
+} from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
 import { ConsolidatedCredit } from "./steps/consolidatedCredit";
@@ -133,7 +136,7 @@ interface SimulateCreditUIProps {
   isTablet: boolean;
   validateRequirements: IValidateRequirement[];
   isLoading: boolean;
-  currentStepsNumber?: StepDetails;
+  currentStepsNumber?: IStepDetails;
   prospectData: IProspect | undefined;
   creditLimitData?: IIncomeSources;
   totalIncome: number;
@@ -148,16 +151,20 @@ interface SimulateCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   servicesProductSelection: IServicesProductSelection;
+  isLoadingSubmit: boolean;
   isLoadingCreditLimit: boolean;
   paymentCapacity?: IPaymentCapacityResponse | null;
   businessManagerCode: string;
   allowToContinue: boolean;
   handleModalTryAgain: () => void;
+  handleNavigate: () => void;
   errorsManager: IManageErrors;
   userAccount?: string;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
   loadingQuestions: boolean;
   showSelectsLoanAmount: boolean;
+  createdProspectModal: boolean;
+  setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -193,7 +200,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     formData,
     selectedProducts,
     isMobile,
-    isTablet,
     prospectData,
     creditLimitData,
     totalIncome,
@@ -220,18 +226,22 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     handleModalTryAgain,
     sentModal,
     setSentModal,
+    handleNavigate,
     prospectCode,
     errorsManager,
     paymentChannel,
     loadingQuestions,
     showSelectsLoanAmount,
+    createdProspectModal,
+    setCreatedProspectModal,
+    isLoadingSubmit,
   } = props;
 
   return (
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigate("/clients/select-client/")}
+          onClick={handleNavigate}
           errorCode={codeError}
           addToFix={addToFix}
         />
@@ -268,81 +278,46 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   </Stack>
                 </StyledArrowBack>
                 <Stack gap="8px">
-                  {isMobile ? (
-                    <>
-                      <Icon
-                        icon={<MdOutlinePriceChange />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if ((currentStepsNumber?.id ?? 0) >= 4) {
-                            setIsCreditLimitModalOpen(true);
-                          } else {
-                            setIsCreditLimitWarning(true);
-                          }
-                        }}
-                      />
-                      <Icon
-                        icon={<MdOutlinePaid />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if (totalIncome === 0) {
-                            setIsCapacityAnalysisWarning(true);
-                          } else {
-                            setIsCapacityAnalysisModal(true);
-                          }
-                        }}
-                      />
-                      <Icon
-                        icon={<MdOutlineRule />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => setIsModalOpenRequirements(true)}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        iconBefore={<MdOutlinePriceChange />}
-                        children={textAddCongfig.buttonQuotas}
-                        appearance="gray"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if ((currentStepsNumber?.id ?? 0) >= 4) {
-                            setIsCreditLimitModalOpen(true);
-                          } else {
-                            setIsCreditLimitWarning(true);
-                          }
-                        }}
-                      />
-                      <Button
-                        spacing="compact"
-                        appearance="gray"
-                        iconBefore={<MdOutlinePaid />}
-                        children={textAddCongfig.buttonPaymentCapacity}
-                        onClick={() => {
-                          if (totalIncome === 0) {
-                            setIsCapacityAnalysisWarning(true);
-                          } else {
-                            setIsCapacityAnalysisModal(true);
-                          }
-                        }}
-                        variant="outlined"
-                      />
-                      <ButtonRequirements
-                        onClick={() => setIsModalOpenRequirements(true)}
-                        data={validateRequirements}
-                      />
-                    </>
-                  )}
+                  <StyledAnchor title={textAddCongfig.buttonQuotas}>
+                    <Icon
+                      icon={<MdOutlinePriceChange />}
+                      appearance="gray"
+                      size="28px"
+                      spacing="compact"
+                      variant="outlined"
+                      cursor="pointer"
+                      onClick={() => {
+                        if ((currentStepsNumber?.id ?? 0) >= 4) {
+                          setIsCreditLimitModalOpen(true);
+                        } else {
+                          setIsCreditLimitWarning(true);
+                        }
+                      }}
+                    />
+                  </StyledAnchor>
+                  <StyledAnchor title={textAddCongfig.buttonPaymentCapacity}>
+                    <Icon
+                      icon={<MdOutlinePaid />}
+                      appearance="gray"
+                      size="28px"
+                      spacing="compact"
+                      variant="outlined"
+                      cursor="pointer"
+                      onClick={() => {
+                        if (totalIncome === 0) {
+                          setIsCapacityAnalysisWarning(true);
+                        } else {
+                          setIsCapacityAnalysisModal(true);
+                        }
+                      }}
+                    />
+                  </StyledAnchor>
+                  <StyledAnchor title={textAddCongfig.requirements}>
+                    <ButtonRequirements
+                      onClick={() => setIsModalOpenRequirements(true)}
+                      data={validateRequirements}
+                    />
+                  </StyledAnchor>
                 </Stack>
               </Stack>
               <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>
@@ -355,7 +330,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     ...titleButtonTextAssited,
                     goNextText: assistedButtonText,
                   }}
-                  onSubmitClick={handleSubmitClick}
+                  onSubmitClick={() => setSentModal(true)}
                   disableNext={!isCurrentFormValid}
                   disableSubmit={!isCurrentFormValid}
                   showCurrentStepNumber={false}
@@ -386,7 +361,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         )
                       }
                       onFormValid={setIsCurrentFormValid}
-                      isTablet={isTablet}
+                      isTablet={isMobile}
                       businessManagerCode={businessManagerCode}
                       clientIdentificationNumber={customerData.publicCode}
                     />
@@ -668,13 +643,26 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               {sentModal && (
                 <BaseModal
                   title={dataSubmitApplication.modals.filed}
+                  nextButton={dataSubmitApplication.modals.continue}
+                  backButton={dataSubmitApplication.modals.cancel}
+                  handleBack={() => setSentModal(false)}
+                  handleNext={handleSubmitClick}
+                  width={isMobile ? "290px" : "402px"}
+                  isLoading={isLoadingSubmit}
+                >
+                  <Text>{dataSubmitApplication.modals.sure}</Text>
+                </BaseModal>
+              )}
+              {createdProspectModal && (
+                <BaseModal
+                  title={dataSubmitApplication.modals.filed}
                   nextButton={dataSubmitApplication.modals.cancel}
                   handleNext={() => {
-                    setSentModal(false);
+                    setCreatedProspectModal(false);
                     navigate(`/credit/prospects/${prospectCode}`);
                   }}
                   handleClose={() => {
-                    setSentModal(false);
+                    setCreatedProspectModal(false);
                     navigate(`/credit/prospects/${prospectCode}`);
                   }}
                   width={isMobile ? "290px" : "402px"}

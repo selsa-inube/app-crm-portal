@@ -61,6 +61,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
 import { getTotalIncomeByBorrowerInProspect } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
 import { Fieldset } from "@components/data/Fieldset";
+import { dataCreditProspects } from "@pages/creditProspects/config";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -72,6 +73,7 @@ import {
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
+import { ScoreModalProspect } from "../ScoreModalProspec";
 import InfoModal from "../InfoModal";
 import { filterIncomeByBorrower } from "./utils";
 
@@ -213,7 +215,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   const handleOpenModal = (modalName: string) => {
     if (modalName === "requirements" && setShowRequirements) {
       setShowRequirements(true);
-
       return;
     }
     if (modalName === "IncomeModal") {
@@ -1050,17 +1051,28 @@ export function CreditProspect(props: ICreditProspectProps) {
               <CardGray
                 label={configModal.observations.preApproval}
                 placeHolder={
-                  prospectData ? prospectData.clientManagerObservation : ""
+                  prospectData!.clientManagerObservation ||
+                  dataCreditProspects.notHaveComments
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
               />
               <CardGray
                 label={configModal.observations.labelTextarea}
-                placeHolder={prospectData ? prospectData!.clientComments : ""}
-                apparencePlaceHolder="gray"
+                placeHolder={
+                  prospectData!.clientComments ||
+                  dataCreditProspects.notHaveObservations
+                }
+                appearancePlaceHolder="gray"
               />
             </Stack>
           </BaseModal>
+        )}
+
+        {currentModal === "scores" && (
+          <ScoreModalProspect
+            isMobile={isMobile}
+            handleClose={handleCloseModal}
+          />
         )}
 
         {showEditMessageModal && (

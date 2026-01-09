@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Button, Input, Stack, Text } from "@inubekit/inubekit";
+import { useState, useEffect } from "react";
+import { Button, Input, Stack, Text, SkeletonLine } from "@inubekit/inubekit";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MdOutlineEdit } from "react-icons/md";
@@ -17,13 +17,26 @@ interface IRiskScoreProps {
   date: string;
   isMobile: boolean;
   handleOnChange: (riskScore: { value: number; date: string }) => void;
+  logo?: string;
+  resetScore?: () => void;
+  newScore?: number | null;
+  isProspect?: boolean;
 }
 
 export function RiskScore(props: IRiskScoreProps) {
-  const { value, date, isMobile, handleOnChange } = props;
-
+  const {
+    value,
+    date,
+    isMobile,
+    handleOnChange,
+    logo,
+    resetScore,
+    isProspect = false,
+  } = props;
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [newScore, setNewScore] = useState<number | null>(null);
 
   const validationSchema = Yup.object({
     score: Yup.number().required(""),
@@ -32,6 +45,7 @@ export function RiskScore(props: IRiskScoreProps) {
   const formik = useFormik({
     initialValues: {
       score: value || riskScoreData.value,
+      date: date || riskScoreData.date,
     },
     validationSchema,
     enableReinitialize: true,
@@ -44,37 +58,62 @@ export function RiskScore(props: IRiskScoreProps) {
       });
 
       setShowEditModal(false);
+      setNewScore(num);
     },
   });
 
   useEffect(() => {
-    handleOnChange({
-      value: value || riskScoreData.value,
-      date: date || riskScoreData.date,
-    });
+    if (!isProspect) {
+      handleOnChange({
+        value: value || riskScoreData.value,
+        date: date || riskScoreData.date,
+      });
+    }
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleReset = () => {
+    if (resetScore) resetScore();
+    setNewScore(null);
+  };
 
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
-        <RiskScoreGauge value={value || riskScoreData.value} />
+        <RiskScoreGauge value={value || riskScoreData.value} logo={logo} />
         <Stack gap="4px">
-          <Text type="body" size="small">
-            {riskScoreData.reportedScore}
-          </Text>
+          {isLoading ? (
+            <SkeletonLine />
+          ) : (
+            <Text type="body" size="small">
+              {riskScoreData.reportedScore}
+            </Text>
+          )}
           <Text type="body" weight="bold" size="small">
             {date === riskScoreData.date
               ? formatPrimaryDate(new Date())
               : formatPrimaryDate(new Date(date))}
           </Text>
         </Stack>
-        <Button
-          variant="outlined"
-          iconBefore={<MdOutlineEdit />}
-          onClick={() => setShowEditModal(true)}
-        >
-          {riskScoreData.editScore}
-        </Button>
+        <Stack gap="12px" direction="column" alignItems="center">
+          <Button
+            variant="outlined"
+            iconBefore={<MdOutlineEdit />}
+            onClick={() => setShowEditModal(true)}
+          >
+            {riskScoreData.editScore}
+          </Button>
+
+          <Button variant="none" onClick={handleReset} disabled={!newScore}>
+            {riskScoreData.reset}
+          </Button>
+        </Stack>
         {showErrorModal && (
           <ErrorModal
             handleClose={() => setShowErrorModal(false)}

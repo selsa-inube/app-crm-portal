@@ -35,7 +35,7 @@ export const stepsAddProspect = {
     id: 6,
     number: 6,
     name: "Score de riesgo",
-    description: "Score de riesgo crediticio consultado.",
+    description: "Verifica el score de riesgo y actualízalo de ser necesario.",
   },
   obligationsFinancial: {
     id: 7,

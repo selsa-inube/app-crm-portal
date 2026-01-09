@@ -1,4 +1,4 @@
-import { Stack, Icon, Text, Divider } from "@inubekit/inubekit";
+import { Stack, Icon, Divider } from "@inubekit/inubekit";
 import {
   MdOutlineDelete,
   MdOutlineEdit,
@@ -12,12 +12,10 @@ import { privilegeCrm } from "@config/privilege";
 import { CardGray } from "@components/cards/CardGray";
 import { IconText } from "@pages/prospect/components/IconText";
 import { currencyFormat } from "@utils/formatData/currency";
-import {
-  capitalizeFirstLetter,
-  truncateTextToMaxLength,
-} from "@utils/formatData/text";
+import { capitalizeFirstLetter } from "@utils/formatData/text";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import { StyledContainer } from "./styles";
 import { cardCreditData } from "./config";
@@ -75,9 +73,14 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
               appearance="dark"
               size="24px"
             />
-            <Text type="title" size="medium" weight="bold" appearance="dark">
-              {truncateTextToMaxLength(title, 20)}
-            </Text>
+            <TruncatedText
+              text={title}
+              maxLength={20}
+              type="title"
+              size="medium"
+              weight="bold"
+              appearance="dark"
+            />
           </Stack>
           {hasMessage && (
             <Icon
@@ -93,25 +96,33 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
         <Stack direction="column" gap="8px">
           <CardGray
             label={cardCreditData.official}
-            placeHolder={borrower}
-            apparencePlaceHolder="gray"
+            placeHolder={
+              <TruncatedText
+                text={borrower}
+                maxLength={26}
+                type="body"
+                size="medium"
+                appearance="gray"
+              />
+            }
+            appearancePlaceHolder="gray"
           />
           <CardGray
             label={cardCreditData.numProspect}
             placeHolder={numProspect}
-            apparencePlaceHolder="gray"
+            appearancePlaceHolder="gray"
           />
           <CardGray
             label={cardCreditData.date}
             placeHolder={capitalizeFirstLetter(
               formatPrimaryDate(new Date(date as Date)),
             )}
-            apparencePlaceHolder="gray"
+            appearancePlaceHolder="gray"
           />
           <CardGray
             label={cardCreditData.value}
             placeHolder={value === 0 ? "$ 0" : currencyFormat(value as number)}
-            apparencePlaceHolder="gray"
+            appearancePlaceHolder="gray"
           />
         </Stack>
         <Stack direction="column" gap="12px">

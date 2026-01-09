@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, useMemo } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
 import { searchAllMoneyDestinationByCustomerCode } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
 import { IMoneyDestination } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
@@ -32,6 +33,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
   const [messageError, setMessageError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const { businessUnitSigla } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -151,6 +153,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
           groupedDestinations={groupedDestinations}
           loading={loading}
           hasActiveSearch={hasActiveSearch}
+          navigate={navigate}
         />
       )}
     </Formik>

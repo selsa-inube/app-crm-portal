@@ -35,6 +35,28 @@ export const errorDataCredit = {
   noData: "Este cliente aún no tiene opciones de crédito.",
   noUrl: "No puedes ir a la ruta seleccionada.",
 };
+export const advancePaymentModal = {
+  title: "Nómina o prima",
+  titleRoster: "Nómina",
+  subtitleRoster: "Es un adelanto del salario de tu cliente.",
+  titleAdvance: "Prima",
+  subtitleAdvance:
+    "Es un adelanto prima de servicios, que se paga cada 6 meses.",
+  description:
+    "Selecciona esta opción si quieres un adelanto de nómina o de prima para el cliente.",
+  nextButtonText: "Entendido",
+  textPayrool: "Nómina",
+  flag: {
+    title: "Solicitud enviada.",
+    description: "La solocitud se envió con éxito.",
+  },
+  tag: {
+    title: "Prima",
+    subtitle: "Adelanto de nómina",
+    routeBonus: "/credit/bonus",
+    routePayroll: "/credit/payroll-advance-credit",
+  },
+};
 
 interface CreditCardCfg {
   key: string;
