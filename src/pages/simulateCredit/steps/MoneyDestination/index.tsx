@@ -83,25 +83,55 @@ function MoneyDestination(props: IMoneyDestinationProps) {
   const filteredDestinations = useMemo(() => {
     if (!moneyDestinations) return undefined;
 
-    if (!searchTerm.trim()) {
+    const cleanedSearchTerm = searchTerm.trim();
+
+    if (!cleanedSearchTerm) {
       return moneyDestinations;
     }
 
-    const searchLower = searchTerm.toLowerCase();
+    const searchTermLowerCase = cleanedSearchTerm.toLowerCase();
+    const searchWordsArray = searchTermLowerCase
+      .split(/\s+/)
+      .filter((word) => word.length > 0);
+    const filteredMoneyDestinations = moneyDestinations.filter(
+      (destination) => {
+        const destinationNameLowerCase =
+          destination.abbreviatedName.toLowerCase();
+        const destinationNameWordsArray = destinationNameLowerCase.split(/\s+/);
+        const allSearchWordsMatch = searchWordsArray.every((searchWord) => {
+          const foundMatchingWord = destinationNameWordsArray.some(
+            (destinationWord) => destinationWord.startsWith(searchWord),
+          );
+          return foundMatchingWord;
+        });
 
-    return moneyDestinations.filter((destination) => {
-      const nameMatch = destination.abbreviatedName
-        .toLowerCase()
-        .includes(searchLower);
-      const descriptionMatch = destination.descriptionUse
-        ?.toLowerCase()
-        .includes(searchLower);
-      const typeMatch = destination.moneyDestinationType
-        ?.toLowerCase()
-        .includes(searchLower);
+        return allSearchWordsMatch;
+      },
+    );
 
-      return nameMatch || descriptionMatch || typeMatch;
-    });
+    const sortedDestinations = filteredMoneyDestinations.sort(
+      (currentDestination, nextDestination) => {
+        const currentName = currentDestination.abbreviatedName.toLowerCase();
+        const nextName = nextDestination.abbreviatedName.toLowerCase();
+        const currentStartsWithSearch =
+          currentName.startsWith(searchTermLowerCase);
+        const nextStartsWithSearch = nextName.startsWith(searchTermLowerCase);
+
+        if (currentStartsWithSearch && !nextStartsWithSearch) return -1;
+        if (!currentStartsWithSearch && nextStartsWithSearch) return 1;
+
+        const currentContainsExactSearch =
+          currentName.includes(searchTermLowerCase);
+        const nextContainsExactSearch = nextName.includes(searchTermLowerCase);
+
+        if (currentContainsExactSearch && !nextContainsExactSearch) return -1;
+        if (!currentContainsExactSearch && nextContainsExactSearch) return 1;
+
+        return currentName.localeCompare(nextName);
+      },
+    );
+
+    return sortedDestinations;
   }, [moneyDestinations, searchTerm]);
 
   useEffect(() => {

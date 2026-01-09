@@ -52,7 +52,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
             onChange={(event) => setSearchTerm(event.target.value)}
           />
           {loading ? (
-            <Stack direction="column" gap="12px">
+            <Stack direction="column" gap="12px" padding="20px 0px 0 0">
               <SkeletonLine animated={true} />
               <SkeletonLine animated={true} />
               <SkeletonLine animated={true} />
