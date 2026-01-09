@@ -3,6 +3,8 @@ import styled from "styled-components";
 
 export const StyledBoxAttribute = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 8px;
   justify-content: space-between;
   word-wrap: break-word;
   white-space: normal;

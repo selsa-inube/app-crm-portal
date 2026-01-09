@@ -7,7 +7,7 @@ export interface ICardGrayProps {
   label: string;
   placeHolder?: string | ReactNode;
   data?: string | number;
-  apparencePlaceHolder?: "dark" | "gray";
+  appearancePlaceHolder?: "dark" | "gray";
   height?: string;
   isMobile?: boolean;
   placeHolderTag?: boolean;
@@ -19,7 +19,7 @@ export function CardGray(props: ICardGrayProps) {
     placeHolder = "",
     data = "",
     isMobile = false,
-    apparencePlaceHolder = "dark",
+    appearancePlaceHolder = "dark",
     placeHolderTag = false,
   } = props;
 
@@ -28,15 +28,21 @@ export function CardGray(props: ICardGrayProps) {
       <Stack direction="column">
         <Text
           type="label"
-          weight="bold"
+          weight="normal"
           size="medium"
-          appearance="dark"
+          appearance="gray"
           ellipsis={true}
         >
           {label}
         </Text>
         {!placeHolderTag ? (
-          <Text type="body" size="medium" appearance={apparencePlaceHolder}>
+          <Text
+            type="body"
+            size="medium"
+            weight="bold"
+            appearance={appearancePlaceHolder}
+            ellipsis={true}
+          >
             {placeHolder}
           </Text>
         ) : (

@@ -1,6 +1,10 @@
 import { inube } from "@inubekit/inubekit";
 import styled, { keyframes } from "styled-components";
 
+interface IStyledAutomatic {
+  loading?: boolean;
+}
+
 const pulseRing = keyframes`
   0% {
     transform: scale(1);
@@ -42,6 +46,7 @@ export const StyledMic = styled.div`
   }
 `;
 
-export const StyledAutomatic = styled.div`
+export const StyledAutomatic = styled.div<IStyledAutomatic>`
   width: 100%;
+  cursor: ${({ loading }) => (loading ? "progress" : "default")};
 `;

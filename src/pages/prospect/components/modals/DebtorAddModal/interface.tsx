@@ -11,12 +11,12 @@ import { IObligations } from "@pages/prospect/components/TableObligationsFinanci
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";
-import { FormData, IStep, StepDetails, titleButtonTextAssited } from "./types";
+import { FormData, IStep, IStepDetails, titleButtonTextAssited } from "./types";
 import { VerificationDebtorAddModal } from "./steps/verification";
 
 interface DebtorAddModalUIProps {
   currentStep: number;
-  currentStepsNumber: StepDetails;
+  currentStepsNumber: IStepDetails;
   steps: IStep[];
   isCurrentFormValid: boolean;
   formData: FormData;

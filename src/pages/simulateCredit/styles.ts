@@ -14,3 +14,7 @@ export const StyledArrowBack = styled.div`
   cursor: pointer;
   width: 500px;
 `;
+
+export const StyledAnchor = styled.a`
+  text-decoration: none;
+`;

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+
 import { IUser } from "../login/types";
 
 interface ICreditUIProps {
@@ -20,5 +21,8 @@ interface ICreditUIProps {
   navigate: ReturnType<typeof useNavigate>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  isInfoModalOpen: boolean;
+  handleInfoModalClose: () => void;
+  handleOpenInfoModal: () => void;
 }
 export type { ICreditUIProps };

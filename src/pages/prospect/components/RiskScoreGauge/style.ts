@@ -13,6 +13,10 @@ interface IStyledArc {
   $strokeWidth?: number;
 }
 
+interface IStyledImgLogo {
+  url: string;
+}
+
 export const StyledContainer = styled.div<IStyledContainer>`
   position: relative;
   width: ${(prop) => prop.$width};
@@ -48,4 +52,18 @@ export const StyledCenterText = styled.div<IStyledCenterText>`
   flex-direction: column;
   align-items: center;
   gap: 4px;
+`;
+
+export const StyledImgLogo = styled.img<IStyledImgLogo>`
+  content: url("${(prop) => prop.url}");
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  top: 130px;
+  left: -170px;
+  border: none;
+`;
+
+export const StyledContainerLogo = styled.div`
+  position: relative;
 `;

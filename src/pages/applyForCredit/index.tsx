@@ -596,7 +596,7 @@ export function ApplyForCredit() {
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
-  const currentStepsNumber = {
+  const currentStepNumber = {
     ...steps[currentStepIndex],
     number: currentStepIndex + 1,
   };
@@ -652,7 +652,7 @@ export function ApplyForCredit() {
         handleNextStep={handleNextStep}
         handlePreviousStep={handlePreviousStep}
         setCurrentStep={setCurrentStep}
-        currentStepsNumber={currentStepsNumber}
+        currentStepNumber={currentStepNumber}
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         setShowErrorModal={setShowErrorModal}

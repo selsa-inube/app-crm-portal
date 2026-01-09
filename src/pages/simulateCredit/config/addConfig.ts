@@ -36,4 +36,5 @@ export const textAddCongfig = {
   errorPost: "Error al crear la solicitud de crédito",
   mainBorrower: "MainBorrower",
   financialObligation: "FinancialObligation",
+  requirements: "Requisitos",
 };

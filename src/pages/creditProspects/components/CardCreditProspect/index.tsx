@@ -105,24 +105,24 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
                 appearance="gray"
               />
             }
-            apparencePlaceHolder="gray"
+            appearancePlaceHolder="gray"
           />
           <CardGray
             label={cardCreditData.numProspect}
             placeHolder={numProspect}
-            apparencePlaceHolder="gray"
+            appearancePlaceHolder="gray"
           />
           <CardGray
             label={cardCreditData.date}
             placeHolder={capitalizeFirstLetter(
               formatPrimaryDate(new Date(date as Date)),
             )}
-            apparencePlaceHolder="gray"
+            appearancePlaceHolder="gray"
           />
           <CardGray
             label={cardCreditData.value}
             placeHolder={value === 0 ? "$ 0" : currencyFormat(value as number)}
-            apparencePlaceHolder="gray"
+            appearancePlaceHolder="gray"
           />
         </Stack>
         <Stack direction="column" gap="12px">
