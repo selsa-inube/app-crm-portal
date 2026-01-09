@@ -15,6 +15,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
 import { restoreIncomeInformationByBorrowerId } from "@services/prospect/restoreIncomeInformationByBorrowerId";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { IProspect } from "@services/prospect/types";
 
 import {
   IncomeEmployment,
@@ -48,17 +49,22 @@ interface ISourceIncomeProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   isLoadingCreditLimit?: boolean;
+  prospectData: IProspect | undefined;
+  onCapitalTotalChange?: (total: number) => void;
+  onEmploymentTotalChange?: (total: number) => void;
+  onBusinessesTotalChange?: (total: number) => void;
 }
 
 export function SourceIncome(props: ISourceIncomeProps) {
   const {
     openModal,
     onDataChange,
+    onEmploymentTotalChange,
+    onBusinessesTotalChange,
     ShowSupport,
     disabled,
     showEdit = true,
     data,
-    selectedIndex,
     customerData = {} as ICustomerData,
     initialDataForRestore,
     borrowerOptions,
@@ -66,6 +72,8 @@ export function SourceIncome(props: ISourceIncomeProps) {
     businessUnitPublicCode,
     businessManagerCode,
     onRestore,
+    prospectData,
+    onCapitalTotalChange,
   } = props;
 
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -156,6 +164,36 @@ export function SourceIncome(props: ISourceIncomeProps) {
     return sumCapital + sumEmployment + sumBusinesses;
   };
 
+  useEffect(() => {
+    if (!borrowerIncome) return;
+
+    const sumCapital =
+      borrowerIncome.capital.reduce(
+        (acc, val) => acc + parseCurrencyString(val),
+        0,
+      ) ?? 0;
+
+    const sumEmployment =
+      borrowerIncome.employment.reduce(
+        (acc, val) => acc + parseCurrencyString(val),
+        0,
+      ) ?? 0;
+
+    const sumBusinesses =
+      borrowerIncome.businesses.reduce(
+        (acc, val) => acc + parseCurrencyString(val),
+        0,
+      ) ?? 0;
+
+    onCapitalTotalChange?.(sumCapital);
+    onEmploymentTotalChange?.(sumEmployment);
+    onBusinessesTotalChange?.(sumBusinesses);
+  }, [
+    borrowerIncome,
+    onCapitalTotalChange,
+    onEmploymentTotalChange,
+    onBusinessesTotalChange,
+  ]);
   function mapToIncomeSources(values: IIncome): IIncomeSources {
     return {
       identificationNumber: values.borrower_id,
@@ -217,18 +255,8 @@ export function SourceIncome(props: ISourceIncomeProps) {
 
     const body = {
       borrowerIdentificationNumber: publicCode || data.identificationNumber,
-      income: {
-        dividends: data.Dividends || 0,
-        financialIncome: data.FinancialIncome || 0,
-        leases: data.Leases || 0,
-        otherNonSalaryEmoluments: data.OtherNonSalaryEmoluments || 0,
-        pensionAllowances: data.PensionAllowances || 0,
-        periodicSalary: data.PeriodicSalary || 0,
-        personalBusinessUtilities: data.PersonalBusinessUtilities || 0,
-        professionalFees: data.ProfessionalFees || 0,
-      },
       justification: "restore income",
-      prospectCode: "",
+      prospectCode: prospectData?.prospectCode || "",
     };
 
     try {
@@ -272,7 +300,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
       setIsOpenModal(false);
     }
   };
-
   return (
     <StyledContainer $smallScreen={isMobile}>
       <Stack
@@ -294,7 +321,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                   {incomeCardData.borrower}
                 </Text>
                 <Text type="title" size="medium">
-                  {borrowerOptions?.[selectedIndex || 0]?.value}
+                  {prospectData?.borrowers[0]?.borrowerName}
                 </Text>
               </Stack>
             )}
@@ -400,6 +427,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
           borrowerOptions={borrowerOptions}
           businessUnitPublicCode={businessUnitPublicCode}
           businessManagerCode={businessManagerCode}
+          prospectData={prospectData}
         />
       )}
       {showErrorModal && (

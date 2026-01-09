@@ -14,12 +14,14 @@ const useAuthHandler = (
   const { loginWithRedirect, isAuthenticated, isLoading } = useIAuth();
 
   useEffect(() => {
+    const isLogoutRoute = window.location.pathname === "/logout";
     if (
       !hasAuthError &&
       authConfig &&
       portalCode &&
       !isAuthenticated &&
-      !isLoading
+      !isLoading &&
+      !isLogoutRoute
     ) {
       loginWithRedirect();
     }

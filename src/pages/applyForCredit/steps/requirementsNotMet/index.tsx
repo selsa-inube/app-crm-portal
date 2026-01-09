@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { MdCheckCircleOutline } from "react-icons/md";
-import { Stack, Text, Icon, Spinner } from "@inubekit/inubekit";
+import { Stack, Text, Icon } from "@inubekit/inubekit";
 
 import { UnfulfilledRequirements } from "@components/cards/UnfulfilledRequirements";
 import { Fieldset } from "@components/data/Fieldset";
-import { ErrorModal } from "@components/modals/ErrorModal";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
+import { dataApproved } from "@pages/payrollBenefits/steps/requirementsNotMet/config";
 
 import { dataError } from "./config";
 
@@ -52,7 +52,12 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
           payload,
         );
         if (data) {
-          setValidateRequirements(data);
+          setValidateRequirements(
+            data.filter(
+              (requirement) =>
+                requirement.requirementStatus !== dataApproved.approved,
+            ),
+          );
         }
       } catch (error) {
         setShowErrorModal(true);
@@ -70,16 +75,21 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
         {isLoading ? (
           <Stack
             gap="16px"
-            padding="16px"
             margin={isMobile ? "8px" : "16px"}
-            justifyContent="center"
-            direction="column"
-            alignItems="center"
+            direction={isMobile ? "column" : "row"}
+            wrap="wrap"
+            height={isMobile ? "auto" : "324px"}
           >
-            <Spinner />
-            <Text type="title" size="medium" appearance="dark">
-              {dataError.loadRequirements}
-            </Text>
+            {[1, 2, 3].map((index) => (
+              <UnfulfilledRequirements
+                key={index}
+                title={`${dataError.alert} ${index}`}
+                isMobile={isMobile}
+                requirement=""
+                causeNonCompliance=""
+                isLoading={true}
+              />
+            ))}
           </Stack>
         ) : validateRequirements && validateRequirements.length > 0 ? (
           <Stack
@@ -98,6 +108,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
                 causeNonCompliance={
                   requirementData.descriptionEvaluationRequirement
                 }
+                isLoading={false}
               />
             ))}
           </Stack>
@@ -110,26 +121,20 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             direction="column"
             alignItems="center"
           >
-            <Icon
-              icon={<MdCheckCircleOutline />}
-              appearance={"success"}
-              size="54px"
-            />
+            {!showErrorModal && (
+              <Icon
+                icon={<MdCheckCircleOutline />}
+                appearance={"success"}
+                size="54px"
+              />
+            )}
+
             <Text type="title" size="medium" appearance="dark">
-              {dataError.noData}
+              {showErrorModal ? dataError.descriptionError : dataError.noData}
             </Text>
           </Stack>
         )}
       </Fieldset>
-      {showErrorModal && (
-        <ErrorModal
-          handleClose={() => {
-            setShowErrorModal(false);
-          }}
-          isMobile={isMobile}
-          message={dataError.descriptionError}
-        />
-      )}
     </>
   );
 }

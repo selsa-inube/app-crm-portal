@@ -117,6 +117,29 @@ const errorCodes: Record<number, ErrorDetail> = {
     ],
     howToFix: ["Confirma la configuración de la regla de negocio:"],
   },
+  1015: {
+    whatWentWrong: [
+      "Este prospecto no pertenece al cliente actual.",
+      "El prospecto que intentas visualizar está asociado a otro cliente.",
+    ],
+    howToFix: [
+      "Verifica que hayas seleccionado el prospecto correcto.",
+      "Contacta al administrador si consideras que esto es un error.",
+      "Selecciona un prospecto que pertenezca al cliente actual.",
+    ],
+  },
+  1022: {
+    whatWentWrong: [
+      "No se pudo eliminar el prospecto.",
+      "Ocurrió un error durante el proceso de eliminación.",
+    ],
+    howToFix: [
+      "Intenta nuevamente más tarde.",
+      "Verifica que el prospecto no haya sido tramitado.",
+      "Contacta al soporte si el problema persiste.",
+    ],
+  },
 };
 
 export { errorCodes };
+export type { ErrorDetail };

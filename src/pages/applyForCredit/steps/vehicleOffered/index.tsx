@@ -1,15 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Stack,
-  Grid,
-  Select,
-  Textarea,
-  Textfield,
-  Spinner,
-  Text,
-} from "@inubekit/inubekit";
+import { Stack, Grid, Select, Textarea, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { optionsOfferedstate } from "@mocks/filing-application/property-offered/propertyoffered.mock";
@@ -17,41 +9,26 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
-import { IBusinessUnitRules } from "@services/businessUnitRules/types";
 
 import { IVehicleOffered } from "../../types";
 import { dataVehicule } from "./config";
-import { dataError } from "../requirementsNotMet/config";
 
 interface IVehicleOfferedProps {
   isMobile: boolean;
   initialValues: IVehicleOffered;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IVehicleOffered) => void;
-  businessUnitPublicCode: string;
-  businessManagerCode: string;
 }
 
 export function VehicleOffered(props: IVehicleOfferedProps) {
-  const {
-    isMobile,
-    initialValues,
-    onFormValid,
-    handleOnChange,
-    businessUnitPublicCode,
-    businessManagerCode,
-  } = props;
-
-  const [shouldRender, setShouldRender] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isMobile, initialValues, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
-    state: Yup.string(),
+    state: Yup.string().required(),
     model: Yup.lazy((_, { parent }) =>
-      parent.state === "nuevo" ? Yup.number() : Yup.number(),
+      parent.state === "nuevo" ? Yup.number() : Yup.number().required(),
     ),
-    value: Yup.number(),
+    value: Yup.number().required(),
     description: Yup.string().max(200),
   });
 
@@ -64,53 +41,9 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
 
   const prevValues = useRef(formik.values);
 
-  const checkGuaranteeRule = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await postBusinessUnitRules(
-        businessUnitPublicCode,
-        businessManagerCode,
-        { ruleName: "GuaranteeRequirements" } as IBusinessUnitRules,
-      );
-      const values = response?.conditions || response;
-      let extractedValues: string[] = [];
-
-      if (Array.isArray(values)) {
-        extractedValues = values
-          .map((item) => {
-            if (typeof item === "object" && item !== null && "value" in item) {
-              return item.value;
-            }
-            if (typeof item === "string") {
-              return item;
-            }
-            return null;
-          })
-          .filter((val): val is string => val !== null && val !== "");
-      }
-
-      const includesPledge = extractedValues.some(
-        (val) => val.toLowerCase() === "pledge",
-      );
-      setShouldRender(includesPledge);
-      setIsLoading(false);
-    } catch (error) {
-      setShouldRender(false);
-      setIsLoading(false);
-    }
-  }, [businessUnitPublicCode, businessManagerCode]);
-
   useEffect(() => {
-    checkGuaranteeRule();
-  }, [checkGuaranteeRule]);
-
-  useEffect(() => {
-    if (shouldRender) {
-      onFormValid(formik.isValid);
-    } else {
-      onFormValid(true);
-    }
-  }, [formik.isValid, shouldRender, onFormValid]);
+    onFormValid(formik.isValid);
+  }, [formik.isValid, onFormValid]);
 
   useEffect(() => {
     if (
@@ -124,30 +57,6 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
     }
   }, [formik.values, handleOnChange]);
 
-  if (!shouldRender && !isLoading) {
-    return null;
-  }
-
-  if (isLoading) {
-    return (
-      <Fieldset>
-        <Stack
-          gap="16px"
-          padding="16px"
-          margin={isMobile ? "8px" : "16px"}
-          justifyContent="center"
-          direction="column"
-          alignItems="center"
-        >
-          <Spinner />
-          <Text type="title" size="medium" appearance="dark">
-            {dataError.loadRequirements}
-          </Text>
-        </Stack>
-      </Fieldset>
-    );
-  }
-
   return (
     <Fieldset>
       <Stack
@@ -160,18 +69,32 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
           autoRows="auto"
           gap="20px"
         >
-          <Select
-            name="state"
-            id="state"
-            label={dataVehicule.labelState}
-            placeholder={dataVehicule.placeHolderState}
-            size="compact"
-            options={optionsOfferedstate}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.state}
-            fullwidth
-          />
+          {optionsOfferedstate.length === 1 ? (
+            <Textfield
+              name="state"
+              id="state"
+              label={dataVehicule.labelState}
+              placeholder={dataVehicule.placeHolderState}
+              size="compact"
+              value={optionsOfferedstate[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              name="state"
+              id="state"
+              label={dataVehicule.labelState}
+              placeholder={dataVehicule.placeHolderState}
+              size="compact"
+              options={optionsOfferedstate}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.state}
+              fullwidth
+            />
+          )}
           <Textfield
             name="model"
             id="model"

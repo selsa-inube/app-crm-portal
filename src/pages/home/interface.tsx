@@ -1,20 +1,24 @@
-import { Stack } from "@inubekit/inubekit";
+import { Stack, Text } from "@inubekit/inubekit";
 
 import { Title } from "@components/layout/Title";
-import { BusinessUnitChange } from "@components/inputs/BusinessUnitChange";
 import { InteractiveBox } from "@components/cards/interactiveBox";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
-import { OptionStaffPortal } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
+import userImage from "@assets/images/userImage.jpeg";
+import {
+  getIconByName,
+  OptionStaffPortal,
+} from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
+import { ErrorPage } from "@components/layout/ErrorPage";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import {
-  StyledCollapse,
   StyledContainerCards,
   StyledGeneralHeader,
   StyledTitle,
 } from "./styles";
 import { IHomeUIProps } from "./types";
-import { homeTitleConfig } from "./config/home.config";
+import { errorDataCredit, homeTitleConfig } from "./config/home.config";
 
 export interface IEnhancedOption {
   id: string;
@@ -30,14 +34,17 @@ const HomeUI = (props: IHomeUIProps) => {
     smallScreen,
     isMobile,
     username,
-    collapse,
-    businessUnitChangeRef,
-    businessUnitsToTheStaff,
-    selectedClient,
-    handleLogoClick,
     dataHeader,
     loading,
     dataOptions,
+    codeError,
+    addToFix,
+    showErrorModal,
+    messageError,
+    user,
+    navigate,
+    setShowErrorModal,
+    setMessageError,
   } = props;
 
   const mergeStaffOptions = (
@@ -49,10 +56,10 @@ const HomeUI = (props: IHomeUIProps) => {
       );
 
       return {
-        id: configItem.id,
-        abbreviatedName: match?.abbreviatedName || configItem.id,
-        descriptionUse: match?.descriptionUse || configItem.descriptionUse,
-        icon: configItem.icon,
+        id: match?.optionStaffId ?? "",
+        abbreviatedName: match?.abbreviatedName ?? "",
+        descriptionUse: match?.descriptionUse ?? "",
+        icon: getIconByName(match?.iconReference || ""),
         url: configItem.url,
         isDisabled: !match,
       };
@@ -65,66 +72,86 @@ const HomeUI = (props: IHomeUIProps) => {
 
   return (
     <>
-      {collapse && (
-        <StyledCollapse ref={businessUnitChangeRef}>
-          <BusinessUnitChange
-            businessUnits={businessUnitsToTheStaff}
-            selectedClient={selectedClient}
-            onLogoClick={handleLogoClick}
-          />
-        </StyledCollapse>
-      )}
-
-      <Stack
-        direction="column"
-        width={isMobile ? "calc(100% - 20px)" : "min(100% - 20px, 1064px)"}
-        margin="0 auto"
-      >
+      {codeError ? (
+        <ErrorPage
+          onClick={() => {
+            codeError === 1003
+              ? navigate(
+                  `/login/${user.username}/business-units/select-business-unit`,
+                )
+              : navigate("/clients/select-client/");
+          }}
+          errorCode={codeError}
+          addToFix={addToFix}
+        />
+      ) : (
         <Stack
           direction="column"
-          alignItems={isMobile ? "normal" : "center"}
-          margin="20px 0px"
-          padding={isMobile ? "64px 20px" : "64px"}
+          width={isMobile ? "calc(100% - 20px)" : "min(100% - 20px, 1064px)"}
+          margin="0 auto"
         >
-          <Stack gap="24px" direction="column" height="100%" width="100%">
-            <StyledGeneralHeader>
-              <GeneralHeader
-                buttonText="Agregar vinculación"
-                descriptionStatus={dataHeader.status}
-                name={dataHeader.name ?? ""}
-                profileImageUrl="…"
-              />
-            </StyledGeneralHeader>
-            <StyledTitle $smallScreen={smallScreen}>
-              <Title
-                title={homeTitleConfig(username).title}
-                description={homeTitleConfig(username).description}
-                icon={homeTitleConfig(username).icon}
-                sizeTitle={homeTitleConfig(username).sizeTitle}
-              />
-            </StyledTitle>
-            <StyledContainerCards $smallScreen={smallScreen}>
-              {loading ? (
-                <>
-                  <InteractiveBox isMobile={smallScreen} isLoading />
-                </>
+          <Stack
+            direction="column"
+            alignItems={isMobile ? "normal" : "center"}
+            padding={isMobile ? "64px 20px" : "64px"}
+          >
+            <Stack gap="24px" direction="column" height="100%" width="100%">
+              <StyledGeneralHeader>
+                <GeneralHeader
+                  buttonText="Agregar vinculación"
+                  descriptionStatus={dataHeader.status}
+                  name={dataHeader.name ?? ""}
+                  profileImageUrl={dataHeader.image || userImage}
+                />
+              </StyledGeneralHeader>
+              <StyledTitle $smallScreen={smallScreen}>
+                <Title
+                  title={homeTitleConfig(username).title}
+                  description={homeTitleConfig(username).description}
+                  icon={homeTitleConfig(username).icon}
+                  sizeTitle={homeTitleConfig(username).sizeTitle}
+                />
+              </StyledTitle>
+              {options.length === 0 ? (
+                <Text type="title" size="large">
+                  {errorDataCredit.noData}
+                </Text>
               ) : (
-                options.map((item, index) => (
-                  <InteractiveBox
-                    key={index}
-                    label={item.abbreviatedName}
-                    description={item.descriptionUse}
-                    icon={item.icon}
-                    url={item.url}
-                    isDisabled={item.isDisabled}
-                    isMobile={smallScreen}
-                  />
-                ))
+                <StyledContainerCards $smallScreen={smallScreen}>
+                  {loading ? (
+                    <>
+                      <InteractiveBox isMobile={smallScreen} isLoading />
+                    </>
+                  ) : (
+                    options.map((item, index) => (
+                      <InteractiveBox
+                        key={index}
+                        label={item.abbreviatedName}
+                        description={item.descriptionUse}
+                        icon={item.icon}
+                        url={item.url}
+                        isDisabled={item.isDisabled}
+                        isMobile={smallScreen}
+                        onInvalidUrl={() => {
+                          setMessageError(errorDataCredit.noUrl);
+                          setShowErrorModal(true);
+                        }}
+                      />
+                    ))
+                  )}
+                </StyledContainerCards>
               )}
-            </StyledContainerCards>
+            </Stack>
           </Stack>
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => setShowErrorModal(false)}
+              isMobile={isMobile}
+              message={messageError}
+            />
+          )}
         </Stack>
-      </Stack>
+      )}
     </>
   );
 };

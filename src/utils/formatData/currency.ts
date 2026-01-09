@@ -10,7 +10,7 @@ const currencyFormat = (price: number, withCurrencySymbol = true): string => {
     style: "currency",
     currency: "COP",
     minimumFractionDigits: 0,
-  }).format(price);
+  }).format(Math.trunc(price));
 
   return withCurrencySymbol ? value : value.replace(/\$/g, "");
 };

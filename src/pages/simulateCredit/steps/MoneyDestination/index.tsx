@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
-import { searchAllMoneyDestinationByCustomerCode } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
-import { IMoneyDestination } from "@src/services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
+import { searchAllMoneyDestinationByCustomerCode } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
+import { IMoneyDestination } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
@@ -31,14 +32,17 @@ function MoneyDestination(props: IMoneyDestinationProps) {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const { businessUnitSigla } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const [moneyDestinations, setMoneyDestinations] =
     useState<IMoneyDestination[]>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     searchAllMoneyDestinationByCustomerCode(
       businessUnitPublicCode,
       businessManagerCode,
@@ -65,6 +69,9 @@ function MoneyDestination(props: IMoneyDestinationProps) {
         setMessageError(
           `Error fetching money destinations data:, ${error.message}`,
         );
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [businessUnitPublicCode]);
 
@@ -111,6 +118,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
           showErrorModal={showErrorModal}
           messageError={messageError}
           groupedDestinations={groupedDestinations}
+          loading={loading}
+          navigate={navigate}
         />
       )}
     </Formik>

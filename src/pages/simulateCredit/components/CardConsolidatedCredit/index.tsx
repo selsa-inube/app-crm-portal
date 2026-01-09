@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Tag, Button, ITag, Icon } from "@inubekit/inubekit";
 
@@ -18,7 +18,13 @@ import {
 import { dataConsolidatedCredit } from "./config";
 
 export interface ICardConsolidatedCreditProps {
-  onUpdateTotal: (oldValue: number, newValue: number, label?: string) => void;
+  onUpdateTotal: (
+    oldValue: number,
+    newValue: number,
+    label?: string,
+    title?: string,
+    electedDate?: Date,
+  ) => void;
   title: string;
   code: string;
   expiredValue: number;
@@ -30,11 +36,13 @@ export interface ICardConsolidatedCreditProps {
   isMobile?: boolean;
   initialValue?: number;
   allowCustomValue?: boolean;
+  initialType?: string;
   onApplyPayOption?: (
     id: string,
     applyPayOption: IApplyPayOption,
     value: number,
   ) => void;
+  handleRemoveCredit?: (code: string) => void;
 }
 
 export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
@@ -49,17 +57,29 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
     date,
     tags,
     initialValue,
+    initialType,
     allowCustomValue,
+    handleRemoveCredit,
   } = props;
 
   const hasInitialValue = initialValue !== undefined && initialValue > 0;
 
-  const [isRadioSelected, setIsRadioSelected] = useState(hasInitialValue);
+  const [isRadioSelected, setIsRadioSelected] = useState(
+    hasInitialValue || initialType !== undefined,
+  );
   const [selectedValue, setSelectedValue] = useState<number | null>(
     hasInitialValue ? initialValue : null,
   );
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(
+    hasInitialValue && initialType ? initialType : null,
+  );
+  useEffect(() => {
+    const has = initialValue !== undefined && initialValue > 0;
+    setIsRadioSelected(has || initialType !== undefined);
+    setSelectedValue(has ? initialValue : null);
+    setSelectedOptionId(initialType ?? null);
+  }, [initialValue, initialType]);
   const [showModal, setShowModal] = useState(false);
-
   const radioRefs = useRef<HTMLInputElement[]>([]);
 
   const paymentOptions = [
@@ -82,18 +102,38 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
     },
   ];
 
-  const handleSelectionChange = (value: number, label: string) => {
-    if (selectedValue !== value) {
-      onUpdateTotal(selectedValue || 0, value, label);
+  const handleSelectionChange = (
+    value: number,
+    label: string,
+    optionId: string = "",
+    optionDate?: Date,
+  ) => {
+    if (selectedValue !== value || selectedOptionId !== optionId) {
+      onUpdateTotal(selectedValue || 0, value, label, title, optionDate);
       setSelectedValue(value);
+      setSelectedOptionId(optionId);
     }
     setIsRadioSelected(true);
   };
 
   const handleClearSelection = () => {
-    if (isRadioSelected && selectedValue !== null) {
+    if (
+      isRadioSelected &&
+      selectedValue !== null &&
+      selectedOptionId !== null
+    ) {
+      onUpdateTotal(selectedValue, 0, selectedOptionId, title);
+      setSelectedValue(null);
+      setSelectedOptionId(null);
+      setIsRadioSelected(false);
+      radioRefs.current.forEach((radio) => {
+        if (radio) radio.checked = false;
+      });
+      handleRemoveCredit && handleRemoveCredit(code);
+    } else if (isRadioSelected && selectedValue !== null) {
       onUpdateTotal(selectedValue, 0);
       setSelectedValue(null);
+      setSelectedOptionId(null);
       setIsRadioSelected(false);
       radioRefs.current.forEach((radio) => {
         if (radio) radio.checked = false;
@@ -150,8 +190,17 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
                   type="radio"
                   name={`paymentOption-${code}`}
                   ref={(el) => (radioRefs.current[index] = el!)}
+                  checked={
+                    (selectedOptionId === option.label && isRadioSelected) ||
+                    undefined
+                  }
                   onChange={() =>
-                    handleSelectionChange(option.value, option.label)
+                    handleSelectionChange(
+                      option.value,
+                      option.label,
+                      option.label,
+                      option.date,
+                    )
                   }
                 />
                 <Stack direction="column">

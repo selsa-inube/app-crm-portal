@@ -8,15 +8,28 @@ import { IStaffPortalByBusinessManager } from "../types";
 import { mapResendApiToEntities } from "./mappers";
 
 const getStaffPortalsByBusinessManager = async (
-  staffPortalId: string,
+  staffPortalId?: string,
+  businessManagerCode?: string,
+  staffPortalCatalogCode?: string,
 ): Promise<IStaffPortalByBusinessManager[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
-  const queryParams = new URLSearchParams({
-    staffPortalId,
-    staffPortalCatalogCode: environment.VITE_STAFF_PORTAL_CATALOG_CODE,
-  });
+  let params: Record<string, string> = {};
+
+  if (businessManagerCode && staffPortalCatalogCode) {
+    params = {
+      businessManagerCode,
+      staffPortalCatalogCode,
+    };
+  } else if (staffPortalId) {
+    params = {
+      staffPortalId,
+      staffPortalCatalogCode: environment.VITE_STAFF_PORTAL_CATALOG_CODE,
+    };
+  }
+
+  const queryParams = new URLSearchParams(params);
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {

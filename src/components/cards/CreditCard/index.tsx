@@ -1,5 +1,6 @@
-import { Icon, Stack, Text } from "@inubekit/inubekit";
 import { FC, ReactNode } from "react";
+import { Icon, Stack, Text } from "@inubekit/inubekit";
+
 import { StyledCreditCard } from "./styles";
 
 interface IOptionsCard {
@@ -9,6 +10,8 @@ interface IOptionsCard {
   url?: string;
   width?: string;
   isDisabled?: boolean;
+  onClick?: () => void;
+  onInvalidUrl?: () => void;
 }
 
 export const CreditCard: FC<IOptionsCard> = ({
@@ -18,23 +21,44 @@ export const CreditCard: FC<IOptionsCard> = ({
   url,
   width,
   isDisabled = false,
-}) => (
-  <StyledCreditCard to={url ?? ""} $width={width} $isDisabled={isDisabled}>
-    <Stack
-      direction="column"
-      width={width ?? "194px"}
-      alignItems="center"
-      gap="12px"
+  onClick,
+  onInvalidUrl,
+}) => {
+  const handleClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+
+    if (onClick) {
+      onClick();
+    } else if (!url) {
+      onInvalidUrl && onInvalidUrl();
+    } else {
+      window.location.href = url;
+    }
+  };
+
+  return (
+    <StyledCreditCard
+      to={url ?? ""}
+      $width={width}
+      $isDisabled={isDisabled}
+      onClick={handleClick}
     >
-      <Icon appearance="dark" icon={icon} size="30px" />
-      <Stack direction="column" alignItems="center" gap="4px">
-        <Text type="title" size="medium" weight="bold">
-          {title}
-        </Text>
-        <Text type="title" size="small" appearance="gray" textAlign="center">
-          {subtitle}
-        </Text>
+      <Stack
+        direction="column"
+        width={width ?? "194px"}
+        alignItems="center"
+        gap="12px"
+      >
+        <Icon appearance="dark" icon={icon} size="30px" />
+        <Stack direction="column" alignItems="center" gap="4px">
+          <Text type="title" size="medium" weight="bold">
+            {title}
+          </Text>
+          <Text type="title" size="small" appearance="gray" textAlign="center">
+            {subtitle}
+          </Text>
+        </Stack>
       </Stack>
-    </Stack>
-  </StyledCreditCard>
-);
+    </StyledCreditCard>
+  );
+};

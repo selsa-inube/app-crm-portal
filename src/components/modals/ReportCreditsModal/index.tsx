@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Stack, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
@@ -12,6 +11,7 @@ export interface ReportCreditsModalProps {
   options: { id: string; label: string; value: string }[];
   debtor: string;
   prospectData?: IProspect[];
+  showAddButton?: boolean;
   onProspectUpdate?: () => void;
 }
 
@@ -19,15 +19,9 @@ export function ReportCreditsModal({
   handleClose,
   onProspectUpdate,
   prospectData,
+  showAddButton,
 }: ReportCreditsModalProps) {
-  const [loading, setLoading] = useState(true);
-
   const isMobile = useMediaQuery("(max-width:880px)");
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timeout);
-  }, []);
 
   return (
     <BaseModal
@@ -39,15 +33,14 @@ export function ReportCreditsModal({
       initialDivider={false}
     >
       <Stack direction="column" gap="16px">
-        {!loading && (
-          <>
-            <TableFinancialObligations
-              showActions
-              initialValues={prospectData}
-              onProspectUpdate={onProspectUpdate}
-            />
-          </>
-        )}
+        <>
+          <TableFinancialObligations
+            showActions
+            initialValues={prospectData}
+            onProspectUpdate={onProspectUpdate}
+            showAddButton={showAddButton}
+          />
+        </>
       </Stack>
     </BaseModal>
   );

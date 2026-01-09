@@ -71,7 +71,8 @@ export function ExtraordinaryInstallments(
     }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [extraordinary, handleOnChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extraordinary]);
 
   const handleSubmit = (installment: {
     installmentDate: string;

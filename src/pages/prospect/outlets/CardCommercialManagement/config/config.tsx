@@ -3,9 +3,11 @@ import {
   MdOutlineMonetizationOn,
   MdOutlineBalance,
   MdOutlineAccountBalanceWallet,
-  MdOutlineEdit,
   MdOutlineRemoveRedEye,
   MdOutlineMessage,
+  MdOutlineRule,
+  MdOutlineEdit,
+  MdOutlineSpeed,
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
@@ -261,7 +263,7 @@ export const SummaryProspectCredit = [
     item: [
       {
         id: "requestedAmount",
-        title: "Monto solicitado",
+        title: "Monto productos de crédito",
         miniIcon: false,
         operation: "-",
       },
@@ -289,7 +291,7 @@ export const SummaryProspectCredit = [
       },
       {
         id: "totalRegularInstallment",
-        title: "Cuota ordinaria",
+        title: "Cuota ordinaria mensual",
         miniIcon: true,
         operation: "",
       },
@@ -317,37 +319,60 @@ export const menuOptions = (
   visibleExtraPayments: boolean,
 ): IOptions[] => [
   {
+    id: "creditLimit",
     title: "Origen de cupo",
     onClick: () => handleOpenModal("creditLimit"),
     icon: <MdOutlineBalance />,
     visible: true,
   },
   {
+    id: "IncomeModal",
     title: "Fuentes de ingreso",
     onClick: () => handleOpenModal("IncomeModal"),
     icon: <MdOutlineAccountBalanceWallet />,
     visible: true,
   },
   {
+    id: "reportCreditsModal",
     title: "Obligaciones financieras",
     onClick: () => handleOpenModal("reportCreditsModal"),
     icon: <MdOutlineMonetizationOn />,
     visible: true,
   },
   {
-    title: "Pagos extras",
+    id: "scores",
+    title: "Score de riesgo",
     onClick: () => {
-      handleOpenModal("extraPayments");
+      handleOpenModal("scores");
     },
-    icon: <MdOutlinePayments />,
-    visible: visibleExtraPayments,
+    icon: <MdOutlineSpeed />,
+    visible: true,
   },
   {
+    id: "requirements",
+    title: "Requsitos",
+    onClick: () => {
+      handleOpenModal("requirements");
+    },
+    icon: <MdOutlineRule />,
+    visible: true,
+  },
+  {
+    id: "observations",
     title: "Observaciones",
     onClick: () => {
       handleOpenModal("observations");
     },
     icon: <MdOutlineMessage />,
+    visible: visibleExtraPayments,
+  },
+  {
+    id: "extraPayments",
+    title: "Pagos extras",
+    onClick: () => {
+      handleOpenModal("extraPayments");
+    },
+    icon: <MdOutlinePayments />,
     visible: visibleExtraPayments,
   },
 ];
@@ -356,7 +381,6 @@ export const tittleOptions = {
   titleCreditId: "No. Rad.: ",
   titleDestination: "Destino: ",
   tittleAmount: "Valor: ",
-  titleProfile: "Ver perfil crediticio",
   titleDisbursement: "Medios de desembolso",
   titleCall: "Llamada",
   titleVideoCall: "Videollamada",
@@ -371,10 +395,11 @@ export const tittleOptions = {
     "¿Realmente deseas eliminar el gasto descontable.",
 };
 
-
 export const paymentCycleMap: Record<string, string> = {
-  "Weekly": "Cada 10 días",
-  "Biweekly": "Bisemanal",
-  "Semimonthly": "Quincenal",
-  "Monthly": "Mensual",
+  Weekly: "Cada 10 días",
+  Biweekly: "Bisemanal",
+  Semimonthly: "Quincenal",
+  Monthly: "Mensual",
 };
+
+export const amountContainerOnSkeletons = 5;

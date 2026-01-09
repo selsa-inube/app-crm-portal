@@ -8,4 +8,7 @@ export const homeData = {
 export enum EErrorMessages {
   NoClientSelected = "Para continuar, primero debes seleccionar un cliente.",
   ClientNotFound = "El cliente no se encuentra registrado.",
+  BackendError = "Ocurrio un error en el backend.",
 }
+
+export const VALIDATE_BLANK_SPACES_REGEX = /\s/g;

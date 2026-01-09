@@ -29,6 +29,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { IProspectSummaryById } from "@services/prospect/types";
+import { CardGray } from "@components/cards/CardGray";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
@@ -85,9 +86,38 @@ export function DisbursementWithInternalAccount(
     });
   };
 
+  const lastValidState = useRef<boolean | null>(null);
+
   useEffect(() => {
-    onFormValid(formik.isValid);
-  }, [formik.isValid, onFormValid]);
+    const checkValidity = () => {
+      const stepErrors = formik.errors[optionNameForm];
+
+      const hasYupErrors = stepErrors && Object.keys(stepErrors).length > 0;
+
+      const currentValues = formik.values[optionNameForm] || {};
+      const isFormVisible = !currentValues.toggle;
+
+      let failsBusinessRule = false;
+      if (isFormVisible && customerData?.publicCode) {
+        if (
+          String(currentValues.identification) ===
+          String(customerData.publicCode)
+        ) {
+          failsBusinessRule = true;
+        }
+      }
+      const isValid = !hasYupErrors && !failsBusinessRule;
+
+      if (lastValidState.current !== isValid) {
+        lastValidState.current = isValid;
+        onFormValid(isValid);
+      }
+    };
+
+    const timer = setTimeout(checkValidity, 200);
+
+    return () => clearTimeout(timer);
+  }, [formik.errors, formik.values, optionNameForm, customerData, onFormValid]);
 
   useEffect(() => {
     if (formik.values[optionNameForm]) {
@@ -154,7 +184,11 @@ export function DisbursementWithInternalAccount(
       `${optionNameForm}.city`,
       person?.zone?.split("-")[1] || "",
     );
-    setCurrentIdentification(customerData?.publicCode || "");
+
+    const newIdentification = customerData?.publicCode || "";
+    setCurrentIdentification(newIdentification);
+
+    previousIdentificationRef.current = newIdentification;
   };
 
   const clearFields = () => {
@@ -242,6 +276,7 @@ export function DisbursementWithInternalAccount(
         const hasData = customer?.publicCode && data;
         if (hasData && customer.publicCode !== customerData?.publicCode) {
           setCurrentIdentification(identification);
+          previousIdentificationRef.current = identification;
           formik.setFieldValue(
             `${optionNameForm}.documentType`,
             data.typeIdentification || "",
@@ -337,7 +372,7 @@ export function DisbursementWithInternalAccount(
   }, [currentIdentification]);
 
   useEffect(() => {
-    if (isAmountReadOnly && accountOptions.length === 1) {
+    if (accountOptions.length === 1) {
       const onlyOption = accountOptions[0];
       formik.setFieldValue(`${optionNameForm}.accountNumber`, onlyOption.value);
     }
@@ -351,7 +386,7 @@ export function DisbursementWithInternalAccount(
       justifyContent="center"
     >
       <Stack direction="column" gap="20px">
-        <Stack width="498px">
+        <Stack>
           <Textfield
             id="amount"
             name="amount"
@@ -440,21 +475,29 @@ export function DisbursementWithInternalAccount(
           <Divider dashed />
         </>
       )}
-      <Stack width="498px">
-        <Select
-          id={`${optionNameForm}.accountNumber`}
-          name={`${optionNameForm}.accountNumber`}
-          label={disbursemenOptionAccount.labelAccount}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={accountOptions}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
-          }
-          value={formik.values[optionNameForm]?.accountNumber || ""}
-          fullwidth
-        />
+      <Stack>
+        {accountOptions.length === 1 ? (
+          <CardGray
+            label={disbursemenOptionAccount.labelAccount}
+            placeHolder={accountOptions[0]?.label || ""}
+            isMobile={isMobile}
+          />
+        ) : (
+          <Select
+            id={`${optionNameForm}.accountNumber`}
+            name={`${optionNameForm}.accountNumber`}
+            label={disbursemenOptionAccount.labelAccount}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={accountOptions}
+            onBlur={formik.handleBlur}
+            onChange={(_, value) =>
+              formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
+            }
+            value={formik.values[optionNameForm]?.accountNumber || ""}
+            fullwidth
+          />
+        )}
       </Stack>
       <Textarea
         id={`${optionNameForm}.description`}

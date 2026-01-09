@@ -28,6 +28,7 @@ interface IExtraDebtorsProps {
   handleOnChange: (values: FormikValues) => void;
   customerData: ICustomerData;
   businessManagerCode: string;
+  prospectData: IProspect | undefined;
 }
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
@@ -37,6 +38,8 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     isMobile,
     businessUnitPublicCode,
     businessManagerCode,
+    prospectData,
+    customerData,
   } = props;
   const [borrowers, setBorrowers] = useState(() =>
     transformServiceData(initialValues),
@@ -223,6 +226,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               prospectData={{} as IProspect}
               businessManagerCode={businessManagerCode}
               businessUnitPublicCode={businessUnitPublicCode}
+              customerData={customerData}
             />
           )}
 
@@ -260,6 +264,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               onUpdate={handleUpdateBorrower}
               businessUnitPublicCode={businessUnitPublicCode}
               businessManagerCode={businessManagerCode}
+              prospectData={prospectData}
             />
           )}
         </Grid>

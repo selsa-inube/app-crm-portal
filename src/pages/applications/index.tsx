@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBack } from "react-icons/md";
 import {
@@ -9,6 +9,7 @@ import {
   Text,
   useMediaQuery,
 } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { ICreditRequest } from "@services/creditRequest/types";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
@@ -18,17 +19,21 @@ import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { environment } from "@config/environment";
+import userImage from "@assets/images/userImage.jpeg";
+import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager/index.tsx";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
-import { addConfig, dataCreditProspects, dataError } from "./config";
+import { addConfig, dataCreditProspects, dataError, redirect } from "./config";
 import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
+import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function CreditApplications() {
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
   );
@@ -36,9 +41,13 @@ export function CreditApplications() {
   const [selectedRequestCode, setSelectedRequestCode] = useState<string | null>(
     null,
   );
+  const [loading, setLoading] = useState(true);
+
+  const searchTimeoutRef = useRef<number>(0);
 
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
+  const { user } = useIAuth();
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -54,14 +63,37 @@ export function CreditApplications() {
     name: customerData.fullName,
     status:
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
+    image: customerData.image,
   };
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (searchTimeoutRef.current) {
+      window.clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (search.trim() === "") {
+      setDebouncedSearch("");
+      return;
+    }
+
+    searchTimeoutRef.current = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        window.clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [search]);
+
+  useEffect(() => {
     if (!customerData.publicCode) return;
 
     const fetchCreditRequest = async () => {
+      setLoading(true);
       try {
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
@@ -69,28 +101,57 @@ export function CreditApplications() {
           userAccount,
           {
             clientIdentificationNumber: customerData.publicCode,
-            textInSearch: search,
+            textInSearch: debouncedSearch,
           },
         );
         setCreditRequestData(creditData);
       } catch {
         setCodeError(1022);
         setAddToFix([dataCreditProspects.errorCreditRequest]);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCreditRequest();
-  }, [customerData.publicCode, search]);
+  }, [customerData.publicCode, debouncedSearch]);
+
+  useEffect(() => {
+    let error = null;
+    const messages: string[] = [];
+
+    if (eventData.businessManager.abbreviatedName.length === 0) {
+      error = 1003;
+      messages.push(dataError.noBusinessUnit);
+    }
+    if (customerData.fullName.length === 0) {
+      error = 1016;
+      messages.push(dataError.noSelectClient);
+    }
+
+    setCodeError(error);
+    setAddToFix(messages);
+  }, [customerData, eventData, loading]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+  };
+
+  const handleNavigate = () => {
+    if (codeError === 1003) {
+      navigate(`/login/${user.username}/business-units/select-business-unit`);
+    } else if (codeError === 1016) {
+      navigate("/clients/select-client/");
+    } else {
+      navigate("/credit");
+    }
   };
 
   return (
     <>
       {codeError ? (
         <ErrorPage
-          onClick={() => navigate("/home")}
+          onClick={handleNavigate}
           errorCode={codeError}
           addToFix={addToFix}
         />
@@ -104,7 +165,7 @@ export function CreditApplications() {
           <GeneralHeader
             descriptionStatus={dataHeader.status}
             name={dataHeader.name}
-            profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
+            profileImageUrl={dataHeader.image || userImage}
           />
           <Breadcrumbs crumbs={addConfig.crumbs} />
           <StyledArrowBack onClick={() => navigate(addConfig.route)}>
@@ -122,30 +183,41 @@ export function CreditApplications() {
                   id="keyWord"
                   placeholder={dataCreditProspects.keyWord}
                   type="search"
+                  value={search}
                   onChange={(event) => handleSearch(event)}
                 />
               </Stack>
               <Stack wrap="wrap" gap="20px">
-                {creditRequestData.length === 0 && (
-                  <NoResultsMessage search={search} />
+                {creditRequestData.length === 0 && !loading && (
+                  <NoResultsMessage search={debouncedSearch} />
                 )}
-                {creditRequestData.map((creditRequest) => (
-                  <SummaryCard
-                    key={creditRequest.creditRequestId}
-                    rad={creditRequest.creditRequestCode}
-                    date={creditRequest.creditRequestDateOfCreation}
-                    name={creditRequest.clientName}
-                    destination={creditRequest.moneyDestinationAbreviatedName}
-                    value={creditRequest.loanAmount}
-                    toDo={creditRequest.taskToBeDone}
-                    hasMessage={creditRequest.unreadNovelties === "Y"}
-                    onCardClick={() => {
-                      setSelectedRequestCode(creditRequest.creditRequestCode);
-                      setIsShowModal(true);
-                    }}
-                  />
-                ))}
-                {creditRequestData.length === 0 && (
+                {loading ? (
+                  <LoadCard />
+                ) : (
+                  <>
+                    {creditRequestData.map((creditRequest) => (
+                      <SummaryCard
+                        key={creditRequest.creditRequestId}
+                        rad={creditRequest.creditRequestCode}
+                        date={creditRequest.creditRequestDateOfCreation}
+                        name={creditRequest.clientName}
+                        destination={
+                          creditRequest.moneyDestinationAbreviatedName
+                        }
+                        value={creditRequest.loanAmount}
+                        toDo={creditRequest.taskToBeDone}
+                        hasMessage={creditRequest.unreadNovelties === "Y"}
+                        onCardClick={() => {
+                          setSelectedRequestCode(
+                            creditRequest.creditRequestCode,
+                          );
+                          setIsShowModal(true);
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+                {creditRequestData.length === 0 && !loading && (
                   <Text type="title" size="large" margin="30px 2px">
                     {dataError.notCredits}
                   </Text>
@@ -159,8 +231,16 @@ export function CreditApplications() {
               nextButton={dataCreditProspects.accept}
               backButton={dataCreditProspects.cancel}
               handleBack={() => setIsShowModal(false)}
-              handleNext={() => {
-                window.location.href = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}`;
+              handleNext={async () => {
+                const portalId = (
+                  await getStaffPortalsByBusinessManager(
+                    "",
+                    eventData.businessManager.abbreviatedName,
+                    redirect.portalName,
+                  )
+                )[0].staffPortalId;
+                const redirectUrl = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}?portal=${portalId}`;
+                window.location.href = redirectUrl;
               }}
               width="400px"
             >

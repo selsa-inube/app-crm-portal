@@ -26,6 +26,10 @@ export const dataSubmitApplication = {
   cards: {
     destination: "Destino: ",
   },
+  error: "Ha ocurrido un error al cargar garantías de la solicitud de crédito.",
+  creditProducts: "Productos de crédito:",
+  prospect: "Prospecto",
+  net: "Neto a girar:",
 };
 export const prospectStates = {
   CREATED: "Created",
@@ -38,4 +42,5 @@ export const tittleOptions = {
   descriptionError: "No se han podido guardar los cambios.",
   errorSubmit: "El radicado no se ha podido enviar correctamente.",
   tryLater: "Estamos tienendo problemas, intentalo mas tarde.",
+  errorSummaryProspect: "Error al consultar el resumen del prospecto.",
 };

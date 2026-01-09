@@ -11,14 +11,18 @@ interface IStyledContainerFieldset {
   $height?: string;
   $borderColor?: string;
   $showFieldset?: boolean;
+  $alignContent?: boolean;
+  $maxHeight?: string;
 }
 
 export const StyledContainerFieldset = styled.div<IStyledContainerFieldset>`
-  align-content: center;
+  align-content: ${({ $alignContent }) =>
+    $alignContent ? "center" : "normal"};
   cursor: ${({ $isClickable }) => ($isClickable ? "pointer" : "auto")};
   overflow-y: ${({ $hasOverflow }) => ($hasOverflow ? "visible" : "auto")};
   box-sizing: border-box;
   height: ${({ $height }) => $height};
+  max-height: ${({ $maxHeight }) => $maxHeight};
   border-radius: 8px;
   border: ${({ $showFieldset }) => ($showFieldset ? "1px solid" : "none")};
   padding-top: ${({ $hasTable }) => !$hasTable && "16px"};

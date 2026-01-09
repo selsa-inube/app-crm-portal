@@ -1,6 +1,9 @@
 import { IObligations } from "@services/creditRequest/types";
-import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
 import { IBorrower } from "@services/prospect/types";
+import { IValidateRequirement } from "@services/requirement/types";
+
+import { TableExtraordinaryInstallmentProps } from "../prospect/components/TableExtraordinaryInstallment";
+import { IDisbursementGeneral } from "../payrollBenefits/types";
 
 export const titleButtonTextAssited = {
   goBackText: "Anterior",
@@ -8,11 +11,15 @@ export const titleButtonTextAssited = {
   submitText: "Enviar",
 };
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;
   description: string;
+}
+
+export interface IManageErrors {
+  validateRequirements?: boolean;
 }
 
 export interface IStep {
@@ -48,7 +55,7 @@ export interface IPosition {
   n_roles?: string[];
 }
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;
@@ -115,8 +122,9 @@ export interface IFormData {
     inputValue: number | string;
     toggleChecked: boolean;
     paymentPlan: string;
-    periodicity: string;
+    paymentCycle: string;
     payAmount: string;
+    periodicity?: string;
   };
   consolidatedCreditSelections: {
     title: string;
@@ -125,9 +133,22 @@ export interface IFormData {
     value: number;
     totalCollected: number;
     selectedValues: Record<string, number>;
+    selectedLabels?: Record<string, string>;
   };
   consolidatedCreditArray?: IConsolidatedCreditItem[];
   sourcesOfIncome: ISourcesOfIncomeState;
+  riskScore: {
+    value: number;
+    date: string;
+  };
+  requestedValue?: string;
+  disbursementGeneral?: IDisbursementGeneral;
+  requirementsValidation?: {
+    requirements: IValidateRequirement[];
+    isValid: boolean;
+    validatedAt: Date | null;
+    unfulfilledCount: number;
+  };
 }
 
 export interface ICondition {

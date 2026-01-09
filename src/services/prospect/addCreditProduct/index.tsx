@@ -4,13 +4,13 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IAddCreditProduct, IProspect } from "../types";
+import { IAddCreditProduct, IProspect, IAddProduct } from "../types";
 
 export const addCreditProduct = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: IAddCreditProduct,
-): Promise<IProspect | undefined> => {
+  payload: IAddCreditProduct | IAddProduct,
+): Promise<IProspect | IAddProduct | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 

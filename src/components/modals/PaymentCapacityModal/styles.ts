@@ -3,8 +3,12 @@ import styled from "styled-components";
 
 export const StyledTable = styled.div`
   max-height: 270px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto;
+
+  & div {
+    width: auto;
+    overflow: auto;
+  }
 
   &::-webkit-scrollbar {
     width: 8px;

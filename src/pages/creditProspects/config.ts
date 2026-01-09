@@ -42,8 +42,22 @@ export const dataCreditProspects = {
   close: "Cerrar",
   modify: "Modificar observaciones",
   preanalysis: "Comentarios del pre-análisis",
+  preApproval: "Comentarios de la pre-aprobación",
+  notHaveObservations: "No hay observaciones",
+  notHaveComments: "No hay comentarios",
+  none: "none",
+  titleFlagDelete: "Eliminar",
+  descriptionFlagDelete: "El prospecto de crédito se ha eliminado",
+  titleFlagComment: "Comentarios",
+  descriptionFlagComment: "Los comentarios se han actualizado",
+  errorCheckIfSimulationIsAllowed:
+    "Error al validar los requisitos para la simulación de crédito.",
+  requirementsNotMet:
+    "El cliente no cumple con los requisitos para la simulación.",
 };
 
-export const errorMessage = {
-  notProspects: "Este cliente aún no tienen ningún prospecto de crédito.",
-};
+export const notFound = "No hay resultados.";
+
+export const amountLineOnSkeletons = 4;
+
+export const amountContainerOnSkeletons = 5;

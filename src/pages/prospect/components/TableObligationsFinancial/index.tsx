@@ -33,8 +33,9 @@ export const TableFinancialObligations = (
     services = true,
     handleOnChangeExtraBorrowers = undefined,
     showOnlyEdit = false,
+    showAddButton = true,
   } = props;
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
   const [selectedBorrower, setSelectedBorrower] =
     useState<ITableFinancialObligationsProps | null>(null);
@@ -71,17 +72,33 @@ export const TableFinancialObligations = (
     setIsModalOpenEdit(true);
   };
 
+  const normalizeObligations = (
+    initial: FormikValues | undefined,
+  ): IObligations[] => {
+    if (!initial) return [];
+    if (Array.isArray(initial)) return initial as IObligations[];
+    if (Array.isArray(initial.obligations))
+      return initial.obligations as IObligations[];
+    if (Array.isArray(initial.obligations?.obligations))
+      return initial.obligations.obligations as IObligations[];
+    return [];
+  };
+
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const visibleHeaders = isMobile
     ? headers.filter(
         (header) =>
           ["type", "balance", "actions"].includes(header.key) &&
-          (showActions || header.key !== "actions"),
+          ((showActions && showAddButton) || header.key !== "actions"),
       )
-    : headers.filter((header) => showActions || header.key !== "actions");
+    : headers.filter(
+        (header) => (showActions && showAddButton) || header.key !== "actions",
+      );
 
   useEffect(() => {
+    setLoading(true);
+
     const data = Array.isArray(initialValues) ? initialValues : [initialValues];
     if (data && data.length > 0) {
       const borrowerList = Array.isArray(data[0]?.borrowers)
@@ -102,9 +119,15 @@ export const TableFinancialObligations = (
           return initial;
         }
 
-        return Array.isArray(initial?.obligations?.obligations)
-          ? initial?.obligations?.obligations
-          : [];
+        if (Array.isArray(initial?.obligations)) {
+          return initial.obligations as IObligations[];
+        }
+
+        if (Array.isArray(initial?.obligations?.obligations)) {
+          return initial.obligations.obligations as IObligations[];
+        }
+
+        return [];
       };
 
       const obligations = getObligationsFromInitialValues(initialValues);
@@ -125,7 +148,16 @@ export const TableFinancialObligations = (
       }
       setExtraDebtors([]);
     }
+
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
   }, [refreshKey, initialValues]);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, [selectedBorrowerIndex]);
 
   useEffect(() => {
     if (initialValues && !initialValuesSnapshot.current) {
@@ -186,7 +218,10 @@ export const TableFinancialObligations = (
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);
+      } finally {
+        setLoading(false);
       }
+
       setRefreshKey?.((prev) => prev + 1);
       onProspectUpdate?.();
     } else {
@@ -196,18 +231,25 @@ export const TableFinancialObligations = (
 
         if (!obligationNumberFromRow) return;
 
-        const currentObligations = Array.isArray(initialValues)
-          ? [...initialValues]
-          : initialValues
-            ? [initialValues]
-            : [];
+        const currentObligations = normalizeObligations(initialValues);
 
-        const updatedInitialValues = currentObligations.filter(
+        const updatedObligations = currentObligations.filter(
           (obligation: IObligations) =>
             String(obligation.obligationNumber) !== obligationNumberFromRow,
         );
 
-        handleOnChange(updatedInitialValues);
+        if (Array.isArray(initialValues)) {
+          handleOnChange(updatedObligations);
+        } else if (initialValues && typeof initialValues === "object") {
+          const updatedInitialValues = {
+            ...initialValues,
+            obligations: updatedObligations,
+          };
+          handleOnChange(updatedInitialValues);
+        } else {
+          handleOnChange(updatedObligations);
+        }
+
         setRefreshKey?.((prev) => prev + 1);
       } catch (error) {
         setShowErrorModal(true);
@@ -273,19 +315,20 @@ export const TableFinancialObligations = (
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${errorMessages.updateMessage}  ${error}`);
+      } finally {
+        setLoading(false);
       }
     } else {
       try {
-        const currentObligations = Array.isArray(initialValues)
-          ? [...initialValues]
-          : initialValues
-            ? [initialValues]
-            : [];
+        const currentObligations = normalizeObligations(initialValues);
+
+        const obligationNumber = updatedDebtor.propertyValue
+          ?.split(",")[5]
+          .trim();
 
         const obligationIndex = currentObligations.findIndex(
           (obligation: IObligations) =>
-            obligation.obligationNumber ===
-            updatedDebtor.propertyValue?.split(",")[5].trim(),
+            obligation.obligationNumber === obligationNumber,
         );
 
         if (obligationIndex === -1) return;
@@ -293,23 +336,35 @@ export const TableFinancialObligations = (
         const updatedObligation = {
           ...currentObligations[obligationIndex],
           balanceObligationTotal:
-            updatedDebtor.balance ||
-            currentObligations[obligationIndex].balanceObligationTotal,
+            updatedDebtor.balance !== undefined && updatedDebtor.balance !== ""
+              ? Number(updatedDebtor.balance)
+              : currentObligations[obligationIndex].balanceObligationTotal,
           nextPaymentValueTotal:
-            updatedDebtor.fee ||
-            currentObligations[obligationIndex].nextPaymentValueTotal,
-        };
+            updatedDebtor.fee !== undefined && updatedDebtor.fee !== ""
+              ? Number(updatedDebtor.fee)
+              : currentObligations[obligationIndex].nextPaymentValueTotal,
+        } as IObligations;
 
-        const updatedInitialValues = [...currentObligations];
-        updatedInitialValues[obligationIndex] = updatedObligation;
+        const updatedObligations = [...currentObligations];
+        updatedObligations[obligationIndex] = updatedObligation;
 
-        handleOnChange(updatedInitialValues);
+        if (Array.isArray(initialValues)) {
+          handleOnChange(updatedObligations);
+        } else if (initialValues && typeof initialValues === "object") {
+          const updatedInitialValues = {
+            ...initialValues,
+            obligations: updatedObligations,
+          };
+          handleOnChange(updatedInitialValues);
+        } else {
+          handleOnChange(updatedObligations);
+        }
+
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
 
-        if (handleOnChangeExtraBorrowers === undefined) return;
-
-        handleOnChangeExtraBorrowers(updatedInitialValues);
+        if (handleOnChangeExtraBorrowers !== undefined)
+          handleOnChangeExtraBorrowers(updatedObligations);
       } catch (error) {
         setShowErrorModal(true);
         setMessageError(`${error}`);
@@ -356,32 +411,12 @@ export const TableFinancialObligations = (
         return;
       }
 
-      const financialObligations = initialObligationsSnapshot.current.map(
-        (prop) => {
-          const values =
-            prop.propertyValue
-              ?.toString()
-              .split(",")
-              .map((v) => v.trim()) || [];
-          return {
-            productName: values[0] || "",
-            balanceObligationTotal: parseFloat(values[1]) || 0,
-            nextPaymentValueTotal: parseFloat(values[2]) || 0,
-            entity: values[3] || "",
-            paymentMethodName: values[4] || "",
-            obligationNumber: values[5] || "",
-            duesPaid: parseInt(values[6]) || 0,
-            outstandingDues: parseInt(values[7]) || 0,
-          };
-        },
-      );
-
+      setLoading(true);
       await restoreFinancialObligationsByBorrowerId(
         businessUnitPublicCode,
         borrower.borrowerIdentificationNumber || "",
         initialValuesSnapshot.current?.[0]?.prospectCode || "",
-        financialObligations,
-        "Restauración de obligaciones financieras a valores iniciales",
+        "Restore financial obligations",
       );
 
       setRefreshKey?.((prev) => prev + 1);
@@ -389,11 +424,14 @@ export const TableFinancialObligations = (
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(`Error al restaurar: ${error}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <TableFinancialObligationsUI
+      initialValuesModalDataProspect={initialValues}
       dataInformation={dataInformation}
       extraDebtors={extraDebtors}
       loading={loading}
@@ -424,6 +462,7 @@ export const TableFinancialObligations = (
       handleRestore={handleRestore}
       handleOnChangeExtraBorrowers={handleOnChangeExtraBorrowers}
       showOnlyEdit={showOnlyEdit}
+      showAddButton={showAddButton}
     />
   );
 };

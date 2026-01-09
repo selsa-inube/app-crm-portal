@@ -33,10 +33,11 @@ export function Detail(props: IDetailprops) {
           size="16px"
           cursorHover
           appearance={item.appearance}
-          onClick={() =>
-            item.id === "delete" &&
-            (canEditCreditRequest ? handleInfo() : handleDelete())
-          }
+          onClick={() => {
+            if (item.id === "delete") {
+              canEditCreditRequest ? handleInfo() : handleDelete();
+            }
+          }}
         />
       ))}
       {isModalOpen ? (

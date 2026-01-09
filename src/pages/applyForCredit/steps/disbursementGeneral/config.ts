@@ -21,6 +21,8 @@ export const disbursemenTabs = {
 export const disbursementGeneral = {
   label: "Valor a girar con esta forma de desembolso",
   place: "Ej: 1.000.000",
+  labelValue: "Saldo por desembolsar",
+  description: 2000000,
   labelCheck:
     "El valor a girar con esta forma de desembolso es igual al saldo pendiente por desembolsar.",
   labelToggle: "¿El desembolso es a nombre propio?",
@@ -54,4 +56,5 @@ export const disbursemenOptionAccount = {
   valueTurnFail:
     "El valor a girar con esta forma de desembolso es diferente de ",
   errorFlagInternal: "Error al obtener cuentas internas",
+  errorBanks: "Error al obtener bancos",
 };

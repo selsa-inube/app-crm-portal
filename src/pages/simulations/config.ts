@@ -33,14 +33,17 @@ export const addConfig = {
 export const dataEditProspect = {
   creditProspect: "Prospecto de crédito",
   destination: "Destino",
-  value: "Valor solicitado/giro",
+  value: "Valor solicitado",
   delete: "Eliminar prospecto",
   confirm: "Confirmar solicitud",
   errorCredit: "Error al obtener las solicitudes de crédito",
   errorProspect: "Error al obtener el prospecto",
   errorRemoveProspect: "No se ha podido eliminar el prospecto de crédito.",
+  errorRecalculate: "No se ha podido recalcular el prospecto.",
   deleteTitle: "Eliminar prospecto",
   deleteDescription: "¿Realmente deseas eliminar este prospecto de crédito?",
+  nextButton: "Eliminar",
+  backButton: "Cancelar",
 };
 
 export const titlesModal = {
@@ -59,4 +62,16 @@ export const labelsAndValuesShare = {
   fileName: "reporte_comercial.pdf",
   text: "Reporte Comercial para compartir",
   error: "No se pudo compartir el PDF",
+};
+
+export const labelsRecalculateSimulation = {
+  title: "Recalcular simulación",
+  description:
+    " La función “Recalcular simulación” no es reversible, se basa en un modelo optimizado y el comportamiento esperado incluye:",
+  list: {
+    itemOne: "Cambio en los datos del prospecto de forma automática.",
+  },
+  cancel: "Cancelar",
+  recalculate: "Recalcular",
+  button: "Recalcular simulación",
 };

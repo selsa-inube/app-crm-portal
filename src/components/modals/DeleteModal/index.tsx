@@ -8,10 +8,16 @@ export interface IDeleteModalProps {
   handleClose: () => void;
   handleDelete?: () => void;
   TextDelete: string;
+  isLoading?: boolean;
 }
 
 export function DeleteModal(props: IDeleteModalProps) {
-  const { handleClose, handleDelete = () => {}, TextDelete } = props;
+  const {
+    handleClose,
+    handleDelete = () => {},
+    TextDelete,
+    isLoading = false,
+  } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -24,6 +30,7 @@ export function DeleteModal(props: IDeleteModalProps) {
       handleClose={handleClose}
       initialDivider={false}
       width={isMobile ? "287px" : "402px"}
+      isLoading={isLoading}
     >
       <Text>{TextDelete}</Text>
     </BaseModal>

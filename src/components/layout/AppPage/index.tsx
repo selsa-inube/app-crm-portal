@@ -36,14 +36,15 @@ import {
 } from "./styles";
 import { useNavigationConfig } from "./config/apps.config";
 
-const renderLogo = (imgUrl: string) => {
+const renderLogo = (imgUrl: string, onTheFooter: boolean = false) => {
+  if (!imgUrl && !onTheFooter) return undefined;
+
   return (
     <StyledContentImg to="/home">
-      <StyledLogo src={imgUrl} />
+      <StyledLogo src={imgUrl} $onTheFooter={onTheFooter} />
     </StyledContentImg>
   );
 };
-
 interface IAppPage {
   showNav?: boolean;
 }
@@ -165,7 +166,7 @@ function AppPage(props: IAppPage) {
               logoURL={renderLogo(eventData.businessUnit.urlLogo)}
               {...(showMenuOnHeader && { navigation: useNavigationConfig() })}
               user={{
-                username: eventData.user.userName,
+                username: eventData.user.userAccount,
                 breakpoint: "848px",
                 client: eventData.businessUnit.abbreviatedName,
               }}
@@ -247,12 +248,8 @@ function AppPage(props: IAppPage) {
           </Grid>
         </StyledContainer>
 
-        <StyledFooter
-          $nav={isTablet}
-          isShowMenuOnHeader={showMenuOnHeader}
-          showNav={showNav}
-        >
-          {renderLogo(eventData.businessManager.urlBrand)}
+        <StyledFooter $nav={isTablet} $showNav={showNav}>
+          {renderLogo(eventData.businessManager.urlBrand, true)}
         </StyledFooter>
       </Grid>
     </StyledAppPage>

@@ -14,7 +14,7 @@ import { StyledContainer, StyledContainerClose } from "./styles";
 import { dataBaseModal } from "./config";
 
 export interface IBaseModalProps {
-  title: string;
+  title: string | React.ReactNode;
   children: JSX.Element | JSX.Element[];
   handleNext?: () => void;
   handleBack?: () => void;
@@ -34,6 +34,8 @@ export interface IBaseModalProps {
   initialDivider?: boolean;
   finalDivider?: boolean;
   portalId?: string;
+  isLoading?: boolean;
+  marginsMobile?: boolean;
 }
 
 export function BaseModal(props: IBaseModalProps) {
@@ -58,6 +60,8 @@ export function BaseModal(props: IBaseModalProps) {
     initialDivider = true,
     finalDivider = false,
     portalId = "portal",
+    isLoading = false,
+    marginsMobile = false,
   } = props;
 
   function getOrCreatePortalNode(id: string): HTMLElement {
@@ -76,7 +80,7 @@ export function BaseModal(props: IBaseModalProps) {
 
   return createPortal(
     <Blanket>
-      <StyledContainer>
+      <StyledContainer marginsMobile={marginsMobile}>
         <Stack
           direction="column"
           padding="24px"
@@ -127,6 +131,7 @@ export function BaseModal(props: IBaseModalProps) {
                 iconBefore={iconBeforeNext}
                 appearance={apparenceNext}
                 variant={variantNext}
+                loading={isLoading}
               >
                 {nextButton}
               </Button>

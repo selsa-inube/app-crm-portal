@@ -17,19 +17,29 @@ export const StyledArrowBack = styled.div`
 
 export const StyledMarginPrint = styled.div`
   @media print {
-    @page {
-      margin: 1in 0.6in 1in 0.75in;
-    }
-    margin: -28px 0 0 0;
+    gap: 0px !important;
+    min-width: 100% !important;
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+
+  page-break-inside: avoid;
+`;
+
+export const StyledPrintContainerHeader = styled.div`
+  page-break-inside: avoid;
+
+  @media print {
+    min-width: 100% !important;
+    overflow-y: visible !important;
   }
 `;
 
 export const StyledScrollPrint = styled.div`
   @media print {
-    ::-webkit-scrollbar {
-      display: none;
-    }
-
-    overflow: hidden !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    min-width: 100% !important;
+    overflow-y: visible !important;
   }
 `;

@@ -6,7 +6,7 @@ export const titleButtonTextAssited = {
   submitText: "Radicar",
 };
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;
@@ -65,6 +65,7 @@ export interface IDebtorDetail {
   relation: string;
   debtorDetail?: Record<string, never>;
   type?: string;
+  borrowerProperties?: Record<string, never>;
 }
 export interface IFormData {
   contactInformation: IContactInformation;

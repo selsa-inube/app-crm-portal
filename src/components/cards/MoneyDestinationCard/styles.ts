@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { inube } from "@inubekit/inubekit";
 
 export const StyledMoneyDestinationCard = styled.label`
-  width: 318px;
+  width: 310px;
   min-width: 200px;
   & div:nth-child(1) {
     border-radius: 8px;

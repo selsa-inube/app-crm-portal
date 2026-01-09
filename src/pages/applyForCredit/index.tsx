@@ -5,8 +5,6 @@ import { useMediaQuery } from "@inubekit/inubekit";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { postSubmitCredit } from "@services/creditRequest/submitCredit";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
-import { getMonthsElapsed } from "@utils/formatData/currency";
 import { getSearchProspectByCode } from "@services/prospect/SearchAllProspects";
 import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
 import {
@@ -16,17 +14,17 @@ import {
 } from "@services/prospect/types";
 import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
 import { IDocumentsCredit } from "@services/creditRequest/types";
+import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
-import { ICondition, IFormData, Irule } from "./types";
-import { evaluateRule } from "./evaluateRule";
-import { ruleConfig } from "./config/configRules";
+import { IFormData } from "./types";
 import {
   dataSubmitApplication,
   prospectStates,
   tittleOptions,
 } from "./config/config";
+import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -40,15 +38,21 @@ export function ApplyForCredit() {
     useState<IProspectSummaryById>();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [creditRequestCode, setCreditRequestCode] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const customerPublicCode: string = customerData.publicCode;
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
+
+  if (!businessManagerCode && codeError === null) {
+    setCodeError(1003);
+  } else if (!customerPublicCode && codeError === null) {
+    setCodeError(400);
+  }
 
   const dataHeader = {
     name: customerData?.fullName ?? "",
@@ -58,6 +62,7 @@ export function ApplyForCredit() {
   };
 
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(true);
+  const [modesOfDisbursement, setModesOfDisbursement] = useState<string[]>([]);
   const [prospectData, setProspectData] = useState<IProspect>({
     prospectId: "",
     prospectCode: "",
@@ -84,10 +89,6 @@ export function ApplyForCredit() {
     creditProducts: [],
     outlays: [],
   });
-
-  const [valueRule, setValueRule] = useState<{ [ruleName: string]: string[] }>(
-    {},
-  );
 
   const [formData, setFormData] = useState<IFormData>({
     contactInformation: {
@@ -207,28 +208,20 @@ export function ApplyForCredit() {
     observations: { relevantObservations: "" },
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [guaranteesRequired, setGuaranteesRequired] = useState<string[]>([]);
 
   const hasBorrowers = Object.keys(prospectData?.borrowers || {}).length;
 
   const bondValue = prospectData.bondValue;
-  const getRuleByName = useCallback(
-    (ruleName: string) => {
-      const raw = valueRule?.[ruleName] || [];
-      return raw
-        .map((v: string | { value: string }) =>
-          typeof v === "string" ? v : v?.value,
-        )
-        .filter(Boolean);
-    },
-    [valueRule],
-  );
 
   const steps = useMemo(() => {
-    if (!valueRule) return Object.values(stepsFilingApplication);
-    const hideMortgage = valueRule["ValidationGuarantee"]?.includes("Mortgage");
-    const hidePledge = valueRule["ValidationGuarantee"]?.includes("Pledge");
+    if (!guaranteesRequired) return Object.values(stepsFilingApplication);
+    const hideMortgage = guaranteesRequired.includes("Mortgage");
+    const hidePledge = guaranteesRequired.includes("Pledge");
     const hasCoborrower =
-      valueRule["ValidationCoborrower"]?.includes("Codeudor") ?? false;
+      guaranteesRequired.includes("Coborower") ||
+      guaranteesRequired.includes("Borrower");
+    const hasBond = guaranteesRequired.includes("Bond") ?? false;
 
     return Object.values(stepsFilingApplication)
       .map((step) => {
@@ -243,16 +236,15 @@ export function ApplyForCredit() {
         return step;
       })
       .filter((step) => {
-        if (step.id === 3 && hasBorrowers === 1 && hasCoborrower === false)
-          return false;
-        if (step.id === 4 && hideMortgage) return false;
-        if (step.id === 5 && hidePledge) return false;
-        if (step.id === 6 && (hasBorrowers >= 1 || bondValue === 0)) {
+        if (step.id === 3 && hasBorrowers === 1 && !hasCoborrower) return false;
+        if (step.id === 4 && !hideMortgage) return false;
+        if (step.id === 5 && !hidePledge) return false;
+        if (step.id === 6 && (hasBorrowers >= 2 || !hasBond)) {
           return false;
         }
         return true;
       });
-  }, [valueRule, hasBorrowers, bondValue]);
+  }, [guaranteesRequired, hasBorrowers, bondValue]);
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsFilingApplication.generalInformation.id,
@@ -264,6 +256,7 @@ export function ApplyForCredit() {
     vehicleOffered,
     disbursementGeneral,
     attachedDocuments,
+    observations,
   } = formData;
 
   const submitData = new FormData();
@@ -299,6 +292,10 @@ export function ApplyForCredit() {
   submitData.append(
     "clientName",
     `${contactInformation.name} ${contactInformation.lastName}`,
+  );
+  submitData.append(
+    "clientManagerObservation",
+    observations.relevantObservations,
   );
   submitData.append("clientPhoneNumber", contactInformation.phone.toString());
   submitData.append(
@@ -349,7 +346,7 @@ export function ApplyForCredit() {
   submitData.append("documents", JSON.stringify(metadataArray));
 
   const guarantees = [];
-  if (getRuleByName("ValidationGuarantee")?.includes("Mortgage")) {
+  if (guaranteesRequired.includes("Mortgage")) {
     guarantees.push({
       guaranteeType: "mortgage",
       transactionOperation: "Insert",
@@ -364,7 +361,7 @@ export function ApplyForCredit() {
       ],
     });
   }
-  if (getRuleByName("ValidationGuarantee")?.includes("Pledge")) {
+  if (guaranteesRequired.includes("Pledge")) {
     guarantees.push({
       guaranteeType: "pledge",
       transactionOperation: "Insert",
@@ -408,18 +405,22 @@ export function ApplyForCredit() {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         businessManagerCode,
-        userAccount,
+        eventData.user.identificationDocumentNumber || "",
         submitData,
       );
-      console.log("Solicitud enviada con éxito:", response);
-      setSentModal(false);
+
+      setCreditRequestCode(response?.creditRequestCode || "");
       setApprovedRequestModal(true);
     } catch (error) {
+      console.error("error: ", error);
       setSentModal(false);
       handleFlag();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -438,15 +439,9 @@ export function ApplyForCredit() {
         prospectCode || "",
       );
 
-      if (prospect && typeof prospect === "object") {
-        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
-          setProspectData(prospect);
-        }
-      }
       const mainBorrower = prospect.borrowers.find(
         (borrower) => borrower.borrowerType === "MainBorrower",
       );
-
       if (mainBorrower?.borrowerIdentificationNumber !== customerPublicCode) {
         setCodeError(1011);
         return;
@@ -454,163 +449,116 @@ export function ApplyForCredit() {
 
       if (prospect.state !== prospectStates.CREATED) {
         setCodeError(1012);
-        return;
+      }
+
+      if (prospect && typeof prospect === "object") {
+        if (JSON.stringify(prospect) !== JSON.stringify(prospectData)) {
+          setProspectData(prospect);
+        }
       }
     } catch (error) {
       setCodeError(1010);
     }
   }, [businessUnitPublicCode, customerPublicCode, prospectCode, prospectData]);
 
-  const cleanConditions = (
-    rule: Irule | null | undefined,
-  ): Irule | null | undefined => {
-    if (!rule) return rule;
-
-    const cleaned = { ...rule };
-
-    if (Array.isArray(cleaned.conditions)) {
-      const hasValidCondition = cleaned.conditions.some(
-        (c: ICondition) =>
-          c.value !== undefined && c.value !== null && c.value !== "",
-      );
-      if (!hasValidCondition) {
-        Reflect.deleteProperty(cleaned, "conditions");
+  useEffect(() => {
+    const fetchDisbursementData = async () => {
+      if (
+        !prospectData.borrowers?.[0]?.borrowerIdentificationNumber ||
+        !prospectData.creditProducts?.[0]?.lineOfCreditAbbreviatedName ||
+        !prospectData.moneyDestinationAbbreviatedName
+      ) {
+        return;
       }
-    }
-    return cleaned;
-  };
-  const fetchValidationRules = useCallback(async () => {
-    const rulesToCheck = [
-      "ModeOfDisbursementType",
-      "ValidationGuarantee",
-      "ValidationCoBorrower",
-    ];
-    const notDefinedRules: string[] = [];
-    await Promise.all(
-      rulesToCheck.map(async (ruleName) => {
-        try {
-          const rule = cleanConditions(ruleConfig[ruleName]?.({}));
-          if (!rule) return notDefinedRules.push(ruleName);
-          await evaluateRule(
-            rule,
-            postBusinessUnitRules,
-            "value",
-            businessUnitPublicCode,
-            businessManagerCode,
-          );
-        } catch (error) {
-          const apiError = error as { response?: { status?: number } };
-          if (apiError?.response?.status === 400) {
-            notDefinedRules.push(ruleName);
-          }
-        }
-      }),
-    );
 
-    if (notDefinedRules.length >= 1) {
-      setCodeError(1013);
-      setAddToFix(notDefinedRules);
-    }
-  }, [businessUnitPublicCode]);
+      try {
+        const creditData = await getSearchAllModesOfDisbursementTypes(
+          businessUnitPublicCode,
+          businessManagerCode,
+          prospectData.borrowers[0].borrowerIdentificationNumber,
+          prospectData.creditProducts[0].lineOfCreditAbbreviatedName,
+          prospectData.moneyDestinationAbbreviatedName,
+          prospectData.creditProducts[0].loanAmount.toString(),
+        );
+
+        if (codeError) return;
+
+        if (
+          creditData?.modesOfDisbursementTypes &&
+          creditData.modesOfDisbursementTypes.length > 0
+        ) {
+          setModesOfDisbursement(creditData.modesOfDisbursementTypes);
+          setCodeError(null);
+          setAddToFix([]);
+        } else {
+          setModesOfDisbursement([]);
+          setCodeError(1014);
+          setAddToFix(["ModeOfDisbursementType"]);
+        }
+      } catch (error) {
+        setModesOfDisbursement([]);
+        setCodeError(1014);
+        setAddToFix(["ModeOfDisbursementType"]);
+      }
+    };
+
+    fetchDisbursementData();
+  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
 
   useEffect(() => {
     if (!customerData || !customerPublicCode) return;
     fetchProspectData();
   }, [customerData, fetchProspectData]);
 
-  useEffect(() => {
-    if (!customerData || !prospectData) return;
-    fetchValidationRules();
-  }, [customerData, prospectData, fetchValidationRules]);
-
-  const fetchValidationRulesData = useCallback(async () => {
-    const clientInfo = customerData?.generalAttributeClientNaturalPersons?.[0];
-    const creditProducts = prospectData?.creditProducts;
-
-    if (!clientInfo.associateType || !creditProducts?.length || !prospectData)
-      return;
-
-    const dataRulesBase = {
-      ClientType: clientInfo.associateType?.substring(0, 1) || "",
-
-      PrimaryIncomeType: "",
-      AffiliateSeniority: getMonthsElapsed(
-        customerData.generalAssociateAttributes?.[0]?.affiliateSeniorityDate,
-        0,
-      ),
-    };
-
-    const rulesValidate = [
-      "ModeOfDisbursementType",
-      "ValidationGuarantee",
-      "ValidationCoBorrower",
-    ];
-
-    for (const product of creditProducts) {
-      if (!product || typeof product !== "object") continue;
-
-      const dataRules = {
-        ...dataRulesBase,
-        LineOfCredit: product.lineOfCreditAbbreviatedName,
-        LoanAmount: product.loanAmount,
-      };
-      await Promise.all(
-        rulesValidate.map(async (ruleName) => {
-          const rule = ruleConfig[ruleName]?.(dataRules);
-          if (!rule) return;
-
-          try {
-            const values = await evaluateRule(
-              rule,
-              postBusinessUnitRules,
-              "value",
-              businessUnitPublicCode,
-              businessManagerCode,
-            );
-            const extractedValues = Array.isArray(values)
-              ? values
-                  .map((v) =>
-                    typeof v === "string" ? v : (v?.valuesAvailable ?? ""),
-                  )
-                  .filter((val): val is string => val !== "")
-              : [];
-
-            if (
-              ruleName === "ModeOfDisbursementType" &&
-              extractedValues.length === 0
-            ) {
-              setCodeError(1014);
-              setAddToFix([ruleName]);
-              return;
-            }
-            setValueRule((prev) => {
-              const current = prev[ruleName] || [];
-              const merged = [...current, ...extractedValues];
-              const unique = Array.from(new Set(merged));
-              return { ...prev, [ruleName]: unique };
-            });
-          } catch (error: unknown) {
-            if (ruleName === "ModeOfDisbursementType") {
-              setCodeError(1014);
-              setAddToFix([ruleName]);
-              return;
-            }
-            console.error(
-              `Error evaluando ${ruleName} para producto`,
-              product,
-              error,
-            );
-          }
-        }),
+  const fetchGuaranteesRequired = useCallback(async () => {
+    try {
+      const response = await getGuaranteesRequiredByCreditProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        prospectCode || "",
       );
+
+      if (!response) {
+        setGuaranteesRequired([]);
+        return;
+      }
+
+      let warrantiesArray: string[] = [];
+
+      if (Array.isArray(response)) {
+        warrantiesArray = response
+          .map((item) => item.warranty?.trim())
+          .filter(
+            (warranty): warranty is string =>
+              warranty !== undefined && warranty !== null && warranty !== "",
+          );
+      } else if (response.warranty) {
+        if (Array.isArray(response.warranty)) {
+          warrantiesArray = response.warranty
+            .map((item) => item.warranty?.trim())
+            .filter(
+              (warranty): warranty is string =>
+                warranty !== undefined && warranty !== null && warranty !== "",
+            );
+        } else if (typeof response.warranty === "string") {
+          warrantiesArray = response.warranty
+            .split(",")
+            .map((item) => item.trim())
+            .filter((item) => item !== "");
+        }
+      }
+      setGuaranteesRequired(warrantiesArray);
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(dataSubmitApplication.error);
     }
-  }, [customerData, prospectData, businessUnitPublicCode]);
+  }, [businessUnitPublicCode, businessManagerCode, prospectCode]);
 
   useEffect(() => {
-    if (customerData && prospectData) {
-      fetchValidationRulesData();
+    if (prospectData?.prospectId) {
+      fetchGuaranteesRequired();
     }
-  }, [customerData, prospectData, fetchValidationRulesData]);
+  }, [prospectData?.prospectId, fetchGuaranteesRequired]);
 
   const handleFormChange = (updatedValues: Partial<IFormData>) => {
     setFormData((prev) => {
@@ -648,7 +596,7 @@ export function ApplyForCredit() {
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
-  const currentStepsNumber = {
+  const currentStepNumber = {
     ...steps[currentStepIndex],
     number: currentStepIndex + 1,
   };
@@ -665,7 +613,7 @@ export function ApplyForCredit() {
         }
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(JSON.stringify(error));
+        setMessageError(tittleOptions.errorSummaryProspect);
       }
     };
 
@@ -704,7 +652,7 @@ export function ApplyForCredit() {
         handleNextStep={handleNextStep}
         handlePreviousStep={handlePreviousStep}
         setCurrentStep={setCurrentStep}
-        currentStepsNumber={currentStepsNumber}
+        currentStepNumber={currentStepNumber}
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         setShowErrorModal={setShowErrorModal}
@@ -714,7 +662,6 @@ export function ApplyForCredit() {
         customerData={customerData}
         codeError={codeError}
         addToFix={addToFix}
-        getRuleByName={getRuleByName}
         prospectSummaryData={prospectSummaryData}
         isModalOpen={isModalOpen}
         showErrorModal={showErrorModal}
@@ -722,6 +669,10 @@ export function ApplyForCredit() {
         setIsModalOpen={setIsModalOpen}
         businessUnitPublicCode={businessUnitPublicCode}
         setMessageError={setMessageError}
+        creditRequestCode={creditRequestCode}
+        modesOfDisbursement={modesOfDisbursement}
+        guaranteesRequired={guaranteesRequired}
+        loading={loading}
       />
     </>
   );

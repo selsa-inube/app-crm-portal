@@ -9,8 +9,11 @@ interface IStyledCollapseIcon {
 
 interface IStyledFooter {
   $nav: boolean;
-  isShowMenuOnHeader: boolean;
-  showNav: boolean;
+  $showNav: boolean;
+}
+
+interface IStyledLogo {
+  $onTheFooter: boolean;
 }
 
 export const StyledAppPage = styled.div`
@@ -21,9 +24,13 @@ export const StyledAppPage = styled.div`
 export const StyledContainer = styled.div`
   display: inherit;
   overflow: hidden;
-
+  @media (max-width: 1024px) {
+    overflow-y: auto;
+  }
   @media print {
     overflow: visible !important;
+    height: auto !important;
+    width: 100% !important;
   }
 `;
 
@@ -32,17 +39,21 @@ export const StyledMain = styled.main`
   flex-direction: column;
   height: 100dvh;
   overflow-y: auto;
+  @media (max-width: 1024px) {
+    height: calc(100dvh - 50px);
+  }
 `;
 
 export const StyledContentImg = styled(Link)`
-  width: 100px;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
-export const StyledLogo = styled.img`
-  with: 100%;
-  height: 100%;
+export const StyledLogo = styled.img<IStyledLogo>`
+  max-width: 130px;
+  justify-self: center;
+  height: ${({ $onTheFooter }) => ($onTheFooter ? "50px" : "100%")};
   object-fit: contain;
 `;
 
@@ -93,16 +104,19 @@ export const StyledCollapse = styled.div`
 `;
 
 export const StyledFooter = styled.footer<IStyledFooter>`
-  display: ${({ showNav }) => (!showNav ? "none" : "inline-flex")};
   justify-content: center;
   align-content: center;
   align-items: center;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
-  width: ${({ $nav }) => ($nav ? "auto" : "200px")};
+  width: ${({ $showNav, $nav }) => ($showNav && !$nav ? "200px" : "auto")};
   height: 50px;
   top: -50px;
   position: relative;
+
+  & > a {
+    height: 40px;
+  }
 `;
 
 export const StyledPrint = styled.div`

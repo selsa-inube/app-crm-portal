@@ -19,7 +19,6 @@ import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import { DocumentViewer } from "../DocumentViewer";
 import {
@@ -31,6 +30,7 @@ import {
   StyledModal,
 } from "./styles";
 import { listModalData } from "./config";
+import { TruncatedText } from "../TruncatedTextModal";
 
 export interface IOptionButtons {
   label: string;
@@ -56,9 +56,9 @@ export interface IListdataProps {
 export interface IListModalProps {
   title: string;
   buttonLabel: string;
-  uploadedFiles: IFile[];
+  uploadedFiles?: IFile[];
   handleClose: () => void;
-  setUploadedFiles: (files: IFile[]) => void;
+  setUploadedFiles?: (files: IFile[]) => void;
   onlyDocumentReceived?: boolean;
   nameRuleValue?: string;
   handleSubmit?: () => void;
@@ -132,7 +132,16 @@ export const ListModal = (props: IListModalProps) => {
     url: string;
   }>({ name: "", url: "" });
 
+  const activePendingFiles = pendingFiles.filter(
+    (file) => !file.selectedToDelete,
+  );
+
+  const activeUploadedFiles =
+    uploadedFiles?.filter((file) => !file.selectedToDelete) || [];
+
   useEffect(() => {
+    if (!uploadedFiles) return;
+
     if (pendingFiles.length === 1 && uploadedFiles?.length > 0) {
       keepUploadedFiles();
     }
@@ -173,7 +182,7 @@ export const ListModal = (props: IListModalProps) => {
       <StyledDocuments>
         {data?.map((element) => (
           <StyledItem key={element.id}>
-            <Text>{truncateTextToMaxLength(element.name, maxLength)}</Text>
+            <TruncatedText text={element.name} maxLength={maxLength} />
             <Icon
               icon={icon}
               appearance="dark"
@@ -268,14 +277,11 @@ export const ListModal = (props: IListModalProps) => {
 
   const isDisabled = () => {
     if (onlyDocumentReceived) {
-      const totalFiles = pendingFiles.length + (uploadedFiles?.length || 0);
+      const totalFiles = activePendingFiles.length + activeUploadedFiles.length;
       return totalFiles < 1;
     }
 
-    return (
-      pendingFiles.length === 0 &&
-      (!uploadedFiles || uploadedFiles.length === 0)
-    );
+    return activePendingFiles.length === 0 && activeUploadedFiles.length === 0;
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -356,6 +362,8 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const onDeleteOneFile = (id: string) => {
+    if (!setUploadedFiles || !uploadedFiles) return;
+
     const newUploadedFiles = uploadedFiles.map((file: IFile) => {
       if (file.id === id) {
         return { ...file, selectedToDelete: true };
@@ -381,6 +389,8 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const keepUploadedFiles = () => {
+    if (!setUploadedFiles || !uploadedFiles) return;
+
     const updatedUploadedFiles = markFilesAsUploaded(uploadedFiles);
     const mergedFiles = [...updatedUploadedFiles, ...pendingFiles];
 
@@ -389,6 +399,8 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const handleCancelDeleteFile = () => {
+    if (!setUploadedFiles || !uploadedFiles) return;
+
     const cancelDeleteUploadedFiles = markFilesProcessDelete(
       uploadedFiles,
       false,
@@ -402,23 +414,24 @@ export const ListModal = (props: IListModalProps) => {
     setUploadedFiles([...cancelDeleteUploadedFiles, ...returnFilesUploaded]);
   };
   const handleCancel = () => {
-    if (!pendingFiles) return;
+    if (setUploadedFiles && uploadedFiles && pendingFiles) {
+      const alreadyFilesMarkedAsUploaded = pendingFiles.filter(
+        (file) => file.wasAlreadyAttached,
+      );
+      let mergedFiles = [...alreadyFilesMarkedAsUploaded, ...uploadedFiles];
 
-    const alreadyFilesMarkedAsUploaded = pendingFiles.filter(
-      (file) => file.wasAlreadyAttached,
-    );
-    let mergedFiles = [...alreadyFilesMarkedAsUploaded, ...uploadedFiles];
+      mergedFiles = markFilesJustUploaded(mergedFiles);
 
-    mergedFiles = markFilesJustUploaded(mergedFiles);
+      setUploadedFiles(mergedFiles);
+      handleCancelDeleteFile();
+      setPendingFiles([]);
+    }
 
-    setUploadedFiles(mergedFiles);
-    handleCancelDeleteFile();
-    setPendingFiles([]);
     handleClose();
   };
 
   const deleteFilesUploaded = () => {
-    if (!uploadedFiles) return;
+    if (!uploadedFiles || !setUploadedFiles) return;
     const newUploadedFiles = uploadedFiles.filter(
       (file) => !file.selectedToDelete,
     );
@@ -515,7 +528,7 @@ export const ListModal = (props: IListModalProps) => {
               <Text size="medium" appearance="gray">
                 {listModalData.maximum}
               </Text>
-              {Array.isArray(pendingFiles) && pendingFiles.length > 0 ? (
+              {activePendingFiles.length > 0 ? (
                 <>
                   <Divider dashed />
                   <Stack direction="column" gap="24px">
@@ -549,7 +562,7 @@ export const ListModal = (props: IListModalProps) => {
                                   fileInputRef.current.value = "";
                                 }
                               }}
-                              uploadedFiles={uploadedFiles}
+                              uploadedFiles={uploadedFiles || []}
                               setSelectedDocument={setSelectedDocument}
                               setOpenViewer={setOpenViewer}
                               isMobile={isMobile}
@@ -567,7 +580,7 @@ export const ListModal = (props: IListModalProps) => {
                 </>
               ) : (
                 Array.isArray(uploadedFiles) &&
-                uploadedFiles.length > 0 && (
+                activeUploadedFiles.length > 0 && (
                   <>
                     <Divider dashed />
                     <Stack direction="column" gap="24px">

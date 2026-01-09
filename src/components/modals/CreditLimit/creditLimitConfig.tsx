@@ -1,3 +1,7 @@
+import { Stack, SkeletonLine } from "@inubekit/inubekit";
+
+import { StyledList } from "./styles";
+
 export const creditLimitTexts = {
   close: "Cerrar",
   maxPaymentCapacity: "Tope máx. para Crédito vacacional",
@@ -20,3 +24,22 @@ export const creditLimitTexts = {
       "No se pudieron cargar los datos. Por favor, intente nuevamente más tarde.",
   },
 };
+
+export const renderSkeletons = () => (
+  <StyledList>
+    <Stack direction="column" gap="12px" height="160px">
+      {Array.from({ length: 5 }).map(() => (
+        <>
+          <Stack justifyContent="space-between" alignItems="center">
+            <SkeletonLine width="60%" height="24px" animated={true} />
+
+            <Stack alignItems="center" gap="10px">
+              <SkeletonLine width="80px" height="24px" animated={true} />
+              <SkeletonLine width="16px" height="16px" animated={true} />
+            </Stack>
+          </Stack>
+        </>
+      ))}
+    </Stack>
+  </StyledList>
+);

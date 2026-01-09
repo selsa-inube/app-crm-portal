@@ -6,5 +6,4 @@ interface IStyledArrowBack {
 
 export const StyledArrowBack = styled.div<IStyledArrowBack>`
   cursor: pointer;
-  width: ${($isMobile) => ($isMobile ? "100px" : "500px")};
 `;

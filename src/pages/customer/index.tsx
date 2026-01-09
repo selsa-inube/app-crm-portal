@@ -1,13 +1,14 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IOption, useMediaQuery } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 
 import { CustomerUI } from "./interface";
-import { EErrorMessages } from "./config";
+import { EErrorMessages, VALIDATE_BLANK_SPACES_REGEX } from "./config";
 import { isValidUpperCaseName, isNumericString } from "./utils";
 
 export function Customer() {
@@ -15,7 +16,11 @@ export function Customer() {
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [errorCode, setErrorCode] = useState<number | null>(null);
 
+  const { user } = useIAuth();
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -27,26 +32,37 @@ export function Customer() {
 
   const handleSearch = async (value: string) => {
     try {
-      if (value.length < 3) {
+      if (value.length < 1) {
         setOptions([]);
         return;
       }
 
+      const formattedValue = value.replace(VALIDATE_BLANK_SPACES_REGEX, "%");
+
       let response = null;
-      if (isNumericString(value)) {
-        response = await getCustomerCatalog(
-          businessUnitPublicCode,
-          businessManagerCode,
-          "",
-          value,
-        );
-      } else if (isValidUpperCaseName(value)) {
-        response = await getCustomerCatalog(
-          businessUnitPublicCode,
-          businessManagerCode,
-          value,
-          "",
-        );
+      try {
+        setLoading(true);
+        if (isNumericString(value)) {
+          response = await getCustomerCatalog(
+            businessUnitPublicCode,
+            businessManagerCode,
+            "",
+            formattedValue,
+          );
+        } else if (isValidUpperCaseName(value)) {
+          response = await getCustomerCatalog(
+            businessUnitPublicCode,
+            businessManagerCode,
+            formattedValue,
+            "",
+          );
+        }
+      } catch (error) {
+        setShowError(true);
+        setErrorCode(500);
+        setMessageError(EErrorMessages.BackendError);
+      } finally {
+        setLoading(false);
       }
 
       if (response && Array.isArray(response) && response.length > 0) {
@@ -55,17 +71,9 @@ export function Customer() {
           label: `${item.publicCode} - ${item.fullName}`.toUpperCase(),
           value: item.publicCode,
         }));
-        setOptions(mappedOptions);
+        setShowError(false);
 
-        setTimeout(() => {
-          const clickable = selectRef.current?.querySelector("input");
-          if (clickable) {
-            clickable.focus();
-            clickable.dispatchEvent(
-              new KeyboardEvent("keyup", { bubbles: true }),
-            );
-          }
-        }, 50);
+        setOptions(mappedOptions);
       } else {
         setOptions([]);
       }
@@ -76,9 +84,10 @@ export function Customer() {
     }
   };
 
-  const handleChangeAutocomplete = (_: unknown, value: string | null) => {
+  const handleChangeAutocomplete = (__: string, value: string | null) => {
     const upperValue = value?.toUpperCase() || "";
     setInputValue(upperValue);
+
     setShowError(false);
     if (!value) {
       setOptions([]);
@@ -91,6 +100,11 @@ export function Customer() {
       return;
     }
     handleSearch(inputValue);
+
+    const isValidOption = options.some(
+      (option) => option.value === inputValue || option.label === inputValue,
+    );
+    setIsValid(isValidOption);
   }, [inputValue]);
 
   const navigate = useNavigate();
@@ -112,8 +126,64 @@ export function Customer() {
   };
 
   useEffect(() => {
-    handleSearch(inputValue);
-  }, [businessUnitSigla]);
+    if (inputValue === "") {
+      setIsValid(false);
+    }
+    if (selectRef.current) {
+      const inputIsEmpty = !inputValue || inputValue.trim() === "";
+      const optionsAreEmpty = options.length === 0;
+
+      if (inputIsEmpty && !optionsAreEmpty) return;
+
+      const isAlreadySelected = options.some(
+        (option) => option.value === inputValue || option.label === inputValue,
+      );
+
+      if (isAlreadySelected) return;
+
+      const inputElement = selectRef.current.querySelector("input");
+
+      if (inputElement) {
+        const isFocused = document.activeElement === inputElement;
+
+        if (!inputIsEmpty && !isFocused) return;
+
+        const event = new KeyboardEvent("keyup", {
+          key: "ArrowDown",
+          code: "ArrowDown",
+          keyCode: 40,
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        });
+
+        inputElement.dispatchEvent(event);
+      }
+    }
+  }, [options, businessUnitSigla, inputValue]);
+
+  useEffect(() => {
+    if (businessUnitPublicCode === "") {
+      setErrorCode(1003);
+      setShowError(true);
+    }
+  }, [businessUnitPublicCode]);
+
+  const redirectErrorPage = () => {
+    switch (errorCode) {
+      case 500:
+        setInputValue("");
+        setOptions([]);
+        setShowError(false);
+        setMessageError("");
+        setLoading(false);
+        setIsValid(false);
+        break;
+      case 1003:
+        navigate(`/login/${user.username}/business-units/select-business-unit`);
+        break;
+    }
+  };
 
   return (
     <CustomerUI
@@ -125,6 +195,10 @@ export function Customer() {
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
       messageError={messageError}
+      loading={loading}
+      isValid={isValid}
+      redirectErrorPage={redirectErrorPage}
+      errorCode={errorCode}
     />
   );
 }

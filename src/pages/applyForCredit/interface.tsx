@@ -28,12 +28,13 @@ import {
   IProspectSummaryById,
 } from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import {
   IBorrowerData,
   IFormData,
   IStep,
-  StepDetails,
+  IStepDetails,
   titleButtonTextAssited,
 } from "./types";
 import {
@@ -58,7 +59,7 @@ import { tittleOptions } from "./config/config";
 
 interface ApplyForCreditUIProps {
   currentStep: number;
-  currentStepsNumber: StepDetails;
+  currentStepNumber: IStepDetails;
   steps: IStep[];
   isCurrentFormValid: boolean;
   formData: IFormData;
@@ -70,7 +71,6 @@ interface ApplyForCreditUIProps {
   numberProspectCode: string;
   dataHeader: { name: string; status: string; image?: string };
   businessManagerCode: string;
-  getRuleByName: (name: string) => string[];
   prospectSummaryData?: IProspectSummaryById;
   setSentModal: React.Dispatch<React.SetStateAction<boolean>>;
   setApprovedRequestModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -80,6 +80,7 @@ interface ApplyForCreditUIProps {
   handlePreviousStep: () => void;
   handleSubmitClick: () => void;
   handleSubmit: () => void;
+  loading: boolean;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   businessUnitPublicCode: string;
   setIsCurrentFormValid: React.Dispatch<React.SetStateAction<boolean>>;
@@ -87,14 +88,17 @@ interface ApplyForCreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  creditRequestCode?: string;
+  modesOfDisbursement: string[];
   customerData?: ICustomerData;
   codeError?: number | null;
   addToFix?: string[];
+  guaranteesRequired: string[];
 }
 
 export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   const {
-    currentStepsNumber,
+    currentStepNumber,
     currentStep,
     steps,
     isCurrentFormValid,
@@ -106,7 +110,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     sentModal,
     approvedRequestModal,
     businessManagerCode,
-    getRuleByName,
     setSentModal,
     setApprovedRequestModal,
     handleFormChange,
@@ -125,6 +128,10 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     addToFix,
     businessUnitPublicCode,
     setMessageError,
+    creditRequestCode,
+    modesOfDisbursement,
+    guaranteesRequired,
+    loading,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -148,7 +155,11 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   }
 
   const handleRedirect = () => {
-    navigate(`/credit/prospects`);
+    if (codeError === 400 || codeError === 1003) {
+      navigate(`/clients/select-client/`);
+    } else {
+      navigate(`/credit/prospects`);
+    }
   };
   return (
     <>
@@ -161,8 +172,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
       ) : (
         <Stack
           direction="column"
-          width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin="0 auto"
+          width={isMobile ? "calc(100% - 5px)" : "min(100% - 40px, 1064px)"}
+          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
@@ -193,7 +204,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
               </Stack>
               <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>
                 <Assisted
-                  step={currentStepsNumber!}
+                  step={currentStepNumber!}
                   totalSteps={steps.length}
                   onBackClick={handlePreviousStep}
                   onNextClick={handleNextStep}
@@ -225,32 +236,51 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 </Stack>
               ) : (
                 <Stack gap="16px" width="100%" justifyContent="space-between">
-                  <Text
-                    type="body"
-                    size="medium"
-                    weight="bold"
-                    appearance="dark"
-                  >
-                    {`Prospecto ${prospectData.prospectCode}`}
-                  </Text>
+                  <Stack width="100%">
+                    <Text
+                      type="body"
+                      size="medium"
+                      weight="bold"
+                      appearance="dark"
+                    >
+                      {`${dataSubmitApplication.prospect} ${prospectData.prospectCode}`}
+                    </Text>
+                  </Stack>
                   <StyledSeparatorLine />
-                  <Text type="body" size="medium" appearance="gray">
-                    {`${dataSubmitApplication.cards.destination}
-        ${prospectData.moneyDestinationAbbreviatedName}`}
-                  </Text>
+                  <Stack width="100%" justifyContent="center">
+                    <TruncatedText
+                      text={`${dataSubmitApplication.cards.destination} ${prospectData.moneyDestinationAbbreviatedName}`}
+                      maxLength={30}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
+                  </Stack>
                   <StyledSeparatorLine />
-                  <Text type="body" size="medium" appearance="gray">
-                    {`Neto a girar: ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
-                  </Text>
+                  <Stack width="100%" justifyContent="center">
+                    <TruncatedText
+                      text={`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                      maxLength={30}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
+                  </Stack>
                   <StyledSeparatorLine />
-                  <Text type="body" size="medium" appearance="gray">
-                    {`Monto: ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
-                  </Text>
+                  <Stack width="100%" justifyContent="end">
+                    <TruncatedText
+                      text={`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                      maxLength={40}
+                      type="body"
+                      size="medium"
+                      appearance="gray"
+                    />
+                  </Stack>
                 </Stack>
               )}
 
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.generalInformation.id &&
                 customerData && (
                   <RequirementsNotMet
@@ -261,8 +291,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     businessManagerCode={businessManagerCode}
                   />
                 )}
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.contactInformation.id &&
                 customerData && (
                   <ContactInformation
@@ -275,25 +305,25 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     customerData={customerData}
                   />
                 )}
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.BorrowerData.id && (
                   <Borrowers
                     isMobile={isMobile}
                     onFormValid={setIsCurrentFormValid}
-                    initialValues={formData.borrowerData}
+                    initialValues={prospectData.borrowers}
                     handleOnChange={(values) =>
                       handleFormChange({
                         borrowerData: values as IBorrowerData,
                       })
                     }
                     prospectData={prospectData as IProspectBorrower}
-                    valueRule={getRuleByName("ValidationCoBorrower")}
+                    valueRule={guaranteesRequired}
                     businessManagerCode={businessManagerCode}
                   />
                 )}
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.propertyOffered.id && (
                   <PropertyOffered
                     isMobile={isMobile}
@@ -302,13 +332,11 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ propertyOffered: values })
                     }
-                    businessUnitPublicCode={businessUnitPublicCode}
-                    businessManagerCode={businessManagerCode}
                   />
                 )}
 
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.vehicleOffered.id && (
                   <VehicleOffered
                     isMobile={isMobile}
@@ -317,12 +345,10 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ vehicleOffered: values })
                     }
-                    businessUnitPublicCode={businessUnitPublicCode}
-                    businessManagerCode={businessManagerCode}
                   />
                 )}
-              {currentStepsNumber &&
-                currentStepsNumber.id === stepsFilingApplication.bail.id && (
+              {currentStepNumber &&
+                currentStepNumber.id === stepsFilingApplication.bail.id && (
                   <Bail
                     onFormValid={setIsCurrentFormValid}
                     initialValues={formData.bail}
@@ -332,8 +358,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     data={prospectData}
                   />
                 )}
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.disbursement.id &&
                 customerData && (
                   <DisbursementGeneral
@@ -348,12 +374,12 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     data={prospectData}
                     customerData={customerData}
                     identificationNumber={customerData?.publicCode || ""}
-                    rule={getRuleByName("ModeOfDisbursementType")}
                     prospectSummaryData={prospectSummaryData}
+                    modesOfDisbursement={modesOfDisbursement}
                   />
                 )}
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.attachedDocuments.id &&
                 customerData && (
                   <AttachedDocuments
@@ -367,8 +393,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     businessUnitPublicCode={businessUnitPublicCode}
                   />
                 )}
-              {currentStepsNumber &&
-                currentStepsNumber.id ===
+              {currentStepNumber &&
+                currentStepNumber.id ===
                   stepsFilingApplication.observations.id &&
                 customerData && (
                   <Observations
@@ -389,7 +415,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   variant="outlined"
                   appearance="gray"
                   onClick={handlePreviousStep}
-                  disabled={currentStepsNumber === steps[0]}
+                  disabled={currentStepNumber === steps[0]}
                 >
                   {titleButtonTextAssited.goBackText}
                 </Button>
@@ -415,10 +441,10 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
         ${prospectData.moneyDestinationAbbreviatedName}`}
                     </Text>
                     <Text type="body" size="medium" appearance="gray">
-                      {`Neto a girar: ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                      {`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
                     </Text>
                     <Text type="body" size="medium" appearance="gray">
-                      {`Monto: ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                      {`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
                     </Text>
                   </Stack>
                 </BaseModal>
@@ -429,14 +455,20 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 title={dataSubmitApplication.modals.file}
                 nextButton={dataSubmitApplication.modals.continue}
                 backButton={dataSubmitApplication.modals.cancel}
-                handleNext={handleSubmit}
+                handleNext={() => {
+                  handleSubmit();
+                }}
+                handleClose={() => {
+                  setSentModal(false);
+                }}
                 handleBack={() => setSentModal(false)}
                 width={isMobile ? "290px" : "402px"}
+                isLoading={loading}
               >
                 <Text type="body" size="large">
                   {dataSubmitApplication.modals.fileDescription.replace(
                     "{numberProspectCode}",
-                    `${prospectData?.prospectCode}` || "",
+                    `${prospectCode}` || "",
                   )}
                 </Text>
               </BaseModal>
@@ -453,7 +485,10 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     size="16px"
                   />
                 }
-                handleNext={() => setApprovedRequestModal(false)}
+                handleNext={() => {
+                  setApprovedRequestModal(false);
+                  navigate("/credit/credit-requests");
+                }}
                 handleClose={() => setApprovedRequestModal(false)}
                 width={isMobile ? "290px" : "402px"}
               >
@@ -468,7 +503,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       {dataSubmitApplication.modals.filed}
                     </Text>
                     <Text type="body" size="large" weight="bold">
-                      {prospectData?.prospectCode}
+                      {creditRequestCode}
                     </Text>
                   </Stack>
                   <Text type="body" size="medium" appearance="gray">

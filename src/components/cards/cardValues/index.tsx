@@ -1,6 +1,4 @@
-import { Stack, Icon, Text } from "@inubekit/inubekit";
-
-import { parseCunstomFormat } from "@utils/formatData/currency";
+import { Stack, Icon, Text, SkeletonLine } from "@inubekit/inubekit";
 
 import { Container, IconWrapper, ContentWrapper, StyledPrint } from "./styles";
 
@@ -20,6 +18,7 @@ export interface CardValuesProps {
   firstIcon?: React.ReactNode;
   showIcon?: boolean;
   showMiniIcons?: boolean;
+  isLoading?: boolean;
 }
 
 export function CardValues(props: CardValuesProps) {
@@ -32,6 +31,7 @@ export function CardValues(props: CardValuesProps) {
     handleView = () => {},
     showIcon = true,
     showMiniIcons = true,
+    isLoading = false,
   } = props;
 
   return (
@@ -57,9 +57,22 @@ export function CardValues(props: CardValuesProps) {
                 {item.title}
               </Text>
               <Stack gap="8px" alignItems="center">
-                <Text size="large" weight="bold" appearance="dark" type="body">
-                  {parseCunstomFormat(item.amount)}
-                </Text>
+                {isLoading ? (
+                  <SkeletonLine animated width="100px" />
+                ) : (
+                  <Text
+                    size="large"
+                    weight="bold"
+                    appearance="dark"
+                    type="body"
+                  >
+                    {Math.trunc(Number(item.amount)).toLocaleString("es-CO", {
+                      style: "currency",
+                      currency: "COP",
+                      minimumFractionDigits: 0,
+                    })}
+                  </Text>
+                )}
                 {item.miniIcon && showMiniIcons && (
                   <StyledPrint>
                     <Icon

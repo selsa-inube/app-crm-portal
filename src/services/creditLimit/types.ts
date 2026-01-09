@@ -8,7 +8,7 @@ export interface IPaymentCapacity {
   periodicSalary: number;
   personalBusinessUtilities: number;
   professionalFees: number;
-  livingExpenseToIncomeRatio: number;
+  livingExpenseToIncomeRatio?: number;
 }
 
 export interface IIncomeDetail {
@@ -84,4 +84,9 @@ export interface IMaximumCreditLimitAnalysis {
 export interface IMaximumCreditLimitByLineOfCredit {
   creditLimitCalculationMethodAbbreviatedName: string;
   creditLimitCalculationMethodValue: number;
+}
+
+export interface IMaximumCreditLimitByMoneyDestination {
+  creditLimitValue: number;
+  lineOfCredit: string;
 }

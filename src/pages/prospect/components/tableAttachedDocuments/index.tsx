@@ -11,9 +11,9 @@ import {
   Tr,
   Icon,
   Text,
-  useFlag,
   Stack,
-  Spinner,
+  SkeletonLine,
+  SkeletonIcon,
 } from "@inubekit/inubekit";
 
 import { ListModal } from "@components/modals/ListModal";
@@ -63,17 +63,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     lastEntryInPage,
   } = usePagination(ruleValues);
 
-  const { addFlag } = useFlag();
-
-  const handleFlag = () => {
-    addFlag({
-      title: `${dataReport.titleFlagDelete}`,
-      description: `${dataReport.descriptionFlagDelete}`,
-      appearance: "success",
-      duration: 5000,
-    });
-  };
-
   const handleOpenAttachment = (rowId: string) => {
     setCurrentRowId(rowId);
     setShowAttachments(true);
@@ -81,9 +70,11 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
 
   const handleSetUploadedFiles = (files: IFile[]) => {
     if (currentRowId) {
+      const cleanFiles = (files || []).filter((file) => !file.selectedToDelete);
+
       setUploadedFilesByRow({
         ...uploadedFilesByRow,
-        [currentRowId]: files || [],
+        [currentRowId]: cleanFiles,
       });
     }
   };
@@ -92,7 +83,6 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     const updated = { ...uploadedFilesByRow };
     delete updated[rowId];
     setUploadedFilesByRow(updated);
-    handleFlag();
   };
 
   const handleConfirmDelete = () => {
@@ -104,12 +94,11 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
   };
 
   const iconToShowOnActions = (rowIndex: number) => {
-    const hasNoFiles = uploadedFilesByRow[rowIndex];
-    return hasNoFiles === undefined || hasNoFiles.length === 0 ? (
-      <MdAttachFile />
-    ) : (
-      <MdOutlineEdit />
-    );
+    const rowFiles = uploadedFilesByRow[rowIndex] || [];
+
+    const activeFiles = rowFiles.filter((file) => !file.selectedToDelete);
+
+    return activeFiles.length === 0 ? <MdAttachFile /> : <MdOutlineEdit />;
   };
 
   const getTitleToModal = (rowId: string) => {
@@ -124,125 +113,111 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
 
   return (
     <>
-      {isLoading ? (
-        <Stack
-          direction="column"
-          gap="16px"
-          justifyContent="center"
-          alignItems="center"
-          padding="32px"
-          width="100%"
-        >
-          <Spinner size="large" appearance="primary" />
-          <Text type="title" size="medium" appearance="dark">
-            {dataReport.loading}
-          </Text>
-        </Stack>
-      ) : (
-        <Table tableLayout="auto">
-          <Thead>
-            <Tr>
-              {visibleHeaders.map((header, index) => (
+      <Table tableLayout="auto">
+        <Thead>
+          <Tr>
+            {visibleHeaders.map((header, index) =>
+              isLoading ? (
+                <Td key={index} type="custom" width="100%">
+                  <SkeletonIcon animated />
+                </Td>
+              ) : (
                 <Th key={index} action={header.action} align="center">
                   {header.label}
                 </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {(() => {
-              if (ruleValues.length === 0) {
-                return (
-                  <Tr>
-                    <Td
-                      colSpan={visibleHeaders.length}
-                      align="center"
-                      type="custom"
-                    >
-                      <Text
-                        size="large"
-                        type="label"
-                        appearance="gray"
-                        textAlign="center"
-                      >
-                        {dataReport.noData}
-                      </Text>
-                    </Td>
-                  </Tr>
-                );
-              } else {
-                return ruleValues.map(
-                  (row: IBorrowerDocumentRule, rowIndex: number) => (
-                    <Tr key={rowIndex}>
-                      {visibleHeaders.map((header, colIndex) => {
-                        const cellData =
-                          row[header.key as keyof { borrower: string }];
-                        const customColumn = [
-                          "download",
-                          "remove",
-                          "attached",
-                          "actions",
-                        ].includes(header.key);
-                        return (
-                          <Td
-                            key={colIndex}
-                            width={customColumn ? "70px" : "auto"}
-                            appearance={rowIndex % 2 === 0 ? "light" : "dark"}
-                            type={customColumn ? "custom" : "text"}
-                            align={"left"}
-                          >
-                            {(() => {
-                              if (header.key === "actions") {
-                                return (
-                                  <Stack justifyContent="space-around">
-                                    <Icon
-                                      icon={iconToShowOnActions(rowIndex)}
-                                      appearance="primary"
-                                      size="16px"
-                                      cursorHover
-                                      onClick={() =>
-                                        handleOpenAttachment(
-                                          rowIndex.toString(),
-                                        )
-                                      }
-                                    />
-                                  </Stack>
-                                );
-                              }
-                              return cellData;
-                            })()}
-                          </Td>
-                        );
-                      })}
-                    </Tr>
-                  ),
-                );
-              }
-            })()}
-          </Tbody>
-          {!isLoading && ruleValues.length > 0 && (
-            <Tfoot>
-              <Tr border="bottom">
-                <Td
-                  colSpan={visibleHeaders.length}
-                  type="custom"
-                  align="center"
-                >
-                  <Pagination
-                    firstEntryInPage={firstEntryInPage}
-                    lastEntryInPage={lastEntryInPage}
-                    totalRecords={totalRecords}
-                    handleStartPage={handleStartPage}
-                    handlePrevPage={handlePrevPage}
-                    handleNextPage={handleNextPage}
-                    handleEndPage={handleEndPage}
-                  />
-                </Td>
+              ),
+            )}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <Tr key={index}>
+                {visibleHeaders.map((_, colIndex) => (
+                  <Td key={colIndex} type="custom" width="100%">
+                    <SkeletonLine animated width="100%" />
+                  </Td>
+                ))}
               </Tr>
-            </Tfoot>
+            ))
+          ) : ruleValues.length === 0 ? (
+            <Tr>
+              <Td
+                colSpan={visibleHeaders.length}
+                align="center"
+                type="custom"
+                height={245}
+              >
+                <Text
+                  size="large"
+                  type="label"
+                  appearance="gray"
+                  textAlign="center"
+                >
+                  {dataReport.noData}
+                </Text>
+              </Td>
+            </Tr>
+          ) : (
+            ruleValues.map((row: IBorrowerDocumentRule, rowIndex: number) => (
+              <Tr key={rowIndex}>
+                {visibleHeaders.map((header, colIndex) => {
+                  const cellData =
+                    row[header.key as keyof { borrower: string }];
+                  const customColumn = [
+                    "download",
+                    "remove",
+                    "attached",
+                    "actions",
+                  ].includes(header.key);
+                  return (
+                    <Td
+                      key={colIndex}
+                      width={customColumn ? "70px" : "auto"}
+                      appearance={rowIndex % 2 === 0 ? "light" : "dark"}
+                      type={customColumn ? "custom" : "text"}
+                      align={"left"}
+                    >
+                      {header.key === "actions" ? (
+                        <Stack justifyContent="space-around">
+                          <Icon
+                            icon={iconToShowOnActions(rowIndex)}
+                            appearance="primary"
+                            size="16px"
+                            cursorHover
+                            onClick={() =>
+                              handleOpenAttachment(rowIndex.toString())
+                            }
+                          />
+                        </Stack>
+                      ) : (
+                        cellData
+                      )}
+                    </Td>
+                  );
+                })}
+              </Tr>
+            ))
           )}
-        </Table>
-      )}
+        </Tbody>
+        {!isLoading && ruleValues.length > 0 && (
+          <Tfoot>
+            <Tr border="bottom">
+              <Td colSpan={visibleHeaders.length} type="custom" align="center">
+                <Pagination
+                  firstEntryInPage={firstEntryInPage}
+                  lastEntryInPage={lastEntryInPage}
+                  totalRecords={totalRecords}
+                  handleStartPage={handleStartPage}
+                  handlePrevPage={handlePrevPage}
+                  handleNextPage={handleNextPage}
+                  handleEndPage={handleEndPage}
+                />
+              </Td>
+            </Tr>
+          </Tfoot>
+        )}
+      </Table>
       {showAttachment && (
         <ListModal
           title={getTitleToModal(currentRowId)}

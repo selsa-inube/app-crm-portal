@@ -1,4 +1,4 @@
-import { Stack } from "@inubekit/inubekit";
+import { SkeletonLine, Stack } from "@inubekit/inubekit";
 
 import { IMoneyDestination } from "@services/moneyDestination/types";
 import { MoneyDestinationCard } from "@components/cards/MoneyDestinationCard";
@@ -11,9 +11,11 @@ interface MoneyDestinationUIProps {
   selectedDestination: string;
   showErrorModal: boolean;
   messageError: string;
+  loading: boolean;
   groupedDestinations: { [type: string]: IMoneyDestination[] };
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleChange: (value: string) => void;
+  navigate: (path: string) => void;
 }
 
 function MoneyDestinationUI(props: MoneyDestinationUIProps) {
@@ -22,45 +24,70 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
     selectedDestination,
     showErrorModal,
     messageError,
+    loading,
     groupedDestinations,
     setShowErrorModal,
     handleChange,
+    navigate,
   } = props;
 
   return (
     <>
-      <Fieldset>
+      <Fieldset heightFieldset="400px" alignContent={false}>
         <Stack direction="column" padding="0 16px">
-          {Object.entries(groupedDestinations).map(([type, group]) => (
-            <CardDeployMoneyDestination key={type} title={type}>
-              <Stack
-                direction="row"
-                wrap="wrap"
-                justifyContent={isTablet ? "center" : "initial"}
-                padding="0 8px"
-                gap="12px"
-              >
-                {group.map((money) => (
-                  <MoneyDestinationCard
-                    key={money.moneyDestinationId}
-                    id={money.moneyDestinationId}
-                    name={money.abbreviatedName}
-                    value={money.descriptionUse}
-                    label={money.abbreviatedName}
-                    icon={money.iconReference}
-                    handleChange={() => handleChange(money.abbreviatedName)}
-                    isSelected={selectedDestination === money.abbreviatedName}
-                  />
-                ))}
-              </Stack>
-            </CardDeployMoneyDestination>
-          ))}
+          {loading ? (
+            <Stack direction="column" gap="12px">
+              <SkeletonLine animated={true} />
+              <SkeletonLine animated={true} />
+              <SkeletonLine animated={true} />
+            </Stack>
+          ) : (
+            Object.entries(groupedDestinations)
+              .sort(([destinationA], [destinationB]) =>
+                destinationA.localeCompare(destinationB),
+              )
+              .map(([type, group]) => (
+                <CardDeployMoneyDestination key={type} title={type}>
+                  <Stack
+                    direction="row"
+                    wrap="wrap"
+                    justifyContent={isTablet ? "center" : "initial"}
+                    padding="0 16px 16px 16px"
+                    gap="12px"
+                  >
+                    {group
+                      .sort((groupA, groupB) =>
+                        groupA.abbreviatedName.localeCompare(
+                          groupB.abbreviatedName,
+                        ),
+                      )
+                      .map((money) => (
+                        <MoneyDestinationCard
+                          key={money.moneyDestinationId}
+                          id={money.moneyDestinationId}
+                          name={money.abbreviatedName}
+                          value={money.descriptionUse}
+                          label={money.abbreviatedName}
+                          icon={money.iconReference}
+                          handleChange={() =>
+                            handleChange(money.abbreviatedName)
+                          }
+                          isSelected={
+                            selectedDestination === money.abbreviatedName
+                          }
+                          isMobile={isTablet}
+                        />
+                      ))}
+                  </Stack>
+                </CardDeployMoneyDestination>
+              ))
+          )}
         </Stack>
       </Fieldset>
       {showErrorModal && (
         <ErrorModal
           handleClose={() => {
-            setShowErrorModal(false);
+            (setShowErrorModal(false), navigate("/credit/prospects"));
           }}
           isMobile={isTablet}
           message={messageError}

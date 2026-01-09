@@ -20,7 +20,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { getCreditLimitByCreditRiskAnalysis } from "@services/creditLimit/getCreditLimitByCreditRiskAnalysis";
 import { IMaximumCreditLimitAnalysis } from "@services/creditLimit/types";
 
-import { frcConfig } from "./FrcConfig";
+import { frcConfig, InfoModalType } from "./FrcConfig";
 import { StyledExpanded } from "./styles";
 
 export interface ScoreModalProps {
@@ -42,6 +42,8 @@ export const ScoreModal = (props: ScoreModalProps) => {
 
   const isMobile = useMediaQuery("(max-width: 700px)");
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [currentInfoType, setCurrentInfoType] =
+    useState<InfoModalType>("intercept");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const [error, setError] = useState(false);
@@ -76,6 +78,15 @@ export const ScoreModal = (props: ScoreModalProps) => {
 
     fetchData();
   }, [businessUnitPublicCode, businessManagerCode, clientIdentificationNumber]);
+
+  const handleInfoClick = (type: InfoModalType) => {
+    setCurrentInfoType(type);
+    setShowInfoModal(true);
+  };
+
+  const getInfoText = () => {
+    return frcConfig.infoTexts[currentInfoType];
+  };
 
   return (
     <BaseModal
@@ -118,7 +129,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                   size="medium"
                   appearance="primary"
                 >
-                  {dataMaximumCreditLimitReciprocity.creditRiskScore}
+                  {dataMaximumCreditLimitReciprocity.creditRiskScore || 0}
                 </Text>
                 {loading ? (
                   <SkeletonLine width="70px" animated={true} />
@@ -156,7 +167,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                           icon={<MdInfoOutline />}
                           appearance="primary"
                           size="14px"
-                          onClick={() => setShowInfoModal(true)}
+                          onClick={() => handleInfoClick("intercept")}
                           cursorHover
                         />
                       </Stack>
@@ -179,7 +190,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                           icon={<MdInfoOutline />}
                           appearance="primary"
                           size="14px"
-                          onClick={() => setShowInfoModal(true)}
+                          onClick={() => handleInfoClick("seniority")}
                           cursorHover
                         />
                       </Stack>
@@ -202,7 +213,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                           icon={<MdInfoOutline />}
                           appearance="primary"
                           size="14px"
-                          onClick={() => setShowInfoModal(true)}
+                          onClick={() => handleInfoClick("centralRisk")}
                           cursorHover
                         />
                       </Stack>
@@ -225,7 +236,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                           icon={<MdInfoOutline />}
                           appearance="primary"
                           size="14px"
-                          onClick={() => setShowInfoModal(true)}
+                          onClick={() => handleInfoClick("employmentStability")}
                           cursorHover
                         />
                       </Stack>
@@ -248,7 +259,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                           icon={<MdInfoOutline />}
                           appearance="primary"
                           size="14px"
-                          onClick={() => setShowInfoModal(true)}
+                          onClick={() => handleInfoClick("maritalStatus")}
                           cursorHover
                         />
                       </Stack>
@@ -271,7 +282,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                           icon={<MdInfoOutline />}
                           appearance="primary"
                           size="14px"
-                          onClick={() => setShowInfoModal(true)}
+                          onClick={() => handleInfoClick("economicActivity")}
                           cursorHover
                         />
                       </Stack>
@@ -293,7 +304,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               ) : (
                 <Text>
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.totalMonthlyIncome,
+                    dataMaximumCreditLimitReciprocity.totalMonthlyIncome || 0,
                     false,
                   )}
                 </Text>
@@ -308,7 +319,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               <SkeletonLine width="70px" animated={true} />
             ) : (
               <Text type="body" size="large">
-                x{dataMaximumCreditLimitReciprocity.creditRiskMultiplier}
+                x{dataMaximumCreditLimitReciprocity.creditRiskMultiplier || 0}
               </Text>
             )}
           </Stack>
@@ -324,7 +335,8 @@ export const ScoreModal = (props: ScoreModalProps) => {
               ) : (
                 <Text>
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.maxAmountAvailableByCreditRiskAnalysis,
+                    dataMaximumCreditLimitReciprocity.maxAmountAvailableByCreditRiskAnalysis ||
+                      0,
                     false,
                   )}
                 </Text>
@@ -342,7 +354,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               ) : (
                 <Text>
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.assignedCreditLimit,
+                    dataMaximumCreditLimitReciprocity.assignedCreditLimit || 0,
                     false,
                   )}
                 </Text>
@@ -369,7 +381,8 @@ export const ScoreModal = (props: ScoreModalProps) => {
                 >
                   $
                   {currencyFormat(
-                    dataMaximumCreditLimitReciprocity.totalPortfolioObligation,
+                    dataMaximumCreditLimitReciprocity.totalPortfolioObligation ||
+                      0,
                     false,
                   )}
                 </Text>
@@ -389,7 +402,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               handleNext={() => setShowInfoModal(false)}
               width={isMobile ? "290px" : "500px"}
             >
-              <Text>{frcConfig.loremIpsum}</Text>
+              <Text>{getInfoText()}</Text>
             </BaseModal>
           )}
         </Stack>

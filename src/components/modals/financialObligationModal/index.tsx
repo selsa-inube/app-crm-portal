@@ -1,5 +1,5 @@
 import { FormikValues, useFormik } from "formik";
-
+import { useEffect } from "react";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney, MdOutlineTag } from "react-icons/md";
 import {
@@ -11,7 +11,6 @@ import {
 } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 import {
   handleChangeWithCurrency,
   validateCurrencyField,
@@ -24,6 +23,8 @@ import {
   meansPaymentOptions,
   dataInputs,
 } from "./config";
+import { dataReport } from "../ReportCreditsModal/config";
+import { TruncatedText } from "../TruncatedTextModal";
 
 export interface FinancialObligationModalProps {
   onCloseModal: () => void;
@@ -37,7 +38,6 @@ export interface FinancialObligationModalProps {
 function FinancialObligationModal({
   onCloseModal,
   onConfirm,
-  title,
   confirmButtonText,
   iconBefore,
   iconAfter,
@@ -83,9 +83,37 @@ function FinancialObligationModal({
     onConfirm(values);
   };
 
+  useEffect(() => {
+    if (obligationTypeOptions.length === 1) {
+      const onlyOption = obligationTypeOptions[0];
+      formik.setFieldValue("type", onlyOption.value);
+    }
+  }, [obligationTypeOptions]);
+
+  useEffect(() => {
+    if (entityOptions.length === 1) {
+      const onlyOption = entityOptions[0];
+      formik.setFieldValue("entity", onlyOption.value);
+    }
+  }, [entityOptions]);
+
+  useEffect(() => {
+    if (meansPaymentOptions.length === 1) {
+      const onlyOption = meansPaymentOptions[0];
+      formik.setFieldValue("payment", onlyOption.value);
+    }
+  }, [meansPaymentOptions]);
+
   return (
     <BaseModal
-      title={truncateTextToMaxLength(title, 25)}
+      title={
+        <TruncatedText
+          text={dataReport.title}
+          maxLength={25}
+          size="small"
+          type="headline"
+        />
+      }
       nextButton={confirmButtonText}
       backButton={dataInputs.cancel}
       handleNext={formik.submitForm}
@@ -103,30 +131,59 @@ function FinancialObligationModal({
           gap="20px"
           width={isMobile ? "280px" : "100%"}
         >
-          <Select
-            label={dataInputs.labelType}
-            name="type"
-            id="type"
-            size="compact"
-            placeholder={dataInputs.placeHolderSelect}
-            options={obligationTypeOptions}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.type}
-            fullwidth
-          />
-          <Select
-            label={dataInputs.labelEntity}
-            name="entity"
-            id="entity"
-            size="compact"
-            placeholder={dataInputs.placeHolderSelect}
-            options={entityOptions}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.entity}
-            fullwidth
-          />
+          {obligationTypeOptions.length === 1 ? (
+            <Textfield
+              label={dataInputs.labelType}
+              name="type"
+              id="type"
+              size="compact"
+              placeholder={dataInputs.placeHolderSelect}
+              value={obligationTypeOptions[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              label={dataInputs.labelType}
+              name="type"
+              id="type"
+              size="compact"
+              placeholder={dataInputs.placeHolderSelect}
+              options={obligationTypeOptions}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.type}
+              fullwidth
+            />
+          )}
+          {entityOptions.length === 1 ? (
+            <Textfield
+              label={dataInputs.labelEntity}
+              name="entity"
+              id="entity"
+              size="compact"
+              placeholder={dataInputs.placeHolderSelect}
+              value={entityOptions[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              label={dataInputs.labelEntity}
+              name="entity"
+              id="entity"
+              size="compact"
+              placeholder={dataInputs.placeHolderSelect}
+              options={entityOptions}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.entity}
+              fullwidth
+            />
+          )}
+
           <Textfield
             label={dataInputs.labelFee}
             name="fee"
@@ -145,6 +202,7 @@ function FinancialObligationModal({
             onChange={(e) => handleChangeWithCurrency(formik, e)}
             fullwidth
           />
+
           <Textfield
             label={dataInputs.labelBalance}
             name="balance"
@@ -163,18 +221,33 @@ function FinancialObligationModal({
             onChange={(e) => handleChangeWithCurrency(formik, e)}
             fullwidth
           />
-          <Select
-            label={dataInputs.labelPayment}
-            name="payment"
-            id="payment"
-            size="compact"
-            placeholder={dataInputs.placeHolderSelect}
-            options={meansPaymentOptions}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.payment}
-            fullwidth
-          />
+          {meansPaymentOptions.length === 1 ? (
+            <Textfield
+              label={dataInputs.labelPayment}
+              name="payment"
+              id="payment"
+              size="compact"
+              placeholder={dataInputs.placeHolderSelect}
+              value={meansPaymentOptions[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              label={dataInputs.labelPayment}
+              name="payment"
+              id="payment"
+              size="compact"
+              placeholder={dataInputs.placeHolderSelect}
+              options={meansPaymentOptions}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.payment}
+              fullwidth
+            />
+          )}
+
           <Textfield
             label={dataInputs.labelId}
             name="idUser"
@@ -189,6 +262,7 @@ function FinancialObligationModal({
             onChange={formik.handleChange}
             fullwidth
           />
+
           <Textfield
             label={dataInputs.labelFeePaid}
             name="feePaid"
@@ -204,6 +278,7 @@ function FinancialObligationModal({
             type="number"
             fullwidth
           />
+
           <Textfield
             label={dataInputs.labelterm}
             name="term"

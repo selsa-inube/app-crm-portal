@@ -5,8 +5,10 @@ import {
   Grid,
   Phonefield,
   Stack,
+  Textfield,
 } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
+import { useEffect } from "react";
 
 import { disbursemenOptionAccount } from "@pages/applyForCredit/steps/disbursementGeneral/config";
 import {
@@ -15,6 +17,7 @@ import {
   City,
 } from "@mocks/filing-application/disbursement-general/disbursementgeneral.mock";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { dataGeneralInformationForm } from "./config";
 
 interface IGeneralInformationFormProps {
   formik: FormikValues;
@@ -27,27 +30,62 @@ interface IGeneralInformationFormProps {
 export function GeneralInformationForm(props: IGeneralInformationFormProps) {
   const { formik, isMobile, optionNameForm, isReadOnly, customerData } = props;
 
+  useEffect(() => {
+    if (typesOfDocuments.length === 1) {
+      const onlyOption = typesOfDocuments[0];
+      formik.setFieldValue(`${optionNameForm}.documentType`, onlyOption.value);
+    }
+  }, [typesOfDocuments, optionNameForm]);
+
+  useEffect(() => {
+    if (Sex.length === 1) {
+      const onlyOption = Sex[0];
+      formik.setFieldValue(`${optionNameForm}.sex`, onlyOption.value);
+    }
+  }, [Sex, optionNameForm]);
+
+  useEffect(() => {
+    if (City.length === 1) {
+      const onlyOption = City[0];
+      formik.setFieldValue(`${optionNameForm}.city`, onlyOption.value);
+    }
+  }, [City, optionNameForm]);
+
   return (
     <>
       <Grid
-        templateColumns={isMobile ? "1fr" : "repeat(4, 1fr)"}
+        templateColumns={isMobile ? "1fr" : "repeat(2, 1fr)"}
         gap="16px"
         autoRows="auto"
       >
-        <Select
-          id={"documentType"}
-          name={`${optionNameForm}.documentType`}
-          label={disbursemenOptionAccount.labelDocumentType}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={typesOfDocuments}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.documentType`, value)
-          }
-          value={formik.values[optionNameForm]?.documentType || ""}
-          fullwidth
-        />
+        {typesOfDocuments.length === 1 ? (
+          <Textfield
+            id={"documentType"}
+            name={`${optionNameForm}.documentType`}
+            label={disbursemenOptionAccount.labelDocumentType}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            value={typesOfDocuments[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            id={"documentType"}
+            name={`${optionNameForm}.documentType`}
+            label={disbursemenOptionAccount.labelDocumentType}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={typesOfDocuments}
+            onBlur={formik.handleBlur}
+            onChange={(_, value) =>
+              formik.setFieldValue(`${optionNameForm}.documentType`, value)
+            }
+            value={formik.values[optionNameForm]?.documentType || ""}
+            fullwidth
+          />
+        )}
 
         <Input
           id={"identification"}
@@ -61,13 +99,14 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           type="number"
           size="compact"
           status={
-            formik.values[optionNameForm]?.identification ===
+            formik.values[optionNameForm]?.identification.toString() ===
             customerData?.publicCode
               ? "invalid"
               : undefined
           }
-          message="El número de identificación ingresado no puede coincidir con el suyo"
+          message={dataGeneralInformationForm.message}
         />
+
         <Input
           id={"name"}
           name={`${optionNameForm}.name`}
@@ -80,6 +119,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           size="compact"
           readOnly={isReadOnly}
         />
+
         <Input
           id={"lastName"}
           name={`${optionNameForm}.lastName`}
@@ -110,20 +150,35 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
             );
           }}
         />
-        <Select
-          id={"sex"}
-          name={`${optionNameForm}.sex`}
-          label={disbursemenOptionAccount.labelSex}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={Sex}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.sex`, value)
-          }
-          value={formik.values[optionNameForm]?.sex || ""}
-          fullwidth
-        />
+        {Sex.length === 1 ? (
+          <Textfield
+            id={"sex"}
+            name={`${optionNameForm}.sex`}
+            label={disbursemenOptionAccount.labelSex}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            value={Sex[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            id={"sex"}
+            name={`${optionNameForm}.sex`}
+            label={disbursemenOptionAccount.labelSex}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={Sex}
+            onBlur={formik.handleBlur}
+            onChange={(_, value) =>
+              formik.setFieldValue(`${optionNameForm}.sex`, value)
+            }
+            value={formik.values[optionNameForm]?.sex || ""}
+            fullwidth
+          />
+        )}
+
         <Phonefield
           id={"phone"}
           name={`${optionNameForm}.phone`}
@@ -136,6 +191,7 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           size="compact"
           readOnly={isReadOnly}
         />
+
         <Input
           id={"mail"}
           name={`${optionNameForm}.mail`}
@@ -150,21 +206,36 @@ export function GeneralInformationForm(props: IGeneralInformationFormProps) {
           type="email"
         />
       </Grid>
-      <Stack width="498px">
-        <Select
-          id={"city"}
-          name={`${optionNameForm}.city`}
-          label={disbursemenOptionAccount.labelCity}
-          placeholder={disbursemenOptionAccount.placeOption}
-          size="compact"
-          options={City}
-          onBlur={formik.handleBlur}
-          onChange={(_, value) =>
-            formik.setFieldValue(`${optionNameForm}.city`, value)
-          }
-          value={formik.values[optionNameForm]?.city || ""}
-          fullwidth
-        />
+
+      <Stack width={isMobile ? "100%" : "498px"}>
+        {City.length === 1 ? (
+          <Textfield
+            id={"city"}
+            name={`${optionNameForm}.city`}
+            label={disbursemenOptionAccount.labelCity}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            value={City[0]?.label || ""}
+            readOnly={true}
+            disabled={true}
+            fullwidth
+          />
+        ) : (
+          <Select
+            id={"city"}
+            name={`${optionNameForm}.city`}
+            label={disbursemenOptionAccount.labelCity}
+            placeholder={disbursemenOptionAccount.placeOption}
+            size="compact"
+            options={City}
+            onBlur={formik.handleBlur}
+            onChange={(_, value) =>
+              formik.setFieldValue(`${optionNameForm}.city`, value)
+            }
+            value={formik.values[optionNameForm]?.city || ""}
+            fullwidth
+          />
+        )}
       </Stack>
     </>
   );

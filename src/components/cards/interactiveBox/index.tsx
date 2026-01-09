@@ -17,6 +17,7 @@ export interface IInteractiveBox {
   url?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
+  onInvalidUrl?: () => void;
 }
 
 export function InteractiveBox(props: IInteractiveBox) {
@@ -26,7 +27,16 @@ export function InteractiveBox(props: IInteractiveBox) {
   return (
     <>
       {isLoading ? (
-        <StyledInteractiveBox to={url ?? ""} $isMobile={isMobile}>
+        <StyledInteractiveBox
+          to={url ?? ""}
+          $isMobile={isMobile}
+          onClick={(event: React.MouseEvent) => {
+            if (!url) {
+              event.preventDefault();
+              props.onInvalidUrl && props.onInvalidUrl();
+            }
+          }}
+        >
           <Stack direction="column" gap="16px">
             <Stack width="70%">
               <SkeletonLine animated />
@@ -44,6 +54,12 @@ export function InteractiveBox(props: IInteractiveBox) {
           to={url ?? ""}
           $isMobile={isMobile}
           $isDisabled={isDisabled}
+          onClick={(event: React.MouseEvent) => {
+            if (!url) {
+              event.preventDefault();
+              props.onInvalidUrl && props.onInvalidUrl();
+            }
+          }}
         >
           <Stack direction="column" gap="16px">
             <Stack justifyContent="space-between">

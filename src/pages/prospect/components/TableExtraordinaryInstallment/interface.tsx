@@ -14,6 +14,9 @@ import {
 import { ActionMobile } from "@components/feedback/ActionMobile";
 import { DeleteModal } from "@components/modals/DeleteModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { BaseModal } from "@components/modals/baseModal";
+import { CardGray } from "@components/cards/CardGray";
+import { dataAddSeriesModal } from "@components/modals/AddSeriesModal/config";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import {
   IExtraordinaryInstallments,
@@ -34,20 +37,29 @@ interface ITableExtraordinaryInstallmentProps {
   visbleActions: { key: string; label: string }[];
   extraordinaryInstallments: TableExtraordinaryInstallmentProps[];
   isMobile: boolean;
-  selectedDebtor: TableExtraordinaryInstallmentProps;
   isOpenModalDelete: boolean;
-  isOpenModalEdit: boolean;
   prospectData: IProspect | undefined;
   businessUnitPublicCode: string;
   service: boolean;
   showErrorModal: boolean;
   messageError: string;
+  isLoadingDelete: boolean;
+  installmentState: {
+    installmentAmount: number;
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  };
+  isOpenModalView: boolean;
+  setIsOpenModalView: (value: boolean) => void;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModalDelete: (value: boolean) => void;
-  setIsOpenModalEdit: (value: boolean) => void;
-  handleUpdate: (
-    updatedDebtor: TableExtraordinaryInstallmentProps,
-  ) => Promise<void>;
+  setInstallmentState: React.Dispatch<
+    React.SetStateAction<{
+      installmentAmount: number;
+      installmentDate: string;
+      paymentChannelAbbreviatedName: string;
+    }>
+  >;
   usePagination: {
     totalRecords: number;
     handleStartPage: () => void;
@@ -58,6 +70,8 @@ interface ITableExtraordinaryInstallmentProps {
     lastEntryInPage: number;
     paddedCurrentData: TableExtraordinaryInstallmentProps[];
   };
+  openMenuIndex: number | null;
+  setOpenMenuIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setSentData?:
     | React.Dispatch<React.SetStateAction<IExtraordinaryInstallments | null>>
     | undefined;
@@ -83,10 +97,17 @@ export function TableExtraordinaryInstallmentUI(
     usePagination,
     showErrorModal,
     messageError,
+    isOpenModalView,
+    installmentState,
+    setIsOpenModalView,
     setShowErrorModal,
     setIsOpenModalDelete,
     setSelectedDebtor,
     handleDeleteAction,
+    setInstallmentState,
+    openMenuIndex,
+    setOpenMenuIndex,
+    isLoadingDelete = false,
   } = props;
 
   const {
@@ -173,12 +194,33 @@ export function TableExtraordinaryInstallmentUI(
                 })}
 
                 {visbleActions.map((action) => (
-                  <Td key={action.key} type="custom">
+                  <Td key={action.key} type="custom" height={"10px"}>
                     {isMobile ? (
                       <ActionMobile
+                        isOpen={openMenuIndex === index}
+                        onToggle={() => {
+                          setOpenMenuIndex(
+                            openMenuIndex === index ? null : index,
+                          );
+                        }}
                         handleDelete={() => {
                           setSelectedDebtor(row);
                           setIsOpenModalDelete(true);
+                          setOpenMenuIndex(null);
+                        }}
+                        handleView={() => {
+                          setSelectedDebtor(row);
+                          setInstallmentState({
+                            installmentAmount: Number(row.value) || 0,
+                            installmentDate:
+                              typeof row.datePayment === "string"
+                                ? row.datePayment
+                                : String(row.datePayment) || "",
+                            paymentChannelAbbreviatedName:
+                              String(row.paymentMethod) || "",
+                          });
+                          setIsOpenModalView(true);
+                          setOpenMenuIndex(null);
                         }}
                       />
                     ) : (
@@ -215,6 +257,24 @@ export function TableExtraordinaryInstallmentUI(
               </Td>
             </Tr>
           )}
+        {loading &&
+          Array.from({ length: 5 }).map((_, rowIndex) => (
+            <Tr key={`skeleton-row-${rowIndex}`}>
+              {visbleHeaders.map((_, colIndex) => (
+                <Td key={`skeleton-cell-${rowIndex}-${colIndex}`} align="left">
+                  <SkeletonLine animated width="100%" />
+                </Td>
+              ))}
+              {visbleActions.map((_, actionIndex) => (
+                <Td
+                  key={`skeleton-action-${rowIndex}-${actionIndex}`}
+                  type="custom"
+                >
+                  <SkeletonLine animated width="100%" />
+                </Td>
+              ))}
+            </Tr>
+          ))}
       </Tbody>
 
       {extraordinaryInstallments.length > 0 && !loading && (
@@ -243,6 +303,7 @@ export function TableExtraordinaryInstallmentUI(
           handleClose={() => setIsOpenModalDelete(false)}
           handleDelete={handleDeleteAction}
           TextDelete={dataTableExtraordinaryInstallment.content}
+          isLoading={isLoadingDelete}
         />
       )}
       {showErrorModal && (
@@ -251,6 +312,28 @@ export function TableExtraordinaryInstallmentUI(
           isMobile={isMobile}
           message={messageError}
         />
+      )}
+      {isOpenModalView && (
+        <BaseModal
+          title={dataAddSeriesModal.view}
+          handleNext={() => setIsOpenModalView(false)}
+          handleClose={() => setIsOpenModalView(false)}
+          nextButton="Cerrar"
+          width="290px"
+        >
+          <CardGray
+            label={dataAddSeriesModal.labelPaymentMethod}
+            placeHolder={installmentState.paymentChannelAbbreviatedName}
+          />
+          <CardGray
+            label={dataAddSeriesModal.labelAmount}
+            placeHolder={installmentState.installmentAmount}
+          />
+          <CardGray
+            label={dataAddSeriesModal.labelDate}
+            placeHolder={installmentState.installmentDate}
+          />
+        </BaseModal>
       )}
     </Table>
   );

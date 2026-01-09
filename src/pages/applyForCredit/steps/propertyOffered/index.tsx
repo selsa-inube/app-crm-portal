@@ -1,15 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Grid,
-  Select,
-  Stack,
-  Textarea,
-  Textfield,
-  Text,
-  Spinner,
-} from "@inubekit/inubekit";
+import { Grid, Select, Stack, Textarea, Textfield } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import {
@@ -20,42 +12,27 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
-import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
-import { IBusinessUnitRules } from "@services/businessUnitRules/types";
 
 import { dataProperty } from "./config";
 import { IPropertyOffered } from "../../types";
-import { dataError } from "../requirementsNotMet/config";
 
 interface IPropertyOfferedProps {
   isMobile: boolean;
   initialValues: IPropertyOffered;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IPropertyOffered) => void;
-  businessUnitPublicCode: string;
-  businessManagerCode: string;
 }
 
 export function PropertyOffered(props: IPropertyOfferedProps) {
-  const {
-    isMobile,
-    initialValues,
-    onFormValid,
-    handleOnChange,
-    businessUnitPublicCode,
-    businessManagerCode,
-  } = props;
-
-  const [shouldRender, setShouldRender] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isMobile, initialValues, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
-    type: Yup.string(),
-    state: Yup.string(),
+    type: Yup.string().required(),
+    state: Yup.string().required(),
     antique: Yup.lazy((_, { parent }) =>
-      parent.state === "nuevo" ? Yup.number() : Yup.number(),
+      parent.state === "nuevo" ? Yup.number() : Yup.number().required(),
     ),
-    estimated: Yup.number(),
+    estimated: Yup.number().required(),
     description: Yup.string().max(200),
   });
 
@@ -68,54 +45,9 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
 
   const prevValues = useRef(formik.values);
 
-  const checkGuaranteeRule = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await postBusinessUnitRules(
-        businessUnitPublicCode,
-        businessManagerCode,
-        { ruleName: "GuaranteeRequirements" } as IBusinessUnitRules,
-      );
-
-      const values = response?.conditions || response;
-      let extractedValues: string[] = [];
-
-      if (Array.isArray(values)) {
-        extractedValues = values
-          .map((item) => {
-            if (typeof item === "object" && item !== null && "value" in item) {
-              return item.value;
-            }
-            if (typeof item === "string") {
-              return item;
-            }
-            return null;
-          })
-          .filter((val): val is string => val !== null && val !== "");
-      }
-
-      const includesMortgage = extractedValues.some(
-        (val) => val.toLowerCase() === "mortgage",
-      );
-      setShouldRender(includesMortgage);
-      setIsLoading(false);
-    } catch (error) {
-      setShouldRender(false);
-      setIsLoading(false);
-    }
-  }, [businessUnitPublicCode, businessManagerCode]);
-
   useEffect(() => {
-    checkGuaranteeRule();
-  }, [checkGuaranteeRule]);
-
-  useEffect(() => {
-    if (shouldRender) {
-      onFormValid(formik.isValid);
-    } else {
-      onFormValid(true);
-    }
-  }, [formik.isValid, shouldRender, onFormValid]);
+    onFormValid(formik.isValid);
+  }, [formik.isValid, onFormValid]);
 
   useEffect(() => {
     if (
@@ -130,30 +62,6 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
     }
   }, [formik.values, handleOnChange]);
 
-  if (!shouldRender && !isLoading) {
-    return null;
-  }
-
-  if (isLoading) {
-    return (
-      <Fieldset>
-        <Stack
-          gap="16px"
-          padding="16px"
-          margin={isMobile ? "8px" : "16px"}
-          justifyContent="center"
-          direction="column"
-          alignItems="center"
-        >
-          <Spinner />
-          <Text type="title" size="medium" appearance="dark">
-            {dataError.loadRequirements}
-          </Text>
-        </Stack>
-      </Fieldset>
-    );
-  }
-
   return (
     <Fieldset>
       <Stack
@@ -166,30 +74,59 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
           autoRows="auto"
           gap="20px"
         >
-          <Select
-            name="type"
-            id="type"
-            label={dataProperty.labelType}
-            placeholder={dataProperty.placeHolderType}
-            size="compact"
-            options={optionsOfferedType}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.type}
-            fullwidth
-          />
-          <Select
-            name="state"
-            id="state"
-            label={dataProperty.labelState}
-            placeholder={dataProperty.placeHolderState}
-            size="compact"
-            options={optionsOfferedstate}
-            onBlur={formik.handleBlur}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            value={formik.values.state}
-            fullwidth
-          />
+          {optionsOfferedType.length === 1 ? (
+            <Textfield
+              name="type"
+              id="type"
+              label={dataProperty.labelType}
+              placeholder={dataProperty.placeHolderType}
+              size="compact"
+              value={optionsOfferedType[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              name="type"
+              id="type"
+              label={dataProperty.labelType}
+              placeholder={dataProperty.placeHolderType}
+              size="compact"
+              options={optionsOfferedType}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.type}
+              fullwidth
+            />
+          )}
+
+          {optionsOfferedstate.length === 1 ? (
+            <Textfield
+              name="state"
+              id="state"
+              label={dataProperty.labelState}
+              placeholder={dataProperty.placeHolderState}
+              size="compact"
+              value={optionsOfferedstate[0]?.label || ""}
+              readOnly={true}
+              disabled={true}
+              fullwidth
+            />
+          ) : (
+            <Select
+              name="state"
+              id="state"
+              label={dataProperty.labelState}
+              placeholder={dataProperty.placeHolderState}
+              size="compact"
+              options={optionsOfferedstate}
+              onBlur={formik.handleBlur}
+              onChange={(name, value) => formik.setFieldValue(name, value)}
+              value={formik.values.state}
+              fullwidth
+            />
+          )}
           <Textfield
             name="antique"
             id="antique"

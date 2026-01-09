@@ -5,9 +5,12 @@ import { getIncomeSourcesById } from "@services/creditLimit/getIncomeSources";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { getAge } from "@utils/formatData/currency";
-import { getAllPropertyValues } from "@utils/mappingData/mappings";
 import { IProspect } from "@services/prospect/types";
+import { ICustomerData } from "@context/CustomerContext/types";
+import { getFinancialObligations } from "@pages/simulateCredit/steps/extraDebtors/utils";
+import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 
+import { transformObligationsToBorrowerProperties } from "../DebtorEditModal/utils";
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { DebtorAddModalUI } from "./interface";
 import { FormData } from "./types";
@@ -32,6 +35,7 @@ interface DebtorAddModalProps {
   prospectData: IProspect;
   businessManagerCode: string;
   businessUnitPublicCode?: string;
+  customerData?: ICustomerData;
 }
 
 export function DebtorAddModal(props: DebtorAddModalProps) {
@@ -42,14 +46,8 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     prospectData,
     businessManagerCode,
     onAddBorrower,
+    customerData,
   } = props;
-
-  const financialObligations = prospectData?.borrowers?.[0]?.borrowerProperties
-    ? getAllPropertyValues(
-        prospectData.borrowers[0].borrowerProperties,
-        "FinancialObligation",
-      ) || []
-    : [];
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddBorrower.generalInformation.id,
@@ -72,6 +70,9 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     undefined,
   );
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
+  const [financialObligationsData, setFinancialObligationsData] = useState<
+    IObligations[]
+  >([]);
 
   const dataBorrower: BorrowerData[] = [
     {
@@ -115,12 +116,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           propertyName: "PensionAllowances",
           propertyValue: incomeData?.PensionAllowances?.toString() || "0",
         },
-        ...(Array.isArray(financialObligations)
-          ? financialObligations.map((obligation) => ({
-              propertyName: "FinancialObligation",
-              propertyValue: obligation,
-            }))
-          : []),
+        ...transformObligationsToBorrowerProperties(financialObligationsData),
         {
           propertyName: "name",
           propertyValue: formData.personalInfo.firstName,
@@ -184,15 +180,22 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
   }
 
   useEffect(() => {
-    if (!borrowerId) return;
+    if (!borrowerId || isCurrentFormValid) return;
+
+    const allFieldsFilled = Object.values(formData.personalInfo).every(
+      (value) => value !== "" && value !== null && value !== undefined,
+    );
+
+    if (
+      !allFieldsFilled &&
+      customerData?.publicCode.toString() ===
+        formData.personalInfo.documentNumber.toString()
+    ) {
+      return;
+    }
 
     const fetchIncomeData = async () => {
       try {
-        const response = await getIncomeSourcesById(
-          borrowerId,
-          businessUnitPublicCode || "",
-          businessManagerCode,
-        );
         const customer = await getSearchCustomerByCode(
           borrowerId,
           businessUnitPublicCode || "",
@@ -200,55 +203,68 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           true,
         );
 
+        if (
+          !customer ||
+          !customer.generalAttributeClientNaturalPersons ||
+          customer.generalAttributeClientNaturalPersons.length === 0
+        ) {
+          setIsAutoCompleted(false);
+          return;
+        }
+
+        const response = await getIncomeSourcesById(
+          borrowerId,
+          businessUnitPublicCode || "",
+          businessManagerCode,
+        );
+
+        const financialObligationsData = await getFinancialObligations(
+          customer.publicCode,
+          businessUnitPublicCode || "",
+          businessManagerCode,
+        );
+        setFinancialObligationsData(financialObligationsData || []);
+
         const formattedData = capitalizeKeysExceptSome<IIncomeSources>(
           response as unknown as Record<string, unknown>,
           ["name", "surname", "identificationNumber", "identificationType"],
         );
+
         setIncomeData(formattedData);
 
-        const data = customer?.generalAttributeClientNaturalPersons?.[0];
+        const data = customer.generalAttributeClientNaturalPersons[0];
 
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            personalInfo: {
-              ...prev.personalInfo,
-              tipeOfDocument: data?.typeIdentification || "",
-              documentNumber: prev.personalInfo.documentNumber,
-              firstName: data?.firstNames || "",
-              lastName: data?.lastNames || "",
-              email: data?.emailContact || "",
-              phone: data?.cellPhoneContact || "",
-              sex: data?.gender || "",
-              age: getAge(data?.dateBirth || "").toString(),
-              relation: prev.personalInfo.relation,
-            },
-          }));
-          setIsAutoCompleted(true);
-        } else if (isAutoCompleted) {
-          setFormData((prev) => ({
-            ...prev,
-            personalInfo: {
-              ...prev.personalInfo,
-              tipeOfDocument: "",
-              firstName: "",
-              lastName: "",
-              email: "",
-              phone: "",
-              sex: "",
-              age: "",
-              relation: prev.personalInfo.relation,
-            },
-          }));
-          setIsAutoCompleted(false);
-        }
+        setFormData((prev) => ({
+          ...prev,
+          personalInfo: {
+            ...prev.personalInfo,
+            tipeOfDocument: data?.typeIdentification || "",
+            documentNumber: prev.personalInfo.documentNumber,
+            firstName: data?.firstNames || "",
+            lastName: data?.lastNames || "",
+            email: data?.emailContact || "",
+            phone: data?.cellPhoneContact || "",
+            sex: data?.gender || "",
+            age: getAge(data?.dateBirth || "").toString(),
+            relation: prev.personalInfo.relation,
+          },
+        }));
+
+        setIsAutoCompleted(true);
       } catch (error) {
         handleFlag(error);
+        setIsAutoCompleted(false);
       }
     };
 
     fetchIncomeData();
-  }, [borrowerId, businessUnitPublicCode, isAutoCompleted]);
+  }, [
+    borrowerId,
+    businessUnitPublicCode,
+    businessManagerCode,
+    isCurrentFormValid,
+    isAutoCompleted,
+  ]);
 
   useEffect(() => {
     if (!isAutoCompleted) {
@@ -324,6 +340,24 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     });
   };
 
+  const transformedProspectData: IProspect = {
+    ...prospectData,
+    borrowers: [
+      {
+        borrowerName:
+          `${formData.personalInfo.firstName} ${formData.personalInfo.lastName}`.trim() ||
+          "Sin nombre",
+        borrowerType: "Borrower",
+        borrowerIdentificationType: formData.personalInfo.tipeOfDocument,
+        borrowerIdentificationNumber:
+          formData.personalInfo.documentNumber.toString(),
+        borrowerProperties: [
+          ...transformObligationsToBorrowerProperties(financialObligationsData),
+        ],
+      },
+    ],
+  };
+
   return (
     <DebtorAddModalUI
       steps={steps}
@@ -333,7 +367,17 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       formData={formData}
       incomeData={incomeData}
       AutoCompleted={isAutoCompleted}
-      prospectData={prospectData}
+      prospectData={transformedProspectData}
+      financialObligationsData={{
+        customerName:
+          `${formData.personalInfo.firstName} ${formData.personalInfo.lastName}`.trim() ||
+          "Sin nombre",
+        customerIdentificationType: formData.personalInfo.tipeOfDocument,
+        customerIdentificationNumber:
+          formData.personalInfo.documentNumber.toString(),
+        obligations: financialObligationsData,
+      }}
+      setFinancialObligationsData={setFinancialObligationsData}
       handleFormChange={handleFormChange}
       handleIncomeChange={handleIncomeChange}
       handleNextStep={handleNextStep}
@@ -346,6 +390,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       businessManagerCode={businessManagerCode}
       title={title}
       isMobile={isMobile}
+      customerData={customerData}
     />
   );
 }
