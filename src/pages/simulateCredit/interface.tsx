@@ -627,6 +627,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   isLoading={isLoading}
                   validateRequirements={validateRequirements}
                   errorsManager={errorsManager}
+                  lang={lang}
                 />
               )}
               {isCreditLimitModalOpen && (
@@ -640,6 +641,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   moneyDestination={formData.selectedDestination}
                   incomeData={formData.sourcesOfIncome}
                   userAccount={userAccount as string}
+                  lang={lang}
                 />
               )}
               {isCreditLimitWarning && (
@@ -655,6 +657,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleClose={() => setIsCapacityAnalysisModal(false)}
                   paymentCapacity={paymentCapacity}
                   sourcesOfIncome={formData.sourcesOfIncome}
+                  lang={lang}
                 />
               )}
               {isCapacityAnalysisWarning && (

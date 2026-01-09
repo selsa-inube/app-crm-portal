@@ -555,6 +555,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   showAddButtons={false}
                   showAddProduct={false}
                   userAccount={eventData.user.userAccount}
+                  lang={lang}
                 />
               )}
             </Stack>
@@ -569,6 +570,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 userAccount={eventData.user.userAccount}
                 moneyDestination={prospectData.moneyDestinationAbbreviatedName}
                 incomeData={incomeDataValues}
+                lang={lang}
               />
             )}
             {currentModal === "reportCreditsModal" && (
@@ -578,6 +580,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 handleClose={handleCloseModal}
                 prospectData={prospectData ? [prospectData] : undefined}
                 options={incomeOptions}
+                lang={lang}
               />
             )}
             {currentModal === "extraPayments" && (
@@ -587,6 +590,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 sentData={sentData}
                 setSentData={setSentData}
                 businessUnitPublicCode={businessUnitPublicCode}
+                lang={lang}
               />
             )}
             {currentModal === "disbursementModal" && (
@@ -601,6 +605,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   checkManagementData: checkManagement || dataDefault,
                   cash: cash || dataDefault,
                 }}
+                lang={lang}
               />
             )}
             {infoModal && (

@@ -203,6 +203,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                 setCurrentBorrowerIndex(index);
                 setIsModalDelete(true);
               }}
+              lang={lang}
             />
           ))}
           <NewCardBorrower

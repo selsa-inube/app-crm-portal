@@ -555,6 +555,7 @@ export const FinancialReporting = () => {
                   <OfferedGuaranteeModal
                     handleClose={() => setShowGuarantee(false)}
                     isMobile={isMobile}
+                    lang={lang}
                   />
                 )}
                 {showMenu && isMobile && (
@@ -588,6 +589,7 @@ export const FinancialReporting = () => {
                 isMobile={isMobile}
                 handleClose={handleSharePdfModal}
                 handleNext={handleSharePdf}
+                lang={lang}
               />
             )}
             {sendCrediboard && (

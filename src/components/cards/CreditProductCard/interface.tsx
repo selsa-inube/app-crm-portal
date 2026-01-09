@@ -18,6 +18,7 @@ function CreditProductCardUI(props: CreditProductCardProps) {
     termMonths,
     periodicFee,
     schedule,
+    lang,
     showIcons,
     onEdit,
     onDelete,
@@ -38,7 +39,7 @@ function CreditProductCardUI(props: CreditProductCardProps) {
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
-            {CREDIT_PRODUCT_TEXTS.paymentMethod}
+            {CREDIT_PRODUCT_TEXTS.paymentMethod.i18n[lang]}
           </Text>
           <TruncatedText
             text={paymentMethod}
@@ -48,25 +49,25 @@ function CreditProductCardUI(props: CreditProductCardProps) {
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
-            {CREDIT_PRODUCT_TEXTS.loanAmount}
+            {CREDIT_PRODUCT_TEXTS.loanAmount.i18n[lang]}
           </Text>
           <Text>{loanAmount === 0 ? "$ 0" : currencyFormat(loanAmount)}</Text>
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
-            {CREDIT_PRODUCT_TEXTS.interestRate}
+            {CREDIT_PRODUCT_TEXTS.interestRate.i18n[lang]}
           </Text>
           <Text>{parseFloat(Number(interestRate).toFixed(4))} %</Text>
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
-            {CREDIT_PRODUCT_TEXTS.termMonths}
+            {CREDIT_PRODUCT_TEXTS.termMonths.i18n[lang]}
           </Text>
           <Text>{termMonths}</Text>
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
-            {CREDIT_PRODUCT_TEXTS.periodicFee}
+            {CREDIT_PRODUCT_TEXTS.periodicFee.i18n[lang]}
           </Text>
           <Text>
             {periodicFee === 0
@@ -76,7 +77,7 @@ function CreditProductCardUI(props: CreditProductCardProps) {
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
-            {CREDIT_PRODUCT_TEXTS.paymentCycle}
+            {CREDIT_PRODUCT_TEXTS.paymentCycle.i18n[lang]}
           </Text>
           <TruncatedText
             text={schedule}

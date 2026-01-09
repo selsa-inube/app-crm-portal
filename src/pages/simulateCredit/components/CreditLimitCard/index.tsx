@@ -8,6 +8,7 @@ import { MaxLimitModal } from "@components/modals/MaxLimitModal";
 import { ReciprocityModal } from "@components/modals/ReciprocityModal";
 import { ScoreModal } from "@components/modals/FrcModal";
 import { PaymentCapacityModal } from "@components/modals/PaymentCapacityModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { StyledContainer } from "./styles";
 import { IdataMaximumCreditLimitService, IPaymentCapacityData } from "./types";
@@ -25,6 +26,7 @@ export interface CreditLimitProps {
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   error: boolean;
   incomeData: ISourcesOfIncomeState;
+  lang: EnumType;
 }
 
 export function CreditLimitCard(props: CreditLimitProps) {
@@ -39,6 +41,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
     setError,
     error,
     incomeData,
+    lang,
   } = props;
 
   const [creditModal, setCreditModal] = useState(false);
@@ -96,6 +99,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
           clientIdentificationNumber={
             dataMaximumCreditLimitService.identificationDocumentNumber
           }
+          lang={lang}
         />
       )}
 
@@ -110,6 +114,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
             ...dataMaximumCreditLimitService,
             lineOfCreditAbbreviatedName: creditLineTxt,
           }}
+          lang={lang}
         />
       )}
 
@@ -122,6 +127,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
           clientIdentificationNumber={
             dataMaximumCreditLimitService.identificationDocumentNumber
           }
+          lang={lang}
         />
       )}
 
@@ -141,6 +147,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
           error={error}
           loading={loading}
           incomeData={incomeData}
+          lang={lang}
         />
       )}
 
@@ -153,6 +160,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
           clientIdentificationNumber={
             dataMaximumCreditLimitService.identificationDocumentNumber
           }
+          lang={lang}
         />
       )}
     </StyledContainer>

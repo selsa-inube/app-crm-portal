@@ -205,6 +205,7 @@ export function Borrowers(props: borrowersProps) {
                   }}
                   handleDelete={() => setIsModalDelete(true)}
                   showIcons={valueRule?.includes("Coborrower")}
+                  lang={lang}
                 />
               ))}
             <NewCardBorrower
@@ -252,6 +253,7 @@ export function Borrowers(props: borrowersProps) {
               <DeleteModal
                 handleClose={() => setIsModalDelete(false)}
                 TextDelete={borrowerData.delete.i18n[lang]}
+                lang={lang}
               />
             )}
             {isModalEdit && editIndex !== null && (

@@ -9,6 +9,7 @@ import {
   Button,
   Blanket,
 } from "@inubekit/inubekit";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { StyledContainer, StyledContainerClose } from "./styles";
 import { dataBaseModal } from "./config";
@@ -62,6 +63,8 @@ export function BaseModal(props: IBaseModalProps) {
     isLoading = false,
   } = props;
 
+  const { lang } = useEnum();
+
   function getOrCreatePortalNode(id: string): HTMLElement {
     let node = document.getElementById(id);
     if (!node) {
@@ -93,7 +96,7 @@ export function BaseModal(props: IBaseModalProps) {
             <StyledContainerClose onClick={handleClose || handleBack}>
               <Stack alignItems="center" gap="8px">
                 <Text type="body" size="large">
-                  {dataBaseModal.close}
+                  {dataBaseModal.close.i18n[lang]}
                 </Text>
                 <Icon
                   icon={<MdClear />}

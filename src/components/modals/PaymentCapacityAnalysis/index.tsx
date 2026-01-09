@@ -6,6 +6,7 @@ import {
 } from "@services/creditLimit/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { BaseModal } from "../baseModal";
 import { PaymentCapacityAnalysisDetails } from "./Details";
@@ -16,6 +17,7 @@ import { ScrollableContainer } from "./styles";
 
 export interface IPaymentCapacityAnalysisProps {
   isMobile: boolean;
+  lang: EnumType;
   handleClose: () => void;
   sourcesOfIncome: ISourcesOfIncomeState;
   paymentCapacity?: IPaymentCapacityResponse | null;
@@ -24,7 +26,8 @@ export interface IPaymentCapacityAnalysisProps {
 export const PaymentCapacityAnalysis = (
   props: IPaymentCapacityAnalysisProps,
 ) => {
-  const { isMobile, handleClose, paymentCapacity, sourcesOfIncome } = props;
+  const { isMobile, handleClose, paymentCapacity, sourcesOfIncome, lang } =
+    props;
 
   const initialValues: IIncomeDetail = {
     periodicSalary: sourcesOfIncome?.PeriodicSalary ?? 0,
@@ -73,15 +76,15 @@ export const PaymentCapacityAnalysis = (
 
   const generalFieldsets: IFieldsetData[] = [
     {
-      legend: DataCapacityAnalysis.workRents,
+      legend: DataCapacityAnalysis.workRents.i18n[lang],
       items: [
         {
-          label: DataCapacityAnalysis.periodicSalary,
+          label: DataCapacityAnalysis.periodicSalary.i18n[lang],
           value: currencyFormat(capacityData.periodicSalary ?? 0, false) || 0,
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.periodicSalary,
+              DataCapacityAnalysis.periodicSalary.i18n[lang],
               capacityData.periodicSalary /
                 (1 - capacityRatios.periodicSalary / 100) || 0,
               capacityData.periodicSalary ?? 0,
@@ -89,14 +92,14 @@ export const PaymentCapacityAnalysis = (
             ),
         },
         {
-          label: DataCapacityAnalysis.otherNonSalaryEmoluments,
+          label: DataCapacityAnalysis.otherNonSalaryEmoluments.i18n[lang],
           value:
             currencyFormat(capacityData.otherNonSalaryEmoluments ?? 0, false) ||
             "0",
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.otherNonSalaryEmoluments,
+              DataCapacityAnalysis.otherNonSalaryEmoluments.i18n[lang],
               capacityData.otherNonSalaryEmoluments /
                 (1 - capacityRatios.otherNonSalaryEmoluments / 100) || 0,
               capacityData.otherNonSalaryEmoluments ?? 0,
@@ -104,13 +107,13 @@ export const PaymentCapacityAnalysis = (
             ),
         },
         {
-          label: DataCapacityAnalysis.pensionPayments,
+          label: DataCapacityAnalysis.pensionPayments.i18n[lang],
           value:
             currencyFormat(capacityData.pensionAllowances ?? 0, false) || 0,
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.pensionPayments,
+              DataCapacityAnalysis.pensionPayments.i18n[lang],
               capacityData.pensionAllowances /
                 (1 - capacityRatios.pensionAllowances / 100) || 0,
               capacityData.pensionAllowances ?? 0,
@@ -120,15 +123,15 @@ export const PaymentCapacityAnalysis = (
       ],
     },
     {
-      legend: DataCapacityAnalysis.professionalServices,
+      legend: DataCapacityAnalysis.professionalServices.i18n[lang],
       items: [
         {
-          label: DataCapacityAnalysis.professionalFees,
+          label: DataCapacityAnalysis.professionalFees.i18n[lang],
           value: currencyFormat(capacityData.professionalFees ?? 0, false) || 0,
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.professionalFees,
+              DataCapacityAnalysis.professionalFees.i18n[lang],
               capacityData.professionalFees /
                 (1 - capacityRatios.professionalFees / 100) || 0,
               capacityData.professionalFees ?? 0,
@@ -138,27 +141,27 @@ export const PaymentCapacityAnalysis = (
       ],
     },
     {
-      legend: DataCapacityAnalysis.capitalIncome,
+      legend: DataCapacityAnalysis.capitalIncome.i18n[lang],
       items: [
         {
-          label: DataCapacityAnalysis.rentals,
+          label: DataCapacityAnalysis.rentals.i18n[lang],
           value: currencyFormat(capacityData.leases ?? 0, false) || "0",
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.rentals,
+              DataCapacityAnalysis.rentals.i18n[lang],
               capacityData.leases / (1 - capacityRatios.leases / 100) || 0,
               capacityData.leases ?? 0,
               capacityRatios.leases ?? 0,
             ),
         },
         {
-          label: DataCapacityAnalysis.dividends,
+          label: DataCapacityAnalysis.dividends.i18n[lang],
           value: currencyFormat(capacityData.dividends ?? 0, false) || "0",
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.dividends,
+              DataCapacityAnalysis.dividends.i18n[lang],
               capacityData.dividends / (1 - capacityRatios.dividends / 100) ||
                 0,
               capacityData.dividends ?? 0,
@@ -166,13 +169,13 @@ export const PaymentCapacityAnalysis = (
             ),
         },
         {
-          label: DataCapacityAnalysis.financialReturns,
+          label: DataCapacityAnalysis.financialReturns.i18n[lang],
           value:
             currencyFormat(capacityData.financialIncome ?? 0, false) || "0",
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.financialReturns,
+              DataCapacityAnalysis.financialReturns.i18n[lang],
               capacityData.financialIncome /
                 (1 - capacityRatios.financialIncome / 100) || 0,
               capacityData.financialIncome ?? 0,
@@ -182,10 +185,10 @@ export const PaymentCapacityAnalysis = (
       ],
     },
     {
-      legend: DataCapacityAnalysis.businessVentures,
+      legend: DataCapacityAnalysis.businessVentures.i18n[lang],
       items: [
         {
-          label: DataCapacityAnalysis.businessUtilities,
+          label: DataCapacityAnalysis.businessUtilities.i18n[lang],
           value:
             currencyFormat(
               capacityData.personalBusinessUtilities ?? 0,
@@ -194,7 +197,7 @@ export const PaymentCapacityAnalysis = (
           showIcon: true,
           onShowModal: () =>
             handleShowModal(
-              DataCapacityAnalysis.businessUtilities,
+              DataCapacityAnalysis.businessUtilities.i18n[lang],
               capacityData.personalBusinessUtilities /
                 (1 - capacityRatios.personalBusinessUtilities / 100) || 0,
               capacityData.personalBusinessUtilities ?? 0,
@@ -215,14 +218,14 @@ export const PaymentCapacityAnalysis = (
 
   const generalSummary: ISummaryItem[] = [
     {
-      label: DataCapacityAnalysis.totalIncome,
+      label: DataCapacityAnalysis.totalIncome.i18n[lang],
       value:
         currencyFormat(generalPayment / (generalRatio / 100 || 1), false) ||
         "0",
       bold: true,
     },
     {
-      label: DataCapacityAnalysis.minimumPaymentReserve.replace(
+      label: DataCapacityAnalysis.minimumPaymentReserve.i18n[lang].replace(
         "{percent}",
         `${generalRatio || 0}`,
       ),
@@ -230,7 +233,7 @@ export const PaymentCapacityAnalysis = (
       gray: true,
     },
     {
-      label: DataCapacityAnalysis.paymentCapacity,
+      label: DataCapacityAnalysis.paymentCapacity.i18n[lang],
       value: currencyFormat(generalPayment ?? 0, false) || "0",
       bold: true,
     },
@@ -238,12 +241,12 @@ export const PaymentCapacityAnalysis = (
 
   const payrollSummary: ISummaryItem[] = [
     {
-      label: DataCapacityAnalysis.totalIncome,
+      label: DataCapacityAnalysis.totalIncome.i18n[lang],
       value: currencyFormat(payrollIncomeTotal, false) || "0",
       bold: true,
     },
     {
-      label: DataCapacityAnalysis.minimumPaymentReserve.replace(
+      label: DataCapacityAnalysis.minimumPaymentReserve.i18n[lang].replace(
         "{percent}",
         `${generalRatio || 0}`,
       ),
@@ -251,7 +254,7 @@ export const PaymentCapacityAnalysis = (
       gray: true,
     },
     {
-      label: DataCapacityAnalysis.paymentCapacity,
+      label: DataCapacityAnalysis.paymentCapacity.i18n[lang],
       value: currencyFormat(generalPayment ?? 0, false) || "0",
       bold: true,
     },
@@ -261,8 +264,8 @@ export const PaymentCapacityAnalysis = (
 
   return (
     <BaseModal
-      title={DataCapacityAnalysis.modalTitle}
-      nextButton={DataCapacityAnalysis.closeButton}
+      title={DataCapacityAnalysis.modalTitle.i18n[lang]}
+      nextButton={DataCapacityAnalysis.closeButton.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       width={isMobile ? "335px" : "500px"}
@@ -286,6 +289,7 @@ export const PaymentCapacityAnalysis = (
                   legend={fieldset.legend}
                   items={fieldset.items}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               ))}
               <SummarySection items={generalSummary} isMobile={isMobile} />
@@ -298,6 +302,7 @@ export const PaymentCapacityAnalysis = (
                   legend={generalFieldsets[0].legend}
                   items={generalFieldsets[0].items}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               )}
               <SummarySection items={payrollSummary} isMobile={isMobile} />
@@ -308,6 +313,7 @@ export const PaymentCapacityAnalysis = (
               isMobile={isMobile}
               initialValues={modalInitialValues}
               handleClose={() => setShowModal(false)}
+              lang={lang}
             />
           )}
         </ScrollableContainer>

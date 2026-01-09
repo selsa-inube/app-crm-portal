@@ -8,6 +8,7 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataInputs } from "./config";
 
@@ -16,6 +17,7 @@ interface IEditFinancialObligationModalProps {
   onConfirm: (values: FormikValues) => void;
   title: string;
   confirmButtonText: string;
+  lang: EnumType;
   initialValues: FormikValues;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
@@ -27,6 +29,7 @@ function EditFinancialObligationModal({
   title,
   confirmButtonText,
   initialValues,
+  lang,
   iconAfter,
 }: IEditFinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
@@ -50,7 +53,7 @@ function EditFinancialObligationModal({
   return (
     <BaseModal
       title={title}
-      backButton={dataInputs.cancel}
+      backButton={dataInputs.cancel.i18n[lang]}
       nextButton={confirmButtonText}
       handleBack={onCloseModal}
       handleNext={formik.submitForm}
@@ -67,7 +70,7 @@ function EditFinancialObligationModal({
         width={isMobile ? "280px" : "100%"}
       >
         <Textfield
-          label={dataInputs.labelFee}
+          label={dataInputs.labelFee.i18n[lang]}
           name="fee"
           id="fee"
           iconBefore={
@@ -77,7 +80,7 @@ function EditFinancialObligationModal({
               size="20px"
             />
           }
-          placeholder={dataInputs.placeHolderFee}
+          placeholder={dataInputs.placeHolderFee.i18n[lang]}
           value={validateCurrencyField("fee", formik, false, "")}
           size="compact"
           onBlur={formik.handleBlur}
@@ -85,7 +88,7 @@ function EditFinancialObligationModal({
           fullwidth
         />
         <Textfield
-          label={dataInputs.labelBalance}
+          label={dataInputs.labelBalance.i18n[lang]}
           name="balance"
           id="balance"
           iconBefore={
@@ -95,7 +98,7 @@ function EditFinancialObligationModal({
               size="20px"
             />
           }
-          placeholder={dataInputs.palaceHolderBalance}
+          placeholder={dataInputs.palaceHolderBalance.i18n[lang]}
           value={validateCurrencyField("balance", formik, false, "")}
           size="compact"
           onBlur={formik.handleBlur}

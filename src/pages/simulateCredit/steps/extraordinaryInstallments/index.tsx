@@ -151,6 +151,7 @@ export function ExtraordinaryInstallments(
               service={false}
               handleDelete={handleDelete}
               businessManagerCode={businessManagerCode}
+              lang={lang}
             />
           </Stack>
         </Stack>
@@ -161,6 +162,7 @@ export function ExtraordinaryInstallments(
             installmentState={installmentState}
             setInstallmentState={setInstallmentState}
             service={false}
+            lang={lang}
           />
         )}
       </Stack>

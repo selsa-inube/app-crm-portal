@@ -1,6 +1,7 @@
 import { Schedule } from "@services/enum/schedule";
 
 import { CreditProductCardUI } from "./interface";
+import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface CreditProductCardProps {
   lineOfCredit: string;
@@ -10,6 +11,7 @@ interface CreditProductCardProps {
   termMonths: number;
   periodicFee: number;
   schedule: Schedule;
+  lang: EnumType;
   showIcons?: boolean;
   onEdit: () => void;
   onDelete: () => void;
@@ -24,6 +26,7 @@ function CreditProductCard(props: CreditProductCardProps) {
     termMonths,
     periodicFee,
     schedule,
+    lang,
     showIcons = true,
     onEdit,
     onDelete,
@@ -38,6 +41,7 @@ function CreditProductCard(props: CreditProductCardProps) {
       termMonths={termMonths}
       periodicFee={periodicFee}
       schedule={schedule}
+      lang={lang}
       showIcons={showIcons}
       onEdit={onEdit}
       onDelete={onDelete}

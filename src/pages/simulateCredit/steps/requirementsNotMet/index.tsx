@@ -92,6 +92,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
                 requirement=""
                 causeNonCompliance=""
                 isLoading={true}
+                lang={lang}
               />
             ))}
           </Stack>
@@ -114,6 +115,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
                 }
                 hasError={hasError}
                 isLoading={false}
+                lang={lang}
               />
             ))}
           </Stack>

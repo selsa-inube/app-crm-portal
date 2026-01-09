@@ -6,6 +6,7 @@ import { AppContext } from "@context/AppContext";
 import { currencyFormat } from "@utils/formatData/currency";
 import { updateProspect } from "@services/prospect/updateProspect";
 import { restoreFinancialObligationsByBorrowerId } from "@services/prospect/restoreFinancialObligationsByBorrowerId";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   convertObligationsToProperties,
@@ -29,6 +30,7 @@ export const TableFinancialObligations = (
     onProspectUpdate,
     showActions,
     showButtons,
+    lang,
     formState,
     services = true,
     handleOnChangeExtraBorrowers = undefined,
@@ -463,6 +465,7 @@ export const TableFinancialObligations = (
       handleOnChangeExtraBorrowers={handleOnChangeExtraBorrowers}
       showOnlyEdit={showOnlyEdit}
       showAddButton={showAddButton}
+      lang={lang as EnumType}
     />
   );
 };

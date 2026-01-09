@@ -207,6 +207,7 @@ export const Requirements = (props: IRequirementsProps) => {
               observations: "",
             }}
             businessManagerCode={businessManagerCode}
+            lang={lang}
           />
         )}
       {showSeeDetailsModal &&
@@ -222,6 +223,7 @@ export const Requirements = (props: IRequirementsProps) => {
             }}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
+            lang={lang}
           />
         )}
       {showSeeDetailsModal &&
@@ -235,6 +237,7 @@ export const Requirements = (props: IRequirementsProps) => {
               observations: "",
             }}
             businessManagerCode={businessManagerCode}
+            lang={lang}
           />
         )}
     </>

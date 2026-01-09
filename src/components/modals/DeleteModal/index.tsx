@@ -1,6 +1,7 @@
 import { Text, useMediaQuery } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { DeleteData } from "./config";
 
@@ -8,6 +9,7 @@ export interface IDeleteModalProps {
   handleClose: () => void;
   handleDelete?: () => void;
   TextDelete: string;
+  lang: EnumType;
   isLoading?: boolean;
 }
 
@@ -16,6 +18,7 @@ export function DeleteModal(props: IDeleteModalProps) {
     handleClose,
     handleDelete = () => {},
     TextDelete,
+    lang,
     isLoading = false,
   } = props;
 
@@ -23,9 +26,9 @@ export function DeleteModal(props: IDeleteModalProps) {
 
   return (
     <BaseModal
-      title={DeleteData.title}
-      nextButton={DeleteData.delate}
-      backButton={DeleteData.cancel}
+      title={DeleteData.title.i18n[lang]}
+      nextButton={DeleteData.delete.i18n[lang]}
+      backButton={DeleteData.cancel.i18n[lang]}
       handleNext={handleDelete}
       handleClose={handleClose}
       initialDivider={false}

@@ -27,6 +27,7 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataAddSeriesModal } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
@@ -65,6 +66,7 @@ export interface AddSeriesModalProps {
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
   }) => void;
+  lang: EnumType;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
@@ -73,6 +75,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     service = true,
     seriesModal,
     installmentState,
+    lang,
     handleClose,
     onSubmit,
     setInstallmentState,
@@ -202,7 +205,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         code + (err?.message || "") + (err?.data?.description || "");
 
       addFlag({
-        title: TextLabels.titleError,
+        title: TextLabels.titleError.i18n[lang],
         description,
         appearance: "danger",
         duration: 5000,
@@ -363,9 +366,9 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
 
   return (
     <BaseModal
-      title={dataAddSeriesModal.title}
-      backButton={dataAddSeriesModal.cancel}
-      nextButton={dataAddSeriesModal.add}
+      title={dataAddSeriesModal.title.i18n[lang]}
+      backButton={dataAddSeriesModal.cancel.i18n[lang]}
+      nextButton={dataAddSeriesModal.add.i18n[lang]}
       handleBack={handleClose}
       handleNext={service ? handleNextClick : handleSimpleSubmit}
       handleClose={handleClose}
@@ -380,8 +383,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           <Textfield
             name="paymentChannelAbbreviatedName"
             id="paymentChannelAbbreviatedName"
-            label={dataAddSeriesModal.labelPaymentMethod}
-            placeholder={dataAddSeriesModal.placeHolderSelect}
+            label={dataAddSeriesModal.labelPaymentMethod.i18n[lang]}
+            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
             value={paymentMethodOptionsMock[0]?.label || ""}
             readOnly={true}
             disabled={true}
@@ -393,8 +396,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           <Select
             name="paymentChannelAbbreviatedName"
             id="paymentChannelAbbreviatedName"
-            label={dataAddSeriesModal.labelPaymentMethod}
-            placeholder={dataAddSeriesModal.placeHolderSelect}
+            label={dataAddSeriesModal.labelPaymentMethod.i18n[lang]}
+            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
             options={paymentMethodOptionsMock}
             value={formik.values.paymentChannelAbbreviatedName}
             onChange={(name, value) => handleFieldChange(name, value)}
@@ -408,8 +411,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           <Textfield
             name="value"
             id="value"
-            label={dataAddSeriesModal.labelAmount}
-            placeholder={dataAddSeriesModal.placeHolderAmount}
+            label={dataAddSeriesModal.labelAmount.i18n[lang]}
+            placeholder={dataAddSeriesModal.placeHolderAmount.i18n[lang]}
             onChange={(event) => {
               handleChangeWithCurrency(
                 { setFieldValue: formik.setFieldValue },
@@ -426,8 +429,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         <Textfield
           name="installmentAmount"
           id="installmentAmount"
-          label={dataAddSeriesModal.labelValue}
-          placeholder={dataAddSeriesModal.placeHolderValue}
+          label={dataAddSeriesModal.labelValue.i18n[lang]}
+          placeholder={dataAddSeriesModal.placeHolderValue.i18n[lang]}
           iconBefore={<MdOutlineAttachMoney color={inube.palette.green.G400} />}
           onChange={(event) =>
             handleInstallmentAmountChange(
@@ -448,8 +451,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           <Textfield
             name="frequency"
             id="frequency"
-            label={dataAddSeriesModal.labelFrequency}
-            placeholder={dataAddSeriesModal.placeHolderSelect}
+            label={dataAddSeriesModal.labelFrequency.i18n[lang]}
+            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
             value={frequencyOptionsMock[0]?.label || ""}
             readOnly={true}
             disabled={true}
@@ -461,8 +464,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           <Select
             name="frequency"
             id="frequency"
-            label={dataAddSeriesModal.labelFrequency}
-            placeholder={dataAddSeriesModal.placeHolderSelect}
+            label={dataAddSeriesModal.labelFrequency.i18n[lang]}
+            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
             options={frequencyOptionsMock}
             value={formik.values.frequency}
             onChange={(name, value) => formik.setFieldValue(name, value)}
@@ -475,8 +478,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           <Textfield
             name="installmentDate"
             id="installmentDate"
-            label={dataAddSeriesModal.labelDate}
-            placeholder={dataAddSeriesModal.placeHolderSelect}
+            label={dataAddSeriesModal.labelDate.i18n[lang]}
+            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
             value={paymentDateOptionsMock[0]?.label || ""}
             readOnly={true}
             disabled={true}
@@ -488,8 +491,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           <Select
             name="installmentDate"
             id="installmentDate"
-            label={dataAddSeriesModal.labelDate}
-            placeholder={dataAddSeriesModal.placeHolderSelect}
+            label={dataAddSeriesModal.labelDate.i18n[lang]}
+            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
             options={paymentDateOptionsMock}
             value={formik.values.installmentDate}
             onChange={(name, value) => handleFieldChange(name, value)}
