@@ -44,6 +44,7 @@ const CreditUI = (props: ICreditUIProps) => {
     showErrorModal,
     messageError,
     loading,
+    lang,
     navigate,
     setShowErrorModal,
     setMessageError,
@@ -125,7 +126,7 @@ const CreditUI = (props: ICreditUIProps) => {
             </StyledArrowBack>
             {options.length === 0 && !loading ? (
               <Text type="title" size="large">
-                {errorDataCredit.noData}
+                {errorDataCredit.noData.i18n[lang]}
               </Text>
             ) : (
               <>
@@ -153,7 +154,7 @@ const CreditUI = (props: ICreditUIProps) => {
                             url={url}
                             isDisabled={isDisabled}
                             onInvalidUrl={() => {
-                              setMessageError(errorDataCredit.noUrl);
+                              setMessageError(errorDataCredit.noUrl.i18n[lang]);
                               setShowErrorModal(true);
                             }}
                           />

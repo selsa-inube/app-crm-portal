@@ -15,6 +15,7 @@ import {
 import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
 import { IDocumentsCredit } from "@services/creditRequest/types";
 import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
@@ -47,6 +48,8 @@ export function ApplyForCredit() {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
+
+  const { lang } = useEnum();
 
   if (!businessManagerCode && codeError === null) {
     setCodeError(1003);
@@ -215,7 +218,16 @@ export function ApplyForCredit() {
   const bondValue = prospectData.bondValue;
 
   const steps = useMemo(() => {
-    if (!guaranteesRequired) return Object.values(stepsFilingApplication);
+    if (!guaranteesRequired) {
+      return Object.values(stepsFilingApplication).map((step) => ({
+        ...step,
+        name: typeof step.name === "string" ? step.name : step.name.i18n[lang],
+        description:
+          typeof step.description === "string"
+            ? step.description
+            : step.description.i18n[lang],
+      }));
+    }
     const hideMortgage = guaranteesRequired.includes("Mortgage");
     const hidePledge = guaranteesRequired.includes("Pledge");
     const hasCoborrower =
@@ -228,12 +240,21 @@ export function ApplyForCredit() {
         if (step.id === 3 && hasBorrowers === 1 && hasCoborrower === true) {
           return {
             ...step,
-            name: dataSubmitApplication.coBorrowers.stepName,
-            description: dataSubmitApplication.coBorrowers.stepDescription,
+            name: dataSubmitApplication.coBorrowers.stepName.i18n[lang],
+            description:
+              dataSubmitApplication.coBorrowers.stepDescription.i18n[lang],
           };
         }
 
-        return step;
+        return {
+          ...step,
+          name:
+            typeof step.name === "string" ? step.name : step.name.i18n[lang],
+          description:
+            typeof step.description === "string"
+              ? step.description
+              : step.description.i18n[lang],
+        };
       })
       .filter((step) => {
         if (step.id === 3 && hasBorrowers === 1 && !hasCoborrower) return false;
@@ -244,7 +265,7 @@ export function ApplyForCredit() {
         }
         return true;
       });
-  }, [guaranteesRequired, hasBorrowers, bondValue]);
+  }, [guaranteesRequired, hasBorrowers, bondValue, lang]);
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsFilingApplication.generalInformation.id,
@@ -428,7 +449,7 @@ export function ApplyForCredit() {
 
   const handleFlag = () => {
     setShowErrorModal(true);
-    setMessageError(tittleOptions.errorSubmit);
+    setMessageError(tittleOptions.errorSubmit.i18n[lang]);
   };
 
   const fetchProspectData = useCallback(async () => {
@@ -447,7 +468,7 @@ export function ApplyForCredit() {
         return;
       }
 
-      if (prospect.state !== prospectStates.CREATED) {
+      if (prospect.state !== prospectStates.CREATED.i18n[lang]) {
         setCodeError(1012);
       }
 
@@ -550,7 +571,7 @@ export function ApplyForCredit() {
       setGuaranteesRequired(warrantiesArray);
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(dataSubmitApplication.error);
+      setMessageError(dataSubmitApplication.error.i18n[lang]);
     }
   }, [businessUnitPublicCode, businessManagerCode, prospectCode]);
 
@@ -596,9 +617,18 @@ export function ApplyForCredit() {
   }
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
+  const currentStep_ = steps[currentStepIndex];
   const currentStepsNumber = {
-    ...steps[currentStepIndex],
+    ...currentStep_,
     number: currentStepIndex + 1,
+    name:
+      typeof currentStep_.name === "string"
+        ? currentStep_.name
+        : currentStep_.name,
+    description:
+      typeof currentStep_.description === "string"
+        ? currentStep_.description
+        : currentStep_.description,
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -613,7 +643,7 @@ export function ApplyForCredit() {
         }
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError(tittleOptions.errorSummaryProspect);
+        setMessageError(tittleOptions.errorSummaryProspect.i18n[lang]);
       }
     };
 
@@ -673,6 +703,7 @@ export function ApplyForCredit() {
         modesOfDisbursement={modesOfDisbursement}
         guaranteesRequired={guaranteesRequired}
         loading={loading}
+        lang={lang}
       />
     </>
   );

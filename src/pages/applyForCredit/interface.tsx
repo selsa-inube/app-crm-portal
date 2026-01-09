@@ -29,6 +29,7 @@ import {
 } from "@services/prospect/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   IBorrowerData,
@@ -94,6 +95,7 @@ interface ApplyForCreditUIProps {
   codeError?: number | null;
   addToFix?: string[];
   guaranteesRequired: string[];
+  lang: EnumType;
 }
 
 export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
@@ -132,6 +134,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     modesOfDisbursement,
     guaranteesRequired,
     loading,
+    lang,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -151,7 +154,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
 
   if (codeError) {
     setShowErrorModal(true);
-    setMessageError(tittleOptions.tryLater);
+    setMessageError(tittleOptions.tryLater.i18n[lang]);
   }
 
   const handleRedirect = () => {
@@ -289,6 +292,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     prospectData={prospectData}
                     businessUnitPublicCode={businessUnitPublicCode}
                     businessManagerCode={businessManagerCode}
+                    lang={lang}
                   />
                 )}
               {currentStepsNumber &&
@@ -303,11 +307,12 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       handleFormChange({ contactInformation: values })
                     }
                     customerData={customerData}
+                    lang={lang}
                   />
                 )}
               {currentStepsNumber &&
                 currentStepsNumber.id ===
-                  stepsFilingApplication.BorrowerData.id && (
+                  stepsFilingApplication.borrowerData.id && (
                   <Borrowers
                     isMobile={isMobile}
                     onFormValid={setIsCurrentFormValid}
@@ -320,6 +325,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     prospectData={prospectData as IProspectBorrower}
                     valueRule={guaranteesRequired}
                     businessManagerCode={businessManagerCode}
+                    lang={lang}
                   />
                 )}
               {currentStepsNumber &&
@@ -332,6 +338,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ propertyOffered: values })
                     }
+                    lang={lang}
                   />
                 )}
 
@@ -345,6 +352,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     handleOnChange={(values) =>
                       handleFormChange({ vehicleOffered: values })
                     }
+                    lang={lang}
                   />
                 )}
               {currentStepsNumber &&
@@ -356,6 +364,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       handleFormChange({ bail: values })
                     }
                     data={prospectData}
+                    lang={lang}
                   />
                 )}
               {currentStepsNumber &&
@@ -376,6 +385,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     identificationNumber={customerData?.publicCode || ""}
                     prospectSummaryData={prospectSummaryData}
                     modesOfDisbursement={modesOfDisbursement}
+                    lang={lang}
                   />
                 )}
               {currentStepsNumber &&
@@ -404,6 +414,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       handleFormChange({ observations: newData })
                     }
                     onFormValid={setIsCurrentFormValid}
+                    lang={lang}
                   />
                 )}
               <Stack
@@ -429,8 +440,8 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
             {isModalOpen && (
               <>
                 <BaseModal
-                  title={titlesModal.title}
-                  nextButton={titlesModal.textButtonNext}
+                  title={titlesModal.title.i18n[lang]}
+                  nextButton={titlesModal.textButtonNext.i18n[lang]}
                   handleNext={() => setIsModalOpen(false)}
                   handleClose={() => setIsModalOpen(false)}
                   width={isMobile ? "290px" : "400px"}
@@ -452,9 +463,9 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
             )}
             {sentModal && (
               <BaseModal
-                title={dataSubmitApplication.modals.file}
-                nextButton={dataSubmitApplication.modals.continue}
-                backButton={dataSubmitApplication.modals.cancel}
+                title={dataSubmitApplication.modals.file.i18n[lang]}
+                nextButton={dataSubmitApplication.modals.continue.i18n[lang]}
+                backButton={dataSubmitApplication.modals.cancel.i18n[lang]}
                 handleNext={() => {
                   handleSubmit();
                 }}
@@ -466,18 +477,17 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 isLoading={loading}
               >
                 <Text type="body" size="large">
-                  {dataSubmitApplication.modals.fileDescription.replace(
-                    "{numberProspectCode}",
-                    `${prospectCode}` || "",
-                  )}
+                  {dataSubmitApplication.modals.fileDescription.i18n[
+                    lang
+                  ].replace("{numberProspectCode}", `${prospectCode}` || "")}
                 </Text>
               </BaseModal>
             )}
             {approvedRequestModal && (
               <BaseModal
-                title={dataSubmitApplication.modals.filed}
-                nextButton={dataSubmitApplication.modals.cancel}
-                backButton={dataSubmitApplication.modals.share}
+                title={dataSubmitApplication.modals.filed.i18n[lang]}
+                nextButton={dataSubmitApplication.modals.cancel.i18n[lang]}
+                backButton={dataSubmitApplication.modals.share.i18n[lang]}
                 iconBeforeback={
                   <Icon
                     icon={<MdOutlineShare />}
@@ -500,14 +510,14 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   />
                   <Stack gap="6px">
                     <Text type="body" size="large">
-                      {dataSubmitApplication.modals.filed}
+                      {dataSubmitApplication.modals.filed.i18n[lang]}
                     </Text>
                     <Text type="body" size="large" weight="bold">
                       {creditRequestCode}
                     </Text>
                   </Stack>
                   <Text type="body" size="medium" appearance="gray">
-                    {dataSubmitApplication.modals.filedDescription}
+                    {dataSubmitApplication.modals.filedDescription.i18n[lang]}
                   </Text>
                 </Stack>
               </BaseModal>

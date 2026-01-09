@@ -9,6 +9,7 @@ import { ItemNotFound } from "@components/layout/ItemNotFound";
 import { IAction, IEntries, ITitle } from "@components/data/TableBoard/types";
 import { getAllPackagesOfRequirementsById } from "@services/requirementsPackages/packagesOfRequirements";
 import { TraceDetailModal } from "@components/modals/TraceDetailModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   infoItems,
@@ -33,6 +34,7 @@ export interface IRequirementsProps {
   businessManagerCode: string;
   creditRequestCode: string;
   isMobile: boolean;
+  lang: EnumType;
 }
 
 export const Requirements = (props: IRequirementsProps) => {
@@ -42,6 +44,7 @@ export const Requirements = (props: IRequirementsProps) => {
     businessUnitPublicCode,
     businessManagerCode,
     creditRequestCode,
+    lang,
   } = props;
   const [showSeeDetailsModal, setShowSeeDetailsModal] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
@@ -147,7 +150,7 @@ export const Requirements = (props: IRequirementsProps) => {
   return (
     <>
       <Fieldset
-        title={errorMessages.Requirements.titleCard}
+        title={errorMessages.Requirements.titleCard.i18n[lang]}
         heightFieldset="100%"
         hasTable
         hasOverflow={isMobile || error}
@@ -155,9 +158,9 @@ export const Requirements = (props: IRequirementsProps) => {
         {error ? (
           <ItemNotFound
             image={userNotFound}
-            title={errorMessages.Requirements.title}
-            description={errorMessages.Requirements.description}
-            buttonDescription={errorMessages.Requirements.button}
+            title={errorMessages.Requirements.title.i18n[lang]}
+            description={errorMessages.Requirements.description.i18n[lang]}
+            buttonDescription={errorMessages.Requirements.button.i18n[lang]}
             onRetry={() => fetchRequirements()}
           />
         ) : (

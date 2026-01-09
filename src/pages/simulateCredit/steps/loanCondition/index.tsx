@@ -5,6 +5,7 @@ import { Stack, Text, Divider, Toggle, Textfield } from "@inubekit/inubekit";
 import { Fieldset } from "@components/data/Fieldset";
 import { VALIDATED_NUMBER_REGEX } from "@components/modals/ProspectProductModal/config";
 import { currencyFormat } from "@utils/formatData/currency";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { loanData } from "./config";
 import { LoanConditionState } from "../../types/forms.types";
@@ -14,10 +15,11 @@ interface ILoanCondition {
   handleOnChange: (newState: LoanConditionState) => void;
   onFormValid: (isValid: boolean) => void;
   isMobile: boolean;
+  lang: EnumType;
 }
 
 export function LoanCondition(props: ILoanCondition) {
-  const { initialValues, handleOnChange, onFormValid, isMobile } = props;
+  const { initialValues, handleOnChange, onFormValid, isMobile, lang } = props;
 
   const validationSchema = Yup.object().shape({
     quotaCapValue: Yup.string().when(
@@ -59,7 +61,7 @@ export function LoanCondition(props: ILoanCondition) {
                 gap="16px"
                 padding={isMobile ? "16px" : "0px 16px"}
               >
-                <Text>{loanData.quotaCapTitle}</Text>
+                <Text>{loanData.quotaCapTitle.i18n[lang]}</Text>
                 <Stack
                   alignItems={isMobile ? "initial" : "center"}
                   direction={isMobile ? "column" : "row"}
@@ -101,16 +103,16 @@ export function LoanCondition(props: ILoanCondition) {
                       }
                     >
                       {values.toggles.quotaCapToggle
-                        ? loanData.yes
-                        : loanData.no}
+                        ? loanData.yes.i18n[lang]
+                        : loanData.no.i18n[lang]}
                     </Text>
                   </Stack>
                   <Stack padding={isMobile ? "0px" : "0px 40px"}>
                     <Textfield
                       id="quotaCap"
                       name="quotaCapValue"
-                      label={loanData.quotaCapLabel}
-                      placeholder={loanData.quotaCapPlaceholder}
+                      label={loanData.quotaCapLabel.i18n[lang]}
+                      placeholder={loanData.quotaCapPlaceholder.i18n[lang]}
                       size="compact"
                       type="text"
                       disabled={!values.toggles.quotaCapToggle}
@@ -151,7 +153,7 @@ export function LoanCondition(props: ILoanCondition) {
                 {!values.toggles.quotaCapToggle && (
                   <Stack direction="column" gap="8px">
                     <Divider dashed />
-                    <Text>{loanData.maximumTermTitle}</Text>
+                    <Text>{loanData.maximumTermTitle.i18n[lang]}</Text>
                     <Stack
                       gap="8px"
                       alignItems={isMobile ? "initial" : "center"}
@@ -200,16 +202,18 @@ export function LoanCondition(props: ILoanCondition) {
                           }
                         >
                           {values.toggles.maximumTermToggle
-                            ? loanData.yes
-                            : loanData.no}
+                            ? loanData.yes.i18n[lang]
+                            : loanData.no.i18n[lang]}
                         </Text>
                       </Stack>
                       <Stack padding={isMobile ? "0px" : "0px 40px"}>
                         <Textfield
                           id="maximumTerm"
                           name="maximumTermValue"
-                          label={loanData.maximumTermLabel}
-                          placeholder={loanData.maximumTermPlaceholder}
+                          label={loanData.maximumTermLabel.i18n[lang]}
+                          placeholder={
+                            loanData.maximumTermPlaceholder.i18n[lang]
+                          }
                           size="compact"
                           type="number"
                           disabled={!values.toggles.maximumTermToggle}

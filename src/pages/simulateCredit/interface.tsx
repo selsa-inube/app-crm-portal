@@ -56,7 +56,7 @@ import { MoneyDestination } from "./steps/MoneyDestination";
 import { ObligationsFinancial } from "./steps/financialObligations";
 import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
-import { addConfig, textAddCongfig } from "./config/addConfig";
+import { addConfig, textAddConfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
 import { messagesError, dataSubmitApplication } from "./config/config";
 import {
@@ -67,6 +67,7 @@ import {
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 import { IDataHeader } from "../simulations/types";
 import { RiskScore } from "./steps/riskScore";
+import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -161,6 +162,7 @@ interface SimulateCreditUIProps {
   loadingQuestions: boolean;
   showSelectsLoanAmount: boolean;
   createdProspectModal: boolean;
+  lang: EnumType;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -219,6 +221,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     businessUnitPublicCode,
     businessManagerCode,
     isLoadingCreditLimit,
+    lang,
     allowToContinue,
     handleModalTryAgain,
     sentModal,
@@ -318,7 +321,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     <>
                       <Button
                         iconBefore={<MdOutlinePriceChange />}
-                        children={textAddCongfig.buttonQuotas}
+                        children={textAddConfig.buttonQuotas.i18n[lang]}
                         appearance="gray"
                         spacing="compact"
                         variant="outlined"
@@ -334,7 +337,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         spacing="compact"
                         appearance="gray"
                         iconBefore={<MdOutlinePaid />}
-                        children={textAddCongfig.buttonPaymentCapacity}
+                        children={
+                          textAddConfig.buttonPaymentCapacity.i18n[lang]
+                        }
                         onClick={() => {
                           if (totalIncome === 0) {
                             setIsCapacityAnalysisWarning(true);
@@ -380,6 +385,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -396,6 +402,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isTablet={isMobile}
                       businessManagerCode={businessManagerCode}
                       clientIdentificationNumber={customerData.publicCode}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -434,6 +441,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }}
                       creditLineTerms={creditLineTerms!}
                       loadingQuestions={loadingQuestions}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -449,6 +457,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           newExtraordinary,
                         )
                       }
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -466,6 +475,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       prospectData={prospectData}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -499,6 +509,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       handleOnChange={(newRisk) =>
                         handleFormDataChange("riskScore", newRisk)
                       }
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -534,6 +545,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                       onFormValid={setIsCurrentFormValid}
                       isMobile={isMobile}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -555,6 +567,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       obligationPayments={obligationPayments}
                       paymentChannel={paymentChannel}
                       showSelects={showSelectsLoanAmount}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -586,6 +599,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         });
                       }}
                       data={obligationPayments}
+                      lang={lang}
                     />
                   )}
               </Stack>

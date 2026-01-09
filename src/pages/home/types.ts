@@ -2,6 +2,7 @@ import { ICRMPortalData } from "@context/AppContext/types";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { useNavigate } from "react-router-dom";
 import { IUser } from "../login/types";
+import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface ICardData {
   id: string;
@@ -49,6 +50,7 @@ interface IHomeUIProps {
   navigate: ReturnType<typeof useNavigate>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  lang: EnumType;
 }
 
 export type { IHome, ICardData, IBusinessUnitsPortalStaffs, IHomeUIProps };

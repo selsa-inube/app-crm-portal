@@ -87,14 +87,7 @@ export const paymentCapacityData = {
     },
   },
 
-  getLineOfCredit: {
-    code: "Max_term_line_of_credit",
-    description: "Maximum term by line of credit",
-    i18n: {
-      en: (lineName: string) => `(x) Max term in ${lineName}`,
-      es: (nombreLinea: string) => `(x) Plazo máx. en ${nombreLinea}`,
-    },
-  },
+  getLineOfCredit: (nombreLinea: string) => `(x) Plazo máx. en ${nombreLinea}`,
 
   maxValueDescription: {
     code: "Max_value_ordinary_description",
@@ -168,3 +161,11 @@ export const paymentCapacityData = {
     },
   },
 };
+
+export const getMaxValueText = (maxAmount: number, maxTerm: number) => (
+  <>
+    Monto máximo calculado para una cuota de{" "}
+    <strong>{maxAmount.toLocaleString("es-CO")}</strong> y plazo de{" "}
+    <strong>{maxTerm}</strong> meses.
+  </>
+);

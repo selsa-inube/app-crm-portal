@@ -6,6 +6,7 @@ import { Stack, Icon, Text, Checkbox } from "@inubekit/inubekit";
 
 import { currencyFormat } from "@utils/formatData/currency";
 import { Fieldset } from "@components/data/Fieldset";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataBail } from "./config";
 import { IBail } from "../../types";
@@ -15,10 +16,11 @@ interface IBailProps {
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IBail) => void;
   data: { bondValue: number };
+  lang: EnumType;
 }
 
 export function Bail(props: IBailProps) {
-  const { initialValues, onFormValid, handleOnChange, data } = props;
+  const { initialValues, onFormValid, handleOnChange, data, lang } = props;
 
   const validationSchema = Yup.object({
     client: Yup.boolean().oneOf([true]).required(),
@@ -52,13 +54,13 @@ export function Bail(props: IBailProps) {
             {currencyFormat(data.bondValue)}
           </Text>
           <Text type="body" size="small" appearance="gray">
-            {dataBail.bail}
+            {dataBail.bail.i18n[lang]}
           </Text>
         </Stack>
         <Checkbox
           id="client"
           name="client"
-          label={dataBail.labelCheckBox}
+          label={dataBail.labelCheckBox.i18n[lang]}
           checked={formik.values.client}
           onChange={formik.handleChange}
           value={"client"}
@@ -66,7 +68,7 @@ export function Bail(props: IBailProps) {
         <Stack gap="4px">
           <Icon icon={<MdInfoOutline />} appearance="dark" size="16px" />
           <Text type="body" size="medium" appearance="gray">
-            {dataBail.disbursement}
+            {dataBail.disbursement.i18n[lang]}
           </Text>
         </Stack>
       </Stack>

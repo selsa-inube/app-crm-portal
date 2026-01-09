@@ -9,6 +9,7 @@ import { RiskScoreGauge } from "@pages/prospect/components/RiskScoreGauge";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { BaseModal } from "@components/modals/baseModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { riskScoreData } from "./config";
 
@@ -16,11 +17,12 @@ interface IRiskScoreProps {
   value: number;
   date: string;
   isMobile: boolean;
+  lang: EnumType;
   handleOnChange: (riskScore: { value: number; date: string }) => void;
 }
 
 export function RiskScore(props: IRiskScoreProps) {
-  const { value, date, isMobile, handleOnChange } = props;
+  const { value, date, isMobile, lang, handleOnChange } = props;
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -32,7 +34,7 @@ export function RiskScore(props: IRiskScoreProps) {
 
   const formik = useFormik({
     initialValues: {
-      score: value || riskScoreData.value,
+      score: value || riskScoreData.value.i18n[lang],
     },
     validationSchema,
     enableReinitialize: true,
@@ -50,8 +52,8 @@ export function RiskScore(props: IRiskScoreProps) {
 
   useEffect(() => {
     handleOnChange({
-      value: value || riskScoreData.value,
-      date: date || riskScoreData.date,
+      value: value || riskScoreData.value.i18n[lang],
+      date: date || riskScoreData.date.i18n[lang],
     });
   }, []);
 
@@ -65,17 +67,17 @@ export function RiskScore(props: IRiskScoreProps) {
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
-        <RiskScoreGauge value={value || riskScoreData.value} />
+        <RiskScoreGauge value={value || riskScoreData.value.i18n[lang]} />
         <Stack gap="4px">
           {isLoading ? (
             <SkeletonLine />
           ) : (
             <Text type="body" size="small">
-              {riskScoreData.reportedScore}
+              {riskScoreData.reportedScore.i18n[lang]}
             </Text>
           )}
           <Text type="body" weight="bold" size="small">
-            {date === riskScoreData.date
+            {date === riskScoreData.date.i18n[lang]
               ? formatPrimaryDate(new Date())
               : formatPrimaryDate(new Date(date))}
           </Text>
@@ -86,24 +88,24 @@ export function RiskScore(props: IRiskScoreProps) {
             iconBefore={<MdOutlineEdit />}
             onClick={() => setShowEditModal(true)}
           >
-            {riskScoreData.editScore}
+            {riskScoreData.editScore.i18n[lang]}
           </Button>
           <Button variant="none" iconBefore={<MdOutlineEdit />}>
-            {riskScoreData.restore}
+            {riskScoreData.restore.i18n[lang]}
           </Button>
         </Stack>
         {showErrorModal && (
           <ErrorModal
             handleClose={() => setShowErrorModal(false)}
             isMobile={isMobile}
-            message={riskScoreData.error}
+            message={riskScoreData.error.i18n[lang]}
           />
         )}
         {showEditModal && (
           <BaseModal
-            title={riskScoreData.editTitle}
-            nextButton={riskScoreData.save}
-            backButton={riskScoreData.close}
+            title={riskScoreData.editTitle.i18n[lang]}
+            nextButton={riskScoreData.save.i18n[lang]}
+            backButton={riskScoreData.close.i18n[lang]}
             handleBack={() => setShowEditModal(false)}
             handleNext={formik.handleSubmit}
             disabledNext={
@@ -114,7 +116,7 @@ export function RiskScore(props: IRiskScoreProps) {
             <Input
               id="score"
               name="score"
-              label={riskScoreData.score}
+              label={riskScoreData.score.i18n[lang]}
               size="compact"
               fullwidth
               type="number"
@@ -126,7 +128,7 @@ export function RiskScore(props: IRiskScoreProps) {
                   ? "invalid"
                   : undefined
               }
-              message={riskScoreData.error}
+              message={riskScoreData.error.i18n[lang]}
             />
           </BaseModal>
         )}

@@ -15,6 +15,7 @@ import {
 } from "@services/creditRequest/types";
 import { getPayrollDiscountAuthorizationsById } from "@services/creditRequest/payroll_discount_authorizations";
 import { getPromissoryNotesById } from "@services/creditRequest/promissory_notes";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   appearanceTag,
@@ -29,11 +30,12 @@ import { errorObserver, errorMessages } from "../config";
 interface IPromissoryNotesProps {
   id: string;
   isMobile: boolean;
+  lang: EnumType;
   creditRequest?: ICreditRequest | null;
 }
 
 export const PromissoryNotes = (props: IPromissoryNotesProps) => {
-  const { isMobile, creditRequest } = props;
+  const { isMobile, lang, creditRequest } = props;
   const { addFlag } = useFlag();
 
   const [showModal, setShowModal] = useState(false);
@@ -130,7 +132,7 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
 
   return (
     <Fieldset
-      title={errorMessages.PromissoryNotes.titleCard}
+      title={errorMessages.PromissoryNotes.titleCard.i18n[lang]}
       heightFieldset="100%"
       hasTable
       hasOverflow={isMobile}
@@ -138,11 +140,11 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
       {!creditRequest || showRetry ? (
         <ItemNotFound
           image={userNotFound}
-          title={errorMessages.PromissoryNotes.title}
+          title={errorMessages.PromissoryNotes.title.i18n[lang]}
           description={
-            errorMessages.PromissoryNotes.description || errorMessage
+            errorMessages.PromissoryNotes.description.i18n[lang] || errorMessage
           }
-          buttonDescription={errorMessages.PromissoryNotes.button}
+          buttonDescription={errorMessages.PromissoryNotes.button.i18n[lang]}
           onRetry={handleRetry}
         />
       ) : (

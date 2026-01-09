@@ -8,6 +8,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataError } from "./config";
 
@@ -17,6 +18,7 @@ interface IRequirementsNotMetProps {
   prospectData: IProspect;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  lang: EnumType;
 }
 
 export function RequirementsNotMet(props: IRequirementsNotMetProps) {
@@ -26,6 +28,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     prospectData,
     businessUnitPublicCode,
     businessManagerCode,
+    lang,
   } = props;
 
   const [validateRequirements, setValidateRequirements] = useState<
@@ -131,7 +134,9 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
               />
             )}
             <Text type="title" size="medium" appearance="dark">
-              {hasError ? dataError.descriptionError : dataError.noData}
+              {hasError
+                ? dataError.descriptionError.i18n[lang]
+                : dataError.noData.i18n[lang]}
             </Text>
           </Stack>
         )}

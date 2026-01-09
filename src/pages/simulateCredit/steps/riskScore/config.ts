@@ -27,8 +27,8 @@ export const riskScoreData = {
     code: "Value",
     description: "Numeric score value",
     i18n: {
-      en: "410",
-      es: "410",
+      en: 410,
+      es: 410,
     },
   },
   date: {

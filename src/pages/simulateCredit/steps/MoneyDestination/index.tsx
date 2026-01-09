@@ -9,12 +9,14 @@ import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
 import { dataMoneyDestination } from "./config";
+import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface IMoneyDestinationProps {
   initialValues: string;
   isTablet: boolean;
   businessManagerCode: string;
   clientIdentificationNumber: string;
+  lang: EnumType;
   handleOnChange: React.Dispatch<React.SetStateAction<string>>;
   onFormValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -25,6 +27,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     isTablet,
     businessManagerCode,
     clientIdentificationNumber,
+    lang,
     handleOnChange,
     onFormValid,
   } = props;
@@ -88,7 +91,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
   if (moneyDestinations) {
     moneyDestinations.forEach((destination) => {
       const type =
-        destination.moneyDestinationType || dataMoneyDestination.noType;
+        destination.moneyDestinationType ||
+        dataMoneyDestination.noType.i18n[lang];
       if (!groupedDestinations[type]) {
         groupedDestinations[type] = [];
       }

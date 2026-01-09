@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
@@ -30,7 +31,7 @@ import {
   IPaymentDatesChannel,
   IResponsePaymentDatesChannel,
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
-import { useIAuth } from "@inube/iauth-react";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
@@ -47,7 +48,7 @@ import {
   updateFinancialObligationsFormData,
 } from "./steps/extraDebtors/utils";
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
-import { textAddCongfig } from "./config/addConfig";
+import { textAddConfig } from "./config/addConfig";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -126,6 +127,8 @@ export function SimulateCredit() {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
+  const { lang } = useEnum();
+
   const dataHeader = {
     name: customerData.fullName,
     status:
@@ -192,7 +195,7 @@ export function SimulateCredit() {
 
     const financialObligationProperties =
       formData.obligationsFinancial?.obligations?.map((obligation) => ({
-        propertyName: textAddCongfig.financialObligation,
+        propertyName: textAddConfig.financialObligation.i18n[lang],
         propertyValue: [
           obligation.productName,
           obligation.nextPaymentValueTotal,
@@ -211,7 +214,7 @@ export function SimulateCredit() {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
-      borrowerType: textAddCongfig.mainBorrower,
+      borrowerType: textAddConfig.mainBorrower.i18n[lang],
       borrowerName: customerData.fullName,
 
       borrowerProperties: [
@@ -965,6 +968,7 @@ export function SimulateCredit() {
         handleFormDataChange={handleFormDataChange}
         isMobile={isMobile}
         isTablet={isTablet}
+        lang={lang}
         creditLimitData={creditLimitData}
         totalIncome={totalIncome}
         isCapacityAnalysisWarning={isCapacityAnalysisWarning}

@@ -24,6 +24,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { IPayment } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataAmount, dataModalDisableLoanAmount } from "./config";
 
@@ -45,6 +46,7 @@ export interface ILoanAmountProps {
   obligationPayments: IPayment[] | undefined;
   paymentChannel: IResponsePaymentDatesChannel[] | null;
   showSelects?: boolean;
+  lang: EnumType;
 }
 
 export function LoanAmount(props: ILoanAmountProps) {
@@ -56,6 +58,7 @@ export function LoanAmount(props: ILoanAmountProps) {
     obligationPayments,
     paymentChannel,
     showSelects,
+    lang,
   } = props;
   const { id } = useParams();
   const loanId = parseInt(id || "0", 10);
@@ -226,7 +229,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                     weight="bold"
                     padding="0px 0px 0px 16px"
                   >
-                    {data}
+                    {data.i18n[lang]}
                   </Text>
                   <Field name="inputValue">
                     {() => (
@@ -243,7 +246,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                           Number(values.inputValue || 0),
                           false,
                         )}
-                        placeholder={dataAmount.placeholderValue}
+                        placeholder={dataAmount.placeholderValue.i18n[lang]}
                         onChange={(e) => {
                           const raw =
                             parseFloat(e.target.value.replace(/[^0-9]/g, "")) ||
@@ -258,7 +261,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                 <Divider dashed />
                 <Stack direction="column" gap="16px">
                   <Text type="body" size="medium">
-                    {dataAmount.currentObligations}
+                    {dataAmount.currentObligations.i18n[lang]}
                   </Text>
                   <Stack gap="8px" alignItems="center">
                     <Toggle
@@ -300,7 +303,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                           {() =>
                             paymentChannelOptions.length === 1 ? (
                               <CardGray
-                                label={dataAmount.ordinaryPayment}
+                                label={dataAmount.ordinaryPayment.i18n[lang]}
                                 placeHolder={
                                   paymentChannelOptions[0]?.label || ""
                                 }
@@ -313,13 +316,15 @@ export function LoanAmount(props: ILoanAmountProps) {
                                   weight="bold"
                                   padding="0px 0px 0px 16px"
                                 >
-                                  {dataAmount.ordinaryPayment}
+                                  {dataAmount.ordinaryPayment.i18n[lang]}
                                 </Text>
                                 <Select
                                   id="paymentPlan"
                                   name="paymentPlan"
                                   options={paymentChannelOptions}
-                                  placeholder={dataAmount.selectOption}
+                                  placeholder={
+                                    dataAmount.selectOption.i18n[lang]
+                                  }
                                   value={values.paymentPlan}
                                   size="compact"
                                   fullwidth
@@ -346,7 +351,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                               {() =>
                                 paymentCycleOptions.length === 1 ? (
                                   <CardGray
-                                    label={dataAmount.paymentCycle}
+                                    label={dataAmount.paymentCycle.i18n[lang]}
                                     placeHolder={
                                       paymentCycleOptions[0]?.label || ""
                                     }
@@ -358,13 +363,15 @@ export function LoanAmount(props: ILoanAmountProps) {
                                       size="medium"
                                       weight="bold"
                                     >
-                                      {dataAmount.paymentCycle}
+                                      {dataAmount.paymentCycle.i18n[lang]}
                                     </Text>
                                     <Select
                                       id="paymentCycle"
                                       name="paymentCycle"
                                       options={paymentCycleOptions}
-                                      placeholder={dataAmount.selectOption}
+                                      placeholder={
+                                        dataAmount.selectOption.i18n[lang]
+                                      }
                                       value={values.paymentCycle}
                                       size="compact"
                                       fullwidth
@@ -388,7 +395,7 @@ export function LoanAmount(props: ILoanAmountProps) {
                                 {() =>
                                   payAmountOptions.length === 1 ? (
                                     <CardGray
-                                      label={dataAmount.paymentDate}
+                                      label={dataAmount.paymentDate.i18n[lang]}
                                       placeHolder={
                                         payAmountOptions[0]?.label || ""
                                       }
@@ -400,13 +407,15 @@ export function LoanAmount(props: ILoanAmountProps) {
                                         size="medium"
                                         weight="bold"
                                       >
-                                        {dataAmount.paymentDate}
+                                        {dataAmount.paymentDate.i18n[lang]}
                                       </Text>
                                       <Select
                                         id="payAmount"
                                         name="payAmount"
                                         options={payAmountOptions}
-                                        placeholder={dataAmount.selectOption}
+                                        placeholder={
+                                          dataAmount.selectOption.i18n[lang]
+                                        }
                                         value={values.payAmount}
                                         size="compact"
                                         fullwidth
@@ -431,21 +440,23 @@ export function LoanAmount(props: ILoanAmountProps) {
               </Stack>
               {showInfoModal && (
                 <BaseModal
-                  title={dataModalDisableLoanAmount.title}
-                  nextButton={dataModalDisableLoanAmount.understood}
+                  title={dataModalDisableLoanAmount.title.i18n[lang]}
+                  nextButton={dataModalDisableLoanAmount.understood.i18n[lang]}
                   handleNext={handleCloseModalToggleState}
                   handleClose={handleCloseModalToggleState}
                   width={isMobile ? "280px" : "450px"}
                 >
                   <Stack>
-                    <Text>{dataModalDisableLoanAmount.description}</Text>
+                    <Text>
+                      {dataModalDisableLoanAmount.description.i18n[lang]}
+                    </Text>
                   </Stack>
                 </BaseModal>
               )}
               {showErrorModal && (
                 <ErrorModal
                   handleClose={() => setShowErrorModal(false)}
-                  message={dataAmount.descriptionErrorModal}
+                  message={dataAmount.descriptionErrorModal.i18n[lang]}
                 />
               )}
             </Form>

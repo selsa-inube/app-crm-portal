@@ -12,6 +12,7 @@ import {
   ICreditRequest,
 } from "@services/creditRequest/types";
 import { getAccountingVouchers } from "@services/creditRequest/accountingVouchers";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { errorMessages } from "../config";
 import {
@@ -24,10 +25,11 @@ interface IApprovalsProps {
   user: string;
   id: string;
   isMobile: boolean;
+  lang: EnumType;
   creditRequest?: ICreditRequest | null;
 }
 export const Postingvouchers = (props: IApprovalsProps) => {
-  const { isMobile, creditRequest } = props;
+  const { isMobile, lang, creditRequest } = props;
   const { user } = useIAuth();
   const [error, setError] = useState(false);
   const [positionsAccountingVouchers, setPositionsAccountingVouchers] =
@@ -64,16 +66,16 @@ export const Postingvouchers = (props: IApprovalsProps) => {
   return (
     <Stack direction="column">
       <Fieldset
-        title={errorMessages.Postingvouchers.titleCard}
+        title={errorMessages.Postingvouchers.titleCard.i18n[lang]}
         heightFieldset={isMobile ? "100%" : "162px"}
         hasTable
         hasOverflow={isMobile}
       >
         {error || (!loading && positionsAccountingVouchers.length === 0) ? (
           <UnfoundData
-            title={errorMessages.PromissoryNotes.title}
-            description={errorMessages.PromissoryNotes.description}
-            buttonDescription={errorMessages.PromissoryNotes.button}
+            title={errorMessages.PromissoryNotes.title.i18n[lang]}
+            description={errorMessages.PromissoryNotes.description.i18n[lang]}
+            buttonDescription={errorMessages.PromissoryNotes.button.i18n[lang]}
             onRetry={() => {
               setError(false);
               fetchAccountingVouchers();

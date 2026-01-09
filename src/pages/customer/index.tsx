@@ -5,6 +5,7 @@ import { IOption, useMediaQuery } from "@inubekit/inubekit";
 import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { CustomerUI } from "./interface";
 import { EErrorMessages, VALIDATE_BLANK_SPACES_REGEX } from "./config";
@@ -15,6 +16,7 @@ export function Customer() {
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const { lang } = useEnum();
 
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
@@ -150,6 +152,7 @@ export function Customer() {
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
       messageError={messageError}
+      lang={lang}
     />
   );
 }

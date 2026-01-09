@@ -1,8 +1,17 @@
 export type appearances = "dark" | "primary";
 
+interface ITitleName {
+  code: string;
+  description: string;
+  i18n: {
+    en: string;
+    es: string;
+  };
+}
+
 export interface ITitle {
   id: string;
-  titleName: string;
+  titleName: string | ITitleName;
   priority: number;
 }
 
@@ -13,7 +22,7 @@ export interface IEntries {
 
 export interface IAction {
   id: string;
-  actionName?: string;
+  actionName?: string | ITitleName;
   content: (entry: IEntries) => React.ReactNode;
   mobilePriority?: boolean;
 }

@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
+
 import { IUser } from "../login/types";
 
 interface ICreditUIProps {
@@ -17,6 +19,7 @@ interface ICreditUIProps {
   showErrorModal: boolean;
   messageError: string;
   loading: boolean;
+  lang: EnumType;
   navigate: ReturnType<typeof useNavigate>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
