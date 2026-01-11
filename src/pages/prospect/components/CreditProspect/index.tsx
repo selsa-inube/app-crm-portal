@@ -6,7 +6,6 @@ import {
   MdOutlineInfo,
   MdOutlinePayments,
   MdOutlinePictureAsPdf,
-  MdOutlineShare,
 } from "react-icons/md";
 import {
   Stack,
@@ -35,7 +34,6 @@ import {
 } from "@pages/prospect/outlets/CardCommercialManagement/styles";
 import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
 import {
   IAddProduct,
@@ -66,7 +64,6 @@ import { dataCreditProspects } from "@pages/creditProspects/config";
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
   dataCreditProspect,
-  labelsAndValuesShare,
   configModal,
   propertyOfMetRequirement,
 } from "./config";
@@ -569,32 +566,6 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [borrowerOptions]);
 
-  const generateAndSharePdf = async () => {
-    try {
-      const pdfBlob = await generatePDF(
-        dataCommercialManagementRef,
-        labelsAndValuesShare.titleOnPdf,
-        labelsAndValuesShare.titleOnPdf,
-        { top: 10, bottom: 10, left: 10, right: 10 },
-        true,
-      );
-
-      if (pdfBlob) {
-        const pdfFile = new File([pdfBlob], labelsAndValuesShare.fileName, {
-          type: "application/pdf",
-        });
-
-        await navigator.share({
-          files: [pdfFile],
-          title: labelsAndValuesShare.titleOnPdf,
-          text: labelsAndValuesShare.text,
-        });
-      }
-    } catch (error) {
-      setShowErrorModal(true);
-      setMessageError(labelsAndValuesShare.error);
-    }
-  };
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
     useCase: getUseCaseValue("canEditCreditRequest"),
   });
