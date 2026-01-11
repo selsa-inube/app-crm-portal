@@ -777,13 +777,6 @@ export function CreditProspect(props: ICreditProspectProps) {
                         cursorHover
                         onClick={print}
                       />
-                      <Icon
-                        icon={<MdOutlineShare />}
-                        appearance="primary"
-                        size="24px"
-                        onClick={async () => await generateAndSharePdf()}
-                        cursorHover
-                      />
                       <StyledVerticalDivider />
                     </>
                   )}

@@ -169,6 +169,18 @@ export function Customer() {
     }
   }, [businessUnitPublicCode]);
 
+  useEffect(() => {
+    if (inputValue.trim() === "" || options.length === 0) {
+      setIsValid(false);
+      return;
+    }
+
+    const isValidOption = options.some(
+      (option) => option.value === inputValue || option.label === inputValue,
+    );
+    setIsValid(isValidOption);
+  }, [options, inputValue]);
+
   const redirectErrorPage = () => {
     switch (errorCode) {
       case 500:

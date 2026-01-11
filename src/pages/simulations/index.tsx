@@ -28,7 +28,11 @@ import { IProspectSummaryById } from "@services/prospect/types";
 import { recalculateProspect } from "@services/prospect/recalculateProspect";
 
 import { SimulationsUI } from "./interface";
-import { dataEditProspect, labelsAndValuesShare } from "./config";
+import {
+  dataEditProspect,
+  labelsAndValuesShare,
+  requirementsMessageError,
+} from "./config";
 
 export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
@@ -267,7 +271,7 @@ export function Simulations() {
         }
       } catch (error) {
         setShowErrorModal(true);
-        setMessageError("");
+        setMessageError(requirementsMessageError.description);
       }
     };
 

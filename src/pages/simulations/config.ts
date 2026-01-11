@@ -75,3 +75,7 @@ export const labelsRecalculateSimulation = {
   recalculate: "Recalcular",
   button: "Recalcular simulación",
 };
+
+export const requirementsMessageError = {
+  description: "Error al obtener los requisitos.",
+};

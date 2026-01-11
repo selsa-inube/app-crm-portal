@@ -142,15 +142,21 @@ export const CardCommercialManagement = (
         ),
       );
 
-      if (prospectData?.prospectId) {
-        const updatedProspect = await getSearchProspectById(
-          businessUnitPublicCode,
-          businessManagerCode,
-          prospectData.prospectId,
-        );
-        if (onProspectUpdate) {
-          onProspectUpdate(updatedProspect);
+      try {
+        if (prospectData?.prospectId) {
+          const updatedProspect = await getSearchProspectById(
+            businessUnitPublicCode,
+            businessManagerCode,
+            prospectData.prospectId,
+          );
+          if (onProspectUpdate) {
+            onProspectUpdate(updatedProspect);
+          }
         }
+      } catch (error) {
+        setShowErrorModal(true);
+        setIsLoading(false);
+        setMessageError(tittleOptions.errorReload);
       }
 
       setIsLoading(false);
@@ -167,7 +173,7 @@ export const CardCommercialManagement = (
       const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
       setIsLoading(false);
-      setMessageError(description);
+      setMessageError(tittleOptions.errorDelete || description);
     }
   };
 
