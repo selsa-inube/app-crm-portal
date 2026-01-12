@@ -5,7 +5,7 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {

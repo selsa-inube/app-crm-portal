@@ -236,6 +236,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
           <DataDebtor
             data={editedBorrower}
             onDataChange={handleDebtorDataChange}
+            lang={lang}
           />
         )}
         {currentTab === "sources" && incomeData && (

@@ -5,8 +5,14 @@ import { Fieldset } from "@components/data/Fieldset";
 import { mockGuaranteeBail } from "@mocks/guarantee/offeredguarantee.mock";
 
 import { dataBail } from "./config";
+import { EnumType } from "@src/hooks/useEnum/useEnum";
 
-export function Bail() {
+interface IBailProps {
+  lang: EnumType;
+}
+
+export function Bail(props: IBailProps) {
+  const { lang } = props;
   const data = mockGuaranteeBail[0];
 
   return (
@@ -24,16 +30,16 @@ export function Bail() {
             $ {data.value}
           </Text>
           <Text type="body" size="small" appearance="gray">
-            {dataBail.bail}
+            {dataBail.bail.i18n[lang]}
           </Text>
         </Stack>
         <Text type="label" size="large">
-          {dataBail.customer}
+          {dataBail.customer.i18n[lang]}
         </Text>
         <Stack gap="4px">
           <Icon icon={<MdInfoOutline />} appearance="dark" size="16px" />
           <Text type="body" size="medium" appearance="gray">
-            {dataBail.disbursement}
+            {dataBail.disbursement.i18n[lang]}
           </Text>
         </Stack>
       </Stack>

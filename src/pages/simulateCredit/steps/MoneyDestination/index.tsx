@@ -3,13 +3,13 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
+import { EnumType } from "@hooks/useEnum/useEnum";
 import { searchAllMoneyDestinationByCustomerCode } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
 import { IMoneyDestination } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
 
 import { MoneyDestinationUI } from "./interface";
 import { dataMoneyDestination } from "./config";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface IMoneyDestinationProps {
   initialValues: string;

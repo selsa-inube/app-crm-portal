@@ -32,6 +32,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import userImage from "@assets/images/userImage.jpeg";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -67,7 +68,6 @@ import {
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
 import { IDataHeader } from "../simulations/types";
 import { RiskScore } from "./steps/riskScore";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface SimulateCreditUIProps {
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -352,6 +352,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       <ButtonRequirements
                         onClick={() => setIsModalOpenRequirements(true)}
                         data={validateRequirements}
+                        lang={lang}
                       />
                     </>
                   )}
@@ -498,6 +499,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       prospectData={prospectData}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&

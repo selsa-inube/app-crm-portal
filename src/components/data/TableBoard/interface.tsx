@@ -3,6 +3,7 @@ import { MdOutlineInfo } from "react-icons/md";
 import { Icon, Text, SkeletonLine, Stack } from "@inubekit/inubekit";
 
 import { InfoModal } from "@components/modals/InfoModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { ITableBoardProps } from ".";
 import { IAction, IEntries, ITitle, appearances } from "./types";
@@ -22,6 +23,7 @@ import {
 interface ITableBoardUIProps extends ITableBoardProps {
   loading: boolean;
   isTablet: boolean;
+  lang: EnumType;
 }
 
 interface IRenderActionsTitles {
@@ -31,6 +33,7 @@ interface IRenderActionsTitles {
   isStyleMobile: boolean;
   onInfoClick: () => void;
   isFirstTable: boolean;
+  lang: EnumType;
 }
 
 const RenderActionsTitles = (props: IRenderActionsTitles) => {
@@ -41,6 +44,7 @@ const RenderActionsTitles = (props: IRenderActionsTitles) => {
     isStyleMobile,
     onInfoClick,
     isFirstTable,
+    lang,
   } = props;
 
   return (
@@ -55,7 +59,9 @@ const RenderActionsTitles = (props: IRenderActionsTitles) => {
                 padding="0px 4px"
                 textAlign="center"
               >
-                {actionTitle.actionName}
+                {typeof actionTitle.actionName === "string"
+                  ? actionTitle.actionName
+                  : actionTitle.actionName?.i18n[lang]}
               </Text>
             </StyledThactions>
           ))
@@ -172,6 +178,7 @@ export const TableBoardUI = (props: ITableBoardUIProps) => {
     actionMobile,
     isFirstTable,
     infoItems,
+    lang,
   } = props;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -201,7 +208,9 @@ export const TableBoardUI = (props: ITableBoardUIProps) => {
                       size="medium"
                       padding={isTablet ? "0px" : "0px 4px"}
                     >
-                      {title.titleName}
+                      {typeof title.titleName === "string"
+                        ? title.titleName
+                        : title.titleName?.i18n[lang]}
                     </Text>
                   </StyledTh>
                 ) : null,
@@ -215,6 +224,7 @@ export const TableBoardUI = (props: ITableBoardUIProps) => {
                 isStyleMobile={appearanceTable!.isStyleMobile!}
                 onInfoClick={() => setIsModalOpen(true)}
                 isFirstTable={isFirstTable ?? false}
+                lang={lang}
               />
             )}
           </tr>

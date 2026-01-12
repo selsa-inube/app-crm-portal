@@ -33,7 +33,7 @@ import { getAllBancks } from "@services/bank/SearchAllBank";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;

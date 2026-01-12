@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
+
 import { ICRMPortalData } from "@context/AppContext/types";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
-import { useNavigate } from "react-router-dom";
+import { EnumType } from "@hooks/useEnum/useEnum";
+
 import { IUser } from "../login/types";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface ICardData {
   id: string;

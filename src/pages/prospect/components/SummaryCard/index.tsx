@@ -1,3 +1,5 @@
+import { EnumType } from "@hooks/useEnum/useEnum";
+
 import { SummaryCardUI } from "./interface";
 
 interface SummaryCardProps {
@@ -8,12 +10,22 @@ interface SummaryCardProps {
   value: number;
   toDo: string;
   hasMessage: boolean;
+  lang: EnumType;
   onCardClick?: () => void;
 }
 
 const SummaryCard = (props: SummaryCardProps) => {
-  const { rad, date, name, destination, value, toDo, hasMessage, onCardClick } =
-    props;
+  const {
+    rad,
+    date,
+    name,
+    destination,
+    value,
+    toDo,
+    hasMessage,
+    lang,
+    onCardClick,
+  } = props;
 
   return (
     <SummaryCardUI
@@ -25,6 +37,7 @@ const SummaryCard = (props: SummaryCardProps) => {
       toDo={toDo}
       hasMessage={hasMessage}
       onCardClick={onCardClick}
+      lang={lang}
     />
   );
 };

@@ -6,7 +6,7 @@ import { useIAuth } from "@inube/iauth-react";
 import { useAppContext } from "@hooks/useAppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
-import { useEnum } from "@src/hooks/useEnum/useEnum";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { CreditUI } from "./interface";
 import { errorDataCredit } from "./config/credit.config";

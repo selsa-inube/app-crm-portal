@@ -54,6 +54,7 @@ Default.args = {
   date: new Date(),
   description: "",
   tags: [],
+  lang: "es",
 } satisfies ICardConsolidatedCreditProps;
 
 export default story;

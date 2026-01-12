@@ -1,51 +1,23 @@
 export const addConfig = {
   id: 1,
-  title: {
-    code: "AddConfig_title",
-    description: "Credit requests page title",
-    i18n: {
-      en: "Credit requests",
-      es: "Solicitudes de crédito",
-    },
-  },
+  title: "Solicitudes de crédito",
   route: "/credit",
   crumbs: [
     {
       path: "/home",
-      label: {
-        code: "AddConfig_crumb_home",
-        description: "Home breadcrumb",
-        i18n: {
-          en: "Home",
-          es: "Inicio",
-        },
-      },
+      label: "Inicio",
       id: "/home",
       isActive: true,
     },
     {
       path: "/credit",
-      label: {
-        code: "AddConfig_crumb_credit",
-        description: "Credit breadcrumb",
-        i18n: {
-          en: "Credit",
-          es: "Crédito",
-        },
-      },
+      label: "Crédito",
       id: "/credito",
       isActive: false,
     },
     {
       path: "/credit/credit-requests",
-      label: {
-        code: "AddConfig_crumb_credit_requests",
-        description: "Credit requests breadcrumb",
-        i18n: {
-          en: "Credit requests",
-          es: "Solicitudes de crédito",
-        },
-      },
+      label: "Solicitudes de crédito",
       id: "/prospectos",
       isActive: false,
     },

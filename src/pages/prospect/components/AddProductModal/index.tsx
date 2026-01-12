@@ -31,6 +31,7 @@ function AddProductModal(props: IAddProductModalProps) {
     customerData,
     businessManagerCode,
     dataProspect,
+    lang,
     isLoading,
   } = props;
 
@@ -241,6 +242,7 @@ function AddProductModal(props: IAddProductModalProps) {
       setErrorModal={setErrorModal}
       errorModal={errorModal}
       isLoading={isLoading}
+      lang={lang}
     />
   );
 }

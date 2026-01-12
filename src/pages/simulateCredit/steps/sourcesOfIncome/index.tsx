@@ -7,6 +7,7 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
 import { IProspect } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { ISourcesOfIncomeState } from "../../types";
 
@@ -18,6 +19,7 @@ interface ISourcesOfIncomeProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   prospectData: IProspect | undefined;
+  lang: EnumType;
   handleOnChange: (newState: Partial<ISourcesOfIncomeState>) => void;
   isLoadingCreditLimit?: boolean;
 }
@@ -31,6 +33,7 @@ export function SourcesOfIncome({
   handleOnChange,
   isLoadingCreditLimit,
   prospectData,
+  lang,
 }: ISourcesOfIncomeProps) {
   const [localData, setLocalData] = useState<IIncomeSources | null>(null);
   const hasInitialized = useRef(false);
@@ -78,6 +81,7 @@ export function SourcesOfIncome({
           disabled
           isLoadingCreditLimit={isLoadingCreditLimit}
           prospectData={prospectData}
+          lang={lang}
         />
       </Stack>
     </Fieldset>

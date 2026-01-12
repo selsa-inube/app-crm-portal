@@ -21,6 +21,7 @@ import { ErrorPage } from "@components/layout/ErrorPage";
 import { environment } from "@config/environment";
 import userImage from "@assets/images/userImage.jpeg";
 import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager/index.tsx";
+import { useEnum } from "@hooks/useEnum/useEnum.ts";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -48,6 +49,8 @@ export function CreditApplications() {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+
+  const { lang } = useEnum();
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
@@ -83,7 +86,7 @@ export function CreditApplications() {
         setCreditRequestData(creditData);
       } catch {
         setCodeError(1022);
-        setAddToFix([dataCreditProspects.errorCreditRequest]);
+        setAddToFix([dataCreditProspects.errorCreditRequest.i18n[lang]]);
       } finally {
         setLoading(false);
       }
@@ -98,11 +101,11 @@ export function CreditApplications() {
 
     if (eventData.businessManager.abbreviatedName.length === 0) {
       error = 1003;
-      messages.push(dataError.noBusinessUnit);
+      messages.push(dataError.noBusinessUnit.i18n[lang]);
     }
     if (customerData.fullName.length === 0) {
       error = 1016;
-      messages.push(dataError.noSelectClient);
+      messages.push(dataError.noSelectClient.i18n[lang]);
     }
 
     setCodeError(error);
@@ -157,7 +160,7 @@ export function CreditApplications() {
               <Stack justifyContent="space-between" alignItems="center">
                 <Input
                   id="keyWord"
-                  placeholder={dataCreditProspects.keyWord}
+                  placeholder={dataCreditProspects.keyWord.i18n[lang]}
                   type="search"
                   onChange={(event) => handleSearch(event)}
                 />
@@ -188,13 +191,14 @@ export function CreditApplications() {
                           );
                           setIsShowModal(true);
                         }}
+                        lang={lang}
                       />
                     ))}
                   </>
                 )}
                 {creditRequestData.length === 0 && !loading && (
                   <Text type="title" size="large" margin="30px 2px">
-                    {dataError.notCredits}
+                    {dataError.notCredits.i18n[lang]}
                   </Text>
                 )}
               </Stack>
@@ -202,16 +206,16 @@ export function CreditApplications() {
           </Fieldset>
           {isShowModal && (
             <BaseModal
-              title={dataCreditProspects.creditApplication}
-              nextButton={dataCreditProspects.accept}
-              backButton={dataCreditProspects.cancel}
+              title={dataCreditProspects.creditApplication.i18n[lang]}
+              nextButton={dataCreditProspects.accept.i18n[lang]}
+              backButton={dataCreditProspects.cancel.i18n[lang]}
               handleBack={() => setIsShowModal(false)}
               handleNext={async () => {
                 const portalId = (
                   await getStaffPortalsByBusinessManager(
                     "",
                     eventData.businessManager.abbreviatedName,
-                    redirect.portalName,
+                    redirect.portalName.i18n[lang],
                   )
                 )[0].staffPortalId;
                 const redirectUrl = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}?portal=${portalId}`;
@@ -219,7 +223,7 @@ export function CreditApplications() {
               }}
               width="400px"
             >
-              <Text>{dataCreditProspects.sure}</Text>
+              <Text>{dataCreditProspects.sure.i18n[lang]}</Text>
             </BaseModal>
           )}
         </Stack>

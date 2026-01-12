@@ -1,7 +1,7 @@
 import { Schedule } from "@services/enum/schedule";
 
 import { CreditProductCardUI } from "./interface";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 interface CreditProductCardProps {
   lineOfCredit: string;

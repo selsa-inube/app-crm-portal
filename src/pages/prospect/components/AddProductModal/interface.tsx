@@ -173,6 +173,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
                   });
                 }}
                 onFormValid={setIsCurrentFormValid}
+                lang={lang}
               />
             )}
 
@@ -219,6 +220,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
                   maximumTermEnabled: values.maximumTermEnabled,
                 });
               }}
+              lang={lang}
               onFormValid={setIsCurrentFormValid}
             />
           )}

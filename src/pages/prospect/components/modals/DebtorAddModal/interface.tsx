@@ -125,6 +125,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               }
               AutoCompleted={AutoCompleted}
               customerData={customerData!}
+              lang={lang}
             />
           )}
         {currentStepsNumber &&

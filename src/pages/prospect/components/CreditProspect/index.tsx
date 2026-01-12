@@ -59,7 +59,7 @@ import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components
 import { incomeCardData } from "@components/cards/IncomeCard/config";
 import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
-import { getTotalIncomeByBorrowerInProspect } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
+import { getTotalIncomeByBorrowerInProspect } from "@services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
 import { Fieldset } from "@components/data/Fieldset";
 import { dataCreditProspects } from "@pages/creditProspects/config";
 import { EnumType } from "@hooks/useEnum/useEnum";
@@ -895,6 +895,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessManagerCode={businessManagerCode}
             dataProspect={prospectData as IProspect}
             isLoading={isLoading}
+            lang={lang}
           />
         )}
         {currentModal === "IncomeModal" && (

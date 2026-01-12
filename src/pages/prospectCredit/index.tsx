@@ -188,6 +188,7 @@ export function ProspectCredit() {
                             `/credit/processed-credit-requests/extended-card/${creditRequest.creditRequestCode}`,
                           );
                         }}
+                        lang={lang}
                       />
                     ))}
                   </>

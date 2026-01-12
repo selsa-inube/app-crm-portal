@@ -22,11 +22,11 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";
 import { Detail } from "./Detail";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface ITableExtraordinaryInstallmentProps {
   loading: boolean;

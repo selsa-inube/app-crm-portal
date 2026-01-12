@@ -1,5 +1,7 @@
 import { inube, Stack, Text } from "@inubekit/inubekit";
 
+import { EnumType } from "@hooks/useEnum/useEnum";
+
 import {
   StyledArc,
   StyledIndicator,
@@ -11,10 +13,11 @@ import { DataRiskScore } from "./config";
 
 interface RiskScoreGaugeProps {
   value: number;
+  lang: EnumType;
 }
 
 export function RiskScoreGauge(props: RiskScoreGaugeProps) {
-  const { value } = props;
+  const { value, lang } = props;
 
   const min = DataRiskScore.min;
   const max = DataRiskScore.max;
@@ -127,7 +130,7 @@ export function RiskScoreGauge(props: RiskScoreGaugeProps) {
           </StyledSvg>
           <StyledCenterText $top={`${gaugeHeight / 2 - 20}px`}>
             <Text type="body" size="medium" appearance="primary">
-              {DataRiskScore.riskScore}
+              {DataRiskScore.riskScore.i18n[lang]}
             </Text>
             <Text
               type="headline"

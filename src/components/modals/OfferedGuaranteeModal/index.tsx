@@ -75,9 +75,11 @@ export function OfferedGuaranteeModal(props: IOfferedGuaranteeModalProps) {
             ))}
           </ScrollableContainer>
         )}
-        {currentTab === "mortgage" && <Mortgage isMobile={isMobile} />}
-        {currentTab === "pledge" && <Pledge isMobile={isMobile} />}
-        {currentTab === "bail" && <Bail />}
+        {currentTab === "mortgage" && (
+          <Mortgage isMobile={isMobile} lang={lang} />
+        )}
+        {currentTab === "pledge" && <Pledge isMobile={isMobile} lang={lang} />}
+        {currentTab === "bail" && <Bail lang={lang} />}
       </Stack>
     </BaseModal>
   );

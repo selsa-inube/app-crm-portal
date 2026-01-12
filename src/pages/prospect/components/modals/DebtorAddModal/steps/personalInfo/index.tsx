@@ -21,6 +21,7 @@ import {
   MockTipeOfFamily,
   MockTipeOfSex,
 } from "@mocks/filing-application/add-borrower/addborrower.mock";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { IAddBorrowed } from "./types";
 import { dataAddModal } from "./config";
@@ -34,6 +35,7 @@ export interface IAddBorrowedProps {
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IAddBorrowed) => void;
   customerData: ICustomerData;
+  lang: EnumType;
 }
 
 export const AddBorrower = (props: IAddBorrowedProps) => {
@@ -43,6 +45,7 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
     onFormValid,
     handleOnChange,
     customerData,
+    lang,
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -127,8 +130,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           <Textfield
             name="tipeOfDocument"
             id="tipeOfDocument"
-            label={dataAddModal.labelTypeDocument}
-            placeholder={dataAddModal.placeHolderSelect}
+            label={dataAddModal.labelTypeDocument.i18n[lang]}
+            placeholder={dataAddModal.placeHolderSelect.i18n[lang]}
             value={MockTipeOfDocument[0]?.label || ""}
             size="compact"
             readOnly={true}
@@ -139,8 +142,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           <Select
             name="tipeOfDocument"
             id="tipeOfDocument"
-            label={dataAddModal.labelTypeDocument}
-            placeholder={dataAddModal.placeHolderSelect}
+            label={dataAddModal.labelTypeDocument.i18n[lang]}
+            placeholder={dataAddModal.placeHolderSelect.i18n[lang]}
             options={MockTipeOfDocument}
             onChange={(name, value) => formik.setFieldValue(name, value)}
             onBlur={formik.handleBlur}
@@ -154,8 +157,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           name="documentNumber"
           id="documentNumber"
           type="text"
-          label={dataAddModal.labelNumberDocument}
-          placeholder={dataAddModal.placeNumberDocument}
+          label={dataAddModal.labelNumberDocument.i18n[lang]}
+          placeholder={dataAddModal.placeNumberDocument.i18n[lang]}
           onChange={(e) => handleChangeWithCurrency(formik, e)}
           onBlur={formik.handleBlur}
           value={validateCurrencyField("documentNumber", formik, false, "")}
@@ -173,8 +176,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           name="firstName"
           id="firstName"
           type="text"
-          label={dataAddModal.labelName}
-          placeholder={dataAddModal.placeHolderName}
+          label={dataAddModal.labelName.i18n[lang]}
+          placeholder={dataAddModal.placeHolderName.i18n[lang]}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.firstName}
@@ -187,8 +190,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           name="lastName"
           id="lastName"
           type="text"
-          label={dataAddModal.labelLastName}
-          placeholder={dataAddModal.placeHolderLastName}
+          label={dataAddModal.labelLastName.i18n[lang]}
+          placeholder={dataAddModal.placeHolderLastName.i18n[lang]}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.lastName}
@@ -201,8 +204,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           name="email"
           id="email"
           type="email"
-          label={dataAddModal.labelEmail}
-          placeholder={dataAddModal.placeHolderEmail}
+          label={dataAddModal.labelEmail.i18n[lang]}
+          placeholder={dataAddModal.placeHolderEmail.i18n[lang]}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.email}
@@ -214,8 +217,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
         <Phonefield
           name="phone"
           id="phone"
-          label={dataAddModal.labelNumber}
-          placeholder={dataAddModal.placeHolderNumber}
+          label={dataAddModal.labelNumber.i18n[lang]}
+          placeholder={dataAddModal.placeHolderNumber.i18n[lang]}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.phone}
@@ -227,8 +230,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           <Textfield
             name="sex"
             id="sex"
-            label={dataAddModal.labelSex}
-            placeholder={dataAddModal.placeHolderSelect}
+            label={dataAddModal.labelSex.i18n[lang]}
+            placeholder={dataAddModal.placeHolderSelect.i18n[lang]}
             value={MockTipeOfSex[0]?.label || ""}
             size="compact"
             readOnly={true}
@@ -239,8 +242,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           <Select
             name="sex"
             id="sex"
-            label={dataAddModal.labelSex}
-            placeholder={dataAddModal.placeHolderSelect}
+            label={dataAddModal.labelSex.i18n[lang]}
+            placeholder={dataAddModal.placeHolderSelect.i18n[lang]}
             options={MockTipeOfSex}
             onChange={(name, value) => formik.setFieldValue(name, value)}
             onBlur={formik.handleBlur}
@@ -254,8 +257,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           name="age"
           id="age"
           type="number"
-          label={dataAddModal.labelAge}
-          placeholder={dataAddModal.placeHolderAge}
+          label={dataAddModal.labelAge.i18n[lang]}
+          placeholder={dataAddModal.placeHolderAge.i18n[lang]}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.age}
@@ -267,8 +270,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           <Textfield
             name="relation"
             id="relation"
-            label={dataAddModal.labelRelation}
-            placeholder={dataAddModal.placeHolderSelect}
+            label={dataAddModal.labelRelation.i18n[lang]}
+            placeholder={dataAddModal.placeHolderSelect.i18n[lang]}
             value={MockTipeOfFamily[0]?.label || ""}
             size="compact"
             readOnly={true}
@@ -279,8 +282,8 @@ export const AddBorrower = (props: IAddBorrowedProps) => {
           <Select
             name="relation"
             id="relation"
-            label={dataAddModal.labelRelation}
-            placeholder={dataAddModal.placeHolderSelect}
+            label={dataAddModal.labelRelation.i18n[lang]}
+            placeholder={dataAddModal.placeHolderSelect.i18n[lang]}
             options={MockTipeOfFamily}
             onChange={(name, value) => formik.setFieldValue(name, value)}
             onBlur={formik.handleBlur}

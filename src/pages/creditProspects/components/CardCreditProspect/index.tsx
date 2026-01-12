@@ -16,6 +16,7 @@ import { capitalizeFirstLetter } from "@utils/formatData/text";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { StyledContainer } from "./styles";
 import { cardCreditData } from "./config";
@@ -27,6 +28,7 @@ export interface ICardCreditProspectProps {
   date: Date | undefined;
   value: number | string;
   isMobile: boolean;
+  lang: EnumType;
   iconTitle: string;
   hasMessage?: boolean;
   handleMessage?: () => void;
@@ -43,6 +45,7 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
     date,
     value,
     isMobile,
+    lang,
     iconTitle,
     hasMessage,
     handleMessage,
@@ -95,7 +98,7 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
         <Divider dashed />
         <Stack direction="column" gap="8px">
           <CardGray
-            label={cardCreditData.official}
+            label={cardCreditData.official.i18n[lang]}
             placeHolder={
               <TruncatedText
                 text={borrower}
@@ -108,19 +111,19 @@ export function CardCreditProspect(props: ICardCreditProspectProps) {
             apparencePlaceHolder="gray"
           />
           <CardGray
-            label={cardCreditData.numProspect}
+            label={cardCreditData.numProspect.i18n[lang]}
             placeHolder={numProspect}
             apparencePlaceHolder="gray"
           />
           <CardGray
-            label={cardCreditData.date}
+            label={cardCreditData.date.i18n[lang]}
             placeHolder={capitalizeFirstLetter(
               formatPrimaryDate(new Date(date as Date)),
             )}
             apparencePlaceHolder="gray"
           />
           <CardGray
-            label={cardCreditData.value}
+            label={cardCreditData.value.i18n[lang]}
             placeHolder={value === 0 ? "$ 0" : currencyFormat(value as number)}
             apparencePlaceHolder="gray"
           />

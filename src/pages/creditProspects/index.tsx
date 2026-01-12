@@ -17,8 +17,8 @@ import {
 } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
+import { checkSimulationPrerequisites } from "@services/prospect/checkSimulationPrerequisites";
 import { Fieldset } from "@components/data/Fieldset";
-import { checkSimulationPrerequisites } from "@src/services/prospect/checkSimulationPrerequisites";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
 import { RemoveProspect } from "@services/prospect/removeProspect";
 import { AppContext } from "@context/AppContext";
@@ -30,6 +30,7 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
+import { useEnum } from "@hooks/useEnum/useEnum";
 import userImage from "@assets/images/userImage.jpeg";
 
 import {
@@ -56,6 +57,8 @@ export function CreditProspects() {
       customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
     image: customerData.image,
   };
+
+  const { lang } = useEnum();
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
@@ -406,6 +409,7 @@ export function CreditProspects() {
                       setSelectedProspect(prospect);
                       setShowDeleteModal(true);
                     }}
+                    lang={lang}
                   />
                 ))}
 

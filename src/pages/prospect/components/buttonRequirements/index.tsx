@@ -2,17 +2,19 @@ import { MdOutlineRule } from "react-icons/md";
 import { Button } from "@inubekit/inubekit";
 
 import { IValidateRequirement } from "@services/requirement/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { StyledButton } from "./styles";
 import { dataButtonRequirements } from "./config";
 
 interface IButtonRequirementsProps {
   data: IValidateRequirement[];
+  lang: EnumType;
   onClick: () => void;
 }
 
 export function ButtonRequirements(props: IButtonRequirementsProps) {
-  const { data, onClick } = props;
+  const { data, lang, onClick } = props;
 
   const onlyNotApprubed = data.filter(
     (requirement) => requirement.requirementStatus !== "Aprobado",
@@ -27,7 +29,7 @@ export function ButtonRequirements(props: IButtonRequirementsProps) {
         variant="outlined"
         spacing="compact"
       >
-        {dataButtonRequirements.requirements}
+        {dataButtonRequirements.requirements.i18n[lang]}
       </Button>
     </StyledButton>
   );

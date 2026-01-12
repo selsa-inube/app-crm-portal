@@ -160,6 +160,7 @@ export interface IAddProductModalProps {
   businessManagerCode: string;
   dataProspect: IProspect;
   isLoading: boolean;
+  lang: EnumType;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   customerData?: ICustomerData;

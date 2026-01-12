@@ -18,7 +18,7 @@ function InfoModal({
   title,
   subtitle,
   description,
-  nextButtonText = infoModalConfig.nextButtonText,
+  nextButtonText = infoModalConfig.nextButtonText.i18n.es,
   width,
   isMobile = false,
 }: InfoModalProps) {

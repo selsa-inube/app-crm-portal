@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 export interface IFirstPaymentDate {
   id: string;
@@ -31,6 +32,7 @@ export interface ITermSelection {
   maximumTermValue: number;
   quotaCapEnabled: boolean;
   maximumTermEnabled: boolean;
+  lang: EnumType;
   isMobile: boolean;
   onChange: (values: {
     quotaCapValue: number;
@@ -43,6 +45,7 @@ export interface ITermSelection {
 
 export interface ITermSelectionUI {
   isMobile: boolean;
+  lang: EnumType;
   initialValues: ITermSelectionValuesMain;
   validationSchema: Yup.ObjectSchema<{
     quotaCapValue?: string;
@@ -89,6 +92,7 @@ export interface IPaymentConfigurationUI {
   paymentMethodOptions: IPaymentsOptions[];
   paymentCycleOptions: IPaymentsOptions[];
   firstPaymentDateOptions: IPaymentsOptions[];
+  lang: EnumType;
   paymentConfiguration: {
     paymentMethod: {
       label: string;
@@ -112,6 +116,7 @@ export interface IPaymentConfigurationUI {
 
 export interface IPaymentConfigurationMain {
   paymentConfig: IPaymentConfiguration;
+  lang: EnumType;
   onChange: (config: Partial<IPaymentConfiguration>) => void;
   onFormValid: (isValid: boolean) => void;
 }

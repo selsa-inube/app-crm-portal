@@ -67,7 +67,10 @@ export function RiskScore(props: IRiskScoreProps) {
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
-        <RiskScoreGauge value={value || riskScoreData.value.i18n[lang]} />
+        <RiskScoreGauge
+          value={value || riskScoreData.value.i18n[lang]}
+          lang={lang}
+        />
         <Stack gap="4px">
           {isLoading ? (
             <SkeletonLine />

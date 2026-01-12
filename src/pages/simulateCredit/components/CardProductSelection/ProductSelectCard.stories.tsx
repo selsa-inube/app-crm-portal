@@ -37,6 +37,7 @@ Default.args = {
   term: 12,
   description: "Producto de Prueba",
   disabled: false,
+  lang: "es",
 } satisfies ICardProductSelectionProps;
 
 export default story;
