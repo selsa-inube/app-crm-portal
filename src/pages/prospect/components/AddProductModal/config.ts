@@ -8,7 +8,8 @@ import {
 } from "@services/enum/prospectProduct";
 import { Schedule } from "@services/enum/schedule";
 import { ICustomerData } from "@context/CustomerContext/types";
-import { IProspect } from "@src/services/prospect/types";
+import { IProspect } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { IPaymentConfiguration } from "./steps/config";
 
@@ -249,6 +250,7 @@ export interface IAddProductModalUIProps {
   errorMessage: string;
   loading: boolean;
   isLoading: boolean;
+  lang: EnumType;
 }
 
 export interface IStep {

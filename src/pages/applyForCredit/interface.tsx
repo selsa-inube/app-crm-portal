@@ -401,6 +401,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     customerData={customerData}
                     prospectData={prospectData}
                     businessUnitPublicCode={businessUnitPublicCode}
+                    lang={lang}
                   />
                 )}
               {currentStepsNumber &&

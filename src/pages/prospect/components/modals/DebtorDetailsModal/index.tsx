@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Stack, Tabs } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { IBorrower } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataDetails, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
@@ -15,20 +16,28 @@ interface IDebtorDetailsModalProps {
   initialValues: IDebtorDetail;
   properties: IBorrower | null;
   isMobile?: boolean;
+  lang: EnumType;
 }
 
 export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
-  const { handleClose, initialValues, isMobile, properties } = props;
+  const { handleClose, initialValues, isMobile, properties, lang } = props;
 
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const onChange = (tabId: string) => {
     setCurrentTab(tabId);
   };
 
+  const translatedTabs = useMemo(() => {
+    return dataTabs.map((tab) => ({
+      ...tab,
+      label: tab.label.i18n[lang],
+    }));
+  }, [lang]);
+
   return (
     <BaseModal
-      title={dataDetails.title}
-      nextButton={dataDetails.close}
+      title={dataDetails.title.i18n[lang]}
+      nextButton={dataDetails.close.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       finalDivider={true}
@@ -39,10 +48,12 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
         <Tabs
           scroll={isMobile}
           selectedTab={currentTab}
-          tabs={dataTabs}
+          tabs={translatedTabs}
           onChange={onChange}
         />
-        {currentTab === "data" && <DataDebtor initialValues={initialValues} />}
+        {currentTab === "data" && (
+          <DataDebtor initialValues={initialValues} lang={lang} />
+        )}
         {currentTab === "sources" && (
           <IncomeDebtor initialValues={properties as IBorrower} />
         )}

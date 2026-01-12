@@ -16,6 +16,7 @@ import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincomety
 import { restoreIncomeInformationByBorrowerId } from "@services/prospect/restoreIncomeInformationByBorrowerId";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { IProspect } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   IncomeEmployment,
@@ -50,6 +51,7 @@ interface ISourceIncomeProps {
   businessManagerCode: string;
   isLoadingCreditLimit?: boolean;
   prospectData: IProspect | undefined;
+  lang: EnumType;
   onCapitalTotalChange?: (total: number) => void;
   onEmploymentTotalChange?: (total: number) => void;
   onBusinessesTotalChange?: (total: number) => void;
@@ -73,6 +75,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     businessManagerCode,
     onRestore,
     prospectData,
+    lang,
     onCapitalTotalChange,
   } = props;
 
@@ -295,7 +298,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
       if (onRestore) onRestore();
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(dataReport.errorIncome);
+      setMessageError(dataReport.errorIncome.i18n[lang]);
     } finally {
       setIsOpenModal(false);
     }
@@ -318,7 +321,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
             {!isMobile && (
               <Stack direction="column" gap="8px">
                 <Text type="body" size="small" weight="bold" appearance="dark">
-                  {incomeCardData.borrower}
+                  {incomeCardData.borrower.i18n[lang]}
                 </Text>
                 <Text type="title" size="medium">
                   {prospectData?.borrowers[0]?.borrowerName}
@@ -343,7 +346,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                 {currencyFormat(totalSum())}
               </Text>
               <Text size="small" appearance="gray" weight="normal">
-                {incomeCardData.income}
+                {incomeCardData.income.i18n[lang]}
               </Text>
             </Stack>
 
@@ -359,7 +362,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                 onClick={() => setIsOpenModal(true)}
                 disabled={!initialDataForRestore && !onRestore}
               >
-                {incomeCardData.restore}
+                {incomeCardData.restore.i18n[lang]}
               </Button>
               {showEdit && (
                 <Button
@@ -368,7 +371,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
                     openModal ? openModal(true) : setIsOpenEditModal(true)
                   }
                 >
-                  {dataReport.edit}
+                  {dataReport.edit.i18n[lang]}
                 </Button>
               )}
             </Stack>
@@ -387,18 +390,21 @@ export function SourceIncome(props: ISourceIncomeProps) {
                   ShowSupport={ShowSupport}
                   disabled={disabled}
                   onValueChange={handleIncomeChange.bind(null, "employment")}
+                  lang={lang}
                 />
                 <IncomeCapital
                   values={borrowerIncome.capital}
                   ShowSupport={ShowSupport}
                   disabled={disabled}
                   onValueChange={handleIncomeChange.bind(null, "capital")}
+                  lang={lang}
                 />
                 <MicroBusinesses
                   values={borrowerIncome.businesses}
                   ShowSupport={ShowSupport}
                   disabled={disabled}
                   onValueChange={handleIncomeChange.bind(null, "businesses")}
+                  lang={lang}
                 />
               </>
             )}
@@ -407,13 +413,13 @@ export function SourceIncome(props: ISourceIncomeProps) {
       </Stack>
       {isOpenModal && (
         <BaseModal
-          title={incomeCardData.restore}
-          nextButton={incomeCardData.restore}
+          title={incomeCardData.restore.i18n[lang]}
+          nextButton={incomeCardData.restore.i18n[lang]}
           handleNext={handleRestore}
           handleClose={() => setIsOpenModal(false)}
           width={isMobile ? "290px" : "400px"}
         >
-          <Text>{incomeCardData.description}</Text>
+          <Text>{incomeCardData.description.i18n[lang]}</Text>
         </BaseModal>
       )}
       {isOpenEditModal && (
@@ -428,6 +434,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
           businessUnitPublicCode={businessUnitPublicCode}
           businessManagerCode={businessManagerCode}
           prospectData={prospectData}
+          lang={lang}
         />
       )}
       {showErrorModal && (

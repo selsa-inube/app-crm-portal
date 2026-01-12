@@ -222,6 +222,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                               );
                             }}
                             isMobile={isMobile}
+                            lang={lang}
                           />
                         </Stack>
                       ))

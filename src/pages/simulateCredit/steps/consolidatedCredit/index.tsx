@@ -198,6 +198,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
                   initialType={initialValues.selectedLabels?.[creditData.id]}
                   isMobile={isMobile}
                   allowCustomValue={creditData.allowCustomValue}
+                  lang={lang}
                 />
               ))}
             </Grid>

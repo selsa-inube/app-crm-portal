@@ -29,6 +29,7 @@ import { IPaymentChannel } from "@services/creditRequest/types";
 import { currencyFormat } from "@utils/formatData/currency";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { RequirementsModal } from "../prospect/components/modals/RequirementsModal";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -75,6 +76,7 @@ interface SimulationsUIProps {
   canDeleteCreditRequest: boolean;
   canEditCreditRequest: boolean;
   processedData: ProcessedData;
+  lang: EnumType;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
@@ -130,6 +132,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     canDeleteCreditRequest,
     canEditCreditRequest,
     processedData,
+    lang,
     setShowDeleteModal,
     setShowErrorModal,
     navigate,
@@ -214,7 +217,9 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         width={isMobile ? "auto " : "189px"}
                         iconBefore={<MdBolt />}
                         children={
-                          isMobile ? "" : labelsRecalculateSimulation.button
+                          isMobile
+                            ? ""
+                            : labelsRecalculateSimulation.button.i18n[lang]
                         }
                         variant="outlined"
                         spacing="compact"
@@ -260,7 +265,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               size="large"
                               appearance="gray"
                             >
-                              {dataEditProspect.creditProspect}
+                              {dataEditProspect.creditProspect.i18n[lang]}
                             </Text>
                             <Text
                               type="title"
@@ -336,7 +341,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                       size="small"
                                       appearance="gray"
                                     >
-                                      {dataEditProspect.destination}
+                                      {dataEditProspect.destination.i18n[lang]}
                                     </Text>
                                   </Stack>
                                 </Stack>
@@ -394,7 +399,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 )}
                               </Stack>
                               <Text type="body" size="small" appearance="gray">
-                                {dataEditProspect.value}
+                                {dataEditProspect.value.i18n[lang]}
                               </Text>
                             </Stack>
                           </Stack>
@@ -422,6 +427,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           userAccount={userAccount as string}
                           setShowRequirements={setShowRequirements}
                           validateRequirements={validateRequirements}
+                          lang={lang}
                         />
                       </Fieldset>
                     </StyledScrollPrint>
@@ -439,7 +445,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                             disabled={canDeleteCreditRequest}
                             onClick={() => setShowDeleteModal(true)}
                           >
-                            {dataEditProspect.delete}
+                            {dataEditProspect.delete.i18n[lang]}
                           </Button>
                           <Stack alignItems="center">
                             {canDeleteCreditRequest && (
@@ -458,7 +464,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                             onClick={handleSubmitClick}
                             disabled={canRequestCredit}
                           >
-                            {dataEditProspect.confirm}
+                            {dataEditProspect.confirm.i18n[lang]}
                           </Button>
                           <Stack alignItems="center">
                             {canRequestCredit && (
@@ -481,21 +487,21 @@ export function SimulationsUI(props: SimulationsUIProps) {
 
               {isModalOpen && (
                 <BaseModal
-                  title={titlesModal.title}
-                  nextButton={titlesModal.textButtonNext}
+                  title={titlesModal.title.i18n[lang]}
+                  nextButton={titlesModal.textButtonNext.i18n[lang]}
                   handleNext={() => setIsModalOpen(false)}
                   handleClose={() => setIsModalOpen(false)}
                   width={isMobile ? "290px" : "400px"}
                 >
                   <Stack gap="16px" direction="column">
                     <Text weight="bold" size="large">
-                      {titlesModal.subTitle}
+                      {titlesModal.subTitle.i18n[lang]}
                     </Text>
                     <Stack direction="column" gap="8px">
                       <ul>
                         <li>
                           <Text weight="normal" size="medium" appearance="gray">
-                            {titlesModal.titlePrivileges}
+                            {titlesModal.titlePrivileges.i18n[lang]}
                           </Text>
                         </li>
                         {dataProspect?.state === "Submitted" && (
@@ -505,7 +511,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                               size="medium"
                               appearance="gray"
                             >
-                              {titlesModal.titleSubmitted}
+                              {titlesModal.titleSubmitted.i18n[lang]}
                             </Text>
                           </li>
                         )}
@@ -517,13 +523,15 @@ export function SimulationsUI(props: SimulationsUIProps) {
 
               {showCreditRequest && (
                 <BaseModal
-                  title={titlesModal.title}
-                  nextButton={titlesModal.textButtonNext}
+                  title={titlesModal.title.i18n[lang]}
+                  nextButton={titlesModal.textButtonNext.i18n[lang]}
                   handleNext={() => setShowCreditRequest(false)}
                   handleClose={() => setShowCreditRequest(false)}
                   width={isMobile ? "290px" : "400px"}
                 >
-                  <Text>{titlesModal.titleRequest + prospectCode}</Text>
+                  <Text>
+                    {titlesModal.titleRequest.i18n[lang] + prospectCode}
+                  </Text>
                 </BaseModal>
               )}
             </Stack>
@@ -549,16 +557,17 @@ export function SimulationsUI(props: SimulationsUIProps) {
           errorsManager={{
             validateRequirements: validateRequirements?.length > 0,
           }}
+          lang={lang}
         />
       )}
       {showRecalculateSimulation && (
         <BaseModal
-          title={labelsRecalculateSimulation.title}
+          title={labelsRecalculateSimulation.title.i18n[lang]}
           handleBack={() => setShowRecalculateSimulation(false)}
           handleNext={handleRecalculateSimulation}
           disabledNext={canEditCreditRequest}
-          backButton={labelsRecalculateSimulation.cancel}
-          nextButton={labelsRecalculateSimulation.recalculate}
+          backButton={labelsRecalculateSimulation.cancel.i18n[lang]}
+          nextButton={labelsRecalculateSimulation.recalculate.i18n[lang]}
           width={isMobile ? "300px" : "480px"}
           isLoading={isLoading}
         >
@@ -570,7 +579,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
               size="68px"
             />
             <Text type="body" size="large" appearance="gray">
-              {labelsRecalculateSimulation.description}
+              {labelsRecalculateSimulation.description.i18n[lang]}
             </Text>
             <Divider dashed={true} />
             <Stack
@@ -580,7 +589,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
             >
               <li>
                 <Text size="large">
-                  {labelsRecalculateSimulation.list.itemOne}
+                  {labelsRecalculateSimulation.list.itemOne.i18n[lang]}
                 </Text>
               </li>
             </Stack>
@@ -589,17 +598,17 @@ export function SimulationsUI(props: SimulationsUIProps) {
       )}
       {showDeleteModal && (
         <BaseModal
-          title={dataEditProspect.deleteTitle}
+          title={dataEditProspect.deleteTitle.i18n[lang]}
           handleBack={() => setShowDeleteModal(false)}
           handleNext={handleDeleteProspect}
           disabledNext={canEditCreditRequest}
-          backButton={dataEditProspect.backButton}
-          nextButton={dataEditProspect.nextButton}
+          backButton={dataEditProspect.backButton.i18n[lang]}
+          nextButton={dataEditProspect.nextButton.i18n[lang]}
           apparenceNext="danger"
           width={isMobile ? "300px" : "500px"}
           isLoading={isLoadingDelete}
         >
-          <Text>{dataEditProspect.deleteDescription}</Text>
+          <Text>{dataEditProspect.deleteDescription.i18n[lang]}</Text>
         </BaseModal>
       )}
     </div>

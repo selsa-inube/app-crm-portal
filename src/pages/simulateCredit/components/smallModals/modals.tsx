@@ -2,6 +2,7 @@ import { MdWarningAmber } from "react-icons/md";
 import { Divider, Icon, Stack, Text } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { textModals } from "./config";
 
@@ -9,15 +10,16 @@ interface IProps {
   handleNext: () => void;
   handleClose: () => void;
   isMobile: boolean;
+  lang: EnumType;
 }
 
 export function AlertIncome(props: IProps) {
-  const { handleNext, handleClose, isMobile } = props;
+  const { handleNext, handleClose, isMobile, lang } = props;
 
   return (
     <BaseModal
-      title={textModals.titleAlert}
-      nextButton={textModals.understood}
+      title={textModals.titleAlert.i18n[lang]}
+      nextButton={textModals.understood.i18n[lang]}
       apparenceNext="warning"
       handleNext={handleNext}
       handleClose={handleClose}
@@ -32,11 +34,11 @@ export function AlertIncome(props: IProps) {
           ></Icon>
         </Stack>
         <Text type="body" size="medium" appearance="gray">
-          {textModals.descriptionIncome}
+          {textModals.descriptionIncome.i18n[lang]}
         </Text>
         <Divider dashed />
         <Text type="body" size="medium">
-          {textModals.includeIncome}
+          {textModals.includeIncome.i18n[lang]}
         </Text>
       </Stack>
     </BaseModal>
@@ -44,12 +46,12 @@ export function AlertIncome(props: IProps) {
 }
 
 export function AlertObligations(props: IProps) {
-  const { handleNext, handleClose, isMobile } = props;
+  const { handleNext, handleClose, isMobile, lang } = props;
 
   return (
     <BaseModal
-      title={textModals.titleAlert}
-      nextButton={textModals.understood}
+      title={textModals.titleAlert.i18n[lang]}
+      nextButton={textModals.understood.i18n[lang]}
       apparenceNext="warning"
       handleNext={handleNext}
       handleClose={handleClose}
@@ -64,11 +66,11 @@ export function AlertObligations(props: IProps) {
           ></Icon>
         </Stack>
         <Text type="body" size="medium" appearance="gray">
-          {textModals.descriptionObligation}
+          {textModals.descriptionObligation.i18n[lang]}
         </Text>
         <Divider dashed />
         <Text type="body" size="medium">
-          {textModals.includeObligation}
+          {textModals.includeObligation.i18n[lang]}
         </Text>
       </Stack>
     </BaseModal>
@@ -76,36 +78,36 @@ export function AlertObligations(props: IProps) {
 }
 
 export function AlertCreditLimit(props: IProps) {
-  const { handleNext, handleClose, isMobile } = props;
+  const { handleNext, handleClose, isMobile, lang } = props;
 
   return (
     <BaseModal
-      title={textModals.titleQuotas}
-      nextButton={textModals.close}
+      title={textModals.titleQuotas.i18n[lang]}
+      nextButton={textModals.close.i18n[lang]}
       handleNext={handleNext}
       handleClose={handleClose}
       width={isMobile ? "280px" : "450px"}
     >
       <Stack>
-        <Text>{textModals.descriptionQuotas}</Text>
+        <Text>{textModals.descriptionQuotas.i18n[lang]}</Text>
       </Stack>
     </BaseModal>
   );
 }
 
 export function AlertCapacityAnalysis(props: IProps) {
-  const { handleNext, handleClose, isMobile } = props;
+  const { handleNext, handleClose, isMobile, lang } = props;
 
   return (
     <BaseModal
-      title={textModals.titlePaymentCapacity}
-      nextButton={textModals.close}
+      title={textModals.titlePaymentCapacity.i18n[lang]}
+      nextButton={textModals.close.i18n[lang]}
       handleNext={handleNext}
       handleClose={handleClose}
       width={isMobile ? "280px" : "400px"}
     >
       <Stack>
-        <Text>{textModals.descriptionPaymentCapacity}</Text>
+        <Text>{textModals.descriptionPaymentCapacity.i18n[lang]}</Text>
       </Stack>
     </BaseModal>
   );

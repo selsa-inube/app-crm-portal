@@ -20,6 +20,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { paymentOptionValues } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { IConsolidatedCredit } from "@services/prospect/types";
 import { updateConsolidatedCredits } from "@services/prospect/updateConsolidatedCredits";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { ScrollableContainer } from "./styles";
 import { ModalConfig, feedback } from "./config";
@@ -34,6 +35,7 @@ export interface ConsolidatedCreditsProps {
     React.SetStateAction<IConsolidatedCredit[]>
   >;
   consolidatedCredits: IConsolidatedCredit[];
+  lang: EnumType;
   showEdit?: boolean;
   onProspectRefreshData?: () => void;
 }
@@ -44,6 +46,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     prospectData,
     businessUnitPublicCode,
     businessManagerCode,
+    lang,
     setConsolidatedCredits,
     consolidatedCredits,
     showEdit = true,
@@ -86,9 +89,10 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
       const description = code + err?.message + (err?.data?.description || "");
 
       addFlag({
-        title: feedback.fetchDataObligationPayment.title,
+        title: feedback.fetchDataObligationPayment.title.i18n[lang],
         description:
-          description || feedback.fetchDataObligationPayment.description,
+          description ||
+          feedback.fetchDataObligationPayment.description.i18n[lang],
         appearance: "danger",
         duration: 5000,
       });
@@ -322,8 +326,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
       handleClose();
 
       addFlag({
-        title: feedback.handleSaveChanges.success.title,
-        description: feedback.handleSaveChanges.success.description,
+        title: feedback.handleSaveChanges.success.title.i18n[lang],
+        description: feedback.handleSaveChanges.success.description.i18n[lang],
         appearance: "success",
         duration: 4000,
       });
@@ -339,9 +343,10 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         code + (err?.message || "") + (err?.data?.description || "");
       setLoading(false);
       addFlag({
-        title: feedback.handleSaveChanges.error.title,
+        title: feedback.handleSaveChanges.error.title.i18n[lang],
         description:
-          description || feedback.handleSaveChanges.error.description,
+          description ||
+          feedback.handleSaveChanges.error.description.i18n[lang],
         appearance: "danger",
         duration: 5000,
       });
@@ -350,15 +355,17 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
 
   return (
     <BaseModal
-      title={ModalConfig.title}
-      nextButton={showEdit ? ModalConfig.keep : ModalConfig.close}
+      title={ModalConfig.title.i18n[lang]}
+      nextButton={
+        showEdit ? ModalConfig.keep.i18n[lang] : ModalConfig.close.i18n[lang]
+      }
       disabledNext={showEdit ? !hasRealChanges : false}
       handleNext={showEdit ? handleSaveChanges : handleClose}
       width={isMobile ? "300px" : "640px"}
       height={isMobile ? "auto" : "688px"}
       handleBack={handleClose}
       finalDivider={true}
-      backButton={showEdit ? ModalConfig.close : undefined}
+      backButton={showEdit ? ModalConfig.close.i18n[lang] : undefined}
       isLoading={isLoading}
     >
       <Stack direction="column" gap="24px">
@@ -393,7 +400,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
               fullwidth={isMobile}
               disabled={!editOpen}
             >
-              {ModalConfig.edit}
+              {ModalConfig.edit.i18n[lang]}
             </Button>
           )}
         </Stack>
@@ -409,7 +416,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
             {editOpen ? (
               <>
                 <Text type="body" appearance="gray" size="small" weight="bold">
-                  {ModalConfig.selectedText}
+                  {ModalConfig.selectedText.i18n[lang]}
                 </Text>
                 <Grid
                   autoRows="auto"
@@ -419,15 +426,16 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                 >
                   {consolidatedCredits.length === 0 && (
                     <Text type="body" size="small">
-                      {ModalConfig.noSelected}
+                      {ModalConfig.noSelected.i18n[lang]}
                     </Text>
                   )}
                   {consolidatedCredits.map((item) => (
                     <InvestmentCreditCard
                       codeValue={item.creditProductCode}
-                      expired={ModalConfig.terminated}
+                      expired={ModalConfig.terminated.i18n[lang]}
                       expiredValue={item.consolidatedAmount}
                       title={item.lineOfCreditDescription}
+                      lang={lang}
                     />
                   ))}
                 </Grid>
@@ -435,7 +443,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
             ) : (
               <>
                 <Text type="body" appearance="gray" size="small" weight="bold">
-                  {ModalConfig.newObligations}
+                  {ModalConfig.newObligations.i18n[lang]}
                 </Text>
                 <Grid
                   autoRows="auto"
@@ -446,7 +454,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                 >
                   {sortedObligationPayment.length === 0 && (
                     <Text type="body" size="small">
-                      {ModalConfig.newObligationsEmpty}
+                      {ModalConfig.newObligationsEmpty.i18n[lang]}
                     </Text>
                   )}
                   {sortedObligationPayment.map((creditData) => (
@@ -508,11 +516,12 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                       allowCustomValue={creditData.allowCustomValue}
                       initialType={initialValuesMap[creditData.id]?.type}
                       handleRemoveCredit={handleRemoveCredit}
+                      lang={lang}
                     />
                   ))}
                 </Grid>
                 <Text type="body" appearance="gray" size="small" weight="bold">
-                  {ModalConfig.selectedText}
+                  {ModalConfig.selectedText.i18n[lang]}
                 </Text>
                 <Grid
                   autoRows="auto"
@@ -522,15 +531,16 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
                 >
                   {consolidatedCredits.length === 0 && (
                     <Text type="body" size="small">
-                      {ModalConfig.noSelected}
+                      {ModalConfig.noSelected.i18n[lang]}
                     </Text>
                   )}
                   {consolidatedCredits.map((item) => (
                     <InvestmentCreditCard
                       codeValue={item.creditProductCode}
-                      expired={ModalConfig.terminated}
+                      expired={ModalConfig.terminated.i18n[lang]}
                       expiredValue={item.consolidatedAmount}
                       title={item.lineOfCreditDescription}
+                      lang={lang}
                     />
                   ))}
                 </Grid>

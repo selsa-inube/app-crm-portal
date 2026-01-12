@@ -22,6 +22,7 @@ import { optionButtons } from "@pages/prospect/outlets/financialReporting/config
 import { IBorrowerDocumentRule } from "@pages/applyForCredit/steps/attachedDocuments";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IFile } from "@components/modals/ListModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { headers, dataReport } from "./config";
 import { usePagination } from "./utils";
@@ -36,6 +37,7 @@ interface ITableAttachedDocumentsProps {
   ruleValues: IBorrowerDocumentRule[];
   isLoading: boolean;
   showErrorModal: boolean;
+  lang: EnumType;
 }
 
 export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
@@ -45,6 +47,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
     setUploadedFilesByRow,
     ruleValues,
     isLoading,
+    lang,
   } = props;
 
   const [showAttachment, setShowAttachments] = useState(false);
@@ -123,7 +126,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                 </Td>
               ) : (
                 <Th key={index} action={header.action} align="center">
-                  {header.label}
+                  {header.label.i18n[lang]}
                 </Th>
               ),
             )}
@@ -154,7 +157,7 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
                   appearance="gray"
                   textAlign="center"
                 >
-                  {dataReport.noData}
+                  {dataReport.noData.i18n[lang]}
                 </Text>
               </Td>
             </Tr>
@@ -247,13 +250,13 @@ export function TableAttachedDocuments(props: ITableAttachedDocumentsProps) {
       )}
       {showDeleteModal && (
         <BaseModal
-          title={dataReport.delete}
-          nextButton={dataReport.delete}
-          backButton={dataReport.close}
+          title={dataReport.delete.i18n[lang]}
+          nextButton={dataReport.delete.i18n[lang]}
+          backButton={dataReport.close.i18n[lang]}
           handleBack={() => setShowDeleteModal(false)}
           handleNext={handleConfirmDelete}
         >
-          <Text>{dataReport.deleteText}</Text>
+          <Text>{dataReport.deleteText.i18n[lang]}</Text>
         </BaseModal>
       )}
     </>

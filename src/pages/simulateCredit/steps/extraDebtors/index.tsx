@@ -231,6 +231,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               businessManagerCode={businessManagerCode}
               businessUnitPublicCode={businessUnitPublicCode}
               customerData={customerData}
+              lang={lang}
             />
           )}
 
@@ -243,6 +244,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               isMobile={isMobile}
               initialValues={selectedDebtorDetail}
               properties={selectedBorrowerForEdit}
+              lang={lang}
             />
           )}
           {isModalDelete && (
@@ -254,6 +256,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               }}
               handleDelete={handleConfirmDelete}
               TextDelete={dataExtraDebtors.delete.i18n[lang]}
+              lang={lang}
             />
           )}
           {isModalEdit && selectedBorrowerForEdit && (
@@ -269,6 +272,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               businessUnitPublicCode={businessUnitPublicCode}
               businessManagerCode={businessManagerCode}
               prospectData={prospectData}
+              lang={lang}
             />
           )}
         </Grid>

@@ -49,6 +49,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
     errorModal,
     loading,
     isLoading,
+    lang,
   } = props;
 
   return (
@@ -143,6 +144,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
                                 creditLine: lineName,
                               });
                             }}
+                            lang={lang}
                           />
                         </Stack>
                       ),

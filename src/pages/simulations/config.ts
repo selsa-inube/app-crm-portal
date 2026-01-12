@@ -1,49 +1,29 @@
 export const addConfig = {
   id: 1,
-  title: {
-    code: "Title",
-    description: "Title for the page",
-    i18n: { en: "Credit Prospects", es: "Prospectos de crédito" },
-  },
+  title: "Prospectos de crédito",
   route: "/credit/prospects",
   crumbs: [
     {
       path: "/home",
-      label: {
-        code: "Crumb_home",
-        description: "Breadcrumb home label",
-        i18n: { en: "Home", es: "Inicio" },
-      },
+      label: "Inicio",
       id: "/home",
       isActive: true,
     },
     {
       path: "/credit",
-      label: {
-        code: "Crumb_credit",
-        description: "Breadcrumb credit label",
-        i18n: { en: "Credit", es: "Crédito" },
-      },
+      label: "Crédito",
       id: "/credito",
       isActive: false,
     },
     {
       path: "/credit/prospects",
-      label: {
-        code: "Crumb_prospects",
-        description: "Breadcrumb prospects label",
-        i18n: { en: "Credit Prospects", es: "Prospectos de crédito" },
-      },
+      label: "Prospectos de crédito",
       id: "/prospectos",
       isActive: false,
     },
     {
       path: `/credit/prospects/prospectCode`,
-      label: {
-        code: "Crumb_prospectDetail",
-        description: "Breadcrumb prospect detail label",
-        i18n: { en: "Credit Prospect", es: "Prospectos de crédito" },
-      },
+      label: "Prospectos de crédito",
       id: "/prospectosId",
       isActive: false,
     },

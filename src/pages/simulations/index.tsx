@@ -26,6 +26,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { recalculateProspect } from "@services/prospect/recalculateProspect";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { SimulationsUI } from "./interface";
 import { dataEditProspect, labelsAndValuesShare } from "./config";
@@ -62,6 +63,8 @@ export function Simulations() {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
+
+  const { lang } = useEnum();
 
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
@@ -225,26 +228,30 @@ export function Simulations() {
     try {
       const pdfBlob = await generatePDF(
         dataPrint,
-        labelsAndValuesShare.titleOnPdf,
-        labelsAndValuesShare.titleOnPdf,
+        labelsAndValuesShare.titleOnPdf.i18n[lang],
+        labelsAndValuesShare.titleOnPdf.i18n[lang],
         { top: 10, bottom: 10, left: 10, right: 10 },
         true,
       );
 
       if (pdfBlob) {
-        const pdfFile = new File([pdfBlob], labelsAndValuesShare.fileName, {
-          type: "application/pdf",
-        });
+        const pdfFile = new File(
+          [pdfBlob],
+          labelsAndValuesShare.fileName.i18n[lang],
+          {
+            type: "application/pdf",
+          },
+        );
 
         await navigator.share({
           files: [pdfFile],
-          title: labelsAndValuesShare.titleOnPdf,
-          text: labelsAndValuesShare.text,
+          title: labelsAndValuesShare.titleOnPdf.i18n[lang],
+          text: labelsAndValuesShare.text.i18n[lang],
         });
       }
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(labelsAndValuesShare.error);
+      setMessageError(labelsAndValuesShare.error.i18n[lang]);
     }
   };
 
@@ -305,7 +312,7 @@ export function Simulations() {
     } catch (error) {
       setIsLoadingDelete(false);
       setCodeError(1022);
-      setAddToFix([dataEditProspect.errorRemoveProspect]);
+      setAddToFix([dataEditProspect.errorRemoveProspect.i18n[lang]]);
     }
   };
 
@@ -325,7 +332,7 @@ export function Simulations() {
       setShowRecalculateSimulation(false);
     } catch (e) {
       setShowErrorModal(true);
-      setMessageError(dataEditProspect.errorRecalculate);
+      setMessageError(dataEditProspect.errorRecalculate.i18n[lang]);
     } finally {
       setIsLoading(false);
     }
@@ -377,6 +384,7 @@ export function Simulations() {
       setShowRequirements={setShowRequirements}
       validateRequirements={validateRequirements}
       isLoading={isLoading}
+      lang={lang}
       isLoadingDelete={isLoadingDelete}
     />
   );

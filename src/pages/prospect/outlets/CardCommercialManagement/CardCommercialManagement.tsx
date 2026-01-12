@@ -471,6 +471,7 @@ export const CardCommercialManagement = (
             setConsolidatedCredits={setConsolidatedCredits}
             onProspectRefreshData={onProspectRefreshData}
             showEdit={showAddProduct}
+            lang={lang}
           />
         )}
         {showDeductibleExpensesModal && (
@@ -479,6 +480,7 @@ export const CardCommercialManagement = (
             initialValues={deductibleExpenses}
             loading={isLoading}
             isMobile={isMobile}
+            lang={lang}
           />
         )}
         {isModalOpen && (

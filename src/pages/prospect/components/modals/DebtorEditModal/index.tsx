@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Stack, Tabs } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
@@ -8,6 +8,7 @@ import { TableFinancialObligations } from "@pages/prospect/components/TableOblig
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { IBorrower, IProspect } from "@services/prospect/types";
 import { IIncomeSources } from "@services/creditLimit/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataEditDebtor, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
@@ -25,6 +26,7 @@ interface IDebtorEditModalProps {
   currentBorrowerIndex?: number | null;
   publicCode?: string;
   businessUnitPublicCode: string;
+  lang: EnumType;
   handleClose: () => void;
   onSave?: () => void;
   onUpdate?: (updatedBorrower: IBorrower, isSave?: boolean) => void;
@@ -41,6 +43,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     businessUnitPublicCode,
     businessManagerCode,
     prospectData,
+    lang,
     handleClose,
     onUpdate,
   } = props;
@@ -57,6 +60,13 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
   useEffect(() => {
     setEditedBorrower(initialValues);
   }, [initialValues]);
+
+  const translatedTabs = useMemo(() => {
+    return dataTabs.map((tab) => ({
+      ...tab,
+      label: tab.label.i18n[lang],
+    }));
+  }, [lang]);
 
   const handleDebtorDataChange = (fieldName: string, value: string) => {
     const propertyMap: { [key: string]: string } = {
@@ -204,9 +214,9 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
 
   return (
     <BaseModal
-      title={dataEditDebtor.title}
-      nextButton={dataEditDebtor.save}
-      backButton={dataEditDebtor.close}
+      title={dataEditDebtor.title.i18n[lang]}
+      nextButton={dataEditDebtor.save.i18n[lang]}
+      backButton={dataEditDebtor.close.i18n[lang]}
       handleNext={handleSave}
       handleBack={handleClose}
       handleClose={handleClose}
@@ -219,7 +229,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
         <Tabs
           scroll={isMobile}
           selectedTab={currentTab}
-          tabs={dataTabs}
+          tabs={translatedTabs}
           onChange={setCurrentTab}
         />
         {currentTab === "data" && (
@@ -240,6 +250,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
             prospectData={prospectData}
+            lang={lang}
           />
         )}
         {currentTab === "obligations" && (

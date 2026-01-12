@@ -236,6 +236,7 @@ export function Borrowers(props: borrowersProps) {
                   ];
                   formik.setFieldValue("borrowers", updatedBorrowers);
                 }}
+                lang={lang}
               />
             )}
             {isModalView && selectedBorrower && (
@@ -247,6 +248,7 @@ export function Borrowers(props: borrowersProps) {
                 isMobile={isMobile}
                 initialValues={selectedDebtorDetail as IDebtorDetail}
                 properties={selectedBorrower as IBorrower}
+                lang={lang}
               />
             )}
             {isModalDelete && (
@@ -280,6 +282,7 @@ export function Borrowers(props: borrowersProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 businessManagerCode={businessManagerCode}
                 prospectData={prospectData as IProspect}
+                lang={lang}
               />
             )}
           </Stack>

@@ -1012,6 +1012,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
             prospectData={prospectData}
+            lang={lang}
           />
         )}
         {currentModal === "reportCreditsModal" && (

@@ -649,6 +649,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsCreditLimitWarning(false)}
                   handleClose={() => setIsCreditLimitWarning(false)}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               )}
               {isCapacityAnalysisModal && (
@@ -665,6 +666,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsCapacityAnalysisWarning(false)}
                   handleClose={() => setIsCapacityAnalysisWarning(false)}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               )}
               {isAlertIncome && (
@@ -672,6 +674,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsAlertIncome(false)}
                   handleClose={() => setIsAlertIncome(false)}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               )}
               {showErrorModal && (
