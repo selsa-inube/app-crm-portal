@@ -24,6 +24,7 @@ import { IProspect } from "@services/prospect/types";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { StyledArrowBack, StyledContainerAssisted } from "../styles";
 import { IDisbursementGeneral, titleButtonTextAssited } from "../types";
@@ -85,6 +86,7 @@ interface BonusUIProps {
   validateRequirements: IValidateRequirement[];
   handleSubmitClick: () => void;
   isLoading: boolean;
+  lang: EnumType;
   errorsManager: IManageErrors;
   handleSuccessModalClose: () => void;
   setIsModalOpenRequirements: React.Dispatch<React.SetStateAction<boolean>>;
@@ -136,6 +138,7 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
     handleSuccessModalClose,
     setIsModalOpenRequirements,
     isModalOpenRequirements,
+    lang,
     isLoading,
     errorsManager,
     showExceedQuotaModal,
@@ -237,6 +240,7 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
                       businessManagerCode={businessManagerCode}
                       onRequirementsValidated={onRequirementsValidated}
                       setShowErrorModal={setShowErrorModal}
+                      lang={lang}
                     />
                   )}
 
@@ -340,6 +344,7 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
               isLoading={isLoading}
               validateRequirements={validateRequirements}
               errorsManager={errorsManager}
+              lang={lang}
             />
           )}
           {showSuccessModal && (

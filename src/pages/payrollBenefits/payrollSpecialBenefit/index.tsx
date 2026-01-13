@@ -12,6 +12,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { useBorrowerData } from "@hooks/useBorrowerData";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { IBonusFormData, titleButtonTextAssited } from "../types";
 import { availableQuotaValue } from "../steps/requestedValue";
@@ -26,6 +27,8 @@ export function PayrolSpecialBenefitAdvanceCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
     stepsToApplyForPayrollAdvanceCredit.generalInformation.id,
   );
+
+  const { lang } = useEnum();
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -481,6 +484,7 @@ export function PayrolSpecialBenefitAdvanceCredit() {
       handleNextClick={handleConfirmNavigation}
       setProspectData={setProspectData}
       handleCancelNavigation={handleCancelNavigation}
+      lang={lang}
     />
   );
 }

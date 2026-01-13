@@ -1071,7 +1071,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 label={configModal.observations.preApproval.i18n[lang]}
                 placeHolder={
                   prospectData!.clientManagerObservation ||
-                  dataCreditProspects.notHaveComments
+                  dataCreditProspects.notHaveComments.i18n[lang]
                 }
                 appearancePlaceHolder="gray"
               />
@@ -1079,7 +1079,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 label={configModal.observations.labelTextarea.i18n[lang]}
                 placeHolder={
                   prospectData!.clientComments ||
-                  dataCreditProspects.notHaveObservations
+                  dataCreditProspects.notHaveObservations.i18n[lang]
                 }
                 appearancePlaceHolder="gray"
               />
@@ -1091,6 +1091,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           <ScoreModalProspect
             isMobile={isMobile}
             handleClose={handleCloseModal}
+            lang={lang}
           />
         )}
 

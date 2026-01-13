@@ -24,6 +24,7 @@ import { ButtonRequirements } from "@pages/prospect/components/buttonRequirement
 import { IProspect } from "@services/prospect/types";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
@@ -99,6 +100,7 @@ interface PayRollUIProps {
   handleNextClick: () => void;
   isTablet: boolean;
   showExceedQuotaModal: boolean;
+  lang: EnumType;
   setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -123,6 +125,7 @@ export function PayRollUI(props: PayRollUIProps) {
     assistedButtonText,
     customerData,
     formData,
+    lang,
     onAmountChange,
     onValidationChange,
     setIsCurrentFormValid,
@@ -246,6 +249,7 @@ export function PayRollUI(props: PayRollUIProps) {
                       businessManagerCode={businessManagerCode}
                       onRequirementsValidated={onRequirementsValidated}
                       setShowErrorModal={setShowErrorModal}
+                      lang={lang}
                     />
                   )}
 
@@ -350,6 +354,7 @@ export function PayRollUI(props: PayRollUIProps) {
               isLoading={isLoading}
               validateRequirements={validateRequirements}
               errorsManager={errorsManager}
+              lang={lang}
             />
           )}
           {showSuccessModal && (
