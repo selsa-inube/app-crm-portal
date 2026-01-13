@@ -27,7 +27,7 @@ export const titleButtonTextAssited = {
   },
 };
 
-export interface StepDetails {
+export interface IStepDetails {
   id: number;
   number: number;
   name: string;

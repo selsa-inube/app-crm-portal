@@ -3,6 +3,7 @@ export interface IDomainEnum {
   value: string;
   description: string;
   i18n: Record<string, string>;
+  I18nValue?: Record<string, string>;
   index?: number;
   requirementType?: string;
   i18nAttribute?: string;

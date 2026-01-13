@@ -7,6 +7,7 @@ import {
   MdOutlineMessage,
   MdOutlineRule,
   MdOutlineEdit,
+  MdOutlineSpeed,
 } from "react-icons/md";
 import { Stack, Text } from "@inubekit/inubekit";
 
@@ -371,6 +372,15 @@ export const menuOptions = (
     title: "Obligaciones financieras",
     onClick: () => handleOpenModal("reportCreditsModal"),
     icon: <MdOutlineMonetizationOn />,
+    visible: true,
+  },
+  {
+    id: "scores",
+    title: "Score de riesgo",
+    onClick: () => {
+      handleOpenModal("scores");
+    },
+    icon: <MdOutlineSpeed />,
     visible: true,
   },
   {

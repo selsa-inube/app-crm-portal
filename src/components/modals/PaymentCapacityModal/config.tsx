@@ -34,6 +34,7 @@ export const headers = [
         es: "Concepto",
       },
     },
+    mobile: true,
   },
   {
     key: "installmentAmount",
@@ -45,6 +46,7 @@ export const headers = [
         es: "Valor",
       },
     },
+    mobile: true,
   },
   {
     key: "installmentDate",
@@ -169,3 +171,10 @@ export const getMaxValueText = (maxAmount: number, maxTerm: number) => (
     <strong>{maxTerm}</strong> meses.
   </>
 );
+
+export const detailsExtraordinaryInstallments = {
+  title: "Detalles",
+  close: "Cerrar",
+  value: "Valor",
+  date: "Fecha",
+};

@@ -2,7 +2,6 @@ import {
   MdArrowBack,
   MdOutlinePaid,
   MdOutlinePriceChange,
-  MdOutlineRule,
   MdCheckCircle,
 } from "react-icons/md";
 import {
@@ -40,14 +39,18 @@ import { stepsAddProspect } from "./config/addProspect.config";
 import {
   IFormData,
   IStep,
-  StepDetails,
+  IStepDetails,
   titleButtonTextAssited,
   ICreditLineTerms,
   IServicesProductSelection,
   ISourcesOfIncomeState,
   IManageErrors,
 } from "./types";
-import { StyledArrowBack, StyledContainerAssisted } from "./styles";
+import {
+  StyledAnchor,
+  StyledArrowBack,
+  StyledContainerAssisted,
+} from "./styles";
 import { RequirementsNotMet } from "./steps/requirementsNotMet";
 import { LoanAmount } from "./steps/loanAmount";
 import { ConsolidatedCredit } from "./steps/consolidatedCredit";
@@ -134,7 +137,7 @@ interface SimulateCreditUIProps {
   isTablet: boolean;
   validateRequirements: IValidateRequirement[];
   isLoading: boolean;
-  currentStepsNumber?: StepDetails;
+  currentStepsNumber?: IStepDetails;
   prospectData: IProspect | undefined;
   creditLimitData?: IIncomeSources;
   totalIncome: number;
@@ -282,84 +285,46 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   </Stack>
                 </StyledArrowBack>
                 <Stack gap="8px">
-                  {isMobile ? (
-                    <>
-                      <Icon
-                        icon={<MdOutlinePriceChange />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if ((currentStepsNumber?.id ?? 0) >= 4) {
-                            setIsCreditLimitModalOpen(true);
-                          } else {
-                            setIsCreditLimitWarning(true);
-                          }
-                        }}
-                      />
-                      <Icon
-                        icon={<MdOutlinePaid />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if (totalIncome === 0) {
-                            setIsCapacityAnalysisWarning(true);
-                          } else {
-                            setIsCapacityAnalysisModal(true);
-                          }
-                        }}
-                      />
-                      <Icon
-                        icon={<MdOutlineRule />}
-                        appearance="gray"
-                        size="28px"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => setIsModalOpenRequirements(true)}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        iconBefore={<MdOutlinePriceChange />}
-                        children={textAddConfig.buttonQuotas.i18n[lang]}
-                        appearance="gray"
-                        spacing="compact"
-                        variant="outlined"
-                        onClick={() => {
-                          if ((currentStepsNumber?.id ?? 0) >= 4) {
-                            setIsCreditLimitModalOpen(true);
-                          } else {
-                            setIsCreditLimitWarning(true);
-                          }
-                        }}
-                      />
-                      <Button
-                        spacing="compact"
-                        appearance="gray"
-                        iconBefore={<MdOutlinePaid />}
-                        children={
-                          textAddConfig.buttonPaymentCapacity.i18n[lang]
+                  <StyledAnchor title={textAddConfig.buttonQuotas.i18n[lang]}>
+                    <Icon
+                      icon={<MdOutlinePriceChange />}
+                      appearance="gray"
+                      size="28px"
+                      spacing="compact"
+                      variant="outlined"
+                      cursor="pointer"
+                      onClick={() => {
+                        if ((currentStepsNumber?.id ?? 0) >= 4) {
+                          setIsCreditLimitModalOpen(true);
+                        } else {
+                          setIsCreditLimitWarning(true);
                         }
-                        onClick={() => {
-                          if (totalIncome === 0) {
-                            setIsCapacityAnalysisWarning(true);
-                          } else {
-                            setIsCapacityAnalysisModal(true);
-                          }
-                        }}
-                        variant="outlined"
-                      />
-                      <ButtonRequirements
-                        onClick={() => setIsModalOpenRequirements(true)}
-                        data={validateRequirements}
-                        lang={lang}
-                      />
-                    </>
-                  )}
+                      }}
+                    />
+                  </StyledAnchor>
+                  <StyledAnchor
+                    title={textAddConfig.buttonPaymentCapacity.i18n[lang]}
+                  >
+                    <Icon
+                      icon={<MdOutlinePaid />}
+                      appearance="gray"
+                      size="28px"
+                      spacing="compact"
+                      variant="outlined"
+                      cursor="pointer"
+                      onClick={() => {
+                        if (totalIncome === 0) {
+                          setIsCapacityAnalysisWarning(true);
+                        } else {
+                          setIsCapacityAnalysisModal(true);
+                        }
+                      }}
+                    />
+                  </StyledAnchor>
+                  <ButtonRequirements
+                    onClick={() => setIsModalOpenRequirements(true)}
+                    data={validateRequirements}
+                  />
                 </Stack>
               </Stack>
               <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>

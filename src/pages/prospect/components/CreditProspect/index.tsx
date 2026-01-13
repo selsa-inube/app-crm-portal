@@ -74,6 +74,7 @@ import {
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
+import { ScoreModalProspect } from "../ScoreModalProspec";
 import InfoModal from "../InfoModal";
 import { filterIncomeByBorrower } from "./utils";
 
@@ -217,7 +218,6 @@ export function CreditProspect(props: ICreditProspectProps) {
   const handleOpenModal = (modalName: string) => {
     if (modalName === "requirements" && setShowRequirements) {
       setShowRequirements(true);
-
       return;
     }
     if (modalName === "IncomeModal") {
@@ -1073,7 +1073,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   prospectData!.clientManagerObservation ||
                   dataCreditProspects.notHaveComments
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
               />
               <CardGray
                 label={configModal.observations.labelTextarea.i18n[lang]}
@@ -1081,10 +1081,17 @@ export function CreditProspect(props: ICreditProspectProps) {
                   prospectData!.clientComments ||
                   dataCreditProspects.notHaveObservations
                 }
-                apparencePlaceHolder="gray"
+                appearancePlaceHolder="gray"
               />
             </Stack>
           </BaseModal>
+        )}
+
+        {currentModal === "scores" && (
+          <ScoreModalProspect
+            isMobile={isMobile}
+            handleClose={handleCloseModal}
+          />
         )}
 
         {showEditMessageModal && (

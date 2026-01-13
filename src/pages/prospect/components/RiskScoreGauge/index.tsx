@@ -8,16 +8,19 @@ import {
   StyledCenterText,
   StyledContainer,
   StyledSvg,
+  StyledImgLogo,
+  StyledContainerLogo,
 } from "./style";
 import { DataRiskScore } from "./config";
 
-interface RiskScoreGaugeProps {
+interface IRiskScoreGaugeProps {
   value: number;
   lang: EnumType;
+  logo?: string;
 }
 
-export function RiskScoreGauge(props: RiskScoreGaugeProps) {
-  const { value, lang } = props;
+export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
+  const { value, lang, logo } = props;
 
   const min = DataRiskScore.min;
   const max = DataRiskScore.max;
@@ -151,6 +154,11 @@ export function RiskScoreGauge(props: RiskScoreGaugeProps) {
           </Text>
         </Stack>
       </Stack>
+      {logo && (
+        <StyledContainerLogo>
+          <StyledImgLogo url={logo} alt={DataRiskScore.altImg.i18n[lang]} />
+        </StyledContainerLogo>
+      )}
     </Stack>
   );
 }

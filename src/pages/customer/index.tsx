@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IOption, useMediaQuery } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
@@ -16,8 +17,12 @@ export function Customer() {
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [errorCode, setErrorCode] = useState<number | null>(null);
   const { lang } = useEnum();
 
+  const { user } = useIAuth();
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
   const selectRef = useRef<HTMLDivElement | null>(null);
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -37,20 +42,29 @@ export function Customer() {
       const formattedValue = value.replace(VALIDATE_BLANK_SPACES_REGEX, "%");
 
       let response = null;
-      if (isNumericString(value)) {
-        response = await getCustomerCatalog(
-          businessUnitPublicCode,
-          businessManagerCode,
-          "",
-          formattedValue,
-        );
-      } else if (isValidUpperCaseName(value)) {
-        response = await getCustomerCatalog(
-          businessUnitPublicCode,
-          businessManagerCode,
-          formattedValue,
-          "",
-        );
+      try {
+        setLoading(true);
+        if (isNumericString(value)) {
+          response = await getCustomerCatalog(
+            businessUnitPublicCode,
+            businessManagerCode,
+            "",
+            formattedValue,
+          );
+        } else if (isValidUpperCaseName(value)) {
+          response = await getCustomerCatalog(
+            businessUnitPublicCode,
+            businessManagerCode,
+            formattedValue,
+            "",
+          );
+        }
+      } catch (error) {
+        setShowError(true);
+        setErrorCode(500);
+        setMessageError(EErrorMessages.BackendError);
+      } finally {
+        setLoading(false);
       }
 
       if (response && Array.isArray(response) && response.length > 0) {
@@ -88,6 +102,11 @@ export function Customer() {
       return;
     }
     handleSearch(inputValue);
+
+    const isValidOption = options.some(
+      (option) => option.value === inputValue || option.label === inputValue,
+    );
+    setIsValid(isValidOption);
   }, [inputValue]);
 
   const navigate = useNavigate();
@@ -109,6 +128,9 @@ export function Customer() {
   };
 
   useEffect(() => {
+    if (inputValue === "") {
+      setIsValid(false);
+    }
     if (selectRef.current) {
       const inputIsEmpty = !inputValue || inputValue.trim() === "";
       const optionsAreEmpty = options.length === 0;
@@ -142,6 +164,29 @@ export function Customer() {
     }
   }, [options, businessUnitSigla, inputValue]);
 
+  useEffect(() => {
+    if (businessUnitPublicCode === "") {
+      setErrorCode(1003);
+      setShowError(true);
+    }
+  }, [businessUnitPublicCode]);
+
+  const redirectErrorPage = () => {
+    switch (errorCode) {
+      case 500:
+        setInputValue("");
+        setOptions([]);
+        setShowError(false);
+        setMessageError("");
+        setLoading(false);
+        setIsValid(false);
+        break;
+      case 1003:
+        navigate(`/login/${user.username}/business-units/select-business-unit`);
+        break;
+    }
+  };
+
   return (
     <CustomerUI
       isMobile={isMobile}
@@ -153,6 +198,10 @@ export function Customer() {
       handleSubmit={handleSubmit}
       messageError={messageError}
       lang={lang}
+      loading={loading}
+      isValid={isValid}
+      redirectErrorPage={redirectErrorPage}
+      errorCode={errorCode}
     />
   );
 }

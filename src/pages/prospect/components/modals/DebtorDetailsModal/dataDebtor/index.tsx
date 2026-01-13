@@ -35,7 +35,7 @@ export function DataDebtor(props: IDataDebtor) {
       <CardGray
         label={dataDebtor.labelEmail.i18n[lang]}
         data={initialValues.email}
-        apparencePlaceHolder="gray"
+        appearancePlaceHolder="gray"
       />
       <CardGray
         label={dataDebtor.labelNumber.i18n[lang]}

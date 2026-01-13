@@ -9,6 +9,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { dataApproved } from "@pages/payrollBenefits/steps/requirementsNotMet/config";
 
 import { dataError } from "./config";
 
@@ -56,7 +57,8 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
         if (data) {
           setValidateRequirements(
             data.filter(
-              (requirement) => requirement.requirementStatus !== "Aprobado",
+              (requirement) =>
+                requirement.requirementStatus !== dataApproved.approved,
             ),
           );
         }

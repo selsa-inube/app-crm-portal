@@ -12,10 +12,12 @@ export const searchAllMoneyDestinationByCustomerCode = async (
 ): Promise<IMoneyDestination[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+
       const options: RequestInit = {
         method: "GET",
         headers: {

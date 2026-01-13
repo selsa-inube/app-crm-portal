@@ -7,4 +7,9 @@ export const dataMoneyDestination = {
       es: "Sin tipo",
     },
   },
+  keyWord: {
+    code: "Keyword",
+    description: "Keyword",
+    i18n: { en: "Keyword", es: "Palabra clave" },
+  },
 };

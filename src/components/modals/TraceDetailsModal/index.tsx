@@ -28,12 +28,12 @@ export function TraceDetailsModal(props: ITraceDetailsModalProps) {
         <CardGray
           label={dataTrace.evaluation.i18n[lang]}
           placeHolder={data.evaluation}
-          apparencePlaceHolder="gray"
+          appearancePlaceHolder="gray"
         />
         <CardGray
           label={dataTrace.description.i18n[lang]}
           placeHolder={data.description}
-          apparencePlaceHolder="gray"
+          appearancePlaceHolder="gray"
           height="108px"
         />
       </Stack>

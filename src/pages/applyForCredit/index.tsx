@@ -682,7 +682,7 @@ export function ApplyForCredit() {
         handleNextStep={handleNextStep}
         handlePreviousStep={handlePreviousStep}
         setCurrentStep={setCurrentStep}
-        currentStepsNumber={currentStepsNumber}
+        currentStepNumber={currentStepsNumber}
         handleSubmitClick={handleSubmitClick}
         handleSubmit={handleSubmit}
         setShowErrorModal={setShowErrorModal}
