@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import {
   Stack,
@@ -36,10 +36,11 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { getEnum } from "@services/enum/enumerators/getEnum";
 import { IDomainEnum } from "@config/enums/types";
-import { useEnums } from "@context/EnumContext";
+
 import { CardGray } from "@components/cards/CardGray";
 
 import { selectDefaultValue, errorMessages } from "./config";
+import { EnumContext } from "@src/context/EnumContext";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;
@@ -86,7 +87,8 @@ export function DisbursementWithExternalAccount(
   const [isLoading, setIsLoading] = useState(false);
 
   const prevValues = useRef(formik.values[optionNameForm]);
-  const { language } = useEnums();
+  const contextValue = useContext(EnumContext);
+  const lang = contextValue?.lang;
 
   useEffect(() => {
     onFormValid(formik.isValid);
@@ -123,8 +125,7 @@ export function DisbursementWithExternalAccount(
 
         const accountsFormated = accounts.map((account: IDomainEnum) => ({
           id: account.code,
-          label:
-            account.I18nValue?.[language] || account.i18n?.[language] || "",
+          label: account.i18n?.[lang as "es" | "en"] || account.code,
           value: account.code,
         }));
 

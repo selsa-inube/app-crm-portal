@@ -71,6 +71,7 @@ interface IBusinessUnit {
   abbreviatedName: string;
   urlLogo: string;
   languageId: string;
+  languageiso: string;
   descriptionUse?: string;
   firstMonthOfFiscalYear?: string;
 }
