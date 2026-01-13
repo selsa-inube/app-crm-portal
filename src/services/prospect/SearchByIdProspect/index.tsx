@@ -63,7 +63,9 @@ const getSearchProspectById = async (
     }
   }
 
-  throw new Error("No se pudo obtener la tarea después de varios intentos.");
+  throw new Error(
+    "No se pudo obtener el prospecto después de varios intentos.",
+  );
 };
 
 export { getSearchProspectById };

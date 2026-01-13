@@ -36,6 +36,7 @@ import {
 
 export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
+  const [managerErrors, setManagerErrors] = useState<string[]>([]);
   const [dataProspect, setDataProspect] = useState<IProspect>();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -270,8 +271,21 @@ export function Simulations() {
           setValidateRequirements(data);
         }
       } catch (error) {
-        setShowErrorModal(true);
-        setMessageError(requirementsMessageError.description);
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
+        if (!managerErrors.includes("errorValidateRequirements")) {
+          setMessageError(description || requirementsMessageError.description);
+          setShowErrorModal(true);
+          setValidateRequirements([]);
+          setManagerErrors((prev) => [...prev, "errorValidateRequirements"]);
+        }
       }
     };
 
@@ -327,9 +341,18 @@ export function Simulations() {
 
       setDataProspect(newDataProspect);
       setShowRecalculateSimulation(false);
-    } catch (e) {
-      setShowErrorModal(true);
+    } catch (error) {
       setMessageError(dataEditProspect.errorRecalculate);
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+
+      setMessageError(description || requirementsMessageError.description);
+      setShowErrorModal(true);
     } finally {
       setIsLoading(false);
     }

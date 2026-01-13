@@ -45,7 +45,7 @@ import {
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
-import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
+import { SearchByIdProspectUpdateProspect } from "@services/prospect/SearchByIdProspectUpdateProspect";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
@@ -301,7 +301,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       );
 
       if (prospectData?.prospectId) {
-        const updatedProspect = await getSearchProspectById(
+        const updatedProspect = await SearchByIdProspectUpdateProspect(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,

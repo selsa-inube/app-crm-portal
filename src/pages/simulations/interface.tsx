@@ -547,7 +547,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
             validateRequirements || ([] as IValidateRequirement[])
           }
           errorsManager={{
-            validateRequirements: validateRequirements?.length > 0,
+            validateRequirements: validateRequirements?.length === 0,
           }}
         />
       )}

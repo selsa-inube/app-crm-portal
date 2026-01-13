@@ -135,6 +135,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
                 justifyContent="center"
                 direction="column"
                 alignItems="center"
+                height={isMobile ? "auto" : "278px"}
               >
                 {!errorsManager.validateRequirements && (
                   <Icon

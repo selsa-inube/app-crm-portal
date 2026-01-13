@@ -3,17 +3,13 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { IProspect } from "../types";
 
-import {
-  IPatchValidateRequirementsPayload,
-  IValidateRequirement,
-} from "../types";
-
-export const patchValidateRequirements = async (
+const SearchByIdProspectUpdateProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  validataRequirements: IPatchValidateRequirementsPayload,
-): Promise<IValidateRequirement[] | undefined> => {
+  prospectCode: string,
+): Promise<IProspect> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -21,52 +17,55 @@ export const patchValidateRequirements = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-
       const options: RequestInit = {
-        method: "PATCH",
+        method: "GET",
         headers: {
-          "X-Action": "ValidateRequirements",
+          "X-Action": "SearchByIdProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
         },
-        body: JSON.stringify(validataRequirements),
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/requirements`,
+        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return;
+        throw new Error("No hay tarea disponible.");
       }
 
       const data = await res.json();
-
       if (!res.ok) {
         throw {
-          message: "Ha ocurrido un error obteniendo los requesitos: ",
+          message: "Error al obtener la tarea.",
           status: res.status,
           data,
         };
       }
+
+      if (Array.isArray(data) && data.length > 0) {
+        return data[0];
+      }
+
       return data;
     } catch (error) {
+      console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
-        if (typeof error === "object" && error !== null) {
-          throw {
-            ...(error as object),
-            message: (error as Error).message,
-          };
-        }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener los requesitos.",
+          "Todos los intentos fallaron. No se pudo obtener la tarea.",
         );
       }
     }
   }
+
+  throw new Error(
+    "No se pudo obtener el prospecto después de varios intentos.",
+  );
 };
+
+export { SearchByIdProspectUpdateProspect };
