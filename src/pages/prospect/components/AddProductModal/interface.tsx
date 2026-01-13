@@ -65,10 +65,10 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
         }
         nextButton={
           currentStepsNumber.id === steps[steps.length - 1].id
-            ? titleButtonTextAssisted.submitText
-            : titleButtonTextAssisted.goNextText
+            ? titleButtonTextAssisted.submitText.i18n[lang]
+            : titleButtonTextAssisted.goNextText.i18n[lang]
         }
-        backButton={titleButtonTextAssisted.goBackText}
+        backButton={titleButtonTextAssisted.goBackText.i18n[lang]}
         handleNext={
           currentStepsNumber.id === steps[steps.length - 1].id
             ? handleSubmitClick
@@ -98,7 +98,11 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
             totalSteps={steps.length}
             onBackClick={handlePreviousStep}
             onNextClick={handleNextStep}
-            controls={titleButtonTextAssisted}
+            controls={{
+              goBackText: titleButtonTextAssisted.goBackText.i18n[lang],
+              goNextText: titleButtonTextAssisted.goNextText.i18n[lang],
+              submitText: titleButtonTextAssisted.submitText.i18n[lang],
+            }}
             onSubmitClick={handleSubmitClick}
             disableNext={!isCurrentFormValid}
             disableSubmit={!isCurrentFormValid}
@@ -183,7 +187,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
               <Text
                 type="body"
                 size="medium"
-                children={noAvailablePaymentMethods}
+                children={noAvailablePaymentMethods.i18n[lang]}
                 margin="10px 0 0 10px"
               />
             )}

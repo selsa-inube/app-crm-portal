@@ -4,18 +4,39 @@ import { useNavigate } from "react-router-dom";
 
 export const addConfig = {
   id: 1,
-  title: "Inicio",
+  title: {
+    code: "Title",
+    description: "Home title",
+    i18n: {
+      en: "Home",
+      es: "Inicio",
+    },
+  },
   route: "/home",
   crumbs: [
     {
       path: "/home",
-      label: "Inicio",
+      label: {
+        code: "Home_label",
+        description: "Home breadcrumb label",
+        i18n: {
+          en: "Home",
+          es: "Inicio",
+        },
+      },
       id: "/home",
       isActive: true,
     },
     {
       path: "/credit",
-      label: "Crédito",
+      label: {
+        code: "Credit_label",
+        description: "Credit breadcrumb label",
+        i18n: {
+          en: "Credit",
+          es: "Crédito",
+        },
+      },
       id: "/credito",
       isActive: false,
     },

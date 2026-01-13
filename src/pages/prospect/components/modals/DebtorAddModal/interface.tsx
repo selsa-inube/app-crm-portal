@@ -156,6 +156,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               handleOnChange={(values) =>
                 setFinancialObligationsData(Array.isArray(values) ? values : [])
               }
+              lang={lang}
             />
           )}
         {currentStepsNumber &&

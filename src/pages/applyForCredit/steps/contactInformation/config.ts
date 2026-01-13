@@ -1,4 +1,12 @@
 export const dataContactInformation = {
+  mobile: {
+    code: "ContactInformation_mobile",
+    description: "Label for mobile phone section",
+    i18n: {
+      en: "Mobile",
+      es: "Móvil",
+    },
+  },
   cardEmail: {
     code: "ContactInformation_cardEmail",
     description: "Label for email card",

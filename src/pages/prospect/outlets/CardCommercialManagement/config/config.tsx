@@ -262,13 +262,27 @@ export const SummaryProspectCredit = [
     item: [
       {
         id: "requestedAmount",
-        title: "Monto productos de crédito",
+        title: {
+          code: "Requested_amount",
+          description: "Credit products amount title",
+          i18n: {
+            en: "Credit products amount",
+            es: "Monto productos de crédito",
+          },
+        },
         miniIcon: false,
         operation: "-",
       },
       {
         id: "totalConsolidatedAmount",
-        title: "Obligaciones recogidas",
+        title: {
+          code: "Total_consolidated_amount",
+          description: "Collected obligations title",
+          i18n: {
+            en: "Collected obligations",
+            es: "Obligaciones recogidas",
+          },
+        },
         miniIcon: true,
         icon: <MdOutlineEdit />,
         modal: "edit",
@@ -276,7 +290,14 @@ export const SummaryProspectCredit = [
       },
       {
         id: "deductibleExpenses",
-        title: "Gastos descontables",
+        title: {
+          code: "Deductible_expenses",
+          description: "Deductible expenses title",
+          i18n: {
+            en: "Deductible expenses",
+            es: "Gastos descontables",
+          },
+        },
         miniIcon: true,
         icon: <MdOutlineRemoveRedEye />,
         modal: "view",
@@ -284,13 +305,27 @@ export const SummaryProspectCredit = [
       },
       {
         id: "netAmountToDisburse",
-        title: "Neto a girar",
+        title: {
+          code: "Net_amount_to_disburse",
+          description: "Net amount to disburse title",
+          i18n: {
+            en: "Net amount to disburse",
+            es: "Neto a girar",
+          },
+        },
         miniIcon: false,
         operation: "|",
       },
       {
         id: "totalRegularInstallment",
-        title: "Cuota ordinaria mensual",
+        title: {
+          code: "Total_regular_installment",
+          description: "Monthly ordinary installment title",
+          i18n: {
+            en: "Monthly ordinary installment",
+            es: "Cuota ordinaria mensual",
+          },
+        },
         miniIcon: true,
         operation: "",
       },

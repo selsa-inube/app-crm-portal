@@ -169,6 +169,7 @@ export const VerificationDebtorAddModal = (
                 showAddButton={false}
                 showOnlyEdit={true}
                 services={false}
+                lang={lang}
               />
             </Stack>
           ),

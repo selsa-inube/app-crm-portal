@@ -1,4 +1,4 @@
-export const addConfig = {
+export const addConfiga = {
   id: 1,
   title: "Solicitudes de crédito",
   route: "/credit",
@@ -18,6 +18,60 @@ export const addConfig = {
     {
       path: "/credit/credit-requests",
       label: "Solicitudes de crédito",
+      id: "/prospectos",
+      isActive: false,
+    },
+  ],
+};
+
+export const addConfig = {
+  id: 1,
+  title: {
+    code: "Title",
+    description: "Credit prospects title",
+    i18n: {
+      en: "Credit prospects",
+      es: "Prospectos de crédito",
+    },
+  },
+  route: "/credit/prospects",
+  crumbs: [
+    {
+      path: "/home",
+      label: {
+        code: "Home_label",
+        description: "Home breadcrumb label",
+        i18n: {
+          en: "Home",
+          es: "Inicio",
+        },
+      },
+      id: "/home",
+      isActive: true,
+    },
+    {
+      path: "/credit",
+      label: {
+        code: "Credit_label",
+        description: "Credit breadcrumb label",
+        i18n: {
+          en: "Credit",
+          es: "Crédito",
+        },
+      },
+      id: "/credito",
+      isActive: false,
+    },
+    {
+      path: "/credit/credit-requests",
+      label: {
+        code: "Credit_requests_label",
+        description: "Credit requests breadcrumb label",
+        i18n: {
+          en: "Credit requests",
+          es: "Solicitudes de crédito",
+        },
+      },
       id: "/prospectos",
       isActive: false,
     },

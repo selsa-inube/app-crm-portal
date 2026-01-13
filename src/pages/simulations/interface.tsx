@@ -185,10 +185,16 @@ export function SimulationsUI(props: SimulationsUIProps) {
                 />
                 <Breadcrumbs
                   crumbs={[
-                    ...addConfig.crumbs.slice(0, 3),
+                    ...addConfig.crumbs.slice(0, 3).map((crumb) => ({
+                      ...crumb,
+                      label: crumb.label.i18n[lang as "es" | "en"],
+                    })),
                     {
                       path: `/credit/prospects/${prospectCode}`,
-                      label: `Prospecto #${prospectCode}`,
+                      label:
+                        lang === "es"
+                          ? `Prospecto #${prospectCode}`
+                          : `Prospect #${prospectCode}`,
                       id: `/prospectos/${prospectCode}`,
                       isActive: false,
                     },
@@ -203,7 +209,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         size="20px"
                       />
                       <Text type="title" size={isMobile ? "small" : "large"}>
-                        {addConfig.title}
+                        {addConfig.title.i18n[lang]}
                       </Text>
                     </Stack>
                   </StyledArrowBack>
@@ -369,7 +375,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 </Text>
                               )}
                               <Text type="body" size="small" appearance="gray">
-                                Cliente
+                                {dataEditProspect.customer.i18n[lang]}
                               </Text>
                             </Stack>
                             <Stack

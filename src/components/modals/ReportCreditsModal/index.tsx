@@ -42,6 +42,7 @@ export function ReportCreditsModal({
             initialValues={prospectData}
             onProspectUpdate={onProspectUpdate}
             showAddButton={showAddButton}
+            lang={lang}
           />
         </>
       </Stack>

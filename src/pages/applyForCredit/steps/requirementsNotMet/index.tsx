@@ -84,7 +84,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             {[1, 2, 3].map((index) => (
               <UnfulfilledRequirements
                 key={index}
-                title={`${dataError.alert} ${index}`}
+                title={`${dataError.alert.i18n[lang]} ${index}`}
                 isMobile={isMobile}
                 requirement=""
                 causeNonCompliance=""
@@ -104,7 +104,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             {validateRequirements.map((requirementData, index) => (
               <UnfulfilledRequirements
                 key={index}
-                title={`${dataError.alert} ${index + 1}`}
+                title={`${dataError.alert.i18n[lang]} ${index + 1}`}
                 isMobile={isMobile}
                 requirement={requirementData.requirementName}
                 causeNonCompliance={

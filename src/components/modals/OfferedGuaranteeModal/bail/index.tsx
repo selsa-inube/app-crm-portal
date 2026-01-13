@@ -3,9 +3,9 @@ import { Stack, Icon, Text } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { mockGuaranteeBail } from "@mocks/guarantee/offeredguarantee.mock";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataBail } from "./config";
-import { EnumType } from "@src/hooks/useEnum/useEnum";
 
 interface IBailProps {
   lang: EnumType;

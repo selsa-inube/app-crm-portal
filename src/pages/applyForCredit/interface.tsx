@@ -190,7 +190,12 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 name={dataHeader.name}
                 profileImageUrl={dataHeader.image || userImage}
               />
-              <Breadcrumbs crumbs={submitCreditApplicationConfig.crumbs} />
+              <Breadcrumbs
+                crumbs={submitCreditApplicationConfig.crumbs.map((crumb) => ({
+                  ...crumb,
+                  label: crumb.label.i18n[lang],
+                }))}
+              />
               <Stack justifyContent="space-between" alignItems="center">
                 <StyledArrowBack onClick={handleHome}>
                   <Stack gap="8px" alignItems="center" width="100%">
@@ -200,7 +205,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       size="20px"
                     />
                     <Text type="title" size={isMobile ? "small" : "large"}>
-                      {`${submitCreditApplicationConfig.title}`}
+                      {`${submitCreditApplicationConfig.title.i18n[lang]}`}
                     </Text>
                   </Stack>
                 </StyledArrowBack>
@@ -211,7 +216,11 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   totalSteps={steps.length}
                   onBackClick={handlePreviousStep}
                   onNextClick={handleNextStep}
-                  controls={titleButtonTextAssited}
+                  controls={{
+                    goBackText: titleButtonTextAssited.goBackText.i18n[lang],
+                    goNextText: titleButtonTextAssited.goNextText.i18n[lang],
+                    submitText: titleButtonTextAssited.submitText.i18n[lang],
+                  }}
                   onSubmitClick={handleSubmitClick}
                   disableNext={!isCurrentFormValid}
                   disableSubmit={!isCurrentFormValid}
@@ -246,13 +255,13 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       weight="bold"
                       appearance="dark"
                     >
-                      {`${dataSubmitApplication.prospect} ${prospectData.prospectCode}`}
+                      {`${dataSubmitApplication.prospect.i18n[lang]} ${prospectData.prospectCode}`}
                     </Text>
                   </Stack>
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="center">
                     <TruncatedText
-                      text={`${dataSubmitApplication.cards.destination} ${prospectData.moneyDestinationAbbreviatedName}`}
+                      text={`${dataSubmitApplication.cards.destination.i18n[lang]} ${prospectData.moneyDestinationAbbreviatedName}`}
                       maxLength={30}
                       type="body"
                       size="medium"
@@ -262,7 +271,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="center">
                     <TruncatedText
-                      text={`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                      text={`${dataSubmitApplication.net.i18n[lang]} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
                       maxLength={30}
                       type="body"
                       size="medium"
@@ -272,7 +281,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   <StyledSeparatorLine />
                   <Stack width="100%" justifyContent="end">
                     <TruncatedText
-                      text={`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                      text={`${dataSubmitApplication.creditProducts.i18n[lang]} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
                       maxLength={40}
                       type="body"
                       size="medium"
@@ -281,7 +290,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   </Stack>
                 </Stack>
               )}
-
               {currentStepsNumber &&
                 currentStepsNumber.id ===
                   stepsFilingApplication.generalInformation.id &&
@@ -341,7 +349,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     lang={lang}
                   />
                 )}
-
               {currentStepsNumber &&
                 currentStepsNumber.id ===
                   stepsFilingApplication.vehicleOffered.id && (
@@ -429,12 +436,12 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   onClick={handlePreviousStep}
                   disabled={currentStepsNumber === steps[0]}
                 >
-                  {titleButtonTextAssited.goBackText}
+                  {titleButtonTextAssited.goBackText.i18n[lang]}
                 </Button>
                 <Button onClick={handleNextStep} disabled={!isCurrentFormValid}>
                   {currentStep === steps[steps.length - 1].id
-                    ? titleButtonTextAssited.submitText
-                    : titleButtonTextAssited.goNextText}
+                    ? titleButtonTextAssited.submitText.i18n[lang]
+                    : titleButtonTextAssited.goNextText.i18n[lang]}
                 </Button>
               </Stack>
             </Stack>

@@ -146,12 +146,17 @@ export function CreditApplications() {
             name={dataHeader.name}
             profileImageUrl={dataHeader.image || userImage}
           />
-          <Breadcrumbs crumbs={addConfig.crumbs} />
+          <Breadcrumbs
+            crumbs={addConfig.crumbs.map((crumb) => ({
+              ...crumb,
+              label: crumb.label.i18n[lang],
+            }))}
+          />{" "}
           <StyledArrowBack onClick={() => navigate(addConfig.route)}>
             <Stack gap="8px" alignItems="center" width="100%">
               <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
               <Text type="title" size={isMobile ? "small" : "large"}>
-                {addConfig.title}
+                {addConfig.title.i18n[lang]}
               </Text>
             </Stack>
           </StyledArrowBack>

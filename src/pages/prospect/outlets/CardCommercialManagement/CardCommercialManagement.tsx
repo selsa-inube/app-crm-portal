@@ -404,6 +404,7 @@ export const CardCommercialManagement = (
                   }
                   return {
                     ...item,
+                    title: item.title.i18n[lang],
                     amount: String(prospectSummaryData?.[item.id] ?? 0),
                     icon: iconToRender,
                   };

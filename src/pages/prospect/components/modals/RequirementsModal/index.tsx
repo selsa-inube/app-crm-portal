@@ -86,8 +86,8 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     <>
       {!showErrorModal ? (
         <BaseModal
-          title={dataRequirementsNotMet.title}
-          nextButton={dataRequirementsNotMet.close}
+          title={dataRequirementsNotMet.title.i18n[lang]}
+          nextButton={dataRequirementsNotMet.close.i18n[lang]}
           handleNext={handleClose}
           handleClose={handleClose}
           width={isMobile ? "300px " : "652px"}
@@ -105,7 +105,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
               >
                 <Spinner />
                 <Text type="title" size="medium" appearance="dark">
-                  {dataError.loadRequirements}
+                  {dataError.loadRequirements.i18n[lang]}
                 </Text>
               </Stack>
             ) : validateRequirements && validateRequirements.length > 0 ? (
@@ -143,8 +143,8 @@ export function RequirementsModal(props: IRequirementsModalProps) {
                 )}
                 <Text type="title" size="medium" appearance="dark">
                   {errorsManager.validateRequirements
-                    ? dataError.descriptionError
-                    : dataError.noData}
+                    ? dataError.descriptionError.i18n[lang]
+                    : dataError.noData.i18n[lang]}
                 </Text>
               </Stack>
             )}
@@ -156,7 +156,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
             (setShowErrorModal(false), handleClose());
           }}
           isMobile={isMobile}
-          message={dataError.descriptionError}
+          message={dataError.descriptionError.i18n[lang]}
         />
       )}
     </>

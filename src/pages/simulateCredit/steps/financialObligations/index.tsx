@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FormikValues } from "formik";
 import { Stack } from "@inubekit/inubekit";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
@@ -32,6 +33,7 @@ interface IObligationsFinancialProps {
     term: string;
     idUser: string;
   };
+  lang: EnumType;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: FormikValues) => void;
 }
@@ -43,6 +45,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
     formState,
     handleOnChange,
     initialValues,
+    lang,
   } = props;
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -66,6 +69,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
           handleOnChange={handleOnChange}
           formState={formState}
           services={false}
+          lang={lang}
         />
       </Stack>
     </Fieldset>

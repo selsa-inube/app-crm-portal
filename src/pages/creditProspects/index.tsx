@@ -115,15 +115,15 @@ export function CreditProspects() {
       setShowDeleteModal(false);
       setSelectedProspect(null);
       addFlag({
-        title: dataCreditProspects.titleFlagDelete,
-        description: dataCreditProspects.descriptionFlagDelete,
+        title: dataCreditProspects.titleFlagDelete.i18n[lang],
+        description: dataCreditProspects.descriptionFlagDelete.i18n[lang],
         appearance: "success",
         duration: 5000,
       });
     } catch (error) {
       setIsLoadingDelete(false);
       setErrorModalMessage(
-        dataCreditProspects.errorRemoveProspect ||
+        dataCreditProspects.errorRemoveProspect.i18n[lang] ||
           "Hubo un error al eliminar el prospecto.",
       );
       setShowErrorModal(true);
@@ -245,15 +245,15 @@ export function CreditProspects() {
       setSelectedProspect(result || updatedProspect);
       setLoadingComments(false);
       addFlag({
-        title: dataCreditProspects.titleFlagComment,
-        description: dataCreditProspects.descriptionFlagComment,
+        title: dataCreditProspects.titleFlagComment.i18n[lang],
+        description: dataCreditProspects.descriptionFlagComment.i18n[lang],
         appearance: "success",
         duration: 5000,
       });
     } catch (error) {
       setLoadingComments(false);
       setShowErrorModal(true);
-      setErrorModalMessage(dataCreditProspects.errorObservations);
+      setErrorModalMessage(dataCreditProspects.errorObservations.i18n[lang]);
     }
   };
   const { disabledButton: canSimulateCredit } = useValidateUseCase({
@@ -292,7 +292,12 @@ export function CreditProspects() {
           name={dataHeader.name}
           profileImageUrl={dataHeader.image || userImage}
         />
-        <Breadcrumbs crumbs={addConfig.crumbs} />
+        <Breadcrumbs
+          crumbs={addConfig.crumbs.map((crumb) => ({
+            ...crumb,
+            label: crumb.label.i18n[lang],
+          }))}
+        />
         <StyledArrowBack
           $isMobile={isMobile}
           onClick={() => navigate(addConfig.route)}
@@ -300,7 +305,7 @@ export function CreditProspects() {
           <Stack gap="8px" alignItems="center" width="100%">
             <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
             <Text type="title" size={isMobile ? "small" : "large"}>
-              {addConfig.title}
+              {addConfig.title.i18n[lang]}
             </Text>
           </Stack>
         </StyledArrowBack>
@@ -314,8 +319,8 @@ export function CreditProspects() {
             >
               <Input
                 id="keyWord"
-                label="Buscar"
-                placeholder={dataCreditProspects.keyWord}
+                label={dataCreditProspects.search.i18n[lang]}
+                placeholder={dataCreditProspects.keyWord.i18n[lang]}
                 type="search"
                 fullwidth={isMobile}
                 value={searchTerm}
@@ -348,7 +353,7 @@ export function CreditProspects() {
                           .partnerStatus !== "A-Activo"
                       }
                     >
-                      {dataCreditProspects.simulate}
+                      {dataCreditProspects.simulate.i18n[lang]}
                     </Button>
                     {simulationIsDisabled && (
                       <Icon
@@ -380,7 +385,8 @@ export function CreditProspects() {
                       )?.Code || prospect.moneyDestinationAbbreviatedName
                     }
                     borrower={
-                      prospect.clientManagerName || dataCreditProspects.none
+                      prospect.clientManagerName ||
+                      dataCreditProspects.none.i18n[lang]
                     }
                     numProspect={prospect.prospectCode}
                     date={prospect.timeOfCreation}
@@ -466,7 +472,7 @@ export function CreditProspects() {
         </Fieldset>
         {showMessageModal && (
           <BaseModal
-            title={dataCreditProspects.messageTitle}
+            title={dataCreditProspects.messageTitle.i18n[lang]}
             handleClose={() => setShowMessageModal(false)}
             handleNext={() => {
               if (selectedProspect) {
@@ -479,7 +485,7 @@ export function CreditProspects() {
               setShowEditMessageModal(true);
               setShowMessageModal(false);
             }}
-            nextButton={dataCreditProspects.modify}
+            nextButton={dataCreditProspects.modify.i18n[lang]}
             disabledNext={canEditCreditRequest}
             iconAfterNext={
               canEditCreditRequest ? (
@@ -492,13 +498,13 @@ export function CreditProspects() {
                 />
               ) : undefined
             }
-            backButton={dataCreditProspects.close}
+            backButton={dataCreditProspects.close.i18n[lang]}
             width={isMobile ? "300px" : "500px"}
             isLoading={isLoadingComments}
           >
             <Stack direction="column" gap="16px">
               <CardGray
-                label={dataCreditProspects.moneyDesination}
+                label={dataCreditProspects.moneyDesination.i18n[lang]}
                 placeHolder={
                   <Tag
                     label={
@@ -517,19 +523,19 @@ export function CreditProspects() {
                 placeHolderTag={true}
               />
               <CardGray
-                label={dataCreditProspects.preApproval}
+                label={dataCreditProspects.preApproval.i18n[lang]}
                 placeHolder={
                   selectedProspect?.clientManagerObservation ||
-                  dataCreditProspects.notHaveComments
+                  dataCreditProspects.notHaveComments.i18n[lang]
                 }
                 apparencePlaceHolder="gray"
               />
               <CardGray
-                label={dataCreditProspects.clientComments}
+                label={dataCreditProspects.clientComments.i18n[lang]}
                 placeHolder={
                   commentsByProspectId[selectedProspect?.prospectId || ""] ||
                   selectedProspect?.clientComments ||
-                  dataCreditProspects.notHaveObservations
+                  dataCreditProspects.notHaveObservations.i18n[lang]
                 }
                 apparencePlaceHolder="gray"
               />
@@ -538,17 +544,17 @@ export function CreditProspects() {
         )}
         {showEditMessageModal && (
           <BaseModal
-            title={dataCreditProspects.messageTitle}
+            title={dataCreditProspects.messageTitle.i18n[lang]}
             handleClose={() => setShowEditMessageModal(false)}
             handleNext={handleClientCommentsUpdate}
-            nextButton={dataCreditProspects.modify}
-            backButton={dataCreditProspects.close}
+            nextButton={dataCreditProspects.modify.i18n[lang]}
+            backButton={dataCreditProspects.close.i18n[lang]}
             width={isMobile ? "300px" : "500px"}
             isLoading={isLoadingComments}
           >
             <Textarea
               id="comments"
-              label={dataCreditProspects.preanalysis}
+              label={dataCreditProspects.preanalysis.i18n[lang]}
               value={
                 commentsByProspectId[selectedProspect?.prospectId || ""] || ""
               }
@@ -564,29 +570,29 @@ export function CreditProspects() {
         )}
         {showConfirmModal && (
           <BaseModal
-            title={dataCreditProspects.confirmTitle}
+            title={dataCreditProspects.confirmTitle.i18n[lang]}
             handleBack={() => setShowConfirmModal(false)}
             handleNext={handleConfirmProspect}
-            backButton="Cancelar"
-            nextButton="Confirmar"
+            backButton={dataCreditProspects.cancel.i18n[lang]}
+            nextButton={dataCreditProspects.confirm.i18n[lang]}
             width={isMobile ? "300px" : "500px"}
             isLoading={isLoadingConfirm}
           >
-            <Text>{dataCreditProspects.confirmDescription}</Text>
+            <Text>{dataCreditProspects.confirmDescription.i18n[lang]}</Text>
           </BaseModal>
         )}
         {showDeleteModal && (
           <BaseModal
-            title={dataCreditProspects.deleteTitle}
+            title={dataCreditProspects.deleteTitle.i18n[lang]}
             handleBack={() => setShowDeleteModal(false)}
             handleNext={handleDeleteProspect}
-            backButton="Cancelar"
-            nextButton="Eliminar"
+            backButton={dataCreditProspects.cancel.i18n[lang]}
+            nextButton={dataCreditProspects.titleFlagDelete.i18n[lang]}
             apparenceNext="danger"
             width={isMobile ? "300px" : "500px"}
             isLoading={isLoadingDelete}
           >
-            <Text>{dataCreditProspects.deleteDescription}</Text>
+            <Text>{dataCreditProspects.deleteDescription.i18n[lang]}</Text>
           </BaseModal>
         )}
       </Stack>
@@ -605,7 +611,7 @@ export function CreditProspects() {
           subtitle={privilegeCrm.subtitle}
           description={
             !canPerformSimulations
-              ? dataCreditProspects.requirementsNotMet
+              ? dataCreditProspects.requirementsNotMet.i18n[lang]
               : privilegeCrm.description
           }
           nextButtonText={privilegeCrm.nextButtonText}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as Yup from "yup";
 
 import { useMediaQuery } from "@inubekit/inubekit";
@@ -123,7 +123,7 @@ function AddProductModal(props: IAddProductModalProps) {
         );
 
         if (!response || response.length === 0) {
-          throw new Error(errorMessages.getPaymentMethods);
+          throw new Error(errorMessages.getPaymentMethods.i18n[lang]);
         }
         setLoading(false);
         setFormData((prev) => ({
@@ -134,7 +134,7 @@ function AddProductModal(props: IAddProductModalProps) {
           },
         }));
       } catch (error) {
-        setErrorMessage(errorMessages.getPaymentMethods);
+        setErrorMessage(errorMessages.getPaymentMethods.i18n[lang]);
         setErrorModal(true);
         setLoading(false);
       }
@@ -162,7 +162,13 @@ function AddProductModal(props: IAddProductModalProps) {
 
   const isMobile = useMediaQuery("(max-width: 550px)");
 
-  const steps = Object.values(stepsAddProduct);
+  const steps = useMemo(() => {
+    return Object.values(stepsAddProduct).map((step) => ({
+      ...step,
+      name: step.name.i18n[lang],
+      description: step.description.i18n[lang],
+    }));
+  }, [lang]);
 
   const currentStepsNumber = steps.find(
     (step: { number: number }) => step.number === currentStep,

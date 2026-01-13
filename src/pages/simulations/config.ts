@@ -1,29 +1,64 @@
 export const addConfig = {
   id: 1,
-  title: "Prospectos de crédito",
+  title: {
+    code: "Title",
+    description: "Credit prospects title",
+    i18n: {
+      en: "Credit prospects",
+      es: "Prospectos de crédito",
+    },
+  },
   route: "/credit/prospects",
   crumbs: [
     {
       path: "/home",
-      label: "Inicio",
+      label: {
+        code: "Home_label",
+        description: "Home breadcrumb label",
+        i18n: {
+          en: "Home",
+          es: "Inicio",
+        },
+      },
       id: "/home",
       isActive: true,
     },
     {
       path: "/credit",
-      label: "Crédito",
+      label: {
+        code: "Credit_label",
+        description: "Credit breadcrumb label",
+        i18n: {
+          en: "Credit",
+          es: "Crédito",
+        },
+      },
       id: "/credito",
       isActive: false,
     },
     {
       path: "/credit/prospects",
-      label: "Prospectos de crédito",
+      label: {
+        code: "Credit_prospects_label",
+        description: "Credit prospects breadcrumb label",
+        i18n: {
+          en: "Credit prospects",
+          es: "Prospectos de crédito",
+        },
+      },
       id: "/prospectos",
       isActive: false,
     },
     {
       path: `/credit/prospects/prospectCode`,
-      label: "Prospectos de crédito",
+      label: {
+        code: "Credit_prospects_label",
+        description: "Credit prospects breadcrumb label",
+        i18n: {
+          en: "Credit prospects",
+          es: "Prospectos de crédito",
+        },
+      },
       id: "/prospectosId",
       isActive: false,
     },
@@ -40,6 +75,11 @@ export const dataEditProspect = {
     code: "Destination",
     description: "Destination label",
     i18n: { en: "Destination", es: "Destino" },
+  },
+  customer: {
+    code: "Customer",
+    description: "Customer label",
+    i18n: { en: "Customer", es: "Cliente" },
   },
   value: {
     code: "Value_requested",

@@ -3,9 +3,30 @@ import { TableExtraordinaryInstallmentProps } from "../prospect/components/Table
 import { IBorrower } from "@services/prospect/types";
 
 export const titleButtonTextAssited = {
-  goBackText: "Anterior",
-  goNextText: "Siguiente",
-  submitText: "Enviar",
+  goBackText: {
+    code: "Go_back_text",
+    description: "Previous button label",
+    i18n: {
+      en: "Previous",
+      es: "Anterior",
+    },
+  },
+  goNextText: {
+    code: "Go_next_text",
+    description: "Next button label",
+    i18n: {
+      en: "Next",
+      es: "Siguiente",
+    },
+  },
+  submitText: {
+    code: "Submit_text",
+    description: "Submit button label",
+    i18n: {
+      en: "Submit",
+      es: "Enviar",
+    },
+  },
 };
 
 export interface StepDetails {

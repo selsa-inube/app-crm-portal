@@ -63,6 +63,7 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
             showButtons={false}
             handleOnChangeExtraBorrowers={() => {}}
             showOnlyEdit={true}
+            lang={lang}
           />
         )}
       </Stack>

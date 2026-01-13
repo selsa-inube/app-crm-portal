@@ -263,6 +263,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             services={false}
             handleOnChangeExtraBorrowers={handleEditOrDeleteObligation}
             handleOnChange={handleAddObligation}
+            lang={lang}
           />
         )}
       </Stack>

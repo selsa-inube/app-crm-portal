@@ -1,9 +1,30 @@
 import { IFile } from "@components/modals/ListModal";
 
 export const titleButtonTextAssited = {
-  goBackText: "Anterior",
-  goNextText: "Siguiente",
-  submitText: "Radicar",
+  goBackText: {
+    code: "Go_back_text",
+    description: "Back button label",
+    i18n: {
+      en: "Back",
+      es: "Atrás",
+    },
+  },
+  goNextText: {
+    code: "Go_next_text",
+    description: "Next button label",
+    i18n: {
+      en: "Next",
+      es: "Siguiente",
+    },
+  },
+  submitText: {
+    code: "Submit_text",
+    description: "Add product button label",
+    i18n: {
+      en: "Add product",
+      es: "Agregar producto",
+    },
+  },
 };
 
 export interface StepDetails {

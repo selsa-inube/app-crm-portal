@@ -103,7 +103,16 @@ export function SimulateCredit() {
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
-  const steps = Object.values(stepsAddProspect);
+  const { lang } = useEnum();
+
+  const steps = useMemo(() => {
+    return Object.values(stepsAddProspect).map((step) => ({
+      ...step,
+      name: step.name.i18n[lang],
+      description: step.description.i18n[lang],
+    }));
+  }, [lang]);
+
   const navigate = useNavigate();
 
   const { user } = useIAuth();
@@ -126,8 +135,6 @@ export function SimulateCredit() {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
-
-  const { lang } = useEnum();
 
   const dataHeader = {
     name: customerData.fullName,
@@ -214,7 +221,7 @@ export function SimulateCredit() {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
-      borrowerType: textAddConfig.mainBorrower.i18n[lang],
+      borrowerType: "MainBorrower",
       borrowerName: customerData.fullName,
 
       borrowerProperties: [
@@ -304,11 +311,11 @@ export function SimulateCredit() {
   const fetchCreditLineTerms = useCallback(async () => {
     if (eventData.businessManager.abbreviatedName.length === 0) {
       setCodeError(1003);
-      setAddToFix([messagesError.noBusinessUnitAvaliable]);
+      setAddToFix([messagesError.noBusinessUnitAvaliable.i18n[lang]]);
     }
     if (customerData.fullName.length === 0) {
       setCodeError(1016);
-      setAddToFix([messagesError.noClientSelected]);
+      setAddToFix([messagesError.noClientSelected.i18n[lang]]);
     } else {
       setCodeError(null);
     }
@@ -351,7 +358,7 @@ export function SimulateCredit() {
       setCreditLineTerms(result);
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     }
   }, [customerData, businessUnitPublicCode, formData.selectedDestination]);
@@ -404,7 +411,7 @@ export function SimulateCredit() {
       });
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     } finally {
       setLoadingQuestions(false);
@@ -471,7 +478,7 @@ export function SimulateCredit() {
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
     }
   };
 
@@ -527,7 +534,7 @@ export function SimulateCredit() {
       setPaymentChannel(dataPaymentDates ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     }
   };
@@ -669,8 +676,8 @@ export function SimulateCredit() {
     (currentStep === stepsAddProspect.loanAmount.id &&
       !formData.loanAmountState.toggleChecked) ||
     currentStep === steps[steps.length - 1].id
-      ? titleButtonTextAssited.submitText
-      : titleButtonTextAssited.goNextText;
+      ? titleButtonTextAssited.submitText.i18n[lang]
+      : titleButtonTextAssited.goNextText.i18n[lang];
 
   const handleSubmitClick = async () => {
     setIsLoadingSubmit(true);
@@ -693,7 +700,7 @@ export function SimulateCredit() {
 
       if (prospectCode === undefined) {
         setShowErrorModal?.(true);
-        setMessageError?.(messagesError.undefinedCodeProspect);
+        setMessageError?.(messagesError.undefinedCodeProspect.i18n[lang]);
       } else {
         setProspectCode(prospectCode);
         setSentModal(false);
@@ -717,7 +724,7 @@ export function SimulateCredit() {
       setCreditLimitData(result);
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     } finally {
       setIsLoadingCreditLimit(false);
@@ -765,7 +772,7 @@ export function SimulateCredit() {
           return { ...prev, validateRequirements: true };
         });
         setShowErrorModal(true);
-        setMessageError(messagesError.tryLater);
+        setMessageError(messagesError.tryLater.i18n[lang]);
       } finally {
         setIsLoading(false);
       }
