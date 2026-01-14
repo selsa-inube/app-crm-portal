@@ -298,7 +298,7 @@ export const stepsAddProduct = {
       code: "Payment_configuration_description",
       description: "Payment configuration step description",
       i18n: {
-        en: "Configure the payment method and cycle",
+        en: "Configure the payment channel and cycle",
         es: "Configura el medio y ciclo de pago",
       },
     },
@@ -375,9 +375,9 @@ export const titleButtonTextAssisted = {
 export const errorMessages = {
   getPaymentMethods: {
     code: "Get_payment_methods_error",
-    description: "Error fetching payment methods",
+    description: "Error fetching payment channels",
     i18n: {
-      en: "Error obtaining payment methods",
+      en: "Error obtaining payment channels",
       es: "Error al obtener los medios de pago",
     },
   },
@@ -385,9 +385,9 @@ export const errorMessages = {
 
 export const noAvailablePaymentMethods = {
   code: "No_available_payment_methods",
-  description: "Empty payment methods message",
+  description: "Empty payment channels message",
   i18n: {
-    en: "No payment methods available",
+    en: "No payment channels available",
     es: "No hay medios de pago disponibles",
   },
 };

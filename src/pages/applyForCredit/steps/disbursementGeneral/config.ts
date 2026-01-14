@@ -40,9 +40,9 @@ export const disbursemenTabs = {
     disabled: false,
     label: {
       code: "DisbursementTab_managementCheck",
-      description: "Management check disbursement tab",
+      description: "Cashier’s check disbursement tab",
       i18n: {
-        en: "Management check",
+        en: "Cashier’s check",
         es: "Cheque de gerencia",
       },
     },
@@ -90,7 +90,7 @@ export const disbursementGeneral = {
     code: "DisbursementGeneral_labelToggle",
     description: "Toggle label for own-name disbursement",
     i18n: {
-      en: "Is the disbursement in your own name?",
+      en: "Is the disbursement is in the name of the borrower?",
       es: "¿El desembolso es a nombre propio?",
     },
   },
@@ -278,7 +278,7 @@ export const disbursemenOptionAccount = {
     description: "Observations placeholder",
     i18n: {
       en: "Additional details to consider.",
-      es: "Cosas extra que deben tenerse en cuenta.",
+      es: "Detalles adicionales que deben tenerse en cuenta.",
     },
   },
   placeOption: {

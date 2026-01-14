@@ -19,7 +19,7 @@ export const errorModalConfig = {
     code: "Sorry_message",
     description: "Message",
     i18n: {
-      en: "We're sorry",
+      en: "Apologies",
       es: "Lo sentimos",
     },
   },

@@ -186,9 +186,9 @@ const dataInputs = {
   },
   labelPayment: {
     code: "Payment_method_label",
-    description: "Payment method",
+    description: "Payment channel",
     i18n: {
-      en: "Payment method",
+      en: "Payment channel",
       es: "Medio de pago",
     },
   },
@@ -201,10 +201,10 @@ const dataInputs = {
     },
   },
   labelFee: {
-    code: "Fee_label",
-    description: "Fee",
+    code: "Loan_amount_label",
+    description: "Loan amount",
     i18n: {
-      en: "Fee",
+      en: "Loan amount",
       es: "Cuota",
     },
   },
@@ -250,15 +250,15 @@ const dataInputs = {
   },
   labelFeePaid: {
     code: "Paid_fees_label",
-    description: "Paid fees",
+    description: "Paid installments",
     i18n: {
-      en: "Paid fees",
+      en: "Paid installments",
       es: "Cuotas pagadas",
     },
   },
   palaceHolderFeePaid: {
     code: "Paid_fees_placeholder",
-    description: "Paid fees placeholder",
+    description: "Paid installments placeholder",
     i18n: {
       en: "Paid fees",
       es: "Cuotas pagadas",

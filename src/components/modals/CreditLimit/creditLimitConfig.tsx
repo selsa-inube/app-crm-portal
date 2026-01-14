@@ -114,7 +114,7 @@ export const creditLimitTexts = {
       description: "Credit limit error message",
       i18n: {
         en: "The data could not be loaded. Please try again later.",
-        es: "No se pudieron cargar los datos. Por favor, intente nuevamente más tarde.",
+        es: "No se pudieron cargar los datos. Intenta nuevamente más tarde.",
       },
     },
   },

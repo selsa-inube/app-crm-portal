@@ -37,9 +37,9 @@ export const DataCapacityAnalysis = {
 
   professionalServices: {
     code: "Professional_services",
-    description: "Independent professional services",
+    description: "Professional fees",
     i18n: {
-      en: "Independent professional services",
+      en: "Professional fees",
       es: "Servicios profesionales independientes",
     },
   },
@@ -90,10 +90,10 @@ export const DataCapacityAnalysis = {
   },
 
   pensionPayments: {
-    code: "Pension_payments",
-    description: "Pension payments",
+    code: "Pension_allowances",
+    description: "Pension allowances",
     i18n: {
-      en: "(+) Pension payments",
+      en: "(+) Pension allowances",
       es: "(+) Mesadas pensionales",
     },
   },
@@ -108,10 +108,10 @@ export const DataCapacityAnalysis = {
   },
 
   rentals: {
-    code: "Rentals",
-    description: "Rentals income",
+    code: "Leases",
+    description: "Leases income",
     i18n: {
-      en: "(+) Rentals",
+      en: "(+) Leases",
       es: "(+) Arrendamientos",
     },
   },
@@ -126,10 +126,10 @@ export const DataCapacityAnalysis = {
   },
 
   financialReturns: {
-    code: "Financial_returns",
-    description: "Financial returns",
+    code: "Financial_income",
+    description: "Financial income",
     i18n: {
-      en: "(+) Financial returns",
+      en: "(+) Financial income",
       es: "(+) Rendimientos financieros",
     },
   },

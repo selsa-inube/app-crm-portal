@@ -9,9 +9,9 @@ export const dataCreditProspect = {
   },
   extraPayment: {
     code: "CreditProspect_ExtraPayment",
-    description: "Label for extra payments",
+    description: "Label for extraordinary installments",
     i18n: {
-      en: "Extra payments",
+      en: "Extraordinary installments",
       es: "Pagos extras",
     },
   },

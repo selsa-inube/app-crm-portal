@@ -33,12 +33,12 @@ export const dataTabs = [
     },
   },
   {
-    id: "bail",
+    id: "bond",
     label: {
-      code: "Bail_tab",
-      description: "Bail tab",
+      code: "Bond_tab",
+      description: "Bond tab",
       i18n: {
-        en: "Bail",
+        en: "Bond",
         es: "Fianza",
       },
     },

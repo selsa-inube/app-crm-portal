@@ -41,9 +41,9 @@ export const dataAddSeriesModal = {
   },
   labelPaymentMethod: {
     code: "Payment_method_label",
-    description: "Payment method",
+    description: "Payment channel",
     i18n: {
-      en: "Payment method",
+      en: "Payment channel",
       es: "Medio de pago",
     },
   },

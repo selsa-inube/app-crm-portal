@@ -36,9 +36,9 @@ export const dataTabs = [
     id: "CheckManagement",
     label: {
       code: "management_check",
-      description: "Management check",
+      description: "Cashier’s check",
       i18n: {
-        en: "Management check",
+        en: "Cashier’s check",
         es: "Cheque Gerencia",
       },
     },
@@ -50,7 +50,7 @@ export const dataTabs = [
       description: "Cash",
       i18n: {
         en: "Cash",
-        es: "Dinero Efectivo",
+        es: "Efectivo",
       },
     },
   },
@@ -59,9 +59,9 @@ export const dataTabs = [
 export const dataDisbursement = {
   title: {
     code: "Disbursement_method_title",
-    description: "Disbursement method",
+    description: "Disbursement mode",
     i18n: {
-      en: "Disbursement method",
+      en: "Disbursement mode",
       es: "Medio de Desembolso",
     },
   },
@@ -104,8 +104,8 @@ export const disbursementGeneral = {
     code: "Own_name_disbursement_label",
     description: "Own name disbursement",
     i18n: {
-      en: "Disbursement in your own name?",
-      es: "¿Desembolso a nombre propio?",
+      en: "Disbursement is in the name of the borrower?",
+      es: "¿Desembolso a nombre del cliente?",
     },
   },
   optionToggleYes: {
@@ -292,7 +292,7 @@ export const disbursemenOptionAccount = {
     description: "Observation placeholder",
     i18n: {
       en: "Extra details to consider.",
-      es: "Cosas extra que deben tenerse en cuenta.",
+      es: "Detalles adicionales que deben tenerse en cuenta.",
     },
   },
   placeOption: {

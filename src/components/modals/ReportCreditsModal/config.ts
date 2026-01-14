@@ -70,9 +70,9 @@ export const headers: {
     key: "payment",
     label: {
       code: "Payment_method_header",
-      description: "Payment method column",
+      description: "Payment channel column",
       i18n: {
-        en: "Payment method",
+        en: "Payment channel",
         es: "Medio de pago",
       },
     },
@@ -154,7 +154,7 @@ export const dataReport = {
     code: "Total_fee",
     description: "Total installment amount",
     i18n: {
-      en: "Total installment",
+      en: "Total loan amount",
       es: "Cuota Total",
     },
   },

@@ -16,18 +16,18 @@ export const dataInputs = {
     },
   },
   labelFee: {
-    code: "Fee_label",
-    description: "Fee",
+    code: "Loan_amount",
+    description: "Loan amount",
     i18n: {
-      en: "Fee",
+      en: "Loan amount",
       es: "Cuota",
     },
   },
   placeHolderFee: {
-    code: "Fee_placeholder",
-    description: "Fee placeholder",
+    code: "Loan_amount_placeHolder",
+    description: "Loan amount placeholder",
     i18n: {
-      en: "Fee value",
+      en: "Loan amount value",
       es: "Valor de la cuota",
     },
   },

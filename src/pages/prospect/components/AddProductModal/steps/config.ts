@@ -235,7 +235,7 @@ export const paymentConfiguration = {
   paymentMethod: {
     placeholder: {
       code: "PaymentMethod_Placeholder",
-      description: "Placeholder for payment method selection",
+      description: "Placeholder for payment channel selection",
       i18n: {
         en: "Select an option",
         es: "Selecciona una opción",
@@ -243,9 +243,9 @@ export const paymentConfiguration = {
     },
     label: {
       code: "PaymentMethod_Label",
-      description: "Label for payment method input",
+      description: "Label for payment channel input",
       i18n: {
-        en: "Payment method",
+        en: "Payment channel",
         es: "Medio de pago",
       },
     },

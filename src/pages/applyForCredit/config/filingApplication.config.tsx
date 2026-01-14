@@ -108,18 +108,18 @@ export const stepsFilingApplication = {
     id: 6,
     number: 6,
     name: {
-      code: "StepsFiling_bail_name",
-      description: "Bail step name",
+      code: "StepsFiling_bond_name",
+      description: "Bond step name",
       i18n: {
-        en: "Bail",
+        en: "Bond",
         es: "Fianza",
       },
     },
     description: {
-      code: "StepsFiling_bail_description",
-      description: "Bail step description",
+      code: "StepsFiling_bond_description",
+      description: "Bond step description",
       i18n: {
-        en: "Carefully review the bail amount to be paid.",
+        en: "bond instead of bond.",
         es: "Lee con atención el valor de la fianza a pagar.",
       },
     },

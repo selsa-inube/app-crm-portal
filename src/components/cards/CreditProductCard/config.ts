@@ -1,9 +1,9 @@
 export const CREDIT_PRODUCT_TEXTS = {
   paymentMethod: {
     code: "Payment_method",
-    description: "Payment method",
+    description: "Payment channel",
     i18n: {
-      en: "Payment method",
+      en: "Payment channel",
       es: "Medio de pago",
     },
   },
@@ -32,10 +32,10 @@ export const CREDIT_PRODUCT_TEXTS = {
     },
   },
   periodicFee: {
-    code: "Periodic_fee_k_i",
-    description: "Periodic fee P+I",
+    code: "Periodic fee K+I",
+    description: "Periodic fee K+I",
     i18n: {
-      en: "Periodic fee P+I",
+      en: "Periodic fee K+I",
       es: "Cuota periódica K+I",
     },
   },

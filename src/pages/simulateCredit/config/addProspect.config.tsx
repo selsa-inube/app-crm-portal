@@ -164,7 +164,7 @@ export const stepsAddProspect = {
       code: "Loan_amount_description",
       description: "Application value step description",
       i18n: {
-        en: "Register the application value and the payment method.",
+        en: "Register the application value and the payment channel.",
         es: "Registra el valor de la solicitud y el medio de pago.",
       },
     },

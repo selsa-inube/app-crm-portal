@@ -107,7 +107,7 @@ export const dataAmount = {
     code: "Description_error_modal",
     description: "Credit line configuration error message",
     i18n: {
-      en: "The selected credit line does not have payment methods configured at this time. Please try another credit line or contact an advisor for more information.",
+      en: "The selected credit line does not have payment channel configured at this time. Please try another credit line or contact an advisor for more information.",
       es: "La línea de crédito seleccionada no cuenta con medios de pago configurados en este momento. Por favor, intenta con otra línea de crédito o comunícate con un asesor para obtener más información.",
     },
   },

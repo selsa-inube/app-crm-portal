@@ -17,9 +17,9 @@ export const TextLabels = {
   },
   extraPayments: {
     code: "Extra_payments",
-    description: "Extra payments",
+    description: "Extraordinary installments",
     i18n: {
-      en: "Extra payments",
+      en: "Extraordinary installments",
       es: "Pagos extras",
     },
   },
@@ -35,7 +35,7 @@ export const TextLabels = {
     code: "Success_description",
     description: "Success description",
     i18n: {
-      en: "The field has been created successfully.",
+      en: "The comment was successfully recorded.",
       es: "Hemos creado el campo exitosamente.",
     },
   },
