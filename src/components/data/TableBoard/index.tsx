@@ -1,5 +1,7 @@
 import { useMediaQuery } from "@inubekit/inubekit";
 
+import { useEnum } from "@hooks/useEnum/useEnum";
+
 import { IAction, IEntries, ITitle, IAppearances } from "./types";
 import { TableBoardUI } from "./interface";
 
@@ -42,6 +44,8 @@ export const TableBoard = (props: ITableBoardProps) => {
     infoItems,
   } = props;
 
+  const { lang } = useEnum();
+
   const isTablet = useMediaQuery("(max-width: 720px)");
 
   return (
@@ -59,6 +63,7 @@ export const TableBoard = (props: ITableBoardProps) => {
       isTablet={isTablet}
       isFirstTable={isFirstTable}
       infoItems={infoItems}
+      lang={lang}
     />
   );
 };

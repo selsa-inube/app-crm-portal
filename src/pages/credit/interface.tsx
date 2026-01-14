@@ -59,6 +59,7 @@ const CreditUI = (props: ICreditUIProps) => {
     showErrorModal,
     messageError,
     loading,
+    lang,
     navigate,
     setShowErrorModal,
     setMessageError,
@@ -113,7 +114,7 @@ const CreditUI = (props: ICreditUIProps) => {
     } else if (url) {
       navigate(url);
     } else {
-      setMessageError(errorDataCredit.noUrl);
+      setMessageError(errorDataCredit.noUrl.i18n[lang]);
       setShowErrorModal(true);
     }
   };
@@ -177,7 +178,12 @@ const CreditUI = (props: ICreditUIProps) => {
             name={dataHeader.name}
             profileImageUrl={dataHeader.image || userImage}
           />
-          <Breadcrumbs crumbs={addConfig.crumbs} />
+          <Breadcrumbs
+            crumbs={addConfig.crumbs.map((crumb) => ({
+              ...crumb,
+              label: crumb.label.i18n[lang],
+            }))}
+          />
           <Stack gap="64px" direction="column">
             <StyledArrowBack
               $isMobile={isMobile}
@@ -186,13 +192,13 @@ const CreditUI = (props: ICreditUIProps) => {
               <Stack gap="8px" alignItems="center" width="100%">
                 <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
                 <Text type="title" size={isMobile ? "small" : "large"}>
-                  {addConfig.title}
+                  {addConfig.title.i18n[lang]}
                 </Text>
               </Stack>
             </StyledArrowBack>
             {options.length === 0 && !loading ? (
               <Text type="title" size="large">
-                {errorDataCredit.noData}
+                {errorDataCredit.noData.i18n[lang]}
               </Text>
             ) : (
               <>
@@ -231,7 +237,7 @@ const CreditUI = (props: ICreditUIProps) => {
                               handleCardClick(title, url, optionId)
                             }
                             onInvalidUrl={() => {
-                              setMessageError(errorDataCredit.noUrl);
+                              setMessageError(errorDataCredit.noUrl.i18n[lang]);
                               setShowErrorModal(true);
                             }}
                           />

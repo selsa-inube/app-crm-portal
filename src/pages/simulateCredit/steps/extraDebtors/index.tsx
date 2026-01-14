@@ -16,6 +16,7 @@ import { choiceBorrowers } from "@mocks/filing-application/choice-borrowers/choi
 import { IBorrower, IProspect } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataExtraDebtors, ITransformedBorrower } from "./config";
 import { transformServiceData } from "./utils";
@@ -29,6 +30,7 @@ interface IExtraDebtorsProps {
   customerData: ICustomerData;
   businessManagerCode: string;
   prospectData: IProspect | undefined;
+  lang: EnumType;
 }
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
@@ -40,6 +42,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     businessManagerCode,
     prospectData,
     customerData,
+    lang,
   } = props;
   const [borrowers, setBorrowers] = useState(() =>
     transformServiceData(initialValues),
@@ -158,7 +161,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
       <Stack direction="column" padding="2px 10px" gap="20px">
         <Stack justifyContent="end">
           <Button onClick={() => setIsModalAdd(true)} iconBefore={<MdAdd />}>
-            {data.addButton}
+            {data.addButton.i18n[lang]}
           </Button>
         </Stack>
         <Grid
@@ -200,11 +203,12 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                 setCurrentBorrowerIndex(index);
                 setIsModalDelete(true);
               }}
+              lang={lang}
             />
           ))}
           <NewCardBorrower
             onClick={() => setIsModalAdd(true)}
-            title={data.borrowerLabel}
+            title={data.borrowerLabel.i18n[lang]}
             isMobile={isMobile}
           />
 
@@ -212,7 +216,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
             <DebtorAddModal
               onSubmit={() => setIsModalAdd(false)}
               handleClose={() => setIsModalAdd(false)}
-              title={data.addButton}
+              title={data.addButton.i18n[lang]}
               onAddBorrower={(newBorrowers: IBorrower[]) => {
                 const transformed = transformServiceData(newBorrowers);
                 if (transformed.length === 0) return;
@@ -227,6 +231,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               businessManagerCode={businessManagerCode}
               businessUnitPublicCode={businessUnitPublicCode}
               customerData={customerData}
+              lang={lang}
             />
           )}
 
@@ -239,6 +244,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               isMobile={isMobile}
               initialValues={selectedDebtorDetail}
               properties={selectedBorrowerForEdit}
+              lang={lang}
             />
           )}
           {isModalDelete && (
@@ -249,7 +255,8 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
                 setCurrentBorrowerIndex(null);
               }}
               handleDelete={handleConfirmDelete}
-              TextDelete={dataExtraDebtors.Delete}
+              TextDelete={dataExtraDebtors.delete.i18n[lang]}
+              lang={lang}
             />
           )}
           {isModalEdit && selectedBorrowerForEdit && (
@@ -265,6 +272,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               businessUnitPublicCode={businessUnitPublicCode}
               businessManagerCode={businessManagerCode}
               prospectData={prospectData}
+              lang={lang}
             />
           )}
         </Grid>

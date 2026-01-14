@@ -9,11 +9,13 @@ import {
   TableExtraordinaryInstallmentProps,
 } from "@pages/prospect/components/TableExtraordinaryInstallment";
 import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments/ExtraordinaryInstallments.config";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 export interface ExtraordinaryInstallmentsProps {
   isMobile: boolean;
   initialValues: TableExtraordinaryInstallmentProps[] | null;
   businessManagerCode: string;
+  lang: EnumType;
   handleOnChange: (
     newExtraordinary: TableExtraordinaryInstallmentProps[],
   ) => void;
@@ -22,7 +24,7 @@ export interface ExtraordinaryInstallmentsProps {
 export function ExtraordinaryInstallments(
   props: ExtraordinaryInstallmentsProps,
 ) {
-  const { initialValues, isMobile, businessManagerCode, handleOnChange } =
+  const { initialValues, isMobile, businessManagerCode, lang, handleOnChange } =
     props;
 
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
@@ -139,7 +141,7 @@ export function ExtraordinaryInstallments(
               }
               onClick={toggleAddSeriesModal}
             >
-              {TextLabels.addSeries}
+              {TextLabels.addSeries.i18n[lang]}
             </Button>
           </Stack>
           <Stack justifyContent="center">
@@ -149,6 +151,7 @@ export function ExtraordinaryInstallments(
               service={false}
               handleDelete={handleDelete}
               businessManagerCode={businessManagerCode}
+              lang={lang}
             />
           </Stack>
         </Stack>
@@ -159,6 +162,7 @@ export function ExtraordinaryInstallments(
             installmentState={installmentState}
             setInstallmentState={setInstallmentState}
             service={false}
+            lang={lang}
           />
         )}
       </Stack>

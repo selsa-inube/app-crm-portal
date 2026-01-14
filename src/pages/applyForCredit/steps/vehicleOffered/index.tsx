@@ -9,6 +9,7 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { IVehicleOffered } from "../../types";
 import { dataVehicule } from "./config";
@@ -16,12 +17,13 @@ import { dataVehicule } from "./config";
 interface IVehicleOfferedProps {
   isMobile: boolean;
   initialValues: IVehicleOffered;
+  lang: EnumType;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IVehicleOffered) => void;
 }
 
 export function VehicleOffered(props: IVehicleOfferedProps) {
-  const { isMobile, initialValues, onFormValid, handleOnChange } = props;
+  const { isMobile, initialValues, lang, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
     state: Yup.string().required(),
@@ -73,8 +75,8 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
             <Textfield
               name="state"
               id="state"
-              label={dataVehicule.labelState}
-              placeholder={dataVehicule.placeHolderState}
+              label={dataVehicule.labelState.i18n[lang]}
+              placeholder={dataVehicule.placeHolderState.i18n[lang]}
               size="compact"
               value={optionsOfferedstate[0]?.label || ""}
               readOnly={true}
@@ -85,8 +87,8 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
             <Select
               name="state"
               id="state"
-              label={dataVehicule.labelState}
-              placeholder={dataVehicule.placeHolderState}
+              label={dataVehicule.labelState.i18n[lang]}
+              placeholder={dataVehicule.placeHolderState.i18n[lang]}
               size="compact"
               options={optionsOfferedstate}
               onBlur={formik.handleBlur}
@@ -98,8 +100,8 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
           <Textfield
             name="model"
             id="model"
-            label={dataVehicule.labelModel}
-            placeholder={dataVehicule.placeHolderModel}
+            label={dataVehicule.labelModel.i18n[lang]}
+            placeholder={dataVehicule.placeHolderModel.i18n[lang]}
             size="compact"
             value={formik.values.model}
             onChange={formik.handleChange}
@@ -110,8 +112,8 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
           <Textfield
             name="value"
             id="value"
-            label={dataVehicule.labelValue}
-            placeholder={dataVehicule.placeHolderValue}
+            label={dataVehicule.labelValue.i18n[lang]}
+            placeholder={dataVehicule.placeHolderValue.i18n[lang]}
             size="compact"
             value={validateCurrencyField("value", formik, true, "")}
             onChange={(e) => handleChangeWithCurrency(formik, e)}
@@ -122,8 +124,8 @@ export function VehicleOffered(props: IVehicleOfferedProps) {
         <Textarea
           name="description"
           id="description"
-          label={dataVehicule.labelDescription}
-          placeholder={dataVehicule.placeDescription}
+          label={dataVehicule.labelDescription.i18n[lang]}
+          placeholder={dataVehicule.placeDescription.i18n[lang]}
           value={formik.values.description}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}

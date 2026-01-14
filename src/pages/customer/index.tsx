@@ -6,6 +6,7 @@ import { useIAuth } from "@inube/iauth-react";
 import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { CustomerUI } from "./interface";
 import { EErrorMessages, VALIDATE_BLANK_SPACES_REGEX } from "./config";
@@ -19,6 +20,7 @@ export function Customer() {
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [errorCode, setErrorCode] = useState<number | null>(null);
+  const { lang } = useEnum();
 
   const { user } = useIAuth();
   const { setCustomerPublicCodeState } = useContext(CustomerContext);
@@ -195,6 +197,7 @@ export function Customer() {
       handleChangeAutocomplete={handleChangeAutocomplete}
       handleSubmit={handleSubmit}
       messageError={messageError}
+      lang={lang}
       loading={loading}
       isValid={isValid}
       redirectErrorPage={redirectErrorPage}

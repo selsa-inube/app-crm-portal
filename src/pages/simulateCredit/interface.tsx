@@ -31,6 +31,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import userImage from "@assets/images/userImage.jpeg";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -59,7 +60,7 @@ import { MoneyDestination } from "./steps/MoneyDestination";
 import { ObligationsFinancial } from "./steps/financialObligations";
 import { LoanCondition } from "./steps/loanCondition";
 import { ExtraDebtors } from "./steps/extraDebtors";
-import { addConfig, textAddCongfig } from "./config/addConfig";
+import { addConfig, textAddConfig } from "./config/addConfig";
 import { CreditLimitModal } from "../prospect/components/modals/CreditLimitModal";
 import { messagesError, dataSubmitApplication } from "./config/config";
 import {
@@ -164,6 +165,7 @@ interface SimulateCreditUIProps {
   loadingQuestions: boolean;
   showSelectsLoanAmount: boolean;
   createdProspectModal: boolean;
+  lang: EnumType;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -209,7 +211,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     validateRequirements,
     isLoading,
     currentStep,
-    assistedButtonText,
     isAlertIncome,
     codeError,
     addToFix,
@@ -222,6 +223,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     businessUnitPublicCode,
     businessManagerCode,
     isLoadingCreditLimit,
+    lang,
     allowToContinue,
     handleModalTryAgain,
     sentModal,
@@ -263,7 +265,12 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                 name={dataHeader.name}
                 profileImageUrl={dataHeader.image || userImage}
               />
-              <Breadcrumbs crumbs={addConfig.crumbs} />
+              <Breadcrumbs
+                crumbs={addConfig.crumbs.map((crumb) => ({
+                  ...crumb,
+                  label: crumb.label.i18n[lang],
+                }))}
+              />
               <Stack justifyContent="space-between" alignItems="center">
                 <StyledArrowBack onClick={() => navigate(addConfig.route)}>
                   <Stack gap="8px" alignItems="center" width="100%">
@@ -273,12 +280,12 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       size="20px"
                     />
                     <Text type="title" size={isMobile ? "small" : "large"}>
-                      {addConfig.title}
+                      {addConfig.title.i18n[lang]}
                     </Text>
                   </Stack>
                 </StyledArrowBack>
                 <Stack gap="8px">
-                  <StyledAnchor title={textAddCongfig.buttonQuotas}>
+                  <StyledAnchor title={textAddConfig.buttonQuotas.i18n[lang]}>
                     <Icon
                       icon={<MdOutlinePriceChange />}
                       appearance="gray"
@@ -295,7 +302,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }}
                     />
                   </StyledAnchor>
-                  <StyledAnchor title={textAddCongfig.buttonPaymentCapacity}>
+                  <StyledAnchor
+                    title={textAddConfig.buttonPaymentCapacity.i18n[lang]}
+                  >
                     <Icon
                       icon={<MdOutlinePaid />}
                       appearance="gray"
@@ -312,12 +321,10 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }}
                     />
                   </StyledAnchor>
-                  <StyledAnchor title={textAddCongfig.requirements}>
-                    <ButtonRequirements
-                      onClick={() => setIsModalOpenRequirements(true)}
-                      data={validateRequirements}
-                    />
-                  </StyledAnchor>
+                  <ButtonRequirements
+                    onClick={() => setIsModalOpenRequirements(true)}
+                    data={validateRequirements}
+                  />
                 </Stack>
               </Stack>
               <StyledContainerAssisted $cursorDisabled={!isCurrentFormValid}>
@@ -327,8 +334,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   onBackClick={handlePreviousStep}
                   onNextClick={handleNextStep}
                   controls={{
-                    ...titleButtonTextAssited,
-                    goNextText: assistedButtonText,
+                    goBackText: titleButtonTextAssited.goBackText.i18n[lang],
+                    submitText: titleButtonTextAssited.submitText.i18n[lang],
+                    goNextText: titleButtonTextAssited.goNextText.i18n[lang],
                   }}
                   onSubmitClick={() => setSentModal(true)}
                   disableNext={!isCurrentFormValid}
@@ -348,6 +356,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       customerData={customerData}
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -364,6 +373,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       isTablet={isMobile}
                       businessManagerCode={businessManagerCode}
                       clientIdentificationNumber={customerData.publicCode}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -402,6 +412,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }}
                       creditLineTerms={creditLineTerms!}
                       loadingQuestions={loadingQuestions}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -417,6 +428,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           newExtraordinary,
                         )
                       }
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -434,6 +446,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       prospectData={prospectData}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -456,6 +469,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       prospectData={prospectData}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -467,6 +481,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       handleOnChange={(newRisk) =>
                         handleFormDataChange("riskScore", newRisk)
                       }
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -485,6 +500,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           newObligation,
                         )
                       }
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -502,6 +518,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                       onFormValid={setIsCurrentFormValid}
                       isMobile={isMobile}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -523,6 +540,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       obligationPayments={obligationPayments}
                       paymentChannel={paymentChannel}
                       showSelects={showSelectsLoanAmount}
+                      lang={lang}
                     />
                   )}
                 {currentStepsNumber &&
@@ -554,6 +572,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         });
                       }}
                       data={obligationPayments}
+                      lang={lang}
                     />
                   )}
               </Stack>
@@ -564,14 +583,14 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   onClick={handlePreviousStep}
                   disabled={currentStepsNumber === steps[0]}
                 >
-                  {titleButtonTextAssited.goBackText}
+                  {titleButtonTextAssited.goBackText.i18n[lang]}
                 </Button>
                 <Button onClick={handleNextStep} disabled={!isCurrentFormValid}>
                   {currentStep === steps[steps.length - 1].id ||
                   (currentStep === stepsAddProspect.loanAmount.id &&
                     !formData.loanAmountState.toggleChecked)
-                    ? titleButtonTextAssited.submitText
-                    : titleButtonTextAssited.goNextText}
+                    ? titleButtonTextAssited.submitText.i18n[lang]
+                    : titleButtonTextAssited.goNextText.i18n[lang]}
                 </Button>
               </Stack>
               {isModalOpenRequirements && (
@@ -581,6 +600,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   isLoading={isLoading}
                   validateRequirements={validateRequirements}
                   errorsManager={errorsManager}
+                  lang={lang}
                 />
               )}
               {isCreditLimitModalOpen && (
@@ -594,6 +614,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   moneyDestination={formData.selectedDestination}
                   incomeData={formData.sourcesOfIncome}
                   userAccount={userAccount as string}
+                  lang={lang}
                 />
               )}
               {isCreditLimitWarning && (
@@ -601,6 +622,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsCreditLimitWarning(false)}
                   handleClose={() => setIsCreditLimitWarning(false)}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               )}
               {isCapacityAnalysisModal && (
@@ -609,6 +631,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleClose={() => setIsCapacityAnalysisModal(false)}
                   paymentCapacity={paymentCapacity}
                   sourcesOfIncome={formData.sourcesOfIncome}
+                  lang={lang}
                 />
               )}
               {isCapacityAnalysisWarning && (
@@ -616,6 +639,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsCapacityAnalysisWarning(false)}
                   handleClose={() => setIsCapacityAnalysisWarning(false)}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               )}
               {isAlertIncome && (
@@ -623,13 +647,14 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleNext={() => setIsAlertIncome(false)}
                   handleClose={() => setIsAlertIncome(false)}
                   isMobile={isMobile}
+                  lang={lang}
                 />
               )}
               {showErrorModal && (
                 <ErrorModal
                   handleClose={() => {
                     if (
-                      messageError === messagesError.tryLater &&
+                      messageError === messagesError.tryLater.i18n[lang] &&
                       !allowToContinue
                     ) {
                       handleModalTryAgain();
@@ -642,21 +667,21 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
               )}
               {sentModal && (
                 <BaseModal
-                  title={dataSubmitApplication.modals.filed}
-                  nextButton={dataSubmitApplication.modals.continue}
-                  backButton={dataSubmitApplication.modals.cancel}
+                  title={dataSubmitApplication.modals.filed.i18n[lang]}
+                  nextButton={dataSubmitApplication.modals.continue.i18n[lang]}
+                  backButton={dataSubmitApplication.modals.cancel.i18n[lang]}
                   handleBack={() => setSentModal(false)}
                   handleNext={handleSubmitClick}
                   width={isMobile ? "290px" : "402px"}
                   isLoading={isLoadingSubmit}
                 >
-                  <Text>{dataSubmitApplication.modals.sure}</Text>
+                  <Text>{dataSubmitApplication.modals.sure.i18n[lang]}</Text>
                 </BaseModal>
               )}
               {createdProspectModal && (
                 <BaseModal
-                  title={dataSubmitApplication.modals.filed}
-                  nextButton={dataSubmitApplication.modals.cancel}
+                  title={dataSubmitApplication.modals.filed.i18n[lang]}
+                  nextButton={dataSubmitApplication.modals.cancel.i18n[lang]}
                   handleNext={() => {
                     setCreatedProspectModal(false);
                     navigate(`/credit/prospects/${prospectCode}`);
@@ -675,7 +700,11 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                     />
                     <Stack gap="6px">
                       <Text type="body" size="large">
-                        {dataSubmitApplication.modals.fileDescription}
+                        {
+                          dataSubmitApplication.modals.fileDescription.i18n[
+                            lang
+                          ]
+                        }
                       </Text>
                       <Text type="body" size="large" weight="bold">
                         {prospectCode}

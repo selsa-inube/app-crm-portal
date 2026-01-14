@@ -1,6 +1,7 @@
 import { Icon, Stack, Text } from "@inubekit/inubekit";
 import { MdClear } from "react-icons/md";
 
+import { useEnum } from "@hooks/useEnum/useEnum";
 import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import { BaseModal } from "../baseModal";
@@ -15,10 +16,12 @@ interface IErrorModalProps {
 export function ErrorModal(props: IErrorModalProps) {
   const { isMobile, message, handleClose } = props;
 
+  const { lang } = useEnum();
+
   return (
     <BaseModal
-      title={errorModalConfig.title}
-      nextButton={errorModalConfig.understand}
+      title={errorModalConfig.title.i18n[lang]}
+      nextButton={errorModalConfig.understand.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       width={isMobile ? "300px" : "450px"}
@@ -33,7 +36,7 @@ export function ErrorModal(props: IErrorModalProps) {
           size="68px"
         />
         <Text type="body" size="large" weight="bold">
-          {errorModalConfig.sorry}
+          {errorModalConfig.sorry.i18n[lang]}
         </Text>
         <Text type="body" size="large" appearance="gray">
           {truncateTextToMaxLength(message, 100)}

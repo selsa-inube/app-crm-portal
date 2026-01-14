@@ -4,6 +4,7 @@ import { useMediaQuery } from "@inubekit/inubekit";
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { getMaximumCreditLimitByLineOfCreditRegulation } from "@services/creditLimit/getMaximumCreditLimitByLineOfCreditRegulation";
 import { IMaximumCreditLimit } from "@services/creditLimit/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { MaxLimitModalUI } from "./interface";
 
@@ -11,6 +12,7 @@ export interface PaymentCapacityProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   dataMaximumCreditLimitService: IdataMaximumCreditLimitService;
+  lang: EnumType;
   iconVisible?: boolean;
   loading?: boolean;
   handleClose: () => void;
@@ -21,6 +23,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
     businessUnitPublicCode,
     businessManagerCode,
     dataMaximumCreditLimitService,
+    lang,
     loading = false,
     handleClose,
   } = props;
@@ -77,6 +80,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
       handleClose={handleClose}
       isMobile={isMobile}
       dataMaximumCreditLimitService={dataMaximumCreditLimit}
+      lang={lang}
     />
   );
 };

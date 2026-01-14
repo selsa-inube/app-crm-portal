@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Stack, Icon, Tag, Text, Spinner } from "@inubekit/inubekit";
 import { MdCheckCircleOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 
@@ -8,9 +8,9 @@ import { TableBoard } from "@components/data/TableBoard";
 import { Fieldset } from "@components/data/Fieldset";
 import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import { EnumContext } from "@context/EnumContext";
 import { requirementStatusData } from "@services/enum/requirements";
 import { IManageErrors } from "@pages/simulateCredit/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   dataError,
@@ -25,6 +25,7 @@ export interface IRequirementsModalProps {
   validateRequirements: IValidateRequirement[];
   isLoading: boolean;
   errorsManager: IManageErrors;
+  lang: EnumType;
 }
 
 export function RequirementsModal(props: IRequirementsModalProps) {
@@ -34,6 +35,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     isLoading,
     handleClose,
     errorsManager,
+    lang,
   } = props;
 
   const [modalData, setModalData] = useState<{
@@ -41,8 +43,6 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     description: string;
   } | null>(null);
 
-  const contextValue = useContext(EnumContext);
-  const lang = contextValue?.lang;
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const entries = validateRequirements.map((item, idx) => {
@@ -54,7 +54,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
           label={
             requirementStatusData.find(
               (status) => status.code === item.requirementStatus,
-            )?.i18n[lang as "es" | "en"] || item.requirementStatus
+            )?.i18n[lang] || item.requirementStatus
           }
           appearance={
             item.requirementStatus === "Aprobado"
@@ -86,8 +86,8 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     <>
       {!showErrorModal ? (
         <BaseModal
-          title={dataRequirementsNotMet.title}
-          nextButton={dataRequirementsNotMet.close}
+          title={dataRequirementsNotMet.title.i18n[lang]}
+          nextButton={dataRequirementsNotMet.close.i18n[lang]}
           handleNext={handleClose}
           handleClose={handleClose}
           width={isMobile ? "300px " : "652px"}
@@ -105,7 +105,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
               >
                 <Spinner />
                 <Text type="title" size="medium" appearance="dark">
-                  {dataError.loadRequirements}
+                  {dataError.loadRequirements.i18n[lang]}
                 </Text>
               </Stack>
             ) : validateRequirements && validateRequirements.length > 0 ? (
@@ -121,6 +121,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
                     data={modalData}
                     handleClose={() => setModalData(null)}
                     isMobile={isMobile}
+                    lang={lang}
                   />
                 )}
               </Stack>
@@ -142,8 +143,8 @@ export function RequirementsModal(props: IRequirementsModalProps) {
                 )}
                 <Text type="title" size="medium" appearance="dark">
                   {errorsManager.validateRequirements
-                    ? dataError.descriptionError
-                    : dataError.noData}
+                    ? dataError.descriptionError.i18n[lang]
+                    : dataError.noData.i18n[lang]}
                 </Text>
               </Stack>
             )}
@@ -155,7 +156,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
             (setShowErrorModal(false), handleClose());
           }}
           isMobile={isMobile}
-          message={dataError.descriptionError}
+          message={dataError.descriptionError.i18n[lang]}
         />
       )}
     </>

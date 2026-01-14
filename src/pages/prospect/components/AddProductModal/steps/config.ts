@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 export interface IFirstPaymentDate {
   id: string;
@@ -31,6 +32,7 @@ export interface ITermSelection {
   maximumTermValue: number;
   quotaCapEnabled: boolean;
   maximumTermEnabled: boolean;
+  lang: EnumType;
   isMobile: boolean;
   onChange: (values: {
     quotaCapValue: number;
@@ -43,6 +45,7 @@ export interface ITermSelection {
 
 export interface ITermSelectionUI {
   isMobile: boolean;
+  lang: EnumType;
   initialValues: ITermSelectionValuesMain;
   validationSchema: Yup.ObjectSchema<{
     quotaCapValue?: string;
@@ -89,6 +92,7 @@ export interface IPaymentConfigurationUI {
   paymentMethodOptions: IPaymentsOptions[];
   paymentCycleOptions: IPaymentsOptions[];
   firstPaymentDateOptions: IPaymentsOptions[];
+  lang: EnumType;
   paymentConfiguration: {
     paymentMethod: {
       label: string;
@@ -112,6 +116,7 @@ export interface IPaymentConfigurationUI {
 
 export interface IPaymentConfigurationMain {
   paymentConfig: IPaymentConfiguration;
+  lang: EnumType;
   onChange: (config: Partial<IPaymentConfiguration>) => void;
   onFormValid: (isValid: boolean) => void;
 }
@@ -160,27 +165,125 @@ export const amountCaptureTexts = {
 };
 
 export const loanData = {
-  quotaCapTitle: "¿Deseas establecer un tope de cuota?",
-  quotaCapLabel: "Valor máximo de la cuota",
-  quotaCapPlaceholder: "$0",
-  maximumTermTitle: "¿Deseas establecer un plazo máximo?",
-  maximumTermLabel: "Plazo en meses",
-  maximumTermPlaceholder: "0",
-  yes: "Sí",
-  no: "No",
+  quotaCapTitle: {
+    code: "Loan_QuotaCapTitle",
+    description: "Title asking if the user wants to set a quota cap",
+    i18n: {
+      en: "Do you want to set a quota cap?",
+      es: "¿Deseas establecer un tope de cuota?",
+    },
+  },
+  quotaCapLabel: {
+    code: "Loan_QuotaCapLabel",
+    description: "Label for the maximum quota input",
+    i18n: {
+      en: "Maximum quota value",
+      es: "Valor máximo de la cuota",
+    },
+  },
+  quotaCapPlaceholder: {
+    code: "Loan_QuotaCapPlaceholder",
+    description: "Placeholder for maximum quota input",
+    i18n: {
+      en: "$0",
+      es: "$0",
+    },
+  },
+  maximumTermTitle: {
+    code: "Loan_MaximumTermTitle",
+    description: "Title asking if the user wants to set a maximum term",
+    i18n: {
+      en: "Do you want to set a maximum term?",
+      es: "¿Deseas establecer un plazo máximo?",
+    },
+  },
+  maximumTermLabel: {
+    code: "Loan_MaximumTermLabel",
+    description: "Label for maximum term input",
+    i18n: {
+      en: "Term in months",
+      es: "Plazo en meses",
+    },
+  },
+  maximumTermPlaceholder: {
+    code: "Loan_MaximumTermPlaceholder",
+    description: "Placeholder for maximum term input",
+    i18n: {
+      en: "0",
+      es: "0",
+    },
+  },
+  yes: {
+    code: "Loan_Yes",
+    description: "Yes option label",
+    i18n: {
+      en: "Yes",
+      es: "Sí",
+    },
+  },
+  no: {
+    code: "Loan_No",
+    description: "No option label",
+    i18n: {
+      en: "No",
+      es: "No",
+    },
+  },
 };
 
 export const paymentConfiguration = {
   paymentMethod: {
-    placeholder: "Selecciona una opcion",
-    label: "Medio de pago",
+    placeholder: {
+      code: "PaymentMethod_Placeholder",
+      description: "Placeholder for payment channel selection",
+      i18n: {
+        en: "Select an option",
+        es: "Selecciona una opción",
+      },
+    },
+    label: {
+      code: "PaymentMethod_Label",
+      description: "Label for payment channel input",
+      i18n: {
+        en: "Payment channel",
+        es: "Medio de pago",
+      },
+    },
   },
   paymentCycle: {
-    placeholder: "Selecciona una opcion",
-    label: "Ciclo de pagos",
+    placeholder: {
+      code: "PaymentCycle_Placeholder",
+      description: "Placeholder for payment cycle selection",
+      i18n: {
+        en: "Select an option",
+        es: "Selecciona una opción",
+      },
+    },
+    label: {
+      code: "PaymentCycle_Label",
+      description: "Label for payment cycle input",
+      i18n: {
+        en: "Payment cycle",
+        es: "Ciclo de pagos",
+      },
+    },
   },
   firstPaymentDate: {
-    placeholder: "Selecciona una opcion",
-    label: "Primer ciclo de pago",
+    placeholder: {
+      code: "FirstPaymentDate_Placeholder",
+      description: "Placeholder for first payment date selection",
+      i18n: {
+        en: "Select an option",
+        es: "Selecciona una opción",
+      },
+    },
+    label: {
+      code: "FirstPaymentDate_Label",
+      description: "Label for first payment date input",
+      i18n: {
+        en: "First payment date",
+        es: "Primer ciclo de pago",
+      },
+    },
   },
 };

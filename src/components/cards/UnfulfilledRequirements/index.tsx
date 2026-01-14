@@ -2,12 +2,14 @@ import { MdWarningAmber } from "react-icons/md";
 import { Stack, Icon, Text, Divider, SkeletonLine } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import LabelData from "./Config/config";
 
 interface IUnfulfilledRequirementsProps {
   requirement: string;
   causeNonCompliance: string;
+  lang: EnumType;
   hasError?: boolean;
   title?: string;
   isMobile?: boolean;
@@ -17,7 +19,8 @@ interface IUnfulfilledRequirementsProps {
 export const UnfulfilledRequirements = (
   props: IUnfulfilledRequirementsProps,
 ) => {
-  const { title, requirement, causeNonCompliance, isMobile, isLoading } = props;
+  const { title, requirement, lang, causeNonCompliance, isMobile, isLoading } =
+    props;
 
   return (
     <Fieldset
@@ -36,7 +39,7 @@ export const UnfulfilledRequirements = (
               </>
             ) : (
               <>
-                <Text ellipsis={true}>{LabelData.requirement}</Text>
+                <Text ellipsis={true}>{LabelData.requirement.i18n[lang]}</Text>
                 <Icon
                   icon={<MdWarningAmber />}
                   appearance="warning"
@@ -58,7 +61,9 @@ export const UnfulfilledRequirements = (
           {isLoading ? (
             <SkeletonLine width="160px" />
           ) : (
-            <Text ellipsis={true}>{LabelData.causeNonCompliance}</Text>
+            <Text ellipsis={true}>
+              {LabelData.causeNonCompliance.i18n[lang]}
+            </Text>
           )}
           <Divider />
           {isLoading ? (

@@ -5,6 +5,8 @@ import { MoneyDestinationCard } from "@components/cards/MoneyDestinationCard";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { CardDeployMoneyDestination } from "@pages/prospect/components/cardDeployMoneyDestination";
+import { EnumType } from "@hooks/useEnum/useEnum";
+
 import { dataMoneyDestination } from "./config";
 
 interface MoneyDestinationUIProps {
@@ -15,6 +17,7 @@ interface MoneyDestinationUIProps {
   loading: boolean;
   searchTerm: string;
   hasActiveSearch: boolean;
+  lang: EnumType;
   groupedDestinations: { [type: string]: IMoneyDestination[] };
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
@@ -32,6 +35,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
     searchTerm,
     hasActiveSearch,
     groupedDestinations,
+    lang,
     setShowErrorModal,
     setSearchTerm,
     handleChange,
@@ -45,7 +49,7 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
           <Input
             id="keyWord"
             label="Buscar"
-            placeholder={dataMoneyDestination.keyWord}
+            placeholder={dataMoneyDestination.keyWord.i18n[lang]}
             type="search"
             fullwidth={isTablet}
             value={searchTerm}

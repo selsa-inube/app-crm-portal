@@ -22,6 +22,7 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { TableExtraordinaryInstallmentProps } from ".";
 import { dataTableExtraordinaryInstallment } from "./config";
@@ -34,6 +35,7 @@ interface ITableExtraordinaryInstallmentProps {
     label: string;
     mask?: (value: string | number) => string | number;
   }[];
+  lang: EnumType;
   visbleActions: { key: string; label: string }[];
   extraordinaryInstallments: TableExtraordinaryInstallmentProps[];
   isMobile: boolean;
@@ -91,6 +93,7 @@ export function TableExtraordinaryInstallmentUI(
     loading,
     visbleHeaders,
     visbleActions,
+    lang,
     extraordinaryInstallments,
     isMobile,
     isOpenModalDelete,
@@ -252,7 +255,7 @@ export function TableExtraordinaryInstallmentUI(
                   appearance="gray"
                   textAlign="center"
                 >
-                  {dataTableExtraordinaryInstallment.noData}
+                  {dataTableExtraordinaryInstallment.noData.i18n[lang]}
                 </Text>
               </Td>
             </Tr>
@@ -302,8 +305,9 @@ export function TableExtraordinaryInstallmentUI(
         <DeleteModal
           handleClose={() => setIsOpenModalDelete(false)}
           handleDelete={handleDeleteAction}
-          TextDelete={dataTableExtraordinaryInstallment.content}
+          TextDelete={dataTableExtraordinaryInstallment.content.i18n[lang]}
           isLoading={isLoadingDelete}
+          lang={lang}
         />
       )}
       {showErrorModal && (
@@ -315,22 +319,22 @@ export function TableExtraordinaryInstallmentUI(
       )}
       {isOpenModalView && (
         <BaseModal
-          title={dataAddSeriesModal.view}
+          title={dataAddSeriesModal.view.i18n[lang]}
           handleNext={() => setIsOpenModalView(false)}
           handleClose={() => setIsOpenModalView(false)}
           nextButton="Cerrar"
           width="290px"
         >
           <CardGray
-            label={dataAddSeriesModal.labelPaymentMethod}
+            label={dataAddSeriesModal.labelPaymentMethod.i18n[lang]}
             placeHolder={installmentState.paymentChannelAbbreviatedName}
           />
           <CardGray
-            label={dataAddSeriesModal.labelAmount}
+            label={dataAddSeriesModal.labelAmount.i18n[lang]}
             placeHolder={installmentState.installmentAmount}
           />
           <CardGray
-            label={dataAddSeriesModal.labelDate}
+            label={dataAddSeriesModal.labelDate.i18n[lang]}
             placeHolder={installmentState.installmentDate}
           />
         </BaseModal>

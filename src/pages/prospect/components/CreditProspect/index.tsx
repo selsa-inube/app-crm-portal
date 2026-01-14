@@ -59,9 +59,10 @@ import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components
 import { incomeCardData } from "@components/cards/IncomeCard/config";
 import { IValidateRequirement } from "@services/requirement/types";
 import { StyledDivider } from "@components/layout/Divider/styles";
-import { getTotalIncomeByBorrowerInProspect } from "@src/services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
+import { getTotalIncomeByBorrowerInProspect } from "@services/prospect/totalIncomeByBorrowers/getTotalIncomeByBorrowerInProspect";
 import { Fieldset } from "@components/data/Fieldset";
 import { dataCreditProspects } from "@pages/creditProspects/config";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -80,6 +81,7 @@ import { filterIncomeByBorrower } from "./utils";
 interface ICreditProspectProps {
   showMenu: () => void;
   isMobile: boolean;
+  lang: EnumType;
   businessManagerCode: string;
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
@@ -109,6 +111,7 @@ export function CreditProspect(props: ICreditProspectProps) {
   const {
     prospectData,
     businessManagerCode,
+    lang,
     showMenu,
     setRequestValue,
     onProspectUpdate,
@@ -163,8 +166,8 @@ export function CreditProspect(props: ICreditProspectProps) {
   useEffect(() => {
     if (showMessageSuccessModal) {
       addFlag({
-        title: configModal.success.title,
-        description: configModal.success.text,
+        title: configModal.success.title.i18n[lang],
+        description: configModal.success.text.i18n[lang],
         appearance: "success",
         duration: 5000,
       });
@@ -573,26 +576,30 @@ export function CreditProspect(props: ICreditProspectProps) {
     try {
       const pdfBlob = await generatePDF(
         dataCommercialManagementRef,
-        labelsAndValuesShare.titleOnPdf,
-        labelsAndValuesShare.titleOnPdf,
+        labelsAndValuesShare.titleOnPdf.i18n[lang],
+        labelsAndValuesShare.titleOnPdf.i18n[lang],
         { top: 10, bottom: 10, left: 10, right: 10 },
         true,
       );
 
       if (pdfBlob) {
-        const pdfFile = new File([pdfBlob], labelsAndValuesShare.fileName, {
-          type: "application/pdf",
-        });
+        const pdfFile = new File(
+          [pdfBlob],
+          labelsAndValuesShare.fileName.i18n[lang],
+          {
+            type: "application/pdf",
+          },
+        );
 
         await navigator.share({
           files: [pdfFile],
-          title: labelsAndValuesShare.titleOnPdf,
-          text: labelsAndValuesShare.text,
+          title: labelsAndValuesShare.titleOnPdf.i18n[lang],
+          text: labelsAndValuesShare.text.i18n[lang],
         });
       }
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(labelsAndValuesShare.error);
+      setMessageError(labelsAndValuesShare.error.i18n[lang]);
     }
   };
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
@@ -654,7 +661,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       setShowMessageSuccessModal(true);
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(configModal.observations.errorMessage);
+      setMessageError(configModal.observations.errorMessage.i18n[lang]);
     }
   };
   const incomeDataProspect = (prospectData?: IProspect): IIncomeSources => {
@@ -688,7 +695,8 @@ export function CreditProspect(props: ICreditProspectProps) {
 
     const requirementsOnlyNotMet = validateRequirements.filter(
       (requirement) =>
-        requirement.requirementStatus !== propertyOfMetRequirement.approve,
+        requirement.requirementStatus !==
+        propertyOfMetRequirement.approve.i18n[lang],
     );
 
     const requirementsOnlyNotMetCount = requirementsOnlyNotMet.length;
@@ -729,7 +737,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   onClick={() => handleOpenModal("editProductModal")}
                   fullwidth={isMobile}
                 >
-                  {dataCreditProspect.addProduct}
+                  {dataCreditProspect.addProduct.i18n[lang]}
                 </Button>
               )}
               {canEditCreditRequest && (
@@ -760,7 +768,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                 disabled={canEditCreditRequest}
                 fullwidth={isMobile}
               >
-                {dataCreditProspect.extraPayment}
+                {dataCreditProspect.extraPayment.i18n[lang]}
               </Button>
             )}
             {isMobile && <StyledDivider />}
@@ -819,6 +827,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             setShowMessageSuccessModal={setShowMessageSuccessModal}
             onProspectRefreshData={onProspectRefreshData}
             showAddProduct={showAddProduct}
+            lang={lang}
           />
         </Stack>
         {currentModal === "creditLimit" && (
@@ -836,6 +845,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             }
             userAccount={userAccount}
             incomeData={incomeDataValues}
+            lang={lang}
           />
         )}
         {openModal === "paymentCapacity" && (
@@ -846,6 +856,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             dataMaximumCreditLimitService={
               dataMaximumCreditLimitService as IdataMaximumCreditLimitService
             }
+            lang={lang}
           />
         )}
         {openModal === "reciprocityModal" && (
@@ -856,6 +867,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             clientIdentificationNumber={
               dataMaximumCreditLimitService.identificationDocumentNumber
             }
+            lang={lang}
           />
         )}
         {openModal === "scoreModal" && (
@@ -866,6 +878,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             clientIdentificationNumber={
               dataMaximumCreditLimitService.identificationDocumentNumber
             }
+            lang={lang}
           />
         )}
         {currentModal === "editProductModal" && (
@@ -882,12 +895,13 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessManagerCode={businessManagerCode}
             dataProspect={prospectData as IProspect}
             isLoading={isLoading}
+            lang={lang}
           />
         )}
         {currentModal === "IncomeModal" && (
           <BaseModal
-            title={dataCreditProspect.incomeSources}
-            nextButton={dataCreditProspect.close}
+            title={dataCreditProspect.incomeSources.i18n[lang]}
+            nextButton={dataCreditProspect.close.i18n[lang]}
             handleNext={handleCloseModal}
             handleClose={handleCloseModal}
             width={isMobile ? "280px" : "448px"}
@@ -931,7 +945,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   >
                     {borrowerOptions.length === 1 ? (
                       <CardGray
-                        label={incomeCardData.borrower}
+                        label={incomeCardData.borrower.i18n[lang]}
                         placeHolder={borrowerOptions[0]?.label || ""}
                         isMobile={isMobile}
                       />
@@ -955,7 +969,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                         disabled={canEditCreditRequest}
                         fullwidth={isMobile}
                       >
-                        {dataCreditProspect.edit}
+                        {dataCreditProspect.edit.i18n[lang]}
                       </Button>
                       {canEditCreditRequest ? (
                         <Icon
@@ -999,6 +1013,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
             prospectData={prospectData}
+            lang={lang}
           />
         )}
         {currentModal === "reportCreditsModal" && (
@@ -1010,6 +1025,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             prospectData={prospectData ? [prospectData] : []}
             onProspectUpdate={onProspectRefreshData}
             showAddButton={showAddButtons}
+            lang={lang}
           />
         )}
         {currentModal === "extraPayments" && (
@@ -1020,12 +1036,13 @@ export function CreditProspect(props: ICreditProspectProps) {
             setSentData={setSentData}
             businessUnitPublicCode={businessUnitPublicCode}
             showAddButton={showAddButtons}
+            lang={lang}
           />
         )}
 
         {currentModal === "observations" && (
           <BaseModal
-            title={configModal.observations.title}
+            title={configModal.observations.title.i18n[lang]}
             handleClose={handleCloseModal}
             handleNext={
               showAddButtons
@@ -1039,28 +1056,30 @@ export function CreditProspect(props: ICreditProspectProps) {
             }
             nextButton={
               showAddButtons
-                ? configModal.observations.modify
-                : configModal.observations.cancel
+                ? configModal.observations.modify.i18n[lang]
+                : configModal.observations.cancel.i18n[lang]
             }
             backButton={
-              showAddButtons ? configModal.observations.cancel : undefined
+              showAddButtons
+                ? configModal.observations.cancel.i18n[lang]
+                : undefined
             }
             width={isMobile ? "300px" : "500px"}
           >
             <Stack direction="column" gap="16px">
               <CardGray
-                label={configModal.observations.preApproval}
+                label={configModal.observations.preApproval.i18n[lang]}
                 placeHolder={
                   prospectData!.clientManagerObservation ||
-                  dataCreditProspects.notHaveComments
+                  dataCreditProspects.notHaveComments.i18n[lang]
                 }
                 appearancePlaceHolder="gray"
               />
               <CardGray
-                label={configModal.observations.labelTextarea}
+                label={configModal.observations.labelTextarea.i18n[lang]}
                 placeHolder={
                   prospectData!.clientComments ||
-                  dataCreditProspects.notHaveObservations
+                  dataCreditProspects.notHaveObservations.i18n[lang]
                 }
                 appearancePlaceHolder="gray"
               />
@@ -1072,21 +1091,22 @@ export function CreditProspect(props: ICreditProspectProps) {
           <ScoreModalProspect
             isMobile={isMobile}
             handleClose={handleCloseModal}
+            lang={lang}
           />
         )}
 
         {showEditMessageModal && (
           <BaseModal
-            title={configModal.observations.title}
+            title={configModal.observations.title.i18n[lang]}
             handleClose={() => setShowEditMessageModal(false)}
             handleNext={handleSaveComments}
-            nextButton={configModal.observations.modify}
-            backButton={configModal.observations.cancel}
+            nextButton={configModal.observations.modify.i18n[lang]}
+            backButton={configModal.observations.cancel.i18n[lang]}
             width={isMobile ? "300px" : "500px"}
           >
             <Textarea
               id="comments"
-              label={configModal.observations.labelTextarea}
+              label={configModal.observations.labelTextarea.i18n[lang]}
               value={editedComments}
               onChange={(event) => handleCommentsChange(event)}
               maxLength={120}

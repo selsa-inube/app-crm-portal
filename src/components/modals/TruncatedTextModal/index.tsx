@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Text, useMediaQuery } from "@inubekit/inubekit";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { BaseModal } from "../baseModal";
 import { StyledContainer } from "./styles";
@@ -28,6 +29,7 @@ export const TruncatedText = ({
   const isMobile = useMediaQuery("(max-width: 700px)");
 
   const isTruncated = text.length > maxLength;
+  const { lang } = useEnum();
 
   const displayText = transformFn ? transformFn(text) : text;
 
@@ -58,7 +60,7 @@ export const TruncatedText = ({
 
       {showModal && (
         <BaseModal
-          title={dataTruncatedText.info}
+          title={dataTruncatedText.info.i18n[lang]}
           nextButton="Cerrar"
           handleNext={handleClose}
           handleClose={handleClose}

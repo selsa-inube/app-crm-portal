@@ -3,6 +3,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
+import { EnumType } from "@hooks/useEnum/useEnum";
 import { searchAllMoneyDestinationByCustomerCode } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
 import { IMoneyDestination } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
@@ -15,6 +16,7 @@ interface IMoneyDestinationProps {
   isTablet: boolean;
   businessManagerCode: string;
   clientIdentificationNumber: string;
+  lang: EnumType;
   handleOnChange: React.Dispatch<React.SetStateAction<string>>;
   onFormValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -25,6 +27,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     isTablet,
     businessManagerCode,
     clientIdentificationNumber,
+    lang,
     handleOnChange,
     onFormValid,
   } = props;
@@ -147,7 +150,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
   if (filteredDestinations) {
     filteredDestinations.forEach((destination) => {
       const type =
-        destination.moneyDestinationType || dataMoneyDestination.noType;
+        destination.moneyDestinationType ||
+        dataMoneyDestination.noType.i18n[lang];
       if (!groupedDestinations[type]) {
         groupedDestinations[type] = [];
       }
@@ -184,6 +188,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
           loading={loading}
           hasActiveSearch={hasActiveSearch}
           navigate={navigate}
+          lang={lang}
         />
       )}
     </Formik>

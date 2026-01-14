@@ -18,6 +18,7 @@ import { IBorrower, IBorrowerProperty } from "@services/creditLimit/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { IProspect, IProspectBorrower } from "@services/prospect/types";
 import { transformServiceData } from "@pages/simulateCredit/steps/extraDebtors/utils";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
@@ -32,6 +33,7 @@ interface borrowersProps {
   isMobile: boolean;
   valueRule: string[];
   businessManagerCode: string;
+  lang: EnumType;
 }
 
 export interface Borrower {
@@ -52,6 +54,7 @@ export function Borrowers(props: borrowersProps) {
     prospectData,
     valueRule,
     businessManagerCode,
+    lang,
   } = props;
 
   const [isModalAdd, setIsModalAdd] = useState(false);
@@ -133,8 +136,8 @@ export function Borrowers(props: borrowersProps) {
         <Stack justifyContent="end" margin="0 8px">
           <Button onClick={() => setIsModalAdd(true)} iconBefore={<MdAdd />}>
             {valueRule?.includes("Coborrower")
-              ? dataSubmitApplication.coBorrowers.borrowerLabel
-              : dataSubmitApplication.borrowers.borrowerLabel}
+              ? dataSubmitApplication.coBorrowers.borrowerLabel.i18n[lang]
+              : dataSubmitApplication.borrowers.borrowerLabel.i18n[lang]}
           </Button>
         </Stack>
         <StyledContainer>
@@ -202,14 +205,15 @@ export function Borrowers(props: borrowersProps) {
                   }}
                   handleDelete={() => setIsModalDelete(true)}
                   showIcons={valueRule?.includes("Coborrower")}
+                  lang={lang}
                 />
               ))}
             <NewCardBorrower
               onClick={() => setIsModalAdd(true)}
               title={
                 valueRule?.includes("Coborrower")
-                  ? dataSubmitApplication.coBorrowers.borrowerLabel
-                  : dataSubmitApplication.borrowers.borrowerLabel
+                  ? dataSubmitApplication.coBorrowers.borrowerLabel.i18n[lang]
+                  : dataSubmitApplication.borrowers.borrowerLabel.i18n[lang]
               }
               isMobile={isMobile}
             />
@@ -220,8 +224,8 @@ export function Borrowers(props: borrowersProps) {
                 businessManagerCode={businessManagerCode}
                 title={
                   valueRule?.includes("Coborrower")
-                    ? dataSubmitApplication.coBorrowers.borrowerLabel
-                    : dataSubmitApplication.borrowers.borrowerLabel
+                    ? dataSubmitApplication.coBorrowers.borrowerLabel.i18n[lang]
+                    : dataSubmitApplication.borrowers.borrowerLabel.i18n[lang]
                 }
                 businessUnitPublicCode={businessUnitPublicCode}
                 prospectData={prospectData as IProspect}
@@ -232,6 +236,7 @@ export function Borrowers(props: borrowersProps) {
                   ];
                   formik.setFieldValue("borrowers", updatedBorrowers);
                 }}
+                lang={lang}
               />
             )}
             {isModalView && selectedBorrower && (
@@ -243,12 +248,14 @@ export function Borrowers(props: borrowersProps) {
                 isMobile={isMobile}
                 initialValues={selectedDebtorDetail as IDebtorDetail}
                 properties={selectedBorrower as IBorrower}
+                lang={lang}
               />
             )}
             {isModalDelete && (
               <DeleteModal
                 handleClose={() => setIsModalDelete(false)}
-                TextDelete={borrowerData.delete}
+                TextDelete={borrowerData.delete.i18n[lang]}
+                lang={lang}
               />
             )}
             {isModalEdit && editIndex !== null && (
@@ -275,6 +282,7 @@ export function Borrowers(props: borrowersProps) {
                 businessUnitPublicCode={businessUnitPublicCode}
                 businessManagerCode={businessManagerCode}
                 prospectData={prospectData as IProspect}
+                lang={lang}
               />
             )}
           </Stack>

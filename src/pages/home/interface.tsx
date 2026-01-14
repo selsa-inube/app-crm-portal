@@ -45,6 +45,7 @@ const HomeUI = (props: IHomeUIProps) => {
     navigate,
     setShowErrorModal,
     setMessageError,
+    lang,
   } = props;
 
   const mergeStaffOptions = (
@@ -106,15 +107,15 @@ const HomeUI = (props: IHomeUIProps) => {
               </StyledGeneralHeader>
               <StyledTitle $smallScreen={smallScreen}>
                 <Title
-                  title={homeTitleConfig(username).title}
-                  description={homeTitleConfig(username).description}
+                  title={homeTitleConfig(username).title.i18n[lang]}
+                  description={homeTitleConfig(username).description.i18n[lang]}
                   icon={homeTitleConfig(username).icon}
-                  sizeTitle={homeTitleConfig(username).sizeTitle}
+                  sizeTitle={"large"}
                 />
               </StyledTitle>
               {options.length === 0 ? (
                 <Text type="title" size="large">
-                  {errorDataCredit.noData}
+                  {errorDataCredit.noData.i18n[lang]}
                 </Text>
               ) : (
                 <StyledContainerCards $smallScreen={smallScreen}>
@@ -133,7 +134,7 @@ const HomeUI = (props: IHomeUIProps) => {
                         isDisabled={item.isDisabled}
                         isMobile={smallScreen}
                         onInvalidUrl={() => {
-                          setMessageError(errorDataCredit.noUrl);
+                          setMessageError(errorDataCredit.noUrl.i18n[lang]);
                           setShowErrorModal(true);
                         }}
                       />

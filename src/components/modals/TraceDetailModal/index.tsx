@@ -5,6 +5,7 @@ import { CardGray } from "@components/cards/CardGray";
 import { BaseModal } from "@components/modals/baseModal";
 import { Fieldset } from "@components/data/Fieldset";
 import { getSearchDocumentById } from "@services/creditRequest/SearchDocumentById";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { DocumentViewer } from "../DocumentViewer";
 import { dataTrace } from "./config";
@@ -14,6 +15,7 @@ import { DocumentItem } from "./types";
 export interface ITraceDetailsModalProps {
   handleClose: () => void;
   data: { answer: string; observations: string; documents?: DocumentItem[] };
+  lang: EnumType;
   businessUnitPublicCode?: string;
   businessManagerCode?: string;
   isMobile?: boolean;
@@ -24,6 +26,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
   const {
     handleClose,
     data,
+    lang,
     businessUnitPublicCode,
     businessManagerCode,
     isMobile,
@@ -57,7 +60,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
       addFlag({
-        title: dataTrace.titleError,
+        title: dataTrace.titleError.i18n[lang],
         description,
         appearance: "danger",
         duration: 5000,
@@ -67,8 +70,8 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
 
   return (
     <BaseModal
-      title={dataTrace.title}
-      nextButton={dataTrace.understood}
+      title={dataTrace.title.i18n[lang]}
+      nextButton={dataTrace.understood.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       width={isMobile ? "287px" : "402px"}
@@ -77,7 +80,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
         {data.documents && (
           <Fieldset borderColor="gray" hasOverflow>
             <Stack direction="column" gap="12px">
-              <Text>{dataTrace.documents}</Text>
+              <Text>{dataTrace.documents.i18n[lang]}</Text>
               <Divider dashed />
               <StyledScroll>
                 <Stack direction="column" gap="8px">
@@ -99,7 +102,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
                             handlePreview(doc.documentId, doc.abbreviatedName)
                           }
                         >
-                          {dataTrace.see}
+                          {dataTrace.see.i18n[lang]}
                         </Text>
                       </Stack>
                       {index < (data.documents?.length ?? 0) - 1 && <Divider />}
@@ -111,12 +114,12 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
           </Fieldset>
         )}
         <CardGray
-          label={dataTrace.answer}
+          label={dataTrace.answer.i18n[lang]}
           placeHolder={data.answer}
           appearancePlaceHolder="gray"
         />
         <CardGray
-          label={dataTrace.observations}
+          label={dataTrace.observations.i18n[lang]}
           placeHolder={data.observations}
           appearancePlaceHolder="gray"
           height="108px"

@@ -12,6 +12,7 @@ import {
   IPatchValidateRequirementsPayload,
   IValidateRequirement,
 } from "@services/creditRequest/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 export interface IBorrowerDocumentRule {
   borrower: string;
@@ -29,6 +30,7 @@ interface IAttachedDocumentsProps {
   customerData: ICustomerData;
   prospectData: IProspect;
   businessUnitPublicCode: string;
+  lang: EnumType;
 }
 
 export function AttachedDocuments(props: IAttachedDocumentsProps) {
@@ -39,6 +41,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     customerData,
     prospectData,
     businessUnitPublicCode,
+    lang,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -99,6 +102,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
           ruleValues={documentsRequiredByBorrower}
           isLoading={isLoading}
           showErrorModal={showErrorModal}
+          lang={lang}
         />
       </Stack>
     </Fieldset>

@@ -9,6 +9,7 @@ import {
 } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
 import { CustomValueModal } from "@pages/simulateCredit/components/CustomValueModal";
 import { IApplyPayOption } from "@pages/simulateCredit/components/CustomValueModal/utils";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   StyledCardContainer,
@@ -32,6 +33,7 @@ export interface ICardConsolidatedCreditProps {
   fullPayment: number;
   description: string;
   date: Date;
+  lang: EnumType;
   tags: ITag[];
   isMobile?: boolean;
   initialValue?: number;
@@ -54,6 +56,7 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
     nextDueDate,
     fullPayment,
     description,
+    lang,
     date,
     tags,
     initialValue,
@@ -191,21 +194,22 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
                   name={`paymentOption-${code}`}
                   ref={(el) => (radioRefs.current[index] = el!)}
                   checked={
-                    (selectedOptionId === option.label && isRadioSelected) ||
+                    (selectedOptionId === option.label.i18n[lang] &&
+                      isRadioSelected) ||
                     undefined
                   }
                   onChange={() =>
                     handleSelectionChange(
                       option.value,
-                      option.label,
-                      option.label,
+                      option.label.i18n[lang],
+                      option.label.i18n[lang],
                       option.date,
                     )
                   }
                 />
                 <Stack direction="column">
                   <Text type="label" size="medium" weight="bold">
-                    {option.label}
+                    {option.label.i18n[lang]}
                   </Text>
                   {option.description && (
                     <Text type="body" size="small" appearance="gray">
@@ -223,7 +227,7 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
         </Stack>
         <Stack justifyContent="space-between" alignItems="center" width="100%">
           <Button
-            children={dataConsolidatedCredit.button}
+            children={dataConsolidatedCredit.button.i18n[lang]}
             iconBefore={<MdOutlineDelete />}
             variant="outlined"
             appearance="danger"
@@ -260,6 +264,7 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
           onCloseModal={handleToggleModal}
           onApplyPayOption={handleApplyPayOption}
           onChangeOtherValue={handleChangeOption}
+          lang={lang}
         />
       )}
     </>

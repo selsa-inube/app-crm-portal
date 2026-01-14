@@ -8,6 +8,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataError } from "./config";
 
@@ -17,6 +18,7 @@ interface IRequirementsNotMetProps {
   prospectData: IProspect;
   businessUnitPublicCode: string;
   businessManagerCode: string;
+  lang: EnumType;
   onRequirementsValidated?: (requirements: IValidateRequirement[]) => void;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -28,6 +30,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     prospectData,
     businessUnitPublicCode,
     businessManagerCode,
+    lang,
     onRequirementsValidated,
     setShowErrorModal,
   } = props;
@@ -101,6 +104,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
                 requirement=""
                 causeNonCompliance=""
                 isLoading={true}
+                lang={lang}
               />
             ))}
           </Stack>
@@ -122,6 +126,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
                   requirementData.descriptionEvaluationRequirement
                 }
                 hasError={hasError}
+                lang={lang}
               />
             ))}
           </Stack>

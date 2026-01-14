@@ -33,6 +33,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { BaseModal } from "@components/modals/baseModal";
 import { environment } from "@config/environment";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import {
   configHandleactions,
@@ -98,6 +99,7 @@ export const FinancialReporting = () => {
 
   const { creditRequestCode } = useParams();
   const { user } = useIAuth();
+  const { lang } = useEnum();
 
   const navigation = useNavigate();
 
@@ -140,12 +142,12 @@ export const FinancialReporting = () => {
           setData(data[0]);
         } else {
           setCodeError(1030);
-          setAddToFix([errorMessages.errorCreditRequest]);
+          setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
         }
       })
       .catch(() => {
         setCodeError(1030);
-        setAddToFix([errorMessages.errorCreditRequest]);
+        setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
       })
       .finally(() => {
         setLoadingData(false);
@@ -173,7 +175,7 @@ export const FinancialReporting = () => {
       setDocument(documentsUser);
       setAttachDocuments(true);
     } catch (error) {
-      setMessageError(errorMessages.documents);
+      setMessageError(errorMessages.documents.i18n[lang]);
       setShowErrorModal(true);
     }
   };
@@ -187,10 +189,10 @@ export const FinancialReporting = () => {
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
     } catch (error) {
-      setMessageError(errorMessages.prospect);
+      setMessageError(errorMessages.prospect.i18n[lang]);
       setShowErrorModal(true);
       if (creditRequestCode === undefined) {
-        setMessageError(errorMessages.prospect);
+        setMessageError(errorMessages.prospect.i18n[lang]);
         setShowErrorModal(true);
       }
     }
@@ -206,7 +208,7 @@ export const FinancialReporting = () => {
     try {
       const pdfBlob = await generatePDF(
         dataCommercialManagementRef,
-        labelsAndValuesShare.titleOnPdf,
+        labelsAndValuesShare.titleOnPdf.i18n[lang],
       );
 
       if (pdfBlob) {
@@ -218,7 +220,7 @@ export const FinancialReporting = () => {
       }
     } catch (error) {
       setPdfState({ isGenerating: false, blob: null, showShareModal: false });
-      setMessageError(errorMessages.share.description);
+      setMessageError(errorMessages.share.description.i18n[lang]);
       setShowErrorModal(true);
     }
   };
@@ -227,20 +229,24 @@ export const FinancialReporting = () => {
     if (!pdfState.blob) return;
 
     try {
-      const pdfFile = new File([pdfState.blob], labelsAndValuesShare.fileName, {
-        type: "application/pdf",
-      });
+      const pdfFile = new File(
+        [pdfState.blob],
+        labelsAndValuesShare.fileName.i18n[lang],
+        {
+          type: "application/pdf",
+        },
+      );
 
       await navigator.share({
         files: [pdfFile],
-        title: labelsAndValuesShare.titleOnPdf,
-        text: labelsAndValuesShare.text,
+        title: labelsAndValuesShare.titleOnPdf.i18n[lang],
+        text: labelsAndValuesShare.text.i18n[lang],
       });
 
       setPdfState({ isGenerating: false, blob: null, showShareModal: false });
     } catch (error) {
       setPdfState({ isGenerating: false, blob: null, showShareModal: false });
-      setMessageError(errorMessages.share.description);
+      setMessageError(errorMessages.share.description.i18n[lang]);
       setShowErrorModal(true);
     }
   };
@@ -289,7 +295,7 @@ export const FinancialReporting = () => {
           user?.id ?? "",
         );
       } catch (error) {
-        setMessageError(errorMessages.getData.description);
+        setMessageError(errorMessages.getData.description.i18n[lang]);
       } finally {
         handleToggleModal();
       }
@@ -313,7 +319,7 @@ export const FinancialReporting = () => {
       setRequests(data[0] as ICreditRequest);
     } catch (error) {
       setCodeError(1022);
-      setAddToFix([errorMessages.prospect]);
+      setAddToFix([errorMessages.prospect.i18n[lang]]);
     }
   }, [businessUnitPublicCode, user, businessManagerCode]);
 
@@ -368,11 +374,11 @@ export const FinancialReporting = () => {
 
     if (eventData.businessManager.abbreviatedName.length === 0) {
       error = 1003;
-      messages.push(errorMessages.noBusinessUnit);
+      messages.push(errorMessages.noBusinessUnit.i18n[lang]);
     }
     if (customerData.fullName.length === 0) {
       error = 1016;
-      messages.push(errorMessages.noSelectClient);
+      messages.push(errorMessages.noSelectClient.i18n[lang]);
     }
 
     setCodeError(error);
@@ -407,7 +413,7 @@ export const FinancialReporting = () => {
             <GlobalPdfStyles $isGeneratingPdf={pdfState.isGenerating} />
             <StyledMarginPrint $isMobile={isMobile}>
               <GeneralHeader
-                buttonText={labelsAndValuesShare.addLink}
+                buttonText={labelsAndValuesShare.addLink.i18n[lang]}
                 descriptionStatus={dataHeader.status}
                 name={dataHeader.name}
                 profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
@@ -456,6 +462,7 @@ export const FinancialReporting = () => {
                               setRequestValue={setRequestValue}
                               requestValue={requestValue}
                               loadingData={loadingData}
+                              lang={lang}
                             />
                           </BlockPdfSection>
                         </Stack>
@@ -470,6 +477,7 @@ export const FinancialReporting = () => {
                               user={creditRequestCode!}
                               isMobile={isMobile}
                               creditRequest={requests}
+                              lang={lang}
                             />
                           </BlockPdfSection>
                         </Stack>
@@ -486,6 +494,7 @@ export const FinancialReporting = () => {
                               businessUnitPublicCode={businessUnitPublicCode}
                               creditRequestCode={data.creditRequestCode!}
                               businessManagerCode={businessManagerCode}
+                              lang={lang}
                             />
                           </BlockPdfSection>
                         </Stack>
@@ -494,6 +503,7 @@ export const FinancialReporting = () => {
                             <Management
                               creditRequest={requests}
                               isMobile={isMobile}
+                              lang={lang}
                             />
                           </BlockPdfSection>
                         </Stack>
@@ -507,6 +517,7 @@ export const FinancialReporting = () => {
                               id={creditRequestCode!}
                               isMobile={isMobile}
                               creditRequest={requests}
+                              lang={lang}
                             />
                           </BlockPdfSection>
                         </Stack>
@@ -522,6 +533,7 @@ export const FinancialReporting = () => {
                           id={creditRequestCode!}
                           isMobile={isMobile}
                           creditRequest={requests}
+                          lang={lang}
                         />
                       </BlockPdfSection>
                     </Stack>
@@ -543,6 +555,7 @@ export const FinancialReporting = () => {
                   <OfferedGuaranteeModal
                     handleClose={() => setShowGuarantee(false)}
                     isMobile={isMobile}
+                    lang={lang}
                   />
                 )}
                 {showMenu && isMobile && (
@@ -566,7 +579,7 @@ export const FinancialReporting = () => {
                 <StyledContainerSpinner>
                   <Spinner size="large" />
                   <Text size="large" weight="bold">
-                    {errorMessages.share.spinner}
+                    {errorMessages.share.spinner.i18n[lang]}
                   </Text>
                 </StyledContainerSpinner>
               </Blanket>
@@ -576,6 +589,7 @@ export const FinancialReporting = () => {
                 isMobile={isMobile}
                 handleClose={handleSharePdfModal}
                 handleNext={handleSharePdf}
+                lang={lang}
               />
             )}
             {sendCrediboard && (
@@ -591,7 +605,7 @@ export const FinancialReporting = () => {
                   navigation("/credit/processed-credit-requests")
                 }
               >
-                <Text>{labelsAndValuesShare.changePortal}</Text>
+                <Text>{labelsAndValuesShare.changePortal.i18n[lang]}</Text>
               </BaseModal>
             )}
           </Stack>

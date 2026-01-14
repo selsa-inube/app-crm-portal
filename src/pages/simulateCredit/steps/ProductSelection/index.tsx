@@ -14,6 +14,7 @@ import {
 import { CardProductSelection } from "@pages/simulateCredit/components/CardProductSelection";
 import { Fieldset } from "@components/data/Fieldset";
 import { BaseModal } from "@components/modals/baseModal";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import {
   ICreditLineTerms,
@@ -43,6 +44,7 @@ interface IProductSelectionProps {
   servicesQuestion: IServicesProductSelection;
   creditLineTerms: ICreditLineTerms;
   loadingQuestions: boolean;
+  lang: EnumType;
 }
 
 export function ProductSelection(props: IProductSelectionProps) {
@@ -60,6 +62,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     choiceMoneyDestination,
     creditLineTerms,
     loadingQuestions,
+    lang,
   } = props;
   const validationSchema = Yup.object().shape({
     selectedProducts: Yup.array().when("generalToggleChecked", {
@@ -148,7 +151,7 @@ export function ProductSelection(props: IProductSelectionProps) {
           <Stack direction="column" gap="20px">
             <Stack direction="column" gap="16px">
               <Text type="label" size="large" weight="bold">
-                {electionData.title}
+                {electionData.title.i18n[lang]}
               </Text>
               <Stack gap="8px">
                 <Field name="generalToggleChecked">
@@ -170,7 +173,9 @@ export function ProductSelection(props: IProductSelectionProps) {
                   weight="bold"
                   appearance={generalToggleChecked ? "success" : "danger"}
                 >
-                  {generalToggleChecked ? electionData.yes : electionData.no}
+                  {generalToggleChecked
+                    ? electionData.yes.i18n[lang]
+                    : electionData.no.i18n[lang]}
                 </Text>
               </Stack>
             </Stack>
@@ -217,12 +222,13 @@ export function ProductSelection(props: IProductSelectionProps) {
                               );
                             }}
                             isMobile={isMobile}
+                            lang={lang}
                           />
                         </Stack>
                       ))
                   ) : (
                     <Text type="body" size="medium">
-                      {electionData.load}
+                      {electionData.load.i18n[lang]}
                     </Text>
                   )}
                 </Stack>
@@ -243,7 +249,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                         size="medium"
                         appearance={isQuestionDisabled(key) ? "gray" : "dark"}
                       >
-                        {question}
+                        {question.i18n[lang]}
                       </Text>
                       <Stack gap="8px">
                         <Stack>
@@ -292,8 +298,8 @@ export function ProductSelection(props: IProductSelectionProps) {
                           }
                         >
                           {values.togglesState[index]
-                            ? electionData.yes
-                            : electionData.no}
+                            ? electionData.yes.i18n[lang]
+                            : electionData.no.i18n[lang]}
                         </Text>
                       </Stack>
                       {filteredIndex !== filteredQuestions.length - 1 && (
@@ -313,8 +319,8 @@ export function ProductSelection(props: IProductSelectionProps) {
           </Stack>
           {showInfoModal && (
             <BaseModal
-              title={electionData.information}
-              nextButton={electionData.understood}
+              title={electionData.information.i18n[lang]}
+              nextButton={electionData.understood.i18n[lang]}
               handleNext={() => setShowInfoModal(false)}
               handleClose={() => setShowInfoModal(false)}
               width={isMobile ? "280px" : "450px"}
@@ -324,7 +330,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                   {
                     electionData.informationDescription[
                       currentDisabledQuestion as keyof typeof electionData.informationDescription
-                    ]
+                    ].i18n[lang]
                   }
                 </Text>
               </Stack>

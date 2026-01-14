@@ -38,9 +38,11 @@ export function NoResultsMessage({ search }: { search: string }) {
   return (
     <StyledNoResults>
       <Text size="medium">
-        {messagesFeedback.notFountResults.title} {search}
+        {messagesFeedback.notFoundResults.title.i18n.es} {search}
       </Text>
-      <Text size="medium">{messagesFeedback.notFountResults.description}</Text>
+      <Text size="medium">
+        {messagesFeedback.notFoundResults.description.i18n.es}
+      </Text>
     </StyledNoResults>
   );
 }

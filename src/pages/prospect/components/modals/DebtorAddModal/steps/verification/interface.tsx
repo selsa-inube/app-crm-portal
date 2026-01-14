@@ -3,6 +3,7 @@ import { Stack, Grid, Button } from "@inubekit/inubekit";
 
 import { BoxAttribute } from "@components/data/BoxAttirbute";
 import { Accordion } from "@components/data/Accordion";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { StyledScrollContainer } from "./styles";
 import { IDataVerificationStep } from "./types";
@@ -12,13 +13,15 @@ interface IVerificationDebtorAddModalUIProps {
   dataVerificationStep: IDataVerificationStep[];
   keySections: string[];
   isMobile: boolean;
+  lang: EnumType;
   setCurrentStep: (step: number) => void;
 }
 
 export const VerificationDebtorAddModalUI = (
   props: IVerificationDebtorAddModalUIProps,
 ) => {
-  const { dataVerificationStep, keySections, isMobile, setCurrentStep } = props;
+  const { dataVerificationStep, keySections, isMobile, lang, setCurrentStep } =
+    props;
   const totalSections = dataVerificationStep.reduce((count, dataStept) => {
     return (
       count +
@@ -53,7 +56,7 @@ export const VerificationDebtorAddModalUI = (
                         iconBefore={<MdArrowBack />}
                         onClick={() => setCurrentStep(section.stepNumber)}
                       >
-                        {verificationDebtorAddModalConfig.back}
+                        {verificationDebtorAddModalConfig.back.i18n[lang]}
                       </Button>
                     </Stack>
                   </>
@@ -81,7 +84,7 @@ export const VerificationDebtorAddModalUI = (
                         iconBefore={<MdArrowBack />}
                         onClick={() => setCurrentStep(section.stepNumber)}
                       >
-                        {verificationDebtorAddModalConfig.back}
+                        {verificationDebtorAddModalConfig.back.i18n[lang]}
                       </Button>
                     </Stack>
                   </>

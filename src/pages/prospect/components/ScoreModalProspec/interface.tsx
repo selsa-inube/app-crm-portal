@@ -3,8 +3,9 @@ import { Stack, Text } from "@inubekit/inubekit";
 import { BaseModal } from "@components/modals/baseModal";
 import { RiskScore } from "@pages/simulateCredit/steps/riskScore";
 import { Fieldset } from "@components/data/Fieldset";
-import { urlMock } from "./config";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
+import { urlMock } from "./config";
 import { prospectScore } from "./config";
 import { DataRiskScore } from "../RiskScoreGauge/config";
 import { StyledImgNotFound } from "./styles";
@@ -16,6 +17,7 @@ interface IScoreModalProspectUIProps {
   secondScore: IScore | null;
   newFirstScore: IScore | null;
   newSecondScore: IScore | null;
+  lang: EnumType;
   setNewFirstScore: React.Dispatch<React.SetStateAction<IScore | null>>;
   setNewSecondScore: React.Dispatch<React.SetStateAction<IScore | null>>;
   handleResetScores: (resetScore: "first" | "second") => void;
@@ -32,12 +34,13 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
     setNewSecondScore,
     newFirstScore,
     newSecondScore,
+    lang,
     handleResetScores,
   } = props;
 
   return (
     <BaseModal
-      title={DataRiskScore.riskScore}
+      title={DataRiskScore.riskScore.i18n[lang]}
       nextButton={
         firstScore === null && secondScore === null
           ? undefined
@@ -79,6 +82,7 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
             }}
             newScore={newFirstScore?.score || null}
             isProspect={true}
+            lang={lang}
           />
         )}
         {secondScore !== null && (
@@ -106,6 +110,7 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
             }}
             newScore={newSecondScore?.score || null}
             isProspect={true}
+            lang={lang}
           />
         )}
 

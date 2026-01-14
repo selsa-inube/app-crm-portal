@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { Fieldset } from "@components/data/Fieldset";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataObservations } from "./config";
 
@@ -12,12 +13,13 @@ interface IObservationsProps {
     relevantObservations: string;
   };
   isMobile: boolean;
+  lang: EnumType;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: { relevantObservations: string }) => void;
 }
 
 export function Observations(props: IObservationsProps) {
-  const { initialValues, isMobile, onFormValid, handleOnChange } = props;
+  const { initialValues, isMobile, lang, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
     relevantObservations: Yup.string().required().max(200),
@@ -52,15 +54,19 @@ export function Observations(props: IObservationsProps) {
         {isMobile && (
           <Stack>
             <Text type="label" size="large" weight="bold">
-              {dataObservations.relevantObservations}
+              {dataObservations.relevantObservations.i18n[lang]}
             </Text>
           </Stack>
         )}
         <Textarea
           id="relevantObservations"
           name="relevantObservations"
-          label={!isMobile ? dataObservations.relevantObservations : ""}
-          placeholder={dataObservations.placeHolderRelevantObservations}
+          label={
+            !isMobile ? dataObservations.relevantObservations.i18n[lang] : ""
+          }
+          placeholder={
+            dataObservations.placeHolderRelevantObservations.i18n[lang]
+          }
           value={formik.values.relevantObservations}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}

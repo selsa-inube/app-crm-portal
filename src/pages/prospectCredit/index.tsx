@@ -17,6 +17,7 @@ import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
+import { useEnum } from "@hooks/useEnum/useEnum.ts";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -32,6 +33,7 @@ export function ProspectCredit() {
   const [creditRequestData, setCreditRequestData] = useState<ICreditRequest[]>(
     [],
   );
+  const { lang } = useEnum();
 
   const [searchParams] = useSearchParams();
   const { customerData } = useContext(CustomerContext);
@@ -77,7 +79,7 @@ export function ProspectCredit() {
         setCreditRequestData(creditData);
       } catch {
         setCodeError(1022);
-        setAddToFix([dataCreditProspects.errorCreditRequest]);
+        setAddToFix([dataCreditProspects.errorCreditRequest.i18n[lang]]);
       } finally {
         setLoading(false);
       }
@@ -92,11 +94,11 @@ export function ProspectCredit() {
 
     if (eventData.businessManager.abbreviatedName.length === 0) {
       error = 1003;
-      messages.push(dataError.noBusinessUnit);
+      messages.push(dataError.noBusinessUnit.i18n[lang]);
     }
     if (customerData.fullName.length === 0) {
       error = 1016;
-      messages.push(dataError.noSelectClient);
+      messages.push(dataError.noSelectClient.i18n[lang]);
     }
 
     setCodeError(error);
@@ -137,12 +139,17 @@ export function ProspectCredit() {
             name={dataHeader.name}
             profileImageUrl="https://s3-alpha-sig.figma.com/img/27d0/10fa/3d2630d7b4cf8d8135968f727bd6d965?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5lEzRE3Uk8fW5GT2LOd5m8eC6TYIJEH84ZLfY7WyFqMx-zv8TC1yzz-OV9FCH9veCgWZ5eBfKi4t0YrdpoWZriy4E1Ic2odZiUbH9uQrHkpxLjFwcMI2VJbWzTXKon-HkgvkcCnKFzMFv3BwmCqd34wNDkLlyDrFSjBbXdGj9NZWS0P3pf8PDWZe67ND1kropkpGAWmRp-qf9Sp4QTJW-7Wcyg1KPRy8G-joR0lsQD86zW6G6iJ7PuNHC8Pq3t7Jnod4tEipN~OkBI8cowG7V5pmY41GSjBolrBWp2ls4Bf-Vr1BKdzSqVvivSTQMYCi8YbRy7ejJo9-ZNVCbaxRg__"
           />
-          <Breadcrumbs crumbs={addConfig.crumbs} />
-          <StyledArrowBack onClick={() => navigate(addConfig.route)}>
+          <Breadcrumbs
+            crumbs={addConfig.crumbs.map((crumb) => ({
+              ...crumb,
+              label: crumb.label.i18n[lang as keyof typeof crumb.label.i18n],
+            }))}
+          />
+          <StyledArrowBack onClick={() => navigate(addConfig.route.i18n[lang])}>
             <Stack gap="8px" alignItems="center" width="100%">
               <Icon icon={<MdArrowBack />} appearance="dark" size="20px" />
               <Text type="title" size={isMobile ? "small" : "large"}>
-                {addConfig.title}
+                {addConfig.title.i18n[lang]}
               </Text>
             </Stack>
           </StyledArrowBack>
@@ -151,7 +158,7 @@ export function ProspectCredit() {
               <Stack justifyContent="space-between" alignItems="center">
                 <Input
                   id="keyWord"
-                  placeholder={dataCreditProspects.keyWord}
+                  placeholder={dataCreditProspects.keyWord.i18n[lang]}
                   type="search"
                   onChange={(event) => handleSearch(event)}
                 />
@@ -181,13 +188,14 @@ export function ProspectCredit() {
                             `/credit/processed-credit-requests/extended-card/${creditRequest.creditRequestCode}`,
                           );
                         }}
+                        lang={lang}
                       />
                     ))}
                   </>
                 )}
                 {creditRequestData.length === 0 && !loading && (
                   <Text type="title" size="large" margin="30px 2px">
-                    {dataError.notCredits}
+                    {dataError.notCredits.i18n[lang]}
                   </Text>
                 )}
               </Stack>

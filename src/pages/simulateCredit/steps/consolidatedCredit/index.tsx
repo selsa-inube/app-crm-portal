@@ -8,6 +8,7 @@ import {
   IPayment,
   paymentOptionValues,
 } from "@services/portfolioObligation/SearchAllPortfolioObligationPayment/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataConsolidated } from "./config";
 import { StyledCards } from "./style";
@@ -38,10 +39,11 @@ interface IConsolidatedCreditProps {
     selectedLabelsMap?: Record<string, string>,
   ) => void;
   data?: IPayment[];
+  lang: EnumType;
 }
 
 export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
-  const { initialValues, isMobile, onChange, data } = props;
+  const { initialValues, isMobile, onChange, data, lang } = props;
 
   const [totalCollected, setTotalCollected] = useState(
     initialValues.totalCollected,
@@ -132,7 +134,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
             {currencyFormat(totalCollected)}
           </Text>
           <Text type="body" size="small" appearance="gray">
-            {dataConsolidated.totalvalue}
+            {dataConsolidated.totalValue.i18n[lang]}
           </Text>
         </Stack>
         <Divider />
@@ -196,6 +198,7 @@ export function ConsolidatedCredit(props: IConsolidatedCreditProps) {
                   initialType={initialValues.selectedLabels?.[creditData.id]}
                   isMobile={isMobile}
                   allowCustomValue={creditData.allowCustomValue}
+                  lang={lang}
                 />
               ))}
             </Grid>
