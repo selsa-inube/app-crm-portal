@@ -493,6 +493,13 @@ function EditProductModal(props: EditProductModalProps) {
     }
   };
 
+  const handleInstallmentChange = (
+    formik: FormikProps<FormikValues>,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    handleChangeWithCurrency(formik, event);
+  };
+
   const handleSelectFocus = (fieldId: string) => {
     setTimeout(() => {
       const element = document.getElementById(fieldId);
@@ -886,10 +893,8 @@ function EditProductModal(props: EditProductModalProps) {
                 type="text"
                 size="compact"
                 onBlur={formik.handleBlur}
-                onChange={(event) => handleCurrencyChange(formik, event)}
+                onChange={(event) => handleInstallmentChange(formik, event)}
                 fullwidth
-                message={interestRateError}
-                status={interestRateError ? "invalid" : undefined}
               />
             </Stack>
           </ScrollableContainer>

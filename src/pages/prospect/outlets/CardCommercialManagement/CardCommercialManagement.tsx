@@ -188,6 +188,7 @@ export const CardCommercialManagement = (
         loanTerm: Number(values.termInMonths),
         loanAmount: Number(values.creditAmount),
         paymentChannelAbbreviatedName: values.paymentMethod,
+        installmentAmount: Number(values.installmentAmount),
       };
 
       await updateCreditProduct(

@@ -57,7 +57,7 @@ const SearchByIdProspectUpdateProspect = async (
       console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener la tarea.",
+          "Todos los intentos fallaron. No se pudo actualizar el prospecto.",
         );
       }
     }
