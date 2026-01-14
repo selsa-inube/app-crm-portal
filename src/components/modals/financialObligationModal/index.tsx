@@ -1,5 +1,5 @@
 import { FormikValues, useFormik } from "formik";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney, MdOutlineTag } from "react-icons/md";
 import {
@@ -16,6 +16,8 @@ import {
   validateCurrencyField,
 } from "@utils/formatData/currency";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { EnumContext } from "@context/EnumContext";
+import { getAllBancks } from "@services/bank/SearchAllBank";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -26,6 +28,7 @@ import {
 } from "./config";
 import { dataReport } from "../ReportCreditsModal/config";
 import { TruncatedText } from "../TruncatedTextModal";
+import { IOptionsSelect } from "../RequirementsModals/types";
 
 export interface FinancialObligationModalProps {
   onCloseModal: () => void;
@@ -46,6 +49,9 @@ function FinancialObligationModal({
   iconAfter,
 }: FinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
+  const [banks, setBanks] = useState<IOptionsSelect[]>([]);
+
+  const { enums } = useContext(EnumContext) || {};
 
   const validationSchema = Yup.object({
     type: Yup.string().required(""),
@@ -82,30 +88,53 @@ function FinancialObligationModal({
     },
   });
 
+  const paymentTypeOptions =
+    enums?.PaymentType?.map((item) => ({
+      id: item.code,
+      label: item.i18n[lang],
+      value: item.code,
+    })) || [];
+
+  const obligationsTypeOptions =
+    enums?.ObligationType?.map((item) => ({
+      id: item.code,
+      label: item.i18n[lang],
+      value: item.code,
+    })) || [];
+
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const response = await getAllBancks();
+        const formattedBanks = response.map((bank) => ({
+          id: bank.bankId,
+          label: bank.bankName,
+          value: bank.bankName,
+        }));
+        setBanks(formattedBanks);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBanks();
+  }, []);
+
   const handleFormSubmit = async (values: FormikValues) => {
     onConfirm(values);
   };
 
   useEffect(() => {
-    if (obligationTypeOptions.length === 1) {
-      const onlyOption = obligationTypeOptions[0];
-      formik.setFieldValue("type", onlyOption.value);
+    if (obligationsTypeOptions.length === 1) {
+      formik.setFieldValue("type", obligationsTypeOptions[0].value);
     }
-  }, [obligationTypeOptions]);
+  }, [obligationsTypeOptions]);
 
   useEffect(() => {
-    if (entityOptions.length === 1) {
-      const onlyOption = entityOptions[0];
-      formik.setFieldValue("entity", onlyOption.value);
+    if (paymentTypeOptions.length === 1) {
+      formik.setFieldValue("payment", paymentTypeOptions[0].value);
     }
-  }, [entityOptions]);
-
-  useEffect(() => {
-    if (meansPaymentOptions.length === 1) {
-      const onlyOption = meansPaymentOptions[0];
-      formik.setFieldValue("payment", onlyOption.value);
-    }
-  }, [meansPaymentOptions]);
+  }, [paymentTypeOptions]);
 
   return (
     <BaseModal
@@ -153,10 +182,7 @@ function FinancialObligationModal({
               id="type"
               size="compact"
               placeholder={dataInputs.placeHolderSelect.i18n[lang]}
-              options={obligationTypeOptions.map((opt) => ({
-                ...opt,
-                label: opt.label.i18n[lang],
-              }))}
+              options={obligationsTypeOptions}
               onBlur={formik.handleBlur}
               onChange={(name, value) => formik.setFieldValue(name, value)}
               value={formik.values.type}
@@ -182,10 +208,7 @@ function FinancialObligationModal({
               id="entity"
               size="compact"
               placeholder={dataInputs.placeHolderSelect.i18n[lang]}
-              options={entityOptions.map((opt) => ({
-                ...opt,
-                label: opt.label.i18n[lang],
-              }))}
+              options={banks}
               onBlur={formik.handleBlur}
               onChange={(name, value) => formik.setFieldValue(name, value)}
               value={formik.values.entity}
@@ -249,10 +272,7 @@ function FinancialObligationModal({
               id="payment"
               size="compact"
               placeholder={dataInputs.placeHolderSelect.i18n[lang]}
-              options={meansPaymentOptions.map((opt) => ({
-                ...opt,
-                label: opt.label.i18n[lang],
-              }))}
+              options={paymentTypeOptions}
               onBlur={formik.handleBlur}
               onChange={(name, value) => formik.setFieldValue(name, value)}
               value={formik.values.payment}
