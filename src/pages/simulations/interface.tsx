@@ -388,7 +388,11 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                     appearance="primary"
                                   >
                                     {currencyFormat(
-                                      prospectSummaryData?.requestedAmount || 0,
+                                      dataProspect
+                                        ? Number(
+                                            dataProspect?.requestedAmount || 0,
+                                          )
+                                        : 0,
                                     )}
                                   </Text>
                                 )}

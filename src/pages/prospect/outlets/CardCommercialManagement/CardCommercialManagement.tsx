@@ -22,7 +22,6 @@ import {
 import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
 import { AppContext } from "@context/AppContext";
 import { EditProductModal } from "@components/modals/ProspectProductModal";
-import { Schedule } from "@services/enum/schedule";
 import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeductibleExpensesById";
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
@@ -275,7 +274,9 @@ export const CardCommercialManagement = (
 
     fetchExpenses();
   }, [businessUnitPublicCode, prospectData?.prospectId]);
-
+  console.log("selectedProduct.installmentAmount: ", selectedProduct);
+  console.log("prospectProducts: ", prospectProducts);
+  console.log("prospectData: ", prospectData);
   return (
     <StyledPrintCardProspect>
       <div ref={dataRef}>
@@ -300,7 +301,11 @@ export const CardCommercialManagement = (
                 periodicFee={
                   entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
                 }
-                schedule={entry.installmentFrequency as Schedule}
+                schedule={
+                  prospectData
+                    ? prospectData.selectedRegularPaymentSchedule || ""
+                    : ""
+                }
                 onEdit={() =>
                   canEditCreditRequest
                     ? handleInfo()
@@ -440,12 +445,15 @@ export const CardCommercialManagement = (
               paymentMethod:
                 selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
                   ?.paymentChannelAbbreviatedName || "",
-              paymentCycle: selectedProduct.installmentFrequency || "",
+              paymentCycle: prospectData?.selectedRegularPaymentSchedule || "",
               firstPaymentCycle: "",
               termInMonths: selectedProduct.loanTerm || 0,
               amortizationType: "",
               interestRate: selectedProduct.interestRate || 0,
               rateType: "",
+              installmentAmount:
+                selectedProduct.ordinaryInstallmentsForPrincipal[0]
+                  .installmentAmount || 1,
             }}
             prospectData={{
               lineOfCredit: selectedProduct.lineOfCreditAbbreviatedName || "",

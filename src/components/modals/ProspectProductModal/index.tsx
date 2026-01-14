@@ -28,6 +28,9 @@ import { CustomerContext } from "@context/CustomerContext";
 import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 import { validateIncrement } from "@services/prospect/validateIncrement";
 import { IValidateIncrementRequest } from "@services/prospect/validateIncrement/types";
+import { CardGray } from "@components/cards/CardGray";
+import { capitalizeFirstLetter } from "@utils/formatData/text";
+import { validateCurrencyFieldTruncate } from "@utils/formatData/currency";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -137,7 +140,9 @@ function EditProductModal(props: EditProductModalProps) {
           ...cycle,
           label: paymentCycleMap[cycle.value] || cycle.label,
         }));
+        paymentMethodsList;
         setPaymentCyclesList(mappedPaymentCycles);
+        paymentCyclesList;
 
         const mappedFirstPaymentCycles = response.firstPaymentCycles.map(
           (cycle) => ({
@@ -146,6 +151,7 @@ function EditProductModal(props: EditProductModalProps) {
           }),
         );
         setFirstPaymentCyclesList(mappedFirstPaymentCycles);
+        firstPaymentCyclesList;
       } catch (error) {
         setPaymentMethodsList([
           {
@@ -707,56 +713,19 @@ function EditProductModal(props: EditProductModalProps) {
                 fullwidth
                 disabled={isCreditAmountDisabled()}
               />
-              <Select
-                label="Medio de pago"
-                name="paymentMethod"
-                id="paymentMethod"
-                size="compact"
-                placeholder="Selecciona una opción"
-                options={paymentMethodsList}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "paymentMethod", name, value)
-                }
-                value={
+              <CardGray
+                label={"Medio de pago"}
+                placeHolder={capitalizeFirstLetter(
                   formik.values.paymentMethod.charAt(0).toUpperCase() +
-                  formik.values.paymentMethod.slice(1)
-                }
-                fullwidth
-                disabled={true}
+                    formik.values.paymentMethod.slice(1),
+                )}
               />
-              <Select
-                label="Ciclo de pagos"
-                name="paymentCycle"
-                id="paymentCycle"
-                size="compact"
-                placeholder="Selecciona una opción"
-                options={paymentCyclesList}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "paymentCycle", name, value)
-                }
-                value={
+              <CardGray
+                label={"Ciclo de pagos"}
+                placeHolder={capitalizeFirstLetter(
                   paymentCycleMap[formik.values.paymentCycle] ||
-                  formik.values.paymentCycle
-                }
-                fullwidth
-                disabled={true}
-              />
-              <Select
-                label="Primer ciclo de pago"
-                name="firstPaymentCycle"
-                id="firstPaymentCycle"
-                size="compact"
-                placeholder="Selecciona una opción"
-                options={firstPaymentCyclesList}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "firstPaymentCycle", name, value)
-                }
-                value={formik.values.firstPaymentCycle}
-                fullwidth
-                disabled={true}
+                    formik.values.paymentCycle,
+                )}
               />
               <Select
                 label="Plazo en meses"
@@ -769,7 +738,11 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) =>
                   handleSelectChange(formik, "termInMonths", name, value)
                 }
-                value={formik.values.termInMonths}
+                value={
+                  formik.values.termInMonths % 1 !== 0
+                    ? formik.values.termInMonths.toFixed(4)
+                    : formik.values.termInMonths
+                }
                 fullwidth
                 message={loanTermError}
                 invalid={loanTermError ? true : false}
@@ -890,6 +863,33 @@ function EditProductModal(props: EditProductModalProps) {
                 value={formik.values.rateType}
                 fullwidth
                 disabled={isLoadingRateTypes}
+              />
+              <Textfield
+                label="Monto de la cuota"
+                name="installmentAmount"
+                id="installmentAmount"
+                placeholder="Ej: 500.0000"
+                value={validateCurrencyFieldTruncate(
+                  "installmentAmount",
+                  formik,
+                  false,
+                  "",
+                )}
+                iconBefore={
+                  <Icon
+                    icon={<MdAttachMoney />}
+                    appearance="success"
+                    size="18px"
+                    spacing="narrow"
+                  />
+                }
+                type="text"
+                size="compact"
+                onBlur={formik.handleBlur}
+                onChange={(event) => handleCurrencyChange(formik, event)}
+                fullwidth
+                message={interestRateError}
+                status={interestRateError ? "invalid" : undefined}
               />
             </Stack>
           </ScrollableContainer>
