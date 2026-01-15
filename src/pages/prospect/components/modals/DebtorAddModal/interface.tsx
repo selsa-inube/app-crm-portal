@@ -8,6 +8,7 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { IProspect } from "@services/prospect/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";
@@ -26,6 +27,7 @@ interface DebtorAddModalUIProps {
   AutoCompleted: boolean;
   prospectData: IProspect;
   businessUnitPublicCode: string;
+  lang: EnumType;
   businessManagerCode: string;
   financialObligationsData: {
     customerName: string;
@@ -60,6 +62,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     prospectData,
     businessUnitPublicCode,
     businessManagerCode,
+    lang,
     financialObligationsData,
     setFinancialObligationsData,
     handleFormChange,
@@ -122,6 +125,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               }
               AutoCompleted={AutoCompleted}
               customerData={customerData!}
+              lang={lang}
             />
           )}
         {currentStepsNumber &&
@@ -136,6 +140,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               onCapitalTotalChange={setTotalCapitalIncome}
               onEmploymentTotalChange={setTotalEmploymentIncome}
               onBusinessesTotalChange={setTotalBusinessesIncome}
+              lang={lang}
             />
           )}
         {currentStepsNumber &&
@@ -151,6 +156,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               handleOnChange={(values) =>
                 setFinancialObligationsData(Array.isArray(values) ? values : [])
               }
+              lang={lang}
             />
           )}
         {currentStepsNumber &&
@@ -165,6 +171,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               totalCapitalIncome={totalCapitalIncome}
               totalEmploymentIncome={totalEmploymentIncome}
               totalBusinessesIncome={totalBusinessesIncome}
+              lang={lang}
             />
           )}
       </Stack>

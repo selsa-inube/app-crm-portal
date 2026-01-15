@@ -29,6 +29,7 @@ import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
@@ -43,6 +44,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 interface CardCommercialManagementProps {
   id: string;
   dataRef: React.RefObject<HTMLDivElement>;
+  lang: EnumType;
   onClick: () => void;
   setShowMessageSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   prospectSummaryData?: IProspectSummaryById;
@@ -64,6 +66,7 @@ export const CardCommercialManagement = (
     onClick,
     prospectData,
     showAddProduct = true,
+    lang,
     onProspectUpdate,
     prospectSummaryData,
     setProspectSummaryData,
@@ -275,9 +278,7 @@ export const CardCommercialManagement = (
 
     fetchExpenses();
   }, [businessUnitPublicCode, prospectData?.prospectId]);
-  console.log("selectedProduct.installmentAmount: ", selectedProduct);
-  console.log("prospectProducts: ", prospectProducts);
-  console.log("prospectData: ", prospectData);
+
   return (
     <StyledPrintCardProspect>
       <div ref={dataRef}>
@@ -319,11 +320,12 @@ export const CardCommercialManagement = (
                     : handleDeleteClick(entry.creditProductCode)
                 }
                 showIcons={showAddProduct}
+                lang={lang}
               />
             ))}
             {showAddProduct && !isLoading && (
               <StyledPrint>
-                <NewCreditProductCard onClick={onClick} />
+                <NewCreditProductCard onClick={onClick} lang={lang} />
               </StyledPrint>
             )}
             {isLoading && prospectProducts.length === 0 && (
@@ -412,6 +414,7 @@ export const CardCommercialManagement = (
                   }
                   return {
                     ...item,
+                    title: item.title.i18n[lang],
                     amount: String(prospectSummaryData?.[item.id] ?? 0),
                     icon: iconToRender,
                   };
@@ -430,6 +433,7 @@ export const CardCommercialManagement = (
             handleDelete={handleDelete}
             TextDelete={tittleOptions.deletedExpensesErrorDescription}
             isLoading={isLoading}
+            lang={lang}
           />
         )}
         {currentModal === "editProductModal" && selectedProduct && (
@@ -481,6 +485,7 @@ export const CardCommercialManagement = (
             setConsolidatedCredits={setConsolidatedCredits}
             onProspectRefreshData={onProspectRefreshData}
             showEdit={showAddProduct}
+            lang={lang}
           />
         )}
         {showDeductibleExpensesModal && (
@@ -489,6 +494,7 @@ export const CardCommercialManagement = (
             initialValues={deductibleExpenses}
             loading={isLoading}
             isMobile={isMobile}
+            lang={lang}
           />
         )}
         {isModalOpen && (

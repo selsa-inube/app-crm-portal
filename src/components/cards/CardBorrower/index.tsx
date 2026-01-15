@@ -7,8 +7,10 @@ import {
   MdOutlineRemoveRedEye,
 } from "react-icons/md";
 
+import { EnumType } from "@hooks/useEnum/useEnum";
+
 import { StyledContainer } from "./styles";
-import { newBorrowedDAta } from "./config";
+import { newBorrowedData } from "./config";
 
 export interface ICardBorrowerProps {
   title: string;
@@ -17,6 +19,7 @@ export interface ICardBorrowerProps {
   email: string;
   income: string;
   obligations: string;
+  lang: EnumType;
   handleView?: () => void;
   handleEdit?: () => void;
   handleDelete?: () => void;
@@ -33,6 +36,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
     email,
     income,
     obligations,
+    lang,
     handleView = () => {},
     handleEdit = () => {},
     handleDelete = () => {},
@@ -54,7 +58,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
         <Stack direction="column" gap="8px">
           <Stack direction="column" gap="4px">
             <Text type="label" weight="bold" size="medium" appearance="gray">
-              {newBorrowedDAta.names}
+              {newBorrowedData.names.i18n[lang]}
             </Text>
             <Text type="body" size="large" ellipsis={true}>
               {name}
@@ -62,7 +66,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
           </Stack>
           <Stack direction="column" gap="4px">
             <Text type="label" weight="bold" size="medium" appearance="gray">
-              {newBorrowedDAta.lastNames}
+              {newBorrowedData.lastNames.i18n[lang]}
             </Text>
             <Text type="body" size="large" ellipsis={true}>
               {lastName}
@@ -70,7 +74,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
           </Stack>
           <Stack direction="column" gap="4px">
             <Text type="label" weight="bold" size="medium" appearance="gray">
-              {newBorrowedDAta.email}
+              {newBorrowedData.email.i18n[lang]}
             </Text>
             <Text type="body" size="large" ellipsis={true}>
               {email}
@@ -78,7 +82,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
           </Stack>
           <Stack direction="column" gap="4px" justifyContent="center">
             <Text type="label" weight="bold" size="medium" appearance="gray">
-              {newBorrowedDAta.income}
+              {newBorrowedData.income.i18n[lang]}
             </Text>
             <Stack alignItems="center">
               <Icon
@@ -93,7 +97,7 @@ export function CardBorrower(props: ICardBorrowerProps) {
           </Stack>
           <Stack direction="column" gap="4px" justifyContent="center">
             <Text type="label" weight="bold" size="medium" appearance="gray">
-              {newBorrowedDAta.obligations}
+              {newBorrowedData.obligations.i18n[lang]}
             </Text>
             <Stack alignItems="center">
               <Icon

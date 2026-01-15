@@ -10,12 +10,26 @@ const entrySelection = (data: IEntries) => {
 export const titlesPostingvouchers = [
   {
     id: "obligationCode",
-    titleName: "No. de Obligación",
+    titleName: {
+      code: "PostingVouchers_title_obligationCode",
+      description: "Obligation number column title",
+      i18n: {
+        en: "Obligation No.",
+        es: "No. de Obligación",
+      },
+    },
     priority: 1,
   },
   {
     id: "documentCode",
-    titleName: "No. de Documento",
+    titleName: {
+      code: "PostingVouchers_title_documentCode",
+      description: "Document number column title",
+      i18n: {
+        en: "Document No.",
+        es: "No. de Documento",
+      },
+    },
     priority: 2,
   },
 ];
@@ -23,7 +37,14 @@ export const titlesPostingvouchers = [
 export const actionsPostingvouchers = [
   {
     id: "ver imagen",
-    actionName: "Ver Imagen",
+    actionName: {
+      code: "PostingVouchers_action_viewImage",
+      description: "View image action",
+      i18n: {
+        en: "View image",
+        es: "Ver Imagen",
+      },
+    },
     content: (data: IEntries) => (
       <Icon
         appearance="primary"

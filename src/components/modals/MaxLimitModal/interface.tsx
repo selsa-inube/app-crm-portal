@@ -5,6 +5,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
 import { Fieldset } from "@components/data/Fieldset";
 import { IMaximumCreditLimit } from "@services/creditLimit/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { incomeModalConfig } from "./IcomeModalConfig";
 
@@ -13,6 +14,7 @@ interface IMaxLimitModalUIProps {
   error: boolean;
   isMobile: boolean;
   dataMaximumCreditLimitService: IMaximumCreditLimit;
+  lang: EnumType;
   handleClose: () => void;
 }
 
@@ -22,13 +24,14 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
     loading,
     error,
     isMobile,
+    lang,
     handleClose,
   } = props;
 
   return (
     <BaseModal
-      title={incomeModalConfig.title}
-      nextButton={incomeModalConfig.buttons.close}
+      title={incomeModalConfig.title.i18n[lang]}
+      nextButton={incomeModalConfig.buttons.close.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       variantNext="outlined"
@@ -38,10 +41,10 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
         <Stack direction="column" alignItems="center">
           <Icon icon={<MdErrorOutline />} size="32px" appearance="danger" />
           <Text size="large" weight="bold" appearance="danger">
-            {incomeModalConfig.error.title}
+            {incomeModalConfig.error.title.i18n[lang]}
           </Text>
           <Text size="small" appearance="dark" textAlign="center">
-            {incomeModalConfig.error.message}
+            {incomeModalConfig.error.message.i18n[lang]}
           </Text>
         </Stack>
       ) : (
@@ -49,7 +52,7 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
           <Stack direction="column" gap="12px">
             <Stack justifyContent="space-between">
               <Text size="large" weight="bold" type="label">
-                {incomeModalConfig.financialObligations.label}
+                {incomeModalConfig.financialObligations.label.i18n[lang]}
               </Text>
               <Stack alignItems="center">
                 <Text appearance="success">$</Text>
@@ -68,7 +71,7 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
             </Stack>
             <Stack justifyContent="space-between">
               <Text appearance="gray" size="large" weight="bold" type="label">
-                {incomeModalConfig.subsistenceReserve.label}
+                {incomeModalConfig.subsistenceReserve.label.i18n[lang]}
               </Text>
               <Stack alignItems="center">
                 <Text appearance="success">$</Text>
@@ -102,7 +105,7 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
               >
                 $
                 {loading
-                  ? incomeModalConfig.loading
+                  ? incomeModalConfig.loading.i18n[lang]
                   : currencyFormat(
                       dataMaximumCreditLimitService.lineOfCreditLoanAmountLimitRegulation ||
                         0,
@@ -110,7 +113,7 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                     )}
               </Text>
               <Text appearance="gray" size="small">
-                {incomeModalConfig.maxAmount}
+                {incomeModalConfig.maxAmount.i18n[lang]}
               </Text>
             </Stack>
           </Fieldset>

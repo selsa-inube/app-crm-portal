@@ -6,7 +6,7 @@ import { PaymentConfigurationUI } from "./interface";
 import { paymentConfiguration, IPaymentConfigurationMain } from "../config";
 
 export function PaymentConfiguration(props: IPaymentConfigurationMain) {
-  const { paymentConfig, onChange, onFormValid } = props;
+  const { paymentConfig, lang, onChange, onFormValid } = props;
   const flatChannels = useMemo(() => {
     return (
       paymentConfig.paymentChannelData?.flatMap(
@@ -136,19 +136,37 @@ export function PaymentConfiguration(props: IPaymentConfigurationMain) {
   const hasOnlyOnePaymentCycle = paymentCycleOptions.length === 1;
   const hasOnlyOneFirstPaymentDate = firstPaymentDateOptions.length === 1;
 
+  const translatedConfig = useMemo(() => {
+    return {
+      paymentMethod: {
+        label: paymentConfiguration.paymentMethod.label.i18n[lang],
+        placeholder: paymentConfiguration.paymentMethod.placeholder.i18n[lang],
+      },
+      paymentCycle: {
+        label: paymentConfiguration.paymentCycle.label.i18n[lang],
+      },
+      firstPaymentDate: {
+        label: paymentConfiguration.firstPaymentDate.label.i18n[lang],
+        placeholder:
+          paymentConfiguration.firstPaymentDate.placeholder.i18n[lang],
+      },
+    };
+  }, [lang]);
+
   return (
     <PaymentConfigurationUI
       paymentConfig={paymentConfig}
       paymentMethodOptions={paymentMethodOptions}
       paymentCycleOptions={paymentCycleOptions}
       firstPaymentDateOptions={firstPaymentDateOptions}
-      paymentConfiguration={paymentConfiguration}
+      paymentConfiguration={translatedConfig}
       handlePaymentMethodChange={handlePaymentMethodChange}
       handlePaymentCycleChange={handlePaymentCycleChange}
       handleFirstPaymentDateChange={handleFirstPaymentDateChange}
       hasOnlyOnePaymentMethod={hasOnlyOnePaymentMethod}
       hasOnlyOnePaymentCycle={hasOnlyOnePaymentCycle}
       hasOnlyOneFirstPaymentDate={hasOnlyOneFirstPaymentDate}
+      lang={lang}
     />
   );
 }

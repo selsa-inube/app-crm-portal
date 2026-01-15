@@ -240,7 +240,7 @@ const actionsMobile = [
 ];
 
 const getRequirementCode = (codeKey: string) => {
-  return requirementStatus.find((item) => item.Code === codeKey)?.Code || "";
+  return requirementStatus.find((item) => item.code === codeKey)?.code || "";
 };
 
 const generateTag = (value: string): JSX.Element => {

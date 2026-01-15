@@ -17,13 +17,13 @@ const handleData = (data: IEntries) => {
 
 export const titlesApprovals = [
   {
-    id: approvalsConfig.ids.users,
-    titleName: approvalsConfig.titles.assignedApprovers,
+    id: approvalsConfig.ids.users.i18n.es,
+    titleName: approvalsConfig.titles.assignedApprovers.i18n.es,
     priority: 1,
   },
   {
-    id: approvalsConfig.ids.tag,
-    titleName: approvalsConfig.titles.decision,
+    id: approvalsConfig.ids.tag.i18n.es,
+    titleName: approvalsConfig.titles.decision.i18n.es,
     priority: 2,
   },
 ];
@@ -159,9 +159,9 @@ export const getMobileActionsConfig = (
     id: action.id,
     content: (data: IEntries) => {
       const handleClick = () => {
-        if (action.id === approvalsConfig.ids.notifications) {
+        if (action.id === approvalsConfig.ids.notifications.i18n.es) {
           handleNotificationClickBound(data);
-        } else if (action.id === approvalsConfig.ids.error) {
+        } else if (action.id === approvalsConfig.ids.error.i18n.es) {
           handleErrorClickBound(data);
         }
       };
@@ -171,19 +171,19 @@ export const getMobileActionsConfig = (
 };
 
 const appearanceTag = (label: string) => {
-  if (label === approvalsConfig.status.approved) {
+  if (label === approvalsConfig.status.approved.i18n.es) {
     return "success";
   }
-  if (label === approvalsConfig.status.pending) {
+  if (label === approvalsConfig.status.pending.i18n.es) {
     return "warning";
   }
-  if (label === approvalsConfig.status.returned) {
+  if (label === approvalsConfig.status.returned.i18n.es) {
     return "help";
   }
-  if (label === approvalsConfig.status.commercialManagement) {
+  if (label === approvalsConfig.status.commercialManagement.i18n.es) {
     return "help";
   }
-  if (label === approvalsConfig.status.riskAnalysis) {
+  if (label === approvalsConfig.status.riskAnalysis.i18n.es) {
     return "dark";
   }
   return "danger";
@@ -196,7 +196,7 @@ const getIconByTagStatus = (tagElement: React.ReactElement) => {
     return (
       <img
         src={check}
-        alt={approvalsConfig.altTexts.complies}
+        alt={approvalsConfig.altTexts.complies.i18n.es}
         width={14}
         height={14}
       />
@@ -205,7 +205,7 @@ const getIconByTagStatus = (tagElement: React.ReactElement) => {
     return (
       <img
         src={remove}
-        alt={approvalsConfig.altTexts.notEvaluated}
+        alt={approvalsConfig.altTexts.notEvaluated.i18n.es}
         width={14}
         height={14}
       />
@@ -214,7 +214,7 @@ const getIconByTagStatus = (tagElement: React.ReactElement) => {
     return (
       <img
         src={close}
-        alt={approvalsConfig.altTexts.doesNotComply}
+        alt={approvalsConfig.altTexts.doesNotComply.i18n.es}
         width={14}
         height={14}
       />
@@ -223,7 +223,7 @@ const getIconByTagStatus = (tagElement: React.ReactElement) => {
     return (
       <img
         src={info}
-        alt={approvalsConfig.altTexts.returned}
+        alt={approvalsConfig.altTexts.returned.i18n.es}
         width={14}
         height={14}
       />
@@ -236,7 +236,7 @@ const getIconByTagStatus = (tagElement: React.ReactElement) => {
 export const getActionsMobileIcon = () => {
   return [
     {
-      id: approvalsConfig.ids.status,
+      id: approvalsConfig.ids.status.i18n.es,
       actionName: "",
       content: (entry: IEntries) => {
         const tagElement = entry.tag as React.ReactElement;
@@ -258,7 +258,7 @@ export const getActionsMobileIcon = () => {
 export const entriesApprovals = (data: IApprovals[]) => {
   return data.map((entry) => ({
     id: entry?.approverName?.toString(),
-    [approvalsConfig.ids.users]: entry?.approverName,
+    [approvalsConfig.ids.users.i18n.es]: entry?.approverName,
     concept: entry?.concept,
     identificationNumber: entry?.approverIdentificationNumber,
     identificationType: entry?.approverIdentificationType,

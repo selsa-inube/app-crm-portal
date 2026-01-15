@@ -16,6 +16,7 @@ import {
 } from "@services/creditLimit/types";
 import { IFormData } from "@pages/simulateCredit/types";
 import { StyledContainer } from "@pages/simulateCredit/components/CreditLimitCard/styles";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataCreditLimitModal } from "./config";
 
@@ -32,6 +33,7 @@ export interface ICreditLimitModalProps {
   paymentCapacityData?: IPaymentCapacityData;
   userAccount: string;
   incomeData: IFormData | IIncomeSources;
+  lang: EnumType;
 }
 
 export function CreditLimitModal(props: ICreditLimitModalProps) {
@@ -44,6 +46,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     handleClose,
     userAccount,
     incomeData,
+    lang,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -83,8 +86,8 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
   return (
     <>
       <BaseModal
-        title={dataCreditLimitModal.title}
-        nextButton={dataCreditLimitModal.close}
+        title={dataCreditLimitModal.title.i18n[lang]}
+        nextButton={dataCreditLimitModal.close.i18n[lang]}
         handleNext={handleClose}
         handleClose={handleClose}
         width={isMobile ? "300px " : "450px"}
@@ -94,16 +97,16 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
           <Stack direction="column" alignItems="center">
             <Icon icon={<MdErrorOutline />} size="32px" appearance="danger" />
             <Text size="large" weight="bold" appearance="danger">
-              {dataCreditLimitModal.error.title}
+              {dataCreditLimitModal.error.title.i18n[lang]}
             </Text>
             <Text size="small" appearance="dark" textAlign="center">
-              {dataCreditLimitModal.error.message}
+              {dataCreditLimitModal.error.message.i18n[lang]}
             </Text>
           </Stack>
         ) : (
           <Stack direction="column" gap="26px">
             <Text appearance="gray" type="body" size="medium" weight="normal">
-              {dataCreditLimitModal.creditText}
+              {dataCreditLimitModal.creditText.i18n[lang]}
             </Text>
             <Stack
               direction={isMobile ? "column" : "row"}
@@ -124,6 +127,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
                   setError={setError}
                   error={error}
                   incomeData={incomeData as IIncomeSources}
+                  lang={lang}
                 />
               ))}
               {isLoading &&
@@ -149,9 +153,9 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
                 size="medium"
                 weight="bold"
               >
-                {dataCreditLimitModal.import}
+                {dataCreditLimitModal.import.i18n[lang]}
               </Text>
-              {dataCreditLimitModal.textImport}
+              {dataCreditLimitModal.textImport.i18n[lang]}
             </Text>
           </Stack>
         )}

@@ -12,6 +12,7 @@ import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataProperty } from "./config";
 import { IPropertyOffered } from "../../types";
@@ -19,12 +20,13 @@ import { IPropertyOffered } from "../../types";
 interface IPropertyOfferedProps {
   isMobile: boolean;
   initialValues: IPropertyOffered;
+  lang: EnumType;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IPropertyOffered) => void;
 }
 
 export function PropertyOffered(props: IPropertyOfferedProps) {
-  const { isMobile, initialValues, onFormValid, handleOnChange } = props;
+  const { isMobile, initialValues, lang, onFormValid, handleOnChange } = props;
 
   const validationSchema = Yup.object({
     type: Yup.string().required(),
@@ -78,8 +80,8 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             <Textfield
               name="type"
               id="type"
-              label={dataProperty.labelType}
-              placeholder={dataProperty.placeHolderType}
+              label={dataProperty.labelType.i18n[lang]}
+              placeholder={dataProperty.placeHolderType.i18n[lang]}
               size="compact"
               value={optionsOfferedType[0]?.label || ""}
               readOnly={true}
@@ -90,8 +92,8 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             <Select
               name="type"
               id="type"
-              label={dataProperty.labelType}
-              placeholder={dataProperty.placeHolderType}
+              label={dataProperty.labelType.i18n[lang]}
+              placeholder={dataProperty.placeHolderType.i18n[lang]}
               size="compact"
               options={optionsOfferedType}
               onBlur={formik.handleBlur}
@@ -105,8 +107,8 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             <Textfield
               name="state"
               id="state"
-              label={dataProperty.labelState}
-              placeholder={dataProperty.placeHolderState}
+              label={dataProperty.labelState.i18n[lang]}
+              placeholder={dataProperty.placeHolderState.i18n[lang]}
               size="compact"
               value={optionsOfferedstate[0]?.label || ""}
               readOnly={true}
@@ -117,8 +119,8 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             <Select
               name="state"
               id="state"
-              label={dataProperty.labelState}
-              placeholder={dataProperty.placeHolderState}
+              label={dataProperty.labelState.i18n[lang]}
+              placeholder={dataProperty.placeHolderState.i18n[lang]}
               size="compact"
               options={optionsOfferedstate}
               onBlur={formik.handleBlur}
@@ -131,8 +133,8 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             name="antique"
             id="antique"
             type="number"
-            label={dataProperty.labelAntique}
-            placeholder={dataProperty.placeHolderAntique}
+            label={dataProperty.labelAntique.i18n[lang]}
+            placeholder={dataProperty.placeHolderAntique.i18n[lang]}
             size="compact"
             value={formik.values.antique}
             onChange={formik.handleChange}
@@ -144,8 +146,8 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
             name="estimated"
             id="estimated"
             type="text"
-            label={dataProperty.labelEstimated}
-            placeholder={dataProperty.placeHolderEstimated}
+            label={dataProperty.labelEstimated.i18n[lang]}
+            placeholder={dataProperty.placeHolderEstimated.i18n[lang]}
             size="compact"
             value={validateCurrencyField("estimated", formik, true, "")}
             onChange={(e) => handleChangeWithCurrency(formik, e)}
@@ -156,8 +158,8 @@ export function PropertyOffered(props: IPropertyOfferedProps) {
         <Textarea
           name="description"
           id="description"
-          label={dataProperty.labelDescription}
-          placeholder={dataProperty.placeHolderDescription}
+          label={dataProperty.labelDescription.i18n[lang]}
+          placeholder={dataProperty.placeHolderDescription.i18n[lang]}
           value={formik.values.description}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}

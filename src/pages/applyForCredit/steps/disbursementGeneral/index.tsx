@@ -6,6 +6,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { AppContext } from "@context/AppContext";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect, IProspectSummaryById } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { DisbursementWithInternalAccount } from "./disbursementWithInternalAccount/index";
 import { DisbursementWithExternalAccount } from "./disbursementWithExternalAccount";
@@ -27,6 +28,7 @@ interface IDisbursementGeneralProps {
   customerData?: ICustomerData;
   prospectSummaryData: IProspectSummaryById | undefined;
   modesOfDisbursement: string[];
+  lang: EnumType;
 }
 
 interface Tab {
@@ -47,6 +49,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     modesOfDisbursement,
     customerData,
     prospectSummaryData,
+    lang,
   } = props;
 
   const [tabChanged, setTabChanged] = useState(false);
@@ -124,10 +127,15 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   const fetchTabs = useCallback(() => {
     if (modesOfDisbursement.length === 0) return;
     const allTabs = Object.values(disbursemenTabs);
-    const availableTabs = allTabs.filter((tab) =>
-      modesOfDisbursement.includes(tab.id),
-    );
+    const availableTabs = allTabs
+      .filter((tab) => modesOfDisbursement.includes(tab.id))
+      .map((tab) => ({
+        ...tab,
+        label: tab.label.description,
+      }));
+
     setValidTabs(availableTabs);
+
     if (availableTabs.length === 1) {
       const tabId = availableTabs[0].id;
       formik.setFieldValue(`${tabId}.amount`, initialValues.amount);
@@ -178,6 +186,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 isAmountReadOnly={isAmountReadOnly}
                 prospectSummaryData={prospectSummaryData}
                 businessManagerCode={businessManagerCode}
+                lang={lang}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.external.id) &&
@@ -195,6 +204,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 identificationNumber={identificationNumber}
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
+                lang={lang}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.check.id) &&
@@ -212,6 +222,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 identificationNumber={identificationNumber}
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
+                lang={lang}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.management.id) &&
@@ -229,6 +240,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 identificationNumber={identificationNumber}
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
+                lang={lang}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.cash.id) &&
@@ -246,6 +258,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 identificationNumber={identificationNumber}
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
+                lang={lang}
               />
             )}
         </Stack>

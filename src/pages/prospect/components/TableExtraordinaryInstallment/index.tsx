@@ -5,6 +5,7 @@ import {
   IExtraordinaryInstallments,
   IProspect,
 } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -21,6 +22,7 @@ export interface TableExtraordinaryInstallmentProps {
   businessUnitPublicCode?: string;
   extraordinary?: TableExtraordinaryInstallmentProps[];
   service?: boolean;
+  lang?: EnumType;
   businessManagerCode?: string;
   setSentData?: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
@@ -77,6 +79,7 @@ export const TableExtraordinaryInstallment = (
     prospectData,
     businessUnitPublicCode,
     extraordinary,
+    lang,
     service = true,
     setSentData,
     handleClose,
@@ -254,6 +257,7 @@ export const TableExtraordinaryInstallment = (
         setOpenMenuIndex={setOpenMenuIndex}
         openMenuIndex={openMenuIndex}
         isLoadingDelete={isLoadingDelete}
+        lang={lang as EnumType}
       />
     </>
   );

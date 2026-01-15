@@ -31,6 +31,7 @@ import { IValidateIncrementRequest } from "@services/prospect/validateIncrement/
 import { CardGray } from "@components/cards/CardGray";
 import { capitalizeFirstLetter } from "@utils/formatData/text";
 import { validateCurrencyFieldTruncate } from "@utils/formatData/currency";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -45,6 +46,7 @@ import {
   validationMessages,
   REPAYMENT_STRUCTURES_WITH_INCREMENT,
   repaymentStructureMap,
+  simulationFormLabels,
 } from "./config";
 import { TruncatedText } from "../TruncatedTextModal";
 
@@ -83,6 +85,8 @@ function EditProductModal(props: EditProductModalProps) {
     setMessageError,
     isProcessingServices,
   } = props;
+
+  const { lang } = useEnum();
 
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
   const [incrementType, setIncrementType] = useState<
@@ -668,7 +672,7 @@ function EditProductModal(props: EditProductModalProps) {
               type="headline"
             />
           }
-          backButton="Cancelar"
+          backButton={simulationFormLabels.cancelButton.i18n[lang]}
           nextButton={confirmButtonText}
           handleNext={formik.submitForm}
           handleBack={onCloseModal}
@@ -702,7 +706,9 @@ function EditProductModal(props: EditProductModalProps) {
                 label={fieldLabels.creditAmount}
                 name="creditAmount"
                 id="creditAmount"
-                placeholder="Monto solicitado"
+                placeholder={
+                  simulationFormLabels.creditAmountPlaceholder.i18n[lang]
+                }
                 value={validateCurrencyField("creditAmount", formik, false, "")}
                 status={loanAmountError ? "invalid" : undefined}
                 message={loanAmountError}
@@ -721,7 +727,7 @@ function EditProductModal(props: EditProductModalProps) {
                 disabled={isCreditAmountDisabled()}
               />
               <CardGray
-                label={"Medio de pago"}
+                label={simulationFormLabels.paymentMethod.i18n[lang]}
                 placeHolder={capitalizeFirstLetter(
                   formik.values.paymentMethod.charAt(0).toUpperCase() +
                     formik.values.paymentMethod.slice(1),
@@ -735,11 +741,11 @@ function EditProductModal(props: EditProductModalProps) {
                 )}
               />
               <Select
-                label="Plazo en meses"
+                label={simulationFormLabels.termInMonthsLabel.i18n[lang]}
                 name="termInMonths"
                 id="termInMonths"
                 size="compact"
-                placeholder="Selecciona una opción"
+                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
                 options={termInMonthsOptions}
                 onBlur={formik.handleBlur}
                 onChange={(name, value) =>
@@ -756,11 +762,11 @@ function EditProductModal(props: EditProductModalProps) {
                 disabled={isTermInMonthsDisabled()}
               />
               <Select
-                label="Tipo de amortización"
+                label={simulationFormLabels.amortizationTypeLabel.i18n[lang]}
                 name="amortizationType"
                 id="amortizationType"
                 size="compact"
-                placeholder="Selecciona una opción"
+                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
                 options={amortizationTypesList}
                 onBlur={formik.handleBlur}
                 onChange={(name, value) =>
@@ -832,10 +838,12 @@ function EditProductModal(props: EditProductModalProps) {
                 />
               )}
               <Textfield
-                label="Tasa de interés"
+                label={simulationFormLabels.interestRateLabel.i18n[lang]}
                 name="interestRate"
                 id="interestRate"
-                placeholder="Ej: 0.9"
+                placeholder={
+                  simulationFormLabels.interestRatePlaceholder.i18n[lang]
+                }
                 value={Number(formik.values.interestRate).toFixed(4)}
                 iconAfter={
                   <Icon
@@ -856,11 +864,11 @@ function EditProductModal(props: EditProductModalProps) {
                 status={interestRateError ? "invalid" : undefined}
               />
               <Select
-                label="Tipo de tasa"
+                label={simulationFormLabels.rateTypeLabel.i18n[lang]}
                 name="rateType"
                 id="rateType"
                 size="compact"
-                placeholder="Selecciona una opción"
+                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
                 options={rateTypesList}
                 onBlur={formik.handleBlur}
                 onChange={(name, value) =>
@@ -872,10 +880,12 @@ function EditProductModal(props: EditProductModalProps) {
                 disabled={isLoadingRateTypes}
               />
               <Textfield
-                label="Monto de la cuota"
+                label={simulationFormLabels.installmentAmountLabel.i18n[lang]}
                 name="installmentAmount"
                 id="installmentAmount"
-                placeholder="Ej: 500.0000"
+                placeholder={
+                  simulationFormLabels.installmentAmountPlaceholder.i18n[lang]
+                }
                 value={validateCurrencyFieldTruncate(
                   "installmentAmount",
                   formik,

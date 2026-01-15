@@ -17,6 +17,7 @@ export function TermSelection(props: ITermSelection) {
     quotaCapEnabled,
     maximumTermEnabled,
     isMobile,
+    lang,
     onChange,
     onFormValid,
   } = props;
@@ -174,6 +175,7 @@ export function TermSelection(props: ITermSelection) {
       handleQuotaCapValueChange={handleQuotaCapValueChange}
       handleMaximumTermToggleChange={handleMaximumTermToggleChange}
       handleMaximumTermValueChange={handleMaximumTermValueChange}
+      lang={lang}
     />
   );
 }

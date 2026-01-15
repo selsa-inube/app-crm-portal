@@ -9,6 +9,7 @@ import {
 import { Schedule } from "@services/enum/schedule";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 import { IStepDetails } from "@pages/payrollBenefits/types";
 
 import { IPaymentConfiguration } from "./steps/config";
@@ -160,6 +161,7 @@ export interface IAddProductModalProps {
   businessManagerCode: string;
   dataProspect: IProspect;
   isLoading: boolean;
+  lang: EnumType;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   customerData?: ICustomerData;
@@ -250,6 +252,7 @@ export interface IAddProductModalUIProps {
   errorMessage: string;
   loading: boolean;
   isLoading: boolean;
+  lang: EnumType;
 }
 
 export interface IStep {
@@ -263,40 +266,131 @@ export const stepsAddProduct = {
   creditLineSelection: {
     id: 1,
     number: 1,
-    name: "Línea de crédito",
-    description: "Selecciona la línea de crédito",
+    name: {
+      code: "Credit_line_selection_name",
+      description: "Credit line step name",
+      i18n: {
+        en: "Credit line",
+        es: "Línea de crédito",
+      },
+    },
+    description: {
+      code: "Credit_line_selection_description",
+      description: "Credit line step description",
+      i18n: {
+        en: "Select the credit line",
+        es: "Selecciona la línea de crédito",
+      },
+    },
   },
   paymentConfiguration: {
     id: 2,
     number: 2,
-    name: "Configuración de pago",
-    description: "Configura el medio y ciclo de pago",
+    name: {
+      code: "Payment_configuration_name",
+      description: "Payment configuration step name",
+      i18n: {
+        en: "Payment configuration",
+        es: "Configuración de pago",
+      },
+    },
+    description: {
+      code: "Payment_configuration_description",
+      description: "Payment configuration step description",
+      i18n: {
+        en: "Configure the payment channel and cycle",
+        es: "Configura el medio y ciclo de pago",
+      },
+    },
   },
   termSelection: {
     id: 3,
     number: 3,
-    name: "Plazo",
-    description: "Selecciona el plazo del crédito",
+    name: {
+      code: "Term_selection_name",
+      description: "Term selection step name",
+      i18n: {
+        en: "Term",
+        es: "Plazo",
+      },
+    },
+    description: {
+      code: "Term_selection_description",
+      description: "Term selection step description",
+      i18n: {
+        en: "Select the credit term",
+        es: "Selecciona el plazo del crédito",
+      },
+    },
   },
   amountCapture: {
     id: 4,
     number: 4,
-    name: "Monto a solicitar",
-    description: "Ingresa el monto del crédito",
+    name: {
+      code: "Amount_capture_name",
+      description: "Amount capture step name",
+      i18n: {
+        en: "Amount to request",
+        es: "Monto a solicitar",
+      },
+    },
+    description: {
+      code: "Amount_capture_description",
+      description: "Amount capture step description",
+      i18n: {
+        en: "Enter the credit amount",
+        es: "Ingresa el monto del crédito",
+      },
+    },
   },
 };
 
 export const titleButtonTextAssisted = {
-  goBackText: "Atrás",
-  goNextText: "Siguiente",
-  submitText: "Agregar producto",
+  goBackText: {
+    code: "Go_back_text",
+    description: "Back button label",
+    i18n: {
+      en: "Back",
+      es: "Atrás",
+    },
+  },
+  goNextText: {
+    code: "Go_next_text",
+    description: "Next button label",
+    i18n: {
+      en: "Next",
+      es: "Siguiente",
+    },
+  },
+  submitText: {
+    code: "Submit_text",
+    description: "Add product button label",
+    i18n: {
+      en: "Add product",
+      es: "Agregar producto",
+    },
+  },
 };
 
 export const errorMessages = {
-  getPaymentMethods: "Error al obtener los medios de pago",
+  getPaymentMethods: {
+    code: "Get_payment_methods_error",
+    description: "Error fetching payment channels",
+    i18n: {
+      en: "Error obtaining payment channels",
+      es: "Error al obtener los medios de pago",
+    },
+  },
 };
 
-export const noAvailablePaymentMethods = "No hay medios de pago disponibles";
+export const noAvailablePaymentMethods = {
+  code: "No_available_payment_methods",
+  description: "Empty payment channels message",
+  i18n: {
+    en: "No payment channels available",
+    es: "No hay medios de pago disponibles",
+  },
+};
 
 export interface IFirstPaymentDate {
   id: string;

@@ -39,6 +39,7 @@ import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { privilegeCrm } from "@config/privilege";
 import { borrowerData } from "@pages/applyForCredit/steps/borrowerData/config";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
@@ -56,6 +57,7 @@ export interface ITableFinancialObligationsProps {
   refreshKey?: number;
   setRefreshKey?: React.Dispatch<React.SetStateAction<number>>;
   showActions?: boolean;
+  lang?: EnumType;
   showOnlyEdit?: boolean;
   showButtons?: boolean;
   showAddButton?: boolean;
@@ -105,6 +107,7 @@ interface UIProps {
   extraDebtors: ITableFinancialObligationsProps[];
   selectedBorrower: ITableFinancialObligationsProps | null;
   loading: boolean;
+  lang: EnumType;
   visibleHeaders: { key: string; label: string; action?: boolean }[];
   isModalOpenEdit: boolean;
   businessManagerCode: string;
@@ -176,6 +179,7 @@ export const TableFinancialObligationsUI = ({
   isMobile,
   isModalOpenEdit,
   businessManagerCode,
+  lang,
   setIsModalOpenEdit,
   onProspectUpdate,
   showOnlyEdit,
@@ -504,7 +508,7 @@ export const TableFinancialObligationsUI = ({
               services &&
               initialValues?.[0]?.borrowers?.length <= 1 && (
                 <Text size="medium" type="label" weight="bold">
-                  {borrowerData.borrower}
+                  {borrowerData.borrower.i18n[lang]}
                 </Text>
               )}
           </Stack>
@@ -587,7 +591,7 @@ export const TableFinancialObligationsUI = ({
                     )
                   ) : services ? (
                     <CardGray
-                      label={borrowerData.borrower}
+                      label={borrowerData.borrower.i18n[lang]}
                       placeHolder={customerData?.fullName}
                       isMobile={true}
                     />
@@ -627,7 +631,7 @@ export const TableFinancialObligationsUI = ({
               </Stack>
               <Stack gap="2px">
                 <Button
-                  children={dataReport.addObligations}
+                  children={dataReport.addObligations.i18n[lang]}
                   iconBefore={<MdAdd />}
                   disabled={canEditCreditRequest}
                   fullwidth={isMobile}
@@ -672,7 +676,7 @@ export const TableFinancialObligationsUI = ({
                     appearance="gray"
                     textAlign="center"
                   >
-                    {dataReport.noData}
+                    {dataReport.noData.i18n[lang]}
                   </Text>
                 </Stack>
               </Td>
@@ -702,9 +706,9 @@ export const TableFinancialObligationsUI = ({
       <Stack gap="15px" justifyContent="center">
         {isOpenModal && (
           <BaseModal
-            title={dataReport.restore}
-            nextButton={dataReport.restore}
-            backButton={dataReport.cancel}
+            title={dataReport.restore.i18n[lang]}
+            nextButton={dataReport.restore.i18n[lang]}
+            backButton={dataReport.cancel.i18n[lang]}
             handleNext={() => {
               handleRestore();
               setIsOpenModal(false);
@@ -712,7 +716,7 @@ export const TableFinancialObligationsUI = ({
             handleBack={() => setIsOpenModal(false)}
             handleClose={() => setIsOpenModal(false)}
           >
-            <Text>{dataReport.descriptionModal}</Text>
+            <Text>{dataReport.descriptionModal.i18n[lang]}</Text>
           </BaseModal>
         )}
       </Stack>
@@ -722,6 +726,7 @@ export const TableFinancialObligationsUI = ({
           onCloseModal={handleCloseModal}
           onConfirm={handleConfirm}
           confirmButtonText="Agregar"
+          lang={lang}
         />
       )}
       {showErrorModal && (
@@ -749,14 +754,15 @@ export const TableFinancialObligationsUI = ({
             await handleUpdate(updatedDebtor);
           }}
           initialValues={selectedBorrower}
-          confirmButtonText={dataReport.save}
+          confirmButtonText={dataReport.save.i18n[lang]}
+          lang={lang}
         />
       )}
       {isDeleteModal && (
         <BaseModal
-          title={dataReport.deletion}
-          nextButton={dataReport.delete}
-          backButton={dataReport.cancel}
+          title={dataReport.deletion.i18n[lang]}
+          nextButton={dataReport.delete.i18n[lang]}
+          backButton={dataReport.cancel.i18n[lang]}
           handleNext={() => {
             handleDelete(selectedBorrower?.propertyValue ?? "");
             setIsDeleteModal(false);
@@ -764,7 +770,7 @@ export const TableFinancialObligationsUI = ({
           handleClose={() => setIsDeleteModal(false)}
         >
           <Stack width="400px">
-            <Text>{dataReport.content}</Text>
+            <Text>{dataReport.content.i18n[lang]}</Text>
           </Stack>
         </BaseModal>
       )}
@@ -782,7 +788,7 @@ export const TableFinancialObligationsUI = ({
         ) : (
           <NewPrice
             value={totalBalance}
-            label={dataReport.descriptionTotalBalance}
+            label={dataReport.descriptionTotalBalance.i18n[lang]}
           />
         )}
         {loading ? (
@@ -791,7 +797,10 @@ export const TableFinancialObligationsUI = ({
             <SkeletonLine animated width="140px" />
           </Stack>
         ) : (
-          <NewPrice value={totalFee} label={dataReport.descriptionTotalFee} />
+          <NewPrice
+            value={totalFee}
+            label={dataReport.descriptionTotalFee.i18n[lang]}
+          />
         )}
       </Stack>
     </Stack>

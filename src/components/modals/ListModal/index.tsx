@@ -19,6 +19,7 @@ import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { DocumentViewer } from "../DocumentViewer";
 import {
@@ -112,6 +113,7 @@ export const ListModal = (props: IListModalProps) => {
   } = props;
 
   const [openFlag, setOpenFlag] = useState(false);
+  const { lang } = useEnum();
 
   const node = document.getElementById(portalId ?? "portal");
   if (!node) {
@@ -470,7 +472,7 @@ export const ListModal = (props: IListModalProps) => {
             </Text>
             <StyledContainerClose onClick={handleClose}>
               <Stack alignItems="center" gap="8px">
-                <Text>{listModalData.close}</Text>
+                <Text>{listModalData.close.i18n[lang]}</Text>
                 <Icon
                   icon={<MdClear />}
                   size="24px"
@@ -510,11 +512,11 @@ export const ListModal = (props: IListModalProps) => {
                 $isDragging={isDragging}
               >
                 <Stack direction="column" alignItems="center">
-                  <Text>{listModalData.drag}</Text>
-                  <Text>{listModalData.or}</Text>
+                  <Text>{listModalData.drag.i18n[lang]}</Text>
+                  <Text>{listModalData.or.i18n[lang]}</Text>
                 </Stack>
                 <Button spacing="compact" onClick={handleBrowseClick}>
-                  {listModalData.search}
+                  {listModalData.search.i18n[lang]}
                 </Button>
                 <input
                   type="file"
@@ -526,7 +528,7 @@ export const ListModal = (props: IListModalProps) => {
                 />
               </StyledAttachContainer>
               <Text size="medium" appearance="gray">
-                {listModalData.maximum}
+                {listModalData.maximum.i18n[lang]}
               </Text>
               {activePendingFiles.length > 0 ? (
                 <>
@@ -538,7 +540,7 @@ export const ListModal = (props: IListModalProps) => {
                       weight="bold"
                       appearance="gray"
                     >
-                      {listModalData.attachments}
+                      {listModalData.attachments.i18n[lang]}
                     </Text>
                     <Grid
                       templateColumns={isMobile ? "100%" : "auto auto"}
@@ -590,7 +592,7 @@ export const ListModal = (props: IListModalProps) => {
                         weight="bold"
                         appearance="gray"
                       >
-                        {listModalData.attachments}
+                        {listModalData.attachments.i18n[lang]}
                       </Text>
                       <Grid
                         templateColumns={isMobile ? "100%" : "auto auto"}
@@ -637,7 +639,7 @@ export const ListModal = (props: IListModalProps) => {
                   appearance="gray"
                   spacing="compact"
                 >
-                  {listModalData.buttonCancel}
+                  {listModalData.buttonCancel.i18n[lang]}
                 </Button>
                 <Button
                   onClick={handleUpload}

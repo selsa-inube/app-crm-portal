@@ -38,17 +38,17 @@ const ValueWithIcon = (props: IValueWithIcon) => {
 };
 
 const FieldsetSection = (props: IFieldsetSection) => {
-  const { legend, items, isMobile } = props;
+  const { legend, items, isMobile, lang } = props;
 
   return (
     <Fieldset legend={legend}>
       <Stack direction="column" width="100%" gap="8px">
         <Stack justifyContent="space-between">
           <Text type="body" size={isMobile ? "small" : "medium"}>
-            {DataCapacityAnalysis.concept}
+            {DataCapacityAnalysis.concept.i18n[lang]}
           </Text>
           <Text type="body" size={isMobile ? "small" : "medium"}>
-            {DataCapacityAnalysis.availableValue}
+            {DataCapacityAnalysis.availableValue.i18n[lang]}
           </Text>
         </Stack>
         <Divider dashed />

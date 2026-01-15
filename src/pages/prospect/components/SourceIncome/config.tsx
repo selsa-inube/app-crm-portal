@@ -1,11 +1,13 @@
 import { IncomeCard } from "@components/cards/IncomeCard";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IncomeTypes } from "@services/enum/icorebanking-vi-crediboard/eincometype";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { IIncome } from "./types";
 
 interface IncomeProps {
   values: string[];
+  lang: EnumType;
   ShowSupport?: boolean;
   disabled?: boolean;
   onValueChange?: (index: number, newValue: string) => void;
@@ -13,6 +15,7 @@ interface IncomeProps {
 
 function IncomeCapital({
   values,
+  lang,
   ShowSupport,
   disabled,
   onValueChange,
@@ -31,12 +34,14 @@ function IncomeCapital({
       ShowSupport={ShowSupport}
       disabled={disabled}
       onValueChange={onValueChange}
+      lang={lang}
     />
   );
 }
 
 function IncomeEmployment({
   values,
+  lang,
   ShowSupport,
   disabled,
   onValueChange,
@@ -56,12 +61,14 @@ function IncomeEmployment({
       ShowSupport={ShowSupport}
       disabled={disabled}
       onValueChange={onValueChange}
+      lang={lang}
     />
   );
 }
 
 function MicroBusinesses({
   values,
+  lang,
   ShowSupport,
   disabled,
   onValueChange,
@@ -82,6 +89,7 @@ function MicroBusinesses({
       ShowSupport={ShowSupport}
       disabled={disabled}
       onValueChange={onValueChange}
+      lang={lang}
     />
   );
 }

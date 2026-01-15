@@ -247,6 +247,69 @@ export const DEBOUNCE_DELAY = 500;
 
 export const FLAG_DURATION = 5000;
 
+export const simulationFormLabels = {
+  cancelButton: {
+    code: "Cancel_button",
+    description: "Label for cancel button",
+    i18n: { en: "Cancel", es: "Cancelar" },
+  },
+  creditAmountPlaceholder: {
+    code: "Credit_amount_placeholder",
+    description: "Placeholder for requested amount",
+    i18n: { en: "Requested amount", es: "Monto solicitado" },
+  },
+  paymentMethod: {
+    code: "Payment_method_label",
+    description: "Label for payment method field",
+    i18n: { en: "Payment method", es: "Medio de pago" },
+  },
+  paymentCycle: {
+    code: "Payment_cycle_label",
+    description: "Label for payment cycle field",
+    i18n: { en: "Payment cycle", es: "Ciclo de pagos" },
+  },
+  termInMonthsLabel: {
+    code: "Term_months_label",
+    description: "Label for term in months select",
+    i18n: { en: "Term in months", es: "Plazo en meses" },
+  },
+  selectPlaceholder: {
+    code: "Select_option_placeholder",
+    description: "Placeholder for select inputs",
+    i18n: { en: "Select an option", es: "Selecciona una opción" },
+  },
+  amortizationTypeLabel: {
+    code: "Amortization_type_label",
+    description: "Label for amortization type select",
+    i18n: { en: "Amortization type", es: "Tipo de amortización" },
+  },
+  interestRateLabel: {
+    code: "Interest_rate_label",
+    description: "Label for interest rate field",
+    i18n: { en: "Interest rate", es: "Tasa de interés" },
+  },
+  interestRatePlaceholder: {
+    code: "Interest_rate_placeholder",
+    description: "Placeholder example for interest rate",
+    i18n: { en: "E.g.: 0.9", es: "Ej: 0.9" },
+  },
+  rateTypeLabel: {
+    code: "Rate_type_label",
+    description: "Label for rate type select",
+    i18n: { en: "Rate type", es: "Tipo de tasa" },
+  },
+  installmentAmountLabel: {
+    code: "Installment_amount_label",
+    description: "Label for installment amount field",
+    i18n: { en: "Installment amount", es: "Monto de la cuota" },
+  },
+  installmentAmountPlaceholder: {
+    code: "Installment_amount_placeholder",
+    description: "Placeholder example for installment amount",
+    i18n: { en: "E.g.: 500,000", es: "Ej: 500.0000" },
+  },
+};
+
 export {
   creditLineOptions,
   paymentMethodOptions,
