@@ -14,15 +14,24 @@ import { StyledSummaryCard, StyledLink } from "./styles";
 import { summaryData } from "./config";
 
 function SummaryCardUI(props: SummaryCardProps) {
-  const { rad, date, name, destination, value, toDo, hasMessage, onCardClick } =
-    props;
+  const {
+    rad,
+    date,
+    name,
+    destination,
+    value,
+    toDo,
+    hasMessage,
+    lang,
+    onCardClick,
+  } = props;
   return (
     <StyledSummaryCard>
       <StyledLink onClick={onCardClick}>
         <Stack justifyContent="space-between">
           <Stack>
             <Text type="body" size="small" appearance="gray">
-              {summaryData.numFiled}
+              {summaryData.numFiled.i18n[lang]}
             </Text>
             <Text type="body" size="small" weight="bold" appearance="gray">
               {rad}
@@ -36,21 +45,21 @@ function SummaryCardUI(props: SummaryCardProps) {
           {capitalizeFirstLetterEachWord(truncateTextToMaxLength(name))}
         </Text>
         <Text type="title" size="small" appearance="gray" weight="bold">
-          {summaryData.destination}
+          {summaryData.destination.i18n[lang]}
         </Text>
         <Text type="body" size="medium">
           {capitalizeFirstLetter(truncateTextToMaxLength(destination, 60))}
         </Text>
         <Stack gap="8px">
           <Text type="title" size="small" appearance="gray" weight="bold">
-            {summaryData.value}
+            {summaryData.value.i18n[lang]}
           </Text>
           <Text type="body" size="medium">
             {value === 0 ? "$ 0" : currencyFormat(value)}
           </Text>
         </Stack>
         <Text type="title" size="small" appearance="gray" weight="bold">
-          {summaryData.activity}
+          {summaryData.activity.i18n[lang]}
         </Text>
         <Text type="body" size="medium">
           {capitalizeFirstLetter(truncateTextToMaxLength(toDo, 60))}

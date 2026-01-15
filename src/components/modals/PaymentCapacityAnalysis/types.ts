@@ -1,3 +1,5 @@
+import { EnumType } from "@hooks/useEnum/useEnum";
+
 export interface IFieldItem {
   label: string;
   value: string | number;
@@ -30,6 +32,7 @@ export interface IFieldsetSection {
   legend: string;
   items: IFieldItem[];
   isMobile: boolean;
+  lang: EnumType;
 }
 
 export interface ISummarySection {

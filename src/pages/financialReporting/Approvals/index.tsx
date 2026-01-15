@@ -8,6 +8,7 @@ import { ItemNotFound } from "@components/layout/ItemNotFound";
 import { getApprovalsById } from "@services/creditRequest/getApprovals";
 import { ICreditRequest } from "@services/creditRequest/types";
 import { AppContext } from "@context/AppContext";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { errorObserver, errorMessages } from "../config";
 import {
@@ -23,10 +24,11 @@ interface IApprovalsProps {
   user: string;
   isMobile: boolean;
   creditRequest?: ICreditRequest | null;
+  lang: EnumType;
 }
 
 export const Approvals = (props: IApprovalsProps) => {
-  const { isMobile, creditRequest } = props;
+  const { isMobile, creditRequest, lang } = props;
   const [loading, setLoading] = useState(true);
   const [approvalsEntries, setApprovalsEntries] = useState<IEntries[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +84,7 @@ export const Approvals = (props: IApprovalsProps) => {
   return (
     <>
       <Fieldset
-        title={errorMessages.approval.titleCard}
+        title={errorMessages.approval.titleCard.i18n[lang]}
         heightFieldset="100%"
         hasTable
         hasOverflow={isMobile || !creditRequest || Boolean(error)}
@@ -90,9 +92,9 @@ export const Approvals = (props: IApprovalsProps) => {
         {!creditRequest || error ? (
           <ItemNotFound
             image={userNotFound}
-            title={errorMessages.approval.title}
-            description={errorMessages.approval.description}
-            buttonDescription={errorMessages.approval.button}
+            title={errorMessages.approval.title.i18n[lang]}
+            description={errorMessages.approval.description.i18n[lang]}
+            buttonDescription={errorMessages.approval.button.i18n[lang]}
             onRetry={handleRetry}
           />
         ) : (

@@ -19,6 +19,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { Fieldset } from "@components/data/Fieldset";
 import { getCreditLimitByCreditRiskAnalysis } from "@services/creditLimit/getCreditLimitByCreditRiskAnalysis";
 import { IMaximumCreditLimitAnalysis } from "@services/creditLimit/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { frcConfig, InfoModalType } from "./FrcConfig";
 import { StyledExpanded } from "./styles";
@@ -28,6 +29,7 @@ export interface ScoreModalProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   clientIdentificationNumber: string;
+  lang: EnumType;
   loading?: boolean;
 }
 
@@ -37,6 +39,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
     businessUnitPublicCode,
     businessManagerCode,
     clientIdentificationNumber,
+    lang,
     loading,
   } = props;
 
@@ -85,13 +88,13 @@ export const ScoreModal = (props: ScoreModalProps) => {
   };
 
   const getInfoText = () => {
-    return frcConfig.infoTexts[currentInfoType];
+    return frcConfig.infoTexts[currentInfoType].i18n[lang];
   };
 
   return (
     <BaseModal
-      title={frcConfig.title}
-      nextButton={frcConfig.closeBtn}
+      title={frcConfig.title.i18n[lang]}
+      nextButton={frcConfig.closeBtn.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       variantNext="outlined"
@@ -101,10 +104,10 @@ export const ScoreModal = (props: ScoreModalProps) => {
         <Stack direction="column" alignItems="center">
           <Icon icon={<MdErrorOutline />} size="32px" appearance="danger" />
           <Text size="large" weight="bold" appearance="danger">
-            {frcConfig.error.title}
+            {frcConfig.error.title.i18n[lang]}
           </Text>
           <Text size="small" appearance="dark" textAlign="center">
-            {frcConfig.error.message}
+            {frcConfig.error.message.i18n[lang]}
           </Text>
         </Stack>
       ) : (
@@ -119,7 +122,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                   size="34px"
                 />
                 <Text appearance="primary" size="large" type="title">
-                  {frcConfig.subTitle}
+                  {frcConfig.subTitle.i18n[lang]}
                 </Text>
               </Stack>
               <Stack alignItems="center">
@@ -135,7 +138,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                   <SkeletonLine width="70px" animated={true} />
                 ) : (
                   <Text type="body" size="medium">
-                    {frcConfig.totalScoreMax}
+                    {frcConfig.totalScoreMax.i18n[lang]}
                   </Text>
                 )}
                 <StyledExpanded $expanded={isExpanded}>
@@ -153,7 +156,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               <>
                 <Stack justifyContent="space-between" alignItems="center">
                   <Text weight="bold" size="large" type="label">
-                    {frcConfig.intercept}
+                    {frcConfig.intercept.i18n[lang]}
                   </Text>
                   {loading ? (
                     <SkeletonLine width="70px" animated={true} />
@@ -176,7 +179,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                 </Stack>
                 <Stack justifyContent="space-between" alignItems="center">
                   <Text weight="bold" size="large" type="label">
-                    {frcConfig.seniorityLabel}
+                    {frcConfig.seniorityLabel.i18n[lang]}
                   </Text>
                   {loading ? (
                     <SkeletonLine width="70px" animated={true} />
@@ -199,7 +202,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                 </Stack>
                 <Stack justifyContent="space-between" alignItems="center">
                   <Text weight="bold" size="large" type="label">
-                    {frcConfig.centralRiskLabel}
+                    {frcConfig.centralRiskLabel.i18n[lang]}
                   </Text>
                   {loading ? (
                     <SkeletonLine width="70px" animated={true} />
@@ -222,7 +225,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                 </Stack>
                 <Stack justifyContent="space-between" alignItems="center">
                   <Text weight="bold" size="large" type="label">
-                    {frcConfig.employmentStabilityLabel}
+                    {frcConfig.employmentStabilityLabel.i18n[lang]}
                   </Text>
                   {loading ? (
                     <SkeletonLine width="70px" animated={true} />
@@ -245,7 +248,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                 </Stack>
                 <Stack justifyContent="space-between" alignItems="center">
                   <Text weight="bold" size="large" type="label">
-                    {frcConfig.maritalStatusLabel}
+                    {frcConfig.maritalStatusLabel.i18n[lang]}
                   </Text>
                   {loading ? (
                     <SkeletonLine width="70px" animated={true} />
@@ -268,7 +271,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                 </Stack>
                 <Stack justifyContent="space-between" alignItems="center">
                   <Text weight="bold" size="large" type="label">
-                    {frcConfig.economicActivityLabel}
+                    {frcConfig.economicActivityLabel.i18n[lang]}
                   </Text>
                   {loading ? (
                     <SkeletonLine width="70px" animated={true} />
@@ -295,7 +298,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
           <Divider dashed />
           <Stack justifyContent="space-between">
             <Text weight="bold" size="large" type="label">
-              {frcConfig.incomesLabel}
+              {frcConfig.incomesLabel.i18n[lang]}
             </Text>
             <Stack>
               <Text appearance="success">$</Text>
@@ -313,7 +316,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
           </Stack>
           <Stack justifyContent="space-between" alignItems="center">
             <Text weight="bold" size="large" type="label">
-              {frcConfig.timesIncome}
+              {frcConfig.timesIncome.i18n[lang]}
             </Text>
             {loading ? (
               <SkeletonLine width="70px" animated={true} />
@@ -326,7 +329,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
           <Divider dashed />
           <Stack justifyContent="space-between">
             <Text weight="bold" size="large" type="label">
-              {frcConfig.maxLimit}
+              {frcConfig.maxLimit.i18n[lang]}
             </Text>
             <Stack>
               <Text appearance="success">$</Text>
@@ -345,7 +348,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
           </Stack>
           <Stack justifyContent="space-between" alignItems="center">
             <Text weight="bold" size="large" type="label">
-              {frcConfig.totalPortafolio}
+              {frcConfig.totalPortafolio.i18n[lang]}
             </Text>
             <Stack>
               <Text appearance="success">$</Text>
@@ -370,7 +373,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
                   type="headline"
                   size="large"
                 >
-                  {frcConfig.loading}
+                  {frcConfig.loading.i18n[lang]}
                 </Text>
               ) : (
                 <Text
@@ -389,7 +392,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
               )}
               <Stack>
                 <Text appearance="gray" size="small" textAlign="center">
-                  {frcConfig.maxIndebtedness}
+                  {frcConfig.maxIndebtedness.i18n[lang]}
                 </Text>
               </Stack>
             </Stack>

@@ -1,3 +1,10 @@
 export const dataBaseModal = {
-  close: "Cerrar",
+  close: {
+    code: "Close",
+    description: "Close",
+    i18n: {
+      en: "Close",
+      es: "Cerrar",
+    },
+  },
 };

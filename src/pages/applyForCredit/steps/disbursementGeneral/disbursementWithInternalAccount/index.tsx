@@ -30,6 +30,7 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { CardGray } from "@components/cards/CardGray";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
@@ -42,6 +43,7 @@ interface IDisbursementWithInternalAccountProps {
   prospectSummaryData: IProspectSummaryById | undefined;
   businessManagerCode: string;
   customerData?: ICustomerData;
+  lang: EnumType;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
   getTotalAmount: () => number;
@@ -60,6 +62,7 @@ export function DisbursementWithInternalAccount(
     isAmountReadOnly,
     customerData,
     businessManagerCode,
+    lang,
     getTotalAmount,
     onFormValid,
     handleOnChange,
@@ -390,8 +393,8 @@ export function DisbursementWithInternalAccount(
           <Textfield
             id="amount"
             name="amount"
-            label={disbursementGeneral.label}
-            placeholder={disbursementGeneral.place}
+            label={disbursementGeneral.label.i18n[lang]}
+            placeholder={disbursementGeneral.place.i18n[lang]}
             size="compact"
             value={validateCurrencyField(
               "amount",
@@ -430,14 +433,14 @@ export function DisbursementWithInternalAccount(
             disabled={isDisabled}
           />
           <Text type="label" size="medium">
-            {disbursementGeneral.labelCheck}
+            {disbursementGeneral.labelCheck.i18n[lang]}
           </Text>
         </Stack>
       </Stack>
       <Divider dashed />
       <Stack direction="column" gap="16px">
         <Text type="label" size="medium">
-          {disbursementGeneral.labelToggle}
+          {disbursementGeneral.labelToggle.i18n[lang]}
         </Text>
       </Stack>
       <Stack direction="row" gap="16px">
@@ -458,8 +461,8 @@ export function DisbursementWithInternalAccount(
           }
         >
           {formik.values[optionNameForm]?.toggle
-            ? disbursementGeneral.optionToggleYes
-            : disbursementGeneral.optionToggleNo}
+            ? disbursementGeneral.optionToggleYes.i18n[lang]
+            : disbursementGeneral.optionToggleNo.i18n[lang]}
         </Text>
       </Stack>
       <Divider dashed />
@@ -478,7 +481,7 @@ export function DisbursementWithInternalAccount(
       <Stack>
         {accountOptions.length === 1 ? (
           <CardGray
-            label={disbursemenOptionAccount.labelAccount}
+            label={disbursemenOptionAccount.labelAccount.i18n[lang]}
             placeHolder={accountOptions[0]?.label || ""}
             isMobile={isMobile}
           />
@@ -486,8 +489,8 @@ export function DisbursementWithInternalAccount(
           <Select
             id={`${optionNameForm}.accountNumber`}
             name={`${optionNameForm}.accountNumber`}
-            label={disbursemenOptionAccount.labelAccount}
-            placeholder={disbursemenOptionAccount.placeOption}
+            label={disbursemenOptionAccount.labelAccount.i18n[lang]}
+            placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
             size="compact"
             options={accountOptions}
             onBlur={formik.handleBlur}
@@ -502,8 +505,8 @@ export function DisbursementWithInternalAccount(
       <Textarea
         id={`${optionNameForm}.description`}
         name={`${optionNameForm}.description`}
-        label={disbursemenOptionAccount.observation}
-        placeholder={disbursemenOptionAccount.placeObservation}
+        label={disbursemenOptionAccount.observation.i18n[lang]}
+        placeholder={disbursemenOptionAccount.placeObservation.i18n[lang]}
         value={formik.values[optionNameForm]?.description || ""}
         onChange={(e) =>
           formik.setFieldValue(`${optionNameForm}.description`, e.target.value)

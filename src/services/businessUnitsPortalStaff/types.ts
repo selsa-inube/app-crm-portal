@@ -5,4 +5,5 @@ export interface IBusinessUnitsPortalStaff {
   urlLogo: string;
   firstMonthOfFiscalYear?: string;
   languageId?: string;
+  languageiso?: string;
 }

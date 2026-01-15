@@ -27,6 +27,7 @@ function LogOut() {
   sessionStorage.clear();
   const { logout } = useIAuth();
   useEffect(() => {
+    localStorage.removeItem("businessUnitSigla");
     logout();
   }, [logout]);
   return null;
@@ -38,7 +39,7 @@ function FirstPage() {
   if (businessUnitSigla.length === 0) {
     return <Login />;
   }
-  return <Navigate to="/home" replace />;
+  return <Navigate to="/clients/select-client" replace />;
 }
 
 const router = createBrowserRouter(

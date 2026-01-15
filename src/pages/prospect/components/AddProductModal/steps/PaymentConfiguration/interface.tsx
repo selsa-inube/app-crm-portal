@@ -11,6 +11,7 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
     firstPaymentDateOptions,
     paymentCycleOptions,
     paymentMethodOptions,
+    lang,
     paymentConfiguration,
     handlePaymentMethodChange,
     handlePaymentCycleChange,
@@ -24,14 +25,14 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
     <Stack direction="column" gap="24px" padding="0px 16px">
       {hasOnlyOnePaymentMethod ? (
         <CardGray
-          label={dataAmount.ordinaryPayment}
+          label={dataAmount.ordinaryPayment.i18n[lang]}
           placeHolder={
             paymentMethodOptions[0]?.label || "No hay opciones disponibles."
           }
         />
       ) : (
         <Select
-          label={dataAmount.ordinaryPayment}
+          label={dataAmount.ordinaryPayment.i18n[lang]}
           name="paymentMethod"
           id="paymentMethod"
           size="compact"
@@ -50,14 +51,14 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
         <>
           {hasOnlyOnePaymentCycle ? (
             <CardGray
-              label={dataAmount.paymentCycle}
+              label={dataAmount.paymentCycle.i18n[lang]}
               placeHolder={
                 paymentCycleOptions[0]?.label || "No hay opciones disponibles."
               }
             />
           ) : (
             <Select
-              label={dataAmount.paymentCycle}
+              label={dataAmount.paymentCycle.i18n[lang]}
               name="paymentCycle"
               id="paymentCycle"
               size="compact"
@@ -78,7 +79,7 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
         <>
           {hasOnlyOneFirstPaymentDate ? (
             <CardGray
-              label={dataAmount.paymentDate}
+              label={dataAmount.paymentDate.i18n[lang]}
               placeHolder={
                 firstPaymentDateOptions[0]?.label ||
                 "No hay opciones disponibles."
@@ -86,7 +87,7 @@ export function PaymentConfigurationUI(props: IPaymentConfigurationUI) {
             />
           ) : (
             <Select
-              label={dataAmount.paymentDate}
+              label={dataAmount.paymentDate.i18n[lang]}
               name="firstPaymentDate"
               id="firstPaymentDate"
               size="compact"

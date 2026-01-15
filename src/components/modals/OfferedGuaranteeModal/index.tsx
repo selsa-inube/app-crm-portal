@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Stack, Tabs } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { CardBorrower } from "@components/cards/CardBorrower";
 import { mockGuaranteeBorrower } from "@mocks/guarantee/offeredguarantee.mock";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { Mortgage } from "./Mortgage";
 import { Pledge } from "./Pledge";
@@ -14,10 +15,18 @@ import { ScrollableContainer } from "./styles";
 export interface IOfferedGuaranteeModalProps {
   handleClose: () => void;
   isMobile: boolean;
+  lang: EnumType;
 }
 
 export function OfferedGuaranteeModal(props: IOfferedGuaranteeModalProps) {
-  const { handleClose, isMobile } = props;
+  const { handleClose, isMobile, lang } = props;
+
+  const translatedTabs = useMemo(() => {
+    return dataTabs.map((tab) => ({
+      ...tab,
+      label: tab.label.i18n[lang],
+    }));
+  }, [lang]);
 
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const onChange = (tabId: string) => {
@@ -26,8 +35,8 @@ export function OfferedGuaranteeModal(props: IOfferedGuaranteeModalProps) {
 
   return (
     <BaseModal
-      title={dataGuarantee.title}
-      nextButton={dataGuarantee.close}
+      title={dataGuarantee.title.i18n[lang]}
+      nextButton={dataGuarantee.close.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       width={isMobile ? "300px" : "630px"}
@@ -37,7 +46,7 @@ export function OfferedGuaranteeModal(props: IOfferedGuaranteeModalProps) {
         <Tabs
           scroll={isMobile}
           selectedTab={currentTab}
-          tabs={dataTabs}
+          tabs={translatedTabs}
           onChange={onChange}
         />
       </Stack>
@@ -60,14 +69,17 @@ export function OfferedGuaranteeModal(props: IOfferedGuaranteeModalProps) {
                   income={borrower.income}
                   obligations={borrower.obligations}
                   showIcons={false}
+                  lang={lang}
                 />
               </Stack>
             ))}
           </ScrollableContainer>
         )}
-        {currentTab === "mortgage" && <Mortgage isMobile={isMobile} />}
-        {currentTab === "pledge" && <Pledge isMobile={isMobile} />}
-        {currentTab === "bail" && <Bail />}
+        {currentTab === "mortgage" && (
+          <Mortgage isMobile={isMobile} lang={lang} />
+        )}
+        {currentTab === "pledge" && <Pledge isMobile={isMobile} lang={lang} />}
+        {currentTab === "bail" && <Bail lang={lang} />}
       </Stack>
     </BaseModal>
   );

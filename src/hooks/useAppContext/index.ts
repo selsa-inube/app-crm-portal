@@ -19,6 +19,7 @@ interface IBusinessUnits {
   businessUnitPublicCode: string;
   abbreviatedName: string;
   languageId: string;
+  languageiso: string;
   urlLogo: string;
 }
 
@@ -76,6 +77,7 @@ function useAppContext() {
       businessUnitPublicCode: businessUnit?.businessUnitPublicCode || "",
       abbreviatedName: businessUnit?.abbreviatedName || "",
       languageId: businessUnit?.languageId || "",
+      languageiso: businessUnit?.languageiso || "",
       urlLogo: businessUnit?.urlLogo || "",
     },
     user: {
@@ -301,6 +303,7 @@ function useAppContext() {
           abbreviatedName: businessUnit?.abbreviatedName || "",
           businessUnitPublicCode: businessUnit?.businessUnitPublicCode || "",
           languageId: businessUnit?.languageId || "",
+          languageiso: businessUnit?.languageiso || "",
           urlLogo: businessUnit?.urlLogo || "",
         },
       }));

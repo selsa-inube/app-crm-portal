@@ -9,6 +9,7 @@ import userNotFound from "@assets/images/ItemNotFound.png";
 import { AppContext } from "@context/AppContext";
 import { ICreditRequest, ITraceType } from "@services/creditRequest/types";
 import { getTraceByCreditRequestId } from "@services/creditRequest/getTraceByCreditRequestId";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { ChatContent, SkeletonContainer, SkeletonLine } from "./styles";
 import { traceObserver, errorObserver, errorMessages } from "../config";
@@ -16,12 +17,13 @@ import { DetailsModal } from "./DetailsModal";
 
 interface IManagementProps {
   isMobile: boolean;
+  lang: EnumType;
   creditRequest?: ICreditRequest | null;
   updateData?: boolean;
 }
 
 export const Management = (props: IManagementProps) => {
-  const { isMobile, updateData, creditRequest } = props;
+  const { isMobile, lang, updateData, creditRequest } = props;
 
   const [traces, setTraces] = useState<ITraceType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -132,16 +134,16 @@ export const Management = (props: IManagementProps) => {
 
   return (
     <Fieldset
-      title={errorMessages.Management.titleCard}
+      title={errorMessages.Management.titleCard.i18n[lang]}
       heightFieldset="340px"
       aspectRatio={isMobile ? "auto" : "1"}
     >
       {!creditRequest || error ? (
         <ItemNotFound
           image={userNotFound}
-          title={errorMessages.Management.title}
-          description={errorMessages.Management.description}
-          buttonDescription={errorMessages.Management.button}
+          title={errorMessages.Management.title.i18n[lang]}
+          description={errorMessages.Management.description.i18n[lang]}
+          buttonDescription={errorMessages.Management.button.i18n[lang]}
           onRetry={handleRetry}
         />
       ) : (
@@ -155,6 +157,7 @@ export const Management = (props: IManagementProps) => {
             <DetailsModal
               data={selectedMessage as ITraceType}
               handleClose={() => setDetailsOpen(false)}
+              lang={lang}
             />
           )}
         </>

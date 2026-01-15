@@ -5,6 +5,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { TableFinancialObligations } from "@pages/prospect/components/TableObligationsFinancial";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { IProspect } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { IAttributes, IDataVerificationStep } from "./types";
 import { IPersonalInfo } from "../../types";
@@ -21,6 +22,7 @@ export interface IControllerAccordionProps {
   totalCapitalIncome: number;
   totalEmploymentIncome: number;
   totalBusinessesIncome: number;
+  lang: EnumType;
 }
 
 function createAttribute(
@@ -39,45 +41,54 @@ export const VerificationDebtorAddModal = (
     totalCapitalIncome,
     totalEmploymentIncome,
     totalBusinessesIncome,
+    lang,
   } = props;
   const isMobile = useMediaQuery("(max-width: 740px)");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const personalInfoAttributes = [
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.documentType,
+      verificationDebtorAddModalConfig.personalInfo.fields.documentType.i18n[
+        lang
+      ],
       steps.personalInfo?.tipeOfDocument,
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.documentNumber,
+      verificationDebtorAddModalConfig.personalInfo.fields.documentNumber.i18n[
+        lang
+      ],
       steps.personalInfo?.documentNumber || "",
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.firstName,
+      verificationDebtorAddModalConfig.personalInfo.fields.firstName.i18n[lang],
       steps.personalInfo?.firstName || "",
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.lastName,
+      verificationDebtorAddModalConfig.personalInfo.fields.lastName.i18n[lang],
       steps.personalInfo?.lastName || "",
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.email,
+      verificationDebtorAddModalConfig.personalInfo.fields.email.i18n[lang],
       steps.personalInfo?.email || "",
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.phone,
+      verificationDebtorAddModalConfig.personalInfo.fields.phone.i18n[lang],
       steps.personalInfo?.phone || "",
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.biologicalSex,
+      verificationDebtorAddModalConfig.personalInfo.fields.biologicalSex.i18n[
+        lang
+      ],
       steps.personalInfo?.sex || "",
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.age,
+      verificationDebtorAddModalConfig.personalInfo.fields.age.i18n[lang],
       steps.personalInfo?.age || "",
     ),
     createAttribute(
-      verificationDebtorAddModalConfig.personalInfo.fields.relationship,
+      verificationDebtorAddModalConfig.personalInfo.fields.relationship.i18n[
+        lang
+      ],
       steps.personalInfo?.relation || "",
     ),
   ].filter((attr) => attr.value);
@@ -87,22 +98,24 @@ export const VerificationDebtorAddModal = (
   if (steps.incomeData) {
     incomeAttributes.push(
       createAttribute(
-        verificationDebtorAddModalConfig.incomeInfo.fields
-          .totalEmploymentIncome,
+        verificationDebtorAddModalConfig.incomeInfo.fields.totalEmploymentIncome
+          .i18n[lang],
         currencyFormat(totalEmploymentIncome),
       ),
     );
 
     incomeAttributes.push(
       createAttribute(
-        verificationDebtorAddModalConfig.incomeInfo.fields.totalCapitalIncome,
+        verificationDebtorAddModalConfig.incomeInfo.fields.totalCapitalIncome
+          .i18n[lang],
         currencyFormat(totalCapitalIncome),
       ),
     );
 
     incomeAttributes.push(
       createAttribute(
-        verificationDebtorAddModalConfig.incomeInfo.fields.totalBusinessIncome,
+        verificationDebtorAddModalConfig.incomeInfo.fields.totalBusinessIncome
+          .i18n[lang],
         currencyFormat(totalBusinessesIncome),
       ),
     );
@@ -112,36 +125,39 @@ export const VerificationDebtorAddModal = (
     {
       sections: {
         generalInformation: {
-          title: verificationDebtorAddModalConfig.personalInfo.title,
+          title: verificationDebtorAddModalConfig.personalInfo.title.i18n[lang],
           attributes: personalInfoAttributes,
           stepNumber: 1,
         },
         incomeInformation: {
-          title: verificationDebtorAddModalConfig.incomeInfo.title,
+          title: verificationDebtorAddModalConfig.incomeInfo.title.i18n[lang],
           attributes:
             incomeAttributes.length > 0
               ? incomeAttributes
               : [
                   createAttribute(
                     verificationDebtorAddModalConfig.incomeInfo.fields
-                      .totalEmploymentIncome,
+                      .totalEmploymentIncome.i18n[lang],
                     currencyFormat(0),
                   ),
                   createAttribute(
                     verificationDebtorAddModalConfig.incomeInfo.fields
-                      .totalCapitalIncome,
+                      .totalCapitalIncome.i18n[lang],
                     currencyFormat(0),
                   ),
                   createAttribute(
                     verificationDebtorAddModalConfig.incomeInfo.fields
-                      .totalBusinessIncome,
+                      .totalBusinessIncome.i18n[lang],
                     currencyFormat(0),
                   ),
                 ],
           stepNumber: 2,
         },
         financialObligations: {
-          title: verificationDebtorAddModalConfig.financialObligations.title,
+          title:
+            verificationDebtorAddModalConfig.financialObligations.title.i18n[
+              lang
+            ],
           customComponent: (
             <Stack direction="column" gap="16px" padding="16px 0">
               <TableFinancialObligations
@@ -153,6 +169,7 @@ export const VerificationDebtorAddModal = (
                 showAddButton={false}
                 showOnlyEdit={true}
                 services={false}
+                lang={lang}
               />
             </Stack>
           ),
@@ -172,6 +189,7 @@ export const VerificationDebtorAddModal = (
       keySections={keySections}
       isMobile={isMobile}
       setCurrentStep={setCurrentStep}
+      lang={lang}
     />
   );
 };

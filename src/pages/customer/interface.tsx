@@ -9,6 +9,7 @@ import {
   Spinner,
 } from "@inubekit/inubekit";
 
+import { EnumType } from "@hooks/useEnum/useEnum";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 
@@ -25,6 +26,7 @@ interface ICustomerUI {
   handleChangeAutocomplete: (event: string, value: string | null) => void;
   handleSubmit: () => void;
   messageError: string;
+  lang: EnumType;
   isValid: boolean;
   redirectErrorPage: () => void;
   errorCode: number | null;
@@ -40,6 +42,7 @@ export function CustomerUI(props: ICustomerUI) {
     handleChangeAutocomplete,
     handleSubmit,
     messageError,
+    lang,
     loading,
     isValid,
     redirectErrorPage,
@@ -63,10 +66,10 @@ export function CustomerUI(props: ICustomerUI) {
           >
             <Stack direction="column" gap="8px">
               <Text type="headline" size={isMobile ? "small" : "large"}>
-                {homeData.selectClient}
+                {homeData.selectClient.i18n[lang]}
               </Text>
               <Text type="body" size="large" appearance="gray">
-                {homeData.text}
+                {homeData.text.i18n[lang]}
               </Text>
               <Fieldset hasOverflow>
                 <Stack alignItems="center" gap="6px">
@@ -75,7 +78,7 @@ export function CustomerUI(props: ICustomerUI) {
                       id="clientSelect"
                       name="clientSelect"
                       fullwidth
-                      placeholder={homeData.selectClient}
+                      placeholder={homeData.selectClient.i18n[lang]}
                       options={options}
                       value={inputValue}
                       onChange={handleChangeAutocomplete}
@@ -94,7 +97,7 @@ export function CustomerUI(props: ICustomerUI) {
 
                   {!isMobile && (!loading || isValid) && (
                     <Button onClick={handleSubmit} disabled={!isValid}>
-                      {homeData.continue}
+                      {homeData.continue.i18n[lang]}
                     </Button>
                   )}
 

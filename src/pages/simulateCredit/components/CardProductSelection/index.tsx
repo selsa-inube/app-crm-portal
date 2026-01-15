@@ -2,10 +2,12 @@ import { Stack, Text } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { currencyFormat } from "@utils/formatData/currency";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { selectData } from "./config";
 
 export interface ICardProductSelectionProps {
+  lang: EnumType;
   amount?: number;
   rate?: number;
   term?: number;
@@ -19,6 +21,7 @@ export interface ICardProductSelectionProps {
 
 export function CardProductSelection(props: ICardProductSelectionProps) {
   const {
+    lang,
     amount = 10000000,
     rate = 1,
     term = 12,
@@ -61,7 +64,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               size="large"
               weight="bold"
             >
-              {selectData.amount}
+              {selectData.amount.i18n[lang]}
             </Text>
             <Text appearance="gray" size="medium">
               <Text as="span" appearance="primary" size="small" weight="bold">
@@ -77,7 +80,7 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               size="large"
               weight="bold"
             >
-              {selectData.rate}
+              {selectData.rate.i18n[lang]}
             </Text>
             <Text appearance="gray" size="medium">
               {rate.toFixed(3)} % M.V
@@ -90,10 +93,10 @@ export function CardProductSelection(props: ICardProductSelectionProps) {
               size="large"
               weight="bold"
             >
-              {selectData.term}
+              {selectData.term.i18n[lang]}
             </Text>
             <Text appearance="gray" size="medium">
-              {term} {selectData.months}
+              {term} {selectData.months.i18n[lang]}
             </Text>
           </Stack>
         </Stack>

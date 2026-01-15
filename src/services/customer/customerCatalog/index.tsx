@@ -28,7 +28,7 @@ export const getCustomerCatalog = async (
         signal: controller.signal,
       };
       const res = await fetch(
-        `${environment.VITE_ICLIENT_QUERY_PROCESS_SERVICE}/customer/?fullName=lk.${fullName}lkp.&publicCode=lk.${publicCode}lkp.`,
+        `${environment.VITE_ICLIENT_QUERY_PROCESS_SERVICE}/customers/?fullName=lk.${fullName}lkp.&publicCode=lk.${publicCode}lkp.`,
         options,
       );
 

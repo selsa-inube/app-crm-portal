@@ -21,6 +21,7 @@ const usePortalLogic = () => {
 
   const [portalData, setPortalData] =
     useState<IStaffPortalByBusinessManager | null>(null);
+  const [publicCode, setPublicCode] = useState<string | null>(null);
   const [businessManager, setBusinessManager] = useState<IBusinessManagers>(
     {} as IBusinessManagers,
   );
@@ -51,8 +52,17 @@ const usePortalLogic = () => {
           setLoading(false);
           return;
         }
+
         const portalData = portals[0];
         setPortalData(portalData);
+
+        if (portalData.publicCode) {
+          setPublicCode(portalData.publicCode);
+        } else {
+          setCodeError(1004);
+          setLoading(false);
+          return;
+        }
 
         const { businessManagerCode } = portalData;
 
@@ -64,6 +74,7 @@ const usePortalLogic = () => {
 
         const manager = await getBusinessManagers(businessManagerCode);
         setBusinessManager(manager);
+
         if (manager.clientId && manager.clientSecret) {
           setAuthConfig({
             clientId: manager.clientId,
@@ -85,6 +96,7 @@ const usePortalLogic = () => {
 
   return {
     portalData,
+    publicCode,
     businessManager,
     authConfig,
     codeError,

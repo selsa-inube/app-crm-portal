@@ -5,16 +5,18 @@ import { Stack, Icon, Text, useMediaQuery } from "@inubekit/inubekit";
 import InfoModal from "@pages/prospect/components/InfoModal";
 import { privilegeCrm } from "@config/privilege";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataNewCard } from "./config";
 import { StyledCreditProductCard } from "../styles";
 
 interface INewCreditProductCardProps {
+  lang: EnumType;
   onClick: () => void;
 }
 
 export function NewCreditProductCard(props: INewCreditProductCardProps) {
-  const { onClick } = props;
+  const { lang, onClick } = props;
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
     useCase: getUseCaseValue("canEditCreditRequest"),
   });
@@ -36,7 +38,7 @@ export function NewCreditProductCard(props: INewCreditProductCardProps) {
         <Stack direction="column" alignItems="center" margin="auto">
           <Icon icon={<MdOutlineAdd />} appearance="gray" size="45px" />
           <Text type="body" size="large" appearance="gray">
-            {dataNewCard.add}
+            {dataNewCard.add.i18n[lang]}
           </Text>
         </Stack>
       </StyledCreditProductCard>

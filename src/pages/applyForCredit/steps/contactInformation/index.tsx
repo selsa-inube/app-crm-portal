@@ -13,6 +13,7 @@ import {
 import { Fieldset } from "@components/data/Fieldset";
 import { IContactInformation } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataContactInformation } from "./config";
 
@@ -22,11 +23,18 @@ interface IContactInformationProps {
   isMobile: boolean;
   initialValues: IContactInformation;
   customerData: ICustomerData;
+  lang: EnumType;
 }
 
 export function ContactInformation(props: IContactInformationProps) {
-  const { onFormValid, handleOnChange, isMobile, initialValues, customerData } =
-    props;
+  const {
+    onFormValid,
+    handleOnChange,
+    isMobile,
+    initialValues,
+    customerData,
+    lang,
+  } = props;
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -117,8 +125,8 @@ export function ContactInformation(props: IContactInformationProps) {
           name="email"
           id="email"
           type="email"
-          placeholder={dataContactInformation.placeEmail}
-          label={dataContactInformation.cardEmail}
+          placeholder={dataContactInformation.placeEmail.i18n[lang]}
+          label={dataContactInformation.cardEmail.i18n[lang]}
           size="compact"
           value={formik.values.email}
           onChange={formik.handleChange}
@@ -130,17 +138,17 @@ export function ContactInformation(props: IContactInformationProps) {
               ? "invalid"
               : undefined
           }
-          message={dataContactInformation.failedEmail}
+          message={dataContactInformation.failedEmail.i18n[lang]}
           fullwidth
         />
-        <FieldsetInube legend="Móvil">
+        <FieldsetInube legend={dataContactInformation.mobile.i18n[lang]}>
           <Stack wrap="wrap" width="100%" gap="16px">
             <Stack width={isMobile ? "100%" : "40%"}>
               <Phonefield
                 name="phone"
                 id="phone"
-                placeholder={dataContactInformation.placePhone}
-                label={dataContactInformation.cardPhone}
+                placeholder={dataContactInformation.placePhone.i18n[lang]}
+                label={dataContactInformation.cardPhone.i18n[lang]}
                 size="compact"
                 value={formik.values.phone}
                 onChange={formik.handleChange}
@@ -158,7 +166,7 @@ export function ContactInformation(props: IContactInformationProps) {
                     ? "invalid"
                     : undefined
                 }
-                message={dataContactInformation.failedPhone}
+                message={dataContactInformation.failedPhone.i18n[lang]}
                 fullwidth={isMobile ? true : true}
               />
             </Stack>
@@ -168,7 +176,7 @@ export function ContactInformation(props: IContactInformationProps) {
               gap="16px"
             >
               <Stack direction="column" gap="16px">
-                <Text>{dataContactInformation.useWhatsApp}</Text>
+                <Text>{dataContactInformation.useWhatsApp.i18n[lang]}</Text>
                 <Stack>
                   <Toggle
                     checked={formik.values.toggleChecked}
@@ -189,8 +197,8 @@ export function ContactInformation(props: IContactInformationProps) {
                     }
                   >
                     {formik.values.toggleChecked
-                      ? dataContactInformation.yes
-                      : dataContactInformation.no}
+                      ? dataContactInformation.yes.i18n[lang]
+                      : dataContactInformation.no.i18n[lang]}
                   </Text>
                 </Stack>
               </Stack>
@@ -199,8 +207,10 @@ export function ContactInformation(props: IContactInformationProps) {
                   <Phonefield
                     name="whatsAppPhone"
                     id="whatsAppPhone"
-                    placeholder={dataContactInformation.placeWhatsApp}
-                    label={dataContactInformation.cardWhatsApp}
+                    placeholder={
+                      dataContactInformation.placeWhatsApp.i18n[lang]
+                    }
+                    label={dataContactInformation.cardWhatsApp.i18n[lang]}
                     size="compact"
                     value={formik.values.whatsAppPhone}
                     onChange={formik.handleChange}
@@ -218,7 +228,7 @@ export function ContactInformation(props: IContactInformationProps) {
                         ? "invalid"
                         : undefined
                     }
-                    message={dataContactInformation.failedPhone}
+                    message={dataContactInformation.failedPhone.i18n[lang]}
                     fullwidth={isMobile ? false : true}
                   />
                 </Stack>

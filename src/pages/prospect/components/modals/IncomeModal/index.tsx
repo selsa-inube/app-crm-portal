@@ -6,6 +6,7 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { useRestoreIncomeData } from "@hooks/useRestoreIncomeData";
 import { IProspect } from "@services/prospect/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataIncomeModal } from "./config";
 import { IIncome } from "../../SourceIncome/types";
@@ -29,6 +30,7 @@ interface IncomeModalProps {
   publicCode?: string;
   businessManagerCode: string;
   prospectData: IProspect | undefined;
+  lang: EnumType;
 }
 
 export function IncomeModal(props: IncomeModalProps) {
@@ -45,6 +47,7 @@ export function IncomeModal(props: IncomeModalProps) {
     publicCode,
     businessManagerCode,
     prospectData,
+    lang,
   } = props;
 
   const [formData, setFormData] = useState(initialValues);
@@ -81,9 +84,9 @@ export function IncomeModal(props: IncomeModalProps) {
 
   return (
     <BaseModal
-      title={dataIncomeModal.title}
-      nextButton={dataIncomeModal.save}
-      backButton={dataIncomeModal.cancel}
+      title={dataIncomeModal.title.i18n[lang]}
+      nextButton={dataIncomeModal.save.i18n[lang]}
+      backButton={dataIncomeModal.cancel.i18n[lang]}
       handleNext={handleSubmit}
       handleBack={handleClose}
       width={isMobile ? "auto" : "1002px"}
@@ -106,6 +109,7 @@ export function IncomeModal(props: IncomeModalProps) {
         businessUnitPublicCode={businessUnitPublicCode}
         businessManagerCode={businessManagerCode}
         prospectData={prospectData}
+        lang={lang}
       />
     </BaseModal>
   );

@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
@@ -30,7 +31,7 @@ import {
   IPaymentDatesChannel,
   IResponsePaymentDatesChannel,
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
-import { useIAuth } from "@inube/iauth-react";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
@@ -47,7 +48,7 @@ import {
   updateFinancialObligationsFormData,
 } from "./steps/extraDebtors/utils";
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
-import { textAddCongfig } from "./config/addConfig";
+import { textAddConfig } from "./config/addConfig";
 
 export function SimulateCredit() {
   const [currentStep, setCurrentStep] = useState<number>(
@@ -102,7 +103,16 @@ export function SimulateCredit() {
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
-  const steps = Object.values(stepsAddProspect);
+  const { lang } = useEnum();
+
+  const steps = useMemo(() => {
+    return Object.values(stepsAddProspect).map((step) => ({
+      ...step,
+      name: step.name.i18n[lang],
+      description: step.description.i18n[lang],
+    }));
+  }, [lang]);
+
   const navigate = useNavigate();
 
   const { user } = useIAuth();
@@ -192,7 +202,7 @@ export function SimulateCredit() {
 
     const financialObligationProperties =
       formData.obligationsFinancial?.obligations?.map((obligation) => ({
-        propertyName: textAddCongfig.financialObligation,
+        propertyName: textAddConfig.financialObligation.i18n[lang],
         propertyValue: [
           obligation.productName,
           obligation.nextPaymentValueTotal,
@@ -211,7 +221,7 @@ export function SimulateCredit() {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
-      borrowerType: textAddCongfig.mainBorrower,
+      borrowerType: "MainBorrower",
       borrowerName: customerData.fullName,
 
       borrowerProperties: [
@@ -301,11 +311,11 @@ export function SimulateCredit() {
   const fetchCreditLineTerms = useCallback(async () => {
     if (eventData.businessManager.abbreviatedName.length === 0) {
       setCodeError(1003);
-      setAddToFix([messagesError.noBusinessUnitAvaliable]);
+      setAddToFix([messagesError.noBusinessUnitAvaliable.i18n[lang]]);
     }
     if (customerData.fullName.length === 0) {
       setCodeError(1016);
-      setAddToFix([messagesError.noClientSelected]);
+      setAddToFix([messagesError.noClientSelected.i18n[lang]]);
     } else {
       setCodeError(null);
     }
@@ -348,7 +358,7 @@ export function SimulateCredit() {
       setCreditLineTerms(result);
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     }
   }, [customerData, businessUnitPublicCode, formData.selectedDestination]);
@@ -401,7 +411,7 @@ export function SimulateCredit() {
       });
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     } finally {
       setLoadingQuestions(false);
@@ -468,7 +478,7 @@ export function SimulateCredit() {
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
     }
   };
 
@@ -524,7 +534,7 @@ export function SimulateCredit() {
       setPaymentChannel(dataPaymentDates ?? null);
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     }
   };
@@ -666,8 +676,8 @@ export function SimulateCredit() {
     (currentStep === stepsAddProspect.loanAmount.id &&
       !formData.loanAmountState.toggleChecked) ||
     currentStep === steps[steps.length - 1].id
-      ? titleButtonTextAssited.submitText
-      : titleButtonTextAssited.goNextText;
+      ? titleButtonTextAssited.submitText.i18n[lang]
+      : titleButtonTextAssited.goNextText.i18n[lang];
 
   const handleSubmitClick = async () => {
     setIsLoadingSubmit(true);
@@ -690,7 +700,7 @@ export function SimulateCredit() {
 
       if (prospectCode === undefined) {
         setShowErrorModal?.(true);
-        setMessageError?.(messagesError.undefinedCodeProspect);
+        setMessageError?.(messagesError.undefinedCodeProspect.i18n[lang]);
       } else {
         setProspectCode(prospectCode);
         setSentModal(false);
@@ -714,7 +724,7 @@ export function SimulateCredit() {
       setCreditLimitData(result);
     } catch (error: unknown) {
       setShowErrorModal(true);
-      setMessageError(messagesError.tryLater);
+      setMessageError(messagesError.tryLater.i18n[lang]);
       setAllowToContinue(false);
     } finally {
       setIsLoadingCreditLimit(false);
@@ -762,7 +772,7 @@ export function SimulateCredit() {
           return { ...prev, validateRequirements: true };
         });
         setShowErrorModal(true);
-        setMessageError(messagesError.tryLater);
+        setMessageError(messagesError.tryLater.i18n[lang]);
       } finally {
         setIsLoading(false);
       }
@@ -965,6 +975,7 @@ export function SimulateCredit() {
         handleFormDataChange={handleFormDataChange}
         isMobile={isMobile}
         isTablet={isTablet}
+        lang={lang}
         creditLimitData={creditLimitData}
         totalIncome={totalIncome}
         isCapacityAnalysisWarning={isCapacityAnalysisWarning}

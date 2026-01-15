@@ -13,11 +13,13 @@ import { AddSeriesModal } from "@components/modals/AddSeriesModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import InfoModal from "@pages/prospect/components/InfoModal";
 import { privilegeCrm } from "@config/privilege";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { TextLabels } from "./config";
 
 export interface ExtraordinaryPaymentModalProps {
   businessUnitPublicCode: string;
+  lang: EnumType;
   prospectData?: IProspect;
   sentData?: IExtraordinaryInstallments | null;
   showAddButton?: boolean;
@@ -32,6 +34,7 @@ export const ExtraordinaryPaymentModal = (
 ) => {
   const {
     businessUnitPublicCode,
+    lang,
     prospectData,
     sentData,
     showAddButton,
@@ -79,8 +82,8 @@ export const ExtraordinaryPaymentModal = (
   };
   return (
     <BaseModal
-      title={TextLabels.extraPayments}
-      nextButton={TextLabels.close}
+      title={TextLabels.extraPayments.i18n[lang]}
+      nextButton={TextLabels.close.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
       width={!isMobile ? "850px" : "290px"}
@@ -105,7 +108,7 @@ export const ExtraordinaryPaymentModal = (
               onClick={openAddSeriesModal}
               disabled={canEditCreditRequest}
             >
-              {TextLabels.addSeries}
+              {TextLabels.addSeries.i18n[lang]}
             </Button>
           )}
           <Stack alignItems="center">
@@ -129,6 +132,7 @@ export const ExtraordinaryPaymentModal = (
             setSentData={setSentData}
             handleClose={closeAddSeriesModal}
             businessUnitPublicCode={businessUnitPublicCode}
+            lang={lang}
           />
         </Stack>
         {isAddSeriesModalOpen && (
@@ -144,6 +148,7 @@ export const ExtraordinaryPaymentModal = (
             setAddModal={setAddModal}
             selectedModal={selectedModal}
             prospectData={prospectData}
+            lang={lang}
           />
         )}
         {isModalOpen ? (

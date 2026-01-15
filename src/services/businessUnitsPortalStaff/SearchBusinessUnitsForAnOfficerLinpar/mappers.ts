@@ -5,12 +5,14 @@ const mapBusinessUnitsPortalStaffToEntity = (
 ): IBusinessUnitsPortalStaff => {
   const buildResend: IBusinessUnitsPortalStaff = {
     businessUnitPublicCode: String(resend.businessUnitPublicCode),
-    languageId: String(resend.languageId),
+    languageId: String(resend.languageIso),
     abbreviatedName: String(resend.abbreviatedName),
     descriptionUse: String(resend.descriptionUse),
     firstMonthOfFiscalYear: String(resend.firstMonthOfFiscalYear),
     urlLogo: String(resend.urlLogo),
+    languageiso: String(resend.languageiso),
   };
+
   return buildResend;
 };
 

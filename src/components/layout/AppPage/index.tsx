@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useRef } from "react";
+import { useContext, useState, useEffect, useRef, useMemo } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { MdLogout, MdOutlineChevronRight } from "react-icons/md";
 import {
@@ -20,6 +20,7 @@ import { IBusinessUnitsPortalStaff } from "@services/businessUnitsPortalStaff/ty
 import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
 import { userMenu } from "@config/menuMainConfiguration";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import {
   StyledAppPage,
@@ -56,6 +57,7 @@ function AppPage(props: IAppPage) {
     useContext(AppContext);
   const location = useLocation();
   const { user } = useIAuth();
+  const { lang } = useEnum();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -88,7 +90,7 @@ function AppPage(props: IAppPage) {
   };
 
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
-  const navConfig = useNavConfig();
+  const navConfig = useNavConfig(lang);
   const [selectedClient, setSelectedClient] = useState<string>(
     eventData.businessUnit.abbreviatedName,
   );
@@ -125,6 +127,24 @@ function AppPage(props: IAppPage) {
   };
 
   const { addFlag } = useFlag();
+
+  const translatedActions = useMemo(() => {
+    return actions.map((action) => ({
+      ...action,
+      label: action.label.i18n[lang],
+    }));
+  }, [lang]);
+
+  const translatedUserMenu = useMemo(() => {
+    return userMenu.map((section) => ({
+      ...section,
+      title: section.title.i18n[lang],
+      links: section.links.map((link) => ({
+        ...link,
+        title: link.title.i18n[lang],
+      })),
+    }));
+  }, [lang]);
 
   const handleFlag = () => {
     const errorData = mockErrorBoard[0].business;
@@ -170,7 +190,7 @@ function AppPage(props: IAppPage) {
                 breakpoint: "848px",
                 client: eventData.businessUnit.abbreviatedName,
               }}
-              menu={userMenu}
+              menu={translatedUserMenu}
             />
           </StyledHeaderContainer>
           <StyledCollapseIcon
@@ -236,7 +256,7 @@ function AppPage(props: IAppPage) {
               <StyledPrint>
                 <Nav
                   navigation={navConfig}
-                  actions={actions}
+                  actions={translatedActions}
                   collapse={true}
                   footerLogo={eventData.businessManager.urlLogo}
                 />

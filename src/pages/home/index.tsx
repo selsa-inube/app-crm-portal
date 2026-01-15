@@ -1,18 +1,20 @@
 import { useMediaQuery } from "@inubekit/inubekit";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { AppContext } from "@context/AppContext";
 import { CustomerContext } from "@context/CustomerContext";
+import { useIAuth } from "@inube/iauth-react";
 import { useAppContext } from "@hooks/useAppContext";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { HomeUI } from "./interface";
-import { useNavigate } from "react-router-dom";
-import { useIAuth } from "@inube/iauth-react";
 import { errorDataCredit } from "./config/home.config";
 
 const Home = () => {
   const { eventData } = useContext(AppContext);
   const { customerData } = useContext(CustomerContext);
+  const { lang } = useEnum();
 
   const smallScreen = useMediaQuery("(max-width: 532px)");
   const isMobile = useMediaQuery("(max-width: 880px)");
@@ -50,15 +52,15 @@ const Home = () => {
 
     if (eventData.businessManager.abbreviatedName.length === 0) {
       error = 1003;
-      messages.push(errorDataCredit.noBusinessUnit);
+      messages.push(errorDataCredit.noBusinessUnit.i18n[lang]);
     }
     if (customerData.fullName.length === 0) {
       error = 1016;
-      messages.push(errorDataCredit.noSelectClient);
+      messages.push(errorDataCredit.noSelectClient.i18n[lang]);
     }
     if (!optionStaffData || optionStaffData.length === 0) {
       error = 1041;
-      messages.push(errorDataCredit.errorData);
+      messages.push(errorDataCredit.errorData.i18n[lang]);
     }
 
     setCodeError(error);
@@ -78,6 +80,7 @@ const Home = () => {
       user={user}
       showErrorModal={showErrorModal}
       messageError={messageError}
+      lang={lang}
       setMessageError={setMessageError}
       setShowErrorModal={setShowErrorModal}
       navigate={navigate}
