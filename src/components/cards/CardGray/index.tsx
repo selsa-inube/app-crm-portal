@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
-import { Stack, Text } from "@inubekit/inubekit";
+import { Stack } from "@inubekit/inubekit";
+
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import { StyledContainer } from "./styles";
 
@@ -26,37 +28,31 @@ export function CardGray(props: ICardGrayProps) {
   return (
     <StyledContainer $isMobile={isMobile}>
       <Stack direction="column">
-        <Text
+        <TruncatedText
+          text={label}
           type="label"
           weight="normal"
           size="medium"
           appearance="gray"
-          ellipsis={true}
-        >
-          {label}
-        </Text>
+        />
         {!placeHolderTag ? (
-          <Text
+          <TruncatedText
+            text={placeHolder as string}
             type="body"
             size="medium"
             weight="bold"
             appearance={appearancePlaceHolder}
-            ellipsis={true}
-          >
-            {placeHolder}
-          </Text>
+          />
         ) : (
           <Stack>{placeHolder}</Stack>
         )}
       </Stack>
-      <Text
+      <TruncatedText
+        text={data as string}
         type="body"
         size={isMobile ? "large" : "medium"}
         appearance={isMobile ? "dark" : "gray"}
-        ellipsis={true}
-      >
-        {data}
-      </Text>
+      />
     </StyledContainer>
   );
 }

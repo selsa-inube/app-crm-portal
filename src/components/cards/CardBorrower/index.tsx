@@ -8,6 +8,7 @@ import {
 } from "react-icons/md";
 
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import { StyledContainer } from "./styles";
 import { newBorrowedData } from "./config";
@@ -60,25 +61,34 @@ export function CardBorrower(props: ICardBorrowerProps) {
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedData.names.i18n[lang]}
             </Text>
-            <Text type="body" size="large" ellipsis={true}>
-              {name}
-            </Text>
+            <TruncatedText
+              text={name}
+              maxLength={27}
+              type="body"
+              size="large"
+            />
           </Stack>
           <Stack direction="column" gap="4px">
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedData.lastNames.i18n[lang]}
             </Text>
-            <Text type="body" size="large" ellipsis={true}>
-              {lastName}
-            </Text>
+            <TruncatedText
+              text={lastName}
+              maxLength={27}
+              type="body"
+              size="large"
+            />
           </Stack>
           <Stack direction="column" gap="4px">
             <Text type="label" weight="bold" size="medium" appearance="gray">
               {newBorrowedData.email.i18n[lang]}
             </Text>
-            <Text type="body" size="large" ellipsis={true}>
-              {email}
-            </Text>
+            <TruncatedText
+              text={email}
+              maxLength={27}
+              type="body"
+              size="large"
+            />
           </Stack>
           <Stack direction="column" gap="4px" justifyContent="center">
             <Text type="label" weight="bold" size="medium" appearance="gray">
@@ -90,9 +100,12 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 appearance={"success"}
                 size="18px"
               />
-              <Text type="body" size="large" ellipsis={true}>
-                {income.replace("$", "")}
-              </Text>
+              <TruncatedText
+                text={income.replace("$", "")}
+                maxLength={27}
+                type="body"
+                size="large"
+              />
             </Stack>
           </Stack>
           <Stack direction="column" gap="4px" justifyContent="center">
@@ -105,9 +118,12 @@ export function CardBorrower(props: ICardBorrowerProps) {
                 appearance={"success"}
                 size="18px"
               />
-              <Text type="body" size="large" ellipsis={true}>
-                {obligations.replace("$", "")}
-              </Text>
+              <TruncatedText
+                text={obligations.replace("$", "")}
+                maxLength={27}
+                type="body"
+                size="large"
+              />
             </Stack>
           </Stack>
         </Stack>

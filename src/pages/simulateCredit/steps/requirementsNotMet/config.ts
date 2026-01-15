@@ -40,3 +40,18 @@ export const dataError = {
     },
   },
 };
+
+export const excludedStatus = [
+  "Aprobado",
+  "PASSED_WITH_SYSTEM_VALIDATION",
+  "IGNORED_BY_THE_USER_SYSTEM_VALIDATION",
+  "DOCUMENT_STORED_AND_VALIDATED",
+  "DOCUMENT_IGNORED_BY_THE_USER",
+];
+
+export const failedStatus = [
+  "FAILED_SYSTEM_VALIDATION",
+  "FAILED_DOCUMENT_VALIDATION",
+  "FAILED_HUMAN_VALIDATION",
+  "VALIDATION_FAILED_CANCELS_REQUEST",
+];

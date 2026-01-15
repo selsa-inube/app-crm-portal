@@ -7,6 +7,7 @@ import {
   Button,
   SkeletonLine,
 } from "@inubekit/inubekit";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import { StyledContainerFieldset, StyledPrint } from "./styles";
 
@@ -35,6 +36,7 @@ interface IFieldsetProps {
   alignContent?: boolean;
   loading?: boolean;
   maxHeight?: string;
+  maxLength?: number;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -57,6 +59,7 @@ export const Fieldset = (props: IFieldsetProps) => {
     alignContent,
     loading,
     maxHeight,
+    maxLength = 30,
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -95,9 +98,12 @@ export const Fieldset = (props: IFieldsetProps) => {
               {title}
             </Text>
             {descriptionTitle && (
-              <Text type="title" ellipsis size={isMobile ? "medium" : "large"}>
-                {descriptionTitle}
-              </Text>
+              <TruncatedText
+                text={descriptionTitle}
+                maxLength={maxLength}
+                type="title"
+                size={isMobile ? "medium" : "large"}
+              />
             )}
           </Stack>
         )}

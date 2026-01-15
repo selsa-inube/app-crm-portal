@@ -21,11 +21,7 @@ import { IAllEnumsResponse } from "@services/enumerators/types";
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
 import { IFormData } from "./types";
-import {
-  dataSubmitApplication,
-  prospectStates,
-  tittleOptions,
-} from "./config/config";
+import { dataSubmitApplication, tittleOptions } from "./config/config";
 import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
@@ -469,7 +465,7 @@ export function ApplyForCredit() {
         return;
       }
 
-      if (prospect.state !== prospectStates.CREATED.i18n[lang]) {
+      if (prospect.state !== "Created") {
         setCodeError(1012);
       }
 
