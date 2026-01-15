@@ -34,6 +34,7 @@ import { ErrorPage } from "@components/layout/ErrorPage";
 import { BaseModal } from "@components/modals/baseModal";
 import { environment } from "@config/environment";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import {
   configHandleactions,
@@ -99,7 +100,7 @@ export const FinancialReporting = () => {
 
   const { creditRequestCode } = useParams();
   const { user } = useIAuth();
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   const navigation = useNavigate();
 
@@ -463,6 +464,7 @@ export const FinancialReporting = () => {
                               requestValue={requestValue}
                               loadingData={loadingData}
                               lang={lang}
+                              enums={enums as IAllEnumsResponse}
                             />
                           </BlockPdfSection>
                         </Stack>

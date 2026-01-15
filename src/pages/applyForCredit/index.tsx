@@ -16,6 +16,7 @@ import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/mes
 import { IDocumentsCredit } from "@services/creditRequest/types";
 import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
@@ -49,7 +50,7 @@ export function ApplyForCredit() {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   if (!businessManagerCode && codeError === null) {
     setCodeError(1003);
@@ -703,6 +704,7 @@ export function ApplyForCredit() {
         modesOfDisbursement={modesOfDisbursement}
         guaranteesRequired={guaranteesRequired}
         loading={loading}
+        enums={enums as IAllEnumsResponse}
         lang={lang}
       />
     </>

@@ -7,6 +7,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { updateProspect } from "@services/prospect/updateProspect";
 import { restoreFinancialObligationsByBorrowerId } from "@services/prospect/restoreFinancialObligationsByBorrowerId";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import {
   convertObligationsToProperties,
@@ -32,6 +33,7 @@ export const TableFinancialObligations = (
     showButtons,
     lang,
     formState,
+    enums,
     services = true,
     handleOnChangeExtraBorrowers = undefined,
     showOnlyEdit = false,
@@ -465,6 +467,7 @@ export const TableFinancialObligations = (
       handleOnChangeExtraBorrowers={handleOnChangeExtraBorrowers}
       showOnlyEdit={showOnlyEdit}
       showAddButton={showAddButton}
+      enums={enums as IAllEnumsResponse}
       lang={lang as EnumType}
     />
   );

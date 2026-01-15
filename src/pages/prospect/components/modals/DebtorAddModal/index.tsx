@@ -10,6 +10,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { getFinancialObligations } from "@pages/simulateCredit/steps/extraDebtors/utils";
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { transformObligationsToBorrowerProperties } from "../DebtorEditModal/utils";
 import { stepsAddBorrower } from "./config/addBorrower.config";
@@ -36,6 +37,7 @@ interface DebtorAddModalProps {
   prospectData: IProspect;
   businessManagerCode: string;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   businessUnitPublicCode?: string;
   customerData?: ICustomerData;
 }
@@ -50,6 +52,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     onAddBorrower,
     customerData,
     lang,
+    enums,
   } = props;
 
   const [currentStep, setCurrentStep] = useState<number>(
@@ -394,6 +397,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
       title={title}
       isMobile={isMobile}
       customerData={customerData}
+      enums={enums}
       lang={lang}
     />
   );

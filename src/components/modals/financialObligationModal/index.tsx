@@ -1,5 +1,5 @@
 import { FormikValues, useFormik } from "formik";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney, MdOutlineTag } from "react-icons/md";
 import {
@@ -16,8 +16,8 @@ import {
   validateCurrencyField,
 } from "@utils/formatData/currency";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { EnumContext } from "@context/EnumContext";
 import { getAllBancks } from "@services/bank/SearchAllBank";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -36,6 +36,7 @@ export interface FinancialObligationModalProps {
   title: string;
   confirmButtonText: string;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
 }
@@ -45,13 +46,12 @@ function FinancialObligationModal({
   onConfirm,
   confirmButtonText,
   lang,
+  enums,
   iconBefore,
   iconAfter,
 }: FinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
   const [banks, setBanks] = useState<IOptionsSelect[]>([]);
-
-  const { enums } = useContext(EnumContext) || {};
 
   const validationSchema = Yup.object({
     type: Yup.string().required(""),
