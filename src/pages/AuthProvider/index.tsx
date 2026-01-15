@@ -7,13 +7,19 @@ import { LoadingAppUI } from "@pages/login/outlets/LoadingApp/interface";
 import { usePortalLogic } from "@hooks/usePortalRedirect";
 import { useAuthHandler } from "@hooks/useAuthHandler";
 
-interface IAuthProvider {
+interface IAuthProviderProps {
   children: ReactNode;
 }
 
 function AuthContent({ children }: { children: ReactNode }) {
-  const { codeError, authConfig, loading, hasAuthError, portalCode } =
-    usePortalLogic();
+  const {
+    codeError,
+    authConfig,
+    loading,
+    hasAuthError,
+    portalCode,
+    publicCode,
+  } = usePortalLogic();
 
   useAuthHandler(authConfig, hasAuthError, portalCode);
 
@@ -21,7 +27,7 @@ function AuthContent({ children }: { children: ReactNode }) {
     return <LoadingAppUI />;
   }
 
-  if (!portalCode) {
+  if (!portalCode || !publicCode) {
     return <ErrorPage errorCode={1000} />;
   }
 
@@ -32,13 +38,15 @@ function AuthContent({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-export function AuthProvider({ children }: IAuthProvider) {
-  const { codeError, authConfig, loading, portalCode } = usePortalLogic();
+export function AuthProvider({ children }: IAuthProviderProps) {
+  const { codeError, authConfig, loading, portalCode, publicCode } =
+    usePortalLogic();
+
   if (loading) {
     return <LoadingAppUI />;
   }
 
-  if (!portalCode) {
+  if (!portalCode || !publicCode) {
     return <ErrorPage errorCode={1000} />;
   }
 
@@ -55,7 +63,7 @@ export function AuthProvider({ children }: IAuthProvider) {
       codeVerifier={environment.CODE_VERIFIER}
       codeChallenge={environment.CODE_CHALLENGE}
       state={environment.STATE}
-      applicationName={environment.VITE_STAFF_PORTAL_CATALOG_CODE}
+      applicationName={publicCode}
       originatorCode={environment.ORIGINATOR_CODE}
     >
       <AuthContent>{children}</AuthContent>
