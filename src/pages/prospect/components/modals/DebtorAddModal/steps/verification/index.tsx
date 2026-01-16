@@ -6,6 +6,7 @@ import { TableFinancialObligations } from "@pages/prospect/components/TableOblig
 import { IIncomeSources } from "@services/creditLimit/types";
 import { IProspect } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { IAttributes, IDataVerificationStep } from "./types";
 import { IPersonalInfo } from "../../types";
@@ -23,6 +24,7 @@ export interface IControllerAccordionProps {
   totalEmploymentIncome: number;
   totalBusinessesIncome: number;
   lang: EnumType;
+  enums: IAllEnumsResponse;
 }
 
 function createAttribute(
@@ -42,6 +44,7 @@ export const VerificationDebtorAddModal = (
     totalEmploymentIncome,
     totalBusinessesIncome,
     lang,
+    enums,
   } = props;
   const isMobile = useMediaQuery("(max-width: 740px)");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -170,6 +173,7 @@ export const VerificationDebtorAddModal = (
                 showOnlyEdit={true}
                 services={false}
                 lang={lang}
+                enums={enums}
               />
             </Stack>
           ),

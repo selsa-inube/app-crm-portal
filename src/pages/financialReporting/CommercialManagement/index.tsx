@@ -52,6 +52,7 @@ import { IIncomeSources } from "@services/creditLimit/types";
 import { getPropertyValue } from "@utils/mappingData/mappings";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { titlesModal } from "./config/config";
 import { errorMessages } from "../config";
@@ -71,6 +72,7 @@ interface ComercialManagementProps {
   setCollapse: React.Dispatch<React.SetStateAction<boolean>>;
   sentData: IExtraordinaryInstallments | null;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
@@ -100,6 +102,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     setSentData,
     setRequestValue,
     loadingData,
+    enums,
   } = props;
   const [showMenu, setShowMenu] = useState(false);
   const [infoModal, setInfoModal] = useState(false);
@@ -556,6 +559,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   showAddProduct={false}
                   userAccount={eventData.user.userAccount}
                   lang={lang}
+                  enums={enums}
                 />
               )}
             </Stack>
@@ -581,6 +585,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                 prospectData={prospectData ? [prospectData] : undefined}
                 options={incomeOptions}
                 lang={lang}
+                enums={enums}
               />
             )}
             {currentModal === "extraPayments" && (

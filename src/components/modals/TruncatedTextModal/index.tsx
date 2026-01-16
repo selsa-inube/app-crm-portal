@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Text, useMediaQuery } from "@inubekit/inubekit";
 import { useEnum } from "@hooks/useEnum/useEnum";
 
@@ -8,7 +8,7 @@ import { dataTruncatedText } from "./config";
 
 interface TruncatedTextProps {
   text: string;
-  maxLength?: number;
+  maxLength?: number | "auto";
   appearance?: TextAppearance;
   type?: TextType;
   size?: TextSize;
@@ -18,7 +18,7 @@ interface TruncatedTextProps {
 
 export const TruncatedText = ({
   text,
-  maxLength = 50,
+  maxLength = "auto",
   appearance,
   type,
   size,
@@ -26,16 +26,29 @@ export const TruncatedText = ({
   transformFn,
 }: TruncatedTextProps) => {
   const [showModal, setShowModal] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 700px)");
-
-  const isTruncated = text.length > maxLength;
   const { lang } = useEnum();
 
   const displayText = transformFn ? transformFn(text) : text;
 
-  const finalContent = isTruncated
-    ? displayText.slice(0, maxLength) + "..."
-    : displayText;
+  useEffect(() => {
+    if (maxLength === "auto" && textRef.current) {
+      const element = textRef.current;
+      setIsOverflowing(element.scrollWidth > element.clientWidth);
+    }
+  }, [displayText, maxLength]);
+
+  const isTruncated =
+    maxLength === "auto" ? isOverflowing : text.length > (maxLength as number);
+
+  const finalContent =
+    maxLength === "auto"
+      ? displayText
+      : text.length > (maxLength as number)
+        ? displayText.slice(0, maxLength as number) + "..."
+        : displayText;
 
   const handleOpen = (event: React.MouseEvent) => {
     if (isTruncated) {
@@ -53,10 +66,16 @@ export const TruncatedText = ({
   };
 
   return (
-    <StyledContainer onClick={handleOpen} $isTruncated={isTruncated}>
-      <Text appearance={appearance} type={type} size={size} weight={weight}>
-        {finalContent}
-      </Text>
+    <>
+      <StyledContainer
+        ref={textRef}
+        onClick={handleOpen}
+        $isTruncated={isTruncated}
+      >
+        <Text appearance={appearance} type={type} size={size} weight={weight}>
+          {finalContent}
+        </Text>
+      </StyledContainer>
 
       {showModal && (
         <BaseModal
@@ -66,11 +85,11 @@ export const TruncatedText = ({
           handleClose={handleClose}
           width={isMobile ? "290px" : "450px"}
         >
-          <Text type="title" size="medium">
+          <Text type="body" size="medium">
             {displayText}
           </Text>
         </BaseModal>
       )}
-    </StyledContainer>
+    </>
   );
 };

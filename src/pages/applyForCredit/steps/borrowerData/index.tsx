@@ -19,6 +19,7 @@ import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { IProspect, IProspectBorrower } from "@services/prospect/types";
 import { transformServiceData } from "@pages/simulateCredit/steps/extraDebtors/utils";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { getTotalFinancialObligations } from "../../util";
 import { StyledContainer } from "./styles";
@@ -34,6 +35,7 @@ interface borrowersProps {
   valueRule: string[];
   businessManagerCode: string;
   lang: EnumType;
+  enums: IAllEnumsResponse;
 }
 
 export interface Borrower {
@@ -55,6 +57,7 @@ export function Borrowers(props: borrowersProps) {
     valueRule,
     businessManagerCode,
     lang,
+    enums,
   } = props;
 
   const [isModalAdd, setIsModalAdd] = useState(false);
@@ -152,7 +155,7 @@ export function Borrowers(props: borrowersProps) {
                 <CardBorrower
                   key={index}
                   title={
-                    dataSubmitApplication.borrowers.borrowerLabel +
+                    dataSubmitApplication.borrowers.borrowerLabel.i18n[lang] +
                     ` ${index + 1}`
                   }
                   name={getPropertyValue(item.borrowerProperties, "name")}
@@ -237,6 +240,7 @@ export function Borrowers(props: borrowersProps) {
                   formik.setFieldValue("borrowers", updatedBorrowers);
                 }}
                 lang={lang}
+                enums={enums}
               />
             )}
             {isModalView && selectedBorrower && (
@@ -249,6 +253,7 @@ export function Borrowers(props: borrowersProps) {
                 initialValues={selectedDebtorDetail as IDebtorDetail}
                 properties={selectedBorrower as IBorrower}
                 lang={lang}
+                enums={enums}
               />
             )}
             {isModalDelete && (
@@ -283,6 +288,7 @@ export function Borrowers(props: borrowersProps) {
                 businessManagerCode={businessManagerCode}
                 prospectData={prospectData as IProspect}
                 lang={lang}
+                enums={enums}
               />
             )}
           </Stack>

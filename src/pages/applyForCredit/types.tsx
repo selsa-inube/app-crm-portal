@@ -18,11 +18,11 @@ export const titleButtonTextAssited = {
     },
   },
   submitText: {
-    code: "Submit_text",
-    description: "Add product button label",
+    code: "Submit",
+    description: "Submit",
     i18n: {
-      en: "Add product",
-      es: "Agregar producto",
+      en: "Submit",
+      es: "Radicar",
     },
   },
 };

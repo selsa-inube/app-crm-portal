@@ -7,6 +7,7 @@ import {
 } from "react-icons/md";
 
 import { IFile } from "@components/modals/ListModal";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import { StyledFile } from "./styles";
 
@@ -52,9 +53,13 @@ function FileUI(props: FileUIProps) {
       <Stack gap="8px" alignItems="center">
         <Icon icon={<MdOutlineDescription />} appearance="dark" size="20px" />
         <Stack direction="column" width={isMobile ? "160px" : "130px"}>
-          <Text type="label" size="medium" weight="bold" ellipsis>
-            {name}
-          </Text>
+          <TruncatedText
+            text={name}
+            maxLength={27}
+            type="label"
+            size="medium"
+            weight="bold"
+          />
           <Text appearance="gray" size="small">
             {size}
           </Text>

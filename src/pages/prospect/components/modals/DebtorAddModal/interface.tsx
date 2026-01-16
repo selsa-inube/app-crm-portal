@@ -9,6 +9,7 @@ import { IProspect } from "@services/prospect/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { stepsAddBorrower } from "./config/addBorrower.config";
 import { AddBorrower } from "./steps/personalInfo";
@@ -25,6 +26,7 @@ interface DebtorAddModalUIProps {
   isMobile: boolean;
   incomeData: IIncomeSources | undefined;
   AutoCompleted: boolean;
+  enums: IAllEnumsResponse;
   prospectData: IProspect;
   businessUnitPublicCode: string;
   lang: EnumType;
@@ -74,6 +76,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
     handleClose,
     setIsCurrentFormValid,
     customerData,
+    enums,
   } = props;
 
   const [totalCapitalIncome, setTotalCapitalIncome] = useState<number>(0);
@@ -157,6 +160,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
                 setFinancialObligationsData(Array.isArray(values) ? values : [])
               }
               lang={lang}
+              enums={enums}
             />
           )}
         {currentStepsNumber &&
@@ -172,6 +176,7 @@ export function DebtorAddModalUI(props: DebtorAddModalUIProps) {
               totalEmploymentIncome={totalEmploymentIncome}
               totalBusinessesIncome={totalBusinessesIncome}
               lang={lang}
+              enums={enums}
             />
           )}
       </Stack>

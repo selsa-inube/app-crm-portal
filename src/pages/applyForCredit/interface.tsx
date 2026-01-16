@@ -30,6 +30,7 @@ import {
 import { currencyFormat } from "@utils/formatData/currency";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import {
   IBorrowerData,
@@ -96,6 +97,7 @@ interface ApplyForCreditUIProps {
   addToFix?: string[];
   guaranteesRequired: string[];
   lang: EnumType;
+  enums: IAllEnumsResponse;
 }
 
 export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
@@ -135,6 +137,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     guaranteesRequired,
     loading,
     lang,
+    enums,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -334,6 +337,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     valueRule={guaranteesRequired}
                     businessManagerCode={businessManagerCode}
                     lang={lang}
+                    enums={enums}
                   />
                 )}
               {currentStepNumber &&

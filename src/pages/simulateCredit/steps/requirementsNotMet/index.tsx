@@ -10,7 +10,7 @@ import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 
-import { dataError } from "./config";
+import { dataError, excludedStatus } from "./config";
 
 interface IRequirementsNotMetProps {
   isMobile: boolean;
@@ -57,7 +57,8 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
         if (data) {
           setValidateRequirements(
             data.filter(
-              (requirement) => requirement.requirementStatus !== "Aprobado",
+              (requirement) =>
+                !excludedStatus.includes(requirement.requirementStatus),
             ),
           );
         }

@@ -32,6 +32,7 @@ import {
   IResponsePaymentDatesChannel,
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
@@ -103,7 +104,7 @@ export function SimulateCredit() {
   const isMobile = useMediaQuery("(max-width:880px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   const steps = useMemo(() => {
     return Object.values(stepsAddProspect).map((step) => ({
@@ -1018,6 +1019,7 @@ export function SimulateCredit() {
         loadingQuestions={loadingQuestions}
         showSelectsLoanAmount={!formData.togglesState[0]}
         isLoadingSubmit={isLoadingSubmit}
+        enums={enums as IAllEnumsResponse}
         handleNavigate={handleNavigate}
       />
     </>

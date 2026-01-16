@@ -11,6 +11,10 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { requirementStatusData } from "@services/enum/requirements";
 import { IManageErrors } from "@pages/simulateCredit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import {
+  excludedStatus,
+  failedStatus,
+} from "@pages/simulateCredit/steps/requirementsNotMet/config";
 
 import {
   dataError,
@@ -57,9 +61,9 @@ export function RequirementsModal(props: IRequirementsModalProps) {
             )?.i18n[lang] || item.requirementStatus
           }
           appearance={
-            item.requirementStatus === "Aprobado"
+            excludedStatus.includes(item.requirementStatus)
               ? "success"
-              : item.requirementStatus === "Rechazado"
+              : failedStatus.includes(item.requirementStatus)
                 ? "danger"
                 : "warning"
           }
@@ -91,9 +95,8 @@ export function RequirementsModal(props: IRequirementsModalProps) {
           handleNext={handleClose}
           handleClose={handleClose}
           width={isMobile ? "300px " : "652px"}
-          height={isMobile ? "auto" : "538px"}
         >
-          <Fieldset>
+          <Fieldset maxHeight="340px">
             {isLoading ? (
               <Stack
                 gap="16px"
@@ -109,7 +112,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
                 </Text>
               </Stack>
             ) : validateRequirements && validateRequirements.length > 0 ? (
-              <Stack height="340px" direction="column">
+              <Stack direction="column">
                 <TableBoard
                   id="requirements"
                   titles={titlesRequirementsModal}
