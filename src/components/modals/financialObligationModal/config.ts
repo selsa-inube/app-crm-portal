@@ -280,6 +280,14 @@ const dataInputs = {
       es: "Total de cuotas",
     },
   },
+  errorBanks: {
+    code: "DisbursementAccount_errorBanks",
+    description: "Error loading banks",
+    i18n: {
+      en: "Error retrieving banks",
+      es: "Error al obtener bancos",
+    },
+  },
 };
 
 export {

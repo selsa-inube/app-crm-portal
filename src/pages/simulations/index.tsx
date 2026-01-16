@@ -27,6 +27,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { recalculateProspect } from "@services/prospect/recalculateProspect";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { SimulationsUI } from "./interface";
 import { dataEditProspect, labelsAndValuesShare } from "./config";
@@ -64,7 +65,7 @@ export function Simulations() {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
@@ -386,6 +387,7 @@ export function Simulations() {
       isLoading={isLoading}
       lang={lang}
       isLoadingDelete={isLoadingDelete}
+      enums={enums as IAllEnumsResponse}
     />
   );
 }

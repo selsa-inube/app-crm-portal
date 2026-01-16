@@ -25,13 +25,13 @@ export const requirementStatusData: IDomainEnum[] = [
   },
   {
     code: "IGNORED_BY_THE_USER_SYSTEM_VALIDATION",
-    value: "Passed*",
+    value: "Passed",
     description:
       "The system performed the validation and the condition(s) are not met, but then a user forcibly approved it. This use case is explained later.",
     requirementType: "SYSTEM_VALIDATION",
     i18n: {
       es: "Aprobado*",
-      en: "Passed*",
+      en: "Passed",
     },
   },
   {

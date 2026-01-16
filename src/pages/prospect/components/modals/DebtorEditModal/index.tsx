@@ -9,6 +9,7 @@ import { getPropertyValue } from "@utils/mappingData/mappings";
 import { IBorrower, IProspect } from "@services/prospect/types";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { dataEditDebtor, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
@@ -33,6 +34,7 @@ interface IDebtorEditModalProps {
   businessUnit?: string;
   businessUnitId?: string;
   prospectData: IProspect | undefined;
+  enums: IAllEnumsResponse;
 }
 
 export function DebtorEditModal(props: IDebtorEditModalProps) {
@@ -44,6 +46,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
     businessManagerCode,
     prospectData,
     lang,
+    enums,
     handleClose,
     onUpdate,
   } = props;
@@ -264,6 +267,7 @@ export function DebtorEditModal(props: IDebtorEditModalProps) {
             handleOnChangeExtraBorrowers={handleEditOrDeleteObligation}
             handleOnChange={handleAddObligation}
             lang={lang}
+            enums={enums}
           />
         )}
       </Stack>

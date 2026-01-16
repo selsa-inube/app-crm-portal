@@ -6,6 +6,7 @@ import { TableFinancialObligations } from "@pages/prospect/components/TableOblig
 import { IBorrower } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { dataDetails, dataTabs } from "./config";
 import { DataDebtor } from "./dataDebtor";
@@ -17,10 +18,12 @@ interface IDebtorDetailsModalProps {
   properties: IBorrower | null;
   isMobile?: boolean;
   lang: EnumType;
+  enums: IAllEnumsResponse;
 }
 
 export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
-  const { handleClose, initialValues, isMobile, properties, lang } = props;
+  const { handleClose, initialValues, isMobile, properties, lang, enums } =
+    props;
 
   const [currentTab, setCurrentTab] = useState(dataTabs[0].id);
   const onChange = (tabId: string) => {
@@ -64,6 +67,7 @@ export function DebtorDetailsModal(props: IDebtorDetailsModalProps) {
             handleOnChangeExtraBorrowers={() => {}}
             showOnlyEdit={true}
             lang={lang}
+            enums={enums}
           />
         )}
       </Stack>

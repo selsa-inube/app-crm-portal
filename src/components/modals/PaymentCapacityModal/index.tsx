@@ -24,7 +24,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { IMaximumCreditLimit } from "@services/creditRequest/types";
 import { postBusinessUnitRules } from "@services/creditLimit/getMaximumCreditLimitBasedOnPaymentCapacityByLineOfCredit";
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
-import { CardGray } from "@src/components/cards/CardGray";
+import { CardGray } from "@components/cards/CardGray";
 import { IExtraordinaryInstallments } from "@services/creditRequest/types";
 import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
 import { formatPrimaryDate } from "@utils/formatData/date";

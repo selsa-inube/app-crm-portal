@@ -16,15 +16,12 @@ import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/mes
 import { IDocumentsCredit } from "@services/creditRequest/types";
 import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
 import { IFormData } from "./types";
-import {
-  dataSubmitApplication,
-  prospectStates,
-  tittleOptions,
-} from "./config/config";
+import { dataSubmitApplication, tittleOptions } from "./config/config";
 import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
@@ -49,7 +46,7 @@ export function ApplyForCredit() {
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   if (!businessManagerCode && codeError === null) {
     setCodeError(1003);
@@ -468,7 +465,7 @@ export function ApplyForCredit() {
         return;
       }
 
-      if (prospect.state !== prospectStates.CREATED.i18n[lang]) {
+      if (prospect.state !== "Created") {
         setCodeError(1012);
       }
 
@@ -703,6 +700,7 @@ export function ApplyForCredit() {
         modesOfDisbursement={modesOfDisbursement}
         guaranteesRequired={guaranteesRequired}
         loading={loading}
+        enums={enums as IAllEnumsResponse}
         lang={lang}
       />
     </>

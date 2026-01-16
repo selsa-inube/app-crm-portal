@@ -62,7 +62,7 @@ export function OfferedGuaranteeModal(props: IOfferedGuaranteeModalProps) {
               >
                 <CardBorrower
                   key={borrower.id}
-                  title={`${dataGuarantee.borrower} ${index + 1}`}
+                  title={`${dataGuarantee.borrower.i18n[lang]} ${index + 1}`}
                   name={borrower.name}
                   lastName={borrower.lastName}
                   email={borrower.email}

@@ -32,6 +32,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import userImage from "@assets/images/userImage.jpeg";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
@@ -166,6 +167,7 @@ interface SimulateCreditUIProps {
   showSelectsLoanAmount: boolean;
   createdProspectModal: boolean;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -237,6 +239,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     createdProspectModal,
     setCreatedProspectModal,
     isLoadingSubmit,
+    enums,
   } = props;
 
   return (
@@ -374,6 +377,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessManagerCode={businessManagerCode}
                       clientIdentificationNumber={customerData.publicCode}
                       lang={lang}
+                      enums={enums}
                     />
                   )}
                 {currentStepsNumber &&
@@ -447,6 +451,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessManagerCode={businessManagerCode}
                       prospectData={prospectData}
                       lang={lang}
+                      enums={enums}
                     />
                   )}
                 {currentStepsNumber &&
@@ -501,6 +506,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         )
                       }
                       lang={lang}
+                      enums={enums}
                     />
                   )}
                 {currentStepsNumber &&

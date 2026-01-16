@@ -30,6 +30,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { RequirementsModal } from "../prospect/components/modals/RequirementsModal";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -77,6 +78,7 @@ interface SimulationsUIProps {
   canEditCreditRequest: boolean;
   processedData: ProcessedData;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
@@ -130,6 +132,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     businessManagerCode,
     canRequestCredit,
     canDeleteCreditRequest,
+    enums,
     canEditCreditRequest,
     processedData,
     lang,
@@ -434,6 +437,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           setShowRequirements={setShowRequirements}
                           validateRequirements={validateRequirements}
                           lang={lang}
+                          enums={enums}
                         />
                       </Fieldset>
                     </StyledScrollPrint>

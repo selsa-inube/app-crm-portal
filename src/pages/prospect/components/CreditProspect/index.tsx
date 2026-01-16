@@ -63,6 +63,7 @@ import { getTotalIncomeByBorrowerInProspect } from "@services/prospect/totalInco
 import { Fieldset } from "@components/data/Fieldset";
 import { dataCreditProspects } from "@pages/creditProspects/config";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -85,6 +86,7 @@ interface ICreditProspectProps {
   businessManagerCode: string;
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
+  enums: IAllEnumsResponse;
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
@@ -128,6 +130,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     showAddProduct = true,
     setShowRequirements,
     validateRequirements,
+    enums,
   } = props;
 
   const { customerData } = useContext(CustomerContext);
@@ -1026,6 +1029,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onProspectUpdate={onProspectRefreshData}
             showAddButton={showAddButtons}
             lang={lang}
+            enums={enums}
           />
         )}
         {currentModal === "extraPayments" && (

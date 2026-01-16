@@ -40,6 +40,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { privilegeCrm } from "@config/privilege";
 import { borrowerData } from "@pages/applyForCredit/steps/borrowerData/config";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { usePagination } from "./utils";
 import { dataReport } from "./config";
@@ -76,6 +77,7 @@ export interface ITableFinancialObligationsProps {
   >;
   clientPortfolio?: IObligations;
   services?: boolean;
+  enums?: IAllEnumsResponse;
   handleOnChange?: (values: FormikValues) => void;
   formState?: {
     type: string;
@@ -169,6 +171,7 @@ interface UIProps {
     newObligations: IObligationsFinancial[],
   ) => void;
   initialValuesModalDataProspect: FormikValues | undefined;
+  enums: IAllEnumsResponse;
 }
 
 export const TableFinancialObligationsUI = ({
@@ -202,6 +205,7 @@ export const TableFinancialObligationsUI = ({
   handleRestore,
   handleOnChangeExtraBorrowers,
   initialValuesModalDataProspect,
+  enums,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -727,6 +731,7 @@ export const TableFinancialObligationsUI = ({
           onConfirm={handleConfirm}
           confirmButtonText="Agregar"
           lang={lang}
+          enums={enums}
         />
       )}
       {showErrorModal && (
@@ -748,7 +753,7 @@ export const TableFinancialObligationsUI = ({
       )}
       {isModalOpenEdit && selectedBorrower && (
         <EditFinancialObligationModal
-          title={`${dataReport.edit} ${selectedBorrower.type || ""}`}
+          title={`${dataReport.edit.i18n[lang]} ${selectedBorrower.type || ""}`}
           onCloseModal={() => setIsModalOpenEdit(false)}
           onConfirm={async (updatedDebtor) => {
             await handleUpdate(updatedDebtor);

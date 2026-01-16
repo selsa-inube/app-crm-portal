@@ -17,6 +17,7 @@ import { IBorrower, IProspect } from "@services/prospect/types";
 import { IDebtorDetail } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { dataExtraDebtors, ITransformedBorrower } from "./config";
 import { transformServiceData } from "./utils";
@@ -31,6 +32,7 @@ interface IExtraDebtorsProps {
   businessManagerCode: string;
   prospectData: IProspect | undefined;
   lang: EnumType;
+  enums: IAllEnumsResponse;
 }
 
 export function ExtraDebtors(props: IExtraDebtorsProps) {
@@ -43,6 +45,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
     prospectData,
     customerData,
     lang,
+    enums,
   } = props;
   const [borrowers, setBorrowers] = useState(() =>
     transformServiceData(initialValues),
@@ -175,7 +178,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
             <CardBorrower
               typeBorrower={item.borrowerType}
               key={index}
-              title={data.borrowerLabel + ` ${index + 1}`}
+              title={data.borrowerLabel.i18n[lang] + ` ${index + 1}`}
               name={item.name}
               lastName={item.lastName}
               email={item.email}
@@ -232,6 +235,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               businessUnitPublicCode={businessUnitPublicCode}
               customerData={customerData}
               lang={lang}
+              enums={enums}
             />
           )}
 
@@ -245,6 +249,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               initialValues={selectedDebtorDetail}
               properties={selectedBorrowerForEdit}
               lang={lang}
+              enums={enums}
             />
           )}
           {isModalDelete && (
@@ -273,6 +278,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
               businessManagerCode={businessManagerCode}
               prospectData={prospectData}
               lang={lang}
+              enums={enums}
             />
           )}
         </Grid>
