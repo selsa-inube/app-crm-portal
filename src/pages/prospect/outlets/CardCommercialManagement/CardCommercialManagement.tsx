@@ -31,6 +31,7 @@ import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
@@ -46,6 +47,7 @@ interface CardCommercialManagementProps {
   id: string;
   dataRef: React.RefObject<HTMLDivElement>;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   onClick: () => void;
   setShowMessageSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   prospectSummaryData?: IProspectSummaryById;
@@ -68,6 +70,7 @@ export const CardCommercialManagement = (
     prospectData,
     showAddProduct = true,
     lang,
+    enums,
     onProspectUpdate,
     prospectSummaryData,
     setProspectSummaryData,
@@ -457,6 +460,8 @@ export const CardCommercialManagement = (
             setShowErrorModal={setShowErrorModal}
             setMessageError={setMessageError}
             isProcessingServices={isProcessingServices}
+            lang={lang}
+            enums={enums}
           />
         )}
         {showConsolidatedModal && (

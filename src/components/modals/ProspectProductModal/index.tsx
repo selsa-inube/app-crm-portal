@@ -8,7 +8,7 @@ import {
   Select,
   Textfield,
 } from "@inubekit/inubekit";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
@@ -28,12 +28,13 @@ import { CustomerContext } from "@context/CustomerContext";
 import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 import { validateIncrement } from "@services/prospect/validateIncrement";
 import { IValidateIncrementRequest } from "@services/prospect/validateIncrement/types";
+import { IAllEnumsResponse } from "@services/enumerators/types";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { ScrollableContainer } from "./styles";
 import {
   interestRateTypeMap,
   termInMonthsOptions,
-  amortizationTypeOptions,
   rateTypeOptions,
   VALIDATED_NUMBER_REGEX,
   messagesErrorValidations,
@@ -41,7 +42,6 @@ import {
   fieldPlaceholders,
   validationMessages,
   REPAYMENT_STRUCTURES_WITH_INCREMENT,
-  repaymentStructureMap,
 } from "./config";
 import { TruncatedText } from "../TruncatedTextModal";
 
@@ -54,6 +54,8 @@ interface EditProductModalProps {
   businessUnitPublicCode: string;
   businessManagerCode: string;
   isProcessingServices: boolean;
+  lang: EnumType;
+  enums: IAllEnumsResponse;
   prospectData: {
     lineOfCredit: string;
     moneyDestination: string;
@@ -76,6 +78,8 @@ function EditProductModal(props: EditProductModalProps) {
     businessUnitPublicCode,
     businessManagerCode,
     prospectData,
+    enums,
+    lang,
     setShowErrorModal,
     setMessageError,
     isProcessingServices,
@@ -105,11 +109,6 @@ function EditProductModal(props: EditProductModalProps) {
   >([]);
 
   const [loanTermError, setLoanTermError] = useState<string>("");
-  const [amortizationTypesList, setAmortizationTypesList] = useState<
-    { id: string; value: string; label: string }[]
-  >([]);
-  const [isLoadingAmortizationTypes, setIsLoadingAmortizationTypes] =
-    useState(false);
   const [interestRateError, setInterestRateError] = useState<string>("");
   const [rateTypesList, setRateTypesList] = useState<
     { id: string; value: string; label: string }[]
@@ -118,6 +117,18 @@ function EditProductModal(props: EditProductModalProps) {
 
   const isMobile = useMediaQuery("(max-width: 550px)");
   const { customerData } = useContext(CustomerContext);
+
+  const amortizationTypesList = useMemo(() => {
+    if (!enums?.RepaymentStructure) return [];
+
+    return enums.RepaymentStructure.map((item) => ({
+      id: item.code,
+      value: item.code,
+      label: item.i18n[lang] || item.description || item.code,
+    }));
+  }, [enums, lang]);
+
+  const isLoadingAmortizationTypes = !enums;
 
   useEffect(() => {
     const loadPaymentOptions = async () => {
@@ -175,48 +186,6 @@ function EditProductModal(props: EditProductModalProps) {
 
     loadPaymentOptions();
   }, [businessUnitPublicCode, businessManagerCode, initialValues.creditLine]);
-
-  useEffect(() => {
-    const loadAmortizationTypes = async () => {
-      setIsLoadingAmortizationTypes(true);
-
-      try {
-        const payload: IBusinessUnitRules = {
-          ruleName: "RepaymentStructure",
-          conditions: [
-            { condition: "LineOfCredit", value: prospectData.lineOfCredit },
-          ],
-        };
-
-        const decisions = await postBusinessUnitRules(
-          businessUnitPublicCode,
-          businessManagerCode,
-          payload,
-        );
-
-        if (decisions && Array.isArray(decisions) && decisions.length > 0) {
-          const options = decisions
-            .filter((decision) => typeof decision.value === "string")
-            .map((decision, index) => ({
-              id: decision.decisionId || `${index}`,
-              value: decision.value as string,
-              label:
-                repaymentStructureMap[decision.value as string] ||
-                (decision.value as string),
-            }));
-          setAmortizationTypesList(options);
-        } else {
-          setAmortizationTypesList(amortizationTypeOptions);
-        }
-      } catch (error) {
-        setAmortizationTypesList(amortizationTypeOptions);
-      } finally {
-        setIsLoadingAmortizationTypes(false);
-      }
-    };
-
-    loadAmortizationTypes();
-  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
 
   useEffect(() => {
     const loadRateTypes = async () => {

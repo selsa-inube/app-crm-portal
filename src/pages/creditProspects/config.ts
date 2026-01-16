@@ -217,8 +217,8 @@ export const dataCreditProspects = {
     code: "None",
     description: "None placeholder",
     i18n: {
-      en: "None",
-      es: "Ninguno",
+      en: "-",
+      es: "-",
     },
   },
   titleFlagDelete: {

@@ -1,7 +1,6 @@
 import {
   CreditLine,
   PaymentMethod,
-  AmortizationType,
   RateType,
 } from "@services/enum/prospectProduct";
 import { Schedule } from "@services/enum/schedule";
@@ -94,44 +93,6 @@ const termInMonthsOptions = [
   { id: "48Months", label: "48", value: "48" },
 ];
 
-const amortizationTypeOptions = [
-  {
-    id: AmortizationType.FixedPayments,
-    label: "Abonos Fijos",
-    value: AmortizationType.FixedPayments,
-  },
-  {
-    id: AmortizationType.GradualPayments,
-    label: "Pagos Graduales",
-    value: AmortizationType.GradualPayments,
-  },
-  {
-    id: AmortizationType.BulletPayment,
-    label: "Pago Único (Bullet)",
-    value: AmortizationType.BulletPayment,
-  },
-  {
-    id: AmortizationType.BalloonPayment,
-    label: "Pago Global (Balloon)",
-    value: AmortizationType.BalloonPayment,
-  },
-  {
-    id: AmortizationType.FixedPrincipal,
-    label: "Capital Fijo",
-    value: AmortizationType.FixedPrincipal,
-  },
-  {
-    id: AmortizationType.InterestOnly,
-    label: "Solo Intereses",
-    value: AmortizationType.InterestOnly,
-  },
-  {
-    id: AmortizationType.FixedIntegralPayments,
-    label: "Abonos Fijos Integrales",
-    value: AmortizationType.FixedIntegralPayments,
-  },
-];
-
 const rateTypeOptions = [
   { id: RateType.Fixed, label: "Fija", value: RateType.Fixed },
   { id: RateType.Variable, label: "Variable", value: RateType.Variable },
@@ -154,15 +115,6 @@ export const messagesErrorValidations = {
 };
 
 export const VALIDATED_NUMBER_REGEX = /[^0-9]/g;
-
-export const repaymentStructureMap: Record<string, string> = {
-  FixedInstallment: "Cuota integral fija",
-  ConstantAmortization: "Abonos fijos a capital",
-  GeometricGradientRepayment: "Gradiente geométrico",
-  ArithmeticGradientRepayment: "Gradiente aritmético",
-  ValueIncrementPayments: "Pagos valor de incremento",
-  PercentageIncrementPayments: "Pagos con porcentaje de incremento",
-};
 
 export const interestRateTypeMap: Record<string, string> = {
   VariableInterestRate: "Tasa variable",
@@ -253,6 +205,5 @@ export {
   paymentCycleOptions,
   firstPaymentCycleOptions,
   termInMonthsOptions,
-  amortizationTypeOptions,
   rateTypeOptions,
 };
