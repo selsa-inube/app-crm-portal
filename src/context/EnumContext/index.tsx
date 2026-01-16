@@ -24,8 +24,10 @@ export function EnumProvider(props: EnumProviderProps) {
 
   const { businessUnitSigla, eventData } = useContext(AppContext);
 
-  const businessUnitPublicCode: string =
-    JSON.parse(businessUnitSigla).businessUnitPublicCode;
+  const businessUnitPublicCode = businessUnitSigla
+    ? JSON.parse(businessUnitSigla).businessUnitPublicCode
+    : "";
+
   const businessManagerCode = eventData.businessManager.abbreviatedName;
   useEffect(() => {
     const browserLang = eventData.businessUnit.languageiso;

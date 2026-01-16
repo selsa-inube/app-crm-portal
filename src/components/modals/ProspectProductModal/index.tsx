@@ -8,24 +8,18 @@ import {
   Select,
   Textfield,
 } from "@inubekit/inubekit";
-import { useState, useEffect, useContext, useMemo } from "react";
+import { useState, useContext, useMemo } from "react";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
-import { getPaymentMethods } from "@services/prospect/getPaymentMethods";
 import { IBusinessUnitRules } from "@services/businessUnitRules/types";
-import {
-  IPaymentMethod,
-  IPaymentCycle,
-  IFirstPaymentCycle,
-} from "@services/prospect/getPaymentMethods/types";
+
 import {
   handleChangeWithCurrency,
   validateCurrencyField,
 } from "@utils/formatData/currency";
 import { getEffectiveInterestRate } from "@services/prospect/getEffectiveInterestRate";
 import { CustomerContext } from "@context/CustomerContext";
-import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 import { validateIncrement } from "@services/prospect/validateIncrement";
 import { IValidateIncrementRequest } from "@services/prospect/validateIncrement/types";
 import { IAllEnumsResponse } from "@services/enumerators/types";
@@ -33,9 +27,7 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { ScrollableContainer } from "./styles";
 import {
-  interestRateTypeMap,
   termInMonthsOptions,
-  rateTypeOptions,
   VALIDATED_NUMBER_REGEX,
   messagesErrorValidations,
   fieldLabels,
@@ -98,25 +90,32 @@ function EditProductModal(props: EditProductModalProps) {
   const [termInMonthsModified, setTermInMonthsModified] =
     useState<boolean>(false);
   const [loanAmountError, setLoanAmountError] = useState<string>("");
-  const [paymentMethodsList, setPaymentMethodsList] = useState<
-    IPaymentMethod[]
-  >([]);
-  const [paymentCyclesList, setPaymentCyclesList] = useState<IPaymentCycle[]>(
-    [],
-  );
-  const [firstPaymentCyclesList, setFirstPaymentCyclesList] = useState<
-    IFirstPaymentCycle[]
-  >([]);
 
   const [loanTermError, setLoanTermError] = useState<string>("");
   const [interestRateError, setInterestRateError] = useState<string>("");
-  const [rateTypesList, setRateTypesList] = useState<
-    { id: string; value: string; label: string }[]
-  >([]);
-  const [isLoadingRateTypes, setIsLoadingRateTypes] = useState(false);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
   const { customerData } = useContext(CustomerContext);
+
+  const paymentMethodsList = useMemo(() => {
+    if (!enums?.PaymentChannelTypeForExtraInstallments) return [];
+
+    return enums.PaymentChannelTypeForExtraInstallments.map((item) => ({
+      id: item.code,
+      value: item.code,
+      label: item.i18n[lang] || item.description || item.code,
+    }));
+  }, [enums, lang]);
+
+  const paymentCyclesList = useMemo(() => {
+    if (!enums?.Peridiocity) return [];
+
+    return enums.Peridiocity.map((item) => ({
+      id: item.code,
+      value: item.code,
+      label: item.i18n[lang] || item.description || item.code,
+    }));
+  }, [enums, lang]);
 
   const amortizationTypesList = useMemo(() => {
     if (!enums?.RepaymentStructure) return [];
@@ -128,110 +127,17 @@ function EditProductModal(props: EditProductModalProps) {
     }));
   }, [enums, lang]);
 
-  const isLoadingAmortizationTypes = !enums;
+  const rateTypesList = useMemo(() => {
+    if (!enums?.InterestRateType) return [];
 
-  useEffect(() => {
-    const loadPaymentOptions = async () => {
-      try {
-        const response = await getPaymentMethods(
-          businessUnitPublicCode,
-          businessManagerCode,
-          initialValues.creditLine,
-        );
+    return enums.InterestRateType.map((item) => ({
+      id: item.code,
+      value: item.code,
+      label: item.i18n[lang] || item.description || item.code,
+    }));
+  }, [enums, lang]);
 
-        if (!response) {
-          throw new Error(messagesErrorValidations.loadPaymentOptions);
-        }
-
-        setPaymentMethodsList(response.paymentMethods);
-        const mappedPaymentCycles = response.paymentCycles.map((cycle) => ({
-          ...cycle,
-          label: paymentCycleMap[cycle.value] || cycle.label,
-        }));
-        setPaymentCyclesList(mappedPaymentCycles);
-
-        const mappedFirstPaymentCycles = response.firstPaymentCycles.map(
-          (cycle) => ({
-            ...cycle,
-            label: paymentCycleMap[cycle.value] || cycle.label,
-          }),
-        );
-        setFirstPaymentCyclesList(mappedFirstPaymentCycles);
-      } catch (error) {
-        setPaymentMethodsList([
-          {
-            id: "0",
-            value: "No hay opciones de pago disponibles",
-            label: "No hay opciones de pago disponibles",
-          },
-        ]);
-
-        setPaymentCyclesList([
-          {
-            id: "0",
-            value: "No hay opciones de pago disponibles",
-            label: "No hay opciones de pago disponibles",
-          },
-        ]);
-
-        setFirstPaymentCyclesList([
-          {
-            id: "0",
-            value: "No hay opciones de pago disponibles",
-            label: "No hay opciones de pago disponibles",
-          },
-        ]);
-      }
-    };
-
-    loadPaymentOptions();
-  }, [businessUnitPublicCode, businessManagerCode, initialValues.creditLine]);
-
-  useEffect(() => {
-    const loadRateTypes = async () => {
-      setIsLoadingRateTypes(true);
-
-      try {
-        const payload: IBusinessUnitRules = {
-          ruleName: "InterestRateType",
-          conditions: [
-            { condition: "LineOfCredit", value: prospectData.lineOfCredit },
-            {
-              condition: "MoneyDestination",
-              value: prospectData.moneyDestination,
-            },
-          ],
-        };
-
-        const decisions = await postBusinessUnitRules(
-          businessUnitPublicCode,
-          businessManagerCode,
-          payload,
-        );
-
-        if (decisions && Array.isArray(decisions) && decisions.length > 0) {
-          const options = decisions
-            .filter((decision) => typeof decision.value === "string")
-            .map((decision, index) => ({
-              id: decision.decisionId || `${index}`,
-              value: decision.value as string,
-              label:
-                interestRateTypeMap[decision.value as string] ||
-                (decision.value as string),
-            }));
-          setRateTypesList(options);
-        } else {
-          setRateTypesList(rateTypeOptions);
-        }
-      } catch (error) {
-        setRateTypesList(rateTypeOptions);
-      } finally {
-        setIsLoadingRateTypes(false);
-      }
-    };
-
-    loadRateTypes();
-  }, [businessUnitPublicCode, businessManagerCode, prospectData]);
+  const isLoading = !enums;
 
   const isCreditAmountDisabled = (): boolean => {
     return termInMonthsModified;
@@ -692,7 +598,7 @@ function EditProductModal(props: EditProductModalProps) {
                   formik.values.paymentMethod.slice(1)
                 }
                 fullwidth
-                disabled={true}
+                disabled={isLoading}
               />
               <Select
                 label="Ciclo de pagos"
@@ -705,12 +611,9 @@ function EditProductModal(props: EditProductModalProps) {
                 onChange={(name, value) =>
                   handleSelectChange(formik, "paymentCycle", name, value)
                 }
-                value={
-                  paymentCycleMap[formik.values.paymentCycle] ||
-                  formik.values.paymentCycle
-                }
+                value={formik.values.paymentCycle}
                 fullwidth
-                disabled={true}
+                disabled={isLoading}
               />
               <Select
                 label="Primer ciclo de pago"
@@ -718,7 +621,7 @@ function EditProductModal(props: EditProductModalProps) {
                 id="firstPaymentCycle"
                 size="compact"
                 placeholder="Selecciona una opción"
-                options={firstPaymentCyclesList}
+                options={paymentCyclesList}
                 onBlur={formik.handleBlur}
                 onChange={(name, value) =>
                   handleSelectChange(formik, "firstPaymentCycle", name, value)
@@ -757,7 +660,7 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 value={formik.values.amortizationType}
                 fullwidth
-                disabled={isLoadingAmortizationTypes}
+                disabled={isLoading}
               />
               {showIncrementField && (
                 <Textfield
@@ -858,7 +761,7 @@ function EditProductModal(props: EditProductModalProps) {
                 onFocus={() => handleSelectFocus("rateType")}
                 value={formik.values.rateType}
                 fullwidth
-                disabled={isLoadingRateTypes}
+                disabled={isLoading}
               />
             </Stack>
           </ScrollableContainer>
