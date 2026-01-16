@@ -49,17 +49,22 @@ export const patchValidateRequirements = async (
 
       if (!res.ok) {
         throw {
-          message: "Error al actualizar la solicitud de crédito",
+          message: "Ha ocurrido un error obteniendo los requesitos: ",
           status: res.status,
           data,
         };
       }
-
       return data;
     } catch (error) {
       if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo registrar la novedad en la solicitud de crédito.",
+          "Todos los intentos fallaron. No se pudo obtener los requesitos.",
         );
       }
     }

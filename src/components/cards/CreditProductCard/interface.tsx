@@ -63,7 +63,9 @@ function CreditProductCardUI(props: CreditProductCardProps) {
           <Text size="small" appearance="gray" weight="bold">
             {CREDIT_PRODUCT_TEXTS.termMonths.i18n[lang]}
           </Text>
-          <Text>{termMonths}</Text>
+          <Text>
+            {termMonths % 1 !== 0 ? termMonths.toFixed(4) : termMonths}
+          </Text>
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">

@@ -74,6 +74,7 @@ export interface ICreditProduct {
   loanTerm: number;
   ordinaryInstallmentsForPrincipal: IOrdinaryInstallmentsForPrincipal[];
   interestRateDueType?: string;
+  selectedRegularPaymentSchedule?: string;
   interestRate?: number;
   prospectId?: string;
   schedule?: string;
@@ -82,6 +83,7 @@ export interface ICreditProduct {
   extraordinaryInstallments?: IExtraordinaryInstallment[];
   acquiredCashFlows?: IAcquiredCashFlow[];
   referenceIndexForVariableInterestRate?: string;
+  installmentAmount?: number;
 }
 
 export interface IAddProduct {

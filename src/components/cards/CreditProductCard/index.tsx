@@ -10,7 +10,7 @@ interface CreditProductCardProps {
   interestRate: number;
   termMonths: number;
   periodicFee: number;
-  schedule: Schedule;
+  schedule: Schedule | string;
   lang: EnumType;
   showIcons?: boolean;
   onEdit: () => void;

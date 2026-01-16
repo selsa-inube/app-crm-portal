@@ -5,7 +5,7 @@ import {
 } from "@config/environment";
 import { IProspect } from "../types";
 
-const getSearchProspectById = async (
+const SearchByIdProspectUpdateProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   prospectCode: string,
@@ -29,7 +29,7 @@ const getSearchProspectById = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-requests/prospects/${prospectCode}`,
+        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
         options,
       );
 
@@ -57,7 +57,7 @@ const getSearchProspectById = async (
       console.error(`Intento ${attempt} fallido:`, error);
       if (attempt === maxRetries) {
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener la información del prospecto.",
+          "Todos los intentos fallaron. No se pudo actualizar el prospecto.",
         );
       }
     }
@@ -68,4 +68,4 @@ const getSearchProspectById = async (
   );
 };
 
-export { getSearchProspectById };
+export { SearchByIdProspectUpdateProspect };

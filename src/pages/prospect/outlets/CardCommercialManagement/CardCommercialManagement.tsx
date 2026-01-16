@@ -22,7 +22,6 @@ import {
 import { getSearchProspectSummaryById } from "@services/prospect/GetProspectSummaryById";
 import { AppContext } from "@context/AppContext";
 import { EditProductModal } from "@components/modals/ProspectProductModal";
-import { Schedule } from "@services/enum/schedule";
 import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeductibleExpensesById";
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
@@ -145,15 +144,21 @@ export const CardCommercialManagement = (
         ),
       );
 
-      if (prospectData?.prospectId) {
-        const updatedProspect = await getSearchProspectById(
-          businessUnitPublicCode,
-          businessManagerCode,
-          prospectData.prospectId,
-        );
-        if (onProspectUpdate) {
-          onProspectUpdate(updatedProspect);
+      try {
+        if (prospectData?.prospectId) {
+          const updatedProspect = await getSearchProspectById(
+            businessUnitPublicCode,
+            businessManagerCode,
+            prospectData.prospectId,
+          );
+          if (onProspectUpdate) {
+            onProspectUpdate(updatedProspect);
+          }
         }
+      } catch (error) {
+        setShowErrorModal(true);
+        setIsLoading(false);
+        setMessageError(tittleOptions.errorReload);
       }
 
       setIsLoading(false);
@@ -170,7 +175,7 @@ export const CardCommercialManagement = (
       const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
       setIsLoading(false);
-      setMessageError(description);
+      setMessageError(tittleOptions.errorDelete || description);
     }
   };
 
@@ -186,6 +191,7 @@ export const CardCommercialManagement = (
         loanTerm: Number(values.termInMonths),
         loanAmount: Number(values.creditAmount),
         paymentChannelAbbreviatedName: values.paymentMethod,
+        installmentAmount: Number(values.installmentAmount),
       };
 
       await updateCreditProduct(
@@ -297,7 +303,11 @@ export const CardCommercialManagement = (
                 periodicFee={
                   entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
                 }
-                schedule={entry.installmentFrequency as Schedule}
+                schedule={
+                  prospectData
+                    ? prospectData.selectedRegularPaymentSchedule || ""
+                    : ""
+                }
                 onEdit={() =>
                   canEditCreditRequest
                     ? handleInfo()
@@ -440,12 +450,15 @@ export const CardCommercialManagement = (
               paymentMethod:
                 selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
                   ?.paymentChannelAbbreviatedName || "",
-              paymentCycle: selectedProduct.installmentFrequency || "",
+              paymentCycle: prospectData?.selectedRegularPaymentSchedule || "",
               firstPaymentCycle: "",
               termInMonths: selectedProduct.loanTerm || 0,
               amortizationType: "",
               interestRate: selectedProduct.interestRate || 0,
               rateType: "",
+              installmentAmount:
+                selectedProduct.ordinaryInstallmentsForPrincipal[0]
+                  .installmentAmount || 1,
             }}
             prospectData={{
               lineOfCredit: selectedProduct.lineOfCreditAbbreviatedName || "",
