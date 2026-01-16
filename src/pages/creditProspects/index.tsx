@@ -172,7 +172,7 @@ export function CreditProspects() {
       } catch (error) {
         setShowErrorModal(true);
         setErrorModalMessage(
-          `${dataCreditProspects.errorCheckIfSimulationIsAllowed}`,
+          `${dataCreditProspects.errorCheckIfSimulationIsAllowed.i18n[lang]}`,
         );
       } finally {
         setIsLoadingCheck(false);

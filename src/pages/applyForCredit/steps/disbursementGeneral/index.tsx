@@ -131,7 +131,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
       .filter((tab) => modesOfDisbursement.includes(tab.id))
       .map((tab) => ({
         ...tab,
-        label: tab.label.description,
+        label: tab.label.i18n[lang],
       }));
 
     setValidTabs(availableTabs);
@@ -143,7 +143,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     if (availableTabs.length > 0 && !userHasChangedTab.current) {
       handleTabChange(availableTabs[0].id);
     }
-  }, [handleTabChange, modesOfDisbursement, initialValues.amount]);
+  }, [handleTabChange, modesOfDisbursement, initialValues.amount, lang]);
 
   useEffect(() => {
     fetchTabs();

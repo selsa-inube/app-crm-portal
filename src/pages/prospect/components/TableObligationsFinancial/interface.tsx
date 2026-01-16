@@ -753,7 +753,7 @@ export const TableFinancialObligationsUI = ({
       )}
       {isModalOpenEdit && selectedBorrower && (
         <EditFinancialObligationModal
-          title={`${dataReport.edit} ${selectedBorrower.type || ""}`}
+          title={`${dataReport.edit.i18n[lang]} ${selectedBorrower.type || ""}`}
           onCloseModal={() => setIsModalOpenEdit(false)}
           onConfirm={async (updatedDebtor) => {
             await handleUpdate(updatedDebtor);

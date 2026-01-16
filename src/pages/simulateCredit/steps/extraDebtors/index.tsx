@@ -178,7 +178,7 @@ export function ExtraDebtors(props: IExtraDebtorsProps) {
             <CardBorrower
               typeBorrower={item.borrowerType}
               key={index}
-              title={data.borrowerLabel + ` ${index + 1}`}
+              title={data.borrowerLabel.i18n[lang] + ` ${index + 1}`}
               name={item.name}
               lastName={item.lastName}
               email={item.email}

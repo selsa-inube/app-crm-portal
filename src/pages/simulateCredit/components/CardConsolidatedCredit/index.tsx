@@ -10,6 +10,7 @@ import {
 import { CustomValueModal } from "@pages/simulateCredit/components/CustomValueModal";
 import { IApplyPayOption } from "@pages/simulateCredit/components/CustomValueModal/utils";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import {
   StyledCardContainer,
@@ -169,9 +170,13 @@ export function CardConsolidatedCredit(props: ICardConsolidatedCreditProps) {
     <>
       <StyledCardContainer>
         <Stack direction="column" gap="4px">
-          <Text type="label" size="large" ellipsis weight="bold">
-            {title}
-          </Text>
+          <TruncatedText
+            text={title}
+            maxLength={33}
+            type="label"
+            size="large"
+            weight="bold"
+          />
           <Text type="body" size="medium" appearance="gray">
             {code}
           </Text>

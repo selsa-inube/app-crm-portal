@@ -1,8 +1,9 @@
 import { MdWarningAmber } from "react-icons/md";
-import { Stack, Icon, Text, Divider, SkeletonLine } from "@inubekit/inubekit";
+import { Stack, Icon, Divider, SkeletonLine } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 import LabelData from "./Config/config";
 
@@ -39,7 +40,10 @@ export const UnfulfilledRequirements = (
               </>
             ) : (
               <>
-                <Text ellipsis={true}>{LabelData.requirement.i18n[lang]}</Text>
+                <TruncatedText
+                  text={LabelData.requirement.i18n[lang]}
+                  maxLength={68}
+                />
                 <Icon
                   icon={<MdWarningAmber />}
                   appearance="warning"
@@ -52,26 +56,35 @@ export const UnfulfilledRequirements = (
           {isLoading ? (
             <SkeletonLine width="100%" />
           ) : (
-            <Text appearance="gray" size="medium" type="body" ellipsis={true}>
-              {requirement}
-            </Text>
+            <TruncatedText
+              text={requirement}
+              maxLength={68}
+              appearance="gray"
+              size="medium"
+              type="body"
+            />
           )}
         </Stack>
         <Stack direction="column" gap="4px">
           {isLoading ? (
             <SkeletonLine width="160px" />
           ) : (
-            <Text ellipsis={true}>
-              {LabelData.causeNonCompliance.i18n[lang]}
-            </Text>
+            <TruncatedText
+              text={LabelData.causeNonCompliance.i18n[lang]}
+              maxLength={68}
+              appearance="gray"
+              size="medium"
+            />
           )}
           <Divider />
           {isLoading ? (
             <SkeletonLine width="100%" />
           ) : (
-            <Text appearance="gray" size="medium" ellipsis>
-              {causeNonCompliance}
-            </Text>
+            <TruncatedText
+              text={causeNonCompliance}
+              appearance="gray"
+              size="medium"
+            />
           )}
         </Stack>
       </Stack>

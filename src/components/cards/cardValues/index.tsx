@@ -1,6 +1,7 @@
 import { Stack, Icon, Text, SkeletonLine } from "@inubekit/inubekit";
 
 import { Container, IconWrapper, ContentWrapper, StyledPrint } from "./styles";
+import { TruncatedText } from "@components/modals/TruncatedTextModal";
 
 export interface CardValuesProps {
   items: {
@@ -46,16 +47,16 @@ export function CardValues(props: CardValuesProps) {
               gap="2px"
               alignItems={showIcon ? "start" : "center"}
             >
-              <Text
-                size="small"
-                weight="bold"
-                type="body"
-                appearance="gray"
-                padding="0px 0px 4px"
-                ellipsis
-              >
-                {item.title}
-              </Text>
+              <Stack padding="0px 0px 4px">
+                <TruncatedText
+                  text={item.title}
+                  maxLength={27}
+                  size="small"
+                  weight="bold"
+                  type="body"
+                  appearance="gray"
+                />
+              </Stack>
               <Stack gap="8px" alignItems="center">
                 {isLoading ? (
                   <SkeletonLine animated width="100px" />

@@ -7,6 +7,7 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { searchAllMoneyDestinationByCustomerCode } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode";
 import { IMoneyDestination } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { MoneyDestinationUI } from "./interface";
 import { dataMoneyDestination } from "./config";
@@ -17,6 +18,7 @@ interface IMoneyDestinationProps {
   businessManagerCode: string;
   clientIdentificationNumber: string;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   handleOnChange: React.Dispatch<React.SetStateAction<string>>;
   onFormValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -28,6 +30,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     businessManagerCode,
     clientIdentificationNumber,
     lang,
+    enums,
     handleOnChange,
     onFormValid,
   } = props;
@@ -149,13 +152,20 @@ function MoneyDestination(props: IMoneyDestinationProps) {
 
   if (filteredDestinations) {
     filteredDestinations.forEach((destination) => {
-      const type =
-        destination.moneyDestinationType ||
-        dataMoneyDestination.noType.i18n[lang];
-      if (!groupedDestinations[type]) {
-        groupedDestinations[type] = [];
+      const typeCode = destination.moneyDestinationType;
+
+      const enumInfo = enums?.["MoneyDestinationType"]?.find(
+        (item) => item.code === typeCode,
+      );
+
+      const typeLabel = enumInfo
+        ? enumInfo.i18n[lang]
+        : typeCode || dataMoneyDestination.noType.i18n[lang];
+
+      if (!groupedDestinations[typeLabel]) {
+        groupedDestinations[typeLabel] = [];
       }
-      groupedDestinations[type].push(destination);
+      groupedDestinations[typeLabel].push(destination);
     });
   }
 

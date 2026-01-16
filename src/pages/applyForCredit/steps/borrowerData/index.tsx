@@ -155,7 +155,7 @@ export function Borrowers(props: borrowersProps) {
                 <CardBorrower
                   key={index}
                   title={
-                    dataSubmitApplication.borrowers.borrowerLabel +
+                    dataSubmitApplication.borrowers.borrowerLabel.i18n[lang] +
                     ` ${index + 1}`
                   }
                   name={getPropertyValue(item.borrowerProperties, "name")}
