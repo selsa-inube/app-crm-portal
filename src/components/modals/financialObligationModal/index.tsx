@@ -29,6 +29,7 @@ import {
 import { dataReport } from "../ReportCreditsModal/config";
 import { TruncatedText } from "../TruncatedTextModal";
 import { IOptionsSelect } from "../RequirementsModals/types";
+import { ErrorModal } from "../ErrorModal";
 
 export interface FinancialObligationModalProps {
   onCloseModal: () => void;
@@ -51,6 +52,8 @@ function FinancialObligationModal({
   iconAfter,
 }: FinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
   const [banks, setBanks] = useState<IOptionsSelect[]>([]);
 
   const validationSchema = Yup.object({
@@ -113,7 +116,8 @@ function FinancialObligationModal({
         }));
         setBanks(formattedBanks);
       } catch (error) {
-        console.log(error);
+        setShowErrorModal(true);
+        setMessageError(dataInputs.errorBanks.i18n[lang]);
       }
     };
 
@@ -327,6 +331,13 @@ function FinancialObligationModal({
             fullwidth
           />
         </Grid>
+        {showErrorModal && (
+          <ErrorModal
+            handleClose={() => setShowErrorModal(false)}
+            isMobile={isMobile}
+            message={messageError}
+          />
+        )}
       </ScrollableContainer>
     </BaseModal>
   );
