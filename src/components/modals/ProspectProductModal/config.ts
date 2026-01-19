@@ -1,7 +1,6 @@
 import {
   CreditLine,
   PaymentMethod,
-  AmortizationType,
   RateType,
 } from "@services/enum/prospectProduct";
 import { Schedule } from "@services/enum/schedule";
@@ -94,44 +93,6 @@ const termInMonthsOptions = [
   { id: "48Months", label: "48", value: "48" },
 ];
 
-const amortizationTypeOptions = [
-  {
-    id: AmortizationType.FixedPayments,
-    label: "Abonos Fijos",
-    value: AmortizationType.FixedPayments,
-  },
-  {
-    id: AmortizationType.GradualPayments,
-    label: "Pagos Graduales",
-    value: AmortizationType.GradualPayments,
-  },
-  {
-    id: AmortizationType.BulletPayment,
-    label: "Pago Único (Bullet)",
-    value: AmortizationType.BulletPayment,
-  },
-  {
-    id: AmortizationType.BalloonPayment,
-    label: "Pago Global (Balloon)",
-    value: AmortizationType.BalloonPayment,
-  },
-  {
-    id: AmortizationType.FixedPrincipal,
-    label: "Capital Fijo",
-    value: AmortizationType.FixedPrincipal,
-  },
-  {
-    id: AmortizationType.InterestOnly,
-    label: "Solo Intereses",
-    value: AmortizationType.InterestOnly,
-  },
-  {
-    id: AmortizationType.FixedIntegralPayments,
-    label: "Abonos Fijos Integrales",
-    value: AmortizationType.FixedIntegralPayments,
-  },
-];
-
 const rateTypeOptions = [
   { id: RateType.Fixed, label: "Fija", value: RateType.Fixed },
   { id: RateType.Variable, label: "Variable", value: RateType.Variable },
@@ -155,33 +116,108 @@ export const messagesErrorValidations = {
 
 export const VALIDATED_NUMBER_REGEX = /[^0-9]/g;
 
-export const repaymentStructureMap: Record<string, string> = {
-  FixedInstallment: "Cuota integral fija",
-  ConstantAmortization: "Abonos fijos a capital",
-  GeometricGradientRepayment: "Gradiente geométrico",
-  ArithmeticGradientRepayment: "Gradiente aritmético",
-  ValueIncrementPayments: "Pagos valor de incremento",
-  PercentageIncrementPayments: "Pagos con porcentaje de incremento",
-};
-
 export const interestRateTypeMap: Record<string, string> = {
   VariableInterestRate: "Tasa variable",
   FixedInterestRate: "Tasa fija",
 };
 
 export const fieldLabels = {
-  creditAmount: "Monto del crédito",
-  termInMonths: "Plazo en meses",
-  amortizationType: "Tipo de amortización",
-  incrementValue: "Valor de incremento",
-  incrementPercentage: "Porcentaje de incremento",
-  interestRate: "Tasa de interés",
-  rateType: "Tipo de tasa",
-  paymentMethod: "Método de pago",
-  paymentCycle: "Ciclo de pago",
-  firstPaymentCycle: "Primer ciclo de pago",
-  creditLine: "Línea de crédito",
-  ordinaryPayment: "Cuota ordinaria mensual",
+  creditAmount: {
+    code: "Credit_amount",
+    description: "Credit amount field label",
+    i18n: {
+      en: "Credit amount",
+      es: "Monto del crédito",
+    },
+  },
+  termInMonths: {
+    code: "Term_in_months",
+    description: "Term in months field label",
+    i18n: {
+      en: "Term in months",
+      es: "Plazo en meses",
+    },
+  },
+  amortizationType: {
+    code: "Amortization_type",
+    description: "Amortization type field label",
+    i18n: {
+      en: "Amortization type",
+      es: "Tipo de amortización",
+    },
+  },
+  incrementValue: {
+    code: "Increment_value",
+    description: "Increment value field label",
+    i18n: {
+      en: "Increment value",
+      es: "Valor de incremento",
+    },
+  },
+  incrementPercentage: {
+    code: "Increment_percentage",
+    description: "Increment percentage field label",
+    i18n: {
+      en: "Increment percentage",
+      es: "Porcentaje de incremento",
+    },
+  },
+  interestRate: {
+    code: "Interest_rate",
+    description: "Interest rate field label",
+    i18n: {
+      en: "Interest rate",
+      es: "Tasa de interés",
+    },
+  },
+  rateType: {
+    code: "Rate_type",
+    description: "Rate type field label",
+    i18n: {
+      en: "Rate type",
+      es: "Tipo de tasa",
+    },
+  },
+  paymentMethod: {
+    code: "Payment_method",
+    description: "Payment method field label",
+    i18n: {
+      en: "Payment method",
+      es: "Método de pago",
+    },
+  },
+  paymentCycle: {
+    code: "Payment_cycle",
+    description: "Payment cycle field label",
+    i18n: {
+      en: "Payment cycle",
+      es: "Ciclo de pago",
+    },
+  },
+  firstPaymentCycle: {
+    code: "First_payment_cycle",
+    description: "First payment cycle field label",
+    i18n: {
+      en: "First payment cycle",
+      es: "Primer ciclo de pago",
+    },
+  },
+  creditLine: {
+    code: "Credit_line",
+    description: "Credit line field label",
+    i18n: {
+      en: "Credit line",
+      es: "Línea de crédito",
+    },
+  },
+  ordinaryPayment: {
+    code: "Ordinary_payment",
+    description: "Monthly ordinary installment field label",
+    i18n: {
+      en: "Monthly ordinary installment",
+      es: "Cuota ordinaria mensual",
+    },
+  },
 };
 
 export const fieldPlaceholders = {
@@ -316,6 +352,5 @@ export {
   paymentCycleOptions,
   firstPaymentCycleOptions,
   termInMonthsOptions,
-  amortizationTypeOptions,
   rateTypeOptions,
 };

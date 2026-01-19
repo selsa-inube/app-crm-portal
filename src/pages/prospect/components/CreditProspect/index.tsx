@@ -791,6 +791,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onProspectRefreshData={onProspectRefreshData}
             showAddProduct={showAddProduct}
             lang={lang}
+            enums={enums}
           />
         </Stack>
         {currentModal === "creditLimit" && (
