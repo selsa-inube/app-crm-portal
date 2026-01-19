@@ -252,4 +252,9 @@ export const tittleOptions = {
       es: "Error al consultar el resumen del prospecto.",
     },
   },
+  errorSharing: {
+    code: "Error",
+    description: "Error sharing PDF",
+    i18n: { en: "Could not share PDF", es: "No se pudo compartir el PDF" },
+  },
 };
