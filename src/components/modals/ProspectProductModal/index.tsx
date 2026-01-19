@@ -24,6 +24,10 @@ import { validateIncrement } from "@services/prospect/validateIncrement";
 import { IValidateIncrementRequest } from "@services/prospect/validateIncrement/types";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { CardGray } from "@components/cards/CardGray";
+import { capitalizeFirstLetter } from "@utils/formatData/text";
+import { validateCurrencyFieldTruncate } from "@utils/formatData/currency";
+import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -34,6 +38,7 @@ import {
   fieldPlaceholders,
   validationMessages,
   REPAYMENT_STRUCTURES_WITH_INCREMENT,
+  simulationFormLabels,
 } from "./config";
 import { TruncatedText } from "../TruncatedTextModal";
 
@@ -96,26 +101,6 @@ function EditProductModal(props: EditProductModalProps) {
 
   const isMobile = useMediaQuery("(max-width: 550px)");
   const { customerData } = useContext(CustomerContext);
-
-  const paymentMethodsList = useMemo(() => {
-    if (!enums?.PaymentChannelTypeForExtraInstallments) return [];
-
-    return enums.PaymentChannelTypeForExtraInstallments.map((item) => ({
-      id: item.code,
-      value: item.code,
-      label: item.i18n[lang] || item.description || item.code,
-    }));
-  }, [enums, lang]);
-
-  const paymentCyclesList = useMemo(() => {
-    if (!enums?.Peridiocity) return [];
-
-    return enums.Peridiocity.map((item) => ({
-      id: item.code,
-      value: item.code,
-      label: item.i18n[lang] || item.description || item.code,
-    }));
-  }, [enums, lang]);
 
   const amortizationTypesList = useMemo(() => {
     if (!enums?.RepaymentStructure) return [];
@@ -362,6 +347,13 @@ function EditProductModal(props: EditProductModalProps) {
     }
   };
 
+  const handleInstallmentChange = (
+    formik: FormikProps<FormikValues>,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    handleChangeWithCurrency(formik, event);
+  };
+
   const handleSelectFocus = (fieldId: string) => {
     setTimeout(() => {
       const element = document.getElementById(fieldId);
@@ -530,7 +522,7 @@ function EditProductModal(props: EditProductModalProps) {
               type="headline"
             />
           }
-          backButton="Cancelar"
+          backButton={simulationFormLabels.cancelButton.i18n[lang]}
           nextButton={confirmButtonText}
           handleNext={formik.submitForm}
           handleBack={onCloseModal}
@@ -561,10 +553,12 @@ function EditProductModal(props: EditProductModalProps) {
               margin="0px 0px 30px 0"
             >
               <Textfield
-                label={fieldLabels.creditAmount}
+                label={fieldLabels.creditAmount.i18n[lang]}
                 name="creditAmount"
                 id="creditAmount"
-                placeholder="Monto solicitado"
+                placeholder={
+                  simulationFormLabels.creditAmountPlaceholder.i18n[lang]
+                }
                 value={validateCurrencyField("creditAmount", formik, false, "")}
                 status={loanAmountError ? "invalid" : undefined}
                 message={loanAmountError}
@@ -582,77 +576,47 @@ function EditProductModal(props: EditProductModalProps) {
                 fullwidth
                 disabled={isCreditAmountDisabled()}
               />
-              <Select
-                label="Medio de pago"
-                name="paymentMethod"
-                id="paymentMethod"
-                size="compact"
-                placeholder="Selecciona una opción"
-                options={paymentMethodsList}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "paymentMethod", name, value)
-                }
-                value={
+              <CardGray
+                label={simulationFormLabels.paymentMethod.i18n[lang]}
+                placeHolder={capitalizeFirstLetter(
                   formik.values.paymentMethod.charAt(0).toUpperCase() +
-                  formik.values.paymentMethod.slice(1)
-                }
-                fullwidth
-                disabled={isLoading}
+                    formik.values.paymentMethod.slice(1),
+                )}
+              />
+              <CardGray
+                label={"Ciclo de pagos"}
+                placeHolder={capitalizeFirstLetter(
+                  paymentCycleMap[formik.values.paymentCycle] ||
+                    formik.values.paymentCycle,
+                )}
               />
               <Select
-                label="Ciclo de pagos"
-                name="paymentCycle"
-                id="paymentCycle"
-                size="compact"
-                placeholder="Selecciona una opción"
-                options={paymentCyclesList}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "paymentCycle", name, value)
-                }
-                value={formik.values.paymentCycle}
-                fullwidth
-                disabled={isLoading}
-              />
-              <Select
-                label="Primer ciclo de pago"
-                name="firstPaymentCycle"
-                id="firstPaymentCycle"
-                size="compact"
-                placeholder="Selecciona una opción"
-                options={paymentCyclesList}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "firstPaymentCycle", name, value)
-                }
-                value={formik.values.firstPaymentCycle}
-                fullwidth
-                disabled={true}
-              />
-              <Select
-                label="Plazo en meses"
+                label={simulationFormLabels.termInMonthsLabel.i18n[lang]}
                 name="termInMonths"
                 id="termInMonths"
                 size="compact"
-                placeholder="Selecciona una opción"
+                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
                 options={termInMonthsOptions}
                 onBlur={formik.handleBlur}
                 onChange={(name, value) =>
                   handleSelectChange(formik, "termInMonths", name, value)
                 }
-                value={formik.values.termInMonths}
+                value={
+                  formik.values.termInMonths % 1 !== 0
+                    ? formik.values.termInMonths.toFixed(4)
+                    : formik.values.termInMonths
+                }
                 fullwidth
                 message={loanTermError}
                 invalid={loanTermError ? true : false}
                 disabled={isTermInMonthsDisabled()}
               />
               <Select
-                label="Tipo de amortización"
+                label={simulationFormLabels.amortizationTypeLabel.i18n[lang]}
                 name="amortizationType"
                 id="amortizationType"
                 size="compact"
-                placeholder="Selecciona una opción"
+                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
                 options={amortizationTypesList}
                 onBlur={formik.handleBlur}
                 onChange={(name, value) =>
@@ -666,8 +630,8 @@ function EditProductModal(props: EditProductModalProps) {
                 <Textfield
                   label={
                     incrementType === "value"
-                      ? fieldLabels.incrementValue
-                      : fieldLabels.incrementPercentage
+                      ? fieldLabels.incrementValue.i18n[lang]
+                      : fieldLabels.incrementPercentage.i18n[lang]
                   }
                   name="incrementValue"
                   id="incrementValue"
@@ -724,10 +688,12 @@ function EditProductModal(props: EditProductModalProps) {
                 />
               )}
               <Textfield
-                label="Tasa de interés"
+                label={simulationFormLabels.interestRateLabel.i18n[lang]}
                 name="interestRate"
                 id="interestRate"
-                placeholder="Ej: 0.9"
+                placeholder={
+                  simulationFormLabels.interestRatePlaceholder.i18n[lang]
+                }
                 value={Number(formik.values.interestRate).toFixed(4)}
                 iconAfter={
                   <Icon
@@ -748,11 +714,11 @@ function EditProductModal(props: EditProductModalProps) {
                 status={interestRateError ? "invalid" : undefined}
               />
               <Select
-                label="Tipo de tasa"
+                label={simulationFormLabels.rateTypeLabel.i18n[lang]}
                 name="rateType"
                 id="rateType"
                 size="compact"
-                placeholder="Selecciona una opción"
+                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
                 options={rateTypesList}
                 onBlur={formik.handleBlur}
                 onChange={(name, value) =>
@@ -762,6 +728,33 @@ function EditProductModal(props: EditProductModalProps) {
                 value={formik.values.rateType}
                 fullwidth
                 disabled={isLoading}
+              />
+              <Textfield
+                label={simulationFormLabels.installmentAmountLabel.i18n[lang]}
+                name="installmentAmount"
+                id="installmentAmount"
+                placeholder={
+                  simulationFormLabels.installmentAmountPlaceholder.i18n[lang]
+                }
+                value={validateCurrencyFieldTruncate(
+                  "installmentAmount",
+                  formik,
+                  false,
+                  "",
+                )}
+                iconBefore={
+                  <Icon
+                    icon={<MdAttachMoney />}
+                    appearance="success"
+                    size="18px"
+                    spacing="narrow"
+                  />
+                }
+                type="text"
+                size="compact"
+                onBlur={formik.handleBlur}
+                onChange={(event) => handleInstallmentChange(formik, event)}
+                fullwidth
               />
             </Stack>
           </ScrollableContainer>

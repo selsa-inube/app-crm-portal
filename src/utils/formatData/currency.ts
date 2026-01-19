@@ -41,6 +41,21 @@ const validateCurrencyField = (
     : value;
 };
 
+export const validateCurrencyFieldTruncate = (
+  fieldName: string,
+  formik: FormikValues,
+  withCurrencySymbol = true,
+  optionNameForm: string | undefined,
+) => {
+  const value = optionNameForm
+    ? Math.trunc(formik.values[optionNameForm]?.[fieldName])
+    : Math.trunc(formik.values[fieldName]);
+
+  return typeof value === "number"
+    ? currencyFormat(value, withCurrencySymbol)
+    : value;
+};
+
 const handleChangeWithCurrency = (
   formik: FormikValues,
   e: React.ChangeEvent<HTMLInputElement>,

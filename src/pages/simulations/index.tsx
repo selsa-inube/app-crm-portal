@@ -30,10 +30,15 @@ import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { SimulationsUI } from "./interface";
-import { dataEditProspect, labelsAndValuesShare } from "./config";
+import {
+  dataEditProspect,
+  labelsAndValuesShare,
+  requirementsMessageError,
+} from "./config";
 
 export function Simulations() {
   const [showMenu, setShowMenu] = useState(false);
+  const [managerErrors, setManagerErrors] = useState<string[]>([]);
   const [dataProspect, setDataProspect] = useState<IProspect>();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -274,8 +279,21 @@ export function Simulations() {
           setValidateRequirements(data);
         }
       } catch (error) {
-        setShowErrorModal(true);
-        setMessageError("");
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
+        if (!managerErrors.includes("errorValidateRequirements")) {
+          setMessageError(description || requirementsMessageError.i18n[lang]);
+          setShowErrorModal(true);
+          setValidateRequirements([]);
+          setManagerErrors((prev) => [...prev, "errorValidateRequirements"]);
+        }
       }
     };
 
@@ -331,9 +349,17 @@ export function Simulations() {
 
       setDataProspect(newDataProspect);
       setShowRecalculateSimulation(false);
-    } catch (e) {
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+
+      setMessageError(description || requirementsMessageError.description);
       setShowErrorModal(true);
-      setMessageError(dataEditProspect.errorRecalculate.i18n[lang]);
     } finally {
       setIsLoading(false);
     }

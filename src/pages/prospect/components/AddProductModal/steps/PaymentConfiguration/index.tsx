@@ -37,8 +37,8 @@ export function PaymentConfiguration(props: IPaymentConfigurationMain) {
     const unique = Array.from(
       new Map(
         selectedChannel.regularCycles.map((cycle) => [
-          cycle.periodicity,
-          cycle.periodicity,
+          cycle.cycleName,
+          cycle.cycleName,
         ]),
       ).values(),
     );
@@ -52,7 +52,7 @@ export function PaymentConfiguration(props: IPaymentConfigurationMain) {
 
   const selectedCycle = useMemo(() => {
     return selectedChannel?.regularCycles.find(
-      (cycle) => cycle.periodicity === paymentConfig.paymentCycle,
+      (cycle) => cycle.cycleName === paymentConfig.paymentCycle,
     );
   }, [selectedChannel, paymentConfig.paymentCycle]);
 

@@ -261,3 +261,12 @@ export const labelsRecalculateSimulation = {
     i18n: { en: "Recalculate simulation", es: "Recalcular simulación" },
   },
 };
+
+export const requirementsMessageError = {
+  code: "Error_requirements",
+  description: "Error fetching requirements",
+  i18n: {
+    en: "Error fetching requirements",
+    es: "Error al obtener los requisitos.",
+  },
+};
