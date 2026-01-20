@@ -20,7 +20,6 @@ interface IScoreModalProspectUIProps {
   lang: EnumType;
   setNewFirstScore: React.Dispatch<React.SetStateAction<IScore | null>>;
   setNewSecondScore: React.Dispatch<React.SetStateAction<IScore | null>>;
-  handleResetScores: (resetScore: "first" | "second") => void;
   handleClose: () => void;
 }
 
@@ -35,7 +34,6 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
     newFirstScore,
     newSecondScore,
     lang,
-    handleResetScores,
   } = props;
 
   return (
@@ -50,7 +48,7 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
       handleClose={handleClose}
       handleBack={handleClose}
       marginsMobile={isMobile}
-      height={isMobile ? "auto" : "545px"}
+      height={isMobile ? "auto" : "470px"}
       width={isMobile ? "270px" : "600px"}
     >
       <Stack
@@ -72,14 +70,13 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
             isMobile={isMobile}
             handleOnChange={(newRisk) =>
               setNewFirstScore({
+                ...firstScore,
                 score: newRisk.value,
                 date: new Date().toISOString(),
               })
             }
             logo={urlMock}
-            resetScore={() => {
-              handleResetScores("first");
-            }}
+            resetScore={() => {}}
             newScore={newFirstScore?.score || null}
             isProspect={true}
             lang={lang}
@@ -100,14 +97,13 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
             isMobile={isMobile}
             handleOnChange={(newRisk) =>
               setNewSecondScore({
+                ...secondScore,
                 score: newRisk.value,
                 date: new Date().toISOString(),
               })
             }
             logo={urlMock}
-            resetScore={() => {
-              handleResetScores("second");
-            }}
+            resetScore={() => {}}
             newScore={newSecondScore?.score || null}
             isProspect={true}
             lang={lang}

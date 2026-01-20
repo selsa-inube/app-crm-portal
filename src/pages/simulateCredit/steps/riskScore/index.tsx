@@ -33,13 +33,11 @@ export function RiskScore(props: IRiskScoreProps) {
     lang,
     handleOnChange,
     logo,
-    resetScore,
     isProspect = false,
   } = props;
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [newScore, setNewScore] = useState<number | null>(null);
 
   const validationSchema = Yup.object({
     score: Yup.number().required(""),
@@ -47,8 +45,8 @@ export function RiskScore(props: IRiskScoreProps) {
 
   const formik = useFormik({
     initialValues: {
-      score: value || riskScoreData.value.i18n[lang],
-      date: date || riskScoreData.date,
+      score: value,
+      date: date,
     },
     validationSchema,
     enableReinitialize: true,
@@ -61,15 +59,14 @@ export function RiskScore(props: IRiskScoreProps) {
       });
 
       setShowEditModal(false);
-      setNewScore(num);
     },
   });
 
   useEffect(() => {
     if (!isProspect) {
       handleOnChange({
-        value: value || riskScoreData.value.i18n[lang],
-        date: date || riskScoreData.date.i18n[lang],
+        value: value,
+        date: date,
       });
     }
   }, []);
@@ -81,85 +78,86 @@ export function RiskScore(props: IRiskScoreProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleReset = () => {
-    if (resetScore) resetScore();
-    setNewScore(null);
-  };
-
   return (
     <Fieldset>
-      <Stack direction="column" alignItems="center" gap="20px">
-        <RiskScoreGauge
-          value={value || riskScoreData.value.i18n[lang]}
-          lang={lang}
-          logo={logo}
-        />
-        <Stack gap="4px">
-          {isLoading ? (
-            <SkeletonLine />
-          ) : (
-            <Text type="body" size="small">
-              {riskScoreData.reportedScore.i18n[lang]}
-            </Text>
-          )}
-          <Text type="body" weight="bold" size="small">
-            {date === riskScoreData.date.i18n[lang]
-              ? formatPrimaryDate(new Date())
-              : formatPrimaryDate(new Date(date))}
+      {formik.values.score === 0 ? (
+        <Stack
+          direction="column"
+          alignItems="center"
+          gap="20px"
+          height="50px"
+          justifyContent="center"
+        >
+          <Text type="body" size="small">
+            {riskScoreData.unavailableScore.i18n[lang]}
           </Text>
         </Stack>
-        <Stack gap="12px" direction="column" alignItems="center">
-          <Button
-            variant="outlined"
-            iconBefore={<MdOutlineEdit />}
-            onClick={() => setShowEditModal(true)}
-          >
-            {riskScoreData.editScore.i18n[lang]}
-          </Button>
-
-          <Button variant="none" onClick={handleReset} disabled={!newScore}>
-            {riskScoreData.restore.i18n[lang]}
-          </Button>
-        </Stack>
-        {showErrorModal && (
-          <ErrorModal
-            handleClose={() => setShowErrorModal(false)}
-            isMobile={isMobile}
-            message={riskScoreData.error.i18n[lang]}
-          />
-        )}
-        {showEditModal && (
-          <BaseModal
-            title={riskScoreData.editTitle.i18n[lang]}
-            nextButton={riskScoreData.save.i18n[lang]}
-            backButton={riskScoreData.close.i18n[lang]}
-            handleBack={() => setShowEditModal(false)}
-            handleNext={formik.handleSubmit}
-            disabledNext={
-              formik.values.score > 950 || formik.values.score < 150
-            }
-            width={isMobile ? "300px" : "400px"}
-          >
-            <Input
-              id="score"
-              name="score"
-              label={riskScoreData.score.i18n[lang]}
-              size="compact"
-              fullwidth
-              type="number"
-              value={formik.values.score}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              status={
-                formik.values.score > 950 || formik.values.score < 150
-                  ? "invalid"
-                  : undefined
-              }
+      ) : (
+        <Stack direction="column" alignItems="center" gap="20px">
+          <RiskScoreGauge value={value} lang={lang} logo={logo} />
+          <Stack gap="4px">
+            {isLoading ? (
+              <SkeletonLine />
+            ) : (
+              <Text type="body" size="small">
+                {riskScoreData.reportedScore.i18n[lang]}
+              </Text>
+            )}
+            <Text type="body" weight="bold" size="small">
+              {date
+                ? formatPrimaryDate(new Date())
+                : formatPrimaryDate(new Date(date))}
+            </Text>
+          </Stack>
+          <Stack gap="12px" direction="column" alignItems="center">
+            <Button
+              variant="outlined"
+              iconBefore={<MdOutlineEdit />}
+              onClick={() => setShowEditModal(true)}
+            >
+              {riskScoreData.editScore.i18n[lang]}
+            </Button>
+          </Stack>
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => setShowErrorModal(false)}
+              isMobile={isMobile}
               message={riskScoreData.error.i18n[lang]}
             />
-          </BaseModal>
-        )}
-      </Stack>
+          )}
+          {showEditModal && (
+            <BaseModal
+              title={riskScoreData.editTitle.i18n[lang]}
+              nextButton={riskScoreData.save.i18n[lang]}
+              backButton={riskScoreData.close.i18n[lang]}
+              handleBack={() => setShowEditModal(false)}
+              handleNext={formik.handleSubmit}
+              disabledNext={
+                formik.values.score > 950 || formik.values.score < 150
+              }
+              width={isMobile ? "300px" : "400px"}
+            >
+              <Input
+                id="score"
+                name="score"
+                label={riskScoreData.score.i18n[lang]}
+                size="compact"
+                fullwidth
+                type="number"
+                value={formik.values.score}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                status={
+                  formik.values.score > 950 || formik.values.score < 150
+                    ? "invalid"
+                    : undefined
+                }
+                message={riskScoreData.error.i18n[lang]}
+              />
+            </BaseModal>
+          )}
+        </Stack>
+      )}
     </Fieldset>
   );
 }

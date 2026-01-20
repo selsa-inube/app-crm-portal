@@ -33,7 +33,9 @@ import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchA
 import userImage from "@assets/images/userImage.jpeg";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { Fieldset } from "@components/data/Fieldset";
 
+import { riskScoreData } from "./steps/riskScore/config";
 import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
 import { stepsAddProspect } from "./config/addProspect.config";
@@ -479,15 +481,47 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id === stepsAddProspect.riskScore.id && (
-                    <RiskScore
-                      value={formData.riskScore.value}
-                      date={formData.riskScore.date}
-                      isMobile={isMobile}
-                      handleOnChange={(newRisk) =>
-                        handleFormDataChange("riskScore", newRisk)
-                      }
-                      lang={lang}
-                    />
+                    <Stack
+                      direction={isMobile ? "column" : "row"}
+                      gap="20px"
+                      justifyContent="center"
+                      width="100%"
+                    >
+                      {formData.riskScores.length === 0 && (
+                        <Fieldset width="100%">
+                          <Stack
+                            direction="column"
+                            gap="8px"
+                            justifyContent="center"
+                            alignItems="center"
+                            height="80px"
+                          >
+                            <Text type="body" size="small">
+                              {riskScoreData.unavailableScore.i18n[lang]}
+                            </Text>
+                          </Stack>
+                        </Fieldset>
+                      )}
+                      {formData.riskScores.map((score, index) => (
+                        <RiskScore
+                          key={score.bureauName}
+                          value={score.value}
+                          date={score.date}
+                          isMobile={isMobile}
+                          lang={lang}
+                          logo={score.bureauName}
+                          handleOnChange={(newRisk) => {
+                            const updatedScores = [...formData.riskScores];
+                            updatedScores[index] = {
+                              ...updatedScores[index],
+                              value: newRisk.value,
+                              date: newRisk.date,
+                            };
+                            handleFormDataChange("riskScores", updatedScores);
+                          }}
+                        />
+                      ))}
+                    </Stack>
                   )}
                 {currentStepsNumber &&
                   currentStepsNumber.id ===
