@@ -2,7 +2,6 @@ import { Icon, Stack, Text } from "@inubekit/inubekit";
 import { MdClear } from "react-icons/md";
 
 import { useEnum } from "@hooks/useEnum/useEnum";
-import { truncateTextToMaxLength } from "@utils/formatData/text";
 
 import { BaseModal } from "../baseModal";
 import { errorModalConfig } from "./config";
@@ -39,7 +38,7 @@ export function ErrorModal(props: IErrorModalProps) {
           {errorModalConfig.sorry.i18n[lang]}
         </Text>
         <Text type="body" size="large" appearance="gray">
-          {truncateTextToMaxLength(message, 100)}
+          {message}
         </Text>
       </Stack>
     </BaseModal>

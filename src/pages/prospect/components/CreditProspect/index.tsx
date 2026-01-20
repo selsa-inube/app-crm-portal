@@ -6,7 +6,6 @@ import {
   MdOutlineInfo,
   MdOutlinePayments,
   MdOutlinePictureAsPdf,
-  MdOutlineShare,
 } from "react-icons/md";
 import {
   Stack,
@@ -35,7 +34,6 @@ import {
 } from "@pages/prospect/outlets/CardCommercialManagement/styles";
 import { CardCommercialManagement } from "@pages/prospect/outlets/CardCommercialManagement/CardCommercialManagement";
 import { getPropertyValue } from "@utils/mappingData/mappings";
-import { generatePDF } from "@utils/pdf/generetePDF";
 import { AppContext } from "@context/AppContext";
 import {
   IAddProduct,
@@ -47,7 +45,7 @@ import {
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { IPaymentChannel } from "@services/creditRequest/types";
 import { addCreditProduct } from "@services/prospect/addCreditProduct";
-import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
+import { SearchByIdProspectUpdateProspect } from "@services/prospect/SearchByIdProspectUpdateProspect";
 import { ExtraordinaryPaymentModal } from "@components/modals/ExtraordinaryPaymentModal";
 import { CustomerContext } from "@context/CustomerContext";
 import { ErrorModal } from "@components/modals/ErrorModal";
@@ -68,7 +66,6 @@ import { IAllEnumsResponse } from "@services/enumerators/types";
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
   dataCreditProspect,
-  labelsAndValuesShare,
   configModal,
   propertyOfMetRequirement,
 } from "./config";
@@ -310,7 +307,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       );
 
       if (prospectData?.prospectId) {
-        const updatedProspect = await getSearchProspectById(
+        const updatedProspect = await SearchByIdProspectUpdateProspect(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
@@ -575,36 +572,6 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
   }, [borrowerOptions]);
 
-  const generateAndSharePdf = async () => {
-    try {
-      const pdfBlob = await generatePDF(
-        dataCommercialManagementRef,
-        labelsAndValuesShare.titleOnPdf.i18n[lang],
-        labelsAndValuesShare.titleOnPdf.i18n[lang],
-        { top: 10, bottom: 10, left: 10, right: 10 },
-        true,
-      );
-
-      if (pdfBlob) {
-        const pdfFile = new File(
-          [pdfBlob],
-          labelsAndValuesShare.fileName.i18n[lang],
-          {
-            type: "application/pdf",
-          },
-        );
-
-        await navigator.share({
-          files: [pdfFile],
-          title: labelsAndValuesShare.titleOnPdf.i18n[lang],
-          text: labelsAndValuesShare.text.i18n[lang],
-        });
-      }
-    } catch (error) {
-      setShowErrorModal(true);
-      setMessageError(labelsAndValuesShare.error.i18n[lang]);
-    }
-  };
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
     useCase: getUseCaseValue("canEditCreditRequest"),
   });
@@ -788,13 +755,6 @@ export function CreditProspect(props: ICreditProspectProps) {
                         cursorHover
                         onClick={print}
                       />
-                      <Icon
-                        icon={<MdOutlineShare />}
-                        appearance="primary"
-                        size="24px"
-                        onClick={async () => await generateAndSharePdf()}
-                        cursorHover
-                      />
                       <StyledVerticalDivider />
                     </>
                   )}
@@ -831,6 +791,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             onProspectRefreshData={onProspectRefreshData}
             showAddProduct={showAddProduct}
             lang={lang}
+            enums={enums}
           />
         </Stack>
         {currentModal === "creditLimit" && (

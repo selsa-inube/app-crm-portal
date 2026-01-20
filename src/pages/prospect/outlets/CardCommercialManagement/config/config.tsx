@@ -428,6 +428,8 @@ export const tittleOptions = {
   save: "Guardar",
   deletedExpensesErrorDescription:
     "¿Realmente deseas eliminar el gasto descontable.",
+  errorDelete: "Error al eliminar el producto credito.",
+  errorReload: "Error al recargar la informacion del prospecto.",
 };
 
 export const paymentCycleMap: Record<string, string> = {
