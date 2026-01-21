@@ -117,8 +117,6 @@ const CreditUI = (props: ICreditUIProps) => {
   );
 
   const handleCardClick = (title: string, url: string, optionId: string) => {
-    // ====== CONTROL DE PRIVILEGIOS ======
-    // Si es la opción de Adelanto de Nómina y NO tiene ambos privilegios
     if (optionId === "Adelanto de nómina" && isPayrollAdvanceDisabled) {
       setMessageError(errorDataCredit.noPrivileges.i18n[lang]);
       setShowErrorModal(true);
