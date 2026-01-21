@@ -7,7 +7,7 @@ interface UseBorrowerDataParams {
   customerData: ICustomerData;
   sourcesOfIncome: IFormData["sourcesOfIncome"];
   obligationsFinancial: IFormData["obligationsFinancial"];
-  riskScore: IFormData["riskScore"];
+  riskScore: IFormData["riskScores"];
 }
 
 export const useBorrowerData = ({
@@ -53,7 +53,7 @@ export const useBorrowerData = ({
         ...financialObligationProperties,
         {
           propertyName: "creditRiskScore",
-          propertyValue: `${riskScore.value}, ${riskScore.date}`,
+          propertyValue: `${riskScore[0].value}, ${riskScore[0].date}`,
         },
       ],
     };

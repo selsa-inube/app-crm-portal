@@ -1057,6 +1057,11 @@ export function CreditProspect(props: ICreditProspectProps) {
             isMobile={isMobile}
             handleClose={handleCloseModal}
             lang={lang}
+            customerPublicCode={customerPublicCode}
+            businessUnitPublicCode={businessUnitPublicCode}
+            businessManagerCode={businessManagerCode}
+            setShowMessageSuccessModal={setShowMessageSuccessModal}
+            setMessageError={setMessageError}
           />
         )}
 

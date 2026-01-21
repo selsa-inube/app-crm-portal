@@ -6,6 +6,7 @@ import { useMediaQuery } from "@inubekit/inubekit";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { GetSearchAllPaymentChannels } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber";
+import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 import {
   IAddProductModalProps,
@@ -16,7 +17,6 @@ import {
   extractBorrowerIncomeData,
 } from "./config";
 import { AddProductModalUI } from "./interface";
-
 function AddProductModal(props: IAddProductModalProps) {
   const {
     onCloseModal,
@@ -130,7 +130,7 @@ function AddProductModal(props: IAddProductModalProps) {
           ...prev,
           paymentConfiguration: {
             ...prev.paymentConfiguration,
-            paymentChannelData: response,
+            paymentChannelData: response as IResponsePaymentDatesChannel[],
           },
         }));
       } catch (error) {
