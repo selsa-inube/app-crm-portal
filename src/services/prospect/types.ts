@@ -250,3 +250,6 @@ export interface simulationPrerequisites {
   canSimulate: string;
   creditPlacementChannel: [string];
 }
+export interface IValidatePrerequisitesForCreditApplication {
+  isCreditSetupCompleteForCreditRequest: "Y" | "N";
+}
