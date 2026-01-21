@@ -6,7 +6,7 @@ import { useMediaQuery } from "@inubekit/inubekit";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { GetSearchAllPaymentChannels } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber";
-import { IResponsePaymentDatesChannel } from "@src/services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 
 import {
   IAddProductModalProps,
