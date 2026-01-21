@@ -681,9 +681,7 @@ export function ApplyForCredit() {
       navigate("/credit/credit-requests");
     } catch (error) {
       setShowErrorModal(true);
-      setMessageError(
-        tittleOptions.errorSharing?.i18n?.[lang] || "No se pudo compartir",
-      );
+      setMessageError(tittleOptions.errorSharing?.i18n?.[lang]);
     }
   };
 
