@@ -109,13 +109,21 @@ export const StyledFooter = styled.footer<IStyledFooter>`
   align-items: center;
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
-  width: ${({ $showNav, $nav }) => ($showNav && !$nav ? "200px" : "auto")};
+  width: ${({ $showNav, $nav }) => ($showNav && !$nav ? "250px" : "auto")};
   height: 50px;
   top: -50px;
   position: relative;
 
   & > a {
     height: 40px;
+    justify-content: ${({ $showNav, $nav }) =>
+      $showNav && !$nav ? "center" : "end"};
+    padding-right: ${({ $showNav, $nav }) =>
+      $showNav && !$nav ? "auto" : "16px"};
+  }
+
+  & > a > img {
+    max-height: 32px;
   }
 `;
 
