@@ -1,10 +1,17 @@
 import { useEffect, useState, useCallback } from "react";
+import { useFlag } from "@inubekit/inubekit";
 
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries";
+import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
+import { updateCreditRiskBureauQuery } from "@services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
+import {
+  ICreditRiskBureauQuery,
+  IUpdateCreditRiskBureauQuery,
+} from "@services/creditRiskBureauQueries/types";
 
 import { ScoreModalProspectUI } from "./interface";
 import { IScore } from "./types";
+import { MODIFY_JUSTIFICATION, creditScoreChanges } from "./config";
 
 interface IScoreModalProspectProps {
   isMobile: boolean;
@@ -28,10 +35,17 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     setMessageError,
   } = props;
 
-  const [firstScore, setFirstScore] = useState<IScore | null>(null);
-  const [secondScore, setSecondScore] = useState<IScore | null>(null);
+  const { addFlag } = useFlag();
+
   const [newFirstScore, setNewFirstScore] = useState<IScore | null>(null);
   const [newSecondScore, setNewSecondScore] = useState<IScore | null>(null);
+  const [firstScore, setFirstScore] = useState<ICreditRiskBureauQuery | null>(
+    null,
+  );
+  const [secondScore, setSecondScore] = useState<ICreditRiskBureauQuery | null>(
+    null,
+  );
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
   const fetchScores = useCallback(async () => {
     if (!customerPublicCode) return;
@@ -44,23 +58,8 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
       );
 
       if (data && data.length > 0) {
-        if (data[0]) {
-          setFirstScore({
-            score: data[0].creditRiskScore,
-            date: data[0].queryDate,
-            bureauName: data[0].bureauName,
-            isActive: data[0].isActive === "1",
-          });
-        }
-
-        if (data[1]) {
-          setSecondScore({
-            score: data[1].creditRiskScore,
-            date: data[1].queryDate,
-            bureauName: data[1].bureauName,
-            isActive: data[1].isActive === "1",
-          });
-        }
+        if (data[0]) setFirstScore(data[0]);
+        if (data[1]) setSecondScore(data[1]);
       }
     } catch (error) {
       const err = error as {
@@ -75,6 +74,63 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     }
   }, [customerPublicCode, businessUnitPublicCode, businessManagerCode]);
 
+  const handleSave = async () => {
+    setIsLoadingSubmit(true);
+    try {
+      if (newFirstScore && firstScore && newFirstScore.score !== null) {
+        const payload: IUpdateCreditRiskBureauQuery = {
+          ...firstScore,
+          creditRiskScore: newFirstScore.score,
+          queryDate: new Date().toISOString(),
+          modifyJustification: MODIFY_JUSTIFICATION,
+        };
+
+        await updateCreditRiskBureauQuery(
+          businessUnitPublicCode,
+          businessManagerCode,
+          payload,
+        );
+      }
+
+      if (newSecondScore && secondScore && newSecondScore.score !== null) {
+        const payload: IUpdateCreditRiskBureauQuery = {
+          ...secondScore,
+          creditRiskScore: newSecondScore.score,
+          queryDate: new Date().toISOString(),
+          modifyJustification: MODIFY_JUSTIFICATION,
+        };
+
+        await updateCreditRiskBureauQuery(
+          businessUnitPublicCode,
+          businessManagerCode,
+          payload,
+        );
+      }
+
+      handleClose();
+
+      addFlag({
+        title: creditScoreChanges.title.i18n[lang],
+        description: creditScoreChanges.description.i18n[lang],
+        appearance: "success",
+        duration: 5000,
+      });
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+
+      setShowMessageSuccessModal(true);
+      setMessageError(description);
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
+
   useEffect(() => {
     fetchScores();
   }, [fetchScores]);
@@ -82,14 +138,34 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
   return (
     <ScoreModalProspectUI
       isMobile={isMobile}
-      firstScore={firstScore}
-      secondScore={secondScore}
+      firstScore={
+        firstScore
+          ? {
+              score: firstScore.creditRiskScore,
+              date: firstScore.queryDate,
+              bureauName: firstScore.bureauName,
+              isActive: firstScore.isActive === "1",
+            }
+          : null
+      }
+      secondScore={
+        secondScore
+          ? {
+              score: secondScore.creditRiskScore,
+              date: secondScore.queryDate,
+              bureauName: secondScore.bureauName,
+              isActive: secondScore.isActive === "1",
+            }
+          : null
+      }
       handleClose={handleClose}
       setNewFirstScore={setNewFirstScore}
       setNewSecondScore={setNewSecondScore}
       newFirstScore={newFirstScore}
       newSecondScore={newSecondScore}
       lang={lang}
+      handleSave={handleSave}
+      isLoadingSubmit={isLoadingSubmit}
     />
   );
 };

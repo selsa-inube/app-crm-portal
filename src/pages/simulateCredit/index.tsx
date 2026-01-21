@@ -33,7 +33,7 @@ import {
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { creditConsultationInBuroByIdentificationNumber } from "@src/services/creditRiskBureauQueries";
+import { creditConsultationInBuroByIdentificationNumber } from "@src/services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";

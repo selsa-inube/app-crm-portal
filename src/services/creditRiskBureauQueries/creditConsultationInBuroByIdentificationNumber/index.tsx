@@ -3,7 +3,7 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { ICreditRiskBureauQuery } from "./types";
+import { ICreditRiskBureauQuery } from "../types";
 
 export const creditConsultationInBuroByIdentificationNumber = async (
   businessUnitPublicCode: string,
