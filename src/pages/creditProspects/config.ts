@@ -277,6 +277,22 @@ export const dataCreditProspects = {
       es: "Buscar",
     },
   },
+  errorValidatePrerequisites: {
+    code: "Error_validate_prerequisites",
+    description: "Error validating credit application prerequisites",
+    i18n: {
+      en: "Error validating prerequisites for credit application. Please try again.",
+      es: "Error al validar los prerrequisitos para la solicitud de crédito. Por favor, intente nuevamente.",
+    },
+  },
+  prerequisitesNotMet: {
+    code: "Prerequisites_not_met",
+    description: "Prerequisites not met for credit application",
+    i18n: {
+      en: "Cannot proceed with the credit application. The necessary prerequisites are not met.",
+      es: "No se puede proceder con la solicitud de crédito. No se cumplen los prerrequisitos necesarios.",
+    },
+  },
 };
 
 export const notFound = "No hay resultados.";

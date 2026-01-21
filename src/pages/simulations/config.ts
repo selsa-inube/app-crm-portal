@@ -270,3 +270,22 @@ export const requirementsMessageError = {
     es: "Error al obtener los requisitos.",
   },
 };
+
+export const prerequisitesConfig = {
+  prerequisitesNotMet: {
+    code: "Prerequisites_not_met",
+    description: "Prerequisites validation failed for credit application",
+    i18n: {
+      en: "The prospect does not meet the prerequisites for credit application",
+      es: "El prospecto no cumple con los requisitos previos para solicitar crédito",
+    },
+  },
+  errorValidatePrerequisites: {
+    code: "Error_validate_prerequisites",
+    description: "Error validating prerequisites",
+    i18n: {
+      en: "Error validating prerequisites",
+      es: "Error al validar los requisitos previos",
+    },
+  },
+};

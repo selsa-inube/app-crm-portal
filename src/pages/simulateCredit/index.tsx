@@ -33,6 +33,7 @@ import {
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
@@ -92,6 +93,7 @@ export function SimulateCredit() {
   const [prospectCode, setProspectCode] = useState<string>("");
   const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [showRiskScoreStep, setShowRiskScoreStep] = useState(true);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -187,10 +189,7 @@ export function SimulateCredit() {
       name: "",
       surname: "",
     },
-    riskScore: {
-      value: 0,
-      date: "",
-    },
+    riskScores: [],
   });
 
   const onlyBorrowerData = useMemo(() => {
@@ -200,6 +199,10 @@ export function SimulateCredit() {
         propertyName: key,
         propertyValue: String(value),
       }));
+
+    const riskScoresString = formData.riskScores
+      .map((score) => `${score.bureauName},${score.value},${score.date},`)
+      .join(";");
 
     const financialObligationProperties =
       formData.obligationsFinancial?.obligations?.map((obligation) => ({
@@ -230,7 +233,7 @@ export function SimulateCredit() {
         ...financialObligationProperties,
         {
           propertyName: "creditRiskScore",
-          propertyValue: `${formData.riskScore.value}, ${formData.riskScore.date}`,
+          propertyValue: riskScoresString,
         },
       ],
     };
@@ -238,7 +241,7 @@ export function SimulateCredit() {
     customerData,
     formData.sourcesOfIncome,
     formData.obligationsFinancial,
-    formData.riskScore,
+    formData.riskScores,
   ]);
 
   const simulateData: IProspect = useMemo(
@@ -595,7 +598,7 @@ export function SimulateCredit() {
         ? stepsAddProspect.extraordinaryInstallments.id
         : undefined,
       stepsAddProspect.sourcesIncome.id,
-      stepsAddProspect.riskScore.id,
+      showRiskScoreStep ? stepsAddProspect.riskScore.id : undefined,
       servicesProductSelection?.financialObligation.includes("Y")
         ? stepsAddProspect.obligationsFinancial.id
         : togglesState[1]
@@ -647,7 +650,7 @@ export function SimulateCredit() {
         : undefined,
       togglesState[3] ? stepsAddProspect.extraBorrowers.id : undefined,
       stepsAddProspect.sourcesIncome.id,
-      stepsAddProspect.riskScore.id,
+      showRiskScoreStep ? stepsAddProspect.riskScore.id : undefined,
       servicesProductSelection?.financialObligation.includes("Y")
         ? stepsAddProspect.obligationsFinancial.id
         : togglesState[1]
@@ -679,6 +682,49 @@ export function SimulateCredit() {
     currentStep === steps[steps.length - 1].id
       ? titleButtonTextAssited.submitText.i18n[lang]
       : titleButtonTextAssited.goNextText.i18n[lang];
+
+  const handleBureauConsultation = useCallback(async () => {
+    if (!customerData.publicCode) return;
+
+    try {
+      const data = await creditConsultationInBuroByIdentificationNumber(
+        businessUnitPublicCode,
+        businessManagerCode,
+        customerData.publicCode,
+      );
+
+      if (data && data.length > 0) {
+        const activeScores = data.filter((score) => score.isActive === "1");
+
+        if (activeScores.length > 0) {
+          setShowRiskScoreStep(true);
+
+          const scoresForState = activeScores.map((score) => ({
+            value: score.creditRiskScore,
+            date: score.queryDate,
+            bureauName: score.bureauName,
+          }));
+
+          handleFormDataChange("riskScores", scoresForState);
+        } else {
+          setShowRiskScoreStep(false);
+        }
+      } else {
+        setShowRiskScoreStep(false);
+      }
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+
+      setMessageError(description);
+      setShowErrorModal(true);
+    }
+  }, [customerData.publicCode, businessUnitPublicCode, businessManagerCode]);
 
   const handleSubmitClick = async () => {
     setIsLoadingSubmit(true);
@@ -744,6 +790,12 @@ export function SimulateCredit() {
       fetchDataPaymentDatesCycle();
     }
   }, [currentStep, formData.selectedProducts]);
+
+  useEffect(() => {
+    if (customerData.publicCode) {
+      handleBureauConsultation();
+    }
+  }, [customerData.publicCode, handleBureauConsultation]);
 
   useEffect(() => {
     if (isCapacityAnalysisModal) {

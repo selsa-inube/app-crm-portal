@@ -26,6 +26,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { recalculateProspect } from "@services/prospect/recalculateProspect";
+import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
@@ -33,6 +34,7 @@ import { SimulationsUI } from "./interface";
 import {
   dataEditProspect,
   labelsAndValuesShare,
+  prerequisitesConfig,
   requirementsMessageError,
 } from "./config";
 
@@ -187,14 +189,45 @@ export function Simulations() {
   }, [businessUnitPublicCode, prospectCode]);
 
   const handleSubmitClick = async () => {
-    const result = await fetchValidateCreditRequest();
+    try {
+      setIsLoading(true);
+      if (!dataProspect) {
+        setMessageError(dataEditProspect.errorProspect.i18n[lang]);
+        setShowErrorModal(true);
+        setIsLoading(false);
+        return;
+      }
+      const validationResult = await validatePrerequisitesForCreditApplication(
+        businessUnitPublicCode,
+        prospectCode!,
+      );
 
-    if (result) {
-      setShowCreditRequest(true);
-      return;
+      if (
+        !validationResult ||
+        validationResult.isCreditSetupCompleteForCreditRequest === "N"
+      ) {
+        setMessageError(prerequisitesConfig.prerequisitesNotMet.i18n[lang]);
+        setShowErrorModal(true);
+        setIsLoading(false);
+        return;
+      }
+      const result = await fetchValidateCreditRequest();
+
+      if (result) {
+        setShowCreditRequest(true);
+        setIsLoading(false);
+        return;
+      }
+
+      navigate(`/credit/apply-for-credit/${prospectCode}`);
+    } catch (error) {
+      setMessageError(
+        prerequisitesConfig.errorValidatePrerequisites.i18n[lang],
+      );
+      setShowErrorModal(true);
+    } finally {
+      setIsLoading(false);
     }
-
-    navigate(`/credit/apply-for-credit/${prospectCode}`);
   };
 
   const fetchProspectData = async () => {

@@ -9,6 +9,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { excludedStatus } from "@pages/simulateCredit/steps/requirementsNotMet/config";
 
 import { dataError } from "./config";
 
@@ -57,13 +58,13 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
           businessManagerCode,
           payload,
         );
-
         if (data) {
-          const unfulfilled = data.filter(
-            (requirement) => requirement.requirementStatus !== "Aprobado",
+          setValidateRequirements(
+            data.filter(
+              (requirement) =>
+                !excludedStatus.includes(requirement.requirementStatus),
+            ),
           );
-
-          setValidateRequirements(unfulfilled);
           if (onRequirementsValidated) {
             onRequirementsValidated(data);
           }
@@ -77,13 +78,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     };
 
     handleSubmit();
-  }, [
-    customerData?.customerId,
-    prospectData,
-    businessUnitPublicCode,
-    businessManagerCode,
-    onRequirementsValidated,
-  ]);
+  }, []);
 
   return (
     <>
@@ -99,7 +94,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             {[1, 2, 3].map((index) => (
               <UnfulfilledRequirements
                 key={index}
-                title={`${dataError.alert} ${index}`}
+                title={`${dataError.alert.i18n[lang]} ${index}`}
                 isMobile={isMobile}
                 requirement=""
                 causeNonCompliance=""
@@ -119,7 +114,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             {validateRequirements.map((requirementData, index) => (
               <UnfulfilledRequirements
                 key={index}
-                title={`${dataError.alert} ${index + 1}`}
+                title={`${dataError.alert.i18n[lang]} ${index + 1}`}
                 isMobile={isMobile}
                 requirement={requirementData.requirementName}
                 causeNonCompliance={
@@ -147,7 +142,9 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
               />
             )}
             <Text type="title" size="medium" appearance="dark">
-              {hasError ? dataError.descriptionError : dataError.noData}
+              {hasError
+                ? dataError.descriptionError.i18n[lang]
+                : dataError.noData.i18n[lang]}
             </Text>
           </Stack>
         )}

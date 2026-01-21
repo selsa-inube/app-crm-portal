@@ -32,6 +32,7 @@ import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import userImage from "@assets/images/userImage.jpeg";
+import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
 
 import {
   addConfig,
@@ -270,10 +271,38 @@ export function CreditProspects() {
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleConfirmProspect = () => {
-    setLoadingConfirm(true);
-    navigate(`/credit/apply-for-credit/${selectedProspect?.prospectCode}`);
-    setLoadingConfirm(false);
+  const handleConfirmProspect = async () => {
+    if (!selectedProspect) return;
+
+    try {
+      setLoadingConfirm(true);
+      const validationResult = await validatePrerequisitesForCreditApplication(
+        businessUnitPublicCode,
+        selectedProspect.prospectCode,
+      );
+
+      if (
+        !validationResult ||
+        validationResult.isCreditSetupCompleteForCreditRequest === "N"
+      ) {
+        setShowConfirmModal(false);
+        setErrorModalMessage(
+          dataCreditProspects.prerequisitesNotMet.i18n[lang],
+        );
+        setShowErrorModal(true);
+        setLoadingConfirm(false);
+        return;
+      }
+      navigate(`/credit/apply-for-credit/${selectedProspect.prospectCode}`);
+    } catch (error) {
+      setShowConfirmModal(false);
+      setErrorModalMessage(
+        dataCreditProspects.errorValidatePrerequisites.i18n[lang],
+      );
+      setShowErrorModal(true);
+    } finally {
+      setLoadingConfirm(false);
+    }
   };
 
   const simulationIsDisabled = canSimulateCredit || !canPerformSimulations;

@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -17,15 +17,16 @@ import { IDocumentsCredit } from "@services/creditRequest/types";
 import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
 import { IFormData } from "./types";
 import { dataSubmitApplication, tittleOptions } from "./config/config";
-import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
+  const navigate = useNavigate();
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const { customerData } = useContext(CustomerContext);
   const [sentModal, setSentModal] = useState(false);
@@ -432,6 +433,7 @@ export function ApplyForCredit() {
       );
 
       setCreditRequestCode(response?.creditRequestCode || "");
+      setSentModal(false);
       setApprovedRequestModal(true);
     } catch (error) {
       console.error("error: ", error);
@@ -627,6 +629,7 @@ export function ApplyForCredit() {
         ? currentStep_.description
         : currentStep_.description,
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -660,6 +663,27 @@ export function ApplyForCredit() {
       }));
     }
   }, [prospectSummaryData]);
+
+  const generateAndShareApprovedRequest = async () => {
+    if (!creditRequestCode) return;
+
+    try {
+      const shareText = `${dataSubmitApplication.modals.filedDescription.i18n[lang]}\n\n${creditRequestCode}`;
+
+      if (navigator.share) {
+        await navigator.share({
+          text: shareText,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareText);
+      }
+      setApprovedRequestModal(false);
+      navigate("/credit/credit-requests");
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(tittleOptions.errorSharing?.i18n?.[lang]);
+    }
+  };
 
   return (
     <>
@@ -702,6 +726,7 @@ export function ApplyForCredit() {
         loading={loading}
         enums={enums as IAllEnumsResponse}
         lang={lang}
+        generateAndShareApprovedRequest={generateAndShareApprovedRequest}
       />
     </>
   );
