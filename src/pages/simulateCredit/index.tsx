@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMediaQuery } from "@inubekit/inubekit";
+import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 import { useIAuth } from "@inube/iauth-react";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -34,7 +34,10 @@ import {
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 import { creditConsultationInBuroByIdentificationNumber } from "@src/services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
+import { updateCreditRiskBureauQuery } from "@src/services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
+import { ICreditRiskBureauQuery } from "@services/creditRiskBureauQueries/types";
 
+import { creditScoreChanges } from "../prospect/components/ScoreModalProspec/config";
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
 import {
@@ -44,7 +47,7 @@ import {
   IManageErrors,
 } from "./types";
 import { SimulateCreditUI } from "./interface";
-import { messagesError } from "./config/config";
+import { messagesError, MODYFY_JUSTIFICATION } from "./config/config";
 import {
   createMainBorrowerFromFormData,
   updateFinancialObligationsFormData,
@@ -53,6 +56,8 @@ import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/typ
 import { textAddConfig } from "./config/addConfig";
 
 export function SimulateCredit() {
+  const { addFlag } = useFlag();
+
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddProspect.generalInformation.id,
   );
@@ -94,6 +99,10 @@ export function SimulateCredit() {
   const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [showRiskScoreStep, setShowRiskScoreStep] = useState(true);
+  const [originalBureauData, setOriginalBureauData] = useState<
+    ICreditRiskBureauQuery[]
+  >([]);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
     financialObligation: string[];
     aditionalBorrowers: string[];
@@ -694,17 +703,17 @@ export function SimulateCredit() {
       );
 
       if (data && data.length > 0) {
+        setOriginalBureauData(data);
+
         const activeScores = data.filter((score) => score.isActive === "1");
 
         if (activeScores.length > 0) {
           setShowRiskScoreStep(true);
-
           const scoresForState = activeScores.map((score) => ({
             value: score.creditRiskScore,
             date: score.queryDate,
             bureauName: score.bureauName,
           }));
-
           handleFormDataChange("riskScores", scoresForState);
         } else {
           setShowRiskScoreStep(false);
@@ -725,6 +734,59 @@ export function SimulateCredit() {
       setShowErrorModal(true);
     }
   }, [customerData.publicCode, businessUnitPublicCode, businessManagerCode]);
+
+  const handleUpdateRiskScore = async (index: number, newValue: number) => {
+    const scoreToUpdate = formData.riskScores[index];
+    const originalRecord = originalBureauData.find(
+      (score) => score.bureauName === scoreToUpdate.bureauName,
+    );
+
+    if (!originalRecord) return;
+
+    setIsLoadingUpdate(true);
+    try {
+      const payload = {
+        ...originalRecord,
+        creditRiskScore: newValue,
+        modifyJustification: MODYFY_JUSTIFICATION,
+        queryDate: new Date().toISOString(),
+      };
+
+      await updateCreditRiskBureauQuery(
+        businessUnitPublicCode,
+        businessManagerCode,
+        payload,
+      );
+
+      const updatedScores = [...formData.riskScores];
+      updatedScores[index] = {
+        ...updatedScores[index],
+        value: newValue,
+        date: payload.queryDate,
+      };
+      handleFormDataChange("riskScores", updatedScores);
+
+      addFlag({
+        title: creditScoreChanges.title.i18n[lang],
+        description: creditScoreChanges.description.i18n[lang],
+        appearance: "success",
+        duration: 5000,
+      });
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+
+      setMessageError(description);
+      setShowErrorModal(true);
+    } finally {
+      setIsLoadingUpdate(false);
+    }
+  };
 
   const handleSubmitClick = async () => {
     setIsLoadingSubmit(true);
@@ -1073,6 +1135,8 @@ export function SimulateCredit() {
         isLoadingSubmit={isLoadingSubmit}
         enums={enums as IAllEnumsResponse}
         handleNavigate={handleNavigate}
+        handleUpdateRiskScore={handleUpdateRiskScore}
+        isLoadingUpdate={isLoadingUpdate}
       />
     </>
   );

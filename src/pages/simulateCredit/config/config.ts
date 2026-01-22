@@ -101,3 +101,5 @@ export const dataSubmitApplication = {
     },
   },
 };
+
+export const MODYFY_JUSTIFICATION = "Manual update during credit simulation";
