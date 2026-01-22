@@ -158,10 +158,11 @@ export interface IFormData {
   };
   consolidatedCreditArray?: IConsolidatedCreditItem[];
   sourcesOfIncome: ISourcesOfIncomeState;
-  riskScore: {
+  riskScores: {
     value: number;
     date: string;
-  };
+    bureauName: string;
+  }[];
   requestedValue?: string;
   disbursementGeneral?: IDisbursementGeneral;
   requirementsValidation?: {

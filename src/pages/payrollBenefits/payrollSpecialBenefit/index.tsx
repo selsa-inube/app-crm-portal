@@ -138,10 +138,7 @@ export function PayrolSpecialBenefitAdvanceCredit() {
       name: "",
       surname: "",
     },
-    riskScore: {
-      value: 0,
-      date: "",
-    },
+    riskScores: [],
     disbursementGeneral: {
       amount: 0,
       Internal_account: {
@@ -236,7 +233,7 @@ export function PayrolSpecialBenefitAdvanceCredit() {
     customerData,
     sourcesOfIncome: formData.sourcesOfIncome,
     obligationsFinancial: formData.obligationsFinancial,
-    riskScore: formData.riskScore,
+    riskScore: formData.riskScores,
   });
 
   const simulateData: IProspect = useMemo(

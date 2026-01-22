@@ -53,7 +53,7 @@ export function CreditApplications() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   const businessManagerCode = eventData.businessManager.abbreviatedName;
 
@@ -213,7 +213,13 @@ export function CreditApplications() {
                           creditRequest.moneyDestinationAbreviatedName
                         }
                         value={creditRequest.loanAmount}
-                        toDo={creditRequest.taskToBeDone}
+                        toDo={
+                          enums?.DmTareasPrs?.find(
+                            (item) =>
+                              item.code.toUpperCase() ===
+                              creditRequest.taskToBeDone?.toUpperCase(),
+                          )?.value || creditRequest.taskToBeDone
+                        }
                         hasMessage={creditRequest.unreadNovelties === "Y"}
                         onCardClick={() => {
                           setSelectedRequestCode(

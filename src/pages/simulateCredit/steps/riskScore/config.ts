@@ -47,6 +47,14 @@ export const riskScoreData = {
       es: "El valor que ingresaste no es válido. Por favor, ingresa un número entre 150 y 950.",
     },
   },
+  unavailableScore: {
+    code: "Unavailable_score",
+    description: "Message when the score cannot be retrieved or consulted",
+    i18n: {
+      en: "We were unable to consult the credit risk score at this time.",
+      es: "No pudimos consultar el score de riesgo crediticio en este momento.",
+    },
+  },
   editTitle: {
     code: "Edit_title",
     description: "Title for the edit modal",

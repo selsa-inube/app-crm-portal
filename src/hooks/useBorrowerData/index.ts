@@ -7,7 +7,7 @@ interface UseBorrowerDataParams {
   customerData: ICustomerData;
   sourcesOfIncome: IFormData["sourcesOfIncome"];
   obligationsFinancial: IFormData["obligationsFinancial"];
-  riskScore: IFormData["riskScore"];
+  riskScore: IFormData["riskScores"];
 }
 
 export const useBorrowerData = ({
@@ -41,21 +41,24 @@ export const useBorrowerData = ({
           .join(", "),
       })) || [];
 
+    const baseProperties = [
+      ...numericIncomeProperties,
+      ...financialObligationProperties,
+    ];
+    if (riskScore && riskScore[0]?.value && riskScore[0]?.date) {
+      baseProperties.push({
+        propertyName: "creditRiskScore",
+        propertyValue: `${riskScore[0].value}, ${riskScore[0].date}`,
+      });
+    }
+
     return {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
       borrowerType: textAddCongfig.mainBorrower,
       borrowerName: customerData.fullName,
-
-      borrowerProperties: [
-        ...numericIncomeProperties,
-        ...financialObligationProperties,
-        {
-          propertyName: "creditRiskScore",
-          propertyValue: `${riskScore.value}, ${riskScore.date}`,
-        },
-      ],
+      borrowerProperties: baseProperties,
     };
   }, [customerData, sourcesOfIncome, obligationsFinancial, riskScore]);
 };
