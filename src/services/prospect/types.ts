@@ -230,15 +230,15 @@ export interface IRefactorIncome {
   prospectCode: string;
 }
 
-export interface IRemoveProspect {
-  removeProspectsRequest: [
+export interface ICancelProspect {
+  cancelProspectsRequest: [
     {
       prospectId: string;
     },
   ];
 }
 
-export interface IRemoveProspectResponse {
+export interface ICancelProspectResponse {
   prospectId: string;
 }
 
