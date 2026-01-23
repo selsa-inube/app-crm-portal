@@ -200,10 +200,6 @@ export function SimulateCredit() {
         propertyValue: String(value),
       }));
 
-    const riskScoresString = formData.riskScores
-      .map((score) => `${score.bureauName},${score.value},${score.date},`)
-      .join(";");
-
     const financialObligationProperties =
       formData.obligationsFinancial?.obligations?.map((obligation) => ({
         propertyName: textAddConfig.financialObligation.i18n[lang],
