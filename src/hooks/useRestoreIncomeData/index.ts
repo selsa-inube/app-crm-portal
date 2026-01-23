@@ -3,6 +3,7 @@ import { getCreditLimit } from "@services/creditLimit/getCreditLimit";
 import { IIncomeSources } from "@services/creditLimit/types";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
+import { useToken } from "@hooks/useToken";
 
 interface UseRestoreIncomeDataProps {
   onSuccess?: (data: IIncomeSources) => void;
@@ -16,6 +17,8 @@ export function useRestoreIncomeData({
   setShowErrorModal,
   setMessageError,
 }: UseRestoreIncomeDataProps = {}) {
+  const { getAuthorizationToken } = useToken();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const { customerData } = useContext(CustomerContext);
@@ -29,10 +32,14 @@ export function useRestoreIncomeData({
   const restoreData = async () => {
     try {
       setIsLoading(true);
+
+      const authorizationToken = await getAuthorizationToken();
+
       const refreshedData = await getCreditLimit(
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
+        authorizationToken,
       );
       onSuccess?.(refreshedData);
       return refreshedData;

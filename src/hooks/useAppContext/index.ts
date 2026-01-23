@@ -14,6 +14,7 @@ import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
 import { getSearchUseCaseForStaff } from "@services/staffs/SearchUseCaseForStaff";
+import { useToken } from "@hooks/useToken";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -25,6 +26,7 @@ interface IBusinessUnits {
 
 function useAppContext() {
   const { user, isLoading: isIAuthLoading } = useIAuth();
+  const { getAuthorizationToken } = useToken();
 
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
@@ -131,7 +133,9 @@ function useAppContext() {
           return;
         }
 
-        const staffData = await getStaff(userIdentifier);
+        const authorizationToken = await getAuthorizationToken();
+
+        const staffData = await getStaff(userIdentifier, authorizationToken);
         if (!staffData.length) return;
 
         setEventData((prev) => ({
@@ -182,10 +186,13 @@ function useAppContext() {
 
     (async () => {
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const staffUseCaseData = await getSearchUseCaseForStaff(
           eventData.businessUnit.abbreviatedName,
           eventData.businessManager.publicCode,
           identificationNumber,
+          authorizationToken,
         );
         setStaffUseCases(staffUseCaseData);
       } catch (error) {
@@ -202,9 +209,15 @@ function useAppContext() {
   useEffect(() => {
     if (isIAuthLoading || !portalCode) return;
 
-    validateConsultation(portalCode).then((data) => {
-      setPortalData(data);
-    });
+    const validateConsultationAsync = async () => {
+      const authorizationToken = await getAuthorizationToken();
+
+      validateConsultation(portalCode, authorizationToken).then((data) => {
+        setPortalData(data);
+      });
+    };
+
+    validateConsultationAsync();
   }, [portalCode, isIAuthLoading]);
 
   const userIdentifier = eventData?.user?.identificationDocumentNumber;
@@ -221,10 +234,13 @@ function useAppContext() {
           return;
         }
 
+        const authorizationToken = await getAuthorizationToken();
+
         const result = await getSearchOptionForStaff(
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
           userIdentifier || "",
+          authorizationToken,
         );
         setOptionStaffData(result);
       } catch (error) {

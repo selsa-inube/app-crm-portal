@@ -6,6 +6,7 @@ import {
   IProspect,
 } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -32,6 +33,8 @@ export interface TableExtraordinaryInstallmentProps {
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
+  const { getAuthorizationToken } = useToken();
+
   const [currentPage, setCurrentPage] = useState(0);
   const pageLength = 5;
   const totalRecords = data.length;
@@ -86,6 +89,7 @@ export const TableExtraordinaryInstallment = (
     handleDelete,
   } = props;
 
+  const { getAuthorizationToken } = useToken();
   const headers = headersTableExtraordinaryInstallment;
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -202,9 +206,13 @@ export const TableExtraordinaryInstallment = (
     } else if (service) {
       try {
         setIsLoadingDelete(true);
+
+        const authorizationToken = await getAuthorizationToken();
+
         await removeExtraordinaryInstallment(
           businessUnitPublicCode ?? "",
           itemIdentifiersForUpdate,
+          authorizationToken,
         );
 
         setSentData?.(itemIdentifiersForUpdate);

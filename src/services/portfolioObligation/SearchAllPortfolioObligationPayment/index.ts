@@ -11,6 +11,7 @@ const getCreditPayments = async (
   userIdentification: string,
   businessUnitPublicCode: string,
   businessManagerCode: string,
+  authorizationToken: string,
 ): Promise<IPayment[] | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;

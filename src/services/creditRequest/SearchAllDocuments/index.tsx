@@ -9,6 +9,7 @@ export const getSearchAllDocumentsById = async (
   userAccount: string,
   businessUnitPublicCode: string,
   businessManagerCode: string,
+  authorizationToken: string,
 ) => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -26,6 +27,7 @@ export const getSearchAllDocumentsById = async (
           "X-User-Name": userAccount,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

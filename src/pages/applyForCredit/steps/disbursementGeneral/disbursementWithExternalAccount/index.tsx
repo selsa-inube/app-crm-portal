@@ -36,11 +36,11 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { getEnum } from "@services/enum/enumerators/getEnum";
 import { IDomainEnum } from "@config/enums/types";
-
 import { CardGray } from "@components/cards/CardGray";
+import { useToken } from "@hooks/useToken";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { selectDefaultValue, errorMessages } from "./config";
-import { EnumType } from "@hooks/useEnum/useEnum";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;
@@ -76,6 +76,8 @@ export function DisbursementWithExternalAccount(
     handleOnChange,
     getTotalAmount,
   } = props;
+
+  const { getAuthorizationToken } = useToken();
 
   const [banks, setBanks] = useState<IOptionsSelect[]>([]);
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
@@ -268,11 +270,14 @@ export function DisbursementWithExternalAccount(
       if (!identification) return;
 
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const customer = await getSearchCustomerByCode(
           identification,
           businessUnitPublicCode,
           businessManagerCode,
           true,
+          authorizationToken,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -333,7 +338,9 @@ export function DisbursementWithExternalAccount(
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const response = await getAllBancks();
+        const authorizationToken = await getAuthorizationToken();
+
+        const response = await getAllBancks(authorizationToken);
         const formattedBanks = response.map((bank) => ({
           id: bank.bankId,
           label: bank.bankName,

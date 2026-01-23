@@ -10,6 +10,7 @@ import { IAction, IEntries, ITitle } from "@components/data/TableBoard/types";
 import { getAllPackagesOfRequirementsById } from "@services/requirementsPackages/packagesOfRequirements";
 import { TraceDetailModal } from "@components/modals/TraceDetailModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import {
   infoItems,
@@ -46,6 +47,8 @@ export const Requirements = (props: IRequirementsProps) => {
     creditRequestCode,
     lang,
   } = props;
+  const { getAuthorizationToken } = useToken();
+
   const [showSeeDetailsModal, setShowSeeDetailsModal] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
@@ -65,10 +68,13 @@ export const Requirements = (props: IRequirementsProps) => {
         return;
       }
 
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await getAllPackagesOfRequirementsById(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode,
+        authorizationToken,
       );
 
       if (!Array.isArray(data) || data.length === 0) {

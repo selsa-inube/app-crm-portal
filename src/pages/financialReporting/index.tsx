@@ -35,6 +35,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { environment } from "@config/environment";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { useToken } from "@hooks/useToken";
 
 import {
   configHandleactions,
@@ -73,6 +74,8 @@ const removeErrorByIdServices = (
 };
 
 export const FinancialReporting = () => {
+  const { getAuthorizationToken } = useToken();
+
   const [data, setData] = useState({} as ICreditRequest);
   const [attachDocuments, setAttachDocuments] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -131,39 +134,50 @@ export const FinancialReporting = () => {
   };
 
   useEffect(() => {
-    setLoadingData(true);
-    getCreditRequestByCode(
-      businessUnitPublicCode,
-      businessManagerCode,
-      user.id,
-      { creditRequestCode },
-    )
-      .then((data) => {
-        if (data && data.length > 0) {
-          setData(data[0]);
-        } else {
+    const searchCreditRequest = async () => {
+      setLoadingData(true);
+
+      const authorizationToken = await getAuthorizationToken();
+
+      getCreditRequestByCode(
+        businessUnitPublicCode,
+        businessManagerCode,
+        user.id,
+        { creditRequestCode },
+        authorizationToken,
+      )
+        .then((data) => {
+          if (data && data.length > 0) {
+            setData(data[0]);
+          } else {
+            setCodeError(1030);
+            setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
+          }
+        })
+        .catch(() => {
           setCodeError(1030);
           setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
-        }
-      })
-      .catch(() => {
-        setCodeError(1030);
-        setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
-      })
-      .finally(() => {
-        setLoadingData(false);
-      });
+        })
+        .finally(() => {
+          setLoadingData(false);
+        });
+    };
+
+    searchCreditRequest();
   }, [creditRequestCode, businessUnitPublicCode, user.id, businessManagerCode]);
 
   const fetchAndShowDocuments = async () => {
     if (!data?.creditRequestId || !user?.id || !businessUnitPublicCode) return;
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const documents = await getSearchAllDocumentsById(
         data.creditRequestId,
         user.id,
         businessUnitPublicCode,
         businessManagerCode,
+        authorizationToken,
       );
 
       const dataToMap = Array.isArray(documents) ? documents : documents.value;
@@ -183,10 +197,13 @@ export const FinancialReporting = () => {
 
   const fetchProspectData = async () => {
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const result = await getSearchProspectById(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode!,
+        authorizationToken,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
     } catch (error) {
@@ -289,11 +306,14 @@ export const FinancialReporting = () => {
       if (!data?.creditRequestId || !businessUnitPublicCode || !user?.id)
         return;
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         await patchAssignAccountManager(
           data?.creditRequestId ?? "",
           businessUnitPublicCode,
           businessManagerCode,
           user?.id ?? "",
+          authorizationToken,
         );
       } catch (error) {
         setMessageError(errorMessages.getData.description.i18n[lang]);
@@ -307,11 +327,14 @@ export const FinancialReporting = () => {
 
   const fetchCreditRequest = useCallback(async () => {
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
         user?.id ?? "",
         { creditRequestCode },
+        authorizationToken,
       );
       if (data[0].stage !== "TRAMITADA") {
         setSendCrediboard(true);
@@ -332,12 +355,15 @@ export const FinancialReporting = () => {
     if (!data?.creditRequestId || !businessUnitPublicCode) return;
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const unreadErrors = await getUnreadErrorsById(
         businessUnitPublicCode,
         businessManagerCode,
         {
           creditRequestId: data.creditRequestId,
         },
+        authorizationToken,
       );
 
       if (Array.isArray(unreadErrors)) {

@@ -21,6 +21,7 @@ import { paymentOptionValues } from "@services/portfolioObligation/SearchAllPort
 import { IConsolidatedCredit } from "@services/prospect/types";
 import { updateConsolidatedCredits } from "@services/prospect/updateConsolidatedCredits";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { ScrollableContainer } from "./styles";
 import { ModalConfig, feedback } from "./config";
@@ -53,6 +54,8 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     onProspectRefreshData,
   } = props;
   const isMobile = useMediaQuery("(max-width:880px)");
+  const { getAuthorizationToken } = useToken();
+
   const [editOpen, setEditOpen] = useState(true);
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
@@ -73,10 +76,13 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
       return;
     }
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await getCreditPayments(
         customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
+        authorizationToken,
       );
       setObligationPayment(data ?? null);
     } catch (error) {
@@ -313,10 +319,14 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
 
     try {
       setLoading(true);
+
+      const authorizationToken = await getAuthorizationToken();
+
       await updateConsolidatedCredits(
         businessUnitPublicCode,
         prospectData.prospectId,
         consolidatedCredits,
+        authorizationToken,
       );
 
       if (onProspectRefreshData) {

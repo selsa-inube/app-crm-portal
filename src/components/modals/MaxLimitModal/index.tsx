@@ -5,6 +5,7 @@ import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components
 import { getMaximumCreditLimitByLineOfCreditRegulation } from "@services/creditLimit/getMaximumCreditLimitByLineOfCreditRegulation";
 import { IMaximumCreditLimit } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { MaxLimitModalUI } from "./interface";
 
@@ -29,6 +30,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
+  const { getAuthorizationToken } = useToken();
 
   const [error, setError] = useState(false);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] =
@@ -41,6 +43,8 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await getMaximumCreditLimitByLineOfCreditRegulation(
           businessUnitPublicCode,
           businessManagerCode,
@@ -49,6 +53,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
           dataMaximumCreditLimitService.identificationDocumentNumber,
           dataMaximumCreditLimitService.moneyDestination,
           dataMaximumCreditLimitService.primaryIncomeType,
+          authorizationToken,
         );
 
         if (data) {

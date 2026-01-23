@@ -12,6 +12,7 @@ export const getCreditRequestByCode = async (
   businessManagerCode: string,
   userAccount: string,
   params: CreditRequestParams,
+  authorizationToken: string,
 ): Promise<ICreditRequest[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -49,6 +50,7 @@ export const getCreditRequestByCode = async (
           "Content-type": "application/json; charset=UTF-8",
           "x-user-name": userAccount,
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

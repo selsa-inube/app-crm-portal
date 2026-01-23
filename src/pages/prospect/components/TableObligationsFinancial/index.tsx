@@ -8,6 +8,7 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { restoreFinancialObligationsByBorrowerId } from "@services/prospect/restoreFinancialObligationsByBorrowerId";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { useToken } from "@hooks/useToken";
 
 import {
   convertObligationsToProperties,
@@ -39,6 +40,9 @@ export const TableFinancialObligations = (
     showOnlyEdit = false,
     showAddButton = true,
   } = props;
+
+  const { getAuthorizationToken } = useToken();
+
   const [loading, setLoading] = useState(true);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
   const [selectedBorrower, setSelectedBorrower] =
@@ -214,10 +218,13 @@ export const TableFinancialObligations = (
       };
 
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         await updateProspect(
           businessUnitPublicCode,
           businessManagerCode,
           updatedInitialValues,
+          authorizationToken,
         );
       } catch (error) {
         setShowErrorModal(true);
@@ -308,10 +315,13 @@ export const TableFinancialObligations = (
           borrowers: updatedBorrowers,
         };
 
+        const authorizationToken = await getAuthorizationToken();
+
         await updateProspect(
           businessUnitPublicCode,
           businessManagerCode,
           updatedInitialValues,
+          authorizationToken,
         );
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
