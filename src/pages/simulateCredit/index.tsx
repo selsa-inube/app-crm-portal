@@ -33,8 +33,8 @@ import {
 } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { creditConsultationInBuroByIdentificationNumber } from "@src/services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
-import { updateCreditRiskBureauQuery } from "@src/services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
+import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
+import { updateCreditRiskBureauQuery } from "@services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
 import { ICreditRiskBureauQuery } from "@services/creditRiskBureauQueries/types";
 
 import { creditScoreChanges } from "../prospect/components/ScoreModalProspec/config";
