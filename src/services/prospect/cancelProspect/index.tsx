@@ -4,13 +4,13 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IRemoveProspect, IRemoveProspectResponse } from "../types";
+import { ICancelProspect, ICancelProspectResponse } from "../types";
 
 export const cancelProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: IRemoveProspect,
-): Promise<IRemoveProspectResponse | undefined> => {
+  payload: ICancelProspect,
+): Promise<ICancelProspectResponse | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
