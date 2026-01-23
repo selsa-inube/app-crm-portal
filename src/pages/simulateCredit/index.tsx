@@ -278,9 +278,10 @@ export function SimulateCredit() {
         formData.loanAmountState.paymentCycle || "",
       paymentChannelCycleName: formData.loanAmountState.paymentCycle || "",
       requestedAmount: formData.loanAmountState.inputValue || 0,
-      ...(formData.loanConditionState.maximumTermValue != null && {
-        termLimit: formData.loanConditionState.maximumTermValue,
-      }),
+      ...(formData.loanConditionState.maximumTermValue != null &&
+        formData.loanConditionState.maximumTermValue != "" && {
+          termLimit: formData.loanConditionState.maximumTermValue,
+        }),
       prospectId: "",
       prospectCode: "",
       state: "",
