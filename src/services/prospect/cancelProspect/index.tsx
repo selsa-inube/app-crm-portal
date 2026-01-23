@@ -6,7 +6,7 @@ import {
 
 import { IRemoveProspect, IRemoveProspectResponse } from "../types";
 
-export const RemoveProspect = async (
+export const cancelProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   payload: IRemoveProspect,
@@ -19,9 +19,9 @@ export const RemoveProspect = async (
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
-        method: "DELETE",
+        method: "PATCH",
         headers: {
-          "X-Action": "RemoveProspect",
+          "X-Action": "CancelProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,

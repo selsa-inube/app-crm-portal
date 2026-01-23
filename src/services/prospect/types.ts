@@ -231,7 +231,7 @@ export interface IRefactorIncome {
 }
 
 export interface IRemoveProspect {
-  removeProspectsRequest: [
+  cancelProspectsRequest: [
     {
       prospectId: string;
     },
