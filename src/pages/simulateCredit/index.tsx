@@ -231,10 +231,6 @@ export function SimulateCredit() {
       borrowerProperties: [
         ...numericIncomeProperties,
         ...financialObligationProperties,
-        {
-          propertyName: "creditRiskScore",
-          propertyValue: riskScoresString,
-        },
       ],
     };
   }, [
