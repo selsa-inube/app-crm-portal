@@ -12,6 +12,7 @@ export const getFinancialObligationsUpdate = async (
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
   moneyDestination: string,
+  authorizationToken: string,
 ): Promise<IFinancialObligationsUpdateResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -26,6 +27,7 @@ export const getFinancialObligationsUpdate = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

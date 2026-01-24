@@ -33,8 +33,6 @@ export interface TableExtraordinaryInstallmentProps {
 }
 
 const usePagination = (data: TableExtraordinaryInstallmentProps[] = []) => {
-  const { getAuthorizationToken } = useToken();
-
   const [currentPage, setCurrentPage] = useState(0);
   const pageLength = 5;
   const totalRecords = data.length;

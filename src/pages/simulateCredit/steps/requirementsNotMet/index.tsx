@@ -9,6 +9,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { dataError, excludedStatus } from "./config";
 
@@ -30,6 +31,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     businessManagerCode,
     lang,
   } = props;
+  const { getAuthorizationToken } = useToken();
 
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
@@ -49,10 +51,13 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
+          authorizationToken,
         );
         if (data) {
           setValidateRequirements(

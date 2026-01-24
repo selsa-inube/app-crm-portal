@@ -8,6 +8,7 @@ import { IProspect } from "../types";
 export const recalculateProspect = async (
   businessUnitPublicCode: string,
   prospectCode: string,
+  authorizationToken: string,
 ): Promise<IProspect | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -21,6 +22,7 @@ export const recalculateProspect = async (
           "X-Action": "RecalculateProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
         body: JSON.stringify({ prospectCode }),

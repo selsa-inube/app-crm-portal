@@ -479,6 +479,7 @@ export const TableFinancialObligations = (
       showAddButton={showAddButton}
       enums={enums as IAllEnumsResponse}
       lang={lang as EnumType}
+      getAuthorizationToken={getAuthorizationToken}
     />
   );
 };

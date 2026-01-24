@@ -11,7 +11,6 @@ export const getAccountingVouchers = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   creditRequestId: string,
-  authorizationToken: string,
 ): Promise<IAccountingVouchers[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;

@@ -13,7 +13,6 @@ import {
 } from "@services/creditRequest/types";
 import { getAccountingVouchers } from "@services/creditRequest/accountingVouchers";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
 
 import { errorMessages } from "../config";
 import {
@@ -32,7 +31,6 @@ interface IApprovalsProps {
 export const Postingvouchers = (props: IApprovalsProps) => {
   const { isMobile, lang, creditRequest } = props;
   const { user } = useIAuth();
-  const { getAuthorizationToken } = useToken();
 
   const [error, setError] = useState(false);
   const [positionsAccountingVouchers, setPositionsAccountingVouchers] =
@@ -49,13 +47,10 @@ export const Postingvouchers = (props: IApprovalsProps) => {
     if (!creditRequest?.creditRequestId) return;
     setLoading(true);
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const vouchers = await getAccountingVouchers(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequest.creditRequestId,
-        authorizationToken,
       );
       setPositionsAccountingVouchers(vouchers);
     } catch (error) {

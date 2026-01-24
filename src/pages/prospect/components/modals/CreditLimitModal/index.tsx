@@ -65,9 +65,9 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
       try {
         setIsLoading(true);
 
-        const authorizationToken = getAuthorizationToken();
+        const authorizationToken = await getAuthorizationToken();
 
-        const data = getGlobalLimitByMoneyDestination(
+        const data = await getGlobalLimitByMoneyDestination(
           businessUnitPublicCode,
           businessManagerCode,
           moneyDestination,

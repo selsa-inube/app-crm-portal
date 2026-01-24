@@ -18,6 +18,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { useEnum } from "@hooks/useEnum/useEnum.ts";
+import { useToken } from "@hooks/useToken";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -27,6 +28,8 @@ import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function ProspectCredit() {
+  const { getAuthorizationToken } = useToken();
+
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [search, setSearch] = useState("");
@@ -67,6 +70,8 @@ export function ProspectCredit() {
       try {
         const stage = "TRAMITADA";
 
+        const authorizationToken = await getAuthorizationToken();
+
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
           businessManagerCode,
@@ -75,6 +80,7 @@ export function ProspectCredit() {
             clientIdentificationNumber: customerData.publicCode,
             stage: stage,
           },
+          authorizationToken,
         );
         setCreditRequestData(creditData);
       } catch {
