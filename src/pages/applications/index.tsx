@@ -253,14 +253,11 @@ export function CreditApplications() {
               backButton={dataCreditProspects.cancel.i18n[lang]}
               handleBack={() => setIsShowModal(false)}
               handleNext={async () => {
-                const authorizationToken = await getAuthorizationToken();
-
                 const portalId = (
                   await getStaffPortalsByBusinessManager(
                     "",
                     eventData.businessManager.abbreviatedName,
                     redirect.portalName.i18n[lang],
-                    authorizationToken,
                   )
                 )[0].staffPortalId;
                 const redirectUrl = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}?portal=${portalId}`;

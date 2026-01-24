@@ -11,7 +11,6 @@ const getStaffPortalsByBusinessManager = async (
   staffPortalId?: string,
   businessManagerCode?: string,
   staffPortalCatalogCode?: string,
-  authorizationToken?: string,
 ): Promise<IStaffPortalByBusinessManager[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -42,7 +41,6 @@ const getStaffPortalsByBusinessManager = async (
         headers: {
           "X-Action": "SearchAllStaffPortalsByBusinessManager",
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
         },
       };
 
