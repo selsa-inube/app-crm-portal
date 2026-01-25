@@ -107,8 +107,13 @@ export const StyledFooter = styled.footer<IStyledFooter>`
   justify-content: center;
   align-content: center;
   align-items: center;
-  background-color: ${({ theme }) =>
-    theme?.palette?.neutral?.N10 || inube.palette.neutral.N10};
+  background-color: ${({ theme, $showNav, $nav }) => {
+    if ($showNav && !$nav) {
+      return "none";
+    } else {
+      return theme?.palette?.neutral?.N10 || inube.palette.neutral.N10;
+    }
+  }};
   width: ${({ $showNav, $nav }) => ($showNav && !$nav ? "250px" : "auto")};
   height: 50px;
   top: -50px;

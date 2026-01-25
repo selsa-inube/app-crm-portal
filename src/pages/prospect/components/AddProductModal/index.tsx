@@ -34,7 +34,6 @@ function AddProductModal(props: IAddProductModalProps) {
     lang,
     isLoading,
   } = props;
-
   const [errorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [creditLineTerms, setCreditLineTerms] = useState<TCreditLineTerms>({});
@@ -77,17 +76,28 @@ function AddProductModal(props: IAddProductModalProps) {
         ? lineOfCreditValues
         : [lineOfCreditValues];
 
+      const existingAbbreviatedNames: string[] =
+        dataProspect?.creditProducts?.map(
+          (product) => product.lineOfCreditAbbreviatedName,
+        ) ?? [];
+
       const result: TCreditLineTerms = {};
 
       linesArray.forEach((line: ILinesOfCreditByMoneyDestination) => {
-        if (line && line.abbreviateName) {
-          result[line.abbreviateName] = {
-            LoanAmountLimit: line.maxAmount,
-            LoanTermLimit: line.maxTerm,
-            RiskFreeInterestRate: line.maxEffectiveInterestRate,
-            amortizationType: line.amortizationType,
-            description: line.description,
-          };
+        if (line?.abbreviateName) {
+          const isAlreadyPresent = existingAbbreviatedNames.includes(
+            line.abbreviateName,
+          );
+
+          if (!isAlreadyPresent) {
+            result[line.abbreviateName] = {
+              LoanAmountLimit: line.maxAmount,
+              LoanTermLimit: line.maxTerm,
+              RiskFreeInterestRate: line.maxEffectiveInterestRate,
+              amortizationType: line.amortizationType,
+              description: line.description,
+            };
+          }
         }
       });
 

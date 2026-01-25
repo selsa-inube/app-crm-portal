@@ -129,7 +129,6 @@ export function CreditProspect(props: ICreditProspectProps) {
     validateRequirements,
     enums,
   } = props;
-
   const { customerData } = useContext(CustomerContext);
   const customerPublicCode: string = customerData.publicCode;
 
