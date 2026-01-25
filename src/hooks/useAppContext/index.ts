@@ -133,9 +133,7 @@ function useAppContext() {
           return;
         }
 
-        const authorizationToken = await getAuthorizationToken();
-
-        const staffData = await getStaff(userIdentifier, authorizationToken);
+        const staffData = await getStaff(userIdentifier);
         if (!staffData.length) return;
 
         setEventData((prev) => ({
@@ -186,13 +184,10 @@ function useAppContext() {
 
     (async () => {
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const staffUseCaseData = await getSearchUseCaseForStaff(
           eventData.businessUnit.abbreviatedName,
           eventData.businessManager.publicCode,
           identificationNumber,
-          authorizationToken,
         );
         setStaffUseCases(staffUseCaseData);
       } catch (error) {

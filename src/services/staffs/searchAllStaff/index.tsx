@@ -5,7 +5,6 @@ import { IStaff } from "./types";
 
 const getStaff = async (
   identificationDocumentNumber: string,
-  authorizationToken: string,
 ): Promise<IStaff[]> => {
   const queryParams = new URLSearchParams({
     identificationDocumentNumber: identificationDocumentNumber.substring(0, 20),
@@ -18,7 +17,6 @@ const getStaff = async (
       headers: {
         "X-Action": "SearchAllStaff",
         "Content-type": "application/json; charset=UTF-8",
-        Authorization: `Bearer ${authorizationToken}`,
       },
     };
 

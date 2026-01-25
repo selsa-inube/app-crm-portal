@@ -10,7 +10,6 @@ export const getSearchUseCaseForStaff = async (
   businessUnitCode: string,
   businessManagerCode: string,
   userAccount: string,
-  authorizationToken: string,
 ): Promise<string[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -30,7 +29,6 @@ export const getSearchUseCaseForStaff = async (
           "X-Action": "SearchUseCaseForStaff",
           "X-User-Name": userAccount,
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };
