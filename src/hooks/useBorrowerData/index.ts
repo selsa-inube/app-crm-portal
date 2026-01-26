@@ -45,12 +45,6 @@ export const useBorrowerData = ({
       ...numericIncomeProperties,
       ...financialObligationProperties,
     ];
-    if (riskScore && riskScore[0]?.value && riskScore[0]?.date) {
-      baseProperties.push({
-        propertyName: "creditRiskScore",
-        propertyValue: `${riskScore[0].value}, ${riskScore[0].date}`,
-      });
-    }
 
     return {
       borrowerIdentificationType:

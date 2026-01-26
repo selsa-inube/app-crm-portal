@@ -117,7 +117,10 @@ const CreditUI = (props: ICreditUIProps) => {
   );
 
   const handleCardClick = (title: string, url: string, optionId: string) => {
-    if (optionId === "Adelanto de nómina" && isPayrollAdvanceDisabled) {
+    if (
+      optionId === advancePaymentModal.tag.subtitle &&
+      isPayrollAdvanceDisabled
+    ) {
       setMessageError(errorDataCredit.noPrivileges.i18n[lang]);
       setShowErrorModal(true);
       return;
@@ -251,7 +254,7 @@ const CreditUI = (props: ICreditUIProps) => {
                             url={url}
                             isDisabled={
                               isDisabled ||
-                              (optionId === "Adelanto de nómina" &&
+                              (optionId === advancePaymentModal.tag.subtitle &&
                                 isPayrollAdvanceDisabled)
                             }
                             onClick={() =>
