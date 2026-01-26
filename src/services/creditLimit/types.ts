@@ -90,3 +90,20 @@ export interface IMaximumCreditLimitByMoneyDestination {
   creditLimitValue: number;
   lineOfCredit: string;
 }
+
+export interface IExtraordinaryAgreement {
+  abbreviatedName: string;
+  extraordinaryCycles: IExtraordinaryCycle[];
+  payingEntityName: string;
+  payingIdentification: string;
+  payrollForDeductionAgreementCode: string;
+  payrollForDeductionAgreementId: string;
+}
+
+export interface IExtraordinaryCycle {
+  cycleName: string;
+  extraordinaryCycleType: string;
+  firstDayOfTheCycle: string;
+  month: string;
+  paymentDates: string[];
+}
