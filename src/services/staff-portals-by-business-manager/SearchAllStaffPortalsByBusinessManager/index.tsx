@@ -8,7 +8,6 @@ import { IStaffPortalByBusinessManager } from "../types";
 import { mapResendApiToEntities } from "./mappers";
 
 const getStaffPortalsByBusinessManager = async (
-  authorizationToken: string,
   staffPortalId?: string,
   businessManagerCode?: string,
   staffPortalCatalogCode?: string,
@@ -42,7 +41,7 @@ const getStaffPortalsByBusinessManager = async (
         headers: {
           "X-Action": "SearchAllStaffPortalsByBusinessManager",
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: ``,
         },
       };
 
