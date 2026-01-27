@@ -37,7 +37,7 @@ import { creditConsultationInBuroByIdentificationNumber } from "@services/credit
 import { updateCreditRiskBureauQuery } from "@services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
 import { ICreditRiskBureauQuery } from "@services/creditRiskBureauQueries/types";
 
-import { creditScoreChanges } from "../prospect/components/ScoreModalProspec/config";
+import { creditScoreChanges } from "../prospect/components/ScoreModalProspect/config";
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
 import {

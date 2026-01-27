@@ -11,7 +11,7 @@ import {
 
 import { ScoreModalProspectUI } from "./interface";
 import { IScore } from "./types";
-import { MODIFY_JUSTIFICATION, creditScoreChanges } from "./config";
+import { riskScoreChanges, creditScoreChanges } from "./config";
 
 interface IScoreModalProspectProps {
   isMobile: boolean;
@@ -82,7 +82,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
           ...firstScore,
           creditRiskScore: newFirstScore.score,
           queryDate: new Date().toISOString(),
-          modifyJustification: MODIFY_JUSTIFICATION,
+          modifyJustification: riskScoreChanges.justification.i18n[lang],
         };
 
         await updateCreditRiskBureauQuery(
@@ -97,7 +97,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
           ...secondScore,
           creditRiskScore: newSecondScore.score,
           queryDate: new Date().toISOString(),
-          modifyJustification: MODIFY_JUSTIFICATION,
+          modifyJustification: riskScoreChanges.justification.i18n[lang],
         };
 
         await updateCreditRiskBureauQuery(
