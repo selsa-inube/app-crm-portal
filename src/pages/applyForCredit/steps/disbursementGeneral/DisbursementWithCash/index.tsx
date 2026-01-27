@@ -26,6 +26,7 @@ import { IDisbursementGeneral } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 interface IDisbursementWithCashProps {
   isMobile: boolean;
@@ -60,6 +61,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
     getTotalAmount,
   } = props;
 
+  const { getAuthorizationToken } = useToken();
   const prevValues = useRef(formik.values[optionNameForm]);
 
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
@@ -212,11 +214,14 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
       if (!identification) return;
 
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const customer = await getSearchCustomerByCode(
           identification,
           businessUnitPublicCode,
           businessManagerCode,
           true,
+          authorizationToken,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];

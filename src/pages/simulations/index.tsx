@@ -19,24 +19,29 @@ import { AppContext } from "@context/AppContext";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
-import { RemoveProspect } from "@services/prospect/removeProspect";
+import { cancelProspect } from "@services/prospect/cancelProspect";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
 import { IValidateRequirement } from "@services/requirement/types";
 import { IProspectSummaryById } from "@services/prospect/types";
 import { recalculateProspect } from "@services/prospect/recalculateProspect";
+import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { useToken } from "@hooks/useToken";
 
 import { SimulationsUI } from "./interface";
 import {
   dataEditProspect,
   labelsAndValuesShare,
+  prerequisitesConfig,
   requirementsMessageError,
 } from "./config";
 
 export function Simulations() {
+  const { getAuthorizationToken } = useToken();
+
   const [showMenu, setShowMenu] = useState(false);
   const [managerErrors, setManagerErrors] = useState<string[]>([]);
   const [dataProspect, setDataProspect] = useState<IProspect>();
@@ -166,6 +171,8 @@ export function Simulations() {
     if (!prospectCode) return;
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const result = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
@@ -173,6 +180,7 @@ export function Simulations() {
         {
           creditRequestCode: prospectCode!,
         },
+        authorizationToken,
       );
 
       const creditData = Array.isArray(result) ? result[0] : result;
@@ -187,23 +195,61 @@ export function Simulations() {
   }, [businessUnitPublicCode, prospectCode]);
 
   const handleSubmitClick = async () => {
-    const result = await fetchValidateCreditRequest();
+    try {
+      setIsLoading(true);
 
-    if (result) {
-      setShowCreditRequest(true);
-      return;
+      const authorizationToken = await getAuthorizationToken();
+
+      if (!dataProspect) {
+        setMessageError(dataEditProspect.errorProspect.i18n[lang]);
+        setShowErrorModal(true);
+        setIsLoading(false);
+        return;
+      }
+      const validationResult = await validatePrerequisitesForCreditApplication(
+        businessUnitPublicCode,
+        prospectCode!,
+        authorizationToken,
+      );
+
+      if (
+        !validationResult ||
+        validationResult.isCreditSetupCompleteForCreditRequest === "N"
+      ) {
+        setMessageError(prerequisitesConfig.prerequisitesNotMet.i18n[lang]);
+        setShowErrorModal(true);
+        setIsLoading(false);
+        return;
+      }
+      const result = await fetchValidateCreditRequest();
+
+      if (result) {
+        setShowCreditRequest(true);
+        setIsLoading(false);
+        return;
+      }
+
+      navigate(`/credit/apply-for-credit/${prospectCode}`);
+    } catch (error) {
+      setMessageError(
+        prerequisitesConfig.errorValidatePrerequisites.i18n[lang],
+      );
+      setShowErrorModal(true);
+    } finally {
+      setIsLoading(false);
     }
-
-    navigate(`/credit/apply-for-credit/${prospectCode}`);
   };
 
   const fetchProspectData = async () => {
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       setIsLoading(true);
       const result = await getSearchProspectByCode(
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode!,
+        authorizationToken,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
       setIsLoading(false);
@@ -269,10 +315,13 @@ export function Simulations() {
     };
     const handleSubmit = async () => {
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
+          authorizationToken,
         );
 
         if (data) {
@@ -318,13 +367,23 @@ export function Simulations() {
 
     try {
       setIsLoadingDelete(true);
-      await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
-        removeProspectsRequest: [
-          {
-            prospectId: dataProspect.prospectId,
-          },
-        ],
-      });
+
+      const authorizationToken = await getAuthorizationToken();
+
+      await cancelProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        {
+          cancelProspectsRequest: [
+            {
+              prospectId: dataProspect.prospectId,
+              prospectCode: dataProspect.prospectCode,
+              clientIdentificationNumber: customerData.publicCode,
+            },
+          ],
+        },
+        authorizationToken,
+      );
 
       navigate("/credit/prospects");
       setIsLoadingDelete(false);
@@ -338,9 +397,13 @@ export function Simulations() {
   const handleRecalculateSimulation = async () => {
     try {
       setIsLoading(true);
+
+      const authorizationToken = await getAuthorizationToken();
+
       const newDataProspect = await recalculateProspect(
         businessUnitPublicCode,
         prospectCode || "",
+        authorizationToken,
       );
 
       if (newDataProspect === null) {

@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
@@ -17,15 +17,19 @@ import { IDocumentsCredit } from "@services/creditRequest/types";
 import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
+import { useToken } from "@hooks/useToken";
 
 import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
 import { IFormData } from "./types";
 import { dataSubmitApplication, tittleOptions } from "./config/config";
-import { getSearchAllModesOfDisbursementTypes } from "@services/lineOfCredit/getSearchAllModesOfDisbursementTypes";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
+  const navigate = useNavigate();
+  const { getAuthorizationToken } = useToken();
+
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const { customerData } = useContext(CustomerContext);
   const [sentModal, setSentModal] = useState(false);
@@ -424,14 +428,18 @@ export function ApplyForCredit() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
+      const authorizationToken = await getAuthorizationToken();
+
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         businessManagerCode,
         eventData.user.identificationDocumentNumber || "",
         submitData,
+        authorizationToken,
       );
 
       setCreditRequestCode(response?.creditRequestCode || "");
+      setSentModal(false);
       setApprovedRequestModal(true);
     } catch (error) {
       console.error("error: ", error);
@@ -451,10 +459,13 @@ export function ApplyForCredit() {
 
   const fetchProspectData = useCallback(async () => {
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const prospect = await getSearchProspectByCode(
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode || "",
+        authorizationToken,
       );
 
       const mainBorrower = prospect.borrowers.find(
@@ -490,6 +501,8 @@ export function ApplyForCredit() {
       }
 
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const creditData = await getSearchAllModesOfDisbursementTypes(
           businessUnitPublicCode,
           businessManagerCode,
@@ -497,6 +510,7 @@ export function ApplyForCredit() {
           prospectData.creditProducts[0].lineOfCreditAbbreviatedName,
           prospectData.moneyDestinationAbbreviatedName,
           prospectData.creditProducts[0].loanAmount.toString(),
+          authorizationToken,
         );
 
         if (codeError) return;
@@ -530,10 +544,13 @@ export function ApplyForCredit() {
 
   const fetchGuaranteesRequired = useCallback(async () => {
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const response = await getGuaranteesRequiredByCreditProspect(
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode || "",
+        authorizationToken,
       );
 
       if (!response) {
@@ -627,13 +644,17 @@ export function ApplyForCredit() {
         ? currentStep_.description
         : currentStep_.description,
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
+          authorizationToken,
         );
         if (result) {
           setProspectSummaryData(result);
@@ -660,6 +681,27 @@ export function ApplyForCredit() {
       }));
     }
   }, [prospectSummaryData]);
+
+  const generateAndShareApprovedRequest = async () => {
+    if (!creditRequestCode) return;
+
+    try {
+      const shareText = `${dataSubmitApplication.modals.filedDescription.i18n[lang]}\n\n${creditRequestCode}`;
+
+      if (navigator.share) {
+        await navigator.share({
+          text: shareText,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareText);
+      }
+      setApprovedRequestModal(false);
+      navigate("/credit/credit-requests");
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(tittleOptions.errorSharing?.i18n?.[lang]);
+    }
+  };
 
   return (
     <>
@@ -702,6 +744,7 @@ export function ApplyForCredit() {
         loading={loading}
         enums={enums as IAllEnumsResponse}
         lang={lang}
+        generateAndShareApprovedRequest={generateAndShareApprovedRequest}
       />
     </>
   );

@@ -31,7 +31,7 @@ export function EnumProvider(props: EnumProviderProps) {
   const businessManagerCode = eventData.businessManager.abbreviatedName;
   useEffect(() => {
     const browserLang = eventData.businessUnit.languageiso;
-    setLang(browserLang === "en" ? "en" : "en");
+    setLang(browserLang === "en" ? "en" : "es");
   }, [eventData.businessUnit.languageiso]);
 
   useEffect(() => {

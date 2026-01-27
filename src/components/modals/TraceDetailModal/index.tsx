@@ -6,6 +6,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { Fieldset } from "@components/data/Fieldset";
 import { getSearchDocumentById } from "@services/creditRequest/SearchDocumentById";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { DocumentViewer } from "../DocumentViewer";
 import { dataTrace } from "./config";
@@ -33,19 +34,23 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
     user,
   } = props;
 
+  const { getAuthorizationToken } = useToken();
+  const { addFlag } = useFlag();
+
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
 
-  const { addFlag } = useFlag();
-
   const handlePreview = async (id: string, name: string) => {
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const documentData = await getSearchDocumentById(
         id,
         user ?? "",
         businessUnitPublicCode ?? "",
         businessManagerCode ?? "",
+        authorizationToken,
       );
       const fileUrl = URL.createObjectURL(documentData);
       setSelectedFile(fileUrl);

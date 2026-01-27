@@ -18,6 +18,7 @@ import {
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { getAllBancks } from "@services/bank/SearchAllBank";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { useToken } from "@hooks/useToken";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -52,6 +53,8 @@ function FinancialObligationModal({
   iconAfter,
 }: FinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
+  const { getAuthorizationToken } = useToken();
+
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [banks, setBanks] = useState<IOptionsSelect[]>([]);
@@ -108,7 +111,9 @@ function FinancialObligationModal({
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const response = await getAllBancks();
+        const authorizationToken = await getAuthorizationToken();
+
+        const response = await getAllBancks(authorizationToken);
         const formattedBanks = response.map((bank) => ({
           id: bank.bankId,
           label: bank.bankName,

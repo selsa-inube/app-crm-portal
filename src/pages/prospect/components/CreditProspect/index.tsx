@@ -62,6 +62,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { dataCreditProspects } from "@pages/creditProspects/config";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { useToken } from "@hooks/useToken";
 
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
@@ -130,6 +131,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     enums,
   } = props;
 
+  const { getAuthorizationToken } = useToken();
   const { customerData } = useContext(CustomerContext);
   const customerPublicCode: string = customerData.publicCode;
 
@@ -193,11 +195,14 @@ export function CreditProspect(props: ICreditProspectProps) {
       setIsLoadingCreditLimit(true);
       setCreditLimitError(null);
 
+      const authorizationToken = await getAuthorizationToken();
+
       const incomesBorrowersByProspect =
         await getTotalIncomeByBorrowerInProspect(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData?.prospectCode || "",
+          authorizationToken,
         );
 
       const incomesFiltered = filterIncomeByBorrower(
@@ -478,10 +483,13 @@ export function CreditProspect(props: ICreditProspectProps) {
 
       setDataProspect(updatedBorrower());
 
+      const authorizationToken = await getAuthorizationToken();
+
       await updateProspect(
         businessUnitPublicCode,
         businessManagerCode,
         updatedBorrower()[0],
+        authorizationToken,
       );
 
       if (onProspectRefreshData) onProspectRefreshData();
@@ -618,10 +626,13 @@ export function CreditProspect(props: ICreditProspectProps) {
       setShowEditMessageModal(false);
       handleCloseModal();
 
+      const authorizationToken = await getAuthorizationToken();
+
       await updateProspect(
         businessUnitPublicCode,
         businessManagerCode,
         updatedProspect,
+        authorizationToken,
       );
 
       if (onProspectRefreshData) {

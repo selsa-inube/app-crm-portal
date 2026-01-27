@@ -173,6 +173,7 @@ interface SimulateCreditUIProps {
   isLoadingUpdate: boolean;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleUpdateRiskScore: (index: number, newValue: number) => Promise<void>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -246,8 +247,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     enums,
     handleUpdateRiskScore,
     isLoadingUpdate,
+    setMessageError,
   } = props;
-
   return (
     <>
       {codeError ? (
@@ -439,6 +440,13 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         )
                       }
                       lang={lang}
+                      lineOfCreditAbbreviatedName={formData.selectedProducts[0]}
+                      moneyDestinationAbbreviatedName={
+                        formData.selectedDestination
+                      }
+                      clientIdentificationNumber={customerData.publicCode}
+                      setShowErrorModal={setShowErrorModal}
+                      setMessageError={setMessageError}
                     />
                   )}
                 {currentStepsNumber &&

@@ -2,7 +2,8 @@ import styled from "styled-components";
 import { inube } from "@inubekit/inubekit";
 
 interface IStyledImage {
-  width?: string;
+  $maxWidth?: string;
+  $maxHeight?: string;
 }
 
 export const StyledWelcomeContainer = styled.div`
@@ -16,6 +17,9 @@ export const StyledOutletContainer = styled(StyledWelcomeContainer)`
 `;
 
 export const StyledImage = styled.img<IStyledImage>`
-  width: ${({ width }) => width};
-  max-width: 1200px;
+  max-width: ${({ $maxWidth }) => $maxWidth || "180px"};
+  max-height: ${({ $maxHeight }) => $maxHeight || "80px"};
+  width: auto;
+  height: auto;
+  object-fit: contain;
 `;

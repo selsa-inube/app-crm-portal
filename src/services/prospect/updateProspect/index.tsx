@@ -11,6 +11,7 @@ export const updateProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   prospect: IProspect | ITableFinancialObligationsProps[],
+  authorizationToken: string,
 ): Promise<IProspect | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -26,6 +27,7 @@ export const updateProspect = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
         body: JSON.stringify(prospect),

@@ -8,6 +8,7 @@ import {
   ICreditRiskBureauQuery,
   IUpdateCreditRiskBureauQuery,
 } from "@services/creditRiskBureauQueries/types";
+import { useToken } from "@hooks/useToken";
 
 import { ScoreModalProspectUI } from "./interface";
 import { IScore } from "./types";
@@ -36,6 +37,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
   } = props;
 
   const { addFlag } = useFlag();
+  const { getAuthorizationToken } = useToken();
 
   const [newFirstScore, setNewFirstScore] = useState<IScore | null>(null);
   const [newSecondScore, setNewSecondScore] = useState<IScore | null>(null);
@@ -51,10 +53,13 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     if (!customerPublicCode) return;
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await creditConsultationInBuroByIdentificationNumber(
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
+        authorizationToken,
       );
 
       if (data && data.length > 0) {

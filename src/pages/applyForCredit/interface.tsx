@@ -98,6 +98,7 @@ interface ApplyForCreditUIProps {
   guaranteesRequired: string[];
   lang: EnumType;
   enums: IAllEnumsResponse;
+  generateAndShareApprovedRequest: () => Promise<void>;
 }
 
 export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
@@ -138,6 +139,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     loading,
     lang,
     enums,
+    generateAndShareApprovedRequest,
   } = props;
 
   const [isSelected, setIsSelected] = useState<string>();
@@ -167,6 +169,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
       navigate(`/credit/prospects`);
     }
   };
+
   return (
     <>
       {codeError ? (
@@ -460,14 +463,14 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                 >
                   <Stack gap="16px" direction="column">
                     <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.cards.destination}
+                      {`${dataSubmitApplication.cards.destination.i18n[lang]}
         ${prospectData.moneyDestinationAbbreviatedName}`}
                     </Text>
                     <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.net} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
+                      {`${dataSubmitApplication.net.i18n[lang]} ${currencyFormat(prospectSummaryData?.netAmountToDisburse ?? 0)}`}
                     </Text>
                     <Text type="body" size="medium" appearance="gray">
-                      {`${dataSubmitApplication.creditProducts} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
+                      {`${dataSubmitApplication.creditProducts.i18n[lang]} ${currencyFormat(prospectSummaryData?.requestedAmount ?? 0)}`}
                     </Text>
                   </Stack>
                 </BaseModal>
@@ -511,7 +514,13 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                   setApprovedRequestModal(false);
                   navigate("/credit/credit-requests");
                 }}
-                handleClose={() => setApprovedRequestModal(false)}
+                handleBack={async () => {
+                  await generateAndShareApprovedRequest();
+                }}
+                handleClose={() => {
+                  setApprovedRequestModal(false);
+                  navigate("/credit/credit-requests");
+                }}
                 width={isMobile ? "290px" : "402px"}
               >
                 <Stack direction="column" alignItems="center" gap="24px">
@@ -520,15 +529,25 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     appearance="success"
                     size="68px"
                   />
-                  <Stack gap="6px">
-                    <Text type="body" size="large">
+                  <Stack gap="6px" direction="column" alignItems="center">
+                    <Text type="body" size="large" textAlign="center">
                       {dataSubmitApplication.modals.filed.i18n[lang]}
                     </Text>
-                    <Text type="body" size="large" weight="bold">
+                    <Text
+                      type="body"
+                      size="large"
+                      weight="bold"
+                      textAlign="center"
+                    >
                       {creditRequestCode}
                     </Text>
                   </Stack>
-                  <Text type="body" size="medium" appearance="gray">
+                  <Text
+                    type="body"
+                    size="medium"
+                    appearance="gray"
+                    textAlign="center"
+                  >
                     {dataSubmitApplication.modals.filedDescription.i18n[lang]}
                   </Text>
                 </Stack>

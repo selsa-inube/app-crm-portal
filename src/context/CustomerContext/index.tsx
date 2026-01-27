@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { AppContext } from "@context/AppContext";
+import { useToken } from "@hooks/useToken";
 
 import { ICustomerContext, ICustomerData, initialCustomerData } from "./types";
 
@@ -17,6 +18,7 @@ interface ICustomerContextProviderProps {
 export function CustomerContextProvider({
   children,
 }: ICustomerContextProviderProps) {
+  const { getAuthorizationToken } = useToken();
   const getInitialPublicCode = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("customerPublicCodeState") || "";
@@ -49,11 +51,16 @@ export function CustomerContextProvider({
     businessUnitPublicCode: string,
   ) => {
     setLoadingCustomerData(true);
+
+    const authorizationToken = await getAuthorizationToken();
+
     try {
       const customers = await getSearchCustomerByCode(
         publicCode,
         businessUnitPublicCode,
         businessManagerCode,
+        false,
+        authorizationToken,
       );
 
       if (customers) {

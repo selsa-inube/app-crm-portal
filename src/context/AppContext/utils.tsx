@@ -13,8 +13,12 @@ const validateBusinessManagers = async (
 
 const validateConsultation = async (
   staffPortalId: string,
+  authorizationToken: string,
 ): Promise<IStaffPortalByBusinessManager[]> => {
-  const newData = await getStaffPortalsByBusinessManager(staffPortalId);
+  const newData = await getStaffPortalsByBusinessManager(
+    authorizationToken,
+    staffPortalId,
+  );
   return newData;
 };
 

@@ -31,6 +31,7 @@ import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCa
 import { IProspectSummaryById } from "@services/prospect/types";
 import { CardGray } from "@components/cards/CardGray";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
@@ -70,6 +71,7 @@ export function DisbursementWithInternalAccount(
   } = props;
 
   const prevValues = useRef(formik.values[optionNameForm]);
+  const { getAuthorizationToken } = useToken();
 
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
   const [currentIdentification, setCurrentIdentification] =
@@ -267,12 +269,15 @@ export function DisbursementWithInternalAccount(
     const fetchCustomer = async () => {
       if (!identification) return;
 
+      const authorizationToken = await getAuthorizationToken();
+
       try {
         const customer = await getSearchCustomerByCode(
           identification,
           businessUnitPublicCode,
           businessManagerCode,
           true,
+          authorizationToken,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -323,10 +328,13 @@ export function DisbursementWithInternalAccount(
   useEffect(() => {
     async function fetchAccounts() {
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const response = await getAllInternalAccounts(
           currentIdentification,
           businessUnitPublicCode,
           businessManagerCode,
+          authorizationToken,
         );
 
         const uniqueMap = new Map<

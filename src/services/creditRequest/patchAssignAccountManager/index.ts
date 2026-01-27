@@ -7,6 +7,7 @@ const patchAssignAccountManager = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   userAccount: string,
+  authorizationToken: string,
 ): Promise<ICreditRequests | undefined> => {
   const requestUrl = `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-requests`;
   try {
@@ -18,6 +19,7 @@ const patchAssignAccountManager = async (
         "X-User-Name": userAccount,
         "Content-type": "application/json; charset=UTF-8",
         "X-Process-Manager": businessManagerCode,
+        Authorization: `Bearer ${authorizationToken}`,
       },
       body: JSON.stringify(mapCreditRequestsEntity(creditRequestId)),
     };
