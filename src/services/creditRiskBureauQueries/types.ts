@@ -17,3 +17,7 @@ export interface ICreditRiskBureauQuery {
   isActive: string;
   portfolioObligations: IPortfolioObligation[];
 }
+
+export interface IUpdateCreditRiskBureauQuery extends ICreditRiskBureauQuery {
+  modifyJustification: string;
+}

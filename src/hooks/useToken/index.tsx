@@ -4,11 +4,7 @@ export const useToken = () => {
   const { getAccessTokenSilently } = useIAuth();
 
   const getAuthorizationToken = async (): Promise<string> => {
-    try {
-      return await getAccessTokenSilently();
-    } catch (error) {
-      throw error;
-    }
+    return await getAccessTokenSilently();
   };
 
   return { getAuthorizationToken };

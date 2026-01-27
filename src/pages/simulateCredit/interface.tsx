@@ -170,7 +170,9 @@ interface SimulateCreditUIProps {
   createdProspectModal: boolean;
   lang: EnumType;
   enums: IAllEnumsResponse;
+  isLoadingUpdate: boolean;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
+  handleUpdateRiskScore: (index: number, newValue: number) => Promise<void>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -243,6 +245,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setCreatedProspectModal,
     isLoadingSubmit,
     enums,
+    handleUpdateRiskScore,
+    isLoadingUpdate,
     setMessageError,
   } = props;
   return (
@@ -518,6 +522,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           isMobile={isMobile}
                           lang={lang}
                           logo={score.bureauName}
+                          isLoadingUpdate={isLoadingUpdate}
                           handleOnChange={(newRisk) => {
                             const updatedScores = [...formData.riskScores];
                             updatedScores[index] = {
@@ -526,6 +531,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                               date: newRisk.date,
                             };
                             handleFormDataChange("riskScores", updatedScores);
+                            handleUpdateRiskScore(index, newRisk.value);
                           }}
                         />
                       ))}

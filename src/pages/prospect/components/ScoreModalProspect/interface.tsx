@@ -18,9 +18,11 @@ interface IScoreModalProspectUIProps {
   newFirstScore: IScore | null;
   newSecondScore: IScore | null;
   lang: EnumType;
+  isLoadingSubmit: boolean;
   setNewFirstScore: React.Dispatch<React.SetStateAction<IScore | null>>;
   setNewSecondScore: React.Dispatch<React.SetStateAction<IScore | null>>;
   handleClose: () => void;
+  handleSave: () => Promise<void>;
 }
 
 export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
@@ -34,6 +36,8 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
     newFirstScore,
     newSecondScore,
     lang,
+    handleSave,
+    isLoadingSubmit,
   } = props;
 
   return (
@@ -47,6 +51,8 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
       backButton={prospectScore.close}
       handleClose={handleClose}
       handleBack={handleClose}
+      handleNext={handleSave}
+      isLoading={isLoadingSubmit}
       marginsMobile={isMobile}
       height={isMobile ? "auto" : "470px"}
       width={isMobile ? "270px" : "600px"}

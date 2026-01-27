@@ -73,7 +73,7 @@ import {
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
-import { ScoreModalProspect } from "../ScoreModalProspec";
+import { ScoreModalProspect } from "../ScoreModalProspect";
 import InfoModal from "../InfoModal";
 import { filterIncomeByBorrower } from "./utils";
 
