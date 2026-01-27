@@ -34,7 +34,7 @@ export const saveDocument = async (
           "X-Action": "SaveDocument",
           "X-Business-Unit": businessUnitPublicCode,
           "X-Process-Manager": businessManagerCode,
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         body: formData,
       };

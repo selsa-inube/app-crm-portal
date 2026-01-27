@@ -20,6 +20,7 @@ export interface ICustomerData {
     affiliateSeniorityDate: string;
     partnerStatus: string;
   }[];
+  token: string;
 }
 
 export interface ICustomerContext {
@@ -54,4 +55,5 @@ export const initialCustomerData: ICustomerData = {
       partnerStatus: "",
     },
   ],
+  token: "",
 };

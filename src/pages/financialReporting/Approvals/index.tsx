@@ -9,7 +9,7 @@ import { getApprovalsById } from "@services/creditRequest/getApprovals";
 import { ICreditRequest } from "@services/creditRequest/types";
 import { AppContext } from "@context/AppContext";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { errorObserver, errorMessages } from "../config";
 import {
@@ -31,7 +31,7 @@ interface IApprovalsProps {
 export const Approvals = (props: IApprovalsProps) => {
   const { isMobile, creditRequest, lang } = props;
 
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [loading, setLoading] = useState(true);
   const [approvalsEntries, setApprovalsEntries] = useState<IEntries[]>([]);
@@ -47,13 +47,11 @@ export const Approvals = (props: IApprovalsProps) => {
     setLoading(true);
     setError(null);
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const data: IApprovals = await getApprovalsById(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequest.creditRequestId,
-        authorizationToken,
+        customerData.token,
       );
       if (data && Array.isArray(data)) {
         const entries: IEntries[] = entriesApprovals(data).map((entry) => ({

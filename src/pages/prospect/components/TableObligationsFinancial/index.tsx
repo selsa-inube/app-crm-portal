@@ -8,7 +8,7 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { restoreFinancialObligationsByBorrowerId } from "@services/prospect/restoreFinancialObligationsByBorrowerId";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import {
   convertObligationsToProperties,
@@ -41,7 +41,7 @@ export const TableFinancialObligations = (
     showAddButton = true,
   } = props;
 
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [loading, setLoading] = useState(true);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
@@ -218,13 +218,11 @@ export const TableFinancialObligations = (
       };
 
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         await updateProspect(
           businessUnitPublicCode,
           businessManagerCode,
           updatedInitialValues,
-          authorizationToken,
+          customerData.token,
         );
       } catch (error) {
         setShowErrorModal(true);
@@ -315,13 +313,11 @@ export const TableFinancialObligations = (
           borrowers: updatedBorrowers,
         };
 
-        const authorizationToken = await getAuthorizationToken();
-
         await updateProspect(
           businessUnitPublicCode,
           businessManagerCode,
           updatedInitialValues,
-          authorizationToken,
+          customerData.token,
         );
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
@@ -431,6 +427,7 @@ export const TableFinancialObligations = (
         borrower.borrowerIdentificationNumber || "",
         initialValuesSnapshot.current?.[0]?.prospectCode || "",
         "Restore financial obligations",
+        customerData.token,
       );
 
       setRefreshKey?.((prev) => prev + 1);
@@ -479,7 +476,7 @@ export const TableFinancialObligations = (
       showAddButton={showAddButton}
       enums={enums as IAllEnumsResponse}
       lang={lang as EnumType}
-      getAuthorizationToken={getAuthorizationToken}
+      authorizationToken={customerData.token}
     />
   );
 };

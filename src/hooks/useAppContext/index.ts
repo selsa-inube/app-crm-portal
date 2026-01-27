@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import { useIAuth } from "@inube/iauth-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
@@ -14,7 +14,7 @@ import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
 import { getSearchUseCaseForStaff } from "@services/staffs/SearchUseCaseForStaff";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -26,7 +26,7 @@ interface IBusinessUnits {
 
 function useAppContext() {
   const { user, isLoading: isIAuthLoading } = useIAuth();
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
@@ -227,13 +227,11 @@ function useAppContext() {
           return;
         }
 
-        const authorizationToken = await getAuthorizationToken();
-
         const result = await getSearchOptionForStaff(
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
           userIdentifier || "",
-          authorizationToken,
+          customerData.token,
         );
         setOptionStaffData(result);
       } catch (error) {

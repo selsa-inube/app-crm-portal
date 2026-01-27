@@ -22,7 +22,7 @@ export const validatePrerequisitesForCreditApplication = async (
           "X-Action": "ValidatePrerequisitesForCreditApplication",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

@@ -22,7 +22,6 @@ import { environment } from "@config/environment";
 import userImage from "@assets/images/userImage.jpeg";
 import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager/index.tsx";
 import { useEnum } from "@hooks/useEnum/useEnum.ts";
-import { useToken } from "@hooks/useToken";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -32,7 +31,9 @@ import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function CreditApplications() {
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
+  const { user } = useIAuth();
 
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
@@ -48,10 +49,6 @@ export function CreditApplications() {
   const [loading, setLoading] = useState(true);
 
   const searchTimeoutRef = useRef<number>(0);
-
-  const { customerData } = useContext(CustomerContext);
-  const { businessUnitSigla, eventData } = useContext(AppContext);
-  const { user } = useIAuth();
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -101,8 +98,6 @@ export function CreditApplications() {
     const fetchCreditRequest = async () => {
       setLoading(true);
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
           businessManagerCode,
@@ -111,7 +106,7 @@ export function CreditApplications() {
             clientIdentificationNumber: customerData.publicCode,
             textInSearch: debouncedSearch,
           },
-          authorizationToken,
+          customerData.token,
         );
         setCreditRequestData(creditData);
       } catch {

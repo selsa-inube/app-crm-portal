@@ -11,6 +11,7 @@ export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
   ClientIdentificationNumber: string,
   lineOfCreditAbbreviatedName: string,
   moneyDestinationAbbreviatedName: string,
+  authorizationToken: string,
 ): Promise<IExtraordinaryAgreement[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
           "X-Action": "SearchExtraInstallmentPaymentCyclesByCustomerCode",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

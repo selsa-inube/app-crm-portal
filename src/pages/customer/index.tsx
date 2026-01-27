@@ -7,14 +7,13 @@ import { getCustomerCatalog } from "@services/customer/customerCatalog";
 import { CustomerContext } from "@context/CustomerContext";
 import { AppContext } from "@context/AppContext";
 import { useEnum } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
 
 import { CustomerUI } from "./interface";
 import { EErrorMessages, VALIDATE_BLANK_SPACES_REGEX } from "./config";
 import { isValidUpperCaseName, isNumericString } from "./utils";
 
 export function Customer() {
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<IOption[]>([]);
@@ -48,15 +47,13 @@ export function Customer() {
       try {
         setLoading(true);
 
-        const authorizationToken = await getAuthorizationToken();
-
         if (isNumericString(value)) {
           response = await getCustomerCatalog(
             businessUnitPublicCode,
             businessManagerCode,
             "",
             formattedValue,
-            authorizationToken,
+            customerData.token,
           );
         } else if (isValidUpperCaseName(value)) {
           response = await getCustomerCatalog(
@@ -64,7 +61,7 @@ export function Customer() {
             businessManagerCode,
             formattedValue,
             "",
-            authorizationToken,
+            customerData.token,
           );
         }
       } catch (error) {

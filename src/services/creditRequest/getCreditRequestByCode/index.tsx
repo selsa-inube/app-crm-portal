@@ -50,7 +50,7 @@ export const getCreditRequestByCode = async (
           "Content-type": "application/json; charset=UTF-8",
           "x-user-name": userAccount,
           "X-Process-Manager": businessManagerCode,
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

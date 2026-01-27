@@ -20,7 +20,6 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { CardGray } from "@components/cards/CardGray";
 import { BaseModal } from "@components/modals/baseModal";
-import { useToken } from "@hooks/useToken";
 
 import { disbursemenOptionAccount } from "../config";
 import {
@@ -61,7 +60,6 @@ export function DisbursementWithInternalAccount(
   } = props;
 
   const prevValues = useRef(formik.values[optionNameForm]);
-  const { getAuthorizationToken } = useToken();
 
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
   const [currentIdentification, setCurrentIdentification] =
@@ -183,17 +181,15 @@ export function DisbursementWithInternalAccount(
     const identification = formik.values[optionNameForm]?.identification;
 
     const fetchCustomer = async () => {
-      if (!identification) return;
+      if (!identification || customerData === undefined) return;
 
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const customer = await getSearchCustomerByCode(
           identification,
           businessUnitPublicCode,
           businessManagerCode,
           true,
-          authorizationToken,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -243,13 +239,13 @@ export function DisbursementWithInternalAccount(
   useEffect(() => {
     async function fetchAccounts() {
       try {
-        const authorizationToken = await getAuthorizationToken();
+        if (customerData === undefined) return;
 
         const response = await getAllInternalAccounts(
           currentIdentification,
           businessUnitPublicCode,
           businessManagerCode,
-          authorizationToken,
+          customerData.token,
         );
 
         const uniqueMap = new Map<

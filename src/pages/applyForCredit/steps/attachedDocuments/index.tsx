@@ -13,7 +13,6 @@ import {
   IValidateRequirement,
 } from "@services/creditRequest/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
 
 export interface IBorrowerDocumentRule {
   borrower: string;
@@ -44,7 +43,6 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     businessUnitPublicCode,
     lang,
   } = props;
-  const { getAuthorizationToken } = useToken();
   const { eventData } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
   const [
@@ -63,14 +61,12 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const data = await postDocumentsRequiredByCreditRequest(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
           eventData?.user?.identificationDocumentNumber || "",
-          authorizationToken,
+          customerData.token,
         );
         if (data && Array.isArray(data) && data.length > 0) {
           setValidDocumentsRequiredByCreditRequest(data);

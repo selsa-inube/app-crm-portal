@@ -29,7 +29,7 @@ const getSearchOptionForStaff = async (
           "X-Action": "SearchOptionForStaff",
           "Content-type": "application/json; charset=UTF-8",
           "X-User-Name": userAccount,
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
       };
       const res = await fetch(

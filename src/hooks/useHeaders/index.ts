@@ -8,7 +8,7 @@ export const useHeaders = () => {
     return {
       "Content-type": "application/json; charset=UTF-8",
       "X-Business-unit": "test",
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `${accessToken}`,
     };
   };
 

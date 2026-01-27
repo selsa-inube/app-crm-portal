@@ -1,4 +1,4 @@
-import { useState, isValidElement, useEffect } from "react";
+import { useState, isValidElement, useEffect, useContext } from "react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { Stack, Icon } from "@inubekit/inubekit";
 
@@ -10,7 +10,7 @@ import { IAction, IEntries, ITitle } from "@components/data/TableBoard/types";
 import { getAllPackagesOfRequirementsById } from "@services/requirementsPackages/packagesOfRequirements";
 import { TraceDetailModal } from "@components/modals/TraceDetailModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import {
   infoItems,
@@ -47,7 +47,7 @@ export const Requirements = (props: IRequirementsProps) => {
     creditRequestCode,
     lang,
   } = props;
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [showSeeDetailsModal, setShowSeeDetailsModal] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
@@ -68,13 +68,11 @@ export const Requirements = (props: IRequirementsProps) => {
         return;
       }
 
-      const authorizationToken = await getAuthorizationToken();
-
       const data = await getAllPackagesOfRequirementsById(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode,
-        authorizationToken,
+        customerData.token,
       );
 
       if (!Array.isArray(data) || data.length === 0) {

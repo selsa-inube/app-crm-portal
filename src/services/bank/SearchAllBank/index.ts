@@ -22,7 +22,7 @@ const getAllBancks = async (
         headers: {
           "X-Action": "SearchAllBank",
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

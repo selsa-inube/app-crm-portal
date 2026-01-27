@@ -19,7 +19,7 @@ const postSubmitCredit = async (
         "X-Business-Unit": businessUnitPublicCode,
         "X-User-Name": userAccount,
         "X-Process-Manager": businessManagerCode,
-        Authorization: `Bearer ${authorizationToken}`,
+        Authorization: `${authorizationToken}`,
       },
       body: submitData,
     };

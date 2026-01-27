@@ -6,7 +6,7 @@ import { IBusinessManagers } from "@services/businessManager/types";
 const validateBusinessManagers = async (
   code: string,
 ): Promise<IBusinessManagers> => {
-  const newData = await getBusinessManagers(code);
+  const newData = await getBusinessManagers(code, "");
 
   return newData;
 };
@@ -14,9 +14,7 @@ const validateBusinessManagers = async (
 const validateConsultation = async (
   staffPortalId: string,
 ): Promise<IStaffPortalByBusinessManager[]> => {
-  const newData = await getStaffPortalsByBusinessManager(
-    staffPortalId,
-  );
+  const newData = await getStaffPortalsByBusinessManager(staffPortalId);
   return newData;
 };
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import {
@@ -6,7 +6,7 @@ import {
   IProspect,
 } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -87,7 +87,7 @@ export const TableExtraordinaryInstallment = (
     handleDelete,
   } = props;
 
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
   const headers = headersTableExtraordinaryInstallment;
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -205,12 +205,10 @@ export const TableExtraordinaryInstallment = (
       try {
         setIsLoadingDelete(true);
 
-        const authorizationToken = await getAuthorizationToken();
-
         await removeExtraordinaryInstallment(
           businessUnitPublicCode ?? "",
           itemIdentifiersForUpdate,
-          authorizationToken,
+          customerData.token,
         );
 
         setSentData?.(itemIdentifiersForUpdate);

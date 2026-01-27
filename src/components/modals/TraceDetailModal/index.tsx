@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Divider, Stack, Text, useFlag } from "@inubekit/inubekit";
 
 import { CardGray } from "@components/cards/CardGray";
@@ -6,7 +6,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { Fieldset } from "@components/data/Fieldset";
 import { getSearchDocumentById } from "@services/creditRequest/SearchDocumentById";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { DocumentViewer } from "../DocumentViewer";
 import { dataTrace } from "./config";
@@ -34,7 +34,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
     user,
   } = props;
 
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
   const { addFlag } = useFlag();
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -43,14 +43,12 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
 
   const handlePreview = async (id: string, name: string) => {
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const documentData = await getSearchDocumentById(
         id,
         user ?? "",
         businessUnitPublicCode ?? "",
         businessManagerCode ?? "",
-        authorizationToken,
+        customerData.token,
       );
       const fileUrl = URL.createObjectURL(documentData);
       setSelectedFile(fileUrl);

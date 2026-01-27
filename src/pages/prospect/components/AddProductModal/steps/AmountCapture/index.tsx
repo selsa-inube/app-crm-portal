@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { IBusinessUnitRules } from "@services/businessUnitRules/types";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { AmountCaptureUI } from "./interface";
 import {
@@ -22,7 +22,7 @@ export function AmountCapture(props: IAmountCaptureProps) {
     onFormValid,
   } = props;
 
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [loanAmountError, setLoanAmountError] = useState<string>("");
   const [displayValue, setDisplayValue] = useState<string>("");
@@ -44,13 +44,11 @@ export function AmountCapture(props: IAmountCaptureProps) {
         ],
       };
 
-      const authorizationToken = await getAuthorizationToken();
-
       const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        authorizationToken,
+        customerData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
