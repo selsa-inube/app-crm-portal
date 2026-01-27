@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   MdErrorOutline,
   MdExpandMore,
@@ -20,7 +20,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { getCreditLimitByCreditRiskAnalysis } from "@services/creditLimit/getCreditLimitByCreditRiskAnalysis";
 import { IMaximumCreditLimitAnalysis } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { frcConfig, InfoModalType } from "./FrcConfig";
 import { StyledExpanded } from "./styles";
@@ -45,7 +45,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [currentInfoType, setCurrentInfoType] =
@@ -68,13 +68,11 @@ export const ScoreModal = (props: ScoreModalProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const data = await getCreditLimitByCreditRiskAnalysis(
           businessUnitPublicCode,
           businessManagerCode,
           clientIdentificationNumber,
-          authorizationToken,
+          customerData.token,
         );
 
         if (data) {

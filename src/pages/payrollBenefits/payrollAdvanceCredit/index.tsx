@@ -12,7 +12,6 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { useBorrowerData } from "@hooks/useBorrowerData";
 import { useEnum } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
 
 import { PayRollUI } from "./interface";
 import { IBonusFormData, titleButtonTextAssited } from "../types";
@@ -23,7 +22,6 @@ export function PayrollAdvanceCredit() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
-  const { getAuthorizationToken } = useToken();
 
   const { lang } = useEnum();
 
@@ -305,13 +303,11 @@ export function PayrollAdvanceCredit() {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
-          authorizationToken,
+          customerData.token,
         );
         if (data) {
           setValidateRequirements(data);

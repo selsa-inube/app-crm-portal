@@ -11,7 +11,6 @@ import { getFinancialObligations } from "@pages/simulateCredit/steps/extraDebtor
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { useToken } from "@hooks/useToken";
 
 import { transformObligationsToBorrowerProperties } from "../DebtorEditModal/utils";
 import { stepsAddBorrower } from "./config/addBorrower.config";
@@ -55,8 +54,6 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     lang,
     enums,
   } = props;
-
-  const { getAuthorizationToken } = useToken();
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddBorrower.generalInformation.id,
@@ -205,14 +202,14 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
 
     const fetchIncomeData = async () => {
       try {
-        const authorizationToken = await getAuthorizationToken();
+        if (customerData === undefined) return;
 
         const customer = await getSearchCustomerByCode(
           borrowerId,
           businessUnitPublicCode || "",
           businessManagerCode,
           true,
-          authorizationToken,
+          customerData.token,
         );
 
         if (
@@ -228,14 +225,14 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           borrowerId,
           businessUnitPublicCode || "",
           businessManagerCode,
-          authorizationToken,
+          customerData.token,
         );
 
         const financialObligationsData = await getFinancialObligations(
           customer.publicCode,
           businessUnitPublicCode || "",
           businessManagerCode,
-          authorizationToken,
+          customerData.token,
         );
         setFinancialObligationsData(financialObligationsData || []);
 

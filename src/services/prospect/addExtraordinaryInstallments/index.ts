@@ -25,7 +25,7 @@ export const addExtraordinaryInstallments = async (
           "X-Action": "AddExtraordinaryInstallments",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         body: JSON.stringify(
           mapExtraordinaryInstallmentsEntity(extraordinaryInstallments),

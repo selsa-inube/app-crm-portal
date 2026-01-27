@@ -26,6 +26,7 @@ export const restoreFinancialObligationsByBorrowerId = async (
   borrowerIdentificationNumber: string,
   prospectCode: string,
   justification: string,
+  authorizationToken: string,
 ): Promise<void> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -46,6 +47,7 @@ export const restoreFinancialObligationsByBorrowerId = async (
           "X-Action": "RestoreFinancialObligationsByBorrowerId",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: `${authorizationToken}`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,

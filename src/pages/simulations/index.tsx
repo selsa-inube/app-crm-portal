@@ -29,7 +29,6 @@ import { recalculateProspect } from "@services/prospect/recalculateProspect";
 import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { useToken } from "@hooks/useToken";
 
 import { SimulationsUI } from "./interface";
 import {
@@ -40,8 +39,6 @@ import {
 } from "./config";
 
 export function Simulations() {
-  const { getAuthorizationToken } = useToken();
-
   const [showMenu, setShowMenu] = useState(false);
   const [managerErrors, setManagerErrors] = useState<string[]>([]);
   const [dataProspect, setDataProspect] = useState<IProspect>();
@@ -171,8 +168,6 @@ export function Simulations() {
     if (!prospectCode) return;
 
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const result = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
@@ -180,7 +175,7 @@ export function Simulations() {
         {
           creditRequestCode: prospectCode!,
         },
-        authorizationToken,
+        customerData.token,
       );
 
       const creditData = Array.isArray(result) ? result[0] : result;
@@ -198,8 +193,6 @@ export function Simulations() {
     try {
       setIsLoading(true);
 
-      const authorizationToken = await getAuthorizationToken();
-
       if (!dataProspect) {
         setMessageError(dataEditProspect.errorProspect.i18n[lang]);
         setShowErrorModal(true);
@@ -209,7 +202,7 @@ export function Simulations() {
       const validationResult = await validatePrerequisitesForCreditApplication(
         businessUnitPublicCode,
         prospectCode!,
-        authorizationToken,
+        customerData.token,
       );
 
       if (
@@ -242,14 +235,12 @@ export function Simulations() {
 
   const fetchProspectData = async () => {
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       setIsLoading(true);
       const result = await getSearchProspectByCode(
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode!,
-        authorizationToken,
+        customerData.token,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
       setIsLoading(false);
@@ -315,13 +306,11 @@ export function Simulations() {
     };
     const handleSubmit = async () => {
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
-          authorizationToken,
+          customerData.token,
         );
 
         if (data) {
@@ -368,8 +357,6 @@ export function Simulations() {
     try {
       setIsLoadingDelete(true);
 
-      const authorizationToken = await getAuthorizationToken();
-
       await cancelProspect(
         businessUnitPublicCode,
         businessManagerCode,
@@ -382,7 +369,7 @@ export function Simulations() {
             },
           ],
         },
-        authorizationToken,
+        customerData.token,
       );
 
       navigate("/credit/prospects");
@@ -398,12 +385,10 @@ export function Simulations() {
     try {
       setIsLoading(true);
 
-      const authorizationToken = await getAuthorizationToken();
-
       const newDataProspect = await recalculateProspect(
         businessUnitPublicCode,
         prospectCode || "",
-        authorizationToken,
+        customerData.token,
       );
 
       if (newDataProspect === null) {

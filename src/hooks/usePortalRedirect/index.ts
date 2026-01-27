@@ -72,7 +72,7 @@ const usePortalLogic = () => {
           return;
         }
 
-        const manager = await getBusinessManagers(businessManagerCode);
+        const manager = await getBusinessManagers(businessManagerCode, "");
         setBusinessManager(manager);
 
         if (manager.clientId && manager.clientSecret) {

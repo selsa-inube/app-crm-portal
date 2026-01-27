@@ -13,7 +13,6 @@ import { useState, useContext, useMemo } from "react";
 import { BaseModal } from "@components/modals/baseModal";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { IBusinessUnitRules } from "@services/businessUnitRules/types";
-import { useToken } from "@hooks/useToken";
 
 import {
   handleChangeWithCurrency,
@@ -81,7 +80,7 @@ function EditProductModal(props: EditProductModalProps) {
     setMessageError,
     isProcessingServices,
   } = props;
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
   const [incrementType, setIncrementType] = useState<
@@ -101,7 +100,6 @@ function EditProductModal(props: EditProductModalProps) {
   const [interestRateError, setInterestRateError] = useState<string>("");
 
   const isMobile = useMediaQuery("(max-width: 550px)");
-  const { customerData } = useContext(CustomerContext);
 
   const amortizationTypesList = useMemo(() => {
     if (!enums?.RepaymentStructure) return [];
@@ -206,13 +204,11 @@ function EditProductModal(props: EditProductModalProps) {
         ],
       };
 
-      const authorizationToken = await getAuthorizationToken();
-
       const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        authorizationToken,
+        customerData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -262,13 +258,11 @@ function EditProductModal(props: EditProductModalProps) {
         ],
       };
 
-      const authorizationToken = await getAuthorizationToken();
-
       const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        authorizationToken,
+        customerData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -305,14 +299,12 @@ function EditProductModal(props: EditProductModalProps) {
     try {
       setInterestRateError("");
 
-      const authorizationToken = await getAuthorizationToken();
-
       const response = await getEffectiveInterestRate(
         businessUnitPublicCode,
         businessManagerCode,
         initialValues.creditLine,
         customerData.publicCode,
-        authorizationToken,
+        customerData.token,
       );
 
       const periodicInterestRateMin = response?.periodicInterestRateMin || 0;

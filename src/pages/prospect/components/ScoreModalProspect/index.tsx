@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import { useFlag } from "@inubekit/inubekit";
 
 import { EnumType } from "@hooks/useEnum/useEnum";
@@ -8,7 +8,7 @@ import {
   ICreditRiskBureauQuery,
   IUpdateCreditRiskBureauQuery,
 } from "@services/creditRiskBureauQueries/types";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { ScoreModalProspectUI } from "./interface";
 import { IScore } from "./types";
@@ -37,7 +37,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
   } = props;
 
   const { addFlag } = useFlag();
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [newFirstScore, setNewFirstScore] = useState<IScore | null>(null);
   const [newSecondScore, setNewSecondScore] = useState<IScore | null>(null);
@@ -53,13 +53,11 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     if (!customerPublicCode) return;
 
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const data = await creditConsultationInBuroByIdentificationNumber(
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
-        authorizationToken,
+        customerData.token,
       );
 
       if (data && data.length > 0) {

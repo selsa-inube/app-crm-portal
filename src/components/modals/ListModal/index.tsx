@@ -20,7 +20,7 @@ import { AppContext } from "@context/AppContext";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
 import { useEnum } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { DocumentViewer } from "../DocumentViewer";
 import {
@@ -113,7 +113,7 @@ export const ListModal = (props: IListModalProps) => {
     id,
   } = props;
 
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
   const { lang } = useEnum();
   const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -250,8 +250,6 @@ export const ListModal = (props: IListModalProps) => {
       return;
     }
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       if (pendingFiles.length > 0) {
         for (const fileData of pendingFiles) {
           await saveDocument(
@@ -260,7 +258,7 @@ export const ListModal = (props: IListModalProps) => {
             id,
             fileData.name.split(".").slice(0, -1).join("."),
             fileData.file,
-            authorizationToken,
+            customerData.token,
           );
         }
       }

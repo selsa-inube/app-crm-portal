@@ -16,7 +16,7 @@ import {
 import { getPayrollDiscountAuthorizationsById } from "@services/creditRequest/payroll_discount_authorizations";
 import { getPromissoryNotesById } from "@services/creditRequest/promissory_notes";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import {
   appearanceTag,
@@ -38,7 +38,7 @@ interface IPromissoryNotesProps {
 export const PromissoryNotes = (props: IPromissoryNotesProps) => {
   const { isMobile, lang, creditRequest } = props;
   const { addFlag } = useFlag();
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,21 +61,19 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
     if (!creditRequest?.creditRequestId) return;
 
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const [payrollDiscountResult, promissoryNotesResult] =
         await Promise.allSettled([
           getPayrollDiscountAuthorizationsById(
             businessUnitPublicCode,
             businessManagerCode,
             creditRequest.creditRequestId,
-            authorizationToken,
+            customerData.token,
           ),
           getPromissoryNotesById(
             businessUnitPublicCode,
             businessManagerCode,
             creditRequest.creditRequestId,
-            authorizationToken,
+            customerData.token,
           ),
         ]);
 

@@ -35,7 +35,6 @@ import { BaseModal } from "@components/modals/baseModal";
 import { environment } from "@config/environment";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { useToken } from "@hooks/useToken";
 
 import {
   configHandleactions,
@@ -74,8 +73,6 @@ const removeErrorByIdServices = (
 };
 
 export const FinancialReporting = () => {
-  const { getAuthorizationToken } = useToken();
-
   const [data, setData] = useState({} as ICreditRequest);
   const [attachDocuments, setAttachDocuments] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -137,14 +134,12 @@ export const FinancialReporting = () => {
     const searchCreditRequest = async () => {
       setLoadingData(true);
 
-      const authorizationToken = await getAuthorizationToken();
-
       getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
         user.id,
         { creditRequestCode },
-        authorizationToken,
+        customerData.token,
       )
         .then((data) => {
           if (data && data.length > 0) {
@@ -170,14 +165,12 @@ export const FinancialReporting = () => {
     if (!data?.creditRequestId || !user?.id || !businessUnitPublicCode) return;
 
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const documents = await getSearchAllDocumentsById(
         data.creditRequestId,
         user.id,
         businessUnitPublicCode,
         businessManagerCode,
-        authorizationToken,
+        customerData.token,
       );
 
       const dataToMap = Array.isArray(documents) ? documents : documents.value;
@@ -197,13 +190,11 @@ export const FinancialReporting = () => {
 
   const fetchProspectData = async () => {
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const result = await getSearchProspectById(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode!,
-        authorizationToken,
+        customerData.token,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
     } catch (error) {
@@ -306,14 +297,12 @@ export const FinancialReporting = () => {
       if (!data?.creditRequestId || !businessUnitPublicCode || !user?.id)
         return;
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         await patchAssignAccountManager(
           data?.creditRequestId ?? "",
           businessUnitPublicCode,
           businessManagerCode,
           user?.id ?? "",
-          authorizationToken,
+          customerData.token,
         );
       } catch (error) {
         setMessageError(errorMessages.getData.description.i18n[lang]);
@@ -327,14 +316,12 @@ export const FinancialReporting = () => {
 
   const fetchCreditRequest = useCallback(async () => {
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const data = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
         user?.id ?? "",
         { creditRequestCode },
-        authorizationToken,
+        customerData.token,
       );
       if (data[0].stage !== "TRAMITADA") {
         setSendCrediboard(true);
@@ -355,15 +342,13 @@ export const FinancialReporting = () => {
     if (!data?.creditRequestId || !businessUnitPublicCode) return;
 
     try {
-      const authorizationToken = await getAuthorizationToken();
-
       const unreadErrors = await getUnreadErrorsById(
         businessUnitPublicCode,
         businessManagerCode,
         {
           creditRequestId: data.creditRequestId,
         },
-        authorizationToken,
+        customerData.token,
       );
 
       if (Array.isArray(unreadErrors)) {

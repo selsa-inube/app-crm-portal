@@ -1,5 +1,5 @@
 import { FormikValues, useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import * as Yup from "yup";
 import { MdOutlineAttachMoney, MdOutlineTag } from "react-icons/md";
 import {
@@ -18,7 +18,7 @@ import {
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { getAllBancks } from "@services/bank/SearchAllBank";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -53,7 +53,7 @@ function FinancialObligationModal({
   iconAfter,
 }: FinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -111,9 +111,7 @@ function FinancialObligationModal({
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const authorizationToken = await getAuthorizationToken();
-
-        const response = await getAllBancks(authorizationToken);
+        const response = await getAllBancks(customerData.token);
         const formattedBanks = response.map((bank) => ({
           id: bank.bankId,
           label: bank.bankName,

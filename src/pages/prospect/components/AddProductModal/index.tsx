@@ -7,7 +7,6 @@ import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLi
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { GetSearchAllPaymentChannels } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
-import { useToken } from "@hooks/useToken";
 
 import {
   IAddProductModalProps,
@@ -35,9 +34,6 @@ function AddProductModal(props: IAddProductModalProps) {
     lang,
     isLoading,
   } = props;
-
-  const { getAuthorizationToken } = useToken();
-
   const [errorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [creditLineTerms, setCreditLineTerms] = useState<TCreditLineTerms>({});
@@ -66,17 +62,16 @@ function AddProductModal(props: IAddProductModalProps) {
     (async () => {
       const clientInfo =
         customerData?.generalAttributeClientNaturalPersons?.[0];
-      if (!clientInfo?.associateType) return;
+      if (!clientInfo?.associateType || customerData === undefined) return;
 
       setLoading(true);
-      const authorizationToken = await getAuthorizationToken();
 
       const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
         businessUnitPublicCode,
         businessManagerCode,
         moneyDestination,
         customerData!.publicCode,
-        authorizationToken,
+        customerData.token,
       );
 
       const linesArray = Array.isArray(lineOfCreditValues)
@@ -133,13 +128,11 @@ function AddProductModal(props: IAddProductModalProps) {
 
         setLoading(true);
 
-        const authorizationToken = await getAuthorizationToken();
-
         const response = await GetSearchAllPaymentChannels(
           businessUnitPublicCode,
           businessManagerCode,
           paymentChannelRequest,
-          authorizationToken,
+          customerData.token,
         );
 
         if (!response || response.length === 0) {

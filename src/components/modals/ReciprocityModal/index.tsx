@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   Stack,
   Text,
@@ -14,7 +14,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { GetCreditLimitByReciprocity } from "@services/creditLimit/getCreditLimitByReciprocity";
 import { IMaximumCreditLimitReciprocity } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { useToken } from "@hooks/useToken";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { dataReciprocity } from "./config";
 
@@ -38,7 +38,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [error, setError] = useState(false);
   const [
@@ -55,13 +55,11 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const authorizationToken = await getAuthorizationToken();
-
         const data = await GetCreditLimitByReciprocity(
           businessUnitPublicCode,
           businessManagerCode,
           clientIdentificationNumber,
-          authorizationToken,
+          customerData.token,
         );
 
         if (data) {

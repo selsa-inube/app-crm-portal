@@ -24,7 +24,7 @@ export const checkSimulationPrerequisites = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": clientIdentificationNumber,
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

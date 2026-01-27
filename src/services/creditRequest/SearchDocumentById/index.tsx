@@ -27,7 +27,7 @@ export const getSearchDocumentById = async (
           "X-User-Name": userAccount,
           "Content-Type": "application/pdf",
           "X-Process-Manager": businessManagerCode,
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

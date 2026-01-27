@@ -27,7 +27,7 @@ export const updateConsolidatedCredits = async (
           "X-Action": "UpdateConsolidatedCredits",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
         body,

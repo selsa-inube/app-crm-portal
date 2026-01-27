@@ -22,7 +22,7 @@ export const recalculateProspect = async (
           "X-Action": "RecalculateProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${authorizationToken}`,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
         body: JSON.stringify({ prospectCode }),
