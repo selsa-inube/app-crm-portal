@@ -188,7 +188,6 @@ function AppPage(props: IAppPage) {
               user={{
                 username: eventData.user.userAccount,
                 breakpoint: "848px",
-                client: eventData.businessUnit.abbreviatedName,
               }}
               menu={translatedUserMenu}
             />

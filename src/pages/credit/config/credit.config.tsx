@@ -100,6 +100,14 @@ export const errorDataCredit = {
       es: "No puedes ir a la ruta seleccionada.",
     },
   },
+  noPrivileges: {
+    code: "No_privileges",
+    description: "Insufficient privileges for payroll advance",
+    i18n: {
+      en: "You do not have the necessary privileges to access this option. You need both 'Simulate Credit' and 'Request Credit' privileges.",
+      es: "No tienes los privilegios necesarios para acceder a esta opción. Necesitas los privilegios de 'Simular crédito' y 'Solicitar crédito'.",
+    },
+  },
 };
 export const advancePaymentModal = {
   title: "Nómina o prima",

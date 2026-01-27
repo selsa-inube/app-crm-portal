@@ -4,16 +4,14 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import {
-  INotificationOnApprovals,
-  INotificationOnApprovalsResponse,
-} from "../types";
+import { ICancelProspect, ICancelProspectResponse } from "../types";
 
-export const getNotificationOnApprovals = async (
+export const cancelProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: INotificationOnApprovals,
-): Promise<INotificationOnApprovalsResponse | undefined> => {
+  payload: ICancelProspect,
+  authorizationToken: string,
+): Promise<ICancelProspectResponse | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -21,21 +19,21 @@ export const getNotificationOnApprovals = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-
       const options: RequestInit = {
         method: "PATCH",
         headers: {
-          "X-Action": "NotificationOnApprovals",
+          "X-Action": "CancelProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-requests`,
+        `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`,
         options,
       );
 
@@ -49,7 +47,7 @@ export const getNotificationOnApprovals = async (
 
       if (!res.ok) {
         throw {
-          message: "Error al traer las notificaciones.",
+          message: "Ha ocurrido un error: ",
           status: res.status,
           data,
         };
@@ -58,8 +56,14 @@ export const getNotificationOnApprovals = async (
       return data;
     } catch (error) {
       if (attempt === maxRetries) {
+        if (typeof error === "object" && error !== null) {
+          throw {
+            ...(error as object),
+            message: (error as Error).message,
+          };
+        }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo traer los errores las notificaciones.",
+          "Todos los intentos fallaron. No se pudo eliminar el prospecto de credito.",
         );
       }
     }

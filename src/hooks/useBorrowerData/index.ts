@@ -41,21 +41,18 @@ export const useBorrowerData = ({
           .join(", "),
       })) || [];
 
+    const baseProperties = [
+      ...numericIncomeProperties,
+      ...financialObligationProperties,
+    ];
+
     return {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
       borrowerIdentificationNumber: customerData.publicCode,
       borrowerType: textAddCongfig.mainBorrower,
       borrowerName: customerData.fullName,
-
-      borrowerProperties: [
-        ...numericIncomeProperties,
-        ...financialObligationProperties,
-        {
-          propertyName: "creditRiskScore",
-          propertyValue: `${riskScore[0].value}, ${riskScore[0].date}`,
-        },
-      ],
+      borrowerProperties: baseProperties,
     };
   }, [customerData, sourcesOfIncome, obligationsFinancial, riskScore]);
 };

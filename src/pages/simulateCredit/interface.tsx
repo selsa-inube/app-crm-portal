@@ -171,6 +171,7 @@ interface SimulateCreditUIProps {
   lang: EnumType;
   enums: IAllEnumsResponse;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -242,8 +243,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     setCreatedProspectModal,
     isLoadingSubmit,
     enums,
+    setMessageError,
   } = props;
-
   return (
     <>
       {codeError ? (
@@ -435,6 +436,13 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                         )
                       }
                       lang={lang}
+                      lineOfCreditAbbreviatedName={formData.selectedProducts[0]}
+                      moneyDestinationAbbreviatedName={
+                        formData.selectedDestination
+                      }
+                      clientIdentificationNumber={customerData.publicCode}
+                      setShowErrorModal={setShowErrorModal}
+                      setMessageError={setMessageError}
                     />
                   )}
                 {currentStepsNumber &&

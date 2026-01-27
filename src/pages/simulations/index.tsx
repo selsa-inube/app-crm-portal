@@ -19,7 +19,7 @@ import { AppContext } from "@context/AppContext";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
 import { generatePDF } from "@utils/pdf/generetePDF";
-import { RemoveProspect } from "@services/prospect/removeProspect";
+import { cancelProspect } from "@services/prospect/cancelProspect";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { patchValidateRequirements } from "@services/requirement/validateRequirements";
@@ -370,13 +370,15 @@ export function Simulations() {
 
       const authorizationToken = await getAuthorizationToken();
 
-      await RemoveProspect(
+      await cancelProspect(
         businessUnitPublicCode,
         businessManagerCode,
         {
-          removeProspectsRequest: [
+          cancelProspectsRequest: [
             {
               prospectId: dataProspect.prospectId,
+              prospectCode: dataProspect.prospectCode,
+              clientIdentificationNumber: customerData.publicCode,
             },
           ],
         },

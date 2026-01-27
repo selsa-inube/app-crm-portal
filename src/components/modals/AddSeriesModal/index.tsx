@@ -8,12 +8,12 @@ import {
   inube,
   useFlag,
   useMediaQuery,
+  IOption,
 } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import {
   currencyFormat,
-  handleChangeWithCurrency,
   parseCurrencyString,
 } from "@utils/formatData/currency";
 import {
@@ -29,12 +29,27 @@ import {
 } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { useToken } from "@hooks/useToken";
+import { searchExtraInstallmentPaymentCyclesByCustomerCode } from "@services/creditLimit/extraInstallmentPaymentCyles/searchExtraInstallmentPaymentCyclesByCustomerCode";
+import { CustomerContext } from "@context/CustomerContext";
+import { CardGray } from "@components/cards/CardGray";
 
-import { dataAddSeriesModal } from "./config";
+import { dataAddSeriesModal, defaultFrequency } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
 import { TextLabels } from "../ExtraordinaryPaymentModal/config";
+import { ICycleOption } from "./types";
 
 export interface AddSeriesModalProps {
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  toggleAddSeriesModal: () => void;
+  handleClose: () => void;
+  onSubmit: (values: {
+    installmentDate: string;
+    paymentChannelAbbreviatedName: string;
+  }) => void;
+  lang: EnumType;
+  lineOfCreditAbbreviatedName: string;
+  moneyDestinationAbbreviatedName: string;
   installmentState?: {
     installmentAmount: number;
     installmentDate: string;
@@ -62,19 +77,12 @@ export interface AddSeriesModalProps {
     }>
   >;
   isEdit?: boolean;
-  handleClose: () => void;
-  onSubmit: (values: {
-    installmentDate: string;
-    paymentChannelAbbreviatedName: string;
-  }) => void;
-  lang: EnumType;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
   const {
     prospectData,
     service = true,
-    seriesModal,
     installmentState,
     lang,
     handleClose,
@@ -82,15 +90,25 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     setInstallmentState,
     isEdit = false,
     setSentData,
-    setAddModal,
+    lineOfCreditAbbreviatedName,
+    moneyDestinationAbbreviatedName,
+    setMessageError,
+    setShowErrorModal,
+    toggleAddSeriesModal,
   } = props;
-
-  const { businessUnitSigla } = useContext(AppContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
   const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
   const { getAuthorizationToken } = useToken();
+  const { customerData } = useContext(CustomerContext);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [dateOptions, setDateOptions] = useState<IOption[]>([]);
+  const [cycleOptions, setCycleOptions] = useState<ICycleOption[]>([]);
+
+  const frequencyOptions: IOption[] = [
+    { id: defaultFrequency, label: defaultFrequency, value: defaultFrequency },
+  ];
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -100,6 +118,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       installmentDate: "",
       installmentAmount: 0,
       paymentChannelAbbreviatedName: "",
+      cycleId: "",
       value: "",
       frequency: "",
     },
@@ -127,34 +146,93 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     }
   }, [isEdit, installmentState]);
 
+  useEffect(() => {
+    const businessManagerCode = eventData.businessManager.abbreviatedName;
+    const clientIdentificationNumber = customerData.publicCode;
+    const fetchCycles = async () => {
+      if (
+        service &&
+        customerData.publicCode &&
+        lineOfCreditAbbreviatedName &&
+        moneyDestinationAbbreviatedName &&
+        businessManagerCode
+      ) {
+        try {
+          setIsLoading(true);
+          const response =
+            await searchExtraInstallmentPaymentCyclesByCustomerCode(
+              businessUnitPublicCode,
+              businessManagerCode,
+              clientIdentificationNumber,
+              lineOfCreditAbbreviatedName,
+            );
+          if (response === null) {
+            return;
+          }
+          const flattenedOptions: ICycleOption[] = response.flatMap(
+            (agreement) =>
+              agreement.extraordinaryCycles.map((cycle) => ({
+                id: `${agreement.payrollForDeductionAgreementId}-${cycle.cycleName}`,
+                label: `${agreement.abbreviatedName} ${cycle.cycleName}`,
+                value: `${agreement.payrollForDeductionAgreementId}-${cycle.cycleName}`,
+                paymentDates: cycle.paymentDates,
+                extraordinaryCycleType: cycle.extraordinaryCycleType,
+              })),
+          );
+
+          setCycleOptions(flattenedOptions);
+
+          if (flattenedOptions.length === 1) {
+            formik.setFieldValue(
+              "paymentChannelAbbreviatedName",
+              flattenedOptions[0].id,
+            );
+            handleCycleChange(
+              "paymentChannelAbbreviatedName",
+              flattenedOptions[0].id,
+              flattenedOptions,
+            );
+          }
+
+          if (flattenedOptions.length === 1) {
+            handleCycleChange(
+              "cycleId",
+              flattenedOptions[0].id,
+              flattenedOptions,
+            );
+          }
+        } catch (error) {
+          const err = error as {
+            message?: string;
+            status: number;
+            data?: { description?: string; code?: string };
+          };
+          const code = err?.data?.code ? `[${err.data.code}] ` : "";
+          const description =
+            code + err?.message + (err?.data?.description || "");
+
+          setShowErrorModal(true);
+          setMessageError(description);
+          toggleAddSeriesModal();
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchCycles();
+  }, [prospectData, service]);
+
   const handleFieldChange = (name: string, value: string) => {
     formik.setFieldValue(name, value);
 
     if (name === "installmentDate") {
-      const parsedDate = new Date(value);
-      const isValidDate = !isNaN(parsedDate.getTime());
-      const dateString = isValidDate ? parsedDate.toISOString() : "";
-      const selected = seriesModal?.find((s) => s.installmentDate === value);
-
-      if (selected && setAddModal && setInstallmentState) {
-        setAddModal(selected);
+      if (setInstallmentState) {
         setInstallmentState((prev) => ({
           ...prev,
-          installmentDate: new Date(selected.installmentDate).toISOString(),
-        }));
-      } else if (setInstallmentState) {
-        setInstallmentState((prev) => ({
-          ...prev,
-          installmentDate: dateString,
+          installmentDate: value,
         }));
       }
-    }
-
-    if (name === "paymentChannelAbbreviatedName" && setInstallmentState) {
-      setInstallmentState((prev) => ({
-        ...prev,
-        paymentChannelAbbreviatedName: value,
-      }));
     }
   };
 
@@ -166,6 +244,54 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         ...prev,
         installmentAmount: parsed,
       }));
+    }
+  };
+
+  const handleCycleChange = (
+    __: string,
+    value: string,
+    currentOptions?: ICycleOption[],
+  ) => {
+    const options = currentOptions || cycleOptions;
+    const selectedCycle = options.find((opt) => opt.value === value);
+
+    formik.setFieldValue("cycleId", value);
+
+    if (selectedCycle) {
+      formik.setFieldValue(
+        "paymentChannelAbbreviatedName",
+        selectedCycle.extraordinaryCycleType,
+      );
+
+      const newDateOptions = selectedCycle.paymentDates.map((date) => ({
+        id: date,
+        label: new Date(date)
+          .toLocaleDateString("es-CO", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+          .toLowerCase(),
+        value: date,
+      }));
+
+      setDateOptions(newDateOptions);
+
+      if (setInstallmentState) {
+        setInstallmentState((prev) => ({
+          ...prev,
+          paymentChannelAbbreviatedName: selectedCycle.extraordinaryCycleType,
+        }));
+      }
+
+      if (newDateOptions.length === 1) {
+        handleFieldChange("installmentDate", newDateOptions[0].value);
+      } else {
+        formik.setFieldValue("installmentDate", "");
+      }
+    } else {
+      setDateOptions([]);
+      formik.setFieldValue("installmentDate", "");
     }
   };
 
@@ -370,6 +496,10 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     }
   }, [paymentDateOptionsMock]);
 
+  useEffect(() => {
+    formik.setFieldValue("frequency", defaultFrequency);
+  }, []);
+
   return (
     <BaseModal
       title={dataAddSeriesModal.title.i18n[lang]}
@@ -385,28 +515,20 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       isLoading={isLoading}
     >
       <Stack gap="24px" direction="column">
-        {paymentMethodOptionsMock.length === 1 ? (
-          <Textfield
-            name="paymentChannelAbbreviatedName"
-            id="paymentChannelAbbreviatedName"
+        {cycleOptions.length === 1 ? (
+          <CardGray
             label={dataAddSeriesModal.labelPaymentMethod.i18n[lang]}
-            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
-            value={paymentMethodOptionsMock[0]?.label || ""}
-            readOnly={true}
-            disabled={true}
-            size="wide"
-            fullwidth
-            required
+            data={cycleOptions[0].label}
           />
         ) : (
           <Select
-            name="paymentChannelAbbreviatedName"
-            id="paymentChannelAbbreviatedName"
+            name="cycleId"
+            id="cycleId"
             label={dataAddSeriesModal.labelPaymentMethod.i18n[lang]}
             placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
-            options={paymentMethodOptionsMock}
-            value={formik.values.paymentChannelAbbreviatedName}
-            onChange={(name, value) => handleFieldChange(name, value)}
+            options={cycleOptions}
+            value={formik.values.cycleId}
+            onChange={(name, value) => handleCycleChange(name, value)}
             size="wide"
             fullwidth
             required
@@ -419,14 +541,9 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
             id="value"
             label={dataAddSeriesModal.labelAmount.i18n[lang]}
             placeholder={dataAddSeriesModal.placeHolderAmount.i18n[lang]}
-            onChange={(event) => {
-              handleChangeWithCurrency(
-                { setFieldValue: formik.setFieldValue },
-                event,
-              );
-            }}
+            type="number"
+            onChange={formik.handleChange}
             value={formik.values.value}
-            size="wide"
             fullwidth
             required
           />
@@ -445,66 +562,37 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
             )
           }
           value={
-            installmentState?.installmentAmount &&
-            installmentState.installmentAmount > 0
+            installmentState?.installmentAmount
               ? currencyFormat(installmentState.installmentAmount, false)
               : ""
           }
           required
           fullwidth
         />
-        {frequencyOptionsMock.length === 1 ? (
-          <Textfield
-            name="frequency"
-            id="frequency"
+
+        <CardGray
+          label={dataAddSeriesModal.labelFrequency.i18n[lang]}
+          data={frequencyOptions[0].label}
+        />
+
+        {dateOptions.length === 1 ? (
+          <CardGray
             label={dataAddSeriesModal.labelFrequency.i18n[lang]}
-            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
-            value={frequencyOptionsMock[0]?.label || ""}
-            readOnly={true}
-            disabled={true}
-            size="wide"
-            fullwidth
-            required
-          />
-        ) : (
-          <Select
-            name="frequency"
-            id="frequency"
-            label={dataAddSeriesModal.labelFrequency.i18n[lang]}
-            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
-            options={frequencyOptionsMock}
-            value={formik.values.frequency}
-            onChange={(name, value) => formik.setFieldValue(name, value)}
-            size="wide"
-            fullwidth
-            required
-          />
-        )}
-        {paymentDateOptionsMock.length === 1 ? (
-          <Textfield
-            name="installmentDate"
-            id="installmentDate"
-            label={dataAddSeriesModal.labelDate.i18n[lang]}
-            placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
-            value={paymentDateOptionsMock[0]?.label || ""}
-            readOnly={true}
-            disabled={true}
-            size="wide"
-            fullwidth
-            required
+            data={dateOptions[0].label}
           />
         ) : (
           <Select
             name="installmentDate"
             id="installmentDate"
-            label={dataAddSeriesModal.labelDate.i18n[lang]}
+            label={dataAddSeriesModal.labelFrequency.i18n[lang]}
             placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
-            options={paymentDateOptionsMock}
+            options={dateOptions}
             value={formik.values.installmentDate}
             onChange={(name, value) => handleFieldChange(name, value)}
             size="wide"
             required
             fullwidth
+            disabled={!dateOptions.length}
           />
         )}
       </Stack>
