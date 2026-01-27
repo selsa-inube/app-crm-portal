@@ -16,7 +16,6 @@ const validateConsultation = async (
   authorizationToken: string,
 ): Promise<IStaffPortalByBusinessManager[]> => {
   const newData = await getStaffPortalsByBusinessManager(
-    authorizationToken,
     staffPortalId,
   );
   return newData;
