@@ -1073,6 +1073,7 @@ export function SimulateCredit() {
         isLoadingSubmit={isLoadingSubmit}
         enums={enums as IAllEnumsResponse}
         handleNavigate={handleNavigate}
+        setMessageError={setMessageError}
       />
     </>
   );

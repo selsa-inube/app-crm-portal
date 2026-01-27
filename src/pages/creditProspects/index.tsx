@@ -20,7 +20,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { checkSimulationPrerequisites } from "@services/prospect/checkSimulationPrerequisites";
 import { Fieldset } from "@components/data/Fieldset";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
-import { RemoveProspect } from "@services/prospect/removeProspect";
+import { cancelProspect } from "@services/prospect/cancelProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
@@ -98,10 +98,12 @@ export function CreditProspects() {
 
     try {
       setIsLoadingDelete(true);
-      await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
-        removeProspectsRequest: [
+      await cancelProspect(businessUnitPublicCode, businessManagerCode, {
+        cancelProspectsRequest: [
           {
             prospectId: selectedProspect.prospectId,
+            prospectCode: selectedProspect.prospectCode,
+            clientIdentificationNumber: customerData.publicCode,
           },
         ],
       });
