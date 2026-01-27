@@ -31,7 +31,6 @@ import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagemen
 
 import { ScrollableContainer } from "./styles";
 import {
-  termInMonthsOptions,
   VALIDATED_NUMBER_REGEX,
   messagesErrorValidations,
   fieldLabels,
