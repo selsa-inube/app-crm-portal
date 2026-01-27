@@ -6,6 +6,7 @@ const postSimulateCredit = async (
   businessManagerCode: string,
   userAccount: string,
   simulateData: IProspect,
+  authorizationToken: string,
 ): Promise<IProspect | undefined> => {
   const requestUrl = `${environment.VITE_IPROSPECT_PERSISTENCE_PROCESS_SERVICE}/prospects`;
 
@@ -18,6 +19,7 @@ const postSimulateCredit = async (
         "X-User-Name": userAccount,
         "Content-type": "application/json; charset=UTF-8",
         "X-Process-Manager": businessManagerCode,
+        Authorization: `${authorizationToken}`,
       },
       body: JSON.stringify(simulateData),
     };

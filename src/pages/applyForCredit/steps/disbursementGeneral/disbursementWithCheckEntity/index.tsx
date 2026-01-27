@@ -211,7 +211,7 @@ export function DisbursementWithCheckEntity(
     const identification = formik.values[optionNameForm]?.identification;
 
     const fetchCustomer = async () => {
-      if (!identification) return;
+      if (!identification || customerData === undefined) return;
 
       try {
         const customer = await getSearchCustomerByCode(
@@ -219,6 +219,7 @@ export function DisbursementWithCheckEntity(
           businessUnitPublicCode,
           businessManagerCode,
           true,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];

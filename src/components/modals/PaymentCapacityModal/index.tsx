@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useContext } from "react";
 import {
   MdErrorOutline,
   MdInfoOutline,
@@ -29,6 +29,7 @@ import { IExtraordinaryInstallments } from "@services/creditRequest/types";
 import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { BaseModal } from "../baseModal";
 import {
@@ -70,6 +71,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     userAccount,
     lang,
   } = props;
+  const { customerData } = useContext(CustomerContext);
 
   const [currentTab, setCurrentTab] = useState("ordinary");
   const [selectedDetail, setSelectedDetail] =
@@ -122,6 +124,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
           businessUnitPublicCode,
           businessManagerCode,
           submitData,
+          customerData.token,
         );
 
         if (data) {

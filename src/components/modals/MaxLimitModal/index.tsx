@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useMediaQuery } from "@inubekit/inubekit";
 
 import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components/CreditLimitCard/types";
 import { getMaximumCreditLimitByLineOfCreditRegulation } from "@services/creditLimit/getMaximumCreditLimitByLineOfCreditRegulation";
 import { IMaximumCreditLimit } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { MaxLimitModalUI } from "./interface";
 
@@ -29,6 +30,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
+  const { customerData } = useContext(CustomerContext);
 
   const [error, setError] = useState(false);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] =
@@ -49,6 +51,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
           dataMaximumCreditLimitService.identificationDocumentNumber,
           dataMaximumCreditLimitService.moneyDestination,
           dataMaximumCreditLimitService.primaryIncomeType,
+          customerData.token,
         );
 
         if (data) {

@@ -9,6 +9,7 @@ export const getTraceByCreditRequestId = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   creditRequestId: string,
+  authorizationToken: string,
 ): Promise<ITraceType[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ export const getTraceByCreditRequestId = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

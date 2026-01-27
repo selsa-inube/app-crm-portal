@@ -6,7 +6,9 @@ import {
 
 import { IBanksAll } from "../types";
 
-const getAllBancks = async (): Promise<IBanksAll[]> => {
+const getAllBancks = async (
+  authorizationToken: string,
+): Promise<IBanksAll[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -20,6 +22,7 @@ const getAllBancks = async (): Promise<IBanksAll[]> => {
         headers: {
           "X-Action": "SearchAllBank",
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

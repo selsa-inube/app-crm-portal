@@ -72,7 +72,7 @@ import {
 import { StyledPrint } from "./styles";
 import { IIncomeSources } from "./types";
 import { CreditLimitModal } from "../modals/CreditLimitModal";
-import { ScoreModalProspect } from "../ScoreModalProspec";
+import { ScoreModalProspect } from "../ScoreModalProspect";
 import InfoModal from "../InfoModal";
 import { filterIncomeByBorrower } from "./utils";
 
@@ -198,6 +198,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           businessUnitPublicCode,
           businessManagerCode,
           prospectData?.prospectCode || "",
+          customerData.token,
         );
 
       const incomesFiltered = filterIncomeByBorrower(
@@ -304,6 +305,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessUnitPublicCode,
         businessManagerCode,
         payload,
+        customerData.token,
       );
 
       if (prospectData?.prospectId) {
@@ -311,6 +313,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
+          customerData.token,
         );
         setDataProspect([updatedProspect]);
         if (onProspectUpdate) {
@@ -482,6 +485,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessUnitPublicCode,
         businessManagerCode,
         updatedBorrower()[0],
+        customerData.token,
       );
 
       if (onProspectRefreshData) onProspectRefreshData();
@@ -622,6 +626,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessUnitPublicCode,
         businessManagerCode,
         updatedProspect,
+        customerData.token,
       );
 
       if (onProspectRefreshData) {

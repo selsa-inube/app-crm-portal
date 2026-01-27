@@ -78,7 +78,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
     lang,
     onCapitalTotalChange,
   } = props;
-
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
@@ -267,6 +266,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
         businessUnitPublicCode || "",
         businessManagerCode,
         body,
+        customerData.token,
       );
       if (response && response.income) {
         const restoredIncome = {

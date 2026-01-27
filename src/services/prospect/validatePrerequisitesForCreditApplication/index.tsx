@@ -8,6 +8,7 @@ import { IValidatePrerequisitesForCreditApplication } from "../types";
 export const validatePrerequisitesForCreditApplication = async (
   businessUnitPublicCode: string,
   prospectCode: string,
+  authorizationToken: string,
 ): Promise<IValidatePrerequisitesForCreditApplication | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -21,6 +22,7 @@ export const validatePrerequisitesForCreditApplication = async (
           "X-Action": "ValidatePrerequisitesForCreditApplication",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

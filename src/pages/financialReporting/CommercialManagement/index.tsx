@@ -53,6 +53,7 @@ import { getPropertyValue } from "@utils/mappingData/mappings";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { titlesModal } from "./config/config";
 import { errorMessages } from "../config";
@@ -104,6 +105,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     loadingData,
     enums,
   } = props;
+  const { customerData } = useContext(CustomerContext);
+
   const [showMenu, setShowMenu] = useState(false);
   const [infoModal, setInfoModal] = useState(false);
   const [modalHistory, setModalHistory] = useState<string[]>([]);
@@ -166,6 +169,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
           businessUnitPublicCode,
           businessManagerCode,
           creditRequest.creditRequestId,
+          customerData.token,
         );
 
         const internalData =

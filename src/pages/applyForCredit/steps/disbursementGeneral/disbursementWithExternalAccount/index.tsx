@@ -36,11 +36,11 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { getEnum } from "@services/enum/enumerators/getEnum";
 import { IDomainEnum } from "@config/enums/types";
-
 import { CardGray } from "@components/cards/CardGray";
 
-import { selectDefaultValue, errorMessages } from "./config";
 import { EnumType } from "@hooks/useEnum/useEnum";
+
+import { selectDefaultValue, errorMessages } from "./config";
 
 interface IDisbursementWithExternalAccountProps {
   isMobile: boolean;
@@ -265,7 +265,7 @@ export function DisbursementWithExternalAccount(
     const identification = formik.values[optionNameForm]?.identification;
 
     const fetchCustomer = async () => {
-      if (!identification) return;
+      if (!identification || customerData === undefined) return;
 
       try {
         const customer = await getSearchCustomerByCode(
@@ -273,6 +273,7 @@ export function DisbursementWithExternalAccount(
           businessUnitPublicCode,
           businessManagerCode,
           true,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -333,7 +334,9 @@ export function DisbursementWithExternalAccount(
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const response = await getAllBancks();
+        if (customerData === undefined) return;
+
+        const response = await getAllBancks(customerData.token);
         const formattedBanks = response.map((bank) => ({
           id: bank.bankId,
           label: bank.bankName,

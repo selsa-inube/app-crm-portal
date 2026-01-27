@@ -16,9 +16,10 @@ export function useRestoreIncomeData({
   setShowErrorModal,
   setMessageError,
 }: UseRestoreIncomeDataProps = {}) {
+  const { customerData } = useContext(CustomerContext);
+
   const [isLoading, setIsLoading] = useState(false);
 
-  const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const customerPublicCode: string = customerData.publicCode;
   const businessUnitPublicCode: string =
@@ -29,10 +30,12 @@ export function useRestoreIncomeData({
   const restoreData = async () => {
     try {
       setIsLoading(true);
+
       const refreshedData = await getCreditLimit(
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
+        customerData.token,
       );
       onSuccess?.(refreshedData);
       return refreshedData;

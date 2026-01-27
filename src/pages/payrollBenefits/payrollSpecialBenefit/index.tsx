@@ -307,6 +307,7 @@ export function PayrolSpecialBenefitAdvanceCredit() {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
+          customerData.token,
         );
         if (data) {
           setValidateRequirements(data);

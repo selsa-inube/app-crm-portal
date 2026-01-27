@@ -12,6 +12,7 @@ const getSearchAllModesOfDisbursementTypes = async (
   lineOfCreditAbbreviatedName: string,
   moneyDestinationAbbreviatedName: string,
   loanAmount: string,
+  authorizationToken: string,
 ): Promise<ISearchAllModesOfDisbursementTypes | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -33,6 +34,7 @@ const getSearchAllModesOfDisbursementTypes = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

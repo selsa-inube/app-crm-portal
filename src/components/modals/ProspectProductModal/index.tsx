@@ -31,7 +31,6 @@ import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagemen
 
 import { ScrollableContainer } from "./styles";
 import {
-  termInMonthsOptions,
   VALIDATED_NUMBER_REGEX,
   messagesErrorValidations,
   fieldLabels,
@@ -81,6 +80,7 @@ function EditProductModal(props: EditProductModalProps) {
     setMessageError,
     isProcessingServices,
   } = props;
+  const { customerData } = useContext(CustomerContext);
 
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
   const [incrementType, setIncrementType] = useState<
@@ -100,7 +100,6 @@ function EditProductModal(props: EditProductModalProps) {
   const [interestRateError, setInterestRateError] = useState<string>("");
 
   const isMobile = useMediaQuery("(max-width: 550px)");
-  const { customerData } = useContext(CustomerContext);
 
   const amortizationTypesList = useMemo(() => {
     if (!enums?.RepaymentStructure) return [];
@@ -209,6 +208,7 @@ function EditProductModal(props: EditProductModalProps) {
         businessUnitPublicCode,
         businessManagerCode,
         payload,
+        customerData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -262,6 +262,7 @@ function EditProductModal(props: EditProductModalProps) {
         businessUnitPublicCode,
         businessManagerCode,
         payload,
+        customerData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -303,6 +304,7 @@ function EditProductModal(props: EditProductModalProps) {
         businessManagerCode,
         initialValues.creditLine,
         customerData.publicCode,
+        customerData.token,
       );
 
       const periodicInterestRateMin = response?.periodicInterestRateMin || 0;
@@ -487,6 +489,32 @@ function EditProductModal(props: EditProductModalProps) {
     }
   };
 
+  const handleTermChange = (
+    formik: FormikProps<FormikValues>,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { value } = event.target;
+    const numericValue = value === "" ? 0 : Number(value);
+
+    formik.setFieldValue("termInMonths", value === "" ? "" : numericValue);
+
+    const initialValue = Number(initialValues.termInMonths);
+
+    if (numericValue === initialValue || value === "") {
+      setTermInMonthsModified(false);
+      setLoanTermError("");
+    } else {
+      setTermInMonthsModified(true);
+      const currentAmount = Number(formik.values.creditAmount) || 0;
+
+      if (numericValue > 0) {
+        validateLoanTerm(numericValue, currentAmount);
+      } else {
+        setLoanTermError("");
+      }
+    }
+  };
+
   const validationSchema = Yup.object({
     creditLine: Yup.string(),
     creditAmount: Yup.number(),
@@ -590,25 +618,21 @@ function EditProductModal(props: EditProductModalProps) {
                     formik.values.paymentCycle,
                 )}
               />
-              <Select
+              <Textfield
                 label={simulationFormLabels.termInMonthsLabel.i18n[lang]}
                 name="termInMonths"
                 id="termInMonths"
+                placeholder={
+                  simulationFormLabels.termInMonthsLabel?.i18n[lang] || "0"
+                }
                 size="compact"
-                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
-                options={termInMonthsOptions}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "termInMonths", name, value)
-                }
-                value={
-                  formik.values.termInMonths % 1 !== 0
-                    ? formik.values.termInMonths.toFixed(4)
-                    : formik.values.termInMonths
-                }
-                fullwidth
+                type="number"
+                value={formik.values.termInMonths}
+                status={loanTermError ? "invalid" : undefined}
                 message={loanTermError}
-                invalid={loanTermError ? true : false}
+                onBlur={formik.handleBlur}
+                onChange={(event) => handleTermChange(formik, event)}
+                fullwidth
                 disabled={isTermInMonthsDisabled()}
               />
               <Select

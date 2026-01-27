@@ -9,6 +9,7 @@ const getSearchProspectSummaryById = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   prospectCode: string,
+  authorizationToken: string,
 ): Promise<IProspectSummaryById> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ const getSearchProspectSummaryById = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

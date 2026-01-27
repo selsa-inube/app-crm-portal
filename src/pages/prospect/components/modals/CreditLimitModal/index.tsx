@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { MdErrorOutline } from "react-icons/md";
 import { Icon, Stack, Text, SkeletonLine } from "@inubekit/inubekit";
 
@@ -17,6 +17,7 @@ import {
 import { IFormData } from "@pages/simulateCredit/types";
 import { StyledContainer } from "@pages/simulateCredit/components/CreditLimitCard/styles";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { dataCreditLimitModal } from "./config";
 
@@ -49,6 +50,8 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     lang,
   } = props;
 
+  const { customerData } = useContext(CustomerContext);
+
   const [isLoading, setIsLoading] = useState(true);
   useState(false);
 
@@ -61,11 +64,13 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+
         const data = await getGlobalLimitByMoneyDestination(
           businessUnitPublicCode,
           businessManagerCode,
           moneyDestination,
           dataMaximumCreditLimitService.identificationDocumentNumber,
+          customerData.token,
         );
         setIsLoading(false);
         if (data) {

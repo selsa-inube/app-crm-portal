@@ -8,11 +8,11 @@ export const riskScoreData = {
     },
   },
   editScore: {
-    code: "Edit_score",
-    description: "Edit score option",
+    code: "Update_score",
+    description: "update score option",
     i18n: {
-      en: "Edit score",
-      es: "Editar score",
+      en: "Update Score",
+      es: "Actualizar Score",
     },
   },
   restore: {
@@ -56,11 +56,11 @@ export const riskScoreData = {
     },
   },
   editTitle: {
-    code: "Edit_title",
-    description: "Title for the edit modal",
+    code: "Update_title",
+    description: "Title for the update modal",
     i18n: {
-      en: "Edit score",
-      es: "Editar score",
+      en: "Update Score",
+      es: "Actualizar Score",
     },
   },
   save: {

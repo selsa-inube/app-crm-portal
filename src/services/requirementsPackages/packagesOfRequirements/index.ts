@@ -9,6 +9,7 @@ const getAllPackagesOfRequirementsById = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   uniqueReferenceNumber: string,
+  authorizationToken: string,
 ): Promise<IPackagesOfRequirementsById[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -28,6 +29,7 @@ const getAllPackagesOfRequirementsById = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

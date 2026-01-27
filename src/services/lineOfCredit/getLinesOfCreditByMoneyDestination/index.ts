@@ -11,6 +11,7 @@ const getLinesOfCreditByMoneyDestination = async (
   businessManagerCode: string,
   moneyDestinationAbbreviatedName: string,
   clientIdentificationNumber: string,
+  authorizationToken: string,
 ): Promise<ILinesOfCreditByMoneyDestination | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -26,6 +27,7 @@ const getLinesOfCreditByMoneyDestination = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

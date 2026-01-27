@@ -13,6 +13,8 @@ import { EErrorMessages, VALIDATE_BLANK_SPACES_REGEX } from "./config";
 import { isValidUpperCaseName, isNumericString } from "./utils";
 
 export function Customer() {
+  const { customerData } = useContext(CustomerContext);
+
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<IOption[]>([]);
   const [showError, setShowError] = useState(false);
@@ -44,12 +46,14 @@ export function Customer() {
       let response = null;
       try {
         setLoading(true);
+
         if (isNumericString(value)) {
           response = await getCustomerCatalog(
             businessUnitPublicCode,
             businessManagerCode,
             "",
             formattedValue,
+            customerData.token,
           );
         } else if (isValidUpperCaseName(value)) {
           response = await getCustomerCatalog(
@@ -57,6 +61,7 @@ export function Customer() {
             businessManagerCode,
             formattedValue,
             "",
+            customerData.token,
           );
         }
       } catch (error) {

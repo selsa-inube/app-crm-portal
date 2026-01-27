@@ -53,6 +53,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     onProspectRefreshData,
   } = props;
   const isMobile = useMediaQuery("(max-width:880px)");
+
   const [editOpen, setEditOpen] = useState(true);
   const [obligationPayment, setObligationPayment] = useState<IPayment[] | null>(
     null,
@@ -77,6 +78,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
+        customerData.token,
       );
       setObligationPayment(data ?? null);
     } catch (error) {
@@ -313,10 +315,12 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
 
     try {
       setLoading(true);
+
       await updateConsolidatedCredits(
         businessUnitPublicCode,
         prospectData.prospectId,
         consolidatedCredits,
+        customerData.token,
       );
 
       if (onProspectRefreshData) {

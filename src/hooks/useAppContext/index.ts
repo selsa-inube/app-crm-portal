@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import { useIAuth } from "@inube/iauth-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
@@ -14,6 +14,7 @@ import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
 import { getSearchUseCaseForStaff } from "@services/staffs/SearchUseCaseForStaff";
+import { CustomerContext } from "@context/CustomerContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -25,6 +26,7 @@ interface IBusinessUnits {
 
 function useAppContext() {
   const { user, isLoading: isIAuthLoading } = useIAuth();
+  const { customerData } = useContext(CustomerContext);
 
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
@@ -202,9 +204,13 @@ function useAppContext() {
   useEffect(() => {
     if (isIAuthLoading || !portalCode) return;
 
-    validateConsultation(portalCode).then((data) => {
-      setPortalData(data);
-    });
+    const validateConsultationAsync = async () => {
+      validateConsultation(portalCode).then((data) => {
+        setPortalData(data);
+      });
+    };
+
+    validateConsultationAsync();
   }, [portalCode, isIAuthLoading]);
 
   const userIdentifier = eventData?.user?.identificationDocumentNumber;
@@ -225,6 +231,7 @@ function useAppContext() {
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
           userIdentifier || "",
+          customerData.token,
         );
         setOptionStaffData(result);
       } catch (error) {

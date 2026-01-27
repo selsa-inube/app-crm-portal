@@ -9,6 +9,7 @@ export const updateConsolidatedCredits = async (
   businessUnitPublicCode: string,
   prospectId: string,
   payload: IConsolidatedCredit[],
+  authorizationToken: string,
 ): Promise<IConsolidatedCredit[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -26,6 +27,7 @@ export const updateConsolidatedCredits = async (
           "X-Action": "UpdateConsolidatedCredits",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
         body,

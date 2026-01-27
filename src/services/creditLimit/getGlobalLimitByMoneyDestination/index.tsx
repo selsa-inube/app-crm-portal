@@ -10,6 +10,7 @@ export const getGlobalLimitByMoneyDestination = async (
   businessManagerCode: string,
   moneyDestination: string,
   clientIdentificationNumber: string,
+  authorizationToken: string,
 ): Promise<IMaximumCreditLimitByMoneyDestination[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -25,6 +26,7 @@ export const getGlobalLimitByMoneyDestination = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

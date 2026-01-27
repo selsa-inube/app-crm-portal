@@ -131,28 +131,34 @@ export const FinancialReporting = () => {
   };
 
   useEffect(() => {
-    setLoadingData(true);
-    getCreditRequestByCode(
-      businessUnitPublicCode,
-      businessManagerCode,
-      user.id,
-      { creditRequestCode },
-    )
-      .then((data) => {
-        if (data && data.length > 0) {
-          setData(data[0]);
-        } else {
+    const searchCreditRequest = async () => {
+      setLoadingData(true);
+
+      getCreditRequestByCode(
+        businessUnitPublicCode,
+        businessManagerCode,
+        user.id,
+        { creditRequestCode },
+        customerData.token,
+      )
+        .then((data) => {
+          if (data && data.length > 0) {
+            setData(data[0]);
+          } else {
+            setCodeError(1030);
+            setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
+          }
+        })
+        .catch(() => {
           setCodeError(1030);
           setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
-        }
-      })
-      .catch(() => {
-        setCodeError(1030);
-        setAddToFix([errorMessages.errorCreditRequest.i18n[lang]]);
-      })
-      .finally(() => {
-        setLoadingData(false);
-      });
+        })
+        .finally(() => {
+          setLoadingData(false);
+        });
+    };
+
+    searchCreditRequest();
   }, [creditRequestCode, businessUnitPublicCode, user.id, businessManagerCode]);
 
   const fetchAndShowDocuments = async () => {
@@ -164,6 +170,7 @@ export const FinancialReporting = () => {
         user.id,
         businessUnitPublicCode,
         businessManagerCode,
+        customerData.token,
       );
 
       const dataToMap = Array.isArray(documents) ? documents : documents.value;
@@ -187,6 +194,7 @@ export const FinancialReporting = () => {
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode!,
+        customerData.token,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
     } catch (error) {
@@ -294,6 +302,7 @@ export const FinancialReporting = () => {
           businessUnitPublicCode,
           businessManagerCode,
           user?.id ?? "",
+          customerData.token,
         );
       } catch (error) {
         setMessageError(errorMessages.getData.description.i18n[lang]);
@@ -312,6 +321,7 @@ export const FinancialReporting = () => {
         businessManagerCode,
         user?.id ?? "",
         { creditRequestCode },
+        customerData.token,
       );
       if (data[0].stage !== "TRAMITADA") {
         setSendCrediboard(true);
@@ -338,6 +348,7 @@ export const FinancialReporting = () => {
         {
           creditRequestId: data.creditRequestId,
         },
+        customerData.token,
       );
 
       if (Array.isArray(unreadErrors)) {

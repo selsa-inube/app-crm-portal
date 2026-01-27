@@ -209,7 +209,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
     const identification = formik.values[optionNameForm]?.identification;
 
     const fetchCustomer = async () => {
-      if (!identification) return;
+      if (!identification || customerData === undefined) return;
 
       try {
         const customer = await getSearchCustomerByCode(
@@ -217,6 +217,7 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
           businessUnitPublicCode,
           businessManagerCode,
           true,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];

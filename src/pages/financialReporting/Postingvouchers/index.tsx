@@ -31,6 +31,7 @@ interface IApprovalsProps {
 export const Postingvouchers = (props: IApprovalsProps) => {
   const { isMobile, lang, creditRequest } = props;
   const { user } = useIAuth();
+
   const [error, setError] = useState(false);
   const [positionsAccountingVouchers, setPositionsAccountingVouchers] =
     useState<IAccountingVouchers[]>([]);

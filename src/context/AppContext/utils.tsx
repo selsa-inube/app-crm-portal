@@ -6,7 +6,7 @@ import { IBusinessManagers } from "@services/businessManager/types";
 const validateBusinessManagers = async (
   code: string,
 ): Promise<IBusinessManagers> => {
-  const newData = await getBusinessManagers(code);
+  const newData = await getBusinessManagers(code, "");
 
   return newData;
 };

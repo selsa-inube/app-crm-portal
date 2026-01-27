@@ -98,15 +98,21 @@ export function CreditProspects() {
 
     try {
       setIsLoadingDelete(true);
-      await cancelProspect(businessUnitPublicCode, businessManagerCode, {
-        cancelProspectsRequest: [
-          {
-            prospectId: selectedProspect.prospectId,
-            prospectCode: selectedProspect.prospectCode,
-            clientIdentificationNumber: customerData.publicCode,
-          },
-        ],
-      });
+
+      await cancelProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        {
+          cancelProspectsRequest: [
+            {
+              prospectId: selectedProspect.prospectId,
+              prospectCode: selectedProspect.prospectCode,
+              clientIdentificationNumber: customerData.publicCode,
+            },
+          ],
+        },
+        customerData.token,
+      );
 
       setProspectSummaryData((prev) =>
         prev.filter(
@@ -137,11 +143,13 @@ export function CreditProspects() {
     const fetchData = async () => {
       try {
         setLoading(true);
+
         const result = await getProspectsByCustomerCode(
           businessUnitPublicCode,
           businessManagerCode,
           customerData.publicCode,
           "Created",
+          customerData.token,
         );
 
         if (result && result.length > 0) {
@@ -169,6 +177,7 @@ export function CreditProspects() {
         const data = await checkSimulationPrerequisites(
           businessUnitPublicCode,
           customerData.publicCode,
+          customerData.token,
         );
 
         if (data?.canSimulate === "Y") setCanPerformSimulations(true);
@@ -229,10 +238,12 @@ export function CreditProspects() {
 
     try {
       setLoadingComments(true);
+
       const result = await updateProspect(
         businessUnitPublicCode,
         businessManagerCode,
         updatedProspect,
+        customerData.token,
       );
 
       setProspectSummaryData((prev) =>
@@ -278,9 +289,11 @@ export function CreditProspects() {
 
     try {
       setLoadingConfirm(true);
+
       const validationResult = await validatePrerequisitesForCreditApplication(
         businessUnitPublicCode,
         selectedProspect.prospectCode,
+        customerData.token,
       );
 
       if (

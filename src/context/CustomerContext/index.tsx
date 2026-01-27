@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import { useIAuth } from "@inube/iauth-react";
 
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { AppContext } from "@context/AppContext";
@@ -17,6 +18,7 @@ interface ICustomerContextProviderProps {
 export function CustomerContextProvider({
   children,
 }: ICustomerContextProviderProps) {
+  const { getAccessTokenSilently } = useIAuth();
   const getInitialPublicCode = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("customerPublicCodeState") || "";
@@ -49,11 +51,16 @@ export function CustomerContextProvider({
     businessUnitPublicCode: string,
   ) => {
     setLoadingCustomerData(true);
+
+    const authorizationToken = await getAccessTokenSilently();
+
     try {
       const customers = await getSearchCustomerByCode(
         publicCode,
         businessUnitPublicCode,
         businessManagerCode,
+        false,
+        authorizationToken,
       );
 
       if (customers) {
@@ -72,6 +79,7 @@ export function CustomerContextProvider({
           )
             ? customers.generalAssociateAttributes
             : [],
+          token: authorizationToken || "",
         });
       }
     } catch (error) {

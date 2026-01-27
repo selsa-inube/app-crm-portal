@@ -43,7 +43,6 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     businessUnitPublicCode,
     lang,
   } = props;
-
   const { eventData } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
   const [
@@ -67,6 +66,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
           businessManagerCode,
           payload,
           eventData?.user?.identificationDocumentNumber || "",
+          customerData.token,
         );
         if (data && Array.isArray(data) && data.length > 0) {
           setValidDocumentsRequiredByCreditRequest(data);

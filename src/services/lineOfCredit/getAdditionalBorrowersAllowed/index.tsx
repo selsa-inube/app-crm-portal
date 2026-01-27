@@ -12,6 +12,7 @@ export const getAdditionalBorrowersAllowed = async (
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
   moneyDestination: string,
+  authorizationToken: string,
 ): Promise<IAdditionalBorrowersAllowedResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -26,6 +27,7 @@ export const getAdditionalBorrowersAllowed = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

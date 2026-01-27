@@ -172,6 +172,7 @@ interface UIProps {
   ) => void;
   initialValuesModalDataProspect: FormikValues | undefined;
   enums: IAllEnumsResponse;
+  authorizationToken: string;
 }
 
 export const TableFinancialObligationsUI = ({
@@ -206,6 +207,7 @@ export const TableFinancialObligationsUI = ({
   handleOnChangeExtraBorrowers,
   initialValuesModalDataProspect,
   enums,
+  authorizationToken,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -303,6 +305,7 @@ export const TableFinancialObligationsUI = ({
           businessUnitPublicCode,
           businessManagerCode,
           prospectData,
+          authorizationToken,
         );
 
         setRefreshKey?.((prev) => prev + 1);

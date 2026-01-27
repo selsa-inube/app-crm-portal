@@ -14,6 +14,7 @@ export const postDocumentsRequiredByCreditRequest = async (
   businessManagerCode: string,
   validataRequirements: IPatchValidateRequirementsPayload,
   userAccount: string,
+  authorizationToken: string,
 ): Promise<IValidateRequirement[] | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -31,6 +32,7 @@ export const postDocumentsRequiredByCreditRequest = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         body: JSON.stringify(validataRequirements),
         signal: controller.signal,

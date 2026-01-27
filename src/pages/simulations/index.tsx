@@ -175,6 +175,7 @@ export function Simulations() {
         {
           creditRequestCode: prospectCode!,
         },
+        customerData.token,
       );
 
       const creditData = Array.isArray(result) ? result[0] : result;
@@ -191,6 +192,7 @@ export function Simulations() {
   const handleSubmitClick = async () => {
     try {
       setIsLoading(true);
+
       if (!dataProspect) {
         setMessageError(dataEditProspect.errorProspect.i18n[lang]);
         setShowErrorModal(true);
@@ -200,6 +202,7 @@ export function Simulations() {
       const validationResult = await validatePrerequisitesForCreditApplication(
         businessUnitPublicCode,
         prospectCode!,
+        customerData.token,
       );
 
       if (
@@ -237,6 +240,7 @@ export function Simulations() {
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode!,
+        customerData.token,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
       setIsLoading(false);
@@ -306,6 +310,7 @@ export function Simulations() {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
+          customerData.token,
         );
 
         if (data) {
@@ -351,15 +356,21 @@ export function Simulations() {
 
     try {
       setIsLoadingDelete(true);
-      await cancelProspect(businessUnitPublicCode, businessManagerCode, {
-        cancelProspectsRequest: [
-          {
-            prospectId: dataProspect.prospectId,
-            prospectCode: dataProspect.prospectCode,
-            clientIdentificationNumber: customerData.publicCode,
-          },
-        ],
-      });
+
+      await cancelProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        {
+          cancelProspectsRequest: [
+            {
+              prospectId: dataProspect.prospectId,
+              prospectCode: dataProspect.prospectCode,
+              clientIdentificationNumber: customerData.publicCode,
+            },
+          ],
+        },
+        customerData.token,
+      );
 
       navigate("/credit/prospects");
       setIsLoadingDelete(false);
@@ -373,9 +384,11 @@ export function Simulations() {
   const handleRecalculateSimulation = async () => {
     try {
       setIsLoading(true);
+
       const newDataProspect = await recalculateProspect(
         businessUnitPublicCode,
         prospectCode || "",
+        customerData.token,
       );
 
       if (newDataProspect === null) {

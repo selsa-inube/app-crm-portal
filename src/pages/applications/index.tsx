@@ -31,6 +31,10 @@ import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function CreditApplications() {
+  const { customerData } = useContext(CustomerContext);
+  const { businessUnitSigla, eventData } = useContext(AppContext);
+  const { user } = useIAuth();
+
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [search, setSearch] = useState("");
@@ -45,10 +49,6 @@ export function CreditApplications() {
   const [loading, setLoading] = useState(true);
 
   const searchTimeoutRef = useRef<number>(0);
-
-  const { customerData } = useContext(CustomerContext);
-  const { businessUnitSigla, eventData } = useContext(AppContext);
-  const { user } = useIAuth();
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -106,6 +106,7 @@ export function CreditApplications() {
             clientIdentificationNumber: customerData.publicCode,
             textInSearch: debouncedSearch,
           },
+          customerData.token,
         );
         setCreditRequestData(creditData);
       } catch {

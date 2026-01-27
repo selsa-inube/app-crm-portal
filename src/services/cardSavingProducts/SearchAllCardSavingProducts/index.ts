@@ -10,6 +10,7 @@ const getAllInternalAccounts = async (
   customerCode: string,
   businessUnitPublicCode: string,
   businessManagerCode: string,
+  authorizationToken: string,
 ): Promise<IAllInternal[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -29,6 +30,7 @@ const getAllInternalAccounts = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

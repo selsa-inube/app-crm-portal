@@ -257,7 +257,6 @@ function AppPage(props: IAppPage) {
                   navigation={navConfig}
                   actions={translatedActions}
                   collapse={true}
-                  footerLogo={eventData.businessManager.urlLogo}
                 />
               </StyledPrint>
             )}

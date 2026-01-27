@@ -202,11 +202,14 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
 
     const fetchIncomeData = async () => {
       try {
+        if (customerData === undefined) return;
+
         const customer = await getSearchCustomerByCode(
           borrowerId,
           businessUnitPublicCode || "",
           businessManagerCode,
           true,
+          customerData.token,
         );
 
         if (
@@ -222,12 +225,14 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           borrowerId,
           businessUnitPublicCode || "",
           businessManagerCode,
+          customerData.token,
         );
 
         const financialObligationsData = await getFinancialObligations(
           customer.publicCode,
           businessUnitPublicCode || "",
           businessManagerCode,
+          customerData.token,
         );
         setFinancialObligationsData(financialObligationsData || []);
 

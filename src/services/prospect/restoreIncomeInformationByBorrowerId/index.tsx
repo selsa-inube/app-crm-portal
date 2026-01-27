@@ -10,6 +10,7 @@ export const restoreIncomeInformationByBorrowerId = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   payload: IRefactorIncome,
+  authorizationToken: string,
 ): Promise<IRefactorIncome | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -25,6 +26,7 @@ export const restoreIncomeInformationByBorrowerId = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,

@@ -57,6 +57,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
+          customerData.token,
         );
         if (data) {
           setValidateRequirements(

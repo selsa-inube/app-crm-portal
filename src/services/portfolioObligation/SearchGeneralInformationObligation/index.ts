@@ -10,6 +10,7 @@ export const searchPortfolioObligationsById = async (
   businessManagerCode: string,
   clientIdentificationNumber: string,
   obligationNumber: string,
+  authorizationToken: string,
 ): Promise<IObligationDetail[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ export const searchPortfolioObligationsById = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };

@@ -27,6 +27,7 @@ import { dataSubmitApplication, tittleOptions } from "./config/config";
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
   const navigate = useNavigate();
+
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const { customerData } = useContext(CustomerContext);
   const [sentModal, setSentModal] = useState(false);
@@ -425,11 +426,13 @@ export function ApplyForCredit() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
+
       const response = await postSubmitCredit(
         businessUnitPublicCode,
         businessManagerCode,
         eventData.user.identificationDocumentNumber || "",
         submitData,
+        customerData.token,
       );
 
       setCreditRequestCode(response?.creditRequestCode || "");
@@ -457,6 +460,7 @@ export function ApplyForCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode || "",
+        customerData.token,
       );
 
       const mainBorrower = prospect.borrowers.find(
@@ -499,6 +503,7 @@ export function ApplyForCredit() {
           prospectData.creditProducts[0].lineOfCreditAbbreviatedName,
           prospectData.moneyDestinationAbbreviatedName,
           prospectData.creditProducts[0].loanAmount.toString(),
+          customerData.token,
         );
 
         if (codeError) return;
@@ -536,6 +541,7 @@ export function ApplyForCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode || "",
+        customerData.token,
       );
 
       if (!response) {
@@ -637,6 +643,7 @@ export function ApplyForCredit() {
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
+          customerData.token,
         );
         if (result) {
           setProspectSummaryData(result);

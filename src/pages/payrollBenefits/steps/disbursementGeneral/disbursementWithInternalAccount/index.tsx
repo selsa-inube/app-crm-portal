@@ -181,7 +181,7 @@ export function DisbursementWithInternalAccount(
     const identification = formik.values[optionNameForm]?.identification;
 
     const fetchCustomer = async () => {
-      if (!identification) return;
+      if (!identification || customerData === undefined) return;
 
       try {
         const customer = await getSearchCustomerByCode(
@@ -189,6 +189,7 @@ export function DisbursementWithInternalAccount(
           businessUnitPublicCode,
           businessManagerCode,
           true,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -238,10 +239,13 @@ export function DisbursementWithInternalAccount(
   useEffect(() => {
     async function fetchAccounts() {
       try {
+        if (customerData === undefined) return;
+
         const response = await getAllInternalAccounts(
           currentIdentification,
           businessUnitPublicCode,
           businessManagerCode,
+          customerData.token,
         );
 
         const uniqueMap = new Map<

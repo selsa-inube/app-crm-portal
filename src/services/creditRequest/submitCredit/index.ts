@@ -7,6 +7,7 @@ const postSubmitCredit = async (
   businessManagerCode: string,
   userAccount: string,
   submitData: FormData,
+  authorizationToken: string,
 ): Promise<ISubmitCredit | undefined> => {
   const requestUrl = `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-requests`;
 
@@ -18,6 +19,7 @@ const postSubmitCredit = async (
         "X-Business-Unit": businessUnitPublicCode,
         "X-User-Name": userAccount,
         "X-Process-Manager": businessManagerCode,
+        Authorization: `${authorizationToken}`,
       },
       body: submitData,
     };

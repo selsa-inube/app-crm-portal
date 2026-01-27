@@ -41,6 +41,7 @@ const getStaffPortalsByBusinessManager = async (
         headers: {
           "X-Action": "SearchAllStaffPortalsByBusinessManager",
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: ``,
         },
       };
 
