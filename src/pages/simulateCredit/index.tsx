@@ -211,10 +211,6 @@ export function SimulateCredit() {
         propertyValue: String(value),
       }));
 
-    const riskScoresString = formData.riskScores
-      .map((score) => `${score.bureauName},${score.value},${score.date},`)
-      .join(";");
-
     const financialObligationProperties =
       formData.obligationsFinancial?.obligations?.map((obligation) => ({
         propertyName: textAddConfig.financialObligation.i18n[lang],
@@ -242,10 +238,6 @@ export function SimulateCredit() {
       borrowerProperties: [
         ...numericIncomeProperties,
         ...financialObligationProperties,
-        {
-          propertyName: "creditRiskScore",
-          propertyValue: riskScoresString,
-        },
       ],
     };
   }, [
@@ -297,9 +289,10 @@ export function SimulateCredit() {
         formData.loanAmountState.paymentCycle || "",
       paymentChannelCycleName: formData.loanAmountState.paymentCycle || "",
       requestedAmount: formData.loanAmountState.inputValue || 0,
-      ...(formData.loanConditionState.maximumTermValue != null && {
-        termLimit: formData.loanConditionState.maximumTermValue,
-      }),
+      ...(formData.loanConditionState.maximumTermValue != null &&
+        formData.loanConditionState.maximumTermValue != "" && {
+          termLimit: formData.loanConditionState.maximumTermValue,
+        }),
       prospectId: "",
       prospectCode: "",
       state: "",
