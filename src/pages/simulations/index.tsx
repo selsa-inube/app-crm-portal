@@ -355,6 +355,8 @@ export function Simulations() {
         cancelProspectsRequest: [
           {
             prospectId: dataProspect.prospectId,
+            prospectCode: dataProspect.prospectCode,
+            clientIdentificationNumber: customerData.publicCode,
           },
         ],
       });

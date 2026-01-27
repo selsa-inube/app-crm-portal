@@ -102,6 +102,8 @@ export function CreditProspects() {
         cancelProspectsRequest: [
           {
             prospectId: selectedProspect.prospectId,
+            prospectCode: selectedProspect.prospectCode,
+            clientIdentificationNumber: customerData.publicCode,
           },
         ],
       });

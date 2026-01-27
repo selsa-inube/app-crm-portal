@@ -234,6 +234,8 @@ export interface ICancelProspect {
   cancelProspectsRequest: [
     {
       prospectId: string;
+      prospectCode: string;
+      clientIdentificationNumber: string;
     },
   ];
 }
