@@ -205,9 +205,7 @@ function useAppContext() {
     if (isIAuthLoading || !portalCode) return;
 
     const validateConsultationAsync = async () => {
-      const authorizationToken = await getAuthorizationToken();
-
-      validateConsultation(portalCode, authorizationToken).then((data) => {
+      validateConsultation(portalCode).then((data) => {
         setPortalData(data);
       });
     };
