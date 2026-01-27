@@ -163,6 +163,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
               businessManagerCode,
               clientIdentificationNumber,
               lineOfCreditAbbreviatedName,
+              customerData.token,
             );
           if (response === null) {
             return;
