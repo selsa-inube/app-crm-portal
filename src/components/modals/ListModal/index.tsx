@@ -20,6 +20,7 @@ import { AppContext } from "@context/AppContext";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { DocumentViewer } from "../DocumentViewer";
 import {
@@ -112,16 +113,17 @@ export const ListModal = (props: IListModalProps) => {
     id,
   } = props;
 
-  const [openFlag, setOpenFlag] = useState(false);
+  const { getAuthorizationToken } = useToken();
   const { lang } = useEnum();
+  const { addFlag } = useFlag();
+  const isMobile = useMediaQuery("(max-width: 700px)");
+
+  const [openFlag, setOpenFlag] = useState(false);
 
   const node = document.getElementById(portalId ?? "portal");
   if (!node) {
     throw new Error(validationMessages.errorNodo);
   }
-  const { addFlag } = useFlag();
-
-  const isMobile = useMediaQuery("(max-width: 700px)");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { businessUnitSigla, eventData } = useContext(AppContext);
@@ -248,6 +250,8 @@ export const ListModal = (props: IListModalProps) => {
       return;
     }
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       if (pendingFiles.length > 0) {
         for (const fileData of pendingFiles) {
           await saveDocument(
@@ -256,6 +260,7 @@ export const ListModal = (props: IListModalProps) => {
             id,
             fileData.name.split(".").slice(0, -1).join("."),
             fileData.file,
+            authorizationToken,
           );
         }
       }

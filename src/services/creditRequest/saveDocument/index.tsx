@@ -10,6 +10,7 @@ export const saveDocument = async (
   creditRequestId: string | undefined,
   abbreviatedName: string | undefined,
   file: File | undefined,
+  authorizationToken: string,
 ) => {
   if (!file) throw new Error("No se ha seleccionado un archivo.");
 
@@ -33,6 +34,7 @@ export const saveDocument = async (
           "X-Action": "SaveDocument",
           "X-Business-Unit": businessUnitPublicCode,
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         body: formData,
       };

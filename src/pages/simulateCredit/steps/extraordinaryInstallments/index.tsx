@@ -16,6 +16,11 @@ export interface ExtraordinaryInstallmentsProps {
   initialValues: TableExtraordinaryInstallmentProps[] | null;
   businessManagerCode: string;
   lang: EnumType;
+  lineOfCreditAbbreviatedName: string;
+  moneyDestinationAbbreviatedName: string;
+  clientIdentificationNumber: string;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
   handleOnChange: (
     newExtraordinary: TableExtraordinaryInstallmentProps[],
   ) => void;
@@ -24,9 +29,17 @@ export interface ExtraordinaryInstallmentsProps {
 export function ExtraordinaryInstallments(
   props: ExtraordinaryInstallmentsProps,
 ) {
-  const { initialValues, isMobile, businessManagerCode, lang, handleOnChange } =
-    props;
-
+  const {
+    initialValues,
+    isMobile,
+    businessManagerCode,
+    lang,
+    handleOnChange,
+    lineOfCreditAbbreviatedName,
+    moneyDestinationAbbreviatedName,
+    setMessageError,
+    setShowErrorModal,
+  } = props;
   const [isAddSeriesModalOpen, setAddSeriesModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const isInitialMount = useRef(true);
@@ -73,7 +86,6 @@ export function ExtraordinaryInstallments(
     }, 0);
 
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extraordinary]);
 
   const handleSubmit = (installment: {
@@ -161,8 +173,13 @@ export function ExtraordinaryInstallments(
             onSubmit={handleSubmit}
             installmentState={installmentState}
             setInstallmentState={setInstallmentState}
-            service={false}
+            service={true}
             lang={lang}
+            lineOfCreditAbbreviatedName={lineOfCreditAbbreviatedName}
+            moneyDestinationAbbreviatedName={moneyDestinationAbbreviatedName}
+            setMessageError={setMessageError}
+            setShowErrorModal={setShowErrorModal}
+            toggleAddSeriesModal={toggleAddSeriesModal}
           />
         )}
       </Stack>

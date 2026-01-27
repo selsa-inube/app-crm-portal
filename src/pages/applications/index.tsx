@@ -22,6 +22,7 @@ import { environment } from "@config/environment";
 import userImage from "@assets/images/userImage.jpeg";
 import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager/index.tsx";
 import { useEnum } from "@hooks/useEnum/useEnum.ts";
+import { useToken } from "@hooks/useToken";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
@@ -31,6 +32,8 @@ import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function CreditApplications() {
+  const { getAuthorizationToken } = useToken();
+
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [search, setSearch] = useState("");
@@ -98,6 +101,8 @@ export function CreditApplications() {
     const fetchCreditRequest = async () => {
       setLoading(true);
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
           businessManagerCode,
@@ -106,6 +111,7 @@ export function CreditApplications() {
             clientIdentificationNumber: customerData.publicCode,
             textInSearch: debouncedSearch,
           },
+          authorizationToken,
         );
         setCreditRequestData(creditData);
       } catch {

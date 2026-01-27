@@ -10,6 +10,7 @@ import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { excludedStatus } from "@pages/simulateCredit/steps/requirementsNotMet/config";
+import { useToken } from "@hooks/useToken";
 
 import { dataError } from "./config";
 
@@ -36,6 +37,8 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     setShowErrorModal,
   } = props;
 
+  const { getAuthorizationToken } = useToken();
+
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
   >([]);
@@ -53,10 +56,13 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
+          authorizationToken,
         );
         if (data) {
           setValidateRequirements(

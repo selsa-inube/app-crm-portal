@@ -13,6 +13,7 @@ import { useState, useContext, useMemo } from "react";
 import { BaseModal } from "@components/modals/baseModal";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { IBusinessUnitRules } from "@services/businessUnitRules/types";
+import { useToken } from "@hooks/useToken";
 
 import {
   handleChangeWithCurrency,
@@ -80,6 +81,7 @@ function EditProductModal(props: EditProductModalProps) {
     setMessageError,
     isProcessingServices,
   } = props;
+  const { getAuthorizationToken } = useToken();
 
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
   const [incrementType, setIncrementType] = useState<
@@ -204,10 +206,13 @@ function EditProductModal(props: EditProductModalProps) {
         ],
       };
 
+      const authorizationToken = await getAuthorizationToken();
+
       const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
+        authorizationToken,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -257,10 +262,13 @@ function EditProductModal(props: EditProductModalProps) {
         ],
       };
 
+      const authorizationToken = await getAuthorizationToken();
+
       const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
+        authorizationToken,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -297,11 +305,14 @@ function EditProductModal(props: EditProductModalProps) {
     try {
       setInterestRateError("");
 
+      const authorizationToken = await getAuthorizationToken();
+
       const response = await getEffectiveInterestRate(
         businessUnitPublicCode,
         businessManagerCode,
         initialValues.creditLine,
         customerData.publicCode,
+        authorizationToken,
       );
 
       const periodicInterestRateMin = response?.periodicInterestRateMin || 0;

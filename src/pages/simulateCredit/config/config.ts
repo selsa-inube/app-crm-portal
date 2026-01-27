@@ -101,3 +101,14 @@ export const dataSubmitApplication = {
     },
   },
 };
+
+export const modifyJustification = {
+  message: {
+    code: "Modify_justification_message",
+    description: "Manual update justification message",
+    i18n: {
+      en: "Manual update during credit simulation",
+      es: "Actualización manual durante la simulación de crédito",
+    },
+  },
+};

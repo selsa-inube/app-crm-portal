@@ -40,11 +40,11 @@ export const dataAddSeriesModal = {
     },
   },
   labelPaymentMethod: {
-    code: "Payment_method_label",
-    description: "Payment channel",
+    code: "Payment_cycle_label",
+    description: "Payment cycle",
     i18n: {
-      en: "Payment channel",
-      es: "Medio de pago",
+      en: "Payment cycle",
+      es: "Ciclo de pago",
     },
   },
   labelAmount: {
@@ -104,3 +104,5 @@ export const dataAddSeriesModal = {
     },
   },
 };
+
+export const defaultFrequency = "Anual";

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { IBusinessUnitRules } from "@services/businessUnitRules/types";
+import { useToken } from "@hooks/useToken";
 
 import { AmountCaptureUI } from "./interface";
 import {
@@ -20,6 +21,8 @@ export function AmountCapture(props: IAmountCaptureProps) {
     onChange,
     onFormValid,
   } = props;
+
+  const { getAuthorizationToken } = useToken();
 
   const [loanAmountError, setLoanAmountError] = useState<string>("");
   const [displayValue, setDisplayValue] = useState<string>("");
@@ -41,10 +44,13 @@ export function AmountCapture(props: IAmountCaptureProps) {
         ],
       };
 
+      const authorizationToken = await getAuthorizationToken();
+
       const decisions = await postBusinessUnitRules(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
+        authorizationToken,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {

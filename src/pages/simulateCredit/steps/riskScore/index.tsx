@@ -18,6 +18,7 @@ interface IRiskScoreProps {
   date: string;
   isMobile: boolean;
   lang: EnumType;
+  isLoadingUpdate?: boolean;
   handleOnChange: (riskScore: { value: number; date: string }) => void;
   logo?: string;
   resetScore?: () => void;
@@ -33,11 +34,11 @@ export function RiskScore(props: IRiskScoreProps) {
     lang,
     handleOnChange,
     logo,
-    isProspect = false,
+    isLoadingUpdate = false,
   } = props;
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isLoadingUpdate);
 
   const validationSchema = Yup.object({
     score: Yup.number().required(""),
@@ -61,15 +62,6 @@ export function RiskScore(props: IRiskScoreProps) {
       setShowEditModal(false);
     },
   });
-
-  useEffect(() => {
-    if (!isProspect) {
-      handleOnChange({
-        value: value,
-        date: date,
-      });
-    }
-  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -29,6 +29,7 @@ import { IExtraordinaryInstallments } from "@services/creditRequest/types";
 import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { BaseModal } from "../baseModal";
 import {
@@ -70,6 +71,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     userAccount,
     lang,
   } = props;
+  const { getAuthorizationToken } = useToken();
 
   const [currentTab, setCurrentTab] = useState("ordinary");
   const [selectedDetail, setSelectedDetail] =
@@ -118,10 +120,13 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
           professionalFees: incomeData.ProfessionalFees || 0,
         };
 
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await postBusinessUnitRules(
           businessUnitPublicCode,
           businessManagerCode,
           submitData,
+          authorizationToken,
         );
 
         if (data) {

@@ -17,6 +17,7 @@ import { restoreIncomeInformationByBorrowerId } from "@services/prospect/restore
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { IProspect } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import {
   IncomeEmployment,
@@ -78,6 +79,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
     lang,
     onCapitalTotalChange,
   } = props;
+  const { getAuthorizationToken } = useToken();
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
@@ -263,10 +265,13 @@ export function SourceIncome(props: ISourceIncomeProps) {
     };
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const response = await restoreIncomeInformationByBorrowerId(
         businessUnitPublicCode || "",
         businessManagerCode,
         body,
+        authorizationToken,
       );
       if (response && response.income) {
         const restoredIncome = {

@@ -20,7 +20,7 @@ import { CustomerContext } from "@context/CustomerContext";
 import { checkSimulationPrerequisites } from "@services/prospect/checkSimulationPrerequisites";
 import { Fieldset } from "@components/data/Fieldset";
 import { getProspectsByCustomerCode } from "@services/prospect/SearchAllProspectsByCustomerCode";
-import { RemoveProspect } from "@services/prospect/removeProspect";
+import { cancelProspect } from "@services/prospect/cancelProspect";
 import { AppContext } from "@context/AppContext";
 import { IProspect } from "@services/prospect/types";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
@@ -33,6 +33,7 @@ import { privilegeCrm } from "@config/privilege";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import userImage from "@assets/images/userImage.jpeg";
 import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
+import { useToken } from "@hooks/useToken";
 
 import {
   addConfig,
@@ -50,6 +51,7 @@ import { StyledContainer } from "./components/CardCreditProspect/styles";
 export function CreditProspects() {
   const isMobile = useMediaQuery("(max-width:880px)");
   const { addFlag } = useFlag();
+  const { getAuthorizationToken } = useToken();
 
   const { customerData } = useContext(CustomerContext);
   const dataHeader = {
@@ -98,13 +100,23 @@ export function CreditProspects() {
 
     try {
       setIsLoadingDelete(true);
-      await RemoveProspect(businessUnitPublicCode, businessManagerCode, {
-        removeProspectsRequest: [
-          {
-            prospectId: selectedProspect.prospectId,
-          },
-        ],
-      });
+
+      const authorizationToken = await getAuthorizationToken();
+
+      await cancelProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        {
+          cancelProspectsRequest: [
+            {
+              prospectId: selectedProspect.prospectId,
+              prospectCode: selectedProspect.prospectCode,
+              clientIdentificationNumber: customerData.publicCode,
+            },
+          ],
+        },
+        authorizationToken,
+      );
 
       setProspectSummaryData((prev) =>
         prev.filter(
@@ -135,11 +147,14 @@ export function CreditProspects() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const authorizationToken = await getAuthorizationToken();
+
         const result = await getProspectsByCustomerCode(
           businessUnitPublicCode,
           businessManagerCode,
           customerData.publicCode,
           "Created",
+          authorizationToken,
         );
 
         if (result && result.length > 0) {
@@ -164,9 +179,12 @@ export function CreditProspects() {
       try {
         setIsLoadingCheck(true);
 
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await checkSimulationPrerequisites(
           businessUnitPublicCode,
           customerData.publicCode,
+          authorizationToken,
         );
 
         if (data?.canSimulate === "Y") setCanPerformSimulations(true);
@@ -227,10 +245,14 @@ export function CreditProspects() {
 
     try {
       setLoadingComments(true);
+
+      const authorizationToken = await getAuthorizationToken();
+
       const result = await updateProspect(
         businessUnitPublicCode,
         businessManagerCode,
         updatedProspect,
+        authorizationToken,
       );
 
       setProspectSummaryData((prev) =>
@@ -276,9 +298,13 @@ export function CreditProspects() {
 
     try {
       setLoadingConfirm(true);
+
+      const authorizationToken = await getAuthorizationToken();
+
       const validationResult = await validatePrerequisitesForCreditApplication(
         businessUnitPublicCode,
         selectedProspect.prospectCode,
+        authorizationToken,
       );
 
       if (

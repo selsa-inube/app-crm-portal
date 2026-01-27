@@ -10,6 +10,7 @@ import { AppContext } from "@context/AppContext";
 import { ICreditRequest, ITraceType } from "@services/creditRequest/types";
 import { getTraceByCreditRequestId } from "@services/creditRequest/getTraceByCreditRequestId";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { ChatContent, SkeletonContainer, SkeletonLine } from "./styles";
 import { traceObserver, errorObserver, errorMessages } from "../config";
@@ -24,6 +25,8 @@ interface IManagementProps {
 
 export const Management = (props: IManagementProps) => {
   const { isMobile, lang, updateData, creditRequest } = props;
+
+  const { getAuthorizationToken } = useToken();
 
   const [traces, setTraces] = useState<ITraceType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,10 +55,13 @@ export const Management = (props: IManagementProps) => {
     setError(null);
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await getTraceByCreditRequestId(
         businessUnitPublicCode,
         businessManagerCode,
         creditRequest.creditRequestId,
+        authorizationToken,
       );
       setTraces(Array.isArray(data) ? data.flat() : []);
     } catch (err) {

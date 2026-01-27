@@ -10,6 +10,7 @@ export const getTotalIncomeByBorrowerInProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   borrowerCode: string,
+  authorizationToken: string,
 ): Promise<IIncomeSourceBorrowers[]> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -25,6 +26,7 @@ export const getTotalIncomeByBorrowerInProspect = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

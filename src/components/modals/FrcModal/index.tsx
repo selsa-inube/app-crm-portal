@@ -20,6 +20,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { getCreditLimitByCreditRiskAnalysis } from "@services/creditLimit/getCreditLimitByCreditRiskAnalysis";
 import { IMaximumCreditLimitAnalysis } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 
 import { frcConfig, InfoModalType } from "./FrcConfig";
 import { StyledExpanded } from "./styles";
@@ -44,6 +45,8 @@ export const ScoreModal = (props: ScoreModalProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
+  const { getAuthorizationToken } = useToken();
+
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [currentInfoType, setCurrentInfoType] =
     useState<InfoModalType>("intercept");
@@ -65,10 +68,13 @@ export const ScoreModal = (props: ScoreModalProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await getCreditLimitByCreditRiskAnalysis(
           businessUnitPublicCode,
           businessManagerCode,
           clientIdentificationNumber,
+          authorizationToken,
         );
 
         if (data) {

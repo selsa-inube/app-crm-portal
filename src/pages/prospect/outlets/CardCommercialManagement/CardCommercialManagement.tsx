@@ -31,6 +31,7 @@ import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { useToken } from "@hooks/useToken";
 
 import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
@@ -76,6 +77,8 @@ export const CardCommercialManagement = (
     setShowMessageSuccessModal,
     onProspectRefreshData,
   } = props;
+  const { getAuthorizationToken } = useToken();
+
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
@@ -137,10 +140,18 @@ export const CardCommercialManagement = (
     if (!prospectData || !prospectProducts.length) return;
     try {
       setIsLoading(true);
-      await RemoveCreditProduct(businessUnitPublicCode, businessManagerCode, {
-        creditProductCode: selectedProductId,
-        prospectId: prospectData.prospectId,
-      });
+
+      const authorizationToken = await getAuthorizationToken();
+
+      await RemoveCreditProduct(
+        businessUnitPublicCode,
+        businessManagerCode,
+        {
+          creditProductCode: selectedProductId,
+          prospectId: prospectData.prospectId,
+        },
+        authorizationToken,
+      );
       setProspectProducts((prev) =>
         prev.filter(
           (product) => product.creditProductCode !== selectedProductId,
@@ -153,6 +164,7 @@ export const CardCommercialManagement = (
             businessUnitPublicCode,
             businessManagerCode,
             prospectData.prospectId,
+            authorizationToken,
           );
           if (onProspectUpdate) {
             onProspectUpdate(updatedProspect);
@@ -197,10 +209,13 @@ export const CardCommercialManagement = (
         installmentAmount: Number(values.installmentAmount),
       };
 
+      const authorizationToken = await getAuthorizationToken();
+
       await updateCreditProduct(
         businessUnitPublicCode,
         businessManagerCode,
         payload,
+        authorizationToken,
       );
 
       if (prospectData?.prospectId) {
@@ -208,6 +223,7 @@ export const CardCommercialManagement = (
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
+          authorizationToken,
         );
         if (onProspectUpdate) {
           onProspectUpdate(updatedProspect);
@@ -240,10 +256,14 @@ export const CardCommercialManagement = (
     const fetchData = async () => {
       try {
         setIsLoadingSummary(true);
+
+        const authorizationToken = await getAuthorizationToken();
+
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData?.prospectId || "",
+          authorizationToken,
         );
         setIsLoadingSummary(false);
         if (result && setProspectSummaryData) {
@@ -265,10 +285,13 @@ export const CardCommercialManagement = (
 
     const fetchExpenses = async () => {
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await getAllDeductibleExpensesById(
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
+          authorizationToken,
         );
         setDeductibleExpenses(data);
       } catch (error) {

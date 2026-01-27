@@ -4,13 +4,14 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IRemoveProspect, IRemoveProspectResponse } from "../types";
+import { ICancelProspect, ICancelProspectResponse } from "../types";
 
-export const RemoveProspect = async (
+export const cancelProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: IRemoveProspect,
-): Promise<IRemoveProspectResponse | undefined> => {
+  payload: ICancelProspect,
+  authorizationToken: string,
+): Promise<ICancelProspectResponse | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
 
@@ -19,12 +20,13 @@ export const RemoveProspect = async (
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
-        method: "DELETE",
+        method: "PATCH",
         headers: {
-          "X-Action": "RemoveProspect",
+          "X-Action": "CancelProspect",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,

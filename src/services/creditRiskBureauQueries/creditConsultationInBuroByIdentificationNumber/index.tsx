@@ -3,43 +3,41 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { ICreditRiskBureauQuery } from "../types";
 
-import { IapproveRequirement, IapproveRequirementResponse } from "./types";
-
-export const approveRequirementById = async (
+export const creditConsultationInBuroByIdentificationNumber = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: IapproveRequirement,
-): Promise<IapproveRequirementResponse[] | undefined> => {
+  clientIdentificationNumber: string,
+  authorizationToken: string,
+): Promise<ICreditRiskBureauQuery[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-
       const options: RequestInit = {
-        method: "PATCH",
+        method: "GET",
         headers: {
-          "X-Action": "ApproveRequirementById",
+          "X-Action": "CreditConsultationInBuroByIdentificationNumber",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
-        body: JSON.stringify(payload),
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/requirements-packages`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-risk-bureau-queries/${clientIdentificationNumber}`,
         options,
       );
 
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return;
+        return null;
       }
 
       const data = await res.json();
@@ -62,9 +60,11 @@ export const approveRequirementById = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo evaluar los requisitos.",
+          "Todos los intentos fallaron. No se pudo obtener los datos del buro de crédito.",
         );
       }
     }
   }
+
+  return null;
 };
