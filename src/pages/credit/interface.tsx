@@ -28,6 +28,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { InteractiveBox } from "@components/cards/interactiveBox";
 import { BaseModal } from "@components/modals/baseModal";
+import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
 import {
   addConfig,
@@ -71,6 +72,15 @@ const CreditUI = (props: ICreditUIProps) => {
   const isTablet: boolean = useMediaQuery("(max-width: 1024px)");
   const location = useLocation();
   const { addFlag } = useFlag();
+  const { disabledButton: cannotSimulateCredit } = useValidateUseCase({
+    useCase: getUseCaseValue("canSimulateCredit"),
+  });
+
+  const { disabledButton: cannotRequestCredit } = useValidateUseCase({
+    useCase: getUseCaseValue("canRequestCredit"),
+  });
+
+  const isPayrollAdvanceDisabled = cannotSimulateCredit || cannotRequestCredit;
 
   const mergeSubOptions = (
     backendOptions: IOptionStaff[],
@@ -107,6 +117,15 @@ const CreditUI = (props: ICreditUIProps) => {
   );
 
   const handleCardClick = (title: string, url: string, optionId: string) => {
+    if (
+      optionId === advancePaymentModal.tag.subtitle &&
+      isPayrollAdvanceDisabled
+    ) {
+      setMessageError(errorDataCredit.noPrivileges.i18n[lang]);
+      setShowErrorModal(true);
+      return;
+    }
+
     if (optionId === advancePaymentModal.tag.subtitle) {
       handleOpenInfoModal();
     } else if (title === advancePaymentModal.textPayrool) {
@@ -152,6 +171,7 @@ const CreditUI = (props: ICreditUIProps) => {
       window.history.replaceState({}, document.title);
     }
   }, [location]);
+
   return (
     <>
       {codeError ? (
@@ -232,7 +252,11 @@ const CreditUI = (props: ICreditUIProps) => {
                             title={title}
                             subtitle={subtitle}
                             url={url}
-                            isDisabled={isDisabled}
+                            isDisabled={
+                              isDisabled ||
+                              (optionId === advancePaymentModal.tag.subtitle &&
+                                isPayrollAdvanceDisabled)
+                            }
                             onClick={() =>
                               handleCardClick(title, url, optionId)
                             }

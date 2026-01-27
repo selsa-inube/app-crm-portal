@@ -24,21 +24,25 @@ export const VerificationPayrollOrnBonus = (
 ) => {
   const { steps, setCurrentStep, destinationOfMoney, advanceType } = props;
   const isMobile = useMediaQuery("(max-width: 740px)");
-
-  const personalInfoAttributes = [
-    createAttribute(
-      steps.personalInfo.requirements[1].requirementName,
-      steps.personalInfo.requirements[1].descriptionEvaluationRequirement,
-    ),
-    createAttribute(
-      steps.personalInfo.requirements[2].requirementName,
-      steps.personalInfo.requirements[2].descriptionEvaluationRequirement,
-    ),
-    createAttribute(
-      steps.personalInfo.requirements[3].requirementName,
-      steps.personalInfo.requirements[3].descriptionEvaluationRequirement,
-    ),
-  ].filter((attr) => attr.value);
+  const personalInfoAttributes = steps.personalInfo?.requirements
+    ? [
+        steps.personalInfo.requirements[1] &&
+          createAttribute(
+            steps.personalInfo.requirements[1].requirementName,
+            steps.personalInfo.requirements[1].descriptionEvaluationRequirement,
+          ),
+        steps.personalInfo.requirements[2] &&
+          createAttribute(
+            steps.personalInfo.requirements[2].requirementName,
+            steps.personalInfo.requirements[2].descriptionEvaluationRequirement,
+          ),
+        steps.personalInfo.requirements[3] &&
+          createAttribute(
+            steps.personalInfo.requirements[3].requirementName,
+            steps.personalInfo.requirements[3].descriptionEvaluationRequirement,
+          ),
+      ].filter((attr) => attr && attr.value)
+    : [];
 
   const advanceTypeAttributes = [
     createAttribute(
@@ -50,8 +54,8 @@ export const VerificationPayrollOrnBonus = (
   ].filter((attr) => attr.value);
 
   const methodOfDisbursement = [
-    ...(steps.methodOfDisbursement.Internal_account.amount > 0 ||
-    steps.methodOfDisbursement.Internal_account.accountNumber
+    ...(steps.methodOfDisbursement?.Internal_account?.amount > 0 ||
+    steps.methodOfDisbursement?.Internal_account?.accountNumber
       ? [
           createAttribute(
             verificatioModalConfig.methodOfDisbursement.amount,
@@ -76,7 +80,8 @@ export const VerificationPayrollOrnBonus = (
             : []),
         ]
       : []),
-  ].filter((attr) => attr.value);
+  ].filter((attr) => attr && attr.value);
+
   const incomeAttributes: IAttributes[] = [];
 
   if (steps.destinations) {
