@@ -1,3 +1,5 @@
+import { ICRMPortalData } from "@context/AppContext/types";
+
 interface IUser {
   id: string;
   username: string;
@@ -10,4 +12,10 @@ interface IUser {
   clients: number[];
 }
 
-export type { IUser };
+interface ILoginUI {
+  eventData: ICRMPortalData;
+  screenMobile: boolean;
+  screenDesktop: boolean;
+}
+
+export type { IUser, ILoginUI };
