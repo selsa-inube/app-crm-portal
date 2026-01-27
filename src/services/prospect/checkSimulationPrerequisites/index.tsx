@@ -9,6 +9,7 @@ import { simulationPrerequisites } from "../types";
 export const checkSimulationPrerequisites = async (
   businessUnitPublicCode: string,
   clientIdentificationNumber: string,
+  authorizationToken: string,
 ): Promise<simulationPrerequisites | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -23,6 +24,7 @@ export const checkSimulationPrerequisites = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": clientIdentificationNumber,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

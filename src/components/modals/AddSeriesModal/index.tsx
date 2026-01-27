@@ -28,6 +28,7 @@ import {
   IProspect,
 } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { useToken } from "@hooks/useToken";
 import { searchExtraInstallmentPaymentCyclesByCustomerCode } from "@services/creditLimit/extraInstallmentPaymentCyles/searchExtraInstallmentPaymentCyclesByCustomerCode";
 import { CustomerContext } from "@context/CustomerContext";
 import { CardGray } from "@components/cards/CardGray";
@@ -98,6 +99,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
+  const { getAuthorizationToken } = useToken();
   const { customerData } = useContext(CustomerContext);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -311,9 +313,13 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   ) => {
     try {
       setIsLoading(true);
+
+      const authorizationToken = await getAuthorizationToken();
+
       await saveExtraordinaryInstallment(
         businessUnitPublicCode,
         extraordinaryInstallments,
+        authorizationToken,
       );
 
       setSentData?.(extraordinaryInstallments);

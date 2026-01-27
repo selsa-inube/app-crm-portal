@@ -58,6 +58,7 @@ const Home = () => {
       error = 1016;
       messages.push(errorDataCredit.noSelectClient.i18n[lang]);
     }
+
     if (!optionStaffData || optionStaffData.length === 0) {
       error = 1041;
       messages.push(errorDataCredit.errorData.i18n[lang]);

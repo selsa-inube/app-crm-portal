@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries";
+import { useToken } from "@hooks/useToken";
 
 import { ScoreModalProspectUI } from "./interface";
 import { IScore } from "./types";
@@ -27,6 +28,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     setShowMessageSuccessModal,
     setMessageError,
   } = props;
+  const { getAuthorizationToken } = useToken();
 
   const [firstScore, setFirstScore] = useState<IScore | null>(null);
   const [secondScore, setSecondScore] = useState<IScore | null>(null);
@@ -37,10 +39,13 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     if (!customerPublicCode) return;
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await creditConsultationInBuroByIdentificationNumber(
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
+        authorizationToken,
       );
 
       if (data && data.length > 0) {

@@ -10,6 +10,7 @@ export const getCustomerCatalog = async (
   businessManagerCode: string,
   fullName?: string,
   publicCode?: string,
+  authorizationToken?: string,
 ): Promise<ICustomerCatalog[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ export const getCustomerCatalog = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

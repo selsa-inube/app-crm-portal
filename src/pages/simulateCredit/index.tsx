@@ -34,6 +34,7 @@ import {
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries";
+import { useToken } from "@hooks/useToken";
 
 import { stepsAddProspect } from "./config/addProspect.config";
 import { getFinancialObligations } from "./steps/extraDebtors/utils";
@@ -53,6 +54,8 @@ import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/typ
 import { textAddConfig } from "./config/addConfig";
 
 export function SimulateCredit() {
+  const { getAuthorizationToken } = useToken();
+
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddProspect.generalInformation.id,
   );
@@ -329,11 +332,14 @@ export function SimulateCredit() {
     if (!clientInfo?.associateType || !formData.selectedDestination) return;
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
         businessUnitPublicCode,
         businessManagerCode,
         formData.selectedDestination,
         customerData.publicCode,
+        authorizationToken,
       );
 
       const linesArray = Array.isArray(lineOfCreditValues)
@@ -370,6 +376,8 @@ export function SimulateCredit() {
   const fetchRulesByProducts = useCallback(async () => {
     setLoadingQuestions(true);
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const results = await Promise.all(
         formData.selectedProducts.map(async (product) => {
           const [financial, borrowers, extra] = await Promise.all([
@@ -379,6 +387,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
+              authorizationToken,
             ),
             getAdditionalBorrowersAllowed(
               businessUnitPublicCode,
@@ -386,6 +395,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
+              authorizationToken,
             ),
             getExtraInstallmentsAllowed(
               businessUnitPublicCode,
@@ -393,6 +403,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
+              authorizationToken,
             ),
           ]);
 
@@ -427,10 +438,13 @@ export function SimulateCredit() {
       return;
     }
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await getFinancialObligations(
         customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
+        authorizationToken,
       );
 
       setClientPortfolio({
@@ -474,10 +488,13 @@ export function SimulateCredit() {
     };
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const paymentCapacity = await getBorrowerPaymentCapacityById(
         businessUnitPublicCode,
         businessManagerCode,
         data,
+        authorizationToken,
       );
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
@@ -491,10 +508,13 @@ export function SimulateCredit() {
       return;
     }
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await getCreditPayments(
         customerPublicCode,
         businessUnitPublicCode,
         businessManagerCode,
+        authorizationToken,
       );
       setObligationPayment(data ?? null);
     } catch (error: unknown) {
@@ -530,10 +550,13 @@ export function SimulateCredit() {
       linesOfCredit: formData.selectedProducts,
     };
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const dataPaymentDates = await GetSearchAllPaymentChannels(
         businessUnitPublicCode,
         businessManagerCode,
         data,
+        authorizationToken,
       );
       setPaymentChannel(dataPaymentDates ?? null);
     } catch (error: unknown) {
@@ -687,10 +710,13 @@ export function SimulateCredit() {
     if (!customerData.publicCode) return;
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const data = await creditConsultationInBuroByIdentificationNumber(
         businessUnitPublicCode,
         businessManagerCode,
         customerData.publicCode,
+        authorizationToken,
       );
 
       if (data && data.length > 0) {
@@ -737,11 +763,14 @@ export function SimulateCredit() {
     }
 
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const response = await postSimulateCredit(
         businessUnitPublicCode,
         businessManagerCode,
         customerData.publicCode,
         simulateData,
+        authorizationToken,
       );
       const prospectCode = response?.prospectCode;
 
@@ -763,10 +792,13 @@ export function SimulateCredit() {
 
   const fetchCreditLimit = async () => {
     try {
+      const authorizationToken = await getAuthorizationToken();
+
       const result = await getCreditLimit(
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
+        authorizationToken,
       );
       setCreditLimitData(result);
     } catch (error: unknown) {
@@ -812,10 +844,13 @@ export function SimulateCredit() {
     const handleSubmit = async () => {
       setIsLoading(true);
       try {
+        const authorizationToken = await getAuthorizationToken();
+
         const data = await patchValidateRequirements(
           businessUnitPublicCode,
           businessManagerCode,
           payload,
+          authorizationToken,
         );
         if (data) {
           setValidateRequirements(data);

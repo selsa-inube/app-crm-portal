@@ -9,6 +9,7 @@ const getSearchProspectById = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   prospectCode: string,
+  authorizationToken: string,
 ): Promise<IProspect> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -24,6 +25,7 @@ const getSearchProspectById = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

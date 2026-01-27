@@ -11,6 +11,7 @@ export const getEffectiveInterestRate = async (
   businessManagerCode: string,
   lineOfCreditAbbreviatedName: string,
   clientIdentificationNumber: string,
+  authorizationToken: string,
 ): Promise<IEffectiveInterestRateResponse | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -25,6 +26,7 @@ export const getEffectiveInterestRate = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         signal: controller.signal,
       };

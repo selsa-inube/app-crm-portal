@@ -10,6 +10,7 @@ export const cancelProspect = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
   payload: ICancelProspect,
+  authorizationToken: string,
 ): Promise<ICancelProspectResponse | undefined> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -25,6 +26,7 @@ export const cancelProspect = async (
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           "X-Process-Manager": businessManagerCode,
+          Authorization: `Bearer ${authorizationToken}`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,

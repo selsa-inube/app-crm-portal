@@ -220,11 +220,13 @@ export const getFinancialObligations = async (
   publicCode: string,
   businessUnitPublicCode: string,
   businessManagerCode: string,
+  authorizationToken: string,
 ) => {
   const obligations = await getClientPortfolioObligationsById(
     businessUnitPublicCode || "",
     businessManagerCode,
     publicCode,
+    authorizationToken,
   );
 
   if (!obligations || !obligations.obligations) return;
@@ -236,6 +238,7 @@ export const getFinancialObligations = async (
         businessManagerCode,
         obligations.customerIdentificationNumber,
         obligation.obligationNumber,
+        authorizationToken,
       );
 
       if (!obligationGeneralInformation) return null;
