@@ -340,7 +340,7 @@ export function DisbursementWithExternalAccount(
 
         const response = await getAllBancks(eventData.token);
         const formattedBanks = response.map((bank) => ({
-          id: bank.bankId,
+          id: bank.documentNumber,
           label: bank.bankName,
           value: bank.bankName,
         }));
@@ -499,9 +499,16 @@ export function DisbursementWithExternalAccount(
               size="compact"
               options={banks}
               onBlur={formik.handleBlur}
-              onChange={(_, value) =>
-                formik.setFieldValue(`${optionNameForm}.bank`, value)
-              }
+              onChange={(_, value) => {
+                const selectedBank = banks.find((bank) => bank.value === value);
+
+                formik.setFieldValue(`${optionNameForm}.bank`, value);
+
+                formik.setFieldValue(
+                  `${optionNameForm}.bankCode`,
+                  selectedBank?.id || "",
+                );
+              }}
               value={formik.values[optionNameForm]?.bank || ""}
               invalid={alreadyShowMessageErrorBank && banks.length === 0}
               message={
