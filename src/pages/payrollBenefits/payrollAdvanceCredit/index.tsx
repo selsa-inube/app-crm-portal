@@ -307,7 +307,7 @@ export function PayrollAdvanceCredit() {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
-          customerData.token,
+          eventData.token,
         );
         if (data) {
           setValidateRequirements(data);

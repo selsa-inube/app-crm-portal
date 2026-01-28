@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useFlag } from "@inubekit/inubekit";
 
 import { EnumType } from "@hooks/useEnum/useEnum";
@@ -8,7 +8,7 @@ import {
   ICreditRiskBureauQuery,
   IUpdateCreditRiskBureauQuery,
 } from "@services/creditRiskBureauQueries/types";
-import { CustomerContext } from "@context/CustomerContext";
+import { ICRMPortalData } from "@context/AppContext/types";
 
 import { ScoreModalProspectUI } from "./interface";
 import { IScore } from "./types";
@@ -23,6 +23,7 @@ interface IScoreModalProspectProps {
   handleClose: () => void;
   setShowMessageSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  eventData: ICRMPortalData;
 }
 export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
   const {
@@ -34,10 +35,10 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     businessManagerCode,
     setShowMessageSuccessModal,
     setMessageError,
+    eventData,
   } = props;
 
   const { addFlag } = useFlag();
-  const { customerData } = useContext(CustomerContext);
 
   const [newFirstScore, setNewFirstScore] = useState<IScore | null>(null);
   const [newSecondScore, setNewSecondScore] = useState<IScore | null>(null);
@@ -57,7 +58,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
-        customerData.token,
+        eventData.token,
       );
 
       if (data && data.length > 0) {

@@ -35,7 +35,7 @@ export function useRestoreIncomeData({
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
-        customerData.token,
+        eventData.token,
       );
       onSuccess?.(refreshedData);
       return refreshedData;

@@ -18,7 +18,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { getGlobalCreditLimitByLineOfCredit } from "@services/creditLimit/getGlobalCreditLimitByLineOfCredit";
 import { IMaximumCreditLimitByLineOfCredit } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
 
 import { creditLimitTexts, renderSkeletons } from "./creditLimitConfig";
 import { StyledList } from "./styles";
@@ -53,7 +53,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
-  const { customerData } = useContext(CustomerContext);
+  const { eventData } = useContext(AppContext);
 
   const [error, setError] = useState(false);
   const [internalLoading, setInternalLoading] = useState(true);
@@ -71,7 +71,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
           businessUnitPublicCode,
           businessManagerCode,
           clientIdentificationNumber,
-          customerData.token,
+          eventData.token,
         );
 
         if (data) {

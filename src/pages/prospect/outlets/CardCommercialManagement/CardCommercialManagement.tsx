@@ -31,7 +31,6 @@ import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { CustomerContext } from "@context/CustomerContext";
 
 import InfoModal from "../../components/InfoModal";
 import { SummaryProspectCredit, tittleOptions } from "./config/config";
@@ -77,7 +76,6 @@ export const CardCommercialManagement = (
     setShowMessageSuccessModal,
     onProspectRefreshData,
   } = props;
-  const { customerData } = useContext(CustomerContext);
 
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
@@ -148,7 +146,7 @@ export const CardCommercialManagement = (
           creditProductCode: selectedProductId,
           prospectId: prospectData.prospectId,
         },
-        customerData.token,
+        eventData.token,
       );
       setProspectProducts((prev) =>
         prev.filter(
@@ -162,7 +160,7 @@ export const CardCommercialManagement = (
             businessUnitPublicCode,
             businessManagerCode,
             prospectData.prospectId,
-            customerData.token,
+            eventData.token,
           );
           if (onProspectUpdate) {
             onProspectUpdate(updatedProspect);
@@ -211,7 +209,7 @@ export const CardCommercialManagement = (
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        customerData.token,
+        eventData.token,
       );
 
       if (prospectData?.prospectId) {
@@ -219,7 +217,7 @@ export const CardCommercialManagement = (
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
-          customerData.token,
+          eventData.token,
         );
         if (onProspectUpdate) {
           onProspectUpdate(updatedProspect);
@@ -257,7 +255,7 @@ export const CardCommercialManagement = (
           businessUnitPublicCode,
           businessManagerCode,
           prospectData?.prospectId || "",
-          customerData.token,
+          eventData.token,
         );
         setIsLoadingSummary(false);
         if (result && setProspectSummaryData) {
@@ -283,7 +281,7 @@ export const CardCommercialManagement = (
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
-          customerData.token,
+          eventData.token,
         );
         setDeductibleExpenses(data);
       } catch (error) {
@@ -506,6 +504,7 @@ export const CardCommercialManagement = (
             onProspectRefreshData={onProspectRefreshData}
             showEdit={showAddProduct}
             lang={lang}
+            eventData={eventData}
           />
         )}
         {showDeductibleExpensesModal && (

@@ -20,7 +20,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { getCreditLimitByCreditRiskAnalysis } from "@services/creditLimit/getCreditLimitByCreditRiskAnalysis";
 import { IMaximumCreditLimitAnalysis } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
 
 import { frcConfig, InfoModalType } from "./FrcConfig";
 import { StyledExpanded } from "./styles";
@@ -45,7 +45,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
-  const { customerData } = useContext(CustomerContext);
+  const { eventData } = useContext(AppContext);
 
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [currentInfoType, setCurrentInfoType] =
@@ -72,7 +72,7 @@ export const ScoreModal = (props: ScoreModalProps) => {
           businessUnitPublicCode,
           businessManagerCode,
           clientIdentificationNumber,
-          customerData.token,
+          eventData.token,
         );
 
         if (data) {
