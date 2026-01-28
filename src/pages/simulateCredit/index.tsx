@@ -53,7 +53,6 @@ import {
   updateFinancialObligationsFormData,
 } from "./steps/extraDebtors/utils";
 import { IdataMaximumCreditLimitService } from "./components/CreditLimitCard/types";
-import { textAddConfig } from "./config/addConfig";
 
 export function SimulateCredit() {
   const { addFlag } = useFlag();
@@ -211,7 +210,7 @@ export function SimulateCredit() {
 
     const financialObligationProperties =
       formData.obligationsFinancial?.obligations?.map((obligation) => ({
-        propertyName: textAddConfig.financialObligation.i18n[lang],
+        propertyName: "FinancialObligation",
         propertyValue: [
           obligation.productName,
           obligation.nextPaymentValueTotal,
