@@ -163,7 +163,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
               businessManagerCode,
               clientIdentificationNumber,
               lineOfCreditAbbreviatedName,
-              customerData.token,
+              eventData.token,
             );
           if (response === null) {
             return;
@@ -316,7 +316,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       await saveExtraordinaryInstallment(
         businessUnitPublicCode,
         extraordinaryInstallments,
-        customerData.token,
+        eventData.token,
       );
 
       setSentData?.(extraordinaryInstallments);

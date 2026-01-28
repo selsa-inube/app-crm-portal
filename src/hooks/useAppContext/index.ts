@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useContext } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useIAuth } from "@inube/iauth-react";
 
 import { IStaffPortalByBusinessManager } from "@services/staff-portals-by-business-manager/types";
@@ -14,7 +14,6 @@ import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
 import { getSearchUseCaseForStaff } from "@services/staffs/SearchUseCaseForStaff";
-import { CustomerContext } from "@context/CustomerContext";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -25,8 +24,11 @@ interface IBusinessUnits {
 }
 
 function useAppContext() {
-  const { user, isLoading: isIAuthLoading } = useIAuth();
-  const { customerData } = useContext(CustomerContext);
+  const {
+    user,
+    isLoading: isIAuthLoading,
+    getAccessTokenSilently,
+  } = useIAuth();
 
   const [portalData, setPortalData] = useState<IStaffPortalByBusinessManager[]>(
     [],
@@ -106,7 +108,23 @@ function useAppContext() {
         useCases: [],
       },
     },
+    token: "",
   });
+
+  useEffect(() => {
+    const obtenerDatos = async () => {
+      try {
+        const tokenData = await getAccessTokenSilently();
+        setEventData((prev) => ({
+          ...prev,
+          token: tokenData,
+        }));
+      } catch (error) {
+        console.error("Error Token:", error);
+      }
+    };
+    obtenerDatos();
+  }, [getAccessTokenSilently]);
 
   useEffect(() => {
     if (!isIAuthLoading) {
@@ -231,7 +249,7 @@ function useAppContext() {
           eventData.portal.publicCode,
           eventData.businessUnit.businessUnitPublicCode,
           userIdentifier || "",
-          customerData.token,
+          eventData.token,
         );
         setOptionStaffData(result);
       } catch (error) {

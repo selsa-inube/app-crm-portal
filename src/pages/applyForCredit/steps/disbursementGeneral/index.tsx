@@ -187,6 +187,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 prospectSummaryData={prospectSummaryData}
                 businessManagerCode={businessManagerCode}
                 lang={lang}
+                eventData={eventData}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.external.id) &&
@@ -205,6 +206,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
                 lang={lang}
+                eventData={eventData}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.check.id) &&
@@ -223,6 +225,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
                 lang={lang}
+                eventData={eventData}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.management.id) &&
@@ -241,6 +244,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
                 lang={lang}
+                eventData={eventData}
               />
             )}
           {validTabs.some((tab) => tab.id === disbursemenTabs.cash.id) &&
@@ -259,6 +263,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
                 lang={lang}
+                eventData={eventData}
               />
             )}
         </Stack>

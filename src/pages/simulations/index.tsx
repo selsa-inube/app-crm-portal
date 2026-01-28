@@ -175,7 +175,7 @@ export function Simulations() {
         {
           creditRequestCode: prospectCode!,
         },
-        customerData.token,
+        eventData.token,
       );
 
       const creditData = Array.isArray(result) ? result[0] : result;
@@ -202,7 +202,7 @@ export function Simulations() {
       const validationResult = await validatePrerequisitesForCreditApplication(
         businessUnitPublicCode,
         prospectCode!,
-        customerData.token,
+        eventData.token,
       );
 
       if (
@@ -240,7 +240,7 @@ export function Simulations() {
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode!,
-        customerData.token,
+        eventData.token,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
       setIsLoading(false);
@@ -310,7 +310,7 @@ export function Simulations() {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
-          customerData.token,
+          eventData.token,
         );
 
         if (data) {
@@ -369,7 +369,7 @@ export function Simulations() {
             },
           ],
         },
-        customerData.token,
+        eventData.token,
       );
 
       navigate("/credit/prospects");
@@ -388,7 +388,7 @@ export function Simulations() {
       const newDataProspect = await recalculateProspect(
         businessUnitPublicCode,
         prospectCode || "",
-        customerData.token,
+        eventData.token,
       );
 
       if (newDataProspect === null) {

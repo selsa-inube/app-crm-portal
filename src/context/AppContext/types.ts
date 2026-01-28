@@ -80,6 +80,7 @@ interface ICRMPortalData {
   businessManager: IBusinessManager;
   businessUnit: IBusinessUnit;
   user: IUser;
+  token: string;
 }
 
 interface IAppContext {

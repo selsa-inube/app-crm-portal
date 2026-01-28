@@ -130,6 +130,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     enums,
   } = props;
 
+  const { eventData } = useContext(AppContext);
   const { customerData } = useContext(CustomerContext);
   const customerPublicCode: string = customerData.publicCode;
 
@@ -198,7 +199,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           businessUnitPublicCode,
           businessManagerCode,
           prospectData?.prospectCode || "",
-          customerData.token,
+          eventData.token,
         );
 
       const incomesFiltered = filterIncomeByBorrower(
@@ -305,7 +306,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        customerData.token,
+        eventData.token,
       );
 
       if (prospectData?.prospectId) {
@@ -313,7 +314,7 @@ export function CreditProspect(props: ICreditProspectProps) {
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
-          customerData.token,
+          eventData.token,
         );
         setDataProspect([updatedProspect]);
         if (onProspectUpdate) {
@@ -485,7 +486,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessUnitPublicCode,
         businessManagerCode,
         updatedBorrower()[0],
-        customerData.token,
+        eventData.token,
       );
 
       if (onProspectRefreshData) onProspectRefreshData();
@@ -626,7 +627,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         businessUnitPublicCode,
         businessManagerCode,
         updatedProspect,
-        customerData.token,
+        eventData.token,
       );
 
       if (onProspectRefreshData) {
@@ -865,6 +866,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             dataProspect={prospectData as IProspect}
             isLoading={isLoading}
             lang={lang}
+            eventData={eventData}
           />
         )}
         {currentModal === "IncomeModal" && (
@@ -1067,6 +1069,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             businessManagerCode={businessManagerCode}
             setShowMessageSuccessModal={setShowMessageSuccessModal}
             setMessageError={setMessageError}
+            eventData={eventData}
           />
         )}
 

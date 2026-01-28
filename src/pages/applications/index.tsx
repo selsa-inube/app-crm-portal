@@ -106,7 +106,7 @@ export function CreditApplications() {
             clientIdentificationNumber: customerData.publicCode,
             textInSearch: debouncedSearch,
           },
-          customerData.token,
+          eventData.token,
         );
         setCreditRequestData(creditData);
       } catch {
