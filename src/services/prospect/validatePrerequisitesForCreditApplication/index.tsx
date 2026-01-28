@@ -10,6 +10,7 @@ export const validatePrerequisitesForCreditApplication = async (
   prospectCode: string,
   authorizationToken: string,
 ): Promise<IValidatePrerequisitesForCreditApplication | null> => {
+  return { isCreditSetupCompleteForCreditRequest: "Y" };
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {

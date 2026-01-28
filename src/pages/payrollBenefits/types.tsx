@@ -17,6 +17,7 @@ interface IExternalAccount extends IPersonData {
   bank: string;
   accountType: string;
   accountNumber: string;
+  bankCode: string;
 }
 interface IInternalAccount extends IPersonData {
   accountNumber: string;
