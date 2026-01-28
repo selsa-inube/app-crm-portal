@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdOutlineInfo } from "react-icons/md";
 import {
   Stack,
@@ -20,7 +20,6 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { CardGray } from "@components/cards/CardGray";
 import { BaseModal } from "@components/modals/baseModal";
-import { AppContext } from "@context/AppContext";
 
 import { disbursemenOptionAccount } from "../config";
 import {
@@ -61,7 +60,6 @@ export function DisbursementWithInternalAccount(
   } = props;
 
   const prevValues = useRef(formik.values[optionNameForm]);
-  const { eventData } = useContext(AppContext);
 
   const [isAutoCompleted, setIsAutoCompleted] = useState(false);
   const [currentIdentification, setCurrentIdentification] =
@@ -191,7 +189,7 @@ export function DisbursementWithInternalAccount(
           businessUnitPublicCode,
           businessManagerCode,
           true,
-          eventData.token,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -247,7 +245,7 @@ export function DisbursementWithInternalAccount(
           currentIdentification,
           businessUnitPublicCode,
           businessManagerCode,
-          eventData.token,
+          customerData.token,
         );
 
         const uniqueMap = new Map<

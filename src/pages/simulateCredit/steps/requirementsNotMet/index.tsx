@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { MdCheckCircleOutline } from "react-icons/md";
 import { Stack, Text, Icon } from "@inubekit/inubekit";
 
@@ -9,7 +9,6 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { AppContext } from "@context/AppContext";
 
 import { dataError, excludedStatus } from "./config";
 
@@ -31,8 +30,6 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     businessManagerCode,
     lang,
   } = props;
-
-  const { eventData } = useContext(AppContext);
 
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
@@ -56,7 +53,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
-          eventData.token,
+          customerData.token,
         );
         if (data) {
           setValidateRequirements(

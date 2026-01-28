@@ -10,6 +10,7 @@ import { AppContext } from "@context/AppContext";
 import { ICreditRequest, ITraceType } from "@services/creditRequest/types";
 import { getTraceByCreditRequestId } from "@services/creditRequest/getTraceByCreditRequestId";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { ChatContent, SkeletonContainer, SkeletonLine } from "./styles";
 import { traceObserver, errorObserver, errorMessages } from "../config";
@@ -24,6 +25,8 @@ interface IManagementProps {
 
 export const Management = (props: IManagementProps) => {
   const { isMobile, lang, updateData, creditRequest } = props;
+
+  const { customerData } = useContext(CustomerContext);
 
   const [traces, setTraces] = useState<ITraceType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +59,7 @@ export const Management = (props: IManagementProps) => {
         businessUnitPublicCode,
         businessManagerCode,
         creditRequest.creditRequestId,
-        eventData.token,
+        customerData.token,
       );
       setTraces(Array.isArray(data) ? data.flat() : []);
     } catch (err) {

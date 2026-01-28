@@ -342,7 +342,7 @@ export function SimulateCredit() {
         businessManagerCode,
         formData.selectedDestination,
         customerData.publicCode,
-        eventData.token,
+        customerData.token,
       );
 
       const linesArray = Array.isArray(lineOfCreditValues)
@@ -388,7 +388,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
-              eventData.token,
+              customerData.token,
             ),
             getAdditionalBorrowersAllowed(
               businessUnitPublicCode,
@@ -396,7 +396,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
-              eventData.token,
+              customerData.token,
             ),
             getExtraInstallmentsAllowed(
               businessUnitPublicCode,
@@ -404,7 +404,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
-              eventData.token,
+              customerData.token,
             ),
           ]);
 
@@ -443,7 +443,7 @@ export function SimulateCredit() {
         customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
-        eventData.token,
+        customerData.token,
       );
 
       setClientPortfolio({
@@ -491,7 +491,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         data,
-        eventData.token,
+        customerData.token,
       );
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
@@ -509,7 +509,7 @@ export function SimulateCredit() {
         customerPublicCode,
         businessUnitPublicCode,
         businessManagerCode,
-        eventData.token,
+        customerData.token,
       );
       setObligationPayment(data ?? null);
     } catch (error: unknown) {
@@ -549,7 +549,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         data,
-        eventData.token,
+        customerData.token,
       );
       setPaymentChannel(dataPaymentDates ?? null);
     } catch (error: unknown) {
@@ -747,7 +747,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         customerData.publicCode,
-        eventData.token,
+        customerData.token,
       );
 
       if (data && data.length > 0) {
@@ -852,7 +852,7 @@ export function SimulateCredit() {
         businessManagerCode,
         customerData.publicCode,
         simulateData,
-        eventData.token,
+        customerData.token,
       );
       const prospectCode = response?.prospectCode;
 
@@ -878,7 +878,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
-        eventData.token,
+        customerData.token,
       );
       setCreditLimitData(result);
     } catch (error: unknown) {
@@ -921,7 +921,7 @@ export function SimulateCredit() {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
-          eventData.token,
+          customerData.token,
         );
         if (data) {
           setValidateRequirements(data);

@@ -10,7 +10,7 @@ import { IAction, IEntries, ITitle } from "@components/data/TableBoard/types";
 import { getAllPackagesOfRequirementsById } from "@services/requirementsPackages/packagesOfRequirements";
 import { TraceDetailModal } from "@components/modals/TraceDetailModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { AppContext } from "@context/AppContext";
+import { CustomerContext } from "@context/CustomerContext";
 
 import {
   infoItems,
@@ -47,8 +47,7 @@ export const Requirements = (props: IRequirementsProps) => {
     creditRequestCode,
     lang,
   } = props;
-
-  const { eventData } = useContext(AppContext);
+  const { customerData } = useContext(CustomerContext);
 
   const [showSeeDetailsModal, setShowSeeDetailsModal] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
@@ -73,7 +72,7 @@ export const Requirements = (props: IRequirementsProps) => {
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode,
-        eventData.token,
+        customerData.token,
       );
 
       if (!Array.isArray(data) || data.length === 0) {

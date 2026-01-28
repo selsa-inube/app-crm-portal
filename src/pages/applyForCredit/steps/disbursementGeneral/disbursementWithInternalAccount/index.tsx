@@ -31,7 +31,6 @@ import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCa
 import { IProspectSummaryById } from "@services/prospect/types";
 import { CardGray } from "@components/cards/CardGray";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { ICRMPortalData } from "@context/AppContext/types";
 
 interface IDisbursementWithInternalAccountProps {
   isMobile: boolean;
@@ -48,7 +47,6 @@ interface IDisbursementWithInternalAccountProps {
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
   getTotalAmount: () => number;
-  eventData: ICRMPortalData;
 }
 
 export function DisbursementWithInternalAccount(
@@ -69,7 +67,6 @@ export function DisbursementWithInternalAccount(
     onFormValid,
     handleOnChange,
     prospectSummaryData,
-    eventData,
   } = props;
 
   const prevValues = useRef(formik.values[optionNameForm]);
@@ -276,7 +273,7 @@ export function DisbursementWithInternalAccount(
           businessUnitPublicCode,
           businessManagerCode,
           true,
-          eventData.token || "",
+          customerData.token || "",
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -333,7 +330,7 @@ export function DisbursementWithInternalAccount(
           currentIdentification,
           businessUnitPublicCode,
           businessManagerCode,
-          eventData.token,
+          customerData.token,
         );
 
         const uniqueMap = new Map<

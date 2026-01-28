@@ -21,7 +21,6 @@ import { paymentOptionValues } from "@services/portfolioObligation/SearchAllPort
 import { IConsolidatedCredit } from "@services/prospect/types";
 import { updateConsolidatedCredits } from "@services/prospect/updateConsolidatedCredits";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { ICRMPortalData } from "@context/AppContext/types";
 
 import { ScrollableContainer } from "./styles";
 import { ModalConfig, feedback } from "./config";
@@ -37,7 +36,6 @@ export interface ConsolidatedCreditsProps {
   >;
   consolidatedCredits: IConsolidatedCredit[];
   lang: EnumType;
-  eventData: ICRMPortalData;
   showEdit?: boolean;
   onProspectRefreshData?: () => void;
 }
@@ -53,7 +51,6 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
     consolidatedCredits,
     showEdit = true,
     onProspectRefreshData,
-    eventData,
   } = props;
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -81,7 +78,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
-        eventData.token,
+        customerData.token,
       );
       setObligationPayment(data ?? null);
     } catch (error) {
@@ -323,7 +320,7 @@ export function ConsolidatedCredits(props: ConsolidatedCreditsProps) {
         businessUnitPublicCode,
         prospectData.prospectId,
         consolidatedCredits,
-        eventData.token,
+        customerData.token,
       );
 
       if (onProspectRefreshData) {

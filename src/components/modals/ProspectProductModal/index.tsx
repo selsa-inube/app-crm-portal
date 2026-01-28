@@ -28,7 +28,6 @@ import { CardGray } from "@components/cards/CardGray";
 import { capitalizeFirstLetter } from "@utils/formatData/text";
 import { validateCurrencyFieldTruncate } from "@utils/formatData/currency";
 import { paymentCycleMap } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
-import { AppContext } from "@context/AppContext";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -82,7 +81,6 @@ function EditProductModal(props: EditProductModalProps) {
     isProcessingServices,
   } = props;
   const { customerData } = useContext(CustomerContext);
-  const { eventData } = useContext(AppContext);
 
   const [showIncrementField, setShowIncrementField] = useState<boolean>(false);
   const [incrementType, setIncrementType] = useState<
@@ -210,7 +208,7 @@ function EditProductModal(props: EditProductModalProps) {
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        eventData.token,
+        customerData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -264,7 +262,7 @@ function EditProductModal(props: EditProductModalProps) {
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        eventData.token,
+        customerData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {
@@ -306,7 +304,7 @@ function EditProductModal(props: EditProductModalProps) {
         businessManagerCode,
         initialValues.creditLine,
         customerData.publicCode,
-        eventData.token,
+        customerData.token,
       );
 
       const periodicInterestRateMin = response?.periodicInterestRateMin || 0;
