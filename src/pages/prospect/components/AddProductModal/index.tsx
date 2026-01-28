@@ -33,6 +33,7 @@ function AddProductModal(props: IAddProductModalProps) {
     dataProspect,
     lang,
     isLoading,
+    eventData,
   } = props;
   const [errorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -71,7 +72,7 @@ function AddProductModal(props: IAddProductModalProps) {
         businessManagerCode,
         moneyDestination,
         customerData!.publicCode,
-        customerData.token,
+        eventData.token,
       );
 
       const linesArray = Array.isArray(lineOfCreditValues)
@@ -132,7 +133,7 @@ function AddProductModal(props: IAddProductModalProps) {
           businessUnitPublicCode,
           businessManagerCode,
           paymentChannelRequest,
-          customerData.token,
+          eventData.token,
         );
 
         if (!response || response.length === 0) {

@@ -5,7 +5,7 @@ import { IdataMaximumCreditLimitService } from "@pages/simulateCredit/components
 import { getMaximumCreditLimitByLineOfCreditRegulation } from "@services/creditLimit/getMaximumCreditLimitByLineOfCreditRegulation";
 import { IMaximumCreditLimit } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
 
 import { MaxLimitModalUI } from "./interface";
 
@@ -30,7 +30,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
   } = props;
 
   const isMobile = useMediaQuery("(max-width: 700px)");
-  const { customerData } = useContext(CustomerContext);
+  const { eventData } = useContext(AppContext);
 
   const [error, setError] = useState(false);
   const [dataMaximumCreditLimit, setDataMaximumCreditLimit] =
@@ -51,7 +51,7 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
           dataMaximumCreditLimitService.identificationDocumentNumber,
           dataMaximumCreditLimitService.moneyDestination,
           dataMaximumCreditLimitService.primaryIncomeType,
-          customerData.token,
+          eventData.token,
         );
 
         if (data) {

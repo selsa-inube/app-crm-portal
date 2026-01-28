@@ -11,6 +11,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IStepDetails } from "@pages/payrollBenefits/types";
+import { ICRMPortalData } from "@context/AppContext/types";
 
 import { IPaymentConfiguration } from "./steps/config";
 
@@ -162,6 +163,7 @@ export interface IAddProductModalProps {
   dataProspect: IProspect;
   isLoading: boolean;
   lang: EnumType;
+  eventData: ICRMPortalData;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
   customerData?: ICustomerData;
