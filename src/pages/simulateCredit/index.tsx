@@ -840,7 +840,6 @@ export function SimulateCredit() {
     } catch (error: unknown) {
       setShowErrorModal(true);
       setMessageError(messagesError.tryLater.i18n[lang]);
-      setAllowToContinue(false);
     } finally {
       setIsLoadingCreditLimit(false);
     }
