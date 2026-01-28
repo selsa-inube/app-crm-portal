@@ -125,6 +125,7 @@ interface IExternalAccount extends IPersonData {
   bank: string;
   accountType: string;
   accountNumber: string;
+  bankCode: string;
 }
 
 export interface IDisbursementGeneral {

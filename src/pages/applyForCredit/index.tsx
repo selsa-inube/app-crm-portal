@@ -159,6 +159,7 @@ export function ApplyForCredit() {
         accountType: "",
         accountNumber: "0",
         documentType: "",
+        bankCode: "",
       },
       Certified_check: {
         amount: 0,
@@ -400,7 +401,7 @@ export function ApplyForCredit() {
   const disbursements = Object.entries(disbursementGeneral)
     .filter(([, value]) => value.amount && value.amount !== "")
     .map(([key, value]) => ({
-      accountBankCode: value.bank || businessUnitPublicCode,
+      accountBankCode: value.bankCode || businessUnitPublicCode,
       accountBankName: value.bank || businessUnitPublicCode,
       accountNumber: value.accountNumber || "0",
       accountType: value.accountType || "CH",

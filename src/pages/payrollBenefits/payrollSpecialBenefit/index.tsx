@@ -174,6 +174,7 @@ export function PayrolSpecialBenefitAdvanceCredit() {
         accountType: "",
         accountNumber: "0",
         documentType: "",
+        bankCode: "",
       },
       Certified_check: {
         amount: 0,
