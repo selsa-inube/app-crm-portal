@@ -36,8 +36,6 @@ import { IAllEnumsResponse } from "@services/enumerators/types";
 import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
 import { updateCreditRiskBureauQuery } from "@services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
 import { ICreditRiskBureauQuery } from "@services/creditRiskBureauQueries/types";
-import { getUpdateMethodByCreditRiskBureauName } from "@services/creditRiskBureauQueries/getUpdateMethodByCreditRiskBureauName";
-import { ICreditRiskBureauUpdateMethod } from "@services/creditRiskBureauQueries/types";
 
 import { creditScoreChanges } from "../prospect/components/ScoreModalProspect/config";
 import { stepsAddProspect } from "./config/addProspect.config";
@@ -102,9 +100,6 @@ export function SimulateCredit() {
   const [showRiskScoreStep, setShowRiskScoreStep] = useState(true);
   const [originalBureauData, setOriginalBureauData] = useState<
     ICreditRiskBureauQuery[]
-  >([]);
-  const [bureauMethods, setBureauMethods] = useState<
-    ICreditRiskBureauUpdateMethod[]
   >([]);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
@@ -603,46 +598,6 @@ export function SimulateCredit() {
     }
   }, [currentStep]);
 
-  useEffect(() => {
-    const fetchBureauConfiguration = async () => {
-      if (!businessUnitPublicCode) return;
-
-      try {
-        const configData = await getUpdateMethodByCreditRiskBureauName(
-          businessUnitPublicCode,
-          businessManagerCode,
-          customerData.token,
-        );
-
-        if (
-          !configData?.creditRiskBureaus ||
-          configData.creditRiskBureaus.length === 0
-        ) {
-          setBureauMethods([]);
-        } else {
-          setShowRiskScoreStep(true);
-          setBureauMethods(configData.creditRiskBureaus);
-
-          handleBureauConsultation();
-        }
-      } catch (error) {
-        const err = error as {
-          message?: string;
-          status: number;
-          data?: { description?: string; code?: string };
-        };
-        const code = err?.data?.code ? `[${err.data.code}] ` : "";
-        const description =
-          code + err?.message + (err?.data?.description || "");
-
-        setMessageError(description);
-        setShowErrorModal(true);
-      }
-    };
-
-    fetchBureauConfiguration();
-  }, [businessUnitPublicCode, customerData.token]);
-
   const currentStepsNumber = steps.find(
     (step: { number: number }) => step.number === currentStep,
   );
@@ -901,6 +856,12 @@ export function SimulateCredit() {
       fetchDataPaymentDatesCycle();
     }
   }, [currentStep, formData.selectedProducts]);
+
+  useEffect(() => {
+    if (customerData.publicCode) {
+      handleBureauConsultation();
+    }
+  }, [customerData.publicCode, handleBureauConsultation]);
 
   useEffect(() => {
     if (isCapacityAnalysisModal) {
@@ -1182,8 +1143,6 @@ export function SimulateCredit() {
         handleUpdateRiskScore={handleUpdateRiskScore}
         isLoadingUpdate={isLoadingUpdate}
         setMessageError={setMessageError}
-        bureauMethods={bureauMethods}
-        handleBureauConsultation={handleBureauConsultation}
       />
     </>
   );
