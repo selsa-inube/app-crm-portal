@@ -29,7 +29,7 @@ import { IExtraordinaryInstallments } from "@services/creditRequest/types";
 import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { AppContext } from "@context/AppContext";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { BaseModal } from "../baseModal";
 import {
@@ -71,7 +71,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     userAccount,
     lang,
   } = props;
-  const { eventData } = useContext(AppContext);
+  const { customerData } = useContext(CustomerContext);
 
   const [currentTab, setCurrentTab] = useState("ordinary");
   const [selectedDetail, setSelectedDetail] =
@@ -124,7 +124,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
           businessUnitPublicCode,
           businessManagerCode,
           submitData,
-          eventData.token,
+          customerData.token,
         );
 
         if (data) {

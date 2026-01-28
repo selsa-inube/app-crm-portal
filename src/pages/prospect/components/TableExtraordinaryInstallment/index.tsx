@@ -6,7 +6,7 @@ import {
   IProspect,
 } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { AppContext } from "@context/AppContext";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -87,7 +87,7 @@ export const TableExtraordinaryInstallment = (
     handleDelete,
   } = props;
 
-  const { eventData } = useContext(AppContext);
+  const { customerData } = useContext(CustomerContext);
   const headers = headersTableExtraordinaryInstallment;
   const isMobile = useMediaQuery("(max-width:880px)");
 
@@ -208,7 +208,7 @@ export const TableExtraordinaryInstallment = (
         await removeExtraordinaryInstallment(
           businessUnitPublicCode ?? "",
           itemIdentifiersForUpdate,
-          eventData.token,
+          customerData.token,
         );
 
         setSentData?.(itemIdentifiersForUpdate);

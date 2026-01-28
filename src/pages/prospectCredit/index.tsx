@@ -75,7 +75,7 @@ export function ProspectCredit() {
             clientIdentificationNumber: customerData.publicCode,
             stage: stage,
           },
-          eventData.token,
+          customerData.token,
         );
         setCreditRequestData(creditData);
       } catch {

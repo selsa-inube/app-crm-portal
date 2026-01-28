@@ -8,6 +8,7 @@ import { updateProspect } from "@services/prospect/updateProspect";
 import { restoreFinancialObligationsByBorrowerId } from "@services/prospect/restoreFinancialObligationsByBorrowerId";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { CustomerContext } from "@context/CustomerContext";
 
 import {
   convertObligationsToProperties,
@@ -39,6 +40,8 @@ export const TableFinancialObligations = (
     showOnlyEdit = false,
     showAddButton = true,
   } = props;
+
+  const { customerData } = useContext(CustomerContext);
 
   const [loading, setLoading] = useState(true);
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
@@ -219,7 +222,7 @@ export const TableFinancialObligations = (
           businessUnitPublicCode,
           businessManagerCode,
           updatedInitialValues,
-          eventData.token,
+          customerData.token,
         );
       } catch (error) {
         setShowErrorModal(true);
@@ -314,7 +317,7 @@ export const TableFinancialObligations = (
           businessUnitPublicCode,
           businessManagerCode,
           updatedInitialValues,
-          eventData.token,
+          customerData.token,
         );
         setRefreshKey?.((prev) => prev + 1);
         setIsModalOpenEdit(false);
@@ -424,7 +427,7 @@ export const TableFinancialObligations = (
         borrower.borrowerIdentificationNumber || "",
         initialValuesSnapshot.current?.[0]?.prospectCode || "",
         "Restore financial obligations",
-        eventData.token,
+        customerData.token,
       );
 
       setRefreshKey?.((prev) => prev + 1);
@@ -473,7 +476,7 @@ export const TableFinancialObligations = (
       showAddButton={showAddButton}
       enums={enums as IAllEnumsResponse}
       lang={lang as EnumType}
-      authorizationToken={eventData.token}
+      authorizationToken={customerData.token}
     />
   );
 };

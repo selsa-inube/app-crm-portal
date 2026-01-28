@@ -111,7 +111,7 @@ export function CreditProspects() {
             },
           ],
         },
-        eventData.token,
+        customerData.token,
       );
 
       setProspectSummaryData((prev) =>
@@ -149,7 +149,7 @@ export function CreditProspects() {
           businessManagerCode,
           customerData.publicCode,
           "Created",
-          eventData.token,
+          customerData.token,
         );
 
         if (result && result.length > 0) {
@@ -177,7 +177,7 @@ export function CreditProspects() {
         const data = await checkSimulationPrerequisites(
           businessUnitPublicCode,
           customerData.publicCode,
-          eventData.token,
+          customerData.token,
         );
 
         if (data?.canSimulate === "Y") setCanPerformSimulations(true);
@@ -243,7 +243,7 @@ export function CreditProspects() {
         businessUnitPublicCode,
         businessManagerCode,
         updatedProspect,
-        eventData.token,
+        customerData.token,
       );
 
       setProspectSummaryData((prev) =>
@@ -293,7 +293,7 @@ export function CreditProspects() {
       const validationResult = await validatePrerequisitesForCreditApplication(
         businessUnitPublicCode,
         selectedProspect.prospectCode,
-        eventData.token,
+        customerData.token,
       );
 
       if (

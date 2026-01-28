@@ -18,7 +18,7 @@ import {
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { getAllBancks } from "@services/bank/SearchAllBank";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { AppContext } from "@context/AppContext";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { ScrollableContainer } from "./styles";
 import {
@@ -53,7 +53,7 @@ function FinancialObligationModal({
   iconAfter,
 }: FinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
-  const { eventData } = useContext(AppContext);
+  const { customerData } = useContext(CustomerContext);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -111,7 +111,7 @@ function FinancialObligationModal({
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const response = await getAllBancks(eventData.token);
+        const response = await getAllBancks(customerData.token);
         const formattedBanks = response.map((bank) => ({
           id: bank.bankId,
           label: bank.bankName,

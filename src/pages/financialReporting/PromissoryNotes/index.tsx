@@ -16,6 +16,7 @@ import {
 import { getPayrollDiscountAuthorizationsById } from "@services/creditRequest/payroll_discount_authorizations";
 import { getPromissoryNotesById } from "@services/creditRequest/promissory_notes";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { CustomerContext } from "@context/CustomerContext";
 
 import {
   appearanceTag,
@@ -37,6 +38,7 @@ interface IPromissoryNotesProps {
 export const PromissoryNotes = (props: IPromissoryNotesProps) => {
   const { isMobile, lang, creditRequest } = props;
   const { addFlag } = useFlag();
+  const { customerData } = useContext(CustomerContext);
 
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -65,13 +67,13 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
             businessUnitPublicCode,
             businessManagerCode,
             creditRequest.creditRequestId,
-            eventData.token,
+            customerData.token,
           ),
           getPromissoryNotesById(
             businessUnitPublicCode,
             businessManagerCode,
             creditRequest.creditRequestId,
-            eventData.token,
+            customerData.token,
           ),
         ]);
 

@@ -6,7 +6,7 @@ import { BaseModal } from "@components/modals/baseModal";
 import { Fieldset } from "@components/data/Fieldset";
 import { getSearchDocumentById } from "@services/creditRequest/SearchDocumentById";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { AppContext } from "@context/AppContext";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { DocumentViewer } from "../DocumentViewer";
 import { dataTrace } from "./config";
@@ -34,7 +34,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
     user,
   } = props;
 
-  const { eventData } = useContext(AppContext);
+  const { customerData } = useContext(CustomerContext);
   const { addFlag } = useFlag();
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -48,7 +48,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
         user ?? "",
         businessUnitPublicCode ?? "",
         businessManagerCode ?? "",
-        eventData.token,
+        customerData.token,
       );
       const fileUrl = URL.createObjectURL(documentData);
       setSelectedFile(fileUrl);

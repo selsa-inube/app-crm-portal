@@ -26,7 +26,6 @@ import { IDisbursementGeneral } from "@pages/applyForCredit/types";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalogByCode";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { ICRMPortalData } from "@context/AppContext/types";
 
 interface IDisbursementWithCheckManagementProps {
   isMobile: boolean;
@@ -42,7 +41,6 @@ interface IDisbursementWithCheckManagementProps {
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
   getTotalAmount: () => number;
-  eventData: ICRMPortalData;
 }
 
 export function DisbursementWithCheckManagement(
@@ -62,7 +60,6 @@ export function DisbursementWithCheckManagement(
     onFormValid,
     handleOnChange,
     getTotalAmount,
-    eventData,
   } = props;
 
   const prevValues = useRef(formik.values[optionNameForm]);
@@ -221,7 +218,7 @@ export function DisbursementWithCheckManagement(
           businessUnitPublicCode,
           businessManagerCode,
           true,
-          eventData.token,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];

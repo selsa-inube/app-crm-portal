@@ -66,7 +66,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
           businessManagerCode,
           payload,
           eventData?.user?.identificationDocumentNumber || "",
-          eventData.token,
+          customerData.token,
         );
         if (data && Array.isArray(data) && data.length > 0) {
           setValidDocumentsRequiredByCreditRequest(data);

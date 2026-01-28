@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MdCached, MdOutlineEdit } from "react-icons/md";
 import { Stack, Text, Grid, useMediaQuery, Button } from "@inubekit/inubekit";
 
@@ -17,7 +17,6 @@ import { restoreIncomeInformationByBorrowerId } from "@services/prospect/restore
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { IProspect } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { AppContext } from "@context/AppContext";
 
 import {
   IncomeEmployment,
@@ -79,9 +78,6 @@ export function SourceIncome(props: ISourceIncomeProps) {
     lang,
     onCapitalTotalChange,
   } = props;
-
-  const { eventData } = useContext(AppContext);
-
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
   const [borrowerIncome, setBorrowerIncome] = useState<IIncome | null>();
@@ -270,7 +266,7 @@ export function SourceIncome(props: ISourceIncomeProps) {
         businessUnitPublicCode || "",
         businessManagerCode,
         body,
-        eventData.token,
+        customerData.token,
       );
       if (response && response.income) {
         const restoredIncome = {

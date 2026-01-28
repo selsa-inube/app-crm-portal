@@ -139,7 +139,7 @@ export const FinancialReporting = () => {
         businessManagerCode,
         user.id,
         { creditRequestCode },
-        eventData.token,
+        customerData.token,
       )
         .then((data) => {
           if (data && data.length > 0) {
@@ -170,7 +170,7 @@ export const FinancialReporting = () => {
         user.id,
         businessUnitPublicCode,
         businessManagerCode,
-        eventData.token,
+        customerData.token,
       );
 
       const dataToMap = Array.isArray(documents) ? documents : documents.value;
@@ -194,7 +194,7 @@ export const FinancialReporting = () => {
         businessUnitPublicCode,
         businessManagerCode,
         creditRequestCode!,
-        eventData.token,
+        customerData.token,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
     } catch (error) {
@@ -302,7 +302,7 @@ export const FinancialReporting = () => {
           businessUnitPublicCode,
           businessManagerCode,
           user?.id ?? "",
-          eventData.token,
+          customerData.token,
         );
       } catch (error) {
         setMessageError(errorMessages.getData.description.i18n[lang]);
@@ -321,7 +321,7 @@ export const FinancialReporting = () => {
         businessManagerCode,
         user?.id ?? "",
         { creditRequestCode },
-        eventData.token,
+        customerData.token,
       );
       if (data[0].stage !== "TRAMITADA") {
         setSendCrediboard(true);
@@ -348,7 +348,7 @@ export const FinancialReporting = () => {
         {
           creditRequestId: data.creditRequestId,
         },
-        eventData.token,
+        customerData.token,
       );
 
       if (Array.isArray(unreadErrors)) {

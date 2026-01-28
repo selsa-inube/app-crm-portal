@@ -20,6 +20,7 @@ import { AppContext } from "@context/AppContext";
 import { File } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { CustomerContext } from "@context/CustomerContext";
 
 import { DocumentViewer } from "../DocumentViewer";
 import {
@@ -112,6 +113,7 @@ export const ListModal = (props: IListModalProps) => {
     id,
   } = props;
 
+  const { customerData } = useContext(CustomerContext);
   const { lang } = useEnum();
   const { addFlag } = useFlag();
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -256,7 +258,7 @@ export const ListModal = (props: IListModalProps) => {
             id,
             fileData.name.split(".").slice(0, -1).join("."),
             fileData.file,
-            eventData.token,
+            customerData.token,
           );
         }
       }

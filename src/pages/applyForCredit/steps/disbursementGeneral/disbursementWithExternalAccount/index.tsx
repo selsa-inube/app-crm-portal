@@ -37,8 +37,8 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { getEnum } from "@services/enum/enumerators/getEnum";
 import { IDomainEnum } from "@config/enums/types";
 import { CardGray } from "@components/cards/CardGray";
+
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { ICRMPortalData } from "@context/AppContext/types";
 
 import { selectDefaultValue, errorMessages } from "./config";
 
@@ -56,7 +56,6 @@ interface IDisbursementWithExternalAccountProps {
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
   getTotalAmount: () => number;
-  eventData: ICRMPortalData;
 }
 
 export function DisbursementWithExternalAccount(
@@ -76,7 +75,6 @@ export function DisbursementWithExternalAccount(
     onFormValid,
     handleOnChange,
     getTotalAmount,
-    eventData,
   } = props;
 
   const [banks, setBanks] = useState<IOptionsSelect[]>([]);
@@ -275,7 +273,7 @@ export function DisbursementWithExternalAccount(
           businessUnitPublicCode,
           businessManagerCode,
           true,
-          eventData.token,
+          customerData.token,
         );
 
         const data = customer?.generalAttributeClientNaturalPersons?.[0];
@@ -338,7 +336,7 @@ export function DisbursementWithExternalAccount(
       try {
         if (customerData === undefined) return;
 
-        const response = await getAllBancks(eventData.token);
+        const response = await getAllBancks(customerData.token);
         const formattedBanks = response.map((bank) => ({
           id: bank.bankId,
           label: bank.bankName,
