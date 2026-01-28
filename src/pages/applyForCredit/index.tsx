@@ -432,7 +432,7 @@ export function ApplyForCredit() {
         businessManagerCode,
         eventData.user.identificationDocumentNumber || "",
         submitData,
-        customerData.token,
+        eventData.token,
       );
 
       setCreditRequestCode(response?.creditRequestCode || "");
@@ -460,7 +460,7 @@ export function ApplyForCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode || "",
-        customerData.token,
+        eventData.token,
       );
 
       const mainBorrower = prospect.borrowers.find(
@@ -503,7 +503,7 @@ export function ApplyForCredit() {
           prospectData.creditProducts[0].lineOfCreditAbbreviatedName,
           prospectData.moneyDestinationAbbreviatedName,
           prospectData.creditProducts[0].loanAmount.toString(),
-          customerData.token,
+          eventData.token,
         );
 
         if (codeError) return;
@@ -541,7 +541,7 @@ export function ApplyForCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         prospectCode || "",
-        customerData.token,
+        eventData.token,
       );
 
       if (!response) {
@@ -643,7 +643,7 @@ export function ApplyForCredit() {
           businessUnitPublicCode,
           businessManagerCode,
           prospectData.prospectId,
-          customerData.token,
+          eventData.token,
         );
         if (result) {
           setProspectSummaryData(result);

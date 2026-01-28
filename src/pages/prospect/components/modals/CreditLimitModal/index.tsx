@@ -17,7 +17,7 @@ import {
 import { IFormData } from "@pages/simulateCredit/types";
 import { StyledContainer } from "@pages/simulateCredit/components/CreditLimitCard/styles";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
 
 import { dataCreditLimitModal } from "./config";
 
@@ -50,7 +50,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     lang,
   } = props;
 
-  const { customerData } = useContext(CustomerContext);
+  const { eventData } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
   useState(false);
@@ -70,7 +70,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
           businessManagerCode,
           moneyDestination,
           dataMaximumCreditLimitService.identificationDocumentNumber,
-          customerData.token,
+          eventData.token,
         );
         setIsLoading(false);
         if (data) {

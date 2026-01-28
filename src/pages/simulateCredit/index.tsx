@@ -36,6 +36,8 @@ import { IAllEnumsResponse } from "@services/enumerators/types";
 import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
 import { updateCreditRiskBureauQuery } from "@services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
 import { ICreditRiskBureauQuery } from "@services/creditRiskBureauQueries/types";
+import { getUpdateMethodByCreditRiskBureauName } from "@services/creditRiskBureauQueries/getUpdateMethodByCreditRiskBureauName";
+import { ICreditRiskBureauUpdateMethod } from "@services/creditRiskBureauQueries/types";
 
 import { creditScoreChanges } from "../prospect/components/ScoreModalProspect/config";
 import { stepsAddProspect } from "./config/addProspect.config";
@@ -100,6 +102,9 @@ export function SimulateCredit() {
   const [showRiskScoreStep, setShowRiskScoreStep] = useState(true);
   const [originalBureauData, setOriginalBureauData] = useState<
     ICreditRiskBureauQuery[]
+  >([]);
+  const [bureauMethods, setBureauMethods] = useState<
+    ICreditRiskBureauUpdateMethod[]
   >([]);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [servicesProductSelection, setServicesProductSelection] = useState<{
@@ -337,7 +342,7 @@ export function SimulateCredit() {
         businessManagerCode,
         formData.selectedDestination,
         customerData.publicCode,
-        customerData.token,
+        eventData.token,
       );
 
       const linesArray = Array.isArray(lineOfCreditValues)
@@ -383,7 +388,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
-              customerData.token,
+              eventData.token,
             ),
             getAdditionalBorrowersAllowed(
               businessUnitPublicCode,
@@ -391,7 +396,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
-              customerData.token,
+              eventData.token,
             ),
             getExtraInstallmentsAllowed(
               businessUnitPublicCode,
@@ -399,7 +404,7 @@ export function SimulateCredit() {
               product,
               customerData.publicCode,
               formData.selectedDestination,
-              customerData.token,
+              eventData.token,
             ),
           ]);
 
@@ -438,7 +443,7 @@ export function SimulateCredit() {
         customerData.publicCode,
         businessUnitPublicCode,
         businessManagerCode,
-        customerData.token,
+        eventData.token,
       );
 
       setClientPortfolio({
@@ -486,7 +491,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         data,
-        customerData.token,
+        eventData.token,
       );
       setPaymentCapacity(paymentCapacity ?? null);
     } catch (error: unknown) {
@@ -504,7 +509,7 @@ export function SimulateCredit() {
         customerPublicCode,
         businessUnitPublicCode,
         businessManagerCode,
-        customerData.token,
+        eventData.token,
       );
       setObligationPayment(data ?? null);
     } catch (error: unknown) {
@@ -544,7 +549,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         data,
-        customerData.token,
+        eventData.token,
       );
       setPaymentChannel(dataPaymentDates ?? null);
     } catch (error: unknown) {
@@ -597,6 +602,46 @@ export function SimulateCredit() {
       }));
     }
   }, [currentStep]);
+
+  useEffect(() => {
+    const fetchBureauConfiguration = async () => {
+      if (!businessUnitPublicCode) return;
+
+      try {
+        const configData = await getUpdateMethodByCreditRiskBureauName(
+          businessUnitPublicCode,
+          businessManagerCode,
+          customerData.token,
+        );
+
+        if (
+          !configData?.creditRiskBureaus ||
+          configData.creditRiskBureaus.length === 0
+        ) {
+          setBureauMethods([]);
+        } else {
+          setShowRiskScoreStep(true);
+          setBureauMethods(configData.creditRiskBureaus);
+
+          handleBureauConsultation();
+        }
+      } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
+        setMessageError(description);
+        setShowErrorModal(true);
+      }
+    };
+
+    fetchBureauConfiguration();
+  }, [businessUnitPublicCode, customerData.token]);
 
   const currentStepsNumber = steps.find(
     (step: { number: number }) => step.number === currentStep,
@@ -702,7 +747,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         customerData.publicCode,
-        customerData.token,
+        eventData.token,
       );
 
       if (data && data.length > 0) {
@@ -807,7 +852,7 @@ export function SimulateCredit() {
         businessManagerCode,
         customerData.publicCode,
         simulateData,
-        customerData.token,
+        eventData.token,
       );
       const prospectCode = response?.prospectCode;
 
@@ -833,7 +878,7 @@ export function SimulateCredit() {
         businessUnitPublicCode,
         businessManagerCode,
         customerPublicCode,
-        customerData.token,
+        eventData.token,
       );
       setCreditLimitData(result);
     } catch (error: unknown) {
@@ -858,12 +903,6 @@ export function SimulateCredit() {
   }, [currentStep, formData.selectedProducts]);
 
   useEffect(() => {
-    if (customerData.publicCode) {
-      handleBureauConsultation();
-    }
-  }, [customerData.publicCode, handleBureauConsultation]);
-
-  useEffect(() => {
     if (isCapacityAnalysisModal) {
       fetchCapacityAnalysis();
     }
@@ -882,7 +921,7 @@ export function SimulateCredit() {
           businessUnitPublicCode,
           businessManagerCode,
           payload,
-          customerData.token,
+          eventData.token,
         );
         if (data) {
           setValidateRequirements(data);
@@ -1143,6 +1182,8 @@ export function SimulateCredit() {
         handleUpdateRiskScore={handleUpdateRiskScore}
         isLoadingUpdate={isLoadingUpdate}
         setMessageError={setMessageError}
+        bureauMethods={bureauMethods}
+        handleBureauConsultation={handleBureauConsultation}
       />
     </>
   );

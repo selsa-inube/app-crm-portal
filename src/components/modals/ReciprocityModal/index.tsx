@@ -14,7 +14,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { GetCreditLimitByReciprocity } from "@services/creditLimit/getCreditLimitByReciprocity";
 import { IMaximumCreditLimitReciprocity } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
 
 import { dataReciprocity } from "./config";
 
@@ -38,7 +38,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
   } = props;
 
   const isMobile = useMediaQuery("(max-width:880px)");
-  const { customerData } = useContext(CustomerContext);
+  const { eventData } = useContext(AppContext);
 
   const [error, setError] = useState(false);
   const [
@@ -59,7 +59,7 @@ export function ReciprocityModal(props: ReciprocityModalProps) {
           businessUnitPublicCode,
           businessManagerCode,
           clientIdentificationNumber,
-          customerData.token,
+          eventData.token,
         );
 
         if (data) {

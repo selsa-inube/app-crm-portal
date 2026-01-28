@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
 import { IBusinessUnitRules } from "@services/businessUnitRules/types";
-import { CustomerContext } from "@context/CustomerContext";
+import { AppContext } from "@context/AppContext";
 
 import { AmountCaptureUI } from "./interface";
 import {
@@ -22,7 +22,7 @@ export function AmountCapture(props: IAmountCaptureProps) {
     onFormValid,
   } = props;
 
-  const { customerData } = useContext(CustomerContext);
+  const { eventData } = useContext(AppContext);
 
   const [loanAmountError, setLoanAmountError] = useState<string>("");
   const [displayValue, setDisplayValue] = useState<string>("");
@@ -48,7 +48,7 @@ export function AmountCapture(props: IAmountCaptureProps) {
         businessUnitPublicCode,
         businessManagerCode,
         payload,
-        customerData.token,
+        eventData.token,
       );
 
       if (decisions && Array.isArray(decisions) && decisions.length > 0) {

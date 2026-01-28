@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useFlag, useMediaQuery } from "@inubekit/inubekit";
 
 import { getIncomeSourcesById } from "@services/creditLimit/getIncomeSources";
@@ -11,6 +11,7 @@ import { getFinancialObligations } from "@pages/simulateCredit/steps/extraDebtor
 import { IObligations } from "@pages/prospect/components/TableObligationsFinancial/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { AppContext } from "@context/AppContext";
 
 import { transformObligationsToBorrowerProperties } from "../DebtorEditModal/utils";
 import { stepsAddBorrower } from "./config/addBorrower.config";
@@ -54,6 +55,8 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
     lang,
     enums,
   } = props;
+
+  const { eventData } = useContext(AppContext);
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsAddBorrower.generalInformation.id,
@@ -209,7 +212,7 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           businessUnitPublicCode || "",
           businessManagerCode,
           true,
-          customerData.token,
+          eventData.token,
         );
 
         if (
@@ -225,14 +228,14 @@ export function DebtorAddModal(props: DebtorAddModalProps) {
           borrowerId,
           businessUnitPublicCode || "",
           businessManagerCode,
-          customerData.token,
+          eventData.token,
         );
 
         const financialObligationsData = await getFinancialObligations(
           customer.publicCode,
           businessUnitPublicCode || "",
           businessManagerCode,
-          customerData.token,
+          eventData.token,
         );
         setFinancialObligationsData(financialObligationsData || []);
 

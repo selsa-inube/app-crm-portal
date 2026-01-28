@@ -8,7 +8,6 @@ import { searchAllMoneyDestinationByCustomerCode } from "@services/moneyDestinat
 import { IMoneyDestination } from "@services/moneyDestination/searchAllMoneyDestinationByCostumerCode/types";
 import { AppContext } from "@context/AppContext";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { CustomerContext } from "@context/CustomerContext";
 
 import { MoneyDestinationUI } from "./interface";
 import { dataMoneyDestination } from "./config";
@@ -35,7 +34,8 @@ function MoneyDestination(props: IMoneyDestinationProps) {
     handleOnChange,
     onFormValid,
   } = props;
-  const { customerData } = useContext(CustomerContext);
+
+  const { eventData } = useContext(AppContext);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -56,7 +56,7 @@ function MoneyDestination(props: IMoneyDestinationProps) {
       businessUnitPublicCode,
       businessManagerCode,
       clientIdentificationNumber,
-      customerData.token,
+      eventData.token,
     )
       .then((response) => {
         if (response && Array.isArray(response)) {
