@@ -87,4 +87,36 @@ export const riskScoreData = {
       es: "Score",
     },
   },
+  automaticUpdateTitle: {
+    code: "Automatic_update_title",
+    description: "Title for the automatic update confirmation modal",
+    i18n: {
+      en: "Update information",
+      es: "Actualizar información",
+    },
+  },
+  automaticUpdateMessage: {
+    code: "Automatic_update_message",
+    description: "Confirmation message for automatic bureau query",
+    i18n: {
+      en: "Are you sure you want to query the credit bureau again? This action will update the score with the latest data.",
+      es: "¿Está seguro que desea consultar la central de riesgo nuevamente? Esta acción actualizará el puntaje con los datos más recientes.",
+    },
+  },
+  confirm: {
+    code: "Confirm",
+    description: "Confirm button text",
+    i18n: {
+      en: "Confirm",
+      es: "Confirmar",
+    },
+  },
+  cancel: {
+    code: "Cancel",
+    description: "Cancel button text",
+    i18n: {
+      en: "Cancel",
+      es: "Cancelar",
+    },
+  },
 };

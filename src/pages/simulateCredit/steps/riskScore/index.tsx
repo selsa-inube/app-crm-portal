@@ -10,6 +10,7 @@ import { formatPrimaryDate } from "@utils/formatData/date";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { EUpdateMethod } from "@services/creditRiskBureauQueries/types";
 
 import { riskScoreData } from "./config";
 
@@ -24,6 +25,8 @@ interface IRiskScoreProps {
   resetScore?: () => void;
   newScore?: number | null;
   isProspect?: boolean;
+  updateMethod?: EUpdateMethod;
+  onRefresh?: () => void;
 }
 
 export function RiskScore(props: IRiskScoreProps) {
@@ -35,9 +38,12 @@ export function RiskScore(props: IRiskScoreProps) {
     handleOnChange,
     logo,
     isLoadingUpdate = false,
+    updateMethod = EUpdateMethod.Manual,
+    onRefresh,
   } = props;
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(isLoadingUpdate);
 
   const validationSchema = Yup.object({
@@ -69,6 +75,21 @@ export function RiskScore(props: IRiskScoreProps) {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleButtonClick = () => {
+    if (updateMethod === EUpdateMethod.Automatic) {
+      setShowConfirmModal(true);
+    } else {
+      setShowEditModal(true);
+    }
+  };
+
+  const handleConfirmAutomatic = () => {
+    setShowConfirmModal(false);
+    if (onRefresh) {
+      onRefresh();
+    }
+  };
 
   return (
     <Fieldset>
@@ -105,7 +126,7 @@ export function RiskScore(props: IRiskScoreProps) {
             <Button
               variant="outlined"
               iconBefore={<MdOutlineEdit />}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => handleButtonClick()}
             >
               {riskScoreData.editScore.i18n[lang]}
             </Button>
@@ -146,6 +167,18 @@ export function RiskScore(props: IRiskScoreProps) {
                 }
                 message={riskScoreData.error.i18n[lang]}
               />
+            </BaseModal>
+          )}
+          {showConfirmModal && (
+            <BaseModal
+              title={riskScoreData.automaticUpdateTitle.i18n[lang]}
+              nextButton={riskScoreData.confirm.i18n[lang]}
+              backButton={riskScoreData.cancel.i18n[lang]}
+              handleBack={() => setShowConfirmModal(false)}
+              handleNext={handleConfirmAutomatic}
+              width={isMobile ? "300px" : "400px"}
+            >
+              <Text>{riskScoreData.automaticUpdateMessage.i18n[lang]}</Text>
             </BaseModal>
           )}
         </Stack>

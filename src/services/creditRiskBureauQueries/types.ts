@@ -21,3 +21,17 @@ export interface ICreditRiskBureauQuery {
 export interface IUpdateCreditRiskBureauQuery extends ICreditRiskBureauQuery {
   modifyJustification: string;
 }
+
+export enum EUpdateMethod {
+  Manual = "Manual",
+  Automatic = "Automatic",
+}
+
+export interface ICreditRiskBureauUpdateMethod {
+  bureauName: string;
+  updateCreditScoreMethod: EUpdateMethod;
+}
+
+export interface IGetUpdateMethodResponse {
+  creditRiskBureaus: ICreditRiskBureauUpdateMethod[];
+}

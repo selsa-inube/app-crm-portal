@@ -34,6 +34,7 @@ import userImage from "@assets/images/userImage.jpeg";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 import { Fieldset } from "@components/data/Fieldset";
+import { ICreditRiskBureauUpdateMethod } from "@services/creditRiskBureauQueries/types";
 
 import { riskScoreData } from "./steps/riskScore/config";
 import { GeneralHeader } from "./components/GeneralHeader";
@@ -174,6 +175,8 @@ interface SimulateCreditUIProps {
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleUpdateRiskScore: (index: number, newValue: number) => Promise<void>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  bureauMethods: ICreditRiskBureauUpdateMethod[];
+  handleBureauConsultation: () => Promise<void>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -248,6 +251,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     handleUpdateRiskScore,
     isLoadingUpdate,
     setMessageError,
+    bureauMethods,
+    handleBureauConsultation,
   } = props;
   return (
     <>
@@ -523,6 +528,13 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           lang={lang}
                           logo={score.bureauName}
                           isLoadingUpdate={isLoadingUpdate}
+                          resetScore={handleBureauConsultation}
+                          updateMethod={
+                            bureauMethods.find(
+                              (bureau) =>
+                                bureau.bureauName === score.bureauName,
+                            )?.updateCreditScoreMethod
+                          }
                           handleOnChange={(newRisk) => {
                             const updatedScores = [...formData.riskScores];
                             updatedScores[index] = {
