@@ -31,6 +31,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { IValidateRequirement } from "@services/creditRequest/types";
 
 import {
   IBorrowerData,
@@ -99,12 +100,14 @@ interface ApplyForCreditUIProps {
   lang: EnumType;
   enums: IAllEnumsResponse;
   generateAndShareApprovedRequest: () => Promise<void>;
+  onDocumentsLoad: (documents: IValidateRequirement[]) => void;
 }
 
 export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   const {
     currentStepNumber,
     currentStep,
+    onDocumentsLoad,
     steps,
     isCurrentFormValid,
     formData,
@@ -416,6 +419,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     prospectData={prospectData}
                     businessUnitPublicCode={businessUnitPublicCode}
                     lang={lang}
+                    onDocumentsLoad={onDocumentsLoad}
                   />
                 )}
               {currentStepNumber &&

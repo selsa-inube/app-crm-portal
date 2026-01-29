@@ -31,6 +31,7 @@ interface IAttachedDocumentsProps {
   prospectData: IProspect;
   businessUnitPublicCode: string;
   lang: EnumType;
+  onDocumentsLoad?: (documents: IValidateRequirement[]) => void;
 }
 
 export function AttachedDocuments(props: IAttachedDocumentsProps) {
@@ -42,6 +43,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     prospectData,
     businessUnitPublicCode,
     lang,
+    onDocumentsLoad,
   } = props;
   const { eventData } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,16 +72,22 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
         );
         if (data && Array.isArray(data) && data.length > 0) {
           setValidDocumentsRequiredByCreditRequest(data);
+          onDocumentsLoad?.(data);
+        } else {
+          setValidDocumentsRequiredByCreditRequest([]);
+          onDocumentsLoad?.([]);
         }
       } catch (error) {
         setShowErrorModal(true);
+        setValidDocumentsRequiredByCreditRequest([]);
+        onDocumentsLoad?.([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     handleSubmit();
-  }, [prospectData, businessUnitPublicCode]);
+  }, [prospectData, businessUnitPublicCode, onDocumentsLoad]);
 
   const documentsRequiredByBorrower =
     validDocumentsRequiredByCreditRequest.length
