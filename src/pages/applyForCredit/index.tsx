@@ -13,7 +13,10 @@ import {
   IProspectSummaryById,
 } from "@services/prospect/types";
 import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
-import { IDocumentsCredit } from "@services/creditRequest/types";
+import {
+  IDocumentsCredit,
+  IValidateRequirement,
+} from "@services/creditRequest/types";
 import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
@@ -40,6 +43,10 @@ export function ApplyForCredit() {
   const [messageError, setMessageError] = useState("");
   const [creditRequestCode, setCreditRequestCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [
+    validDocumentsRequiredByCreditRequest,
+    setValidDocumentsRequiredByCreditRequest,
+  ] = useState<IValidateRequirement[]>([]);
 
   const customerPublicCode: string = customerData.publicCode;
 
@@ -159,6 +166,7 @@ export function ApplyForCredit() {
         accountType: "",
         accountNumber: "0",
         documentType: "",
+        bankCode: "",
       },
       Certified_check: {
         amount: 0,
@@ -262,9 +270,21 @@ export function ApplyForCredit() {
         if (step.id === 6 && (hasBorrowers >= 2 || !hasBond)) {
           return false;
         }
+        if (
+          step.id === stepsFilingApplication.attachedDocuments.id &&
+          validDocumentsRequiredByCreditRequest.length === 0
+        ) {
+          return false;
+        }
         return true;
       });
-  }, [guaranteesRequired, hasBorrowers, bondValue, lang]);
+  }, [
+    guaranteesRequired,
+    hasBorrowers,
+    bondValue,
+    validDocumentsRequiredByCreditRequest,
+    lang,
+  ]);
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsFilingApplication.generalInformation.id,
@@ -400,7 +420,7 @@ export function ApplyForCredit() {
   const disbursements = Object.entries(disbursementGeneral)
     .filter(([, value]) => value.amount && value.amount !== "")
     .map(([key, value]) => ({
-      accountBankCode: value.bank || businessUnitPublicCode,
+      accountBankCode: value.bankCode || businessUnitPublicCode,
       accountBankName: value.bank || businessUnitPublicCode,
       accountNumber: value.accountNumber || "0",
       accountType: value.accountType || "CH",
@@ -734,6 +754,7 @@ export function ApplyForCredit() {
         enums={enums as IAllEnumsResponse}
         lang={lang}
         generateAndShareApprovedRequest={generateAndShareApprovedRequest}
+        onDocumentsLoad={setValidDocumentsRequiredByCreditRequest}
       />
     </>
   );
