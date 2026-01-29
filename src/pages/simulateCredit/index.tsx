@@ -850,7 +850,7 @@ export function SimulateCredit() {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
         businessManagerCode,
-        customerData.publicCode,
+        eventData.user.identificationDocumentNumber || "",
         simulateData,
         eventData.token,
       );
