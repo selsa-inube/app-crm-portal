@@ -52,7 +52,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     setValidDocumentsRequiredByCreditRequest,
   ] = useState<IValidateRequirement[]>([]);
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const [showErrorModal, setShowErrorModal] = useState(false);
 

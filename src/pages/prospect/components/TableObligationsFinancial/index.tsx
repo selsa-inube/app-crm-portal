@@ -57,7 +57,7 @@ export const TableFinancialObligations = (
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const handleEdit = (debtor: ITableFinancialObligationsProps) => {
     let balance = "";
