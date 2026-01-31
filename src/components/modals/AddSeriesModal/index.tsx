@@ -145,7 +145,6 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   }, [isEdit, installmentState]);
 
   useEffect(() => {
-    const businessManagerCode = eventData.businessManager.abbreviatedName;
     const clientIdentificationNumber = customerData.publicCode;
     const fetchCycles = async () => {
       if (
@@ -153,16 +152,16 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         customerData.publicCode &&
         lineOfCreditAbbreviatedName &&
         moneyDestinationAbbreviatedName &&
-        businessManagerCode
+        clientIdentificationNumber
       ) {
         try {
           setIsLoading(true);
           const response =
             await searchExtraInstallmentPaymentCyclesByCustomerCode(
               businessUnitPublicCode,
-              businessManagerCode,
               clientIdentificationNumber,
               lineOfCreditAbbreviatedName,
+              moneyDestinationAbbreviatedName,
               eventData.token,
             );
           if (response === null) {

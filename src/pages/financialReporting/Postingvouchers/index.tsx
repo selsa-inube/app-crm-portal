@@ -41,7 +41,7 @@ export const Postingvouchers = (props: IApprovalsProps) => {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const fetchAccountingVouchers = async () => {
     if (!creditRequest?.creditRequestId) return;

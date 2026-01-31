@@ -25,7 +25,7 @@ export function useRestoreIncomeData({
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const restoreData = async () => {
     try {

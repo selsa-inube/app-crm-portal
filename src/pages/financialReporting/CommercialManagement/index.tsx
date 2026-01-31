@@ -146,7 +146,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const handleOpenModal = (modalName: string) => {
     setModalHistory((prevHistory) => [...prevHistory, modalName]);

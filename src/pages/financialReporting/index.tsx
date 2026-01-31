@@ -118,7 +118,7 @@ export const FinancialReporting = () => {
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const dataHeader = {
     name: customerData.fullName,

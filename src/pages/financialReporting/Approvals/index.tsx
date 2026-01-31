@@ -37,7 +37,7 @@ export const Approvals = (props: IApprovalsProps) => {
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const fetchApprovalsData = useCallback(async () => {
     if (!creditRequest?.creditRequestId) return;

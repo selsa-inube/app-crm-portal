@@ -35,7 +35,7 @@ export function CustomerContextProvider({
   const { businessUnitSigla, eventData } = useContext(AppContext);
   let businessUnitPublicCode: string = "";
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   try {
     if (businessUnitSigla) {

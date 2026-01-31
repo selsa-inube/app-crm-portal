@@ -85,7 +85,7 @@ export const CardCommercialManagement = (
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const [isProcessingServices, setIsProcessingServices] =
     useState<boolean>(false);
