@@ -55,7 +55,7 @@ export function CreditApplications() {
 
   const { lang, enums } = useEnum();
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const { userAccount } =
     typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;

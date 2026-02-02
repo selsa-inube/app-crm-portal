@@ -31,7 +31,7 @@ export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/${ClientIdentificationNumber}/${lineOfCreditAbbreviatedName}/${moneyDestinationAbbreviatedName}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/extra-installment-payment-cycles/${ClientIdentificationNumber}/${lineOfCreditAbbreviatedName}/${moneyDestinationAbbreviatedName}`,
         options,
       );
 
