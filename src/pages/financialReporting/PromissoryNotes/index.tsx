@@ -50,7 +50,7 @@ export const PromissoryNotes = (props: IPromissoryNotesProps) => {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const fetchData = useCallback(async () => {
     setLoading(true);

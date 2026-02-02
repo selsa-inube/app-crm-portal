@@ -150,7 +150,7 @@ export function SimulateCredit() {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
 
   const dataHeader = {
     name: customerData.fullName,
@@ -850,7 +850,7 @@ export function SimulateCredit() {
       const response = await postSimulateCredit(
         businessUnitPublicCode,
         businessManagerCode,
-        customerData.publicCode,
+        eventData.user.identificationDocumentNumber || "",
         simulateData,
         eventData.token,
       );

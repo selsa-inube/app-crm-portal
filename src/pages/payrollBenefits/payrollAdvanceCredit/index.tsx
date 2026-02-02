@@ -37,7 +37,7 @@ export function PayrollAdvanceCredit() {
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
-  const businessManagerCode = eventData.businessManager.abbreviatedName;
+  const businessManagerCode = eventData.businessManager.publicCode;
   const steps = Object.values(stepsPayrollSpecialBenefitAdvanceCredit);
   const { customerData } = useContext(CustomerContext);
 
