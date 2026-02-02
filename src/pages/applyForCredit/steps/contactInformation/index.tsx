@@ -39,6 +39,7 @@ export function ContactInformation(props: IContactInformationProps) {
   const validationSchema = Yup.object({
     email: Yup.string()
       .matches(/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/)
+      .max(100, "El email no puede exceder 100 caracteres")
       .required(""),
     phone: Yup.string()
       .matches(/^(\+\d{1,3})?\d{10,14}$/, "invlid phone number")
@@ -138,7 +139,12 @@ export function ContactInformation(props: IContactInformationProps) {
               ? "invalid"
               : undefined
           }
-          message={dataContactInformation.failedEmail.i18n[lang]}
+          maxLength={100}
+          message={
+            formik.touched.email && formik.errors.email
+              ? formik.errors.email
+              : dataContactInformation.failedEmail.i18n[lang]
+          }
           fullwidth
         />
         <FieldsetInube legend={dataContactInformation.mobile.i18n[lang]}>

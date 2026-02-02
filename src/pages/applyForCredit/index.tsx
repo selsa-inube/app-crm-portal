@@ -300,7 +300,6 @@ export function ApplyForCredit() {
   } = formData;
 
   const submitData = new FormData();
-
   const borrowersArray = Array.isArray(formData.borrowerData.borrowers)
     ? formData.borrowerData.borrowers
     : [];
@@ -454,14 +453,24 @@ export function ApplyForCredit() {
         submitData,
         eventData.token,
       );
-
       setCreditRequestCode(response?.creditRequestCode || "");
       setSentModal(false);
       setApprovedRequestModal(true);
     } catch (error) {
-      console.error("error: ", error);
+      const err = error as {
+        message?: string;
+        status?: number;
+        data?: { description?: string; code?: string };
+      };
+
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description =
+        code + (err?.message || "") + (err?.data?.description || "");
+
+      setMessageError(description);
+      setShowErrorModal(true);
       setSentModal(false);
-      handleFlag();
+      handleFlag;
     } finally {
       setLoading(false);
     }

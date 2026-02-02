@@ -68,11 +68,27 @@ export function Observations(props: IObservationsProps) {
             dataObservations.placeHolderRelevantObservations.i18n[lang]
           }
           value={formik.values.relevantObservations}
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            if (e.target.value.length <= 200) {
+              formik.handleChange(e);
+            }
+          }}
           onBlur={formik.handleBlur}
           fullwidth={true}
           required={true}
           maxLength={200}
+          status={
+            formik.touched.relevantObservations &&
+            formik.errors.relevantObservations
+              ? "invalid"
+              : undefined
+          }
+          message={
+            formik.touched.relevantObservations &&
+            formik.errors.relevantObservations
+              ? formik.errors.relevantObservations
+              : ""
+          }
         />
       </Stack>
     </Fieldset>
