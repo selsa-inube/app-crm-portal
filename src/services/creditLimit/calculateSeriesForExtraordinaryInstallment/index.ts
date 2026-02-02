@@ -4,14 +4,12 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IExtraordinaryAgreement } from "../../types";
+import { IExtraordinaryAgreement } from "../types";
 
-export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
+export const calculateSeriesForExtraordinaryInstallment = async (
   businessUnitPublicCode: string,
-  ClientIdentificationNumber: string,
-  lineOfCreditAbbreviatedName: string,
-  moneyDestinationAbbreviatedName: string,
   authorizationToken: string,
+  userName: string,
 ): Promise<IExtraordinaryAgreement[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -20,18 +18,19 @@ export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
       const options: RequestInit = {
-        method: "GET",
+        method: "POST",
         headers: {
-          "X-Action": "SearchExtraInstallmentPaymentCyclesByCustomerCode",
+          "X-Action": "CalculateSeriesForExtraordinaryInstallment",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
+          "X-User-Name": userName,
           Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/extra-installment-payment-cycles/${ClientIdentificationNumber}/${lineOfCreditAbbreviatedName}/${moneyDestinationAbbreviatedName}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/`,
         options,
       );
 
@@ -45,8 +44,7 @@ export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
 
       if (!res.ok) {
         throw {
-          message:
-            "Ha ocurrido un error al consultar los ciclos de pago extra: ",
+          message: "Ha ocurrido un error al calcular los pagos extra: ",
           status: res.status,
           data,
         };
@@ -62,7 +60,7 @@ export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener los ciclos de pago extra.",
+          "Todos los intentos fallaron. No se calcular los pagos extra.",
         );
       }
     }

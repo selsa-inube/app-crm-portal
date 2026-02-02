@@ -160,9 +160,9 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           const response =
             await searchExtraInstallmentPaymentCyclesByCustomerCode(
               businessUnitPublicCode,
-              businessManagerCode,
               clientIdentificationNumber,
               lineOfCreditAbbreviatedName,
+              moneyDestinationAbbreviatedName,
               eventData.token,
             );
           if (response === null) {

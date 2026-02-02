@@ -196,7 +196,6 @@ export function CreditProspects() {
 
   const handleCloseModalNotExistProspect = () => {
     setShowErrorModal(false);
-    navigate("/credit");
   };
 
   const filteredProspects = prospectSummaryData.filter((prospect) => {
