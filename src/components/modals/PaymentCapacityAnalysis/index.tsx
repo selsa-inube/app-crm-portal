@@ -225,16 +225,21 @@ export const PaymentCapacityAnalysis = (
       (1 - capacityRatios.pensionAllowances / 100) ||
       capacityData.pensionAllowances);
 
-  const payrollReserve =    
-    capacityData.periodicSalary / (1 - (capacityRatios.periodicSalary / 100||0))*(capacityRatios.periodicSalary / 100||0) +
-    (capacityData.otherNonSalaryEmoluments /
-      (1 - (capacityRatios.otherNonSalaryEmoluments / 100||0))*(capacityRatios.otherNonSalaryEmoluments / 100||0) +
-    (capacityData.pensionAllowances /
-      (1 - (capacityRatios.pensionAllowances / 100||0))*(capacityRatios.pensionAllowances / 100||0) ;
+  const payrollReserve =
+    (capacityData.periodicSalary /
+      (1 - (capacityRatios.periodicSalary / 100 || 0))) *
+      (capacityRatios.periodicSalary / 100 || 0) +
+    ((capacityData.otherNonSalaryEmoluments /
+      (1 - (capacityRatios.otherNonSalaryEmoluments / 100 || 0))) *
+      (capacityRatios.otherNonSalaryEmoluments / 100 || 0) +
+      (capacityData.pensionAllowances /
+        (1 - (capacityRatios.pensionAllowances / 100 || 0))) *
+        (capacityRatios.pensionAllowances / 100 || 0));
 
-  const payrollMinReserveToIncomeRatio =  payrollIncomeTotal != null
-    ? (payrollReserve / payrollIncomeTotal) * 100
-    : 0;
+  const payrollMinReserveToIncomeRatio =
+    payrollIncomeTotal != null
+      ? (payrollReserve / payrollIncomeTotal) * 100
+      : 0;
 
   const generalSummary: ISummaryItem[] = [
     {
