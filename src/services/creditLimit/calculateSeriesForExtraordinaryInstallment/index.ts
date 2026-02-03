@@ -3,36 +3,36 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IGuaranteesRequiredByCreditProspect } from "../types";
 
-export const getGuaranteesRequiredByCreditProspect = async (
+import { ICalculatedSeries } from "@services/creditRequest/types";
+
+export const calculateSeriesForExtraordinaryInstallment = async (
   businessUnitPublicCode: string,
-  businessManagerCode: string,
-  prospectCode: string,
   authorizationToken: string,
-): Promise<IGuaranteesRequiredByCreditProspect | null> => {
+  userName: string,
+  body: Record<string, string | number>,
+): Promise<ICalculatedSeries[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-
       const options: RequestInit = {
-        method: "GET",
+        method: "POST",
         headers: {
-          "X-Action": "GetGuaranteesRequiredByCreditProspect",
+          "X-Action": "CalculateSeriesForExtraordinaryInstallment",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          "X-Process-Manager": businessManagerCode,
+          "X-User-Name": userName,
           Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
+        body: JSON.stringify(body),
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/get-guarantees-required-by-credit-prospect/?prospectCode=${prospectCode}`,
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits/`,
         options,
       );
 
@@ -46,7 +46,7 @@ export const getGuaranteesRequiredByCreditProspect = async (
 
       if (!res.ok) {
         throw {
-          message: "Ha ocurrido un error: ",
+          message: "Ha ocurrido un error al calcular los pagos extra: ",
           status: res.status,
           data,
         };
@@ -62,7 +62,7 @@ export const getGuaranteesRequiredByCreditProspect = async (
           };
         }
         throw new Error(
-          "Todos los intentos fallaron. No se pudo obtener las garantías de la solicitud de crédito.",
+          "Todos los intentos fallaron. No se calcular los pagos extra.",
         );
       }
     }

@@ -138,7 +138,12 @@ export function ContactInformation(props: IContactInformationProps) {
               ? "invalid"
               : undefined
           }
-          message={dataContactInformation.failedEmail.i18n[lang]}
+          maxLength={100}
+          message={
+            formik.touched.email && formik.errors.email
+              ? formik.errors.email
+              : dataContactInformation.failedEmail.i18n[lang]
+          }
           fullwidth
         />
         <FieldsetInube legend={dataContactInformation.mobile.i18n[lang]}>

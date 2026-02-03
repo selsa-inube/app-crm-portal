@@ -10,6 +10,7 @@ import {
   useMediaQuery,
   IOption,
 } from "@inubekit/inubekit";
+import { useIAuth } from "@inube/iauth-react";
 
 import { BaseModal } from "@components/modals/baseModal";
 import {
@@ -31,6 +32,8 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { searchExtraInstallmentPaymentCyclesByCustomerCode } from "@services/creditLimit/extraInstallmentPaymentCyles/searchExtraInstallmentPaymentCyclesByCustomerCode";
 import { CustomerContext } from "@context/CustomerContext";
 import { CardGray } from "@components/cards/CardGray";
+import { calculateSeriesForExtraordinaryInstallment } from "@services/creditLimit/calculateSeriesForExtraordinaryInstallment";
+import { ICalculatedSeries } from "@services/creditRequest/types";
 
 import { dataAddSeriesModal, defaultFrequency } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
@@ -45,6 +48,7 @@ export interface AddSeriesModalProps {
   onSubmit: (values: {
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
+    value: number;
   }) => void;
   lang: EnumType;
   lineOfCreditAbbreviatedName: string;
@@ -76,6 +80,7 @@ export interface AddSeriesModalProps {
     }>
   >;
   isEdit?: boolean;
+  isSimulateCredit?: boolean;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
@@ -94,9 +99,12 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     setMessageError,
     setShowErrorModal,
     toggleAddSeriesModal,
+    isSimulateCredit = false,
   } = props;
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const { addFlag } = useFlag();
+  const { user } = useIAuth();
+
   const isMobile = useMediaQuery("(max-width: 700px)");
   const { customerData } = useContext(CustomerContext);
 
@@ -121,7 +129,11 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       frequency: "",
     },
     onSubmit: (values) => {
-      onSubmit?.(values);
+      onSubmit?.({
+        installmentDate: values.installmentDate,
+        paymentChannelAbbreviatedName: values.paymentChannelAbbreviatedName,
+        value: values.installmentAmount,
+      });
     },
   });
 
@@ -311,7 +323,6 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   ) => {
     try {
       setIsLoading(true);
-
       await saveExtraordinaryInstallment(
         businessUnitPublicCode,
         extraordinaryInstallments,
@@ -352,6 +363,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
 
     const count = parseInt(formik.values.value, 10);
     const frequency = formik.values.frequency;
+
     if (
       !installmentAmount ||
       !installmentDate ||
@@ -385,7 +397,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     handleExtraordinaryInstallment(updatedValues);
   };
 
-  const handleSimpleSubmit = () => {
+  const handleSimpleSubmit = async () => {
     if (!installmentState) return;
 
     const {
@@ -405,6 +417,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       onSubmit?.({
         installmentDate: installmentDate,
         paymentChannelAbbreviatedName: paymentChannelAbbreviatedName,
+        value: installmentAmount,
       });
       return;
     }
@@ -423,28 +436,61 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       return;
     }
 
-    const installments = [];
-    const currentDate = new Date(installmentDate);
-    for (let i = 0; i < count; i++) {
-      installments.push({
-        installmentDate: currentDate.toISOString(),
-        paymentChannelAbbreviatedName,
-      });
+    const cycleNameRaw = formik.values.cycleId
+      ? formik.values.cycleId.split("-").pop()
+      : "";
 
-      if (frequency === "Semestral") {
-        currentDate.setMonth(currentDate.getMonth() + 6);
-      } else if (frequency === "Anual") {
-        currentDate.setFullYear(currentDate.getFullYear() + 1);
+    const dateObj = new Date(installmentDate);
+    const formattedDate = `${dateObj.getFullYear()}/${(dateObj.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${dateObj.getDate().toString().padStart(2, "0")}`;
+
+    const requestBody: Record<string, string | number> = {
+      customerCode: customerData.publicCode,
+      cycleName: cycleNameRaw || "",
+      firstDayOfTheCycle: formattedDate,
+      installmentAmount: count,
+      installmentFrequency: frequency,
+      paymentChannelAbbreviatedName: paymentChannelAbbreviatedName,
+      value: installmentAmount,
+    };
+
+    try {
+      setIsLoading(true);
+
+      const response = await calculateSeriesForExtraordinaryInstallment(
+        businessUnitPublicCode,
+        eventData.token,
+        user.id,
+        requestBody,
+      );
+
+      if (response && Array.isArray(response)) {
+        response.forEach((item: ICalculatedSeries) => {
+          onSubmit?.({
+            installmentDate: item.paymentDate,
+            paymentChannelAbbreviatedName:
+              item.cycleName || item.paymentChannelAbbreviatedName,
+            value: item.value,
+          });
+        });
       }
-    }
 
-    installments.forEach((installment) => {
-      onSubmit?.({
-        installmentDate: installment.installmentDate,
-        paymentChannelAbbreviatedName:
-          installment.paymentChannelAbbreviatedName,
-      });
-    });
+      handleClose();
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description = code + err?.message + (err?.data?.description || "");
+
+      setMessageError(description);
+      setShowErrorModal(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isFormValid = () => {
@@ -502,7 +548,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       backButton={dataAddSeriesModal.cancel.i18n[lang]}
       nextButton={dataAddSeriesModal.add.i18n[lang]}
       handleBack={handleClose}
-      handleNext={service ? handleNextClick : handleSimpleSubmit}
+      handleNext={!isSimulateCredit ? handleNextClick : handleSimpleSubmit}
       handleClose={handleClose}
       width={isMobile ? "280px" : "425px"}
       height="auto"

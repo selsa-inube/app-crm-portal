@@ -86,7 +86,8 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.periodicSalary.i18n[lang],
               capacityData.periodicSalary /
-                (1 - capacityRatios.periodicSalary / 100) || 0,
+                (1 - capacityRatios.periodicSalary / 100) ||
+                capacityData.periodicSalary,
               capacityData.periodicSalary ?? 0,
               capacityRatios.periodicSalary ?? 0,
             ),
@@ -101,7 +102,8 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.otherNonSalaryEmoluments.i18n[lang],
               capacityData.otherNonSalaryEmoluments /
-                (1 - capacityRatios.otherNonSalaryEmoluments / 100) || 0,
+                (1 - capacityRatios.otherNonSalaryEmoluments / 100) ||
+                capacityData.otherNonSalaryEmoluments,
               capacityData.otherNonSalaryEmoluments ?? 0,
               capacityRatios.otherNonSalaryEmoluments ?? 0,
             ),
@@ -115,7 +117,8 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.pensionPayments.i18n[lang],
               capacityData.pensionAllowances /
-                (1 - capacityRatios.pensionAllowances / 100) || 0,
+                (1 - capacityRatios.pensionAllowances / 100) ||
+                capacityData.pensionAllowances,
               capacityData.pensionAllowances ?? 0,
               capacityRatios.pensionAllowances ?? 0,
             ),
@@ -133,7 +136,8 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.professionalFees.i18n[lang],
               capacityData.professionalFees /
-                (1 - capacityRatios.professionalFees / 100) || 0,
+                (1 - capacityRatios.professionalFees / 100) ||
+                capacityData.professionalFees,
               capacityData.professionalFees ?? 0,
               capacityRatios.professionalFees ?? 0,
             ),
@@ -150,7 +154,8 @@ export const PaymentCapacityAnalysis = (
           onShowModal: () =>
             handleShowModal(
               DataCapacityAnalysis.rentals.i18n[lang],
-              capacityData.leases / (1 - capacityRatios.leases / 100) || 0,
+              capacityData.leases / (1 - capacityRatios.leases / 100) ||
+                capacityData.leases,
               capacityData.leases ?? 0,
               capacityRatios.leases ?? 0,
             ),
@@ -163,7 +168,7 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.dividends.i18n[lang],
               capacityData.dividends / (1 - capacityRatios.dividends / 100) ||
-                0,
+                capacityData.dividends,
               capacityData.dividends ?? 0,
               capacityRatios.dividends ?? 0,
             ),
@@ -177,7 +182,8 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.financialReturns.i18n[lang],
               capacityData.financialIncome /
-                (1 - capacityRatios.financialIncome / 100) || 0,
+                (1 - capacityRatios.financialIncome / 100) ||
+                capacityData.financialIncome,
               capacityData.financialIncome ?? 0,
               capacityRatios.financialIncome ?? 0,
             ),
@@ -199,7 +205,8 @@ export const PaymentCapacityAnalysis = (
             handleShowModal(
               DataCapacityAnalysis.businessUtilities.i18n[lang],
               capacityData.personalBusinessUtilities /
-                (1 - capacityRatios.personalBusinessUtilities / 100) || 0,
+                (1 - capacityRatios.personalBusinessUtilities / 100) ||
+                capacityData.personalBusinessUtilities,
               capacityData.personalBusinessUtilities ?? 0,
               capacityRatios.personalBusinessUtilities ?? 0,
             ),
@@ -209,25 +216,43 @@ export const PaymentCapacityAnalysis = (
   ];
 
   const payrollIncomeTotal =
-    (capacityData.periodicSalary / (1 - capacityData.periodicSalary / 100) ||
-      0) +
+    (capacityData.periodicSalary / (1 - capacityRatios.periodicSalary / 100) ||
+      capacityData.periodicSalary) +
     (capacityData.otherNonSalaryEmoluments /
-      (capacityRatios.otherNonSalaryEmoluments / 100) || 0) +
+      (1 - capacityRatios.otherNonSalaryEmoluments / 100) ||
+      capacityData.otherNonSalaryEmoluments) +
     (capacityData.pensionAllowances /
-      (capacityRatios.pensionAllowances / 100) || 0);
+      (1 - capacityRatios.pensionAllowances / 100) ||
+      capacityData.pensionAllowances);
+
+  const payrollReserve =
+    (capacityData.periodicSalary /
+      (1 - (capacityRatios.periodicSalary / 100 || 0))) *
+      (capacityRatios.periodicSalary / 100 || 0) +
+    ((capacityData.otherNonSalaryEmoluments /
+      (1 - (capacityRatios.otherNonSalaryEmoluments / 100 || 0))) *
+      (capacityRatios.otherNonSalaryEmoluments / 100 || 0) +
+      (capacityData.pensionAllowances /
+        (1 - (capacityRatios.pensionAllowances / 100 || 0))) *
+        (capacityRatios.pensionAllowances / 100 || 0));
+
+  const payrollMinReserveToIncomeRatio =
+    payrollIncomeTotal != null
+      ? (payrollReserve / payrollIncomeTotal) * 100
+      : 0;
 
   const generalSummary: ISummaryItem[] = [
     {
       label: DataCapacityAnalysis.totalIncome.i18n[lang],
       value:
-        currencyFormat(generalPayment / (generalRatio / 100 || 1), false) ||
+        currencyFormat(generalPayment / (1 - generalRatio / 100 || 1), false) ||
         "0",
       bold: true,
     },
     {
       label: DataCapacityAnalysis.minimumPaymentReserve.i18n[lang].replace(
         "{percent}",
-        `${generalRatio || 0}`,
+        `${generalRatio.toFixed(4) || 0}`,
       ),
       value: currencyFormat(generalReserve ?? 0, false) || "0",
       gray: true,
@@ -248,9 +273,9 @@ export const PaymentCapacityAnalysis = (
     {
       label: DataCapacityAnalysis.minimumPaymentReserve.i18n[lang].replace(
         "{percent}",
-        `${generalRatio || 0}`,
+        `${payrollMinReserveToIncomeRatio.toFixed(4) || 0}`,
       ),
-      value: currencyFormat(generalReserve ?? 0, false) || "0",
+      value: currencyFormat(payrollReserve ?? 0, false) || "0",
       gray: true,
     },
     {
