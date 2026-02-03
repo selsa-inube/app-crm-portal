@@ -68,9 +68,9 @@ export function Observations(props: IObservationsProps) {
             dataObservations.placeHolderRelevantObservations.i18n[lang]
           }
           value={formik.values.relevantObservations}
-          onChange={(e) => {
-            if (e.target.value.length <= 200) {
-              formik.handleChange(e);
+          onChange={(changeEvent) => {
+            if (changeEvent.target.value.length <= 200) {
+              formik.handleChange(changeEvent);
             }
           }}
           onBlur={formik.handleBlur}

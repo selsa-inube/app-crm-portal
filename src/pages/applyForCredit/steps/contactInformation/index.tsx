@@ -39,7 +39,6 @@ export function ContactInformation(props: IContactInformationProps) {
   const validationSchema = Yup.object({
     email: Yup.string()
       .matches(/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/)
-      .max(100, "El email no puede exceder 100 caracteres")
       .required(""),
     phone: Yup.string()
       .matches(/^(\+\d{1,3})?\d{10,14}$/, "invlid phone number")
