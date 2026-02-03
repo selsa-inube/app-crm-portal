@@ -4,13 +4,14 @@ import {
   maxRetriesServices,
 } from "@config/environment";
 
-import { IExtraordinaryAgreement } from "../types";
+import { ICalculatedSeries } from "@services/creditRequest/types";
 
 export const calculateSeriesForExtraordinaryInstallment = async (
   businessUnitPublicCode: string,
   authorizationToken: string,
   userName: string,
-): Promise<IExtraordinaryAgreement[] | null> => {
+  body: Record<string, string | number>,
+): Promise<ICalculatedSeries[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -27,10 +28,11 @@ export const calculateSeriesForExtraordinaryInstallment = async (
           Authorization: `${authorizationToken}`,
         },
         signal: controller.signal,
+        body: JSON.stringify(body),
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/`,
+        `${environment.ICOREBANKING_API_URL_PERSISTENCE}/credit-limits/`,
         options,
       );
 

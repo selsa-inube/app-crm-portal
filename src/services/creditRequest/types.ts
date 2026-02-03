@@ -110,6 +110,13 @@ export interface IExtraordinaryInstallments {
   installmentDate: string;
   paymentChannelAbbreviatedName: string;
 }
+
+export interface ICalculatedSeries {
+  cycleName: string;
+  paymentChannelAbbreviatedName: string;
+  paymentDate: string;
+  value: number;
+}
 export interface IMaximumCreditLimit {
   customerCode: string;
   dividends: number;

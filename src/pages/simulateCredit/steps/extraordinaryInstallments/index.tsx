@@ -91,8 +91,13 @@ export function ExtraordinaryInstallments(
   const handleSubmit = (installment: {
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
+    value?: number;
   }) => {
-    const { installmentDate, paymentChannelAbbreviatedName } = installment;
+    const { installmentDate, paymentChannelAbbreviatedName, value } =
+      installment;
+
+    const amountToAdd =
+      value !== undefined ? value : installmentState.installmentAmount;
 
     setExtraordinary((prev) => {
       const existingIndex = prev.findIndex(
@@ -107,9 +112,7 @@ export function ExtraordinaryInstallments(
           index === existingIndex
             ? {
                 ...item,
-                value:
-                  (Number(item.value) || 0) +
-                  installmentState.installmentAmount,
+                value: (Number(item.value) || 0) + amountToAdd,
               }
             : item,
         );
@@ -117,7 +120,7 @@ export function ExtraordinaryInstallments(
         const newPayment: TableExtraordinaryInstallmentProps = {
           id: `${paymentChannelAbbreviatedName},${installmentDate},${Date.now()}`,
           datePayment: installmentDate,
-          value: installmentState.installmentAmount,
+          value: amountToAdd,
           paymentMethod: paymentChannelAbbreviatedName,
         };
         updated = [...prev, newPayment];
@@ -180,6 +183,7 @@ export function ExtraordinaryInstallments(
             setMessageError={setMessageError}
             setShowErrorModal={setShowErrorModal}
             toggleAddSeriesModal={toggleAddSeriesModal}
+            isSimulateCredit={true}
           />
         )}
       </Stack>
