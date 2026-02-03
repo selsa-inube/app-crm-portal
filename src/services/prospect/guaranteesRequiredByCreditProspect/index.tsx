@@ -32,7 +32,7 @@ export const getGuaranteesRequiredByCreditProspect = async (
       };
 
       const res = await fetch(
-        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/${prospectCode}`,
+        `${environment.VITE_IPROSPECT_QUERY_PROCESS_SERVICE}/prospects/get-guarantees-required-by-credit-prospect/${prospectCode}`,
         options,
       );
 
