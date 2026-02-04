@@ -765,12 +765,17 @@ export function SimulateCredit() {
           const existingScore = activeScores.find(
             (score) => score.bureauName === method.bureauName,
           );
+
+          const normalizedBureauName = method.bureauName
+            .toLowerCase()
+            .replace("_", " ");
+
           return {
             value: existingScore ? existingScore.creditRiskScore : null,
             date: existingScore
               ? existingScore.queryDate
               : new Date().toISOString(),
-            bureauName: method.bureauName,
+            bureauName: normalizedBureauName,
           };
         });
 

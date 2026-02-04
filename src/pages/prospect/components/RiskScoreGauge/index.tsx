@@ -17,10 +17,11 @@ interface IRiskScoreGaugeProps {
   value: number;
   lang: EnumType;
   logo?: string;
+  nameProvider?: string;
 }
 
 export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
-  const { value, lang, logo } = props;
+  const { value, lang, logo, nameProvider } = props;
 
   const min = DataRiskScore.min;
   const max = DataRiskScore.max;
@@ -162,7 +163,10 @@ export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
       </Stack>
       {logo && (
         <StyledContainerLogo>
-          <StyledImgLogo url={logo} alt={DataRiskScore.altImg.i18n[lang]} />
+          <StyledImgLogo
+            url={logo}
+            alt={`${nameProvider} ${DataRiskScore.altImg.i18n[lang]}`}
+          />
         </StyledContainerLogo>
       )}
     </Stack>

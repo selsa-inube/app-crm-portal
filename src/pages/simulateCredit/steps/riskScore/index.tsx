@@ -22,6 +22,7 @@ interface IRiskScoreProps {
   lang: EnumType;
   isLoadingUpdate?: boolean;
   handleOnChange: (riskScore: { value: number; date: string }) => void;
+  nameProvider?: string;
   logo?: string;
   resetScore?: (methods: ICreditRiskBureauUpdateMethod[]) => Promise<void>;
   newScore?: number | null;
@@ -41,6 +42,7 @@ export function RiskScore(props: IRiskScoreProps) {
     isLoadingUpdate = false,
     updateMethod = EUpdateMethod.Manual,
     onRefresh,
+    nameProvider,
   } = props;
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -95,7 +97,12 @@ export function RiskScore(props: IRiskScoreProps) {
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
-        <RiskScoreGauge value={value} lang={lang} logo={logo} />
+        <RiskScoreGauge
+          value={value}
+          lang={lang}
+          logo={logo}
+          nameProvider={nameProvider}
+        />
         <Stack gap="4px">
           {isLoading ? (
             <SkeletonLine />

@@ -524,6 +524,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       {formData.riskScores.map((score, index) => (
                         <RiskScore
                           key={score.bureauName}
+                          nameProvider={score.bureauName}
                           value={score.value}
                           date={score.date}
                           isMobile={isMobile}
