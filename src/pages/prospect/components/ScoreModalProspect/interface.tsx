@@ -82,7 +82,6 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
               })
             }
             logo={urlMock}
-            resetScore={() => {}}
             newScore={newFirstScore?.score || null}
             isProspect={true}
             lang={lang}
@@ -109,7 +108,6 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
               })
             }
             logo={urlMock}
-            resetScore={() => {}}
             newScore={newSecondScore?.score || null}
             isProspect={true}
             lang={lang}

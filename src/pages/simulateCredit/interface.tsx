@@ -176,7 +176,9 @@ interface SimulateCreditUIProps {
   handleUpdateRiskScore: (index: number, newValue: number) => Promise<void>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
   bureauMethods: ICreditRiskBureauUpdateMethod[];
-  handleBureauConsultation: () => Promise<void>;
+  handleBureauConsultation: (
+    methods: ICreditRiskBureauUpdateMethod[],
+  ) => Promise<void>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {
@@ -522,6 +524,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       {formData.riskScores.map((score, index) => (
                         <RiskScore
                           key={score.bureauName}
+                          nameProvider={score.bureauName}
                           value={score.value}
                           date={score.date}
                           isMobile={isMobile}
