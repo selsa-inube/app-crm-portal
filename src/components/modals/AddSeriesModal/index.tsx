@@ -617,14 +617,14 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
 
         {dateOptions.length === 1 ? (
           <CardGray
-            label={dataAddSeriesModal.labelFrequency.i18n[lang]}
+            label={dataAddSeriesModal.labelDate.i18n[lang]}
             data={dateOptions[0].label}
           />
         ) : (
           <Select
             name="installmentDate"
             id="installmentDate"
-            label={dataAddSeriesModal.labelFrequency.i18n[lang]}
+            label={dataAddSeriesModal.labelDate.i18n[lang]}
             placeholder={dataAddSeriesModal.placeHolderSelect.i18n[lang]}
             options={dateOptions}
             value={formik.values.installmentDate}

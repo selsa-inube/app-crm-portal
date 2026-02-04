@@ -76,7 +76,7 @@ export const dataAddSeriesModal = {
     description: "First payment date",
     i18n: {
       en: "First payment date",
-      es: "Primer pago",
+      es: "Fecha del primer pago",
     },
   },
   placeHolderSelect: {
