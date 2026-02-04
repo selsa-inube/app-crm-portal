@@ -614,17 +614,10 @@ export function SimulateCredit() {
           customerData.token,
         );
 
-        if (
-          !configData?.creditRiskBureaus ||
-          configData.creditRiskBureaus.length === 0
-        ) {
-          setBureauMethods([]);
-        } else {
-          setShowRiskScoreStep(true);
-          setBureauMethods(configData.creditRiskBureaus);
+        const methods = configData?.creditRiskBureaus || [];
+        setBureauMethods(methods);
 
-          handleBureauConsultation();
-        }
+        handleBureauConsultation(methods);
       } catch (error) {
         const err = error as {
           message?: string;
@@ -739,49 +732,67 @@ export function SimulateCredit() {
       ? titleButtonTextAssited.submitText.i18n[lang]
       : titleButtonTextAssited.goNextText.i18n[lang];
 
-  const handleBureauConsultation = useCallback(async () => {
-    if (!customerData.publicCode) return;
-
-    try {
-      const data = await creditConsultationInBuroByIdentificationNumber(
-        businessUnitPublicCode,
-        businessManagerCode,
-        customerData.publicCode,
-        eventData.token,
-      );
-
-      if (data && data.length > 0) {
-        setOriginalBureauData(data);
-
-        const activeScores = data.filter((score) => score.isActive === "1");
-
-        if (activeScores.length > 0) {
-          setShowRiskScoreStep(true);
-          const scoresForState = activeScores.map((score) => ({
-            value: score.creditRiskScore,
-            date: score.queryDate,
-            bureauName: score.bureauName,
-          }));
-          handleFormDataChange("riskScores", scoresForState);
-        } else {
-          setShowRiskScoreStep(false);
-        }
-      } else {
+  const handleBureauConsultation = useCallback(
+    async (methods: ICreditRiskBureauUpdateMethod[]) => {
+      if (!customerData.publicCode || methods.length === 0) {
         setShowRiskScoreStep(false);
+        return;
       }
-    } catch (error) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
-      };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
 
-      setMessageError(description);
-      setShowErrorModal(true);
-    }
-  }, [customerData.publicCode, businessUnitPublicCode, businessManagerCode]);
+      try {
+        const consultationData =
+          await creditConsultationInBuroByIdentificationNumber(
+            businessUnitPublicCode,
+            businessManagerCode,
+            customerData.publicCode,
+            eventData.token,
+          );
+
+        const activeScores = (consultationData || []).filter(
+          (score) => score.isActive === "1",
+        );
+
+        if (methods.length > 0) {
+          const hasPendingBureaus = methods.some((method) =>
+            activeScores.some(
+              (score) => score.bureauName === method.bureauName,
+            ),
+          );
+          setShowRiskScoreStep(hasPendingBureaus);
+        }
+
+        const scoresForState = methods.map((method) => {
+          const existingScore = activeScores.find(
+            (score) => score.bureauName === method.bureauName,
+          );
+          return {
+            value: existingScore ? existingScore.creditRiskScore : null,
+            date: existingScore
+              ? existingScore.queryDate
+              : new Date().toISOString(),
+            bureauName: method.bureauName,
+          };
+        });
+
+        setShowRiskScoreStep(scoresForState.length > 0);
+        handleFormDataChange("riskScores", scoresForState);
+      } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
+        setMessageError(description);
+        setOriginalBureauData;
+        setShowErrorModal(true);
+      }
+    },
+    [customerData.publicCode, businessUnitPublicCode, businessManagerCode],
+  );
 
   const handleUpdateRiskScore = async (index: number, newValue: number) => {
     const scoreToUpdate = formData.riskScores[index];

@@ -176,7 +176,9 @@ interface SimulateCreditUIProps {
   handleUpdateRiskScore: (index: number, newValue: number) => Promise<void>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
   bureauMethods: ICreditRiskBureauUpdateMethod[];
-  handleBureauConsultation: () => Promise<void>;
+  handleBureauConsultation: (
+    methods: ICreditRiskBureauUpdateMethod[],
+  ) => Promise<void>;
 }
 
 export function SimulateCreditUI(props: SimulateCreditUIProps) {

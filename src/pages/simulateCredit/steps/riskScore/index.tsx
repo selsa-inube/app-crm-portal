@@ -11,6 +11,7 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { BaseModal } from "@components/modals/baseModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { EUpdateMethod } from "@services/creditRiskBureauQueries/types";
+import { ICreditRiskBureauUpdateMethod } from "@services/creditRiskBureauQueries/types";
 
 import { riskScoreData } from "./config";
 
@@ -22,7 +23,7 @@ interface IRiskScoreProps {
   isLoadingUpdate?: boolean;
   handleOnChange: (riskScore: { value: number; date: string }) => void;
   logo?: string;
-  resetScore?: () => void;
+  resetScore?: (methods: ICreditRiskBureauUpdateMethod[]) => Promise<void>;
   newScore?: number | null;
   isProspect?: boolean;
   updateMethod?: EUpdateMethod;
@@ -93,96 +94,82 @@ export function RiskScore(props: IRiskScoreProps) {
 
   return (
     <Fieldset>
-      {formik.values.score === 0 ? (
-        <Stack
-          direction="column"
-          alignItems="center"
-          gap="20px"
-          height="50px"
-          justifyContent="center"
-        >
-          <Text type="body" size="small">
-            {riskScoreData.unavailableScore.i18n[lang]}
+      <Stack direction="column" alignItems="center" gap="20px">
+        <RiskScoreGauge value={value} lang={lang} logo={logo} />
+        <Stack gap="4px">
+          {isLoading ? (
+            <SkeletonLine />
+          ) : (
+            <Text type="body" size="small">
+              {riskScoreData.reportedScore.i18n[lang]}
+            </Text>
+          )}
+          <Text type="body" weight="bold" size="small">
+            {date
+              ? formatPrimaryDate(new Date())
+              : formatPrimaryDate(new Date(date))}
           </Text>
         </Stack>
-      ) : (
-        <Stack direction="column" alignItems="center" gap="20px">
-          <RiskScoreGauge value={value} lang={lang} logo={logo} />
-          <Stack gap="4px">
-            {isLoading ? (
-              <SkeletonLine />
-            ) : (
-              <Text type="body" size="small">
-                {riskScoreData.reportedScore.i18n[lang]}
-              </Text>
-            )}
-            <Text type="body" weight="bold" size="small">
-              {date
-                ? formatPrimaryDate(new Date())
-                : formatPrimaryDate(new Date(date))}
-            </Text>
-          </Stack>
-          <Stack gap="12px" direction="column" alignItems="center">
-            <Button
-              variant="outlined"
-              iconBefore={<MdOutlineEdit />}
-              onClick={() => handleButtonClick()}
-            >
-              {riskScoreData.editScore.i18n[lang]}
-            </Button>
-          </Stack>
-          {showErrorModal && (
-            <ErrorModal
-              handleClose={() => setShowErrorModal(false)}
-              isMobile={isMobile}
+        <Stack gap="12px" direction="column" alignItems="center">
+          <Button
+            variant="outlined"
+            iconBefore={<MdOutlineEdit />}
+            onClick={() => handleButtonClick()}
+          >
+            {riskScoreData.editScore.i18n[lang]}
+          </Button>
+        </Stack>
+        {showErrorModal && (
+          <ErrorModal
+            handleClose={() => setShowErrorModal(false)}
+            isMobile={isMobile}
+            message={riskScoreData.error.i18n[lang]}
+          />
+        )}
+        {showEditModal && (
+          <BaseModal
+            title={riskScoreData.editTitle.i18n[lang]}
+            nextButton={riskScoreData.save.i18n[lang]}
+            backButton={riskScoreData.close.i18n[lang]}
+            handleBack={() => setShowEditModal(false)}
+            handleNext={formik.handleSubmit}
+            disabledNext={
+              formik.values.score > 950 || formik.values.score < 150
+            }
+            width={isMobile ? "300px" : "400px"}
+          >
+            <Input
+              id="score"
+              name="score"
+              label={riskScoreData.score.i18n[lang]}
+              size="compact"
+              fullwidth
+              type="number"
+              value={formik.values.score}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              status={
+                formik.values.score > 950 || formik.values.score < 150
+                  ? "invalid"
+                  : undefined
+              }
               message={riskScoreData.error.i18n[lang]}
             />
-          )}
-          {showEditModal && (
-            <BaseModal
-              title={riskScoreData.editTitle.i18n[lang]}
-              nextButton={riskScoreData.save.i18n[lang]}
-              backButton={riskScoreData.close.i18n[lang]}
-              handleBack={() => setShowEditModal(false)}
-              handleNext={formik.handleSubmit}
-              disabledNext={
-                formik.values.score > 950 || formik.values.score < 150
-              }
-              width={isMobile ? "300px" : "400px"}
-            >
-              <Input
-                id="score"
-                name="score"
-                label={riskScoreData.score.i18n[lang]}
-                size="compact"
-                fullwidth
-                type="number"
-                value={formik.values.score}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                status={
-                  formik.values.score > 950 || formik.values.score < 150
-                    ? "invalid"
-                    : undefined
-                }
-                message={riskScoreData.error.i18n[lang]}
-              />
-            </BaseModal>
-          )}
-          {showConfirmModal && (
-            <BaseModal
-              title={riskScoreData.automaticUpdateTitle.i18n[lang]}
-              nextButton={riskScoreData.confirm.i18n[lang]}
-              backButton={riskScoreData.cancel.i18n[lang]}
-              handleBack={() => setShowConfirmModal(false)}
-              handleNext={handleConfirmAutomatic}
-              width={isMobile ? "300px" : "400px"}
-            >
-              <Text>{riskScoreData.automaticUpdateMessage.i18n[lang]}</Text>
-            </BaseModal>
-          )}
-        </Stack>
-      )}
+          </BaseModal>
+        )}
+        {showConfirmModal && (
+          <BaseModal
+            title={riskScoreData.automaticUpdateTitle.i18n[lang]}
+            nextButton={riskScoreData.confirm.i18n[lang]}
+            backButton={riskScoreData.cancel.i18n[lang]}
+            handleBack={() => setShowConfirmModal(false)}
+            handleNext={handleConfirmAutomatic}
+            width={isMobile ? "300px" : "400px"}
+          >
+            <Text>{riskScoreData.automaticUpdateMessage.i18n[lang]}</Text>
+          </BaseModal>
+        )}
+      </Stack>
     </Fieldset>
   );
 }
