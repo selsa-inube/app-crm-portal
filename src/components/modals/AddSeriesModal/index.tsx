@@ -182,7 +182,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           const flattenedOptions: ICycleOption[] =
             response.extraordinaryCycles.map((cycle) => ({
               id: `${response.payrollForDeductionAgreementId}-${cycle.cycleName}`,
-              label: `${response.abbreviatedName} ${cycle.cycleName}`,
+              label: `${cycle.cycleName}`,
               value: `${response.payrollForDeductionAgreementId}-${cycle.cycleName}`,
               paymentDates: cycle.paymentDates,
               extraordinaryCycleType: cycle.extraordinaryCycleType,
