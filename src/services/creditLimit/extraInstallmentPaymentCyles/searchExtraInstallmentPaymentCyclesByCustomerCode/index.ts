@@ -12,7 +12,7 @@ export const searchExtraInstallmentPaymentCyclesByCustomerCode = async (
   lineOfCreditAbbreviatedName: string,
   moneyDestinationAbbreviatedName: string,
   authorizationToken: string,
-): Promise<IExtraordinaryAgreement[] | null> => {
+): Promise<IExtraordinaryAgreement | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {

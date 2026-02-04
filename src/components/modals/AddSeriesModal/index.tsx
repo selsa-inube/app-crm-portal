@@ -179,16 +179,14 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           if (response === null) {
             return;
           }
-          const flattenedOptions: ICycleOption[] = response.flatMap(
-            (agreement) =>
-              agreement.extraordinaryCycles.map((cycle) => ({
-                id: `${agreement.payrollForDeductionAgreementId}-${cycle.cycleName}`,
-                label: `${agreement.abbreviatedName} ${cycle.cycleName}`,
-                value: `${agreement.payrollForDeductionAgreementId}-${cycle.cycleName}`,
-                paymentDates: cycle.paymentDates,
-                extraordinaryCycleType: cycle.extraordinaryCycleType,
-              })),
-          );
+          const flattenedOptions: ICycleOption[] =
+            response.extraordinaryCycles.map((cycle) => ({
+              id: `${response.payrollForDeductionAgreementId}-${cycle.cycleName}`,
+              label: `${response.abbreviatedName} ${cycle.cycleName}`,
+              value: `${response.payrollForDeductionAgreementId}-${cycle.cycleName}`,
+              paymentDates: cycle.paymentDates,
+              extraordinaryCycleType: cycle.extraordinaryCycleType,
+            }));
 
           setCycleOptions(flattenedOptions);
 
