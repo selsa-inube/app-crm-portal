@@ -79,6 +79,14 @@ export const addConfig = {
 };
 
 export const dataCreditProspects = {
+  title: {
+    code: "CreditProspects_title",
+    description: "Credit prospects title",
+    i18n: {
+      en: "Error",
+      es: "Error",
+    },
+  },
   applyCredit: {
     code: "CreditProspects_applyCredit",
     description: "Apply for credit button label",

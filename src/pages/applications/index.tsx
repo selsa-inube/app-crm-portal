@@ -308,7 +308,7 @@ export function CreditApplications() {
           )}
           {errorModal && (
             <BaseModal
-              title="Error"
+              title={dataCreditProspects.title.i18n[lang]}
               nextButton={dataCreditProspects.accept.i18n[lang]}
               handleNext={() => setErrorModal(false)}
               width="400px"
