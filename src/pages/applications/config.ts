@@ -79,6 +79,14 @@ export const addConfig = {
 };
 
 export const dataCreditProspects = {
+  title: {
+    code: "CreditProspects_title",
+    description: "Credit prospects title",
+    i18n: {
+      en: "Error",
+      es: "Error",
+    },
+  },
   applyCredit: {
     code: "CreditProspects_applyCredit",
     description: "Apply for credit button label",
@@ -188,6 +196,30 @@ export const redirect = {
     i18n: {
       en: "Crediboard",
       es: "Crediboard",
+    },
+  },
+  errorNoPortalsFound: {
+    code: "Redirect_errorNoPortalsFound",
+    description: "Error when no portals are found",
+    i18n: {
+      en: "No available portals found",
+      es: "No se encontraron portales disponibles",
+    },
+  },
+  errorInvalidPortalId: {
+    code: "Redirect_errorInvalidPortalId",
+    description: "Error when portal has no valid ID",
+    i18n: {
+      en: "The portal does not have a valid ID",
+      es: "El portal no tiene un ID válido",
+    },
+  },
+  errorCrediboardUrlNotConfigured: {
+    code: "Redirect_errorCrediboardUrlNotConfigured",
+    description: "Error when Crediboard URL is not configured",
+    i18n: {
+      en: "Crediboard URL not configured",
+      es: "URL de Crediboard no configurada",
     },
   },
 };

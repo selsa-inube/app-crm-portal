@@ -6,7 +6,6 @@ import {
   Stack,
   Textfield,
   inube,
-  useFlag,
   useMediaQuery,
   IOption,
 } from "@inubekit/inubekit";
@@ -37,7 +36,6 @@ import { ICalculatedSeries } from "@services/creditRequest/types";
 
 import { dataAddSeriesModal, defaultFrequency } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
-import { TextLabels } from "../ExtraordinaryPaymentModal/config";
 import { ICycleOption } from "./types";
 
 export interface AddSeriesModalProps {
@@ -102,7 +100,6 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     isSimulateCredit = false,
   } = props;
   const { businessUnitSigla, eventData } = useContext(AppContext);
-  const { addFlag } = useFlag();
   const { user } = useIAuth();
 
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -186,6 +183,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
               value: `${response.payrollForDeductionAgreementId}-${cycle.cycleName}`,
               paymentDates: cycle.paymentDates,
               extraordinaryCycleType: cycle.extraordinaryCycleType,
+              cycleName: cycle.cycleName,
             }));
 
           setCycleOptions(flattenedOptions);
@@ -303,34 +301,45 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     }
   };
 
-  const itemIdentifiersForUpdate: IExtraordinaryInstallments = {
-    creditProductCode:
-      prospectData?.creditProducts?.[0]?.creditProductCode || "",
-    extraordinaryInstallments: [
-      {
-        installmentAmount: 0,
-        installmentDate: "",
-        paymentChannelAbbreviatedName: "",
-      },
-    ],
-    prospectId: prospectData?.prospectId || "",
-  };
-
   const handleExtraordinaryInstallment = async (
-    extraordinaryInstallments: IExtraordinaryInstallments,
+    extraordinaryInstallments: Record<string, string | number>,
   ) => {
     try {
       setIsLoading(true);
-      await saveExtraordinaryInstallment(
+
+      const calculateInstallments =
+        await calculateSeriesForExtraordinaryInstallment(
+          businessUnitPublicCode,
+          eventData.token,
+          user.id,
+          extraordinaryInstallments,
+        );
+
+      const formattedInstallments = (calculateInstallments || []).map(
+        (item) => ({
+          installmentAmount: item.value,
+          installmentDate: item.paymentDate,
+          paymentChannelAbbreviatedName: item.paymentChannelAbbreviatedName,
+        }),
+      );
+
+      const saveBody: IExtraordinaryInstallments = {
+        creditProductCode:
+          prospectData?.creditProducts?.[0]?.creditProductCode || "",
+        extraordinaryInstallments: formattedInstallments,
+        prospectId: prospectData?.prospectId || "",
+      };
+
+      const newExtraordinaryInstallments = await saveExtraordinaryInstallment(
         businessUnitPublicCode,
-        extraordinaryInstallments,
+        saveBody,
         eventData.token,
       );
 
-      setSentData?.(extraordinaryInstallments);
+      setSentData?.(newExtraordinaryInstallments || null);
       setIsLoading(false);
       handleClose();
-    } catch (error: unknown) {
+    } catch (error) {
       setIsLoading(false);
       const err = error as {
         message?: string;
@@ -341,12 +350,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       const description =
         code + (err?.message || "") + (err?.data?.description || "");
 
-      addFlag({
-        title: TextLabels.titleError.i18n[lang],
-        description,
-        appearance: "danger",
-        duration: 5000,
-      });
+      setShowErrorModal(true);
+      setMessageError(description);
     }
   };
 
@@ -387,12 +392,26 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       }
     }
 
-    const updatedValues: IExtraordinaryInstallments = {
-      ...itemIdentifiersForUpdate,
-      extraordinaryInstallments: installments,
+    const selectedCycle = cycleOptions.find(
+      (option) => option.value === formik.values.cycleId,
+    );
+
+    const dateObj = new Date(installmentDate);
+    const formattedDate = `${dateObj.getFullYear()}/${(dateObj.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${dateObj.getDate().toString().padStart(2, "0")}`;
+
+    const requestBody: Record<string, string | number> = {
+      customerCode: customerData.publicCode,
+      cycleName: selectedCycle?.cycleName || "",
+      firstDayOfTheCycle: formattedDate,
+      installmentAmount: count,
+      installmentFrequency: frequency,
+      paymentChannelAbbreviatedName: paymentChannelAbbreviatedName,
+      value: installmentAmount,
     };
 
-    handleExtraordinaryInstallment(updatedValues);
+    handleExtraordinaryInstallment(requestBody);
   };
 
   const handleSimpleSubmit = async () => {
