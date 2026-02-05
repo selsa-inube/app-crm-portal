@@ -295,7 +295,7 @@ export const dataCreditProspects = {
   },
 };
 
-export const notFound = "No hay resultados.";
+export const notFound = "Este cliente no tiene prospectos por gestionar.";
 
 export const amountLineOnSkeletons = 4;
 
