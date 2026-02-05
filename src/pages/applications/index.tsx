@@ -47,6 +47,8 @@ export function CreditApplications() {
     null,
   );
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
 
   const searchTimeoutRef = useRef<number>(0);
 
@@ -109,9 +111,20 @@ export function CreditApplications() {
           eventData.token,
         );
         setCreditRequestData(creditData);
-      } catch {
-        setCodeError(1022);
-        setAddToFix([dataCreditProspects.errorCreditRequest.i18n[lang]]);
+      } catch (error) {
+        const err = error as {
+          message?: string;
+          status?: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + (err?.message || "") + (err?.data?.description || "");
+
+        setErrorMessage(
+          description || dataCreditProspects.errorCreditRequest.i18n[lang],
+        );
+        setErrorModal(true);
       } finally {
         setLoading(false);
       }
@@ -121,33 +134,73 @@ export function CreditApplications() {
   }, [customerData.publicCode, debouncedSearch]);
 
   useEffect(() => {
-    let error = null;
-    const messages: string[] = [];
-
     if (eventData.businessManager.abbreviatedName.length === 0) {
-      error = 1003;
-      messages.push(dataError.noBusinessUnit.i18n[lang]);
-    }
-    if (customerData.fullName.length === 0) {
-      error = 1016;
-      messages.push(dataError.noSelectClient.i18n[lang]);
+      setCodeError(1003);
+      setAddToFix([dataError.noBusinessUnit.i18n[lang]]);
+      return;
     }
 
-    setCodeError(error);
-    setAddToFix(messages);
-  }, [customerData, eventData, loading]);
+    if (customerData.fullName.length === 0) {
+      setCodeError(1016);
+      setAddToFix([dataError.noSelectClient.i18n[lang]]);
+      return;
+    }
+
+    setCodeError(null);
+    setAddToFix([]);
+  }, [customerData, eventData, lang]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
 
   const handleNavigate = () => {
-    if (codeError === 1003) {
-      navigate(`/login/${user.username}/business-units/select-business-unit`);
-    } else if (codeError === 1016) {
-      navigate("/clients/select-client/");
-    } else {
-      navigate("/credit");
+    const routes = {
+      1003: `/login/${user.username}/business-units/select-business-unit`,
+      1016: "/clients/select-client/",
+    };
+
+    navigate(routes[codeError as keyof typeof routes] || "/credit");
+  };
+
+  const handleRedirect = async () => {
+    try {
+      const portals = await getStaffPortalsByBusinessManager(
+        "",
+        eventData.businessManager.publicCode,
+        redirect.portalName.i18n[lang],
+      );
+
+      if (!portals || portals.length === 0) {
+        throw new Error(redirect.errorNoPortalsFound.i18n[lang]);
+      }
+
+      const portalId = portals[0]?.staffPortalId;
+
+      if (!portalId) {
+        throw new Error(redirect.errorInvalidPortalId.i18n[lang]);
+      }
+
+      if (!environment.VITE_CREDIBOARD_URL) {
+        throw new Error(redirect.errorCrediboardUrlNotConfigured.i18n[lang]);
+      }
+
+      const redirectUrl = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}?portal=${portalId}`;
+
+      window.location.href = redirectUrl;
+    } catch (error) {
+      const err = error as {
+        message?: string;
+        status?: number;
+        data?: { description?: string; code?: string };
+      };
+      const code = err?.data?.code ? `[${err.data.code}] ` : "";
+      const description =
+        code + (err?.message || "") + (err?.data?.description || "");
+
+      setErrorMessage(description);
+      setErrorModal(true);
+      setIsShowModal(false);
     }
   };
 
@@ -247,20 +300,20 @@ export function CreditApplications() {
               nextButton={dataCreditProspects.accept.i18n[lang]}
               backButton={dataCreditProspects.cancel.i18n[lang]}
               handleBack={() => setIsShowModal(false)}
-              handleNext={async () => {
-                const portalId = (
-                  await getStaffPortalsByBusinessManager(
-                    "",
-                    eventData.businessManager.abbreviatedName,
-                    redirect.portalName.i18n[lang],
-                  )
-                )[0].staffPortalId;
-                const redirectUrl = `${environment.VITE_CREDIBOARD_URL}/extended-card/${selectedRequestCode}?portal=${portalId}`;
-                window.location.href = redirectUrl;
-              }}
+              handleNext={handleRedirect}
               width="400px"
             >
               <Text>{dataCreditProspects.sure.i18n[lang]}</Text>
+            </BaseModal>
+          )}
+          {errorModal && (
+            <BaseModal
+              title={dataCreditProspects.title.i18n[lang]}
+              nextButton={dataCreditProspects.accept.i18n[lang]}
+              handleNext={() => setErrorModal(false)}
+              width="400px"
+            >
+              <Text>{errorMessage}</Text>
             </BaseModal>
           )}
         </Stack>
