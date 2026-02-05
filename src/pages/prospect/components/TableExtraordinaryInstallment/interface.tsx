@@ -50,6 +50,7 @@ interface ITableExtraordinaryInstallmentProps {
     installmentAmount: number;
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
+    cycleName?: string;
   };
   isOpenModalView: boolean;
   setIsOpenModalView: (value: boolean) => void;
@@ -60,6 +61,7 @@ interface ITableExtraordinaryInstallmentProps {
       installmentAmount: number;
       installmentDate: string;
       paymentChannelAbbreviatedName: string;
+      cycleName?: string;
     }>
   >;
   usePagination: {
@@ -182,12 +184,16 @@ export function TableExtraordinaryInstallmentUI(
                 {visbleHeaders.map((header) => {
                   const raw =
                     row[header.key as keyof TableExtraordinaryInstallmentProps];
-                  const value =
-                    header.key === "datePayment"
-                      ? formatPrimaryDate(new Date(raw as string))
-                      : header.mask
-                        ? header.mask(raw as string | number)
-                        : raw;
+
+                  let value = raw;
+
+                  if (header.key === "paymentMethod" && row.cycleName) {
+                    value = row.cycleName;
+                  } else if (header.key === "datePayment") {
+                    value = formatPrimaryDate(new Date(raw as string));
+                  } else if (header.mask) {
+                    value = header.mask(raw as string | number);
+                  }
 
                   return (
                     <Td key={header.key} align="left">
@@ -221,6 +227,7 @@ export function TableExtraordinaryInstallmentUI(
                                 : String(row.datePayment) || "",
                             paymentChannelAbbreviatedName:
                               String(row.paymentMethod) || "",
+                            cycleName: String(row.cycleName) || "",
                           });
                           setIsOpenModalView(true);
                           setOpenMenuIndex(null);
@@ -326,7 +333,10 @@ export function TableExtraordinaryInstallmentUI(
           width="290px"
         >
           <CardGray
-            label={dataAddSeriesModal.labelPaymentMethod.i18n[lang]}
+            label={
+              installmentState.cycleName ||
+              installmentState.paymentChannelAbbreviatedName
+            }
             placeHolder={installmentState.paymentChannelAbbreviatedName}
           />
           <CardGray

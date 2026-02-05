@@ -7,6 +7,11 @@ import {
 } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { AppContext } from "@context/AppContext";
+import { searchExtraInstallmentPaymentCyclesByCustomerCode } from "@services/creditLimit/extraInstallmentPaymentCyles/searchExtraInstallmentPaymentCyclesByCustomerCode";
+import {
+  IExtraordinaryAgreement,
+  IExtraordinaryCycle,
+} from "@services/creditLimit/types";
 
 import { removeExtraordinaryInstallment } from "./utils";
 import {
@@ -92,6 +97,13 @@ export const TableExtraordinaryInstallment = (
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [paymentCycles, setPaymentCycles] = useState<IExtraordinaryCycle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
+  const [isOpenModalView, setIsOpenModalView] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [messageError, setMessageError] = useState("");
+  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
 
   const visbleHeaders = isMobile
     ? headers.filter((header) => rowsVisbleMobile.includes(header.key))
@@ -114,12 +126,6 @@ export const TableExtraordinaryInstallment = (
     installmentDate: "",
     paymentChannelAbbreviatedName: "",
   });
-  const [loading, setLoading] = useState(true);
-  const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
-  const [isOpenModalView, setIsOpenModalView] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [messageError, setMessageError] = useState("");
-  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
 
   const paginationProps = usePagination(extraordinaryInstallments);
 
@@ -145,19 +151,83 @@ export const TableExtraordinaryInstallment = (
   };
 
   useEffect(() => {
+    const fetchPaymentCycles = async () => {
+      if (
+        !eventData?.user.identificationDocumentNumber ||
+        !businessUnitPublicCode ||
+        prospectData === undefined
+      )
+        return;
+
+      try {
+        const product = prospectData.creditProducts?.[0];
+
+        const clientIdentificationName = prospectData?.borrowers?.map(
+          (borrower) => {
+            if (borrower?.borrowerType === "MainBorrower") {
+              return borrower?.borrowerIdentificationNumber;
+            }
+          },
+        );
+
+        const response: IExtraordinaryAgreement | null =
+          await searchExtraInstallmentPaymentCyclesByCustomerCode(
+            businessUnitPublicCode,
+            clientIdentificationName[0] || "",
+            product?.lineOfCreditAbbreviatedName || "",
+            prospectData?.moneyDestinationAbbreviatedName || "",
+            eventData.token,
+          );
+
+        if (response && response.extraordinaryCycles) {
+          setPaymentCycles(response.extraordinaryCycles);
+        }
+      } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
+        setShowErrorModal(true);
+        setMessageError(description);
+      }
+    };
+
+    if (service) {
+      fetchPaymentCycles();
+    }
+  }, [prospectData, businessUnitPublicCode, eventData.token, service]);
+
+  useEffect(() => {
     if (prospectData?.creditProducts) {
       const extraordinaryInstallmentsFlat = prospectData.creditProducts.flatMap(
-        (product) =>
-          Array.isArray(product.extraordinaryInstallments)
-            ? product.extraordinaryInstallments.map((installment) => ({
-                id: `${product.creditProductCode},${installment.installmentDate},${installment.paymentChannelAbbreviatedName}`,
-                datePayment: installment.installmentDate,
-                value: installment.installmentAmount,
-                paymentMethod: installment.paymentChannelAbbreviatedName,
-                creditProductCode: product.creditProductCode,
-              }))
-            : [],
+        (product) => {
+          const installments = product.extraordinaryInstallments;
+
+          if (!Array.isArray(installments)) return [];
+
+          return installments.map((installment) => {
+            const matchingCycle = paymentCycles.find(
+              (cycle) =>
+                cycle.extraordinaryCycleType ===
+                installment.paymentChannelAbbreviatedName,
+            );
+            return {
+              id: `${product.creditProductCode},${installment.installmentDate},${installment.paymentChannelAbbreviatedName}`,
+              datePayment: installment.installmentDate,
+              value: installment.installmentAmount,
+              paymentMethod: installment.paymentChannelAbbreviatedName,
+              creditProductCode: product.creditProductCode,
+              cycleName: matchingCycle ? matchingCycle.cycleName : "",
+            };
+          });
+        },
       );
+
       const installmentsByUniqueKey = extraordinaryInstallmentsFlat.reduce(
         (
           installmentsAccumulator: Record<
@@ -169,9 +239,10 @@ export const TableExtraordinaryInstallment = (
           const uniqueKey = `${currentInstallment.creditProductCode}_${currentInstallment.datePayment}_${currentInstallment.paymentMethod}`;
 
           if (installmentsAccumulator[uniqueKey]) {
-            installmentsAccumulator[uniqueKey].value =
-              (installmentsAccumulator[uniqueKey].value as number) +
-              (currentInstallment.value as number);
+            const existingValue =
+              (installmentsAccumulator[uniqueKey].value as number) || 0;
+            const newValue = (currentInstallment.value as number) || 0;
+            installmentsAccumulator[uniqueKey].value = existingValue + newValue;
           } else {
             installmentsAccumulator[uniqueKey] = { ...currentInstallment };
           }
@@ -188,7 +259,7 @@ export const TableExtraordinaryInstallment = (
       setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
     setLoading(false);
-  }, [prospectData, refreshKey]);
+  }, [prospectData, refreshKey, paymentCycles]);
 
   useEffect(() => {
     if (extraordinary && Array.isArray(extraordinary)) {
