@@ -1,5 +1,6 @@
 import { IDisbursementGeneral } from "@pages/payrollBenefits/types";
 
+import { ICalculatedSeries } from "../creditRequest/types";
 import { IValidateRequirement } from "../requirement/types";
 
 export interface IBorrowerProperty {
@@ -54,7 +55,7 @@ export interface IExtraordinaryInstallment {
 
 export interface IExtraordinaryInstallments {
   creditProductCode: string;
-  extraordinaryInstallments: IExtraordinaryInstallment[];
+  extraordinaryInstallments: IExtraordinaryInstallment[] | ICalculatedSeries[];
   prospectId: string;
 }
 
