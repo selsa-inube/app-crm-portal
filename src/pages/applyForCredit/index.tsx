@@ -266,9 +266,12 @@ export function ApplyForCredit() {
       .filter((step) => {
         if (step.id === 3 && hasBorrowers === 1 && !hasCoborrower) return false;
         if (step.id === 4 && !hideMortgage) return false;
+
         if (step.id === 5 && !hidePledge) return false;
-        if (step.id === 6 && (hasBorrowers >= 2 || !hasBond)) {
-          return false;
+        if (step.id === 6) {
+          if (!hasBond) return false;
+          if (hasBorrowers >= 2) return false;
+          return true;
         }
         if (
           step.id === stepsFilingApplication.attachedDocuments.id &&
@@ -276,6 +279,7 @@ export function ApplyForCredit() {
         ) {
           return false;
         }
+
         return true;
       });
   }, [
@@ -609,7 +613,14 @@ export function ApplyForCredit() {
         }
       }
 
-      setGuaranteesRequired([...new Set(warrantiesArray)]);
+      const processedWarranties = warrantiesArray.flatMap((warranty) => {
+        if (warranty === "BondOrCoborrower") {
+          return ["Bond", "Coborrower"];
+        }
+        return warranty;
+      });
+
+      setGuaranteesRequired([...new Set(processedWarranties)]);
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(dataSubmitApplication.error.i18n[lang]);
