@@ -82,8 +82,8 @@ export const dataSubmitApplication = {
       code: "SubmitApplication_modal_fileDescription",
       description: "File application confirmation text",
       i18n: {
-        en: "The credit application {numberProspectCode} will be filed. Do you want to continue?",
-        es: "Se radicará la solicitud de crédito {numberProspectCode}. ¿Realmente deseas continuar?",
+        en: "The credit application for the prospect {numberProspectCode} will be filed. Do you want to continue?",
+        es: "Se radicará la solicitud de crédito para el prospecto {numberProspectCode}. ¿Realmente deseas continuar?",
       },
     },
     continue: {
