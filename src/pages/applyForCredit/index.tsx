@@ -238,7 +238,7 @@ export function ApplyForCredit() {
     const hideMortgage = guaranteesRequired.includes("Mortgage");
     const hidePledge = guaranteesRequired.includes("Pledge");
     const hasCoborrower =
-      guaranteesRequired.includes("Coborower") ||
+      guaranteesRequired.includes("Coborrower") ||
       guaranteesRequired.includes("Borrower");
     const hasBond = guaranteesRequired.includes("Bond") ?? false;
 
@@ -581,28 +581,35 @@ export function ApplyForCredit() {
       let warrantiesArray: string[] = [];
 
       if (Array.isArray(response)) {
-        warrantiesArray = response
-          .map((item) => item.warranty?.trim())
-          .filter(
-            (warranty): warranty is string =>
-              warranty !== undefined && warranty !== null && warranty !== "",
-          );
+        response.forEach((item) => {
+          if (item.warranty && typeof item.warranty === "string") {
+            const warranties = item.warranty
+              .split(",")
+              .map((w: string) => w.trim())
+              .filter((w: string) => w !== "");
+            warrantiesArray.push(...warranties);
+          }
+        });
       } else if (response.warranty) {
         if (Array.isArray(response.warranty)) {
-          warrantiesArray = response.warranty
-            .map((item) => item.warranty?.trim())
-            .filter(
-              (warranty): warranty is string =>
-                warranty !== undefined && warranty !== null && warranty !== "",
-            );
+          response.warranty.forEach((item) => {
+            if (item.warranty && typeof item.warranty === "string") {
+              const warranties = item.warranty
+                .split(",")
+                .map((w: string) => w.trim())
+                .filter((w: string) => w !== "");
+              warrantiesArray.push(...warranties);
+            }
+          });
         } else if (typeof response.warranty === "string") {
           warrantiesArray = response.warranty
             .split(",")
-            .map((item) => item.trim())
-            .filter((item) => item !== "");
+            .map((item: string) => item.trim())
+            .filter((item: string) => item !== "");
         }
       }
-      setGuaranteesRequired(warrantiesArray);
+
+      setGuaranteesRequired([...new Set(warrantiesArray)]);
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(dataSubmitApplication.error.i18n[lang]);
