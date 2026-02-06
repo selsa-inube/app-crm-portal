@@ -281,7 +281,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
           .toLowerCase(),
         value: date,
       }));
-      console.log("newDateOptions: ", newDateOptions);
+
       setDateOptions(newDateOptions);
 
       if (setInstallmentState) {
