@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Button, Input, Stack, Text, SkeletonLine } from "@inubekit/inubekit";
+import {
+  Button,
+  Input,
+  Stack,
+  Text,
+  SkeletonLine,
+  Date as DateField,
+} from "@inubekit/inubekit";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MdOutlineEdit } from "react-icons/md";
@@ -51,12 +58,22 @@ export function RiskScore(props: IRiskScoreProps) {
 
   const validationSchema = Yup.object({
     score: Yup.number().required(""),
+    date: Yup.date()
+      .required("")
+      .max(new Date(), riskScoreData.futureDateError.i18n[lang])
+      .required("Required"),
   });
+
+  const handleDateForInput = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
 
   const formik = useFormik({
     initialValues: {
       score: value,
-      date: date,
+      date: handleDateForInput(date),
     },
     validationSchema,
     enableReinitialize: true,
@@ -65,7 +82,7 @@ export function RiskScore(props: IRiskScoreProps) {
 
       handleOnChange({
         value: num,
-        date: new Date().toISOString(),
+        date: new Date(values.date).toISOString(),
       });
 
       setShowEditModal(false);
@@ -113,8 +130,8 @@ export function RiskScore(props: IRiskScoreProps) {
           )}
           <Text type="body" weight="bold" size="small">
             {date
-              ? formatPrimaryDate(new Date())
-              : formatPrimaryDate(new Date(date))}
+              ? formatPrimaryDate(new Date(date))
+              : formatPrimaryDate(new Date())}
           </Text>
         </Stack>
         <Stack gap="12px" direction="column" alignItems="center">
@@ -141,27 +158,49 @@ export function RiskScore(props: IRiskScoreProps) {
             handleBack={() => setShowEditModal(false)}
             handleNext={formik.handleSubmit}
             disabledNext={
-              formik.values.score > 950 || formik.values.score < 150
+              formik.values.score > 950 ||
+              formik.values.score < 150 ||
+              !formik.values.date ||
+              !formik.isValid ||
+              !formik.dirty
             }
             width={isMobile ? "300px" : "400px"}
           >
-            <Input
-              id="score"
-              name="score"
-              label={riskScoreData.score.i18n[lang]}
-              size="compact"
-              fullwidth
-              type="number"
-              value={formik.values.score}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              status={
-                formik.values.score > 950 || formik.values.score < 150
-                  ? "invalid"
-                  : undefined
-              }
-              message={riskScoreData.error.i18n[lang]}
-            />
+            <Stack direction="column" gap="16px">
+              <Input
+                id="score"
+                name="score"
+                label={riskScoreData.score.i18n[lang]}
+                size="compact"
+                required
+                fullwidth
+                type="number"
+                value={formik.values.score}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                status={
+                  formik.values.score > 950 || formik.values.score < 150
+                    ? "invalid"
+                    : undefined
+                }
+                message={riskScoreData.error.i18n[lang]}
+              />
+              <DateField
+                id="date"
+                name="date"
+                label={riskScoreData.dateLabel.i18n[lang]}
+                size="compact"
+                required
+                fullwidth
+                value={formik.values.date}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                status={formik.errors.date ? "invalid" : "pending"}
+                message={
+                  (formik.touched.date && (formik.errors.date as string)) || ""
+                }
+              />
+            </Stack>
           </BaseModal>
         )}
         {showConfirmModal && (

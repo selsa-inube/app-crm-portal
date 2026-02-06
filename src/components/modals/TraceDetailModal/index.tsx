@@ -31,7 +31,6 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
     businessUnitPublicCode,
     businessManagerCode,
     isMobile,
-    user,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -45,7 +44,7 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
     try {
       const documentData = await getSearchDocumentById(
         id,
-        user ?? "",
+        eventData?.user?.identificationDocumentNumber || "",
         businessUnitPublicCode ?? "",
         businessManagerCode ?? "",
         eventData.token,

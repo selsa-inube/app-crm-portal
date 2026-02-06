@@ -59,9 +59,6 @@ export function CreditApplications() {
 
   const businessManagerCode = eventData.businessManager.publicCode;
 
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-
   const isMobile = useMediaQuery("(max-width:880px)");
 
   const dataHeader = {
@@ -103,7 +100,7 @@ export function CreditApplications() {
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
           businessManagerCode,
-          userAccount,
+          eventData?.user?.identificationDocumentNumber || "",
           {
             clientIdentificationNumber: customerData.publicCode,
             textInSearch: debouncedSearch,

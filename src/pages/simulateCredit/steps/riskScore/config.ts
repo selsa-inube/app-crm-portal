@@ -119,4 +119,20 @@ export const riskScoreData = {
       es: "Cancelar",
     },
   },
+  futureDateError: {
+    code: "Future_date_error",
+    description: "Validation error for dates in the future",
+    i18n: {
+      en: "The date cannot be later than today.",
+      es: "La fecha no puede ser posterior a hoy.",
+    },
+  },
+  dateLabel: {
+    code: "Date_label",
+    description: "Label for the date input field",
+    i18n: {
+      en: "Date",
+      es: "Fecha",
+    },
+  },
 };

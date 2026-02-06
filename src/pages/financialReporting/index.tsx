@@ -167,7 +167,7 @@ export const FinancialReporting = () => {
     try {
       const documents = await getSearchAllDocumentsById(
         data.creditRequestId,
-        user.id,
+        eventData?.user?.identificationDocumentNumber || "",
         businessUnitPublicCode,
         businessManagerCode,
         eventData.token,
@@ -301,7 +301,7 @@ export const FinancialReporting = () => {
           data?.creditRequestId ?? "",
           businessUnitPublicCode,
           businessManagerCode,
-          user?.id ?? "",
+          eventData?.user?.identificationDocumentNumber || "",
           eventData.token,
         );
       } catch (error) {
@@ -319,7 +319,7 @@ export const FinancialReporting = () => {
       const data = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
-        user?.id ?? "",
+        eventData?.user?.identificationDocumentNumber || "",
         { creditRequestCode },
         eventData.token,
       );
