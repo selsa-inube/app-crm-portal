@@ -238,7 +238,7 @@ export function ApplyForCredit() {
     const hideMortgage = guaranteesRequired.includes("Mortgage");
     const hidePledge = guaranteesRequired.includes("Pledge");
     const hasCoborrower =
-      guaranteesRequired.includes("Coborower") ||
+      guaranteesRequired.includes("Coborrower") ||
       guaranteesRequired.includes("Borrower");
     const hasBond = guaranteesRequired.includes("Bond") ?? false;
 
@@ -266,9 +266,12 @@ export function ApplyForCredit() {
       .filter((step) => {
         if (step.id === 3 && hasBorrowers === 1 && !hasCoborrower) return false;
         if (step.id === 4 && !hideMortgage) return false;
+
         if (step.id === 5 && !hidePledge) return false;
-        if (step.id === 6 && (hasBorrowers >= 2 || !hasBond)) {
-          return false;
+        if (step.id === 6) {
+          if (!hasBond) return false;
+          if (hasBorrowers >= 2) return false;
+          return true;
         }
         if (
           step.id === stepsFilingApplication.attachedDocuments.id &&
@@ -276,6 +279,7 @@ export function ApplyForCredit() {
         ) {
           return false;
         }
+
         return true;
       });
   }, [
@@ -581,28 +585,42 @@ export function ApplyForCredit() {
       let warrantiesArray: string[] = [];
 
       if (Array.isArray(response)) {
-        warrantiesArray = response
-          .map((item) => item.warranty?.trim())
-          .filter(
-            (warranty): warranty is string =>
-              warranty !== undefined && warranty !== null && warranty !== "",
-          );
+        response.forEach((item) => {
+          if (item.warranty && typeof item.warranty === "string") {
+            const warranties = item.warranty
+              .split(",")
+              .map((w: string) => w.trim())
+              .filter((w: string) => w !== "");
+            warrantiesArray.push(...warranties);
+          }
+        });
       } else if (response.warranty) {
         if (Array.isArray(response.warranty)) {
-          warrantiesArray = response.warranty
-            .map((item) => item.warranty?.trim())
-            .filter(
-              (warranty): warranty is string =>
-                warranty !== undefined && warranty !== null && warranty !== "",
-            );
+          response.warranty.forEach((item) => {
+            if (item.warranty && typeof item.warranty === "string") {
+              const warranties = item.warranty
+                .split(",")
+                .map((w: string) => w.trim())
+                .filter((w: string) => w !== "");
+              warrantiesArray.push(...warranties);
+            }
+          });
         } else if (typeof response.warranty === "string") {
           warrantiesArray = response.warranty
             .split(",")
-            .map((item) => item.trim())
-            .filter((item) => item !== "");
+            .map((item: string) => item.trim())
+            .filter((item: string) => item !== "");
         }
       }
-      setGuaranteesRequired(warrantiesArray);
+
+      const processedWarranties = warrantiesArray.flatMap((warranty) => {
+        if (warranty === "BondOrCoborrower") {
+          return ["Bond", "Coborrower"];
+        }
+        return warranty;
+      });
+
+      setGuaranteesRequired([...new Set(processedWarranties)]);
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(dataSubmitApplication.error.i18n[lang]);
