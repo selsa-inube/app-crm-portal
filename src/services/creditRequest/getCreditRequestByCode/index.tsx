@@ -48,7 +48,7 @@ export const getCreditRequestByCode = async (
           "X-Action": "SearchAllCreditRequestsInProgress",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
-          "x-user-name": userAccount,
+          "X-User-Name": userAccount,
           "X-Process-Manager": businessManagerCode,
           Authorization: `${authorizationToken}`,
         },

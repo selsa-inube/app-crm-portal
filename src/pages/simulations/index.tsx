@@ -74,9 +74,6 @@ export function Simulations() {
 
   const { lang, enums } = useEnum();
 
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
-
   const data = dataProspect;
   const [sentData, setSentData] = useState<IExtraordinaryInstallments | null>(
     null,
@@ -171,7 +168,7 @@ export function Simulations() {
       const result = await getCreditRequestByCode(
         businessUnitPublicCode,
         businessManagerCode,
-        userAccount,
+        eventData?.user?.identificationDocumentNumber || "",
         {
           creditRequestCode: prospectCode!,
         },
