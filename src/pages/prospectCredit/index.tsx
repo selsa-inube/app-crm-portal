@@ -45,8 +45,6 @@ export function ProspectCredit() {
 
   const businessManagerCode = eventData.businessManager.publicCode;
 
-  const { userAccount } =
-    typeof eventData === "string" ? JSON.parse(eventData).user : eventData.user;
   const { user } = useIAuth();
 
   const isMobile = useMediaQuery("(max-width:880px)");
@@ -70,7 +68,7 @@ export function ProspectCredit() {
         const creditData = await getCreditRequestByCode(
           businessUnitPublicCode,
           businessManagerCode,
-          userAccount,
+          eventData?.user?.identificationDocumentNumber || "",
           {
             clientIdentificationNumber: customerData.publicCode,
             stage: stage,
