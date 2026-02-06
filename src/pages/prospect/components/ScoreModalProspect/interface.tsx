@@ -78,7 +78,7 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
               setNewFirstScore({
                 ...firstScore,
                 score: newRisk.value,
-                date: new Date().toISOString(),
+                date: newRisk.date,
               })
             }
             logo={urlMock}
@@ -104,7 +104,7 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
               setNewSecondScore({
                 ...secondScore,
                 score: newRisk.value,
-                date: new Date().toISOString(),
+                date: newRisk.date,
               })
             }
             logo={urlMock}

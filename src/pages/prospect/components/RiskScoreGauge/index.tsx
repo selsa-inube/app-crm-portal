@@ -120,23 +120,21 @@ export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
               stroke={COLORS.darkGreen}
               $strokeWidth={arcStrokeWidth}
             />
-            {value !== 0 ||
-              value !== undefined ||
-              (value !== null && (
-                <>
-                  <StyledIndicator
-                    cx={indicatorX}
-                    cy={indicatorY}
-                    r={indicatorOuterRadius}
-                  />
-                  <circle
-                    cx={indicatorX}
-                    cy={indicatorY}
-                    r={indicatorInnerRadius}
-                    fill="white"
-                  />
-                </>
-              ))}
+            {value > 0 && (
+              <>
+                <StyledIndicator
+                  cx={indicatorX}
+                  cy={indicatorY}
+                  r={indicatorOuterRadius}
+                />
+                <circle
+                  cx={indicatorX}
+                  cy={indicatorY}
+                  r={indicatorInnerRadius}
+                  fill="white"
+                />
+              </>
+            )}
           </StyledSvg>
           <StyledCenterText $top={`${gaugeHeight / 2 - 20}px`}>
             <Text type="body" size="medium" appearance="primary">
