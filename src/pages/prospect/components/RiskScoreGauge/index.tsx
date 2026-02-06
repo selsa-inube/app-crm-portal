@@ -17,10 +17,11 @@ interface IRiskScoreGaugeProps {
   value: number;
   lang: EnumType;
   logo?: string;
+  nameProvider?: string;
 }
 
 export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
-  const { value, lang, logo } = props;
+  const { value, lang, logo, nameProvider } = props;
 
   const min = DataRiskScore.min;
   const max = DataRiskScore.max;
@@ -119,17 +120,23 @@ export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
               stroke={COLORS.darkGreen}
               $strokeWidth={arcStrokeWidth}
             />
-            <StyledIndicator
-              cx={indicatorX}
-              cy={indicatorY}
-              r={indicatorOuterRadius}
-            />
-            <circle
-              cx={indicatorX}
-              cy={indicatorY}
-              r={indicatorInnerRadius}
-              fill="white"
-            />
+            {value !== 0 ||
+              value !== undefined ||
+              (value !== null && (
+                <>
+                  <StyledIndicator
+                    cx={indicatorX}
+                    cy={indicatorY}
+                    r={indicatorOuterRadius}
+                  />
+                  <circle
+                    cx={indicatorX}
+                    cy={indicatorY}
+                    r={indicatorInnerRadius}
+                    fill="white"
+                  />
+                </>
+              ))}
           </StyledSvg>
           <StyledCenterText $top={`${gaugeHeight / 2 - 20}px`}>
             <Text type="body" size="medium" appearance="primary">
@@ -141,7 +148,7 @@ export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
               size="large"
               appearance="primary"
             >
-              {value}
+              {value || 0}
             </Text>
           </StyledCenterText>
         </StyledContainer>
@@ -156,7 +163,10 @@ export function RiskScoreGauge(props: IRiskScoreGaugeProps) {
       </Stack>
       {logo && (
         <StyledContainerLogo>
-          <StyledImgLogo url={logo} alt={DataRiskScore.altImg.i18n[lang]} />
+          <StyledImgLogo
+            url={logo}
+            alt={`${nameProvider} ${DataRiskScore.altImg.i18n[lang]}`}
+          />
         </StyledContainerLogo>
       )}
     </Stack>

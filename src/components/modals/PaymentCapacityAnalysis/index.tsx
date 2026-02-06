@@ -216,23 +216,23 @@ export const PaymentCapacityAnalysis = (
   ];
 
   const payrollIncomeTotal =
-    (capacityData.periodicSalary / (1 - capacityRatios.periodicSalary / 100) ||
-      capacityData.periodicSalary) +
-    (capacityData.otherNonSalaryEmoluments /
+    ((capacityData.periodicSalary ?? 0) / (1 - capacityRatios.periodicSalary / 100) ||
+      (capacityData.periodicSalary ?? 0)) +
+    ((capacityData.otherNonSalaryEmoluments ?? 0) /
       (1 - capacityRatios.otherNonSalaryEmoluments / 100) ||
-      capacityData.otherNonSalaryEmoluments) +
-    (capacityData.pensionAllowances /
+      (capacityData.otherNonSalaryEmoluments ?? 0)) +
+    ((capacityData.pensionAllowances ?? 0) /
       (1 - capacityRatios.pensionAllowances / 100) ||
-      capacityData.pensionAllowances);
+      (capacityData.pensionAllowances ?? 0));
 
   const payrollReserve =
-    (capacityData.periodicSalary /
+    ((capacityData.periodicSalary ?? 0) /
       (1 - (capacityRatios.periodicSalary / 100 || 0))) *
       (capacityRatios.periodicSalary / 100 || 0) +
-    ((capacityData.otherNonSalaryEmoluments /
+    (((capacityData.otherNonSalaryEmoluments ?? 0) /
       (1 - (capacityRatios.otherNonSalaryEmoluments / 100 || 0))) *
       (capacityRatios.otherNonSalaryEmoluments / 100 || 0) +
-      (capacityData.pensionAllowances /
+      ((capacityData.pensionAllowances ?? 0) /
         (1 - (capacityRatios.pensionAllowances / 100 || 0))) *
         (capacityRatios.pensionAllowances / 100 || 0));
 
