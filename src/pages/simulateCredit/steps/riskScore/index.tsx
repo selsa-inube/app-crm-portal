@@ -130,8 +130,8 @@ export function RiskScore(props: IRiskScoreProps) {
           )}
           <Text type="body" weight="bold" size="small">
             {date
-              ? formatPrimaryDate(new Date())
-              : formatPrimaryDate(new Date(date))}
+              ? formatPrimaryDate(new Date(date))
+              : formatPrimaryDate(new Date())}
           </Text>
         </Stack>
         <Stack gap="12px" direction="column" alignItems="center">
