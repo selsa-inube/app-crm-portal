@@ -251,7 +251,9 @@ export const getFinancialObligations = async (
         nextPaymentValueTotal:
           obligationGeneralInformation[0].nextPaymentValue.total,
         obligationNumber: obligation.obligationNumber,
-        outstandingDues: obligationGeneralInformation[0].pendingQuotas,
+        outstandingDues:
+          obligationGeneralInformation[0].pendingQuotas +
+          obligationGeneralInformation[0].paidQuotas,
         paymentMethodName: obligationGeneralInformation[0].paymentMethodName,
         productName: obligationGeneralInformation[0].productName,
       };
