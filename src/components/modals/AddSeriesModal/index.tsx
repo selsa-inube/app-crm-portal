@@ -276,6 +276,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
             day: "2-digit",
             month: "short",
             year: "numeric",
+            timeZone: "UTC",
           })
           .toLowerCase(),
         value: date,
@@ -396,10 +397,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       (option) => option.value === formik.values.cycleId,
     );
 
-    const dateObj = new Date(installmentDate);
-    const formattedDate = `${dateObj.getFullYear()}/${(dateObj.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}/${dateObj.getDate().toString().padStart(2, "0")}`;
+    const formattedDate = installmentDate.split("T")[0].replace(/-/g, "/");
 
     const requestBody: Record<string, string | number> = {
       customerCode: customerData.publicCode,
@@ -457,10 +455,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       ? formik.values.cycleId.split("-").pop()
       : "";
 
-    const dateObj = new Date(installmentDate);
-    const formattedDate = `${dateObj.getFullYear()}/${(dateObj.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}/${dateObj.getDate().toString().padStart(2, "0")}`;
+    const formattedDate = installmentDate.split("T")[0].replace(/-/g, "/");
 
     const requestBody: Record<string, string | number> = {
       customerCode: customerData.publicCode,
