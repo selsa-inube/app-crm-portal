@@ -170,7 +170,7 @@ export const TableExtraordinaryInstallment = (
           },
         );
 
-        const response: IExtraordinaryAgreement | null =
+        const response: IExtraordinaryAgreement[] | null =
           await searchExtraInstallmentPaymentCyclesByCustomerCode(
             businessUnitPublicCode,
             clientIdentificationName[0] || "",
@@ -179,8 +179,12 @@ export const TableExtraordinaryInstallment = (
             eventData.token,
           );
 
-        if (response && response.extraordinaryCycles) {
-          setPaymentCycles(response.extraordinaryCycles);
+        if (response && response.length > 0) {
+          const allCycles = response.flatMap(
+            (agreement) => agreement.extraordinaryCycles,
+          );
+
+          setPaymentCycles(allCycles);
         }
       } catch (error) {
         const err = error as {
@@ -222,7 +226,9 @@ export const TableExtraordinaryInstallment = (
               value: installment.installmentAmount,
               paymentMethod: installment.paymentChannelAbbreviatedName,
               creditProductCode: product.creditProductCode,
-              cycleName: matchingCycle ? matchingCycle.cycleName : "",
+              cycleName: matchingCycle
+                ? matchingCycle.extraordinaryCycleType
+                : "",
             };
           });
         },
