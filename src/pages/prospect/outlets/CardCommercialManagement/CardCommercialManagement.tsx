@@ -152,9 +152,18 @@ export const CardCommercialManagement = (
       try {
         fetchProspectData && (await fetchProspectData());
       } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
         setShowErrorModal(true);
         setIsLoading(false);
-        setMessageError(tittleOptions.errorReload);
+        setMessageError(description);
       }
 
       setIsLoading(false);
