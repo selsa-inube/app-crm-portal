@@ -91,11 +91,16 @@ export function ExtraordinaryInstallments(
   const handleSubmit = (installment: {
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
+    abbreviatedName: string;
     value?: number;
   }) => {
-    const { installmentDate, paymentChannelAbbreviatedName, value } =
-      installment;
-
+    const {
+      installmentDate,
+      paymentChannelAbbreviatedName,
+      value,
+      abbreviatedName,
+    } = installment;
+    console.log("installment--> ", installment);
     const amountToAdd =
       value !== undefined ? value : installmentState.installmentAmount;
 
@@ -113,6 +118,7 @@ export function ExtraordinaryInstallments(
             ? {
                 ...item,
                 value: (Number(item.value) || 0) + amountToAdd,
+                cycleName: abbreviatedName,
               }
             : item,
         );
@@ -122,6 +128,8 @@ export function ExtraordinaryInstallments(
           datePayment: installmentDate,
           value: amountToAdd,
           paymentMethod: paymentChannelAbbreviatedName,
+          paymentChannelAbbreviatedName: paymentChannelAbbreviatedName,
+          cycleName: abbreviatedName,
         };
         updated = [...prev, newPayment];
       }

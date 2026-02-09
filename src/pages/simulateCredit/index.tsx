@@ -248,7 +248,6 @@ export function SimulateCredit() {
     formData.obligationsFinancial,
     formData.riskScores,
   ]);
-
   const simulateData: IProspect = useMemo(
     () => ({
       clientIdentificationNumber: customerData.publicCode,
@@ -273,14 +272,14 @@ export function SimulateCredit() {
             }))
           : [],
       linesOfCredit: formData.selectedProducts,
-      firstPaymentCycleDate: new Date().toISOString(),
+      firstPaymentCycleDate: formData.loanAmountState.payAmount || "",
       extraordinaryInstallments: Array.isArray(
         formData.extraordinaryInstallments,
       )
         ? formData.extraordinaryInstallments.map((item) => ({
             installmentAmount: item.value as number,
             installmentDate: item.datePayment as string | Date,
-            paymentChannelAbbreviatedName: item.paymentMethod as string,
+            paymentChannelAbbreviatedName: item.cycleName as string,
           }))
         : [],
       installmentLimit: formData.loanConditionState.quotaCapValue || 0,

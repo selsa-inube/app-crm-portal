@@ -245,7 +245,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     errorsManager,
     paymentChannel,
     loadingQuestions,
-    showSelectsLoanAmount,
     createdProspectModal,
     setCreatedProspectModal,
     isLoadingSubmit,
@@ -608,7 +607,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       setRequestValue={setRequestValue}
                       obligationPayments={obligationPayments}
                       paymentChannel={paymentChannel}
-                      showSelects={showSelectsLoanAmount}
+                      showSelects={true}
                       lang={lang}
                     />
                   )}
