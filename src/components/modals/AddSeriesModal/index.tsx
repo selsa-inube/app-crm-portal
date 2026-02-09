@@ -128,7 +128,6 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       abbreviatedName: "",
     },
     onSubmit: (values) => {
-      console.log("values-------+", values);
       onSubmit?.({
         installmentDate: values.installmentDate,
         paymentChannelAbbreviatedName: values.paymentChannelAbbreviatedName,
