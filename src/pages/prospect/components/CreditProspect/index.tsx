@@ -104,6 +104,7 @@ interface ICreditProspectProps {
   onProspectRefreshData?: () => void;
   setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements?: IValidateRequirement[];
+  fetchProspectData?: () => Promise<void>;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -128,6 +129,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     setShowRequirements,
     validateRequirements,
     enums,
+    fetchProspectData,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -788,6 +790,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             showAddProduct={showAddProduct}
             lang={lang}
             enums={enums}
+            fetchProspectData={fetchProspectData}
           />
         </Stack>
         {currentModal === "creditLimit" && (

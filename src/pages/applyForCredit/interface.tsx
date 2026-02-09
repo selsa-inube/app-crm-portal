@@ -31,7 +31,6 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
-import { IValidateRequirement } from "@services/creditRequest/types";
 
 import {
   IBorrowerData,
@@ -59,6 +58,7 @@ import { submitCreditApplicationConfig } from "./config/submitCreditApplication.
 import { dataSubmitApplication } from "./config/config";
 import { titlesModal } from "../simulations/config";
 import { tittleOptions } from "./config/config";
+import { IValidateRequirement } from "@src/services/creditRequest/types";
 
 interface ApplyForCreditUIProps {
   currentStep: number;
@@ -100,20 +100,20 @@ interface ApplyForCreditUIProps {
   lang: EnumType;
   enums: IAllEnumsResponse;
   generateAndShareApprovedRequest: () => Promise<void>;
-  onDocumentsLoad: (documents: IValidateRequirement[]) => void;
+  validDocumentsRequiredByCreditRequest: IValidateRequirement[];
 }
 
 export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
   const {
     currentStepNumber,
     currentStep,
-    onDocumentsLoad,
     steps,
     isCurrentFormValid,
     formData,
     isMobile,
     isModalOpen,
     setIsModalOpen,
+    validDocumentsRequiredByCreditRequest,
     dataHeader,
     sentModal,
     approvedRequestModal,
@@ -416,10 +416,12 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                       handleFormChange({ attachedDocuments: newDocs })
                     }
                     customerData={customerData}
-                    prospectData={prospectData}
-                    businessUnitPublicCode={businessUnitPublicCode}
                     lang={lang}
-                    onDocumentsLoad={onDocumentsLoad}
+                    loading={loading}
+                    validDocumentsRequiredByCreditRequest={
+                      validDocumentsRequiredByCreditRequest
+                    }
+                    showErrorModal={showErrorModal}
                   />
                 )}
               {currentStepNumber &&
