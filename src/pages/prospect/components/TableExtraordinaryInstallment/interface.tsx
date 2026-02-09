@@ -114,7 +114,7 @@ export function TableExtraordinaryInstallmentUI(
     setOpenMenuIndex,
     isLoadingDelete = false,
   } = props;
-
+  console.log("extraordinaryInstallments: ", extraordinaryInstallments);
   const {
     totalRecords,
     firstEntryInPage,
