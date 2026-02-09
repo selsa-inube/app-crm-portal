@@ -290,7 +290,7 @@ export function CreditProspect(props: ICreditProspectProps) {
         firstPaymentCycleDate: values.paymentConfiguration.firstPaymentDate,
         lineOfCreditAbbreviatedName: values.selectedProducts[0],
         termLimit: Number(values.maximumTermValue) || 0,
-        installmentLimit: Number(values.installmentAmount) || 0,
+        installmentLimit: Number(values.quotaCapValue) || 0,
         additionalAmount: Number(values.creditAmount),
       };
 

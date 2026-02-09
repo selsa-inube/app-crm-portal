@@ -182,10 +182,16 @@ export function CreditProspects() {
 
         if (data?.canSimulate === "Y") setCanPerformSimulations(true);
       } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
         setShowErrorModal(true);
-        setErrorModalMessage(
-          `${dataCreditProspects.errorCheckIfSimulationIsAllowed.i18n[lang]}`,
-        );
+        setErrorModalMessage(description);
       } finally {
         setIsLoadingCheck(false);
       }
