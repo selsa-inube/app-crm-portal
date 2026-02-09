@@ -192,19 +192,21 @@ function AppPage(props: IAppPage) {
               menu={translatedUserMenu}
             />
           </StyledHeaderContainer>
-          <StyledCollapseIcon
-            $collapse={collapse}
-            onClick={() => setCollapse(!collapse)}
-            $isTablet={isTablet}
-            ref={collapseMenuRef}
-          >
-            <Icon
-              icon={<MdOutlineChevronRight />}
-              appearance="primary"
-              size="24px"
-              cursorHover
-            />
-          </StyledCollapseIcon>
+          {businessUnitsToTheStaff && businessUnitsToTheStaff.length > 1 && (
+            <StyledCollapseIcon
+              $collapse={collapse}
+              onClick={() => setCollapse(!collapse)}
+              $isTablet={isTablet}
+              ref={collapseMenuRef}
+            >
+              <Icon
+                icon={<MdOutlineChevronRight />}
+                appearance="primary"
+                size="24px"
+                cursorHover
+              />
+            </StyledCollapseIcon>
+          )}
         </StyledPrint>
         {collapse && (
           <StyledCollapse ref={businessUnitChangeRef}>
