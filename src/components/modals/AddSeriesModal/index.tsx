@@ -176,18 +176,24 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
               moneyDestinationAbbreviatedName,
               eventData.token,
             );
+
           if (response === null) {
             return;
           }
-          const flattenedOptions: ICycleOption[] =
-            response.extraordinaryCycles.map((cycle) => ({
-              id: `${response.payrollForDeductionAgreementId}-${cycle.cycleName}`,
-              label: `${cycle.cycleName}`,
-              value: `${response.payrollForDeductionAgreementId}-${cycle.cycleName}`,
-              paymentDates: cycle.paymentDates,
-              extraordinaryCycleType: cycle.extraordinaryCycleType,
-              cycleName: cycle.cycleName,
-            }));
+
+          const flattenedOptions: ICycleOption[] = response.flatMap(
+            (agreement) =>
+              agreement.extraordinaryCycles.map((cycle) => ({
+                id: `${agreement.payrollForDeductionAgreementId}-${cycle.cycleName}`,
+                label: `${cycle.cycleName}`,
+                value: `${agreement.payrollForDeductionAgreementId}-${cycle.cycleName}`,
+                paymentDates: cycle.paymentDates,
+                extraordinaryCycleType: cycle.extraordinaryCycleType,
+                cycleName: cycle.cycleName,
+                agreementCode: agreement.payrollForDeductionAgreementCode,
+                payingEntityName: agreement.payingEntityName,
+              })),
+          );
 
           setCycleOptions(flattenedOptions);
 
