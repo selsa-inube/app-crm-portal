@@ -125,7 +125,6 @@ export function LoanAmount(props: ILoanAmountProps) {
                 channel,
               ]),
             );
-
             return Array.from(unique.values()).map((channel, index) => ({
               id: `${channel.abbreviatedName}-${index}`,
               value: channel.abbreviatedName,

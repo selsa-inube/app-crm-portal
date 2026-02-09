@@ -463,6 +463,7 @@ function EditProductModal(props: EditProductModalProps) {
     formikHelpers: FormikHelpers<FormikValues>,
   ) => {
     try {
+      console.log("Submitted values:", values);
       const submitValues = {
         ...values,
         ...(showIncrementField &&
@@ -720,7 +721,7 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder={
                   simulationFormLabels.interestRatePlaceholder.i18n[lang]
                 }
-                value={Number(formik.values.interestRate).toFixed(4)}
+                value={Number(formik.values.interestRate)}
                 iconAfter={
                   <Icon
                     icon={<MdPercent />}

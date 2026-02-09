@@ -111,6 +111,7 @@ interface SimulationsUIProps {
     React.SetStateAction<IProspectSummaryById>
   >;
   isLoadingDelete?: boolean;
+  fetchProspectData?: () => Promise<void>;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -161,6 +162,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     validateRequirements,
     isLoading = false,
     isLoadingDelete = false,
+    fetchProspectData,
   } = props;
 
   return (
@@ -442,6 +444,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                           validateRequirements={validateRequirements}
                           lang={lang}
                           enums={enums}
+                          fetchProspectData={fetchProspectData}
                         />
                       </Fieldset>
                     </StyledScrollPrint>

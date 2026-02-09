@@ -47,6 +47,7 @@ export interface AddSeriesModalProps {
     installmentDate: string;
     paymentChannelAbbreviatedName: string;
     value: number;
+    abbreviatedName: string;
   }) => void;
   lang: EnumType;
   lineOfCreditAbbreviatedName: string;
@@ -124,12 +125,14 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       cycleId: "",
       value: "",
       frequency: "",
+      abbreviatedName: "",
     },
     onSubmit: (values) => {
       onSubmit?.({
         installmentDate: values.installmentDate,
         paymentChannelAbbreviatedName: values.paymentChannelAbbreviatedName,
         value: values.installmentAmount,
+        abbreviatedName: values.abbreviatedName,
       });
     },
   });
@@ -433,6 +436,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
         installmentDate: installmentDate,
         paymentChannelAbbreviatedName: paymentChannelAbbreviatedName,
         value: installmentAmount,
+        abbreviatedName: paymentChannelAbbreviatedName,
       });
       return;
     }
@@ -484,6 +488,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
             paymentChannelAbbreviatedName:
               item.cycleName || item.paymentChannelAbbreviatedName,
             value: item.value,
+            abbreviatedName: item.paymentChannelAbbreviatedName,
           });
         });
       }

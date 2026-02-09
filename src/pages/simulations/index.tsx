@@ -392,7 +392,7 @@ export function Simulations() {
         throw new Error();
       }
 
-      setDataProspect(newDataProspect);
+      await fetchProspectData();
       setShowRecalculateSimulation(false);
     } catch (error) {
       const err = error as {
@@ -459,6 +459,7 @@ export function Simulations() {
       lang={lang}
       isLoadingDelete={isLoadingDelete}
       enums={enums as IAllEnumsResponse}
+      fetchProspectData={fetchProspectData}
     />
   );
 }
