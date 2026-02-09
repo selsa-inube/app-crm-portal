@@ -48,7 +48,7 @@ const ListContent = ({ items }: { items: string[] }) => (
 function ErrorPage(props: ErrorPageProps) {
   const {
     logo = selsaLogo,
-    logoAlt = "Sistemas Enlinea",
+    logoAlt = "Logo del Operador",
     heading = "¡Ups! Algo salió mal...",
     image = errorImage,
     imageAlt = "Ha surgido un error. Revisa la descripción",

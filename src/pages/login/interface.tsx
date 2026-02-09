@@ -34,7 +34,7 @@ function LoginUI(props: ILoginUI) {
           </Stack>
           <StyledImage
             src={eventData.businessManager.urlLogo}
-            alt="Sistemas Enlinea"
+            alt="Logo del Operador"
             $maxWidth={screenDesktop ? "180px" : "160px"}
             $maxHeight="80px"
           />

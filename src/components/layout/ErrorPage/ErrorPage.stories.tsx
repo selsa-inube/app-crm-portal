@@ -14,7 +14,7 @@ export const Default = (args: ErrorPageProps) => <ErrorPage {...args} />;
 
 Default.args = {
   logo: selsaLogo,
-  logoAlt: "Sistemas Enlinea",
+  logoAlt: "Logo del operador",
   heading: "¡Ups! Algo salió mal...",
   description:
     "La compañía donde trabajas NO tiene los privilegios requeridos para acceder al portal.Confirma que estés usando la url adecuada",
