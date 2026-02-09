@@ -88,11 +88,14 @@ export interface ICreditProduct {
 }
 
 export interface IAddProduct {
-  creditProduct: ICreditProduct;
-  firstPaymentCycleDate: string | Date;
-  paymentCycle: string;
   prospectId: string;
-  installmentAmount?: number;
+  paymentChannelAbbreviatedName: string;
+  paymentCycle: string;
+  firstPaymentCycleDate: string | Date;
+  lineOfCreditAbbreviatedName: string;
+  termLimit?: number;
+  installmentLimit?: number;
+  additionalAmount: number;
 }
 
 export interface IOutlay {
