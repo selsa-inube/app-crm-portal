@@ -720,7 +720,7 @@ function EditProductModal(props: EditProductModalProps) {
                 placeholder={
                   simulationFormLabels.interestRatePlaceholder.i18n[lang]
                 }
-                value={Number(formik.values.interestRate).toFixed(4)}
+                value={Number(formik.values.interestRate)}
                 iconAfter={
                   <Icon
                     icon={<MdPercent />}

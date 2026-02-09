@@ -459,6 +459,7 @@ export function Simulations() {
       lang={lang}
       isLoadingDelete={isLoadingDelete}
       enums={enums as IAllEnumsResponse}
+      fetchProspectData={fetchProspectData}
     />
   );
 }
