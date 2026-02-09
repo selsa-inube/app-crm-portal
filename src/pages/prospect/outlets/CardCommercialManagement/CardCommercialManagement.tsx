@@ -150,24 +150,9 @@ export const CardCommercialManagement = (
         },
         eventData.token,
       );
-      setProspectProducts((prev) =>
-        prev.filter(
-          (product) => product.creditProductCode !== selectedProductId,
-        ),
-      );
 
       try {
-        if (prospectData?.prospectId) {
-          const updatedProspect = await getSearchProspectById(
-            businessUnitPublicCode,
-            businessManagerCode,
-            prospectData.prospectId,
-            eventData.token,
-          );
-          if (onProspectUpdate) {
-            onProspectUpdate(updatedProspect);
-          }
-        }
+        fetchProspectData && (await fetchProspectData());
       } catch (error) {
         setShowErrorModal(true);
         setIsLoading(false);
