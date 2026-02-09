@@ -96,19 +96,21 @@ const CreditUI = (props: ICreditUIProps) => {
         ? backendOption.subOption
         : [];
 
-      return configOption.subOptions.map((sub) => {
-        const match = backendSubs.find((opt) => opt.publicCode === sub.id);
-
-        return {
-          key: match?.optionStaffId,
-          icon: getIconByName(match?.iconReference || ""),
-          title: match?.abbreviatedName,
-          subtitle: match?.descriptionUse,
-          url: sub.url ?? "",
-          isDisabled: !match,
-          optionId: sub.id,
-        };
-      });
+      return configOption.subOptions
+        .map((sub) => {
+          const match = backendSubs.find((opt) => opt.publicCode === sub.id);
+          if (!match) return null;
+          return {
+            key: match.optionStaffId,
+            icon: getIconByName(match.iconReference || ""),
+            title: match.abbreviatedName,
+            subtitle: match.descriptionUse,
+            url: sub.url ?? "",
+            isDisabled: false,
+            optionId: sub.id,
+          };
+        })
+        .filter((option): option is IEnhancedSubOption => option !== null);
     });
   };
 

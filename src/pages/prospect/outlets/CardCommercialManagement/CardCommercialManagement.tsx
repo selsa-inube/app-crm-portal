@@ -310,9 +310,8 @@ export const CardCommercialManagement = (
                   entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
                 }
                 schedule={
-                  prospectData
-                    ? prospectData.selectedRegularPaymentSchedule || ""
-                    : ""
+                  entry.ordinaryInstallmentsForPrincipal?.[0]
+                    ?.paymentChannelCycleName || ""
                 }
                 onEdit={() =>
                   canEditCreditRequest
