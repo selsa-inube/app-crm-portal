@@ -282,24 +282,14 @@ export function CreditProspect(props: ICreditProspectProps) {
       setIsLoading(true);
       const payload: IAddProduct = {
         prospectId: prospectData.prospectId,
-        creditProduct: {
-          lineOfCreditAbbreviatedName: values.selectedProducts[0],
-          loanAmount: Number(values.creditAmount),
-          installmentFrequency: values.paymentConfiguration.paymentCycle,
-          interestRate: Number(values.interestRate),
-          loanTerm: Number(values.maximumTermValue),
-          creditProductCode: values.selectedProducts[0],
-          ordinaryInstallmentsForPrincipal: [
-            {
-              installmentAmount: Number(values.installmentAmount) | 1,
-              installmentFrequency: values.paymentConfiguration.paymentCycle,
-              paymentChannelAbbreviatedName:
-                values.paymentConfiguration.paymentMethod,
-            },
-          ],
-        },
+        paymentChannelAbbreviatedName:
+          values.paymentConfiguration.paymentMethod,
         paymentCycle: values.paymentConfiguration.paymentCycle,
         firstPaymentCycleDate: values.paymentConfiguration.firstPaymentDate,
+        lineOfCreditAbbreviatedName: values.selectedProducts[0],
+        termLimit: Number(values.maximumTermValue) || 0,
+        installmentLimit: Number(values.installmentAmount) || 0,
+        additionalAmount: Number(values.creditAmount),
       };
 
       await addCreditProduct(
