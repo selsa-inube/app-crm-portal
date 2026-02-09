@@ -248,7 +248,6 @@ export function SimulateCredit() {
     formData.obligationsFinancial,
     formData.riskScores,
   ]);
-  console.log("***************** ", formData);
   const simulateData: IProspect = useMemo(
     () => ({
       clientIdentificationNumber: customerData.publicCode,
@@ -273,7 +272,7 @@ export function SimulateCredit() {
             }))
           : [],
       linesOfCredit: formData.selectedProducts,
-      firstPaymentCycleDate: new Date().toISOString(),
+      firstPaymentCycleDate: formData.loanAmountState.payAmount || "",
       extraordinaryInstallments: Array.isArray(
         formData.extraordinaryInstallments,
       )
