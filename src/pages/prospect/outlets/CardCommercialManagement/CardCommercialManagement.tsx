@@ -25,7 +25,6 @@ import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeductibleExpensesById";
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
-import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
@@ -71,7 +70,6 @@ export const CardCommercialManagement = (
     showAddProduct = true,
     lang,
     enums,
-    onProspectUpdate,
     prospectSummaryData,
     setProspectSummaryData,
     setShowMessageSuccessModal,
