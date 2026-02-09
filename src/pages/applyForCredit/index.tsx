@@ -15,6 +15,7 @@ import {
 import { MessagingPlatform } from "@services/enum/icorebanking-vi-crediboard/messagingPlatform";
 import {
   IDocumentsCredit,
+  IPatchValidateRequirementsPayload,
   IValidateRequirement,
 } from "@services/creditRequest/types";
 import { getGuaranteesRequiredByCreditProspect } from "@services/prospect/guaranteesRequiredByCreditProspect";
@@ -26,6 +27,7 @@ import { stepsFilingApplication } from "./config/filingApplication.config";
 import { ApplyForCreditUI } from "./interface";
 import { IFormData } from "./types";
 import { dataSubmitApplication, tittleOptions } from "./config/config";
+import { postDocumentsRequiredByCreditRequest } from "@src/services/creditRequest/getDocumentsRequiredByCreditRequest";
 
 export function ApplyForCredit() {
   const { prospectCode } = useParams();
@@ -707,6 +709,36 @@ export function ApplyForCredit() {
   }, [businessUnitPublicCode, prospectData?.prospectId]);
 
   useEffect(() => {
+    if (!prospectData) return;
+    const payload =
+      prospectData as unknown as IPatchValidateRequirementsPayload;
+    const handleSubmit = async () => {
+      setLoading(true);
+      try {
+        const data = await postDocumentsRequiredByCreditRequest(
+          businessUnitPublicCode,
+          businessManagerCode,
+          payload,
+          eventData?.user?.identificationDocumentNumber || "",
+          eventData.token,
+        );
+        if (data && Array.isArray(data) && data.length > 0) {
+          setValidDocumentsRequiredByCreditRequest(data);
+        } else {
+          setValidDocumentsRequiredByCreditRequest([]);
+        }
+      } catch (error) {
+        setShowErrorModal(true);
+        setValidDocumentsRequiredByCreditRequest([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleSubmit();
+  }, [prospectData, businessUnitPublicCode]);
+
+  useEffect(() => {
     if (prospectSummaryData?.netAmountToDisburse) {
       setFormData((prev) => ({
         ...prev,
@@ -781,7 +813,9 @@ export function ApplyForCredit() {
         enums={enums as IAllEnumsResponse}
         lang={lang}
         generateAndShareApprovedRequest={generateAndShareApprovedRequest}
-        onDocumentsLoad={setValidDocumentsRequiredByCreditRequest}
+        validDocumentsRequiredByCreditRequest={
+          validDocumentsRequiredByCreditRequest
+        }
       />
     </>
   );
