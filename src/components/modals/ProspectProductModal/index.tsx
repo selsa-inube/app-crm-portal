@@ -463,6 +463,7 @@ function EditProductModal(props: EditProductModalProps) {
     formikHelpers: FormikHelpers<FormikValues>,
   ) => {
     try {
+      console.log("Submitted values:", values);
       const submitValues = {
         ...values,
         ...(showIncrementField &&

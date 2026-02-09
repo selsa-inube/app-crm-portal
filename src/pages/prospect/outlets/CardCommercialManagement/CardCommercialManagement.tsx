@@ -205,6 +205,10 @@ export const CardCommercialManagement = (
         loanAmount: Number(values.creditAmount),
         paymentChannelAbbreviatedName: values.paymentMethod,
         installmentAmount: Number(values.installmentAmount),
+        firstPaymentDate: values.firstPaymentDate,
+        interestRateDueType: values.interestRateDueType,
+        interestRateType: values.interestRateType,
+        paymentChannelCyleName: values.paymentCycle,
       };
 
       await updateCreditProduct(
