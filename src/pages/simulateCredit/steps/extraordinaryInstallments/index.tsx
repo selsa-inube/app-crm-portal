@@ -100,7 +100,6 @@ export function ExtraordinaryInstallments(
       value,
       abbreviatedName,
     } = installment;
-    console.log("installment--> ", installment);
     const amountToAdd =
       value !== undefined ? value : installmentState.installmentAmount;
 

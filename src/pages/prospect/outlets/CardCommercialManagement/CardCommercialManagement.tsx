@@ -25,7 +25,6 @@ import { EditProductModal } from "@components/modals/ProspectProductModal";
 import { getAllDeductibleExpensesById } from "@services/prospect/SearchAllDeductibleExpensesById";
 import { RemoveCreditProduct } from "@services/prospect/removeCreditProduct";
 import { updateCreditProduct } from "@services/prospect/updateCreditProduct";
-import { getSearchProspectById } from "@services/prospect/SearchByIdProspect";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
@@ -71,7 +70,6 @@ export const CardCommercialManagement = (
     showAddProduct = true,
     lang,
     enums,
-    onProspectUpdate,
     prospectSummaryData,
     setProspectSummaryData,
     setShowMessageSuccessModal,
@@ -150,28 +148,22 @@ export const CardCommercialManagement = (
         },
         eventData.token,
       );
-      setProspectProducts((prev) =>
-        prev.filter(
-          (product) => product.creditProductCode !== selectedProductId,
-        ),
-      );
 
       try {
-        if (prospectData?.prospectId) {
-          const updatedProspect = await getSearchProspectById(
-            businessUnitPublicCode,
-            businessManagerCode,
-            prospectData.prospectId,
-            eventData.token,
-          );
-          if (onProspectUpdate) {
-            onProspectUpdate(updatedProspect);
-          }
-        }
+        fetchProspectData && (await fetchProspectData());
       } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
         setShowErrorModal(true);
         setIsLoading(false);
-        setMessageError(tittleOptions.errorReload);
+        setMessageError(description);
       }
 
       setIsLoading(false);
