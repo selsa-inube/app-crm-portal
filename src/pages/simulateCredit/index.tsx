@@ -309,7 +309,7 @@ export function SimulateCredit() {
     }),
     [formData, onlyBorrowerData],
   );
-  console.log("simulateData: ", simulateData);
+
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [creditLineTerms, setCreditLineTerms] = useState<{
     [lineName: string]: {
