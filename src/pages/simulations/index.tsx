@@ -392,7 +392,7 @@ export function Simulations() {
         throw new Error();
       }
 
-      setDataProspect(newDataProspect);
+      await fetchProspectData();
       setShowRecalculateSimulation(false);
     } catch (error) {
       const err = error as {
