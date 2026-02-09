@@ -28,7 +28,7 @@ export interface IConsolidatedCredit {
 
 export interface IOrdinaryInstallmentsForPrincipal {
   paymentChannelAbbreviatedName: string;
-  installmentFrequency: string;
+  paymentChannelCycleName: string;
   installmentAmount: number;
   numberOfInstallments?: number;
   gradientRate?: number;

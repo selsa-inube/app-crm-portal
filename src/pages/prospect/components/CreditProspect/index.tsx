@@ -287,12 +287,12 @@ export function CreditProspect(props: ICreditProspectProps) {
           loanAmount: Number(values.creditAmount),
           installmentFrequency: values.paymentConfiguration.paymentCycle,
           interestRate: Number(values.interestRate),
-          loanTerm: Number(values.maximumTermValue),
+          loanTerm: Number(values.maximumTermValue) || 0,
           creditProductCode: values.selectedProducts[0],
           ordinaryInstallmentsForPrincipal: [
             {
-              installmentAmount: Number(values.installmentAmount) | 1,
-              installmentFrequency: values.paymentConfiguration.paymentCycle,
+              installmentAmount: Number(values.installmentAmount) || 0,
+              paymentChannelCycleName: values.paymentConfiguration.paymentCycle,
               paymentChannelAbbreviatedName:
                 values.paymentConfiguration.paymentMethod,
             },
