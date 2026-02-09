@@ -85,6 +85,7 @@ interface ComercialManagementProps {
   requestValue?: IPaymentChannel[];
   creditRequest?: ICreditRequest | null;
   loadingData?: boolean;
+  fetchProspectData: () => Promise<void>;
 }
 
 export const ComercialManagement = (props: ComercialManagementProps) => {
@@ -103,6 +104,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     setRequestValue,
     loadingData,
     enums,
+    fetchProspectData,
   } = props;
   const [showMenu, setShowMenu] = useState(false);
   const [infoModal, setInfoModal] = useState(false);
@@ -561,6 +563,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   userAccount={eventData.user.userAccount}
                   lang={lang}
                   enums={enums}
+                  fetchProspectData={fetchProspectData}
                 />
               )}
             </Stack>

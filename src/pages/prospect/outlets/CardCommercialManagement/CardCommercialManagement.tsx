@@ -58,6 +58,7 @@ interface CardCommercialManagementProps {
   refreshProducts?: () => void;
   onProspectUpdate?: (prospect: IProspect) => void;
   onProspectRefreshData?: () => void;
+  fetchProspectData?: () => Promise<void>;
 }
 
 export const CardCommercialManagement = (
@@ -75,6 +76,7 @@ export const CardCommercialManagement = (
     setProspectSummaryData,
     setShowMessageSuccessModal,
     onProspectRefreshData,
+    fetchProspectData,
   } = props;
 
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
@@ -203,6 +205,10 @@ export const CardCommercialManagement = (
         loanAmount: Number(values.creditAmount),
         paymentChannelAbbreviatedName: values.paymentMethod,
         installmentAmount: Number(values.installmentAmount),
+        firstPaymentDate: values.firstPaymentDate,
+        interestRateDueType: values.interestRateDueType,
+        interestRateType: values.interestRateType,
+        paymentChannelCyleName: values.paymentCycle,
       };
 
       await updateCreditProduct(
@@ -212,16 +218,8 @@ export const CardCommercialManagement = (
         eventData.token,
       );
 
-      if (prospectData?.prospectId) {
-        const updatedProspect = await getSearchProspectById(
-          businessUnitPublicCode,
-          businessManagerCode,
-          prospectData.prospectId,
-          eventData.token,
-        );
-        if (onProspectUpdate) {
-          onProspectUpdate(updatedProspect);
-        }
+      if (fetchProspectData) {
+        await fetchProspectData();
       }
 
       setModalHistory((prev) => prev.slice(0, -1));
@@ -468,9 +466,13 @@ export const CardCommercialManagement = (
                   ?.paymentChannelAbbreviatedName || "",
               paymentCycle: prospectData?.selectedRegularPaymentSchedule || "",
               firstPaymentCycle: "",
-              termInMonths: selectedProduct.loanTerm || 0,
+              termInMonths:
+                Number(selectedProduct.loanTerm) % 1 !== 0
+                  ? Number(selectedProduct.loanTerm).toFixed(4)
+                  : Number(selectedProduct.loanTerm) || 0,
               amortizationType: "",
-              interestRate: selectedProduct.interestRate || 0,
+              interestRate:
+                Number(selectedProduct.interestRate).toFixed(4) || 0,
               rateType: "",
               installmentAmount:
                 selectedProduct.ordinaryInstallmentsForPrincipal[0]

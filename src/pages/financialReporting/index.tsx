@@ -476,6 +476,7 @@ export const FinancialReporting = () => {
                               loadingData={loadingData}
                               lang={lang}
                               enums={enums as IAllEnumsResponse}
+                              fetchProspectData={fetchProspectData}
                             />
                           </BlockPdfSection>
                         </Stack>
