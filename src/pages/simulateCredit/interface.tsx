@@ -173,7 +173,10 @@ interface SimulateCreditUIProps {
   enums: IAllEnumsResponse;
   isLoadingUpdate: boolean;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
-  handleUpdateRiskScore: (index: number, newValue: number) => Promise<void>;
+  handleUpdateRiskScore: (
+    index: number,
+    newRisk: { value: number; date: string },
+  ) => Promise<void>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
   bureauMethods: ICreditRiskBureauUpdateMethod[];
   handleBureauConsultation: (
@@ -528,7 +531,9 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                           date={score.date}
                           isMobile={isMobile}
                           lang={lang}
-                          logo={score.bureauName}
+                          logo={
+                            "https://storage.googleapis.com/inube-assets/crediboard/datacredito-logo.png"
+                          }
                           isLoadingUpdate={isLoadingUpdate}
                           resetScore={handleBureauConsultation}
                           updateMethod={
@@ -538,14 +543,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                             )?.updateCreditScoreMethod
                           }
                           handleOnChange={(newRisk) => {
-                            const updatedScores = [...formData.riskScores];
-                            updatedScores[index] = {
-                              ...updatedScores[index],
-                              value: newRisk.value,
-                              date: newRisk.date,
-                            };
-                            handleFormDataChange("riskScores", updatedScores);
-                            handleUpdateRiskScore(index, newRisk.value);
+                            handleUpdateRiskScore(index, newRisk);
                           }}
                         />
                       ))}

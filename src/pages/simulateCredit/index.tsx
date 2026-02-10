@@ -37,7 +37,10 @@ import { creditConsultationInBuroByIdentificationNumber } from "@services/credit
 import { updateCreditRiskBureauQuery } from "@services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
 import { ICreditRiskBureauQuery } from "@services/creditRiskBureauQueries/types";
 import { getUpdateMethodByCreditRiskBureauName } from "@services/creditRiskBureauQueries/getUpdateMethodByCreditRiskBureauName";
-import { ICreditRiskBureauUpdateMethod } from "@services/creditRiskBureauQueries/types";
+import {
+  ICreditRiskBureauUpdateMethod,
+  IUpdateCreditRiskBureauQuery,
+} from "@services/creditRiskBureauQueries/types";
 
 import { creditScoreChanges } from "../prospect/components/ScoreModalProspect/config";
 import { stepsAddProspect } from "./config/addProspect.config";
@@ -615,7 +618,6 @@ export function SimulateCredit() {
 
         const methods = configData?.creditRiskBureaus || [];
         setBureauMethods(methods);
-
         handleBureauConsultation(methods);
       } catch (error) {
         const err = error as {
@@ -747,9 +749,9 @@ export function SimulateCredit() {
             eventData.token,
           );
 
-        const activeScores = (consultationData || []).filter(
-          (score) => score.isActive === "1",
-        );
+        setOriginalBureauData(consultationData || []);
+
+        const activeScores = (consultationData || []).filter(() => true);
 
         if (methods.length > 0) {
           const hasPendingBureaus = methods.some((method) =>
@@ -791,29 +793,58 @@ export function SimulateCredit() {
           code + err?.message + (err?.data?.description || "");
 
         setMessageError(description);
-        setOriginalBureauData;
         setShowErrorModal(true);
       }
     },
     [customerData.publicCode, businessUnitPublicCode, businessManagerCode],
   );
 
-  const handleUpdateRiskScore = async (index: number, newValue: number) => {
+  const handleUpdateRiskScore = async (
+    index: number,
+    newRisk: { value: number; date: string },
+  ) => {
     const scoreToUpdate = formData.riskScores[index];
     const originalRecord = originalBureauData.find(
-      (score) => score.bureauName === scoreToUpdate.bureauName,
+      (score) =>
+        score.bureauName.toLowerCase().replace(/_/g, " ") ===
+        scoreToUpdate.bureauName.toLowerCase().replace(/_/g, " "),
     );
-
-    if (!originalRecord) return;
 
     setIsLoadingUpdate(true);
     try {
-      const payload = {
-        ...originalRecord,
-        creditRiskScore: newValue,
-        modifyJustification: modifyJustification.message.i18n[lang],
-        queryDate: new Date().toISOString(),
-      };
+      let payload: IUpdateCreditRiskBureauQuery;
+
+      if (originalRecord) {
+        payload = {
+          ...originalRecord,
+          creditRiskScore: newRisk.value,
+          queryDate: newRisk.date,
+          modifyJustification: modifyJustification.message.i18n[lang],
+          registrantIdentificationNumber:
+            eventData.user.identificationDocumentNumber || "",
+          portfolioObligations: [],
+        };
+      } else {
+        const generatedId = new Date().getTime().toString();
+        payload = {
+          clientName: customerData.fullName,
+          creditRiskBureauQueryId: generatedId,
+          bureauName: scoreToUpdate.bureauName,
+          creditRiskScore: newRisk.value,
+          queryDate: newRisk.date,
+          isActive: "1",
+          clientIdentificationNumber: customerData.publicCode,
+          modifyJustification: modifyJustification.message.i18n[lang],
+          portfolioObligations: [],
+          clientIdentificationType:
+            customerData.generalAttributeClientNaturalPersons?.[0]
+              ?.typeIdentification || "",
+          registrantIdentificationNumber:
+            eventData.user.identificationDocumentNumber || "",
+        };
+      }
+
+      delete (payload as Partial<typeof payload>).creditRiskBureauQueryId;
 
       await updateCreditRiskBureauQuery(
         businessUnitPublicCode,
@@ -821,13 +852,7 @@ export function SimulateCredit() {
         payload,
       );
 
-      const updatedScores = [...formData.riskScores];
-      updatedScores[index] = {
-        ...updatedScores[index],
-        value: newValue,
-        date: payload.queryDate,
-      };
-      handleFormDataChange("riskScores", updatedScores);
+      await handleBureauConsultation(bureauMethods);
 
       addFlag({
         title: creditScoreChanges.title.i18n[lang],

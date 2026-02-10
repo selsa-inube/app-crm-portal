@@ -20,7 +20,7 @@ export const updateCreditRiskBureauQuery = async (
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
 
       const options: RequestInit = {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "X-Action": "UpdateCreditRiskBureauQuery",
           "X-Business-Unit": businessUnitPublicCode,

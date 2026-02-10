@@ -56,8 +56,8 @@ export const StyledCenterText = styled.div<IStyledCenterText>`
 
 export const StyledImgLogo = styled.img<IStyledImgLogo>`
   content: url("${(prop) => prop.url}");
-  width: 100px;
-  height: 50px;
+  width: 105px;
+  height: 47.5px;
   position: absolute;
   top: 130px;
   left: -170px;
