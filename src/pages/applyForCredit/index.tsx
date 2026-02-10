@@ -275,11 +275,14 @@ export function ApplyForCredit() {
           if (hasBorrowers >= 2) return false;
           return true;
         }
-        if (
-          step.id === stepsFilingApplication.attachedDocuments.id &&
-          validDocumentsRequiredByCreditRequest.length === 0
-        ) {
-          return false;
+        if (step.id === stepsFilingApplication.attachedDocuments.id) {
+          const hasValidDocs = validDocumentsRequiredByCreditRequest.some(
+            (item) =>
+              item.borrowerName &&
+              item.documentalRequirement &&
+              item.documentalRequirement.length > 0,
+          );
+          if (!hasValidDocs) return false;
         }
 
         return true;
