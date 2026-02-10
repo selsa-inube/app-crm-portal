@@ -8,7 +8,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The system could not perform the validation because some data is missing.",
     requirementType: undefined,
     i18n: {
-      es: "No Evaluado",
+      es: "Sin Evaluar",
       en: "Not Evaluated",
     },
   },
@@ -19,7 +19,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The system performed the validation and the condition(s) are met.",
     requirementType: "SYSTEM_VALIDATION",
     i18n: {
-      es: "Aprobado",
+      es: "Cumple",
       en: "Passed",
     },
   },
@@ -30,7 +30,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The system performed the validation and the condition(s) are not met, but then a user forcibly approved it. This use case is explained later.",
     requirementType: "SYSTEM_VALIDATION",
     i18n: {
-      es: "Aprobado*",
+      es: "Cumple*",
       en: "Passed",
     },
   },
@@ -41,7 +41,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The system performed the validation and the condition(s) are not met.",
     requirementType: "SYSTEM_VALIDATION",
     i18n: {
-      es: "Fallido",
+      es: "No Cumple",
       en: "Failed",
     },
   },
@@ -52,7 +52,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The file(s) with the scanned image or the document in standard format have not yet been uploaded.",
     requirementType: "DOCUMENT",
     i18n: {
-      es: "No Evaluado",
+      es: "Sin Evaluar",
       en: "Not Evaluated",
     },
   },
@@ -63,7 +63,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The file(s) were uploaded and a human performed a visual check to ensure they are correct and appropriate.",
     requirementType: "DOCUMENT",
     i18n: {
-      es: "Aprobado",
+      es: "Cumple",
       en: "Passed",
     },
   },
@@ -74,7 +74,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The file(s) were uploaded, but during the human validation the content did NOT match the requirements, was illegible, incomplete, or had some other issue preventing acceptance.",
     requirementType: "DOCUMENT",
     i18n: {
-      es: "Fallido",
+      es: "No Cumple",
       en: "Failed",
     },
   },
@@ -96,7 +96,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "When a human forcibly approves the requirement even though it does not match or is not suitable. The use case for forced approval is explained later.",
     requirementType: "DOCUMENT",
     i18n: {
-      es: "Aprobado*",
+      es: "Cumple*",
       en: "Passed*",
     },
   },
@@ -107,7 +107,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The requirement was just added (as configured in the rule), but has not yet been validated by a human.",
     requirementType: "HUMAN_VALIDATION",
     i18n: {
-      es: "No Evaluado",
+      es: "Sin Evaluar",
       en: "Not Evaluated",
     },
   },
@@ -118,7 +118,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The requirement was validated by a human, who confirms it meets the requested criteria.",
     requirementType: "HUMAN_VALIDATION",
     i18n: {
-      es: "Aprobado",
+      es: "Cumple",
       en: "Passed",
     },
   },
@@ -129,7 +129,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "A human identifies that the requirement was NOT met by the responsible person or does NOT meet the requested criteria.",
     requirementType: "HUMAN_VALIDATION",
     i18n: {
-      es: "Fallido",
+      es: "No Cumple",
       en: "Failed",
     },
   },
@@ -151,7 +151,7 @@ export const requirementStatusData: IDomainEnum[] = [
       "The requirement was forcibly approved by a human, even though it was NOT presented or does NOT meet the criteria.",
     requirementType: "HUMAN_VALIDATION",
     i18n: {
-      es: "Aprobado*",
+      es: "Cumple*",
       en: "Passed*",
     },
   },
