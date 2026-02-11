@@ -361,20 +361,26 @@ export function CreditProspects() {
         <Fieldset>
           <Stack direction="column" gap="20px" padding="8px 16px">
             <Stack
-              justifyContent="space-between"
+              justifyContent={
+                !isLoading && prospectSummaryData.length > 0
+                  ? "space-between"
+                  : "flex-end"
+              }
               alignItems="center"
               direction={isMobile ? "column" : "row"}
               gap="8px"
             >
-              <Input
-                id="keyWord"
-                label={dataCreditProspects.search.i18n[lang]}
-                placeholder={dataCreditProspects.keyWord.i18n[lang]}
-                type="search"
-                fullwidth={isMobile}
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-              />
+              {!isLoading && prospectSummaryData.length > 0 && (
+                <Input
+                  id="keyWord"
+                  label={dataCreditProspects.search.i18n[lang]}
+                  placeholder={dataCreditProspects.keyWord.i18n[lang]}
+                  type="search"
+                  fullwidth={isMobile}
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                />
+              )}
               <Grid
                 templateColumns={canSimulateCredit ? "95% 4%" : "100%"}
                 gap="8px"

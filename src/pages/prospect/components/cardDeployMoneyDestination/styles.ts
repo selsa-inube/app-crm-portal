@@ -19,3 +19,9 @@ export const StyledCardContainer = styled.div`
     cursor: pointer;
   }
 `;
+
+export const StyledFieldsetWrapper = styled.div`
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+`;

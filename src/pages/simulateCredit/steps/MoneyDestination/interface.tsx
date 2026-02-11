@@ -6,6 +6,7 @@ import { Fieldset } from "@components/data/Fieldset";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { CardDeployMoneyDestination } from "@pages/prospect/components/cardDeployMoneyDestination";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { StyledFieldsetWrapper } from "@pages/prospect/components/cardDeployMoneyDestination/styles";
 
 import { dataMoneyDestination } from "./config";
 
@@ -44,79 +45,81 @@ function MoneyDestinationUI(props: MoneyDestinationUIProps) {
 
   return (
     <>
-      <Fieldset heightFieldset="400px" alignContent={false}>
-        <Stack direction="column" padding="0 16px">
-          <Input
-            id="keyWord"
-            label="Buscar"
-            placeholder={dataMoneyDestination.keyWord.i18n[lang]}
-            type="search"
-            fullwidth={isTablet}
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-          />
-          {loading ? (
-            <Stack direction="column" gap="12px" padding="20px 0px 0 0">
-              <SkeletonLine animated={true} />
-              <SkeletonLine animated={true} />
-              <SkeletonLine animated={true} />
-            </Stack>
-          ) : (
-            Object.entries(groupedDestinations)
-              .sort(([destinationA], [destinationB]) =>
-                destinationA.localeCompare(destinationB),
-              )
-              .map(([type, group]) => (
-                <CardDeployMoneyDestination
-                  key={type}
-                  title={type}
-                  defaultOpen={hasActiveSearch}
-                >
-                  <Stack
-                    direction="row"
-                    wrap="wrap"
-                    justifyContent={isTablet ? "center" : "initial"}
-                    padding="0 16px 16px 16px"
-                    gap="12px"
+      <StyledFieldsetWrapper>
+        <Fieldset heightFieldset="400px" alignContent={false}>
+          <Stack direction="column" padding="0 16px">
+            <Input
+              id="keyWord"
+              label="Buscar"
+              placeholder={dataMoneyDestination.keyWord.i18n[lang]}
+              type="search"
+              fullwidth={isTablet}
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+            {loading ? (
+              <Stack direction="column" gap="12px" padding="20px 0px 0 0">
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
+                <SkeletonLine animated={true} />
+              </Stack>
+            ) : (
+              Object.entries(groupedDestinations)
+                .sort(([destinationA], [destinationB]) =>
+                  destinationA.localeCompare(destinationB),
+                )
+                .map(([type, group]) => (
+                  <CardDeployMoneyDestination
+                    key={type}
+                    title={type}
+                    defaultOpen={hasActiveSearch}
                   >
-                    {group
-                      .sort((groupA, groupB) =>
-                        groupA.abbreviatedName.localeCompare(
-                          groupB.abbreviatedName,
-                        ),
-                      )
-                      .map((money) => (
-                        <MoneyDestinationCard
-                          key={money.moneyDestinationId}
-                          id={money.moneyDestinationId}
-                          name={money.abbreviatedName}
-                          value={money.descriptionUse}
-                          label={money.abbreviatedName}
-                          icon={money.iconReference}
-                          handleChange={() =>
-                            handleChange(money.abbreviatedName)
-                          }
-                          isSelected={
-                            selectedDestination === money.abbreviatedName
-                          }
-                          isMobile={isTablet}
-                        />
-                      ))}
-                  </Stack>
-                </CardDeployMoneyDestination>
-              ))
-          )}
-        </Stack>
-      </Fieldset>
-      {showErrorModal && (
-        <ErrorModal
-          handleClose={() => {
-            (setShowErrorModal(false), navigate("/credit/prospects"));
-          }}
-          isMobile={isTablet}
-          message={messageError}
-        />
-      )}
+                    <Stack
+                      direction="row"
+                      wrap="wrap"
+                      justifyContent={isTablet ? "center" : "initial"}
+                      padding="0 16px 16px 16px"
+                      gap="12px"
+                    >
+                      {group
+                        .sort((groupA, groupB) =>
+                          groupA.abbreviatedName.localeCompare(
+                            groupB.abbreviatedName,
+                          ),
+                        )
+                        .map((money) => (
+                          <MoneyDestinationCard
+                            key={money.moneyDestinationId}
+                            id={money.moneyDestinationId}
+                            name={money.abbreviatedName}
+                            value={money.descriptionUse}
+                            label={money.abbreviatedName}
+                            icon={money.iconReference}
+                            handleChange={() =>
+                              handleChange(money.abbreviatedName)
+                            }
+                            isSelected={
+                              selectedDestination === money.abbreviatedName
+                            }
+                            isMobile={isTablet}
+                          />
+                        ))}
+                    </Stack>
+                  </CardDeployMoneyDestination>
+                ))
+            )}
+          </Stack>
+        </Fieldset>
+        {showErrorModal && (
+          <ErrorModal
+            handleClose={() => {
+              (setShowErrorModal(false), navigate("/credit/prospects"));
+            }}
+            isMobile={isTablet}
+            message={messageError}
+          />
+        )}
+      </StyledFieldsetWrapper>
     </>
   );
 }
