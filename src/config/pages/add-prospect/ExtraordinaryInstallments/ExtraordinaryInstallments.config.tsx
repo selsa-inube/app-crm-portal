@@ -22,8 +22,8 @@ export const TextLabels = {
     code: "TextLabels_title",
     description: "New series modal title",
     i18n: {
-      en: "New series",
-      es: "Nueva serie",
+      en: "Add extras",
+      es: "Agrega extras",
     },
   },
 };
