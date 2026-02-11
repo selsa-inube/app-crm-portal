@@ -3,8 +3,8 @@ export const dataAddSeriesModal = {
     code: "New_series_title",
     description: "New series",
     i18n: {
-      en: "New series",
-      es: "Nueva serie",
+      en: "Add extras",
+      es: "Agrega extras",
     },
   },
   view: {
