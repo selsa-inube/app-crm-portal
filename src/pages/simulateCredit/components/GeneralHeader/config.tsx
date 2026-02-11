@@ -27,3 +27,11 @@ export const appearanceTag = (label: string = "") => {
   };
   return config[label] || { appearance: "danger", icon: "" };
 };
+
+export const tittleHeader = {
+  title: {
+    code: "Title",
+    description: "Client",
+    i18n: { en: "Client", es: "Cliente" },
+  },
+};

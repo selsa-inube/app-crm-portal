@@ -248,148 +248,124 @@ export function SimulationsUI(props: SimulationsUIProps) {
                     )}
                   </Stack>
                 </Stack>
-              </StyledPrint>
-
-              <StyledMarginPrint>
-                <Stack>
-                  <Stack
-                    width={
-                      isMobile ? "-webkit-fill-available" : "min(100%,1440px)"
-                    }
-                    margin="0 auto"
-                    direction="column"
-                    gap="20px"
-                  >
-                    <Fieldset>
-                      <Stack gap="16px" direction="column" padding="4px 16px">
-                        <Stack
-                          justifyContent="space-between"
-                          alignItems="center"
-                        >
-                          <Stack
-                            gap={isMobile ? "0" : "8px"}
-                            direction={isMobile ? "column" : "row"}
-                          >
-                            <Text
-                              type="title"
-                              weight="bold"
-                              size="large"
-                              appearance="gray"
-                            >
-                              {dataEditProspect.creditProspect.i18n[lang]}
-                            </Text>
-                            <Text
-                              type="title"
-                              weight="bold"
-                              size="large"
-                              appearance="gray"
-                            >
-                              #{prospectCode}
-                            </Text>
-                          </Stack>
-                          <StyledPrint>
-                            <Icon
-                              icon={<MdOutlineShare />}
-                              appearance="primary"
-                              size="20px"
-                              cursorHover
-                              onClick={generateAndSharePdf}
-                            />
-                          </StyledPrint>
-                        </Stack>
-                        <Divider dashed />
-                        <StyledPrintContainerHeader>
+                <StyledMarginPrint>
+                  <Stack>
+                    <Stack
+                      width={
+                        isMobile ? "-webkit-fill-available" : "min(100%,1440px)"
+                      }
+                      margin="0 auto"
+                      direction="column"
+                      gap="20px"
+                    >
+                      <Fieldset>
+                        <Stack gap="16px" direction="column" padding="4px 16px">
                           <Stack
                             justifyContent="space-between"
                             alignItems="center"
-                            direction={isMobile ? "column" : "row"}
-                            gap="16px"
                           >
                             <Stack
-                              gap="8px"
-                              direction="column"
-                              alignItems="center"
-                              width="30%"
+                              gap={isMobile ? "0" : "8px"}
+                              direction={isMobile ? "column" : "row"}
                             >
-                              <Stack gap="8px" width="100%">
-                                {isLoading ? (
-                                  <SkeletonLine
-                                    animated
-                                    height="40px"
-                                    width="40px"
-                                  />
-                                ) : (
-                                  <Icon
-                                    icon={<MdOutlineBeachAccess />}
-                                    appearance="dark"
-                                    size="28px"
-                                  />
-                                )}
-                                <Stack
-                                  direction="column"
-                                  alignItems="center"
-                                  gap="8px"
-                                >
+                              <Text
+                                type="title"
+                                weight="bold"
+                                size="large"
+                                appearance="gray"
+                              >
+                                {dataEditProspect.creditProspect.i18n[lang]}
+                              </Text>
+                              <Text
+                                type="title"
+                                weight="bold"
+                                size="large"
+                                appearance="gray"
+                              >
+                                #{prospectCode}
+                              </Text>
+                            </Stack>
+                            <StyledPrint>
+                              <Icon
+                                icon={<MdOutlineShare />}
+                                appearance="primary"
+                                size="20px"
+                                cursorHover
+                                onClick={generateAndSharePdf}
+                              />
+                            </StyledPrint>
+                          </Stack>
+                          <Divider dashed />
+                          <StyledPrintContainerHeader>
+                            <Stack
+                              justifyContent="space-between"
+                              alignItems="center"
+                              direction={isMobile ? "column" : "row"}
+                              gap="16px"
+                            >
+                              <Stack
+                                gap="8px"
+                                direction="column"
+                                alignItems="center"
+                                width="30%"
+                              >
+                                <Stack gap="8px" width="100%">
+                                  {isLoading ? (
+                                    <SkeletonLine
+                                      animated
+                                      height="40px"
+                                      width="40px"
+                                    />
+                                  ) : (
+                                    <Icon
+                                      icon={<MdOutlineBeachAccess />}
+                                      appearance="dark"
+                                      size="28px"
+                                    />
+                                  )}
                                   <Stack
                                     direction="column"
                                     alignItems="center"
                                     gap="8px"
-                                    width="100%"
                                   >
-                                    {isLoading ? (
-                                      <SkeletonLine
-                                        animated
-                                        height="40px"
-                                        width="150px"
-                                      />
-                                    ) : (
-                                      <Text type="title" size="large">
-                                        {processedData?.destinationName}
-                                      </Text>
-                                    )}
-                                    <Text
-                                      type="body"
-                                      size="small"
-                                      appearance="gray"
+                                    <Stack
+                                      direction="column"
+                                      alignItems="center"
+                                      gap="8px"
+                                      width="100%"
                                     >
-                                      {dataEditProspect.destination.i18n[lang]}
-                                    </Text>
+                                      {isLoading ? (
+                                        <SkeletonLine
+                                          animated
+                                          height="40px"
+                                          width="150px"
+                                        />
+                                      ) : (
+                                        <Text type="title" size="large">
+                                          {processedData?.destinationName}
+                                        </Text>
+                                      )}
+                                      <Text
+                                        type="body"
+                                        size="small"
+                                        appearance="gray"
+                                      >
+                                        {
+                                          dataEditProspect.destination.i18n[
+                                            lang
+                                          ]
+                                        }
+                                      </Text>
+                                    </Stack>
                                   </Stack>
                                 </Stack>
                               </Stack>
-                            </Stack>
-                            <Stack
-                              direction="column"
-                              alignItems="center"
-                              gap="8px"
-                              width="40%"
-                            >
-                              {isLoading ? (
-                                <SkeletonLine
-                                  animated
-                                  height="40px"
-                                  width="150px"
-                                />
-                              ) : (
-                                <Text
-                                  type="title"
-                                  size="large"
-                                  textAlign="center"
-                                >
-                                  {processedData?.mainBorrowerName}
-                                </Text>
-                              )}
-                              <Text type="body" size="small" appearance="gray">
-                                {dataEditProspect.customer.i18n[lang]}
-                              </Text>
-                            </Stack>
-                            <Stack
-                              direction="column"
-                              alignItems="center"
-                              gap="8px"
-                              width="30%"
-                            >
-                              <Stack gap="8px">
+                              <Stack
+                                direction="column"
+                                alignItems="center"
+                                gap="8px"
+                                width="40%"
+                              >
                                 {isLoading ? (
                                   <SkeletonLine
                                     animated
@@ -398,110 +374,145 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                   />
                                 ) : (
                                   <Text
-                                    type="headline"
-                                    weight="bold"
+                                    type="title"
                                     size="large"
-                                    appearance="primary"
+                                    textAlign="center"
                                   >
-                                    {currencyFormat(
-                                      dataProspect
-                                        ? Number(
-                                            dataProspect?.requestedAmount || 0,
-                                          )
-                                        : 0,
-                                    )}
+                                    {processedData?.mainBorrowerName}
                                   </Text>
                                 )}
+                                <Text
+                                  type="body"
+                                  size="small"
+                                  appearance="gray"
+                                >
+                                  {dataEditProspect.customer.i18n[lang]}
+                                </Text>
                               </Stack>
-                              <Text type="body" size="small" appearance="gray">
-                                {dataEditProspect.value.i18n[lang]}
-                              </Text>
+                              <Stack
+                                direction="column"
+                                alignItems="center"
+                                gap="8px"
+                                width="30%"
+                              >
+                                <Stack gap="8px">
+                                  {isLoading ? (
+                                    <SkeletonLine
+                                      animated
+                                      height="40px"
+                                      width="150px"
+                                    />
+                                  ) : (
+                                    <Text
+                                      type="headline"
+                                      weight="bold"
+                                      size="large"
+                                      appearance="primary"
+                                    >
+                                      {currencyFormat(
+                                        dataProspect
+                                          ? Number(
+                                              dataProspect?.requestedAmount ||
+                                                0,
+                                            )
+                                          : 0,
+                                      )}
+                                    </Text>
+                                  )}
+                                </Stack>
+                                <Text
+                                  type="body"
+                                  size="small"
+                                  appearance="gray"
+                                >
+                                  {dataEditProspect.value.i18n[lang]}
+                                </Text>
+                              </Stack>
+                            </Stack>
+                          </StyledPrintContainerHeader>
+                        </Stack>
+                      </Fieldset>
+
+                      <StyledScrollPrint>
+                        <Fieldset>
+                          <CreditProspect
+                            isMobile={isMobile}
+                            showMenu={() => setShowMenu(false)}
+                            showPrint={true}
+                            isPrint={true}
+                            prospectData={dataProspect!}
+                            sentData={sentData}
+                            businessManagerCode={businessManagerCode}
+                            setSentData={setSentData}
+                            setRequestValue={setRequestValue}
+                            onProspectUpdate={setProspectData}
+                            onProspectUpdated={onProspectUpdated}
+                            prospectSummaryData={prospectSummaryData}
+                            setProspectSummaryData={setProspectSummaryData}
+                            onProspectRefreshData={onProspectUpdated}
+                            userAccount={userAccount as string}
+                            setShowRequirements={setShowRequirements}
+                            validateRequirements={validateRequirements}
+                            lang={lang}
+                            enums={enums}
+                            fetchProspectData={fetchProspectData}
+                          />
+                        </Fieldset>
+                      </StyledScrollPrint>
+
+                      <StyledPrint>
+                        <Stack
+                          gap="10px"
+                          justifyContent="end"
+                          padding="0 0 16px 0"
+                        >
+                          <Stack gap="2px">
+                            <Button
+                              appearance="danger"
+                              variant="outlined"
+                              disabled={canDeleteCreditRequest}
+                              onClick={() => setShowDeleteModal(true)}
+                            >
+                              {dataEditProspect.delete.i18n[lang]}
+                            </Button>
+                            <Stack alignItems="center">
+                              {canDeleteCreditRequest && (
+                                <Icon
+                                  icon={<MdOutlineInfo />}
+                                  appearance="primary"
+                                  size="16px"
+                                  cursorHover
+                                  onClick={handleInfo}
+                                />
+                              )}
                             </Stack>
                           </Stack>
-                        </StyledPrintContainerHeader>
-                      </Stack>
-                    </Fieldset>
-
-                    <StyledScrollPrint>
-                      <Fieldset>
-                        <CreditProspect
-                          isMobile={isMobile}
-                          showMenu={() => setShowMenu(false)}
-                          showPrint={true}
-                          isPrint={true}
-                          prospectData={dataProspect!}
-                          sentData={sentData}
-                          businessManagerCode={businessManagerCode}
-                          setSentData={setSentData}
-                          setRequestValue={setRequestValue}
-                          onProspectUpdate={setProspectData}
-                          onProspectUpdated={onProspectUpdated}
-                          prospectSummaryData={prospectSummaryData}
-                          setProspectSummaryData={setProspectSummaryData}
-                          onProspectRefreshData={onProspectUpdated}
-                          userAccount={userAccount as string}
-                          setShowRequirements={setShowRequirements}
-                          validateRequirements={validateRequirements}
-                          lang={lang}
-                          enums={enums}
-                          fetchProspectData={fetchProspectData}
-                        />
-                      </Fieldset>
-                    </StyledScrollPrint>
-
-                    <StyledPrint>
-                      <Stack
-                        gap="10px"
-                        justifyContent="end"
-                        padding="0 0 16px 0"
-                      >
-                        <Stack gap="2px">
-                          <Button
-                            appearance="danger"
-                            variant="outlined"
-                            disabled={canDeleteCreditRequest}
-                            onClick={() => setShowDeleteModal(true)}
-                          >
-                            {dataEditProspect.delete.i18n[lang]}
-                          </Button>
-                          <Stack alignItems="center">
-                            {canDeleteCreditRequest && (
-                              <Icon
-                                icon={<MdOutlineInfo />}
-                                appearance="primary"
-                                size="16px"
-                                cursorHover
-                                onClick={handleInfo}
-                              />
-                            )}
+                          <Stack gap="2px" alignItems="center">
+                            <Button
+                              onClick={handleSubmitClick}
+                              disabled={canRequestCredit}
+                            >
+                              {dataEditProspect.confirm.i18n[lang]}
+                            </Button>
+                            <Stack alignItems="center">
+                              {canRequestCredit && (
+                                <Icon
+                                  icon={<MdOutlineInfo />}
+                                  appearance="primary"
+                                  size="16px"
+                                  cursorHover
+                                  onClick={handleInfo}
+                                />
+                              )}
+                            </Stack>
                           </Stack>
                         </Stack>
-                        <Stack gap="2px" alignItems="center">
-                          <Button
-                            onClick={handleSubmitClick}
-                            disabled={canRequestCredit}
-                          >
-                            {dataEditProspect.confirm.i18n[lang]}
-                          </Button>
-                          <Stack alignItems="center">
-                            {canRequestCredit && (
-                              <Icon
-                                icon={<MdOutlineInfo />}
-                                appearance="primary"
-                                size="16px"
-                                cursorHover
-                                onClick={handleInfo}
-                              />
-                            )}
-                          </Stack>
-                        </Stack>
-                      </Stack>
-                    </StyledPrint>
+                      </StyledPrint>
+                    </Stack>
+                    {showMenu && <Stack></Stack>}
                   </Stack>
-                  {showMenu && <Stack></Stack>}
-                </Stack>
-              </StyledMarginPrint>
-
+                </StyledMarginPrint>
+              </StyledPrint>
               {isModalOpen && (
                 <BaseModal
                   title={titlesModal.title.i18n[lang]}

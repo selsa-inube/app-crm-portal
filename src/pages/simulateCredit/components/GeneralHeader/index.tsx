@@ -9,9 +9,10 @@ import { Stack, Icon, Text, useMediaQuery, Button } from "@inubekit/inubekit";
 
 import { CustomerContext } from "@context/CustomerContext";
 import { initialCustomerData } from "@context/CustomerContext/types";
+import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { StyledContainerGeneralHeader, StyledPerfil } from "./styles";
-import { appearanceTag } from "./config";
+import { appearanceTag, tittleHeader } from "./config";
 
 interface IGeneralHeaderProps {
   profileImageUrl: string;
@@ -42,7 +43,7 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
     useContext(CustomerContext);
   const isMobile = useMediaQuery("(max-width: 460px)");
   const navigate = useNavigate();
-
+  const { lang } = useEnum();
   return (
     <StyledContainerGeneralHeader>
       <Stack
@@ -64,6 +65,14 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
                 {name}
               </Text>
               <Stack direction="row" alignItems="center" gap="6px">
+                <Text
+                  type="label"
+                  size="small"
+                  appearance="gray"
+                  weight="normal"
+                >
+                  {tittleHeader.title.i18n[lang]}
+                </Text>
                 <Icon
                   size="12px"
                   icon={appearanceTag(descriptionStatus).icon}
