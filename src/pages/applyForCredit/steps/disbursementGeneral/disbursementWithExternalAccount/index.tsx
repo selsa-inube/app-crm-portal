@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MdOutlineAttachMoney } from "react-icons/md";
+import { MdOutlineAttachMoney, MdOutlineInfo } from "react-icons/md";
 import {
   Stack,
   Text,
@@ -12,6 +12,7 @@ import {
   Checkbox,
   inube,
   SkeletonLine,
+  Icon,
 } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
@@ -39,7 +40,10 @@ import { IDomainEnum } from "@config/enums/types";
 import { CardGray } from "@components/cards/CardGray";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { ICRMPortalData } from "@context/AppContext/types";
+import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
+import { BaseModal } from "@components/modals/baseModal";
 
+import { StyledContainer } from "../types";
 import { selectDefaultValue, errorMessages } from "./config";
 
 interface IDisbursementWithExternalAccountProps {
@@ -88,6 +92,11 @@ export function DisbursementWithExternalAccount(
   const [currentIdentification, setCurrentIdentification] =
     useState(identificationNumber);
   const [accountOptions, setAccountOptions] = useState<IOptionsSelect[]>([]);
+  const [accountOptionsInternal, setAccountOptionsInternal] = useState<
+    IOptionsSelect[]
+  >([]);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const prevValues = useRef(formik.values[optionNameForm]);
@@ -217,7 +226,12 @@ export function DisbursementWithExternalAccount(
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
+
     formik.setFieldValue(`${optionNameForm}.toggle`, isChecked);
+
+    formik.setFieldValue(`${optionNameForm}.bank`, "");
+    formik.setFieldValue(`${optionNameForm}.accountType`, "");
+    formik.setFieldValue(`${optionNameForm}.accountNumber`, "");
 
     if (isChecked) {
       restoreCustomerDataFields();
@@ -377,6 +391,61 @@ export function DisbursementWithExternalAccount(
     }
   }, [accountOptions]);
 
+  useEffect(() => {
+    async function fetchAccounts() {
+      try {
+        if (customerData === undefined) return;
+
+        const response = await getAllInternalAccounts(
+          currentIdentification,
+          businessUnitPublicCode,
+          businessManagerCode,
+          eventData.token,
+        );
+
+        const uniqueMap = new Map<
+          string,
+          { id: string; label: string; value: string }
+        >();
+
+        response.forEach((account) => {
+          const key = `${account.productDescription}-${account.savingProductCode}`;
+          if (!uniqueMap.has(key)) {
+            uniqueMap.set(key, {
+              id: account.savingProductCode,
+              label: `${account.productDescription} - ${account.savingProductCode}`,
+              value: `${account.savingProductCode}`,
+            });
+          }
+        });
+
+        const accountsList = Array.from(uniqueMap.values());
+
+        setAccountOptionsInternal([
+          ...accountsList,
+          {
+            id: "none",
+            label: disbursementGeneral.none.i18n[lang],
+            value: "none",
+          },
+        ]);
+        if (accountsList.length > 0) {
+          formik.setFieldValue(
+            `${optionNameForm}.accountNumber`,
+            accountsList[0].value,
+          );
+        } else {
+          formik.setFieldValue(`${optionNameForm}.accountNumber`, "none");
+        }
+      } catch (error) {
+        console.error("Error fetching internal accounts:", error);
+        setAccountOptions([]);
+      }
+    }
+
+    fetchAccounts();
+  }, [currentIdentification, businessUnitPublicCode]);
+
   return (
     <>
       <Stack
@@ -417,24 +486,26 @@ export function DisbursementWithExternalAccount(
                   : undefined
               }
               readOnly={isAmountReadOnly}
-              message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
+              message={`${disbursemenOptionAccount.valueTurnFail.i18n[lang]} ${currencyFormat(initialValues.amount)}`}
               fullwidth
             />
           </Stack>
-          <Stack gap="10px" direction="row" alignItems="center">
-            <Checkbox
-              id={"featureCheckbox"}
-              name={"featureCheckbox"}
-              checked={formik.values[optionNameForm]?.check}
-              indeterminate={false}
-              onChange={handleCheckboxChange}
-              value={"featureCheckbox"}
-              disabled={isDisabled}
-            />
-            <Text type="label" size="medium">
-              {disbursementGeneral.labelCheck.i18n[lang]}
-            </Text>
-          </Stack>
+          {!isAmountReadOnly && (
+            <Stack gap="10px" direction="row" alignItems="center">
+              <Checkbox
+                id="featureCheckbox"
+                name="featureCheckbox"
+                checked={isDisabled || formik.values[optionNameForm]?.check}
+                indeterminate={false}
+                onChange={handleCheckboxChange}
+                value="featureCheckbox"
+                disabled={isDisabled}
+              />
+              <Text type="label" size="medium">
+                {disbursementGeneral.labelCheck.i18n[lang]}
+              </Text>
+            </Stack>
+          )}
         </Stack>
         <Divider dashed />
         <Stack direction="column" gap="16px">
@@ -474,107 +545,152 @@ export function DisbursementWithExternalAccount(
               isReadOnly={isAutoCompleted}
               customerData={customerData}
             />
-            <Divider dashed />
+            {formik.values[optionNameForm]?.toggle === true && (
+              <Divider dashed />
+            )}
           </>
         )}
-        <Stack direction={isMobile ? "column" : "row"} gap="16px">
-          {banks.length === 1 ? (
-            <Textfield
-              id={`${optionNameForm}.bank`}
-              name={`${optionNameForm}.bank`}
-              label={disbursemenOptionAccount.labelBank.i18n[lang]}
-              placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
-              size="compact"
-              value={banks[0]?.label || ""}
-              readOnly={true}
-              disabled={true}
-              fullwidth
-            />
-          ) : (
-            <Select
-              id={`${optionNameForm}.bank`}
-              name={`${optionNameForm}.bank`}
-              label={disbursemenOptionAccount.labelBank.i18n[lang]}
-              placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
-              size="compact"
-              options={banks}
-              onBlur={formik.handleBlur}
-              onChange={(_, value) => {
-                const selectedBank = banks.find((bank) => bank.value === value);
-
-                formik.setFieldValue(`${optionNameForm}.bank`, value);
-
-                formik.setFieldValue(
-                  `${optionNameForm}.bankCode`,
-                  selectedBank?.id || "",
-                );
-              }}
-              value={formik.values[optionNameForm]?.bank || ""}
-              invalid={alreadyShowMessageErrorBank && banks.length === 0}
-              message={
-                (alreadyShowMessageErrorBank &&
-                  banks.length === 0 &&
-                  disbursemenOptionAccount.errorBanks.i18n[lang]) ||
-                ""
-              }
-              fullwidth
-            />
-          )}
-
-          {accountOptions.length === 1 && (
-            <Stack width="100%">
-              <CardGray
-                label={disbursemenOptionAccount.labelAccountType.i18n[lang]}
-                placeHolder={accountOptions[0]?.label || ""}
-                isMobile={true}
+        {formik.values[optionNameForm]?.toggle === false ? (
+          <Stack direction={isMobile ? "column" : "row"} gap="16px">
+            {banks.length === 1 ? (
+              <Textfield
+                id={`${optionNameForm}.bank`}
+                name={`${optionNameForm}.bank`}
+                label={disbursemenOptionAccount.labelBank.i18n[lang]}
+                placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
+                size="compact"
+                value={banks[0]?.label || ""}
+                readOnly={true}
+                disabled={true}
+                fullwidth
               />
-            </Stack>
-          )}
+            ) : (
+              <Select
+                id={`${optionNameForm}.bank`}
+                name={`${optionNameForm}.bank`}
+                label={disbursemenOptionAccount.labelBank.i18n[lang]}
+                placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
+                size="compact"
+                options={banks}
+                onBlur={formik.handleBlur}
+                onChange={(_, value) => {
+                  const selectedBank = banks.find(
+                    (bank) => bank.value === value,
+                  );
 
-          {accountOptions.length >= 2 && (
+                  formik.setFieldValue(`${optionNameForm}.bank`, value);
+
+                  formik.setFieldValue(
+                    `${optionNameForm}.bankCode`,
+                    selectedBank?.id || "",
+                  );
+                }}
+                value={formik.values[optionNameForm]?.bank || ""}
+                invalid={alreadyShowMessageErrorBank && banks.length === 0}
+                message={
+                  (alreadyShowMessageErrorBank &&
+                    banks.length === 0 &&
+                    disbursemenOptionAccount.errorBanks.i18n[lang]) ||
+                  ""
+                }
+                fullwidth
+              />
+            )}
+
+            {accountOptions.length === 1 && (
+              <Stack width="100%">
+                <CardGray
+                  label={disbursemenOptionAccount.labelAccountType.i18n[lang]}
+                  placeHolder={accountOptions[0]?.label || ""}
+                  isMobile={true}
+                />
+              </Stack>
+            )}
+
+            {accountOptions.length >= 2 && (
+              <Select
+                id={"accountType"}
+                name={`${optionNameForm}.accountType`}
+                label={disbursemenOptionAccount.labelAccountType.i18n[lang]}
+                placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
+                size="compact"
+                options={accountOptions}
+                onBlur={formik.handleBlur}
+                onChange={(name, value) => formik.setFieldValue(name, value)}
+                value={formik.values[optionNameForm]?.accountType || ""}
+                fullwidth
+              />
+            )}
+
+            {isLoading && (
+              <Stack width="100%" gap="10px" direction="column">
+                <SkeletonLine animated width="50%" height="10px" />
+                <SkeletonLine animated width="100%" height="40px" />
+              </Stack>
+            )}
+
+            <Input
+              id={"accountNumber"}
+              name={`${optionNameForm}.accountNumber`}
+              label={disbursemenOptionAccount.labelAccountNumber.i18n[lang]}
+              placeholder={
+                disbursemenOptionAccount.placeAccountNumber.i18n[lang]
+              }
+              value={formik.values[optionNameForm]?.accountNumber || ""}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              fullwidth={true}
+              size="compact"
+            />
+          </Stack>
+        ) : (
+          <Stack>
             <Select
-              id={"accountType"}
-              name={`${optionNameForm}.accountType`}
-              label={disbursemenOptionAccount.labelAccountType.i18n[lang]}
+              id={`${optionNameForm}.accountNumber`}
+              name={`${optionNameForm}.accountNumber`}
+              label={disbursemenOptionAccount.labelAccount.i18n[lang]}
               placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
               size="compact"
-              options={accountOptions}
+              options={accountOptionsInternal}
               onBlur={formik.handleBlur}
-              onChange={(name, value) => formik.setFieldValue(name, value)}
-              value={formik.values[optionNameForm]?.accountType || ""}
+              onChange={(_, value) =>
+                formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
+              }
+              value={formik.values[optionNameForm]?.accountNumber || ""}
               fullwidth
             />
-          )}
-
-          {isLoading && (
-            <Stack width="100%" gap="10px" direction="column">
-              <SkeletonLine animated width="50%" height="10px" />
-              <SkeletonLine animated width="100%" height="40px" />
-            </Stack>
-          )}
-
-          <Input
-            id={"accountNumber"}
-            name={`${optionNameForm}.accountNumber`}
-            label={disbursemenOptionAccount.labelAccountNumber.i18n[lang]}
-            placeholder={disbursemenOptionAccount.placeAccountNumber.i18n[lang]}
-            value={formik.values[optionNameForm]?.accountNumber || ""}
-            onChange={formik.handleChange}
+          </Stack>
+        )}
+        <StyledContainer>
+          <Stack alignItems="center" gap="4px" margin="0 0 0 18px">
+            <Text type="label" size="medium" weight="bold">
+              {disbursemenOptionAccount.observation.i18n[lang]}
+            </Text>
+            {formik.values[optionNameForm]?.accountNumber === "none" && (
+              <Icon
+                icon={<MdOutlineInfo />}
+                size="12px"
+                appearance="primary"
+                onClick={() => setShowInfoModal(true)}
+                cursor="pointer"
+              />
+            )}
+          </Stack>
+          <Textarea
+            id={`${optionNameForm}.description`}
+            name={`${optionNameForm}.description`}
+            placeholder={disbursemenOptionAccount.placeObservation.i18n[lang]}
+            value={formik.values[optionNameForm]?.description || ""}
+            onChange={(e) =>
+              formik.setFieldValue(
+                `${optionNameForm}.description`,
+                e.target.value,
+              )
+            }
             onBlur={formik.handleBlur}
-            fullwidth={true}
-            size="compact"
+            fullwidth
           />
-        </Stack>
-        <Textarea
-          id={"description"}
-          name={`${optionNameForm}.description`}
-          label={disbursemenOptionAccount.observation.i18n[lang]}
-          placeholder={disbursemenOptionAccount.placeObservation.i18n[lang]}
-          value={formik.values[optionNameForm]?.description || ""}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          fullwidth
-        />
+        </StyledContainer>
       </Stack>
       {modalError && !alreadyShowMessageErrorBank && (
         <ErrorModal
@@ -585,6 +701,17 @@ export function DisbursementWithExternalAccount(
             setModalError(false);
           }}
         />
+      )}
+      {showInfoModal && (
+        <BaseModal
+          title={disbursementGeneral.info.i18n[lang]}
+          width={isMobile ? "auto" : "450px"}
+          nextButton={disbursementGeneral.understood.i18n[lang]}
+          handleNext={() => setShowInfoModal(false)}
+          handleClose={() => setShowInfoModal(false)}
+        >
+          <Text>{disbursementGeneral.descriptionInfo.i18n[lang]}</Text>
+        </BaseModal>
       )}
     </>
   );

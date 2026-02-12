@@ -95,14 +95,23 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   useEffect(() => {
     const totalAmount = getTotalAmount();
 
-    const isInternalValid = formik.values.Internal_account?.amount
-      ? formik.values.Internal_account.accountNumber !== ""
+    const internal = formik.values.Internal_account;
+    const external = formik.values.External_account;
+
+    const isInternalValid = internal?.amount
+      ? internal.accountNumber !== "" &&
+        (internal.accountNumber !== "none" ||
+          internal.description?.trim() !== "")
       : true;
 
-    const isExternalValid = formik.values.External_account?.amount
-      ? formik.values.External_account.bank !== "" &&
-        formik.values.External_account.accountNumber !== "" &&
-        formik.values.External_account.accountType !== ""
+    const isExternalValid = external?.amount
+      ? external.toggle === false
+        ? external.bank !== "" &&
+          external.accountType !== "" &&
+          external.accountNumber !== ""
+        : external.accountNumber !== "" &&
+          (external.accountNumber !== "none" ||
+            external.description?.trim() !== "")
       : true;
 
     const isValid =
@@ -157,7 +166,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
   const isAmountReadOnly = validTabs.length === 1;
 
   return (
-    <Fieldset>
+    <Fieldset hasOverflow={true}>
       <Stack
         direction="column"
         padding={isMobile ? "4px 10px" : "10px 16px"}
