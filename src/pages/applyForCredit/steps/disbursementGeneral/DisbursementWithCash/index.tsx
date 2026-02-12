@@ -314,24 +314,26 @@ export function DisbursementWithCash(props: IDisbursementWithCashProps) {
                 : undefined
             }
             readOnly={isAmountReadOnly}
-            message={`${disbursemenOptionAccount.valueTurnFail}${currencyFormat(initialValues.amount, false)}`}
+            message={`${disbursemenOptionAccount.valueTurnFail.i18n[lang]} ${currencyFormat(initialValues.amount)}`}
             fullwidth
           />
         </Stack>
-        <Stack gap="10px" direction="row" alignItems="center">
-          <Checkbox
-            id={"featureCheckbox"}
-            name={"featureCheckbox"}
-            checked={isDisabled || formik.values[optionNameForm]?.check}
-            indeterminate={false}
-            onChange={handleCheckboxChange}
-            value={"featureCheckbox"}
-            disabled={isDisabled}
-          />
-          <Text type="label" size="medium">
-            {disbursementGeneral.labelCheck.i18n[lang]}
-          </Text>
-        </Stack>
+        {!isAmountReadOnly && (
+          <Stack gap="10px" direction="row" alignItems="center">
+            <Checkbox
+              id="featureCheckbox"
+              name="featureCheckbox"
+              checked={isDisabled || formik.values[optionNameForm]?.check}
+              indeterminate={false}
+              onChange={handleCheckboxChange}
+              value="featureCheckbox"
+              disabled={isDisabled}
+            />
+            <Text type="label" size="medium">
+              {disbursementGeneral.labelCheck.i18n[lang]}
+            </Text>
+          </Stack>
+        )}
       </Stack>
       <Divider dashed />
       <Stack direction="column" gap="16px">
