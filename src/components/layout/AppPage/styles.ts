@@ -24,6 +24,16 @@ export const StyledAppPage = styled.div`
 export const StyledContainer = styled.div`
   display: inherit;
   overflow: hidden;
+  box-sizing: border-box;
+  border-bottom: 1px solid
+    ${({ theme }) => theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
+  box-shadow:
+    0px 1px 3px 1px
+      ${({ theme }) =>
+        theme?.palette?.neutral?.N40 || inube.palette.neutral.N40},
+    0px 1px 2px 0px
+      ${({ theme }) =>
+        theme?.palette?.neutral?.N20 || inube.palette.neutral.N20};
   @media (max-width: 1024px) {
     overflow-y: auto;
   }
@@ -73,7 +83,7 @@ export const StyledCollapseIcon = styled.div<IStyledCollapseIcon>`
   top: ${({ $isTablet }) => ($isTablet ? "8.5px" : "13px")};
   transform: ${({ $collapse }) =>
     $collapse ? "rotate(-90deg)" : "rotate(90deg)"};
-  left: ${({ $isTablet }) => ($isTablet ? "200px" : "160px")};
+  margin-left: 150px;
   z-index: 2;
 `;
 
