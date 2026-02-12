@@ -6,10 +6,10 @@ export const addConfig = {
   id: 1,
   title: {
     code: "Title",
-    description: "Home title",
+    description: "Credit title",
     i18n: {
-      en: "Home",
-      es: "Inicio",
+      en: "Credit",
+      es: "Crédito",
     },
   },
   route: "/home",

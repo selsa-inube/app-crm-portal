@@ -618,7 +618,7 @@ export function SimulateCredit() {
 
         const methods = configData?.creditRiskBureaus || [];
         setBureauMethods(methods);
-        handleBureauConsultation(methods);
+        await handleBureauConsultation(methods);
       } catch (error) {
         const err = error as {
           message?: string;
@@ -773,9 +773,7 @@ export function SimulateCredit() {
 
           return {
             value: existingScore ? existingScore.creditRiskScore : null,
-            date: existingScore
-              ? existingScore.queryDate
-              : new Date().toISOString(),
+            date: existingScore ? existingScore.queryDate : null,
             bureauName: normalizedBureauName,
           };
         });
@@ -852,7 +850,18 @@ export function SimulateCredit() {
         payload,
       );
 
-      await handleBureauConsultation(bureauMethods);
+      const updatedScores = formData.riskScores.map((score, indexScore) => {
+        if (indexScore === index) {
+          return {
+            ...score,
+            value: newRisk.value,
+            date: newRisk.date,
+          };
+        }
+        return score;
+      });
+
+      handleFormDataChange("riskScores", updatedScores);
 
       addFlag({
         title: creditScoreChanges.title.i18n[lang],
@@ -952,7 +961,14 @@ export function SimulateCredit() {
     if (!customerData?.customerId || !simulateData) return;
     const payload = {
       clientIdentificationNumber: customerData.publicCode,
-      prospect: { ...simulateData },
+      prospect: {
+        ...simulateData,
+        creditProducts: formData.selectedProducts.map((product) => {
+          return {
+            lineOfCreditAbbreviatedName: product,
+          };
+        }),
+      },
     };
     const handleSubmit = async () => {
       setIsLoading(true);

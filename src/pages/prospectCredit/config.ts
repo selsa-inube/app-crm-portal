@@ -3,8 +3,8 @@ export const addConfig = {
     code: "Title",
     description: "Title for credit prospects section",
     i18n: {
-      en: "Credit prospects",
-      es: "Prospectos de crédito",
+      en: "Processed applications",
+      es: "Solicitudes tramitadas",
     },
   },
   route: {
@@ -43,13 +43,13 @@ export const addConfig = {
       isActive: false,
     },
     {
-      path: "/credit/credit-requests",
+      path: "/credit/processed-credit-requests",
       label: {
         code: "Crumb_prospects",
         description: "Breadcrumb for credit prospects",
         i18n: {
           en: "Credit prospects",
-          es: "Prospectos de crédito",
+          es: "Solicitudes tramitadas",
         },
       },
       id: "/prospectos",

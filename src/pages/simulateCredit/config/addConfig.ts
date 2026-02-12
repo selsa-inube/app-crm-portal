@@ -4,8 +4,8 @@ export const addConfig = {
     code: "Title",
     description: "Credit prospects title",
     i18n: {
-      en: "Credit prospects",
-      es: "Prospectos de crédito",
+      en: "Simulate credit",
+      es: "Simular crédito",
     },
   },
   route: "/credit/prospects",

@@ -39,6 +39,14 @@ export const riskScoreData = {
       es: "DD/MMM/AAAA",
     },
   },
+  haveNotData: {
+    code: "Have_not_data",
+    description: "Message when the data is not available",
+    i18n: {
+      en: "The client does not have any inquiries recorded in the credit system.",
+      es: "El cliente no tiene consultas almacenadas en el sistema de crédito.",
+    },
+  },
   error: {
     code: "Error",
     description: "Validation error for score range",

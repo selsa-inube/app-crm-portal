@@ -30,11 +30,11 @@ export const addConfig = {
     code: "Title",
     description: "Credit prospects title",
     i18n: {
-      en: "Credit prospects",
-      es: "Prospectos de crédito",
+      en: "Credit Requests",
+      es: "Solicitudes de crédito",
     },
   },
-  route: "/credit/prospects",
+  route: "/credit",
   crumbs: [
     {
       path: "/home",

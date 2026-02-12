@@ -4,8 +4,8 @@ export const submitCreditApplicationConfig = {
     code: "Title",
     description: "Credit prospects title",
     i18n: {
-      en: "Credit prospects",
-      es: "Prospectos de crédito",
+      en: "Credit application",
+      es: "Solicitar un crédito",
     },
   },
   route: "/credit/prospects",

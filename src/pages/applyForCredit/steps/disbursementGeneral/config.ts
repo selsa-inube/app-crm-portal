@@ -110,6 +110,38 @@ export const disbursementGeneral = {
       es: "No",
     },
   },
+  none: {
+    code: "none",
+    description: "none option",
+    i18n: {
+      en: "None of the above",
+      es: "Ninguna de las anteriores",
+    },
+  },
+  info: {
+    code: "DisbursementGeneral_info",
+    description: "Information about disbursement methods",
+    i18n: {
+      en: "Information",
+      es: "Información",
+    },
+  },
+  descriptionInfo: {
+    code: "DisbursementGeneral_descriptionInfo",
+    description: "Description for disbursement methods information",
+    i18n: {
+      en: "If the account where you want to receive the disbursement is not registered, use the observations field to describe the form of disbursement you require.",
+      es: "Si la cuenta donde deseas recibir el desembolso no está registrada, utiliza el campo de observaciones para describir la forma de desembolso que requieres.",
+    },
+  },
+  understood: {
+    code: "Understood",
+    description: "Understood button",
+    i18n: {
+      en: "Understood",
+      es: "Entendido",
+    },
+  },
 };
 
 export const disbursemenOptionAccount = {

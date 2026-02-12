@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { MdOutlineAdd } from "react-icons/md";
-import { Stack, Icon, Button } from "@inubekit/inubekit";
+import { Stack, Icon, Button, Text } from "@inubekit/inubekit";
 
 import { Fieldset } from "@components/data/Fieldset";
 import { AddSeriesModal } from "@components/modals/AddSeriesModal";
@@ -10,6 +10,7 @@ import {
 } from "@pages/prospect/components/TableExtraordinaryInstallment";
 import { TextLabels } from "@config/pages/add-prospect/ExtraordinaryInstallments/ExtraordinaryInstallments.config";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { titleExtraordinary } from "./config";
 
 export interface ExtraordinaryInstallmentsProps {
   isMobile: boolean;
@@ -150,7 +151,20 @@ export function ExtraordinaryInstallments(
     <Fieldset>
       <Stack direction="column">
         <Stack direction="column">
-          <Stack justifyContent="end" margin="0px 0px 16px ">
+          <Stack
+            justifyContent="space-between"
+            alignItems="center"
+            margin="0px 0px 16px "
+          >
+            <Text
+              type="label"
+              size="large"
+              appearance="dark"
+              weight="bold"
+              padding="0 20px"
+            >
+              {titleExtraordinary.title.i18n[lang]}
+            </Text>
             <Button
               fullwidth={isMobile}
               iconBefore={

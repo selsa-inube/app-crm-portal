@@ -61,7 +61,7 @@ function BusinessUnitsUI({
     <StyledBusinessUnits $isMobile={isMobile}>
       <Stack direction="column">
         <Text type="title" as="h2" textAlign="center">
-          Unidad de Negocios
+          Unidades de Negocio
         </Text>
         <Text size="medium" textAlign="center">
           Selecciona la Unidad de Negocio
