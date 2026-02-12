@@ -44,7 +44,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     if (!customerData?.customerId || !prospectData) return;
 
     const payload = {
-      clientIdentificationNumber: customerData.customerId,
+      clientIdentificationNumber: customerData.publicCode,
       prospect: { ...prospectData },
     };
 

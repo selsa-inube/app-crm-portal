@@ -4,7 +4,7 @@ export const TextLabels = {
     description: "Add series",
     i18n: {
       en: "Add series",
-      es: "Agregar extra",
+      es: "Agregar pago extra",
     },
   },
   close: {
