@@ -952,7 +952,14 @@ export function SimulateCredit() {
     if (!customerData?.customerId || !simulateData) return;
     const payload = {
       clientIdentificationNumber: customerData.publicCode,
-      prospect: { ...simulateData },
+      prospect: {
+        ...simulateData,
+        creditProducts: formData.selectedProducts.map((product) => {
+          return {
+            lineOfCreditAbbreviatedName: product,
+          };
+        }),
+      },
     };
     const handleSubmit = async () => {
       setIsLoading(true);

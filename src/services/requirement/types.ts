@@ -5,7 +5,12 @@ export interface IValidateRequirement {
   requirementName: string;
   requirementStatus: string;
 }
+
+export interface IProspectValidate extends Omit<IProspect, "creditProducts"> {
+  creditProducts: Record<string, string | number>[];
+}
+
 export interface IPatchValidateRequirementsPayload {
   clientIdentificationNumber: string;
-  prospect: IProspect;
+  prospect: IProspectValidate | IProspect;
 }
