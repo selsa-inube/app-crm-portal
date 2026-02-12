@@ -57,7 +57,10 @@ export function RiskScore(props: IRiskScoreProps) {
   const [isLoading, setIsLoading] = useState(isLoadingUpdate);
 
   const validationSchema = Yup.object({
-    score: Yup.number().required(""),
+    score: Yup.number()
+      .min(150, riskScoreData.error.i18n[lang])
+      .max(950, riskScoreData.error.i18n[lang])
+      .required("Required"),
     date: Yup.date()
       .required("")
       .max(new Date(), riskScoreData.futureDateError.i18n[lang])
@@ -125,13 +128,13 @@ export function RiskScore(props: IRiskScoreProps) {
             <SkeletonLine />
           ) : (
             <Text type="body" size="small">
-              {riskScoreData.reportedScore.i18n[lang]}
+              {date
+                ? riskScoreData.reportedScore.i18n[lang]
+                : riskScoreData.haveNotData.i18n[lang]}
             </Text>
           )}
           <Text type="body" weight="bold" size="small">
-            {date
-              ? formatPrimaryDate(new Date(date))
-              : formatPrimaryDate(new Date())}
+            {date ? formatPrimaryDate(new Date(date)) : ""}
           </Text>
         </Stack>
         <Stack gap="12px" direction="column" alignItems="center">
@@ -176,10 +179,13 @@ export function RiskScore(props: IRiskScoreProps) {
                 fullwidth
                 type="number"
                 value={formik.values.score}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  formik.handleChange(event);
+                  formik.setFieldTouched("score", true, false);
+                }}
                 onBlur={formik.handleBlur}
                 status={
-                  formik.values.score > 950 || formik.values.score < 150
+                  formik.touched.score && formik.errors.score
                     ? "invalid"
                     : undefined
                 }
@@ -193,9 +199,16 @@ export function RiskScore(props: IRiskScoreProps) {
                 required
                 fullwidth
                 value={formik.values.date}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  formik.handleChange(event);
+                  formik.setFieldTouched("date", true, false);
+                }}
                 onBlur={formik.handleBlur}
-                status={formik.errors.date ? "invalid" : "pending"}
+                status={
+                  formik.errors.date && formik.touched.date
+                    ? "invalid"
+                    : "pending"
+                }
                 message={
                   (formik.touched.date && (formik.errors.date as string)) || ""
                 }
