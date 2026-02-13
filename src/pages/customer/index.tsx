@@ -9,7 +9,7 @@ import { AppContext } from "@context/AppContext";
 import { useEnum } from "@hooks/useEnum/useEnum";
 
 import { CustomerUI } from "./interface";
-import { EErrorMessages, VALIDATE_BLANK_SPACES_REGEX } from "./config";
+import { EErrorMessages } from "./config";
 import { isValidUpperCaseName, isNumericString } from "./utils";
 
 export function Customer() {
@@ -39,8 +39,6 @@ export function Customer() {
         return;
       }
 
-      const formattedValue = value.replace(VALIDATE_BLANK_SPACES_REGEX, "%");
-
       let response = null;
       try {
         setLoading(true);
@@ -50,14 +48,14 @@ export function Customer() {
             businessUnitPublicCode,
             businessManagerCode,
             "",
-            formattedValue,
+            value,
             eventData.token,
           );
         } else if (isValidUpperCaseName(value)) {
           response = await getCustomerCatalog(
             businessUnitPublicCode,
             businessManagerCode,
-            formattedValue,
+            value,
             "",
             eventData.token,
           );
