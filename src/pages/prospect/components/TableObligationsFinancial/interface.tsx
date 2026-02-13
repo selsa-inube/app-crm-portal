@@ -78,6 +78,7 @@ export interface ITableFinancialObligationsProps {
   clientPortfolio?: IObligations;
   services?: boolean;
   enums?: IAllEnumsResponse;
+  maxTerm?: number;
   handleOnChange?: (values: FormikValues) => void;
   formState?: {
     type: string;
@@ -173,6 +174,7 @@ interface UIProps {
   initialValuesModalDataProspect: FormikValues | undefined;
   enums: IAllEnumsResponse;
   authorizationToken: string;
+  maxTerm?: number;
 }
 
 export const TableFinancialObligationsUI = ({
@@ -208,6 +210,7 @@ export const TableFinancialObligationsUI = ({
   initialValuesModalDataProspect,
   enums,
   authorizationToken,
+  maxTerm,
 }: UIProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -735,6 +738,7 @@ export const TableFinancialObligationsUI = ({
           confirmButtonText="Agregar"
           lang={lang}
           enums={enums}
+          maxTerm={maxTerm}
         />
       )}
       {showErrorModal && (

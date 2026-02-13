@@ -524,7 +524,7 @@ function EditProductModal(props: EditProductModalProps) {
     paymentMethod: Yup.string(),
     paymentCycle: Yup.string(),
     firstPaymentCycle: Yup.string(),
-    termInMonths: Yup.number(),
+    termInMonths: Yup.number().positive(""),
     amortizationType: Yup.string(),
     interestRate: Yup.number().min(0, ""),
     rateType: Yup.string(),

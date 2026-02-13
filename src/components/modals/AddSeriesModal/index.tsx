@@ -10,6 +10,7 @@ import {
   IOption,
 } from "@inubekit/inubekit";
 import { useIAuth } from "@inube/iauth-react";
+import * as Yup from "yup";
 
 import { BaseModal } from "@components/modals/baseModal";
 import {
@@ -117,6 +118,12 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
+  const validationSchema = Yup.object({
+    value: Yup.number()
+      .required("")
+      .positive(dataAddSeriesModal.valueGreater.i18n[lang]),
+  });
+
   const formik = useFormik({
     initialValues: {
       installmentDate: "",
@@ -127,6 +134,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       frequency: "",
       abbreviatedName: "",
     },
+    validationSchema,
     onSubmit: (values) => {
       onSubmit?.({
         installmentDate: values.installmentDate,
@@ -609,6 +617,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
             type="number"
             onChange={formik.handleChange}
             value={formik.values.value}
+            message={formik.errors.value}
+            status={formik.errors.value ? "invalid" : "pending"}
             fullwidth
             required
           />

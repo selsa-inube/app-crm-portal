@@ -1158,6 +1158,10 @@ export function SimulateCredit() {
     }
   }, [formData.generalToggleChecked, formData.togglesState, creditLineTerms]);
 
+  const maxLoanTerm = Math.max(
+    ...Object.values(creditLineTerms || {}).map((term) => term.LoanTermLimit),
+  );
+
   return (
     <>
       <SimulateCreditUI
@@ -1240,6 +1244,7 @@ export function SimulateCredit() {
         setMessageError={setMessageError}
         bureauMethods={bureauMethods}
         handleBureauConsultation={handleBureauConsultation}
+        maxLoanTerm={maxLoanTerm}
       />
     </>
   );

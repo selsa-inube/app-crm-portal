@@ -38,6 +38,7 @@ export const TableFinancialObligations = (
     handleOnChangeExtraBorrowers = undefined,
     showOnlyEdit = false,
     showAddButton = true,
+    maxTerm,
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -474,6 +475,7 @@ export const TableFinancialObligations = (
       enums={enums as IAllEnumsResponse}
       lang={lang as EnumType}
       authorizationToken={eventData.token}
+      maxTerm={maxTerm}
     />
   );
 };
