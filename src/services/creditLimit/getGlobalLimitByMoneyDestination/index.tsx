@@ -3,7 +3,11 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
-import { IMaximumCreditLimitByMoneyDestination } from "../types";
+
+import {
+  IMaximumCreditLimitByMoneyDestination,
+  IIncomeSources,
+} from "../types";
 
 export const getGlobalLimitByMoneyDestination = async (
   businessUnitPublicCode: string,
@@ -11,6 +15,7 @@ export const getGlobalLimitByMoneyDestination = async (
   moneyDestination: string,
   clientIdentificationNumber: string,
   authorizationToken: string,
+  incomeSources: IIncomeSources,
 ): Promise<IMaximumCreditLimitByMoneyDestination[] | null> => {
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
@@ -18,7 +23,50 @@ export const getGlobalLimitByMoneyDestination = async (
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
+      const queryParams = new URLSearchParams();
 
+      if (incomeSources.PeriodicSalary) {
+        queryParams.set(
+          "periodicSalary",
+          incomeSources.PeriodicSalary.toString(),
+        );
+      }
+      if (incomeSources.OtherNonSalaryEmoluments) {
+        queryParams.set(
+          "otherNonSalaryEmoluments",
+          incomeSources.OtherNonSalaryEmoluments.toString(),
+        );
+      }
+      if (incomeSources.PensionAllowances) {
+        queryParams.set(
+          "pensionAllowances",
+          incomeSources.PensionAllowances.toString(),
+        );
+      }
+      if (incomeSources.ProfessionalFees) {
+        queryParams.set(
+          "professionalFees",
+          incomeSources.ProfessionalFees.toString(),
+        );
+      }
+      if (incomeSources.Leases) {
+        queryParams.set("leases", incomeSources.Leases.toString());
+      }
+      if (incomeSources.Dividends) {
+        queryParams.set("dividends", incomeSources.Dividends.toString());
+      }
+      if (incomeSources.FinancialIncome) {
+        queryParams.set(
+          "financialIncome",
+          incomeSources.FinancialIncome.toString(),
+        );
+      }
+      if (incomeSources.PersonalBusinessUtilities) {
+        queryParams.set(
+          "personalBusinessUtilities",
+          incomeSources.PersonalBusinessUtilities.toString(),
+        );
+      }
       const options: RequestInit = {
         method: "GET",
         headers: {
@@ -32,7 +80,7 @@ export const getGlobalLimitByMoneyDestination = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/${moneyDestination}/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/by-money-destination/${moneyDestination}/${clientIdentificationNumber}?${queryParams.toString()}`,
         options,
       );
 

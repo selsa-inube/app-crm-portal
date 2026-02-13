@@ -31,7 +31,7 @@ export const getCreditLimitByCreditRiskAnalysis = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/by-credit-risk-analysis/${clientIdentificationNumber}`,
         options,
       );
 

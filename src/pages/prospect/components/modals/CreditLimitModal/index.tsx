@@ -71,6 +71,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
           moneyDestination,
           dataMaximumCreditLimitService.identificationDocumentNumber,
           eventData.token,
+          incomeData as IIncomeSources,
         );
         setIsLoading(false);
         if (data) {
@@ -87,6 +88,7 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     businessUnitPublicCode,
     businessManagerCode,
     dataMaximumCreditLimitService,
+    incomeData,
   ]);
   return (
     <>
