@@ -42,7 +42,6 @@ interface IObligationsFinancialProps {
 
 export function ObligationsFinancial(props: IObligationsFinancialProps) {
   const {
-    isMobile,
     clientPortfolio,
     formState,
     handleOnChange,
