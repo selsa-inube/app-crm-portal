@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { IDataInformationItem } from "./interface";
 
-export const usePagination = (data: IDataInformationItem[]) => {
+export const usePagination = (data: IDataInformationItem[], pageLength = 5) => {
   const [currentPage, setCurrentPage] = useState(0);
 
-  const pageLength = 5;
   const totalRecords = data.length;
   const totalPages = Math.ceil(totalRecords / pageLength);
 

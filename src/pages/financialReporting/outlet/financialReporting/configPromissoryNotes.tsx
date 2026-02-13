@@ -14,29 +14,6 @@ const entrySelection = (data: IEntries) => {
   console.log(data);
 };
 
-export const titlesFinanacialReporting = [
-  {
-    id: "No. de Obligación",
-    titleName: "No. de Obligación",
-    priority: 1,
-  },
-  {
-    id: "No. de Documento",
-    titleName: "No. de Documento",
-    priority: 2,
-  },
-  {
-    id: "Tipo",
-    titleName: "Tipo",
-    priority: 3,
-  },
-  {
-    id: "tag",
-    titleName: "Estado",
-    priority: 4,
-  },
-];
-
 export const actionsFinanacialReporting = [
   {
     id: "Reenviar",
