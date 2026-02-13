@@ -172,6 +172,7 @@ interface SimulateCreditUIProps {
   lang: EnumType;
   enums: IAllEnumsResponse;
   isLoadingUpdate: boolean;
+  maxLoanTerm: number;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleUpdateRiskScore: (
     index: number,
@@ -238,6 +239,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     businessUnitPublicCode,
     businessManagerCode,
     isLoadingCreditLimit,
+    maxLoanTerm,
     lang,
     allowToContinue,
     handleModalTryAgain,
@@ -258,6 +260,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     bureauMethods,
     handleBureauConsultation,
   } = props;
+
   return (
     <>
       {codeError ? (
@@ -567,6 +570,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                       lang={lang}
                       enums={enums}
+                      maxTerm={maxLoanTerm}
                     />
                   )}
                 {currentStepsNumber &&

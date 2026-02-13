@@ -36,6 +36,7 @@ interface IObligationsFinancialProps {
   };
   lang: EnumType;
   enums: IAllEnumsResponse;
+  maxTerm?: number;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: FormikValues) => void;
 }
@@ -49,6 +50,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
     initialValues,
     enums,
     lang,
+    maxTerm,
   } = props;
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -74,6 +76,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
           services={false}
           enums={enums}
           lang={lang}
+          maxTerm={maxTerm}
         />
       </Stack>
     </Fieldset>
