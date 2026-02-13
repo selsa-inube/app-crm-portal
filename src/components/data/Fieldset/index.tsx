@@ -37,6 +37,7 @@ interface IFieldsetProps {
   loading?: boolean;
   maxHeight?: string;
   maxLength?: number;
+  gap?: string;
 }
 
 export const Fieldset = (props: IFieldsetProps) => {
@@ -56,6 +57,7 @@ export const Fieldset = (props: IFieldsetProps) => {
     borderColor = "normal",
     showFieldset = true,
     padding = "0 0 16px 0",
+    gap = "8px",
     alignContent,
     loading,
     maxHeight,
@@ -78,7 +80,7 @@ export const Fieldset = (props: IFieldsetProps) => {
   return (
     <Stack
       direction="column"
-      gap="8px"
+      gap={gap}
       width={width}
       height={!isMobile ? heightFieldset : "auto"}
       padding={padding}

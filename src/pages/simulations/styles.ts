@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const StyledPrint = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
 
   @media print {
     display: none;
@@ -12,7 +12,7 @@ export const StyledPrint = styled.div`
 
 export const StyledArrowBack = styled.div`
   cursor: pointer;
-  width: 500px;
+  width: 650px;
 `;
 
 export const StyledMarginPrint = styled.div`
