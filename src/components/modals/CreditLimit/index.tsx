@@ -19,6 +19,7 @@ import { getGlobalCreditLimitByLineOfCredit } from "@services/creditLimit/getGlo
 import { IMaximumCreditLimitByLineOfCredit } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { AppContext } from "@context/AppContext";
+import { IIncomeSources } from "@services/creditLimit/types";
 
 import { creditLimitTexts, renderSkeletons } from "./creditLimitConfig";
 import { StyledList } from "./styles";
@@ -29,6 +30,8 @@ export interface ICreditLimitProps {
   businessManagerCode: string;
   clientIdentificationNumber: string;
   lang: EnumType;
+  creditLine: string;
+  incomeData: IIncomeSources;
   loading?: boolean;
   handleClose: () => void;
   onOpenMaxLimitModal?: () => void;
@@ -44,6 +47,8 @@ export const CreditLimit = (props: ICreditLimitProps) => {
     businessManagerCode,
     clientIdentificationNumber,
     lang,
+    creditLine,
+    incomeData,
     loading,
     handleClose,
     onOpenMaxLimitModal,
@@ -72,6 +77,8 @@ export const CreditLimit = (props: ICreditLimitProps) => {
           businessManagerCode,
           clientIdentificationNumber,
           eventData.token,
+          creditLine,
+          incomeData as IIncomeSources,
         );
 
         if (data) {

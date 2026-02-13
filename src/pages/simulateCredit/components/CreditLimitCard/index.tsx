@@ -100,6 +100,8 @@ export function CreditLimitCard(props: CreditLimitProps) {
             dataMaximumCreditLimitService.identificationDocumentNumber
           }
           lang={lang}
+          creditLine={creditLineTxt}
+          incomeData={incomeData}
         />
       )}
 
