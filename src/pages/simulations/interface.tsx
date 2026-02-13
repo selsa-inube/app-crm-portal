@@ -1,5 +1,4 @@
 import {
-  Breadcrumbs,
   Button,
   Divider,
   Icon,
@@ -173,37 +172,20 @@ export function SimulationsUI(props: SimulationsUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin={`20px auto ${isMobile ? "100px" : "50px"} auto`}
+          margin={`0px auto ${isMobile ? "100px" : "50px"} auto`}
         >
           <Stack
             direction="column"
             alignItems={isMobile ? "normal" : "center"}
             margin="20px 0px"
           >
-            <Stack gap="24px" direction="column" height="100%" width="100%">
+            <Stack gap="12px" direction="column" height="100%" width="100%">
               <StyledPrint>
                 <GeneralHeader
                   buttonText="Agregar vinculación"
                   descriptionStatus={dataHeader.status}
                   name={dataHeader.name}
                   profileImageUrl={dataHeader.image || userImage}
-                />
-                <Breadcrumbs
-                  crumbs={[
-                    ...addConfig.crumbs.slice(0, 3).map((crumb) => ({
-                      ...crumb,
-                      label: crumb.label.i18n[lang as "es" | "en"],
-                    })),
-                    {
-                      path: `/credit/prospects/${prospectCode}`,
-                      label:
-                        lang === "es"
-                          ? `Prospecto #${prospectCode}`
-                          : `Prospect #${prospectCode}`,
-                      id: `/prospectos/${prospectCode}`,
-                      isActive: false,
-                    },
-                  ]}
                 />
                 <Stack>
                   <StyledArrowBack onClick={() => navigate(addConfig.route)}>
@@ -214,7 +196,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                         size="20px"
                       />
                       <Text type="title" size={isMobile ? "small" : "large"}>
-                        {addConfig.title.i18n[lang]}
+                        {addConfig.title.i18n[lang]} {prospectCode}
                       </Text>
                     </Stack>
                   </StyledArrowBack>
@@ -256,46 +238,10 @@ export function SimulationsUI(props: SimulationsUIProps) {
                       }
                       margin="0 auto"
                       direction="column"
-                      gap="20px"
+                      gap="12px"
                     >
-                      <Fieldset>
+                      <Fieldset padding="4px 0px" gap="0px" hasTable={true}>
                         <Stack gap="16px" direction="column" padding="4px 16px">
-                          <Stack
-                            justifyContent="space-between"
-                            alignItems="center"
-                          >
-                            <Stack
-                              gap={isMobile ? "0" : "8px"}
-                              direction={isMobile ? "column" : "row"}
-                            >
-                              <Text
-                                type="title"
-                                weight="bold"
-                                size="large"
-                                appearance="gray"
-                              >
-                                {dataEditProspect.creditProspect.i18n[lang]}
-                              </Text>
-                              <Text
-                                type="title"
-                                weight="bold"
-                                size="large"
-                                appearance="gray"
-                              >
-                                #{prospectCode}
-                              </Text>
-                            </Stack>
-                            <StyledPrint>
-                              <Icon
-                                icon={<MdOutlineShare />}
-                                appearance="primary"
-                                size="20px"
-                                cursorHover
-                                onClick={generateAndSharePdf}
-                              />
-                            </StyledPrint>
-                          </Stack>
-                          <Divider dashed />
                           <StyledPrintContainerHeader>
                             <Stack
                               justifyContent="space-between"
@@ -307,7 +253,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 gap="8px"
                                 direction="column"
                                 alignItems="center"
-                                width="30%"
+                                width={isMobile ? "100%" : "30%"}
                               >
                                 <Stack gap="8px" width="100%">
                                   {isLoading ? (
@@ -341,7 +287,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                           width="150px"
                                         />
                                       ) : (
-                                        <Text type="title" size="large">
+                                        <Text type="title" size="medium">
                                           {processedData?.destinationName}
                                         </Text>
                                       )}
@@ -364,7 +310,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 direction="column"
                                 alignItems="center"
                                 gap="8px"
-                                width="40%"
+                                width={isMobile ? "100%" : "40%"}
                               >
                                 {isLoading ? (
                                   <SkeletonLine
@@ -375,7 +321,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 ) : (
                                   <Text
                                     type="title"
-                                    size="large"
+                                    size="medium"
                                     textAlign="center"
                                   >
                                     {processedData?.mainBorrowerName}
@@ -393,7 +339,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 direction="column"
                                 alignItems="center"
                                 gap="8px"
-                                width="30%"
+                                width={isMobile ? "100%" : "30%"}
                               >
                                 <Stack gap="8px">
                                   {isLoading ? (
@@ -406,7 +352,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                     <Text
                                       type="headline"
                                       weight="bold"
-                                      size="large"
+                                      size="medium"
                                       appearance="primary"
                                     >
                                       {currencyFormat(
@@ -428,13 +374,22 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                   {dataEditProspect.value.i18n[lang]}
                                 </Text>
                               </Stack>
+                              <StyledPrint>
+                                <Icon
+                                  icon={<MdOutlineShare />}
+                                  appearance="primary"
+                                  size="20px"
+                                  cursorHover
+                                  onClick={generateAndSharePdf}
+                                />
+                              </StyledPrint>
                             </Stack>
                           </StyledPrintContainerHeader>
                         </Stack>
                       </Fieldset>
 
                       <StyledScrollPrint>
-                        <Fieldset>
+                        <Fieldset padding="0px" gap="0px">
                           <CreditProspect
                             isMobile={isMobile}
                             showMenu={() => setShowMenu(false)}
@@ -461,11 +416,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                       </StyledScrollPrint>
 
                       <StyledPrint>
-                        <Stack
-                          gap="10px"
-                          justifyContent="end"
-                          padding="0 0 16px 0"
-                        >
+                        <Stack gap="10px" justifyContent="end">
                           <Stack gap="2px">
                             <Button
                               appearance="danger"

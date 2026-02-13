@@ -292,7 +292,7 @@ export const CardCommercialManagement = (
           <Stack
             gap="24px"
             width="fit-content"
-            padding="4px 8px 16px 8px"
+            padding="3px 8px 7px 8px"
             direction={isMobile ? "column" : "row"}
           >
             {prospectProducts.map((entry, index) => (
@@ -401,7 +401,7 @@ export const CardCommercialManagement = (
         <StylePrintCardSummary>
           <Stack
             gap="24px"
-            margin="36px 16px 8px 8px"
+            margin="12px 16px 0px 8px"
             direction={isMobile ? "column" : "row"}
             justifyContent="space-between"
           >
