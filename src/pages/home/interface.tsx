@@ -90,12 +90,10 @@ const HomeUI = (props: IHomeUIProps) => {
           direction="column"
           width={isMobile ? "calc(100% - 20px)" : "min(100% - 20px, 1064px)"}
           margin="0 auto"
+          gap="16px"
+          padding="32px 0 0 0"
         >
-          <Stack
-            direction="column"
-            alignItems={isMobile ? "normal" : "center"}
-            padding={isMobile ? "64px 20px" : "64px"}
-          >
+          <Stack direction="column" alignItems={isMobile ? "normal" : "center"}>
             <Stack gap="24px" direction="column" height="100%" width="100%">
               <StyledGeneralHeader>
                 <GeneralHeader
