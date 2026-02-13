@@ -56,12 +56,7 @@ export function ObligationsFinancial(props: IObligationsFinancialProps) {
   return (
     <Fieldset>
       <Stack direction="column" height="auto" gap="20px" />
-      <Stack
-        width="auto"
-        justifyContent="center"
-        direction="column"
-        margin={isMobile ? "none" : "16px"}
-      >
+      <Stack width="auto" justifyContent="center" direction="column">
         <TableFinancialObligations
           refreshKey={refreshKey}
           setRefreshKey={setRefreshKey}
