@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MdInfoOutline } from "react-icons/md";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
@@ -81,8 +81,31 @@ export function ProductSelection(props: IProductSelectionProps) {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [currentDisabledQuestion, setCurrentDisabledQuestion] = useState("");
 
+  const productKeys = useMemo(
+    () => Object.keys(creditLineTerms),
+    [creditLineTerms],
+  );
+  const isSingleProduct = productKeys.length === 1;
+
   useEffect(() => {
-    const isValid = generalToggleChecked || selectedProducts.length > 0;
+    if (isSingleProduct) {
+      const singleProduct = productKeys[0];
+      if (!selectedProducts.includes(singleProduct)) {
+        setSelectedProducts([singleProduct]);
+        handleFormDataChange("selectedProducts", [singleProduct]);
+      }
+    }
+  }, [
+    isSingleProduct,
+    productKeys,
+    selectedProducts,
+    setSelectedProducts,
+    handleFormDataChange,
+  ]);
+
+  useEffect(() => {
+    const isValid =
+      isSingleProduct || generalToggleChecked || selectedProducts.length > 0;
     onFormValid(isValid);
   }, [generalToggleChecked, selectedProducts, onFormValid]);
 
@@ -149,71 +172,89 @@ export function ProductSelection(props: IProductSelectionProps) {
       {({ values, setFieldValue }) => (
         <Form>
           <Stack direction="column" gap="20px">
-            <Stack direction="column" gap="16px">
-              <Text type="label" size="large" weight="bold">
-                {electionData.title.i18n[lang]}
-              </Text>
-              <Stack gap="8px">
-                <Field name="generalToggleChecked">
-                  {({ field }: { field: { value: boolean; name: string } }) => (
-                    <Toggle
-                      {...field}
-                      value={field.value.toString()}
-                      checked={field.value}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setFieldValue("generalToggleChecked", e.target.checked);
-                        onGeneralToggleChange();
-                      }}
-                    />
-                  )}
-                </Field>
-                <Text
-                  type="label"
-                  size="large"
-                  weight="bold"
-                  appearance={generalToggleChecked ? "success" : "danger"}
-                >
-                  {generalToggleChecked
-                    ? electionData.yes.i18n[lang]
-                    : electionData.no.i18n[lang]}
+            {!isSingleProduct && (
+              <Stack direction="column" gap="16px">
+                <Text type="label" size="large" weight="bold">
+                  {electionData.title.i18n[lang]}
                 </Text>
+                <Stack gap="8px">
+                  <Field name="generalToggleChecked">
+                    {({
+                      field,
+                    }: {
+                      field: { value: boolean; name: string };
+                    }) => (
+                      <Toggle
+                        {...field}
+                        value={field.value.toString()}
+                        checked={field.value}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldValue(
+                            "generalToggleChecked",
+                            e.target.checked,
+                          );
+                          onGeneralToggleChange();
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <Text
+                    type="label"
+                    size="large"
+                    weight="bold"
+                    appearance={generalToggleChecked ? "success" : "danger"}
+                  >
+                    {generalToggleChecked
+                      ? electionData.yes.i18n[lang]
+                      : electionData.no.i18n[lang]}
+                  </Text>
+                </Stack>
               </Stack>
-            </Stack>
-            {!initialValues.generalToggleChecked && (
-              <Fieldset>
-                <Stack
-                  gap="16px"
-                  padding={isMobile ? "0px 6px" : "0px 12px"}
-                  wrap="wrap"
-                >
-                  {Object.keys(creditLineTerms).length > 0 ? (
-                    Object.entries(creditLineTerms)
-                      .sort(([creditLineA], [creditLineB]) =>
-                        creditLineA.localeCompare(creditLineB),
-                      )
-                      .map(([creditLineName, creditLineTermsValues]) => (
-                        <Stack key={creditLineName} direction="column">
+            )}
+            {isSingleProduct ? (
+              <Stack padding={isMobile ? "0px 6px" : "0px 12px"}>
+                {Object.entries(creditLineTerms).map(([name, terms]) => (
+                  <CardProductSelection
+                    key={name}
+                    amount={terms.LoanAmountLimit}
+                    rate={terms.RiskFreeInterestRate}
+                    term={terms.LoanTermLimit}
+                    description={name}
+                    isSelected={true}
+                    onSelect={() => {}}
+                    isMobile={isMobile}
+                    lang={lang}
+                    withCheckbox={false}
+                  />
+                ))}
+              </Stack>
+            ) : (
+              !values.generalToggleChecked && (
+                <Fieldset>
+                  <Stack
+                    gap="16px"
+                    padding={isMobile ? "0px 6px" : "0px 12px"}
+                    wrap="wrap"
+                  >
+                    {productKeys.length > 0 ? (
+                      Object.entries(creditLineTerms)
+                        .sort(([a], [b]) => a.localeCompare(b))
+                        .map(([name, terms]) => (
                           <CardProductSelection
-                            key={creditLineName}
-                            amount={creditLineTermsValues.LoanAmountLimit}
-                            rate={creditLineTermsValues.RiskFreeInterestRate}
-                            term={creditLineTermsValues.LoanTermLimit}
-                            description={creditLineName}
+                            key={name}
+                            amount={terms.LoanAmountLimit}
+                            rate={terms.RiskFreeInterestRate}
+                            term={terms.LoanTermLimit}
+                            description={name}
                             disabled={generalToggleChecked}
-                            isSelected={values.selectedProducts.includes(
-                              creditLineName,
-                            )}
+                            isSelected={values.selectedProducts.includes(name)}
                             onSelect={() => {
                               const newSelected =
-                                values.selectedProducts.includes(creditLineName)
+                                values.selectedProducts.includes(name)
                                   ? values.selectedProducts.filter(
-                                      (id) => id !== creditLineName,
+                                      (id) => id !== name,
                                     )
-                                  : [
-                                      ...values.selectedProducts,
-                                      creditLineName,
-                                    ];
-
+                                  : [...values.selectedProducts, name];
                               setFieldValue("selectedProducts", newSelected);
                               setSelectedProducts(newSelected);
                               handleFormDataChange(
@@ -224,15 +265,15 @@ export function ProductSelection(props: IProductSelectionProps) {
                             isMobile={isMobile}
                             lang={lang}
                           />
-                        </Stack>
-                      ))
-                  ) : (
-                    <Text type="body" size="medium">
-                      {electionData.load.i18n[lang]}
-                    </Text>
-                  )}
-                </Stack>
-              </Fieldset>
+                        ))
+                    ) : (
+                      <Text type="body" size="medium">
+                        {electionData.load.i18n[lang]}
+                      </Text>
+                    )}
+                  </Stack>
+                </Fieldset>
+              )
             )}
             {filteredQuestions.length > 0 && !loadingQuestions ? (
               <Fieldset>
