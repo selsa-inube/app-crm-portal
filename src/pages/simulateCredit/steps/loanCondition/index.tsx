@@ -52,7 +52,7 @@ export function LoanCondition(props: ILoanCondition) {
       validateOnMount={true}
       onSubmit={() => {}}
     >
-      {({ values, handleChange, handleBlur }) => (
+      {({ values, handleChange, handleBlur, setFieldValue }) => (
         <Form>
           <Stack>
             <Fieldset>
@@ -74,23 +74,27 @@ export function LoanCondition(props: ILoanCondition) {
                       checked={values.toggles.quotaCapToggle}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const isChecked = e.target.checked;
-                        handleChange(e);
-                        const updatedState = {
+                        setFieldValue("toggles.quotaCapToggle", isChecked);
+                        setFieldValue("toggles.maximumTermToggle", !isChecked);
+
+                        const updatedState: LoanConditionState = {
                           ...values,
                           toggles: {
                             ...values.toggles,
                             quotaCapToggle: isChecked,
+                            maximumTermToggle: !isChecked,
                           },
                           quotaCapValue: isChecked ? values.quotaCapValue : "",
+                          maximumTermValue: !isChecked
+                            ? values.maximumTermValue
+                            : "",
                         };
                         handleOnChange(updatedState);
+
                         if (!isChecked) {
-                          handleChange({
-                            target: {
-                              name: "quotaCapValue",
-                              value: "",
-                            },
-                          });
+                          setFieldValue("quotaCapValue", "");
+                        } else {
+                          setFieldValue("maximumTermValue", "");
                         }
                       }}
                     />
@@ -108,46 +112,50 @@ export function LoanCondition(props: ILoanCondition) {
                     </Text>
                   </Stack>
                   <Stack padding={isMobile ? "0px" : "0px 40px"}>
-                    <Textfield
-                      id="quotaCap"
-                      name="quotaCapValue"
-                      label={loanData.quotaCapLabel.i18n[lang]}
-                      placeholder={loanData.quotaCapPlaceholder.i18n[lang]}
-                      size="compact"
-                      type="text"
-                      disabled={!values.toggles.quotaCapToggle}
-                      fullwidth={isMobile}
-                      value={
-                        values.quotaCapValue
-                          ? currencyFormat(
-                              Number(
-                                String(values.quotaCapValue).replace(
-                                  VALIDATED_NUMBER_REGEX,
-                                  "",
+                    {values.toggles.quotaCapToggle ? (
+                      <Textfield
+                        id="quotaCap"
+                        name="quotaCapValue"
+                        label={loanData.quotaCapLabel.i18n[lang]}
+                        placeholder={loanData.quotaCapPlaceholder.i18n[lang]}
+                        size="compact"
+                        type="text"
+                        disabled={!values.toggles.quotaCapToggle}
+                        fullwidth={isMobile}
+                        value={
+                          values.quotaCapValue
+                            ? currencyFormat(
+                                Number(
+                                  String(values.quotaCapValue).replace(
+                                    VALIDATED_NUMBER_REGEX,
+                                    "",
+                                  ),
                                 ),
-                              ),
-                            )
-                          : ""
-                      }
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        const formattedValue = currencyFormat(
-                          Number(e.target.value.replace(/[^0-9]/g, "")),
-                        );
-                        handleChange({
-                          target: {
-                            name: "quotaCapValue",
-                            value: formattedValue,
-                          },
-                        });
-                        handleOnChange({
-                          ...values,
-                          quotaCapValue: Number(
-                            e.target.value.replace(/[^0-9]/g, ""),
-                          ),
-                        });
-                      }}
-                      onBlur={handleBlur}
-                    />
+                              )
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const formattedValue = currencyFormat(
+                            Number(e.target.value.replace(/[^0-9]/g, "")),
+                          );
+                          handleChange({
+                            target: {
+                              name: "quotaCapValue",
+                              value: formattedValue,
+                            },
+                          });
+                          handleOnChange({
+                            ...values,
+                            quotaCapValue: Number(
+                              e.target.value.replace(/[^0-9]/g, ""),
+                            ),
+                          });
+                        }}
+                        onBlur={handleBlur}
+                      />
+                    ) : (
+                      <Stack margin="32px 0" />
+                    )}
                   </Stack>
                 </Stack>
                 {!values.toggles.quotaCapToggle && (
@@ -159,7 +167,7 @@ export function LoanCondition(props: ILoanCondition) {
                       alignItems={isMobile ? "initial" : "center"}
                       direction={isMobile ? "column" : "row"}
                     >
-                      <Stack>
+                      <Stack gap="8px">
                         <Field
                           name="toggles.maximumTermToggle"
                           type="checkbox"
@@ -169,25 +177,32 @@ export function LoanCondition(props: ILoanCondition) {
                             e: React.ChangeEvent<HTMLInputElement>,
                           ) => {
                             const isChecked = e.target.checked;
-                            handleChange(e);
-                            const updatedState = {
+                            setFieldValue(
+                              "toggles.maximumTermToggle",
+                              isChecked,
+                            );
+                            setFieldValue("toggles.quotaCapToggle", !isChecked);
+
+                            const updatedState: LoanConditionState = {
                               ...values,
                               toggles: {
                                 ...values.toggles,
                                 maximumTermToggle: isChecked,
+                                quotaCapToggle: !isChecked,
                               },
                               maximumTermValue: isChecked
                                 ? values.maximumTermValue
                                 : "",
+                              quotaCapValue: !isChecked
+                                ? values.quotaCapValue
+                                : "",
                             };
                             handleOnChange(updatedState);
+
                             if (!isChecked) {
-                              handleChange({
-                                target: {
-                                  name: "maximumTermValue",
-                                  value: "",
-                                },
-                              });
+                              setFieldValue("maximumTermValue", "");
+                            } else {
+                              setFieldValue("quotaCapValue", "");
                             }
                           }}
                         />
