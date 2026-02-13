@@ -216,7 +216,8 @@ export const PaymentCapacityAnalysis = (
   ];
 
   const payrollIncomeTotal =
-    ((capacityData.periodicSalary ?? 0) / (1 - capacityRatios.periodicSalary / 100) ||
+    ((capacityData.periodicSalary ?? 0) /
+      (1 - capacityRatios.periodicSalary / 100) ||
       (capacityData.periodicSalary ?? 0)) +
     ((capacityData.otherNonSalaryEmoluments ?? 0) /
       (1 - capacityRatios.otherNonSalaryEmoluments / 100) ||
