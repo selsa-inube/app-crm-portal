@@ -179,7 +179,11 @@ function AppPage(props: IAppPage) {
 
   return (
     <StyledAppPage>
-      <Grid templateRows="auto 1fr" height="100vh" justifyContent="unset">
+      <Grid
+        templateRows="auto 1fr"
+        height="calc(100vh - 16px)"
+        justifyContent="unset"
+      >
         <StyledPrint>
           <StyledHeaderContainer>
             <Header
