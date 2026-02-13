@@ -536,55 +536,18 @@ export const TableFinancialObligationsUI = ({
         direction={isMobile ? "column" : "row"}
         justifyContent="space-between"
       >
-        <Stack
-          gap="48px"
-          direction={!isMobile ? "row" : "column"}
-          justifyContent="center"
-          alignContent="center"
-          alignItems="center"
-          padding="auto"
-          width="100%"
-        >
-          {loading ? (
-            <Stack direction="row" alignItems="center" gap="4px">
-              <SkeletonLine animated width="100px" />
-              <SkeletonLine animated width="140px" />
+        <Stack width={isMobile ? "300px" : "1000px"} direction="column">
+          {handleOnChangeExtraBorrowers === undefined && (
+            <Stack alignItems="center">
+              {!isMobile &&
+                services &&
+                initialValues?.[0]?.borrowers?.length <= 1 && (
+                  <Text size="medium" type="label" weight="bold">
+                    {borrowerData.borrower.i18n[lang]}
+                  </Text>
+                )}
             </Stack>
-          ) : (
-            <NewPrice
-              value={totalBalance}
-              label={dataReport.descriptionTotalBalance.i18n[lang]}
-            />
           )}
-          {loading ? (
-            <Stack direction="column" alignItems="center" gap="4px">
-              <SkeletonLine animated width="100px" />
-              <SkeletonLine animated width="140px" />
-            </Stack>
-          ) : (
-            <NewPrice
-              value={totalFee}
-              label={dataReport.descriptionTotalFee.i18n[lang]}
-            />
-          )}
-        </Stack>
-        {handleOnChangeExtraBorrowers === undefined && (
-          <Stack alignItems="center">
-            {!isMobile &&
-              services &&
-              initialValues?.[0]?.borrowers?.length <= 1 && (
-                <Text size="medium" type="label" weight="bold">
-                  {borrowerData.borrower.i18n[lang]}
-                </Text>
-              )}
-          </Stack>
-        )}
-        <Stack
-          justifyContent="center"
-          alignItems={isMobile ? "normal" : "end"}
-          direction={isMobile ? "column" : "row"}
-          alignContent="center"
-        >
           {handleOnChangeExtraBorrowers === undefined && (
             <>
               {!isMobile && (
@@ -667,6 +630,45 @@ export const TableFinancialObligationsUI = ({
               )}
             </>
           )}
+        </Stack>
+        <Stack
+          gap="48px"
+          direction={!isMobile ? "row" : "column"}
+          justifyContent="center"
+          alignContent="center"
+          alignItems="center"
+          padding={isMobile ? "0px 0px 30px 0px" : "auto"}
+          width="100%"
+        >
+          {loading ? (
+            <Stack direction="row" alignItems="center" gap="4px">
+              <SkeletonLine animated width="100px" />
+              <SkeletonLine animated width="140px" />
+            </Stack>
+          ) : (
+            <NewPrice
+              value={totalBalance}
+              label={dataReport.descriptionTotalBalance.i18n[lang]}
+            />
+          )}
+          {loading ? (
+            <Stack direction="column" alignItems="center" gap="4px">
+              <SkeletonLine animated width="100px" />
+              <SkeletonLine animated width="140px" />
+            </Stack>
+          ) : (
+            <NewPrice
+              value={totalFee}
+              label={dataReport.descriptionTotalFee.i18n[lang]}
+            />
+          )}
+        </Stack>
+        <Stack
+          justifyContent="center"
+          alignItems={isMobile ? "normal" : "end"}
+          direction={isMobile ? "column" : "row"}
+          alignContent="center"
+        >
           {!showOnlyEdit && showAddButton === true && (
             <Stack
               justifyContent="end"
