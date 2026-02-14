@@ -98,14 +98,14 @@ function FinancialObligationModal({
     enums?.PaymentType?.map((item) => ({
       id: item.code,
       label: item.i18n[lang],
-      value: item.code,
+      value: item.i18n[lang],
     })) || [];
 
   const obligationsTypeOptions =
     enums?.ObligationType?.map((item) => ({
       id: item.code,
       label: item.i18n[lang],
-      value: item.code,
+      value: item.i18n[lang],
     })) || [];
 
   useEffect(() => {
