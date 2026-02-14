@@ -106,6 +106,16 @@ function AddProductModal(props: IAddProductModalProps) {
 
       setLoading(false);
       setCreditLineTerms(result);
+
+      const availableLines = Object.keys(result);
+      if (availableLines.length === 1) {
+        const singleLine = availableLines[0];
+        setFormData((prev) => ({
+          ...prev,
+          creditLine: singleLine,
+          selectedProducts: [singleLine],
+        }));
+      }
     })();
   }, [businessUnitPublicCode]);
 
