@@ -58,13 +58,22 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
           width="100%"
           justifyContent={isMobile ? "space-between" : "start"}
         >
-          <Stack gap="12px">
-            <StyledPerfil src={profileImageUrl} alt="imagen perfil" />
-            <Stack direction="column" justifyContent="space-around">
-              <Text type="label" size="medium" appearance="dark" weight="bold">
-                {name}
-              </Text>
-              <Stack direction="row" alignItems="center" gap="6px">
+          <Stack justifyContent="space-around" gap="12px">
+            <Stack>
+              <StyledPerfil src={profileImageUrl} alt="imagen perfil" />
+            </Stack>
+            <Stack direction="column" justifyContent="center" gap="2px">
+              <Stack>
+                <Text
+                  type="label"
+                  size="medium"
+                  appearance="dark"
+                  weight="bold"
+                >
+                  {name}
+                </Text>
+              </Stack>
+              <Stack alignItems="center" gap="4px">
                 <Text
                   type="label"
                   size="small"
@@ -89,54 +98,54 @@ export function GeneralHeader(props: IGeneralHeaderProps) {
                 </Text>
               </Stack>
             </Stack>
-            <Stack height="100%" margin="auto 0">
-              <Icon
-                icon={<MdOutlineCached />}
-                appearance="primary"
-                variant="outlined"
-                size="20px"
-                cursorHover
-                onClick={() => {
-                  setCustomerPublicCodeState("");
-                  setCustomerData(initialCustomerData);
-                  navigate("/clients/select-client/");
-                }}
-              />
-            </Stack>
           </Stack>
-          {showIcon && (
+          <Stack height="100%" margin="auto 0">
             <Icon
-              onClick={onClickIcon}
+              icon={<MdOutlineCached />}
               appearance="primary"
-              icon={<MdOutlineManageAccounts />}
+              variant="outlined"
+              size="20px"
               cursorHover
-              spacing="narrow"
-              variant="outlined"
-              shape="rectangle"
-              size="22px"
+              onClick={() => {
+                setCustomerPublicCodeState("");
+                setCustomerData(initialCustomerData);
+                navigate("/clients/select-client/");
+              }}
             />
-          )}
-        </Stack>
-        {showButton && (
-          <Stack
-            justifyContent="space-between"
-            alignItems="end"
-            padding={isMobile ? "6px 0px 0px 0px" : "0 6px"}
-            width={isMobile ? "100%" : "auto"}
-          >
-            <Button
-              onClick={onClickButton}
-              iconBefore={<MdAdd />}
-              variant="outlined"
-              appearance="primary"
-              spacing="compact"
-              fullwidth={isMobile}
-            >
-              {buttonText}
-            </Button>
           </Stack>
+        </Stack>
+        {showIcon && (
+          <Icon
+            onClick={onClickIcon}
+            appearance="primary"
+            icon={<MdOutlineManageAccounts />}
+            cursorHover
+            spacing="narrow"
+            variant="outlined"
+            shape="rectangle"
+            size="22px"
+          />
         )}
       </Stack>
+      {showButton && (
+        <Stack
+          justifyContent="space-between"
+          alignItems="end"
+          padding={isMobile ? "6px 0px 0px 0px" : "0 6px"}
+          width={isMobile ? "100%" : "auto"}
+        >
+          <Button
+            onClick={onClickButton}
+            iconBefore={<MdAdd />}
+            variant="outlined"
+            appearance="primary"
+            spacing="compact"
+            fullwidth={isMobile}
+          >
+            {buttonText}
+          </Button>
+        </Stack>
+      )}
     </StyledContainerGeneralHeader>
   );
 }

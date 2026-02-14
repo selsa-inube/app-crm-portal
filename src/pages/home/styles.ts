@@ -16,9 +16,9 @@ const StyledTitle = styled.div<IStyledContainer>`
 
 const StyledGeneralHeader = styled.div`
   position: sticky;
-  top: 74px;
   z-index: 1;
   width: 100%;
+  height: 56px;
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 `;
@@ -31,20 +31,30 @@ const StyledCollapse = styled.div`
 
 const StyledContainerCards = styled.div<IStyledContainer>`
   box-sizing: border-box;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 28px;
-  justify-content: ${(props) => (props.$smallScreen ? "center" : "flex-start")};
   border: ${(props) => (props.$smallScreen ? "none" : "1px solid #E0E0E0")};
   border-radius: 8px;
   padding: 16px;
   max-height: ${(props) => (props.$smallScreen ? "auto" : "550px")};
   overflow-y: auto;
 
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
   & > * {
-    flex: 1 1 calc(25% - 24px);
-    min-width: 279px;
-    max-width: calc(25% - 24px);
+    height: 130px;
   }
 
   &::-webkit-scrollbar {

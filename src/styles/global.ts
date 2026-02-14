@@ -1,3 +1,4 @@
+import { inube } from "@inubekit/inubekit";
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyles = createGlobalStyle`
@@ -16,7 +17,31 @@ const GlobalStyles = createGlobalStyle`
     margin: 0 auto;
     width: 100%;
   }
+ * {
+    scrollbar-width: thin;
+    scrollbar-color: ${({ theme }) =>
+      theme?.palette?.neutral?.N50 || inube.palette.neutral.N80} transparent;
+  }
 
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+  background: ${({ theme }) =>
+    theme?.palette?.neutral?.N50 || inube.palette.neutral.N50};
+    border-radius: 2px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background:${({ theme }) =>
+      theme?.palette?.neutral?.N50 || inube.palette.neutral.N80};
+  }
   @media print {
     body, html, #root, .main-container {
       overflow: visible !important;
