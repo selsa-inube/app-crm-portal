@@ -111,6 +111,7 @@ interface SimulationsUIProps {
   >;
   isLoadingDelete?: boolean;
   fetchProspectData?: () => Promise<void>;
+  disableAddProduct?: boolean;
 }
 
 export function SimulationsUI(props: SimulationsUIProps) {
@@ -162,6 +163,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
     isLoading = false,
     isLoadingDelete = false,
     fetchProspectData,
+    disableAddProduct = false,
   } = props;
 
   return (
@@ -411,6 +413,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                             lang={lang}
                             enums={enums}
                             fetchProspectData={fetchProspectData}
+                            disableAddProduct={disableAddProduct}
                           />
                         </Fieldset>
                       </StyledScrollPrint>

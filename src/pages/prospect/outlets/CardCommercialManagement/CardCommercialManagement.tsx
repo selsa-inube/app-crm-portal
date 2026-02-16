@@ -58,6 +58,7 @@ interface CardCommercialManagementProps {
   onProspectUpdate?: (prospect: IProspect) => void;
   onProspectRefreshData?: () => void;
   fetchProspectData?: () => Promise<void>;
+  disableAddProduct?: boolean;
 }
 
 export const CardCommercialManagement = (
@@ -75,6 +76,7 @@ export const CardCommercialManagement = (
     setShowMessageSuccessModal,
     onProspectRefreshData,
     fetchProspectData,
+    disableAddProduct = false,
   } = props;
 
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
@@ -284,7 +286,7 @@ export const CardCommercialManagement = (
 
     fetchExpenses();
   }, [businessUnitPublicCode, prospectData?.prospectId]);
-
+  console.log("enums: ", enums);
   return (
     <StyledPrintCardProspect>
       <div ref={dataRef}>
@@ -326,13 +328,20 @@ export const CardCommercialManagement = (
                 }
                 showIcons={showAddProduct}
                 lang={lang}
+                canDelete={prospectProducts.length === 1}
+                installmentFrequency={
+                  enums.Peridiocity?.find(
+                    (item) => item.code === entry.installmentFrequency,
+                  )?.i18n?.[lang]
+                }
               />
             ))}
-            {showAddProduct && !isLoading && (
-              <StyledPrint>
-                <NewCreditProductCard onClick={onClick} lang={lang} />
-              </StyledPrint>
-            )}
+            {!(showAddProduct && !isLoading) ||
+              (!disableAddProduct && (
+                <StyledPrint>
+                  <NewCreditProductCard onClick={onClick} lang={lang} />
+                </StyledPrint>
+              ))}
             {isLoading && prospectProducts.length === 0 && (
               <>
                 {Array(3)
