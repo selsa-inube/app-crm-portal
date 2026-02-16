@@ -56,12 +56,39 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
       marginsMobile={isMobile}
       height={isMobile ? "auto" : "470px"}
       width={isMobile ? "270px" : "600px"}
+      disabledNext={!(newFirstScore !== null || newSecondScore !== null)}
     >
       <Stack
         direction={isMobile ? "column" : "row"}
         gap={isMobile ? "6px" : "16px"}
       >
-        {firstScore !== null && (
+        {isLoadingSubmit && (
+          <>
+            <RiskScore
+              value={0}
+              date={""}
+              isMobile={isMobile}
+              handleOnChange={() => null}
+              logo={urlMock}
+              newScore={newFirstScore?.score || null}
+              isProspect={true}
+              lang={lang}
+              isLoadingUpdate={isLoadingSubmit}
+            />
+            <RiskScore
+              value={0}
+              date={""}
+              isMobile={isMobile}
+              handleOnChange={() => null}
+              logo={urlMock}
+              newScore={newFirstScore?.score || null}
+              isProspect={true}
+              lang={lang}
+              isLoadingUpdate={isLoadingSubmit}
+            />
+          </>
+        )}
+        {firstScore !== null && !isLoadingSubmit && (
           <RiskScore
             value={
               newFirstScore !== null
@@ -85,9 +112,10 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
             newScore={newFirstScore?.score || null}
             isProspect={true}
             lang={lang}
+            isLoadingUpdate={isLoadingSubmit}
           />
         )}
-        {secondScore !== null && (
+        {secondScore !== null && !isLoadingSubmit && (
           <RiskScore
             value={
               newSecondScore !== null
@@ -111,10 +139,11 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
             newScore={newSecondScore?.score || null}
             isProspect={true}
             lang={lang}
+            isLoadingUpdate={isLoadingSubmit}
           />
         )}
 
-        {firstScore === null && secondScore === null && (
+        {firstScore === null && secondScore === null && !isLoadingSubmit && (
           <Fieldset>
             <Stack
               alignItems="center"

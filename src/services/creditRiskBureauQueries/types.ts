@@ -6,7 +6,6 @@ export interface IPortfolioObligation {
 }
 
 export interface ICreditRiskBureauQuery {
-  creditRiskBureauQueryId: string;
   clientName: string;
   clientIdentificationType: string;
   clientIdentificationNumber: string;
@@ -16,6 +15,7 @@ export interface ICreditRiskBureauQuery {
   registrantIdentificationNumber: string;
   isActive: string;
   portfolioObligations: IPortfolioObligation[];
+  creditRiskBureauQueryId?: string;
 }
 
 export interface IUpdateCreditRiskBureauQuery extends ICreditRiskBureauQuery {
