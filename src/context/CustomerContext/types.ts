@@ -15,6 +15,9 @@ export interface ICustomerData {
     gender: string;
     dateBirth: string;
     zone: string;
+    transferAccountType: string;
+    transferAccountNumber: string;
+    transferAccountBank: string;
   }[];
   generalAssociateAttributes: {
     affiliateSeniorityDate: string;
@@ -47,6 +50,9 @@ export const initialCustomerData: ICustomerData = {
       gender: "",
       dateBirth: "",
       zone: "",
+      transferAccountType: "",
+      transferAccountNumber: "",
+      transferAccountBank: "",
     },
   ],
   generalAssociateAttributes: [

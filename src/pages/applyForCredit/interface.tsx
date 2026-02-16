@@ -403,6 +403,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     prospectSummaryData={prospectSummaryData}
                     modesOfDisbursement={modesOfDisbursement}
                     lang={lang}
+                    enums={enums}
                   />
                 )}
               {currentStepNumber &&

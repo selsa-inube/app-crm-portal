@@ -355,7 +355,12 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   controls={{
                     goBackText: titleButtonTextAssited.goBackText.i18n[lang],
                     submitText: titleButtonTextAssited.submitText.i18n[lang],
-                    goNextText: titleButtonTextAssited.goNextText.i18n[lang],
+                    goNextText:
+                      currentStep === steps[steps.length - 1].id ||
+                      (currentStep === stepsAddProspect.loanAmount.id &&
+                        !formData.loanAmountState.toggleChecked)
+                        ? titleButtonTextAssited.submitText.i18n[lang]
+                        : titleButtonTextAssited.goNextText.i18n[lang],
                   }}
                   onSubmitClick={() => setSentModal(true)}
                   disableNext={!isCurrentFormValid}

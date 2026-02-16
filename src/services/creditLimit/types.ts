@@ -106,4 +106,5 @@ export interface IExtraordinaryCycle {
   firstDayOfTheCycle: string;
   month: string;
   paymentDates: string[];
+  payrollForDeductionAgreementCode: string;
 }

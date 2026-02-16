@@ -22,6 +22,8 @@ function CreditProductCardUI(props: CreditProductCardProps) {
     showIcons,
     onEdit,
     onDelete,
+    canDelete,
+    installmentFrequency,
   } = props;
 
   return (
@@ -57,7 +59,10 @@ function CreditProductCardUI(props: CreditProductCardProps) {
           <Text size="small" appearance="gray" weight="bold">
             {CREDIT_PRODUCT_TEXTS.interestRate.i18n[lang]}
           </Text>
-          <Text>{parseFloat(Number(interestRate).toFixed(4))} %</Text>
+          <Text>
+            {parseFloat(Number(interestRate).toFixed(4))} %{" "}
+            {installmentFrequency}
+          </Text>
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
@@ -100,13 +105,15 @@ function CreditProductCardUI(props: CreditProductCardProps) {
                 cursorHover
                 onClick={onEdit}
               />
-              <Icon
-                icon={<MdOutlineDelete />}
-                appearance="primary"
-                size="24px"
-                cursorHover
-                onClick={onDelete}
-              />
+              {!canDelete && (
+                <Icon
+                  icon={<MdOutlineDelete />}
+                  appearance="primary"
+                  size="24px"
+                  cursorHover
+                  onClick={onDelete}
+                />
+              )}
             </Stack>
           </StyledPrint>
         )}

@@ -130,24 +130,25 @@ export const TableExtraordinaryInstallment = (
   const paginationProps = usePagination(extraordinaryInstallments);
 
   const itemIdentifiersForUpdate: IExtraordinaryInstallments = {
-    creditProductCode: prospectData?.creditProducts[0].creditProductCode || "",
-    extraordinaryInstallments:
-      prospectData?.creditProducts[0]?.extraordinaryInstallments
-        ?.filter((installment) => {
-          const expectedId = `${prospectData?.creditProducts[0].creditProductCode},${installment.installmentDate},${installment.paymentChannelAbbreviatedName}`;
-          return expectedId === selectedDebtor?.id;
-        })
-        ?.map((installment) => ({
-          installmentDate:
-            typeof installment.installmentDate === "string"
-              ? installment.installmentDate
-              : new Date(installment.installmentDate).toISOString(),
-          installmentAmount: Number(installment.installmentAmount),
-          paymentChannelAbbreviatedName: String(
-            installment.paymentChannelAbbreviatedName,
-          ),
-        })) || [],
+    creditProductCode: (selectedDebtor?.creditProductCode as string) || "",
     prospectId: prospectData?.prospectId || "",
+    extraordinaryInstallments: selectedDebtor?.id
+      ? [
+          {
+            installmentDate:
+              typeof selectedDebtor.datePayment === "string"
+                ? selectedDebtor.datePayment
+                : new Date(
+                    selectedDebtor.datePayment as string | number | Date,
+                  ).toISOString(),
+            installmentAmount: Number(selectedDebtor.value),
+            paymentChannelAbbreviatedName: String(selectedDebtor.paymentMethod),
+            payrollForDeductionAgreementCode: String(
+              selectedDebtor.payrollForDeductionAgreementCode || "",
+            ),
+          },
+        ]
+      : [],
   };
 
   useEffect(() => {
@@ -180,8 +181,12 @@ export const TableExtraordinaryInstallment = (
           );
 
         if (response && response.length > 0) {
-          const allCycles = response.flatMap(
-            (agreement) => agreement.extraordinaryCycles,
+          const allCycles = response.flatMap((agreement) =>
+            agreement.extraordinaryCycles.map((cycle) => ({
+              ...cycle,
+              payrollForDeductionAgreementCode:
+                agreement.payrollForDeductionAgreementCode,
+            })),
           );
 
           setPaymentCycles(allCycles);
@@ -229,6 +234,8 @@ export const TableExtraordinaryInstallment = (
               cycleName: matchingCycle
                 ? matchingCycle.extraordinaryCycleType
                 : "",
+              payrollForDeductionAgreementCode:
+                matchingCycle?.payrollForDeductionAgreementCode || "",
             };
           });
         },

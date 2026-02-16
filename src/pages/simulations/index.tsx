@@ -29,6 +29,7 @@ import { recalculateProspect } from "@services/prospect/recalculateProspect";
 import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 
 import { SimulationsUI } from "./interface";
 import {
@@ -59,6 +60,7 @@ export function Simulations() {
   const [validateRequirements, setValidateRequirements] = useState<
     IValidateRequirement[]
   >([]);
+  const [isAddProductDisabled, setIsAddProductDisabled] = useState(false);
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { prospectCode } = useParams();
@@ -185,6 +187,33 @@ export function Simulations() {
       return null;
     }
   }, [businessUnitPublicCode, prospectCode]);
+
+  const disableAddProduct = useCallback(async () => {
+    if (!dataProspect) return;
+
+    try {
+      const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
+        businessUnitPublicCode,
+        businessManagerCode,
+        dataProspect.moneyDestinationAbbreviatedName,
+        customerData!.publicCode,
+        eventData.token,
+      );
+
+      if (Array.isArray(lineOfCreditValues)) {
+        setIsAddProductDisabled(
+          lineOfCreditValues.length === dataProspect.creditProducts.length,
+        );
+      }
+    } catch (error) {
+      setShowErrorModal(true);
+      setMessageError(`${dataEditProspect.errorCredit}:, ${error}`);
+    }
+  }, [businessUnitPublicCode, prospectCode, dataProspect]);
+
+  useEffect(() => {
+    disableAddProduct();
+  }, [dataProspect, disableAddProduct]);
 
   const handleSubmitClick = async () => {
     try {
@@ -460,6 +489,7 @@ export function Simulations() {
       isLoadingDelete={isLoadingDelete}
       enums={enums as IAllEnumsResponse}
       fetchProspectData={fetchProspectData}
+      disableAddProduct={isAddProductDisabled}
     />
   );
 }

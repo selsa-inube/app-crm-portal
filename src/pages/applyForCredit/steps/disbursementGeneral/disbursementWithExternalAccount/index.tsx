@@ -37,10 +37,10 @@ import { getSearchCustomerByCode } from "@services/customer/SearchCustomerCatalo
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { getEnum } from "@services/enum/enumerators/getEnum";
 import { IDomainEnum } from "@config/enums/types";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 import { CardGray } from "@components/cards/CardGray";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { ICRMPortalData } from "@context/AppContext/types";
-import { getAllInternalAccounts } from "@services/cardSavingProducts/SearchAllCardSavingProducts";
 import { BaseModal } from "@components/modals/baseModal";
 
 import { StyledContainer } from "../types";
@@ -56,6 +56,7 @@ interface IDisbursementWithExternalAccountProps {
   isAmountReadOnly: boolean;
   businessManagerCode: string;
   lang: EnumType;
+  enums: IAllEnumsResponse;
   customerData?: ICustomerData;
   onFormValid: (isValid: boolean) => void;
   handleOnChange: (values: IDisbursementGeneral) => void;
@@ -77,6 +78,7 @@ export function DisbursementWithExternalAccount(
     businessManagerCode,
     customerData,
     lang,
+    enums,
     onFormValid,
     handleOnChange,
     getTotalAmount,
@@ -92,14 +94,54 @@ export function DisbursementWithExternalAccount(
   const [currentIdentification, setCurrentIdentification] =
     useState(identificationNumber);
   const [accountOptions, setAccountOptions] = useState<IOptionsSelect[]>([]);
-  const [accountOptionsInternal, setAccountOptionsInternal] = useState<
+  const [accountOptionsExternal, setAccountOptionsExternal] = useState<
     IOptionsSelect[]
   >([]);
   const [showInfoModal, setShowInfoModal] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
 
   const prevValues = useRef(formik.values[optionNameForm]);
+
+  const findAccountTypeCode = (
+    itemData: ICustomerData["generalAttributeClientNaturalPersons"][0],
+  ) => {
+    const rawAccountType = itemData?.transferAccountType || "";
+    const accountTypeName = rawAccountType.split("-")[1]?.trim();
+
+    if (!accountTypeName) return "";
+
+    const matchedEnum = enums.AccountType?.find(
+      (enumItem) =>
+        enumItem.i18n?.es?.toLowerCase() === accountTypeName.toLowerCase() ||
+        enumItem.description?.toLowerCase() === accountTypeName.toLowerCase(),
+    );
+
+    return matchedEnum?.code || "";
+  };
+
+  const handleAccountChange = (value: string) => {
+    formik.setFieldValue(`${optionNameForm}.accountNumber`, value);
+    if (value !== "none") {
+      const data = customerData?.generalAttributeClientNaturalPersons?.[0];
+      if (data) {
+        formik.setFieldValue(
+          `${optionNameForm}.accountType`,
+          findAccountTypeCode(data),
+        );
+        const bankData = data.transferAccountBank || "";
+        const [bankCode, ...bankNameParts] = bankData.split("-");
+        formik.setFieldValue(`${optionNameForm}.bankCode`, bankCode.trim());
+        formik.setFieldValue(
+          `${optionNameForm}.bank`,
+          bankNameParts.join("-").trim(),
+        );
+      }
+    } else {
+      formik.setFieldValue(`${optionNameForm}.accountType`, "");
+      formik.setFieldValue(`${optionNameForm}.bankCode`, "");
+      formik.setFieldValue(`${optionNameForm}.bank`, "");
+    }
+  };
 
   useEffect(() => {
     onFormValid(formik.isValid);
@@ -392,59 +434,29 @@ export function DisbursementWithExternalAccount(
   }, [accountOptions]);
 
   useEffect(() => {
-    async function fetchAccounts() {
-      try {
-        if (customerData === undefined) return;
+    if (!customerData) return;
 
-        const response = await getAllInternalAccounts(
-          currentIdentification,
-          businessUnitPublicCode,
-          businessManagerCode,
-          eventData.token,
-        );
+    const data = customerData.generalAttributeClientNaturalPersons?.[0];
 
-        const uniqueMap = new Map<
-          string,
-          { id: string; label: string; value: string }
-        >();
+    const prueba = [
+      {
+        id: "account",
+        label: `${data?.transferAccountBank} - ${data?.transferAccountType} - ${data?.transferAccountNumber}`,
+        value: data?.transferAccountNumber || "account",
+      },
+      {
+        id: "none",
+        label: disbursementGeneral.none.i18n[lang],
+        value: "none",
+      },
+    ];
 
-        response.forEach((account) => {
-          const key = `${account.productDescription}-${account.savingProductCode}`;
-          if (!uniqueMap.has(key)) {
-            uniqueMap.set(key, {
-              id: account.savingProductCode,
-              label: `${account.productDescription} - ${account.savingProductCode}`,
-              value: `${account.savingProductCode}`,
-            });
-          }
-        });
+    setAccountOptionsExternal(prueba);
 
-        const accountsList = Array.from(uniqueMap.values());
-
-        setAccountOptionsInternal([
-          ...accountsList,
-          {
-            id: "none",
-            label: disbursementGeneral.none.i18n[lang],
-            value: "none",
-          },
-        ]);
-        if (accountsList.length > 0) {
-          formik.setFieldValue(
-            `${optionNameForm}.accountNumber`,
-            accountsList[0].value,
-          );
-        } else {
-          formik.setFieldValue(`${optionNameForm}.accountNumber`, "none");
-        }
-      } catch (error) {
-        console.error("Error fetching internal accounts:", error);
-        setAccountOptions([]);
-      }
+    if (formik.values[optionNameForm]?.toggle && data) {
+      handleAccountChange(data.transferAccountNumber || "");
     }
-
-    fetchAccounts();
-  }, [currentIdentification, businessUnitPublicCode]);
+  }, [customerData, formik.values[optionNameForm]?.toggle, enums]);
 
   return (
     <>
@@ -651,11 +663,9 @@ export function DisbursementWithExternalAccount(
               label={disbursemenOptionAccount.labelAccount.i18n[lang]}
               placeholder={disbursemenOptionAccount.placeOption.i18n[lang]}
               size="compact"
-              options={accountOptionsInternal}
+              options={accountOptionsExternal}
               onBlur={formik.handleBlur}
-              onChange={(_, value) =>
-                formik.setFieldValue(`${optionNameForm}.accountNumber`, value)
-              }
+              onChange={(_, value) => handleAccountChange(value)}
               value={formik.values[optionNameForm]?.accountNumber || ""}
               fullwidth
             />

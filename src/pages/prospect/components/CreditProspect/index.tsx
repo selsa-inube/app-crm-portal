@@ -105,6 +105,7 @@ interface ICreditProspectProps {
   setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements?: IValidateRequirement[];
   fetchProspectData?: () => Promise<void>;
+  disableAddProduct?: boolean;
 }
 
 export function CreditProspect(props: ICreditProspectProps) {
@@ -130,6 +131,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     validateRequirements,
     enums,
     fetchProspectData,
+    disableAddProduct = false,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -688,7 +690,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               direction={isMobile ? "column" : "row"}
               width={isMobile ? "100%" : "auto"}
             >
-              {showAddProduct && (
+              {showAddProduct && !disableAddProduct && (
                 <Button
                   type="button"
                   appearance="primary"
@@ -791,6 +793,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             lang={lang}
             enums={enums}
             fetchProspectData={fetchProspectData}
+            disableAddProduct={disableAddProduct}
           />
         </Stack>
         {currentModal === "creditLimit" && (
@@ -1063,6 +1066,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             setShowMessageSuccessModal={setShowMessageSuccessModal}
             setMessageError={setMessageError}
             eventData={eventData}
+            setShowErrorModal={setShowErrorModal}
           />
         )}
 
