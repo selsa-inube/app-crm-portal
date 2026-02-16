@@ -15,6 +15,8 @@ interface CreditProductCardProps {
   showIcons?: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  canDelete?: boolean;
+  installmentFrequency?: string;
 }
 
 function CreditProductCard(props: CreditProductCardProps) {
@@ -30,6 +32,8 @@ function CreditProductCard(props: CreditProductCardProps) {
     showIcons = true,
     onEdit,
     onDelete,
+    canDelete,
+    installmentFrequency,
   } = props;
 
   return (
@@ -45,6 +49,8 @@ function CreditProductCard(props: CreditProductCardProps) {
       showIcons={showIcons}
       onEdit={onEdit}
       onDelete={onDelete}
+      canDelete={canDelete}
+      installmentFrequency={installmentFrequency}
     />
   );
 }
