@@ -332,7 +332,7 @@ export const CardCommercialManagement = (
                 installmentFrequency={
                   enums.Peridiocity?.find(
                     (item) => item.code === entry.installmentFrequency,
-                  )?.i18n?.[lang]
+                  )?.i18n?.[lang] || ""
                 }
               />
             ))}
