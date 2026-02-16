@@ -51,6 +51,7 @@ export interface IExtraordinaryInstallment {
   installmentAmount: number;
   paymentChannelAbbreviatedName: string;
   humanChannelPaymentDay?: number;
+  payrollForDeductionAgreementCode?: string;
 }
 
 export interface IExtraordinaryInstallments {

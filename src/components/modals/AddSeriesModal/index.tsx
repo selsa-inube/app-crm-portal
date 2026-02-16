@@ -416,6 +416,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       installmentFrequency: frequency,
       paymentChannelAbbreviatedName: paymentChannelAbbreviatedName,
       value: installmentAmount,
+      payrollForDeductionAgreementCode: selectedCycle?.agreementCode || "",
     };
 
     handleExtraordinaryInstallment(requestBody);
@@ -465,6 +466,10 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       ? formik.values.cycleId.split("-").pop()
       : "";
 
+    const selectedCycle = cycleOptions.find(
+      (option) => option.value === formik.values.cycleId,
+    );
+
     const formattedDate = installmentDate.split("T")[0].replace(/-/g, "/");
 
     const requestBody: Record<string, string | number> = {
@@ -475,6 +480,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       installmentFrequency: frequency,
       paymentChannelAbbreviatedName: paymentChannelAbbreviatedName,
       value: installmentAmount,
+      payrollForDeductionAgreementCode: selectedCycle?.agreementCode || "",
     };
 
     try {
