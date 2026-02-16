@@ -7,6 +7,7 @@ import { AppContext } from "@context/AppContext";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { IProspect, IProspectSummaryById } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { DisbursementWithInternalAccount } from "./disbursementWithInternalAccount/index";
 import { DisbursementWithExternalAccount } from "./disbursementWithExternalAccount";
@@ -29,6 +30,7 @@ interface IDisbursementGeneralProps {
   prospectSummaryData: IProspectSummaryById | undefined;
   modesOfDisbursement: string[];
   lang: EnumType;
+  enums: IAllEnumsResponse;
 }
 
 interface Tab {
@@ -50,6 +52,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
     customerData,
     prospectSummaryData,
     lang,
+    enums,
   } = props;
 
   const [tabChanged, setTabChanged] = useState(false);
@@ -215,6 +218,7 @@ export function DisbursementGeneral(props: IDisbursementGeneralProps) {
                 customerData={customerData}
                 isAmountReadOnly={isAmountReadOnly}
                 lang={lang}
+                enums={enums}
                 eventData={eventData}
               />
             )}
