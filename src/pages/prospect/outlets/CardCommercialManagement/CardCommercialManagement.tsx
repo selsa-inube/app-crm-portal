@@ -286,7 +286,7 @@ export const CardCommercialManagement = (
 
     fetchExpenses();
   }, [businessUnitPublicCode, prospectData?.prospectId]);
-  console.log("enums: ", enums);
+
   return (
     <StyledPrintCardProspect>
       <div ref={dataRef}>
