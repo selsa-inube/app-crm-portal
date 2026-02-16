@@ -24,6 +24,7 @@ interface IScoreModalProspectProps {
   setShowMessageSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
   eventData: ICRMPortalData;
+  setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
   const {
@@ -33,9 +34,9 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     customerPublicCode,
     businessUnitPublicCode,
     businessManagerCode,
-    setShowMessageSuccessModal,
     setMessageError,
     eventData,
+    setShowErrorModal,
   } = props;
 
   const { addFlag } = useFlag();
@@ -54,6 +55,8 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     if (!customerPublicCode) return;
 
     try {
+      setIsLoadingSubmit(true);
+
       const data = await creditConsultationInBuroByIdentificationNumber(
         businessUnitPublicCode,
         businessManagerCode,
@@ -73,8 +76,10 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-      setShowMessageSuccessModal(true);
+      setShowErrorModal(true);
       setMessageError(description);
+    } finally {
+      setIsLoadingSubmit(false);
     }
   }, [customerPublicCode, businessUnitPublicCode, businessManagerCode]);
 
@@ -85,9 +90,11 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
         const payload: IUpdateCreditRiskBureauQuery = {
           ...firstScore,
           creditRiskScore: newFirstScore.score,
-          queryDate: new Date().toISOString(),
+          queryDate: new Date(newFirstScore.date).toISOString(),
           modifyJustification: riskScoreChanges.justification.i18n[lang],
         };
+
+        delete payload.creditRiskBureauQueryId;
 
         await updateCreditRiskBureauQuery(
           businessUnitPublicCode,
@@ -100,9 +107,11 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
         const payload: IUpdateCreditRiskBureauQuery = {
           ...secondScore,
           creditRiskScore: newSecondScore.score,
-          queryDate: new Date().toISOString(),
+          queryDate: new Date(newSecondScore.date).toISOString(),
           modifyJustification: riskScoreChanges.justification.i18n[lang],
         };
+
+        delete payload.creditRiskBureauQueryId;
 
         await updateCreditRiskBureauQuery(
           businessUnitPublicCode,
@@ -120,6 +129,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
         duration: 5000,
       });
     } catch (error) {
+      console.log(error);
       const err = error as {
         message?: string;
         status: number;
@@ -128,7 +138,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
 
-      setShowMessageSuccessModal(true);
+      setShowErrorModal(true);
       setMessageError(description);
     } finally {
       setIsLoadingSubmit(false);

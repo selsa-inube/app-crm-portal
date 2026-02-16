@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Button,
   Input,
@@ -36,6 +36,7 @@ interface IRiskScoreProps {
   isProspect?: boolean;
   updateMethod?: EUpdateMethod;
   onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
 export function RiskScore(props: IRiskScoreProps) {
@@ -70,6 +71,7 @@ export function RiskScore(props: IRiskScoreProps) {
   const handleDateForInput = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
+    setIsLoading;
     return date.toISOString().split("T")[0];
   };
 
@@ -92,13 +94,6 @@ export function RiskScore(props: IRiskScoreProps) {
     },
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleButtonClick = () => {
     if (updateMethod === EUpdateMethod.Automatic) {
       setShowConfirmModal(true);
@@ -117,15 +112,20 @@ export function RiskScore(props: IRiskScoreProps) {
   return (
     <Fieldset>
       <Stack direction="column" alignItems="center" gap="20px">
-        <RiskScoreGauge
-          value={value}
-          lang={lang}
-          logo={logo}
-          nameProvider={nameProvider}
-        />
+        {isLoading ? (
+          <SkeletonLine height="170px" width="250px" animated />
+        ) : (
+          <RiskScoreGauge
+            value={value}
+            lang={lang}
+            logo={logo}
+            nameProvider={nameProvider}
+          />
+        )}
+
         <Stack gap="4px">
           {isLoading ? (
-            <SkeletonLine />
+            <SkeletonLine height="30px" width="170px" animated />
           ) : (
             <Text type="body" size="small">
               {date
@@ -133,18 +133,29 @@ export function RiskScore(props: IRiskScoreProps) {
                 : riskScoreData.haveNotData.i18n[lang]}
             </Text>
           )}
+
           <Text type="body" weight="bold" size="small">
-            {date ? formatPrimaryDate(new Date(date)) : ""}
+            {isLoading ? (
+              <SkeletonLine height="30px" width="70px" animated />
+            ) : (
+              <Text type="body" weight="bold" size="small">
+                {date ? formatPrimaryDate(new Date(date)) : ""}
+              </Text>
+            )}
           </Text>
         </Stack>
         <Stack gap="12px" direction="column" alignItems="center">
-          <Button
-            variant="outlined"
-            iconBefore={<MdOutlineEdit />}
-            onClick={() => handleButtonClick()}
-          >
-            {riskScoreData.editScore.i18n[lang]}
-          </Button>
+          {isLoading ? (
+            <SkeletonLine height="40px" width="170px" animated />
+          ) : (
+            <Button
+              variant="outlined"
+              iconBefore={<MdOutlineEdit />}
+              onClick={() => handleButtonClick()}
+            >
+              {riskScoreData.editScore.i18n[lang]}
+            </Button>
+          )}
         </Stack>
         {showErrorModal && (
           <ErrorModal
