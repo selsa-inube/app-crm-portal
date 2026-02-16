@@ -674,7 +674,7 @@ export function CreditProspect(props: ICreditProspectProps) {
 
   return (
     <div ref={dataPrint}>
-      <Stack direction="column" gap="24px">
+      <Stack direction="column" gap="12px">
         <StyledPrint>
           <Stack
             gap="16px"

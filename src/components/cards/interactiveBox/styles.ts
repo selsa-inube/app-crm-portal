@@ -10,7 +10,6 @@ interface IStyledInteractiveBox {
 const StyledInteractiveBox = styled(Link)<IStyledInteractiveBox>`
   box-sizing: border-box;
   padding: 12px 24px;
-
   width: ${($isMobile) => ($isMobile ? "100%" : "305px")};
   min-height: ${($isMobile) => ($isMobile ? "auto" : "100px")};
   display: flex;
@@ -23,8 +22,9 @@ const StyledInteractiveBox = styled(Link)<IStyledInteractiveBox>`
     theme?.palette?.neutral.N900 || inube.palette.neutral.N900};
   border: 1px solid
     ${({ theme }) => theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
-  box-shadow: 3px 3px 5px 1px
-    ${({ theme }) => theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
+  box-shadow:
+    0px 2px 6px 0px rgba(0, 0, 0, 0.15),
+    0px 1px 2px 0px rgba(0, 0, 0, 0.3);
   cursor: ${({ $isDisabled }) => ($isDisabled ? "default" : "pointer")};
   opacity: ${({ $isDisabled }) => ($isDisabled ? 0.5 : 1)};
   pointer-events: ${({ $isDisabled }) => ($isDisabled ? "none" : "auto")};
@@ -37,9 +37,10 @@ const StyledInteractiveBox = styled(Link)<IStyledInteractiveBox>`
     background-color: ${({ theme, $isDisabled }) =>
       $isDisabled
         ? "transparent"
-        : theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
-    box-shadow: ${({ $isDisabled }) =>
-      $isDisabled ? "3px 3px 5px 1px" : "none"};
+        : theme?.palette?.neutral?.N20 || inube.palette.neutral.N20};
+    box-shadow:
+      0px 2px 8px 0px rgba(0, 0, 0, 0.15),
+      0px 1px 2px 0px rgba(0, 0, 0, 0.3);
   }
 
   div {

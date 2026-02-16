@@ -7,6 +7,8 @@ import {
   Divider,
 } from "@inubekit/inubekit";
 
+import { truncateTextToMaxLength } from "@utils/formatData/text";
+
 import { StyledInteractiveBox } from "./styles";
 
 export interface IInteractiveBox {
@@ -71,8 +73,8 @@ export function InteractiveBox(props: IInteractiveBox) {
               </Stack>
             </Stack>
             <Divider dashed />
-            <Text type="body" size="small">
-              {description}
+            <Text type="body" size="small" weight="normal" appearance="gray">
+              {truncateTextToMaxLength(description, 50)}
             </Text>
           </Stack>
         </StyledInteractiveBox>

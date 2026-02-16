@@ -223,7 +223,7 @@ export const TableFinancialObligationsUI = ({
     firstEntryInPage,
     lastEntryInPage,
     paddedCurrentData,
-  } = usePagination([...dataInformation].reverse());
+  } = usePagination([...dataInformation].reverse(), 4);
 
   const getValueFromProperty = (
     value: string | number | string[] | undefined,
@@ -443,6 +443,30 @@ export const TableFinancialObligationsUI = ({
         <Tr key={rowIndex}>
           {visibleHeaders.map((header, colIndex) => {
             let cellData = values[colIndex] || "";
+
+            if (header.key === "type") {
+              const translatedType = enums?.ObligationType?.find(
+                (item) =>
+                  item.code === cellData || item.description === cellData,
+              );
+              if (translatedType) {
+                cellData = translatedType.i18n[lang] || cellData;
+              }
+            }
+
+            if (header.key === "payment") {
+              const translatedPayment = enums?.PaymentType?.find(
+                (item) =>
+                  item.code === cellData || item.description === cellData,
+              );
+              if (translatedPayment) {
+                cellData = translatedPayment.i18n[lang] || cellData;
+              }
+            }
+
+            const isNumeric = ["balance", "fee", "idUser", "feePaid"].includes(
+              header.key,
+            );
             const isCurrency = ["balance", "fee"].includes(header.key);
 
             if (isCurrency) {
@@ -461,7 +485,7 @@ export const TableFinancialObligationsUI = ({
                 key={colIndex}
                 appearance={rowIndex % 2 === 0 ? "light" : "dark"}
                 type={header.action ? "custom" : "text"}
-                align={isCurrency ? "right" : "left"}
+                align={header.action ? "center" : isNumeric ? "right" : "left"}
               >
                 {header.action ? (
                   <Stack justifyContent="space-around">
@@ -511,23 +535,22 @@ export const TableFinancialObligationsUI = ({
       width="100%"
       gap={handleOnChangeExtraBorrowers === undefined ? "16px" : "5px"}
     >
-      <Stack direction="column">
-        {handleOnChangeExtraBorrowers === undefined && (
-          <Stack alignItems="center">
-            {!isMobile &&
-              services &&
-              initialValues?.[0]?.borrowers?.length <= 1 && (
-                <Text size="medium" type="label" weight="bold">
-                  {borrowerData.borrower.i18n[lang]}
-                </Text>
-              )}
-          </Stack>
-        )}
-        <Stack
-          justifyContent="space-between"
-          alignItems={isMobile ? "normal" : "end"}
-          direction={isMobile ? "column" : "row"}
-        >
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent="space-between"
+      >
+        <Stack width={isMobile ? "300px" : "1000px"} direction="column">
+          {handleOnChangeExtraBorrowers === undefined && (
+            <Stack alignItems="center">
+              {!isMobile &&
+                services &&
+                initialValues?.[0]?.borrowers?.length <= 1 && (
+                  <Text size="medium" type="label" weight="bold">
+                    {borrowerData.borrower.i18n[lang]}
+                  </Text>
+                )}
+            </Stack>
+          )}
           {handleOnChangeExtraBorrowers === undefined && (
             <>
               {!isMobile && (
@@ -610,6 +633,45 @@ export const TableFinancialObligationsUI = ({
               )}
             </>
           )}
+        </Stack>
+        <Stack
+          gap="48px"
+          direction={!isMobile ? "row" : "column"}
+          justifyContent="center"
+          alignContent="center"
+          alignItems="center"
+          padding={isMobile ? "0px 0px 30px 0px" : "auto"}
+          width="100%"
+        >
+          {loading ? (
+            <Stack direction="row" alignItems="center" gap="4px">
+              <SkeletonLine animated width="100px" />
+              <SkeletonLine animated width="140px" />
+            </Stack>
+          ) : (
+            <NewPrice
+              value={totalBalance}
+              label={dataReport.descriptionTotalBalance.i18n[lang]}
+            />
+          )}
+          {loading ? (
+            <Stack direction="column" alignItems="center" gap="4px">
+              <SkeletonLine animated width="100px" />
+              <SkeletonLine animated width="140px" />
+            </Stack>
+          ) : (
+            <NewPrice
+              value={totalFee}
+              label={dataReport.descriptionTotalFee.i18n[lang]}
+            />
+          )}
+        </Stack>
+        <Stack
+          justifyContent="center"
+          alignItems={isMobile ? "normal" : "end"}
+          direction={isMobile ? "column" : "row"}
+          alignContent="center"
+        >
           {!showOnlyEdit && showAddButton === true && (
             <Stack
               justifyContent="end"
@@ -677,7 +739,7 @@ export const TableFinancialObligationsUI = ({
                 <Stack
                   gap="16px"
                   direction="column"
-                  height="250px"
+                  height="200px"
                   justifyContent="center"
                 >
                   <Text
@@ -786,35 +848,6 @@ export const TableFinancialObligationsUI = ({
           </Stack>
         </BaseModal>
       )}
-      <Stack
-        gap="48px"
-        direction={!isMobile ? "row" : "column"}
-        justifyContent="center"
-        alignItems="center"
-      >
-        {loading ? (
-          <Stack direction="column" alignItems="center" gap="4px">
-            <SkeletonLine animated width="100px" />
-            <SkeletonLine animated width="140px" />
-          </Stack>
-        ) : (
-          <NewPrice
-            value={totalBalance}
-            label={dataReport.descriptionTotalBalance.i18n[lang]}
-          />
-        )}
-        {loading ? (
-          <Stack direction="column" alignItems="center" gap="4px">
-            <SkeletonLine animated width="100px" />
-            <SkeletonLine animated width="140px" />
-          </Stack>
-        ) : (
-          <NewPrice
-            value={totalFee}
-            label={dataReport.descriptionTotalFee.i18n[lang]}
-          />
-        )}
-      </Stack>
     </Stack>
   );
 };
