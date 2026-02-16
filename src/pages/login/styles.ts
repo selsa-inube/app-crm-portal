@@ -9,8 +9,17 @@ interface IStyledImage {
 export const StyledWelcomeContainer = styled.div`
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
+  box-sizing: border-box;
+  border-bottom: 1px solid
+    ${({ theme }) => theme?.palette?.neutral?.N40 || inube.palette.neutral.N40};
+  box-shadow:
+    0px 1px 3px 1px
+      ${({ theme }) =>
+        theme?.palette?.neutral?.N40 || inube.palette.neutral.N40},
+    0px 1px 2px 0px
+      ${({ theme }) =>
+        theme?.palette?.neutral?.N20 || inube.palette.neutral.N20};
 `;
-
 export const StyledOutletContainer = styled(StyledWelcomeContainer)`
   background-color: ${({ theme }) =>
     theme?.palette?.neutral?.N0 || inube.palette.neutral.N0};

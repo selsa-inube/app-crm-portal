@@ -27,7 +27,6 @@ import { SummaryCard } from "../prospect/components/SummaryCard";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
 import { addConfig, dataCreditProspects, dataError, redirect } from "./config";
-import { NoResultsMessage } from "../login/outlets/Clients/interface.tsx";
 import { LoadCard } from "../prospect/components/loadCard/index.tsx";
 
 export function CreditApplications() {
@@ -49,6 +48,7 @@ export function CreditApplications() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [errorModal, setErrorModal] = useState(false);
+  const [hasInitialData, setHasInitialData] = useState(false);
 
   const searchTimeoutRef = useRef<number>(0);
 
@@ -108,6 +108,11 @@ export function CreditApplications() {
           eventData.token,
         );
         setCreditRequestData(creditData);
+
+        // Establecer hasInitialData solo en la primera carga (sin búsqueda)
+        if (debouncedSearch === "") {
+          setHasInitialData(creditData.length > 0);
+        }
       } catch (error) {
         const err = error as {
           message?: string;
@@ -201,6 +206,9 @@ export function CreditApplications() {
     }
   };
 
+  // Determinar si mostrar el buscador
+  const showSearchInput = hasInitialData || debouncedSearch !== "";
+
   return (
     <>
       {codeError ? (
@@ -237,23 +245,58 @@ export function CreditApplications() {
           </StyledArrowBack>
           <Fieldset>
             <Stack direction="column" gap="20px" padding="8px 16px">
-              <Stack justifyContent="space-between" alignItems="center">
-                <Input
-                  id="keyWord"
-                  placeholder={dataCreditProspects.keyWord.i18n[lang]}
-                  type="search"
-                  value={search}
-                  onChange={(event) => handleSearch(event)}
-                />
-              </Stack>
-              <Stack wrap="wrap" gap="20px">
-                {creditRequestData.length === 0 && !loading && (
-                  <NoResultsMessage search={debouncedSearch} />
-                )}
+              {showSearchInput && (
+                <Stack justifyContent="space-between" alignItems="center">
+                  <Input
+                    id="keyWord"
+                    placeholder={dataCreditProspects.keyWord.i18n[lang]}
+                    type="search"
+                    value={search}
+                    onChange={(event) => handleSearch(event)}
+                  />
+                </Stack>
+              )}
+              <Stack
+                wrap="wrap"
+                gap="20px"
+                justifyContent={
+                  creditRequestData.length === 0 && !loading
+                    ? "center"
+                    : "flex-start"
+                }
+              >
                 {loading ? (
                   <LoadCard />
                 ) : (
                   <>
+                    {creditRequestData.length === 0 &&
+                    !hasInitialData &&
+                    debouncedSearch === "" ? (
+                      <Stack
+                        width="100%"
+                        justifyContent="center"
+                        padding="30px 0"
+                      >
+                        <Text size="medium" textAlign="center">
+                          {dataError.notCredits.i18n[lang]}
+                        </Text>
+                      </Stack>
+                    ) : null}
+
+                    {creditRequestData.length === 0 &&
+                    debouncedSearch !== "" ? (
+                      <Stack
+                        width="100%"
+                        justifyContent="center"
+                        padding="30px 0"
+                      >
+                        <Text size="medium" textAlign="center">
+                          No se encontraron solicitudes que coincidan con "
+                          {debouncedSearch}"
+                        </Text>
+                      </Stack>
+                    ) : null}
+
                     {creditRequestData.map((creditRequest) => (
                       <SummaryCard
                         key={creditRequest.creditRequestId}
@@ -282,11 +325,6 @@ export function CreditApplications() {
                       />
                     ))}
                   </>
-                )}
-                {creditRequestData.length === 0 && !loading && (
-                  <Text type="title" size="large" margin="30px 2px">
-                    {dataError.notCredits.i18n[lang]}
-                  </Text>
                 )}
               </Stack>
             </Stack>
