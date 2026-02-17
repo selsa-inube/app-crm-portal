@@ -30,7 +30,7 @@ export const creditConsultationInBuroByIdentificationNumber = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-risk-bureau-queries/${clientIdentificationNumber}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-risk-bureau-queries/identification-number/${clientIdentificationNumber}`,
         options,
       );
 
