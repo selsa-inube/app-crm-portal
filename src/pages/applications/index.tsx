@@ -205,7 +205,6 @@ export function CreditApplications() {
     }
   };
 
-  // Determinar si mostrar el buscador
   const showSearchInput = hasInitialData || debouncedSearch !== "";
 
   return (
