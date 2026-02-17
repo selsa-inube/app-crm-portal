@@ -346,6 +346,10 @@ export const simulationFormLabels = {
   },
 };
 
+export interface IBusinessUnitRuleResponse {
+  value?: string | { from: number; to: number };
+}
+
 export {
   creditLineOptions,
   paymentMethodOptions,

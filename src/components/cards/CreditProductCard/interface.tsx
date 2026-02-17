@@ -25,7 +25,6 @@ function CreditProductCardUI(props: CreditProductCardProps) {
     canDelete,
     installmentFrequency,
   } = props;
-
   return (
     <StyledCreditProductCard $showIcons={showIcons}>
       <Stack direction="column" height="100%" padding="12px" gap="8px">
@@ -68,9 +67,7 @@ function CreditProductCardUI(props: CreditProductCardProps) {
           <Text size="small" appearance="gray" weight="bold">
             {CREDIT_PRODUCT_TEXTS.termMonths.i18n[lang]}
           </Text>
-          <Text>
-            {termMonths % 1 !== 0 ? termMonths.toFixed(4) : termMonths}
-          </Text>
+          <Text>{Number(Number(termMonths).toFixed(4))}</Text>
         </Stack>
         <Stack direction="column">
           <Text size="small" appearance="gray" weight="bold">
