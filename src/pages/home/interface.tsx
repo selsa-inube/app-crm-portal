@@ -10,6 +10,7 @@ import {
 } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { ErrorModal } from "@components/modals/ErrorModal";
+import { LoadingAppUI } from "../login/outlets/LoadingApp/interface";
 
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import {
@@ -71,9 +72,11 @@ const HomeUI = (props: IHomeUIProps) => {
     Array.isArray(dataOptions) ? dataOptions : [dataOptions],
   );
 
+  if (loading) return <LoadingAppUI />;
+
   return (
     <>
-      {codeError ? (
+      {codeError && codeError !== 204 ? (
         <ErrorPage
           onClick={() => {
             codeError === 1003
@@ -117,27 +120,21 @@ const HomeUI = (props: IHomeUIProps) => {
                 </Text>
               ) : (
                 <StyledContainerCards $smallScreen={smallScreen}>
-                  {loading ? (
-                    <>
-                      <InteractiveBox isMobile={smallScreen} isLoading />
-                    </>
-                  ) : (
-                    options.map((item, index) => (
-                      <InteractiveBox
-                        key={index}
-                        label={item.abbreviatedName}
-                        description={item.descriptionUse}
-                        icon={item.icon}
-                        url={item.url}
-                        isDisabled={item.isDisabled}
-                        isMobile={smallScreen}
-                        onInvalidUrl={() => {
-                          setMessageError(errorDataCredit.noUrl.i18n[lang]);
-                          setShowErrorModal(true);
-                        }}
-                      />
-                    ))
-                  )}
+                  {options.map((item, index) => (
+                    <InteractiveBox
+                      key={index}
+                      label={item.abbreviatedName}
+                      description={item.descriptionUse}
+                      icon={item.icon}
+                      url={item.url}
+                      isDisabled={item.isDisabled}
+                      isMobile={smallScreen}
+                      onInvalidUrl={() => {
+                        setMessageError(errorDataCredit.noUrl.i18n[lang]);
+                        setShowErrorModal(true);
+                      }}
+                    />
+                  ))}
                 </StyledContainerCards>
               )}
             </Stack>

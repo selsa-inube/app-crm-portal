@@ -24,9 +24,9 @@ import {
   OptionStaffPortal,
 } from "@services/enum/isaas/catalogOfOptionsForStaffPortal";
 import { ErrorPage } from "@components/layout/ErrorPage";
+
 import { Fieldset } from "@components/data/Fieldset";
-import { ErrorModal } from "@components/modals/ErrorModal";
-import { InteractiveBox } from "@components/cards/interactiveBox";
+
 import { BaseModal } from "@components/modals/baseModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 
@@ -38,6 +38,8 @@ import {
 import { ICreditUIProps } from "./types";
 import { StyledArrowBack, StyledClickableFieldset } from "./styles";
 import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
+import { ErrorModal } from "@src/components/modals/ErrorModal";
+import { LoadingAppUI } from "../login/outlets/LoadingApp/interface";
 
 type IEnhancedSubOption = {
   key: string;
@@ -174,9 +176,11 @@ const CreditUI = (props: ICreditUIProps) => {
     }
   }, [location]);
 
+  if (loading) return <LoadingAppUI />;
+
   return (
     <>
-      {codeError ? (
+      {codeError && codeError !== 204 ? (
         <ErrorPage
           onClick={() => {
             codeError === 1003
@@ -218,61 +222,48 @@ const CreditUI = (props: ICreditUIProps) => {
                 </Text>
               </Stack>
             </StyledArrowBack>
-            {options.length === 0 && !loading ? (
+            {options.length === 0 ? (
               <Text type="title" size="large">
                 {errorDataCredit.noData.i18n[lang]}
               </Text>
             ) : (
-              <>
-                {loading ? (
-                  <Stack width="300px">
-                    <InteractiveBox isMobile={isTablet} isLoading />
-                  </Stack>
-                ) : (
-                  <Fieldset
-                    maxHeight={"550px"}
-                    showFieldset={options.length > 9}
-                  >
-                    <Stack
-                      direction={isTablet ? "column" : "row"}
-                      wrap="wrap"
-                      alignItems={isTablet ? "center" : "flex-start"}
-                    >
-                      {options.map(
-                        ({
-                          key,
-                          icon,
-                          title,
-                          subtitle,
-                          url,
-                          isDisabled,
-                          optionId,
-                        }) => (
-                          <CreditCard
-                            key={key}
-                            icon={icon}
-                            title={title}
-                            subtitle={subtitle}
-                            url={url}
-                            isDisabled={
-                              isDisabled ||
-                              (optionId === advancePaymentModal.tag.subtitle &&
-                                isPayrollAdvanceDisabled)
-                            }
-                            onClick={() =>
-                              handleCardClick(title, url, optionId)
-                            }
-                            onInvalidUrl={() => {
-                              setMessageError(errorDataCredit.noUrl.i18n[lang]);
-                              setShowErrorModal(true);
-                            }}
-                          />
-                        ),
-                      )}
-                    </Stack>
-                  </Fieldset>
-                )}
-              </>
+              <Fieldset maxHeight={"550px"} showFieldset={options.length > 9}>
+                <Stack
+                  direction={isTablet ? "column" : "row"}
+                  wrap="wrap"
+                  alignItems={isTablet ? "center" : "flex-start"}
+                >
+                  {options.map(
+                    ({
+                      key,
+                      icon,
+                      title,
+                      subtitle,
+                      url,
+                      isDisabled,
+                      optionId,
+                    }) => (
+                      <CreditCard
+                        key={key}
+                        icon={icon}
+                        title={title}
+                        subtitle={subtitle}
+                        url={url}
+                        isDisabled={
+                          isDisabled ||
+                          (optionId === advancePaymentModal.tag.subtitle &&
+                            isPayrollAdvanceDisabled)
+                        }
+                        onClick={() => handleCardClick(title, url, optionId)}
+                        onInvalidUrl={() => {
+                          setMessageError(errorDataCredit.noUrl.i18n[lang]);
+                          setShowErrorModal(true);
+                        }}
+                      />
+                    ),
+                  )}
+                </Stack>
+              </Fieldset>
             )}
           </Stack>
           {showErrorModal && (
