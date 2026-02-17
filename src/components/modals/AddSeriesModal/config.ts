@@ -103,6 +103,14 @@ export const dataAddSeriesModal = {
       es: "Valor a pagar",
     },
   },
+  valueGreater: {
+    code: "Value_greater_than_zero",
+    description: "Value must be greater than 0",
+    i18n: {
+      en: "Value must be greater than 0",
+      es: "El valor debe ser mayor a 0",
+    },
+  },
 };
 
 export const defaultFrequency = "Anual";

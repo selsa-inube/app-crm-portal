@@ -50,6 +50,8 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
     loading,
     isLoading,
     lang,
+    dataProspect,
+    eventData,
   } = props;
 
   return (
@@ -226,6 +228,10 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
               }}
               lang={lang}
               onFormValid={setIsCurrentFormValid}
+              dataProspect={dataProspect}
+              businessUnitPublicCode={businessUnitPublicCode}
+              businessManagerCode={businessManagerCode}
+              eventData={eventData}
             />
           )}
         </Stack>

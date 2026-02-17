@@ -2,6 +2,8 @@ import * as Yup from "yup";
 
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IProspect } from "@services/prospect/types";
+import { ICRMPortalData } from "@context/AppContext/types";
 
 export interface IFirstPaymentDate {
   id: string;
@@ -34,6 +36,10 @@ export interface ITermSelection {
   maximumTermEnabled: boolean;
   lang: EnumType;
   isMobile: boolean;
+  dataProspect: IProspect;
+  businessUnitPublicCode: string;
+  businessManagerCode: string;
+  eventData: ICRMPortalData;
   onChange: (values: {
     quotaCapValue: number;
     maximumTermValue: number;

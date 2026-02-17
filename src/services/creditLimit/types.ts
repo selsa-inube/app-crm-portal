@@ -108,3 +108,8 @@ export interface IExtraordinaryCycle {
   paymentDates: string[];
   payrollForDeductionAgreementCode: string;
 }
+
+export interface IPayrollSpecialBenefitAvailable {
+  availableValue: number;
+  date: string;
+}
