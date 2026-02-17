@@ -35,7 +35,7 @@ export function ReportCreditsModal({
       nextButton={dataReport.close.i18n[lang]}
       handleNext={handleClose}
       handleClose={handleClose}
-      width={isMobile ? "310px" : "1120px"}
+      width={isMobile ? "310px" : "1064px"}
       initialDivider={false}
     >
       <Stack direction="column" gap="16px">
