@@ -751,26 +751,19 @@ export function SimulateCredit() {
 
         setOriginalBureauData(consultationData || []);
 
-        const activeScores = (consultationData || []).filter(() => true);
+        const hasActiveScore = (consultationData || []).some(
+          (score) => score.isActive === "Y",
+        );
 
-        if (methods.length > 0) {
-          const hasPendingBureaus = methods.some((method) =>
-            activeScores.some(
-              (score) => score.bureauName === method.bureauName,
-            ),
-          );
-          setShowRiskScoreStep(hasPendingBureaus);
-        }
+        setShowRiskScoreStep(!hasActiveScore);
 
         const scoresForState = methods.map((method) => {
-          const existingScore = activeScores.find(
+          const existingScore = (consultationData || []).find(
             (score) => score.bureauName === method.bureauName,
           );
-
           const normalizedBureauName = method.bureauName
             .toLowerCase()
             .replace("_", " ");
-
           return {
             value: existingScore ? existingScore.creditRiskScore : null,
             date: existingScore ? existingScore.queryDate : null,
@@ -778,7 +771,6 @@ export function SimulateCredit() {
           };
         });
 
-        setShowRiskScoreStep(scoresForState.length > 0);
         handleFormDataChange("riskScores", scoresForState);
       } catch (error) {
         const err = error as {
