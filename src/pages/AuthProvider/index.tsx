@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { IAuthProvider } from "@inube/iauth-react";
+import { IAuthProvider, useIAuth } from "@inube/iauth-react";
 
 import { environment } from "@config/environment";
 import { ErrorPage } from "@components/layout/ErrorPage";
@@ -11,28 +11,32 @@ interface IAuthProviderProps {
   children: ReactNode;
 }
 
-function AuthContent({ children }: { children: ReactNode }) {
-  const {
-    codeError,
-    authConfig,
-    loading,
-    hasAuthError,
-    portalCode,
-    publicCode,
-  } = usePortalLogic();
+interface AuthContentProps {
+  children: ReactNode;
+  authConfig: { clientId: string; clientSecret: string } | null;
+  codeError: number | null;
+  portalCode: string;
+  publicCode: string | null;
+}
+
+function AuthContent({
+  children,
+  authConfig,
+  codeError,
+  portalCode,
+}: AuthContentProps) {
+  const { isAuthenticated, isLoading: isAuthLoading } = useIAuth();
+
+  const hasAuthError = !authConfig || Boolean(codeError);
 
   useAuthHandler(authConfig, hasAuthError, portalCode);
 
-  if (loading) {
+  if (isAuthLoading) {
     return <LoadingAppUI />;
   }
 
-  if (!portalCode || !publicCode) {
-    return <ErrorPage errorCode={1000} />;
-  }
-
-  if (codeError || !authConfig) {
-    return <ErrorPage errorCode={codeError ?? 1000} />;
+  if (!isAuthenticated && !hasAuthError) {
+    return <LoadingAppUI />;
   }
 
   return <>{children}</>;
@@ -66,7 +70,14 @@ export function AuthProvider({ children }: IAuthProviderProps) {
       applicationName={publicCode}
       originatorCode={environment.ORIGINATOR_CODE}
     >
-      <AuthContent>{children}</AuthContent>
+      <AuthContent
+        authConfig={authConfig}
+        codeError={codeError}
+        portalCode={portalCode}
+        publicCode={publicCode}
+      >
+        {children}
+      </AuthContent>
     </IAuthProvider>
   );
 }

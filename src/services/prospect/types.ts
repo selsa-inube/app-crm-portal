@@ -86,6 +86,8 @@ export interface ICreditProduct {
   acquiredCashFlows?: IAcquiredCashFlow[];
   referenceIndexForVariableInterestRate?: string;
   installmentAmount?: number;
+  repaymentStructure?: string;
+  interestRateType?: string;
 }
 
 export interface IAddProduct {

@@ -158,7 +158,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
               score: firstScore.creditRiskScore,
               date: firstScore.queryDate,
               bureauName: firstScore.bureauName,
-              isActive: firstScore.isActive === "1",
+              isActive: firstScore.isActive === "Y",
             }
           : null
       }
@@ -168,7 +168,7 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
               score: secondScore.creditRiskScore,
               date: secondScore.queryDate,
               bureauName: secondScore.bureauName,
-              isActive: secondScore.isActive === "1",
+              isActive: secondScore.isActive === "Y",
             }
           : null
       }

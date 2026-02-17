@@ -3,13 +3,14 @@ import {
   fetchTimeoutServices,
   maxRetriesServices,
 } from "@config/environment";
+import { IUpdateCreditProductPayload } from "@pages/prospect/outlets/CardCommercialManagement/config/config";
 
 import { IProspect, IUpdateCreditProduct } from "../types";
 
 export const updateCreditProduct = async (
   businessUnitPublicCode: string,
   businessManagerCode: string,
-  payload: IUpdateCreditProduct,
+  payload: IUpdateCreditProduct | IUpdateCreditProductPayload,
   authorizationToken: string,
 ): Promise<IProspect | undefined> => {
   const maxRetries = maxRetriesServices;

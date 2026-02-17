@@ -11,6 +11,7 @@ interface IProps {
   handleClose: () => void;
   isMobile: boolean;
   lang: EnumType;
+  incomes?: boolean;
 }
 
 export function AlertIncome(props: IProps) {
@@ -78,7 +79,7 @@ export function AlertObligations(props: IProps) {
 }
 
 export function AlertCreditLimit(props: IProps) {
-  const { handleNext, handleClose, isMobile, lang } = props;
+  const { handleNext, handleClose, isMobile, lang, incomes } = props;
 
   return (
     <BaseModal
@@ -89,7 +90,11 @@ export function AlertCreditLimit(props: IProps) {
       width={isMobile ? "280px" : "450px"}
     >
       <Stack>
-        <Text>{textModals.descriptionQuotas.i18n[lang]}</Text>
+        <Text>
+          {incomes
+            ? textModals.descriptionQuotasIncome.i18n[lang]
+            : textModals.descriptionQuotas.i18n[lang]}
+        </Text>
       </Stack>
     </BaseModal>
   );

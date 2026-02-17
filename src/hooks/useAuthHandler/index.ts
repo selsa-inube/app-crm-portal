@@ -15,6 +15,7 @@ const useAuthHandler = (
 
   useEffect(() => {
     const isLogoutRoute = window.location.pathname === "/logout";
+
     if (
       !hasAuthError &&
       authConfig &&

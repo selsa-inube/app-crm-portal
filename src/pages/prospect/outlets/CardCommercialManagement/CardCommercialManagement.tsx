@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   SkeletonLine,
 } from "@inubekit/inubekit";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
 
 import { CreditProductCard } from "@components/cards/CreditProductCard";
 import { NewCreditProductCard } from "@components/cards/CreditProductCard/newCard";
@@ -32,14 +33,18 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import InfoModal from "../../components/InfoModal";
-import { SummaryProspectCredit, tittleOptions } from "./config/config";
+import {
+  SummaryProspectCredit,
+  tittleOptions,
+  IUpdateCreditProductPayload,
+} from "./config/config";
 import {
   StyledCardsCredit,
   StyledPrint,
   StyledPrintCardProspect,
   StylePrintCardSummary,
 } from "./styles";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { areValuesEqual } from "./utils";
 
 interface CardCommercialManagementProps {
   id: string;
@@ -191,19 +196,66 @@ export const CardCommercialManagement = (
 
     try {
       setIsProcessingServices(true);
-      const payload = {
+
+      const payload: IUpdateCreditProductPayload = {
         prospectId: prospectData.prospectId,
         creditProductCode: selectedProduct.creditProductCode,
-        interestRate: Number(values.interestRate),
-        loanTerm: Number(values.termInMonths),
-        loanAmount: Number(values.creditAmount),
-        paymentChannelAbbreviatedName: values.paymentMethod,
-        installmentAmount: Number(values.installmentAmount),
-        firstPaymentDate: values.firstPaymentDate,
-        interestRateDueType: values.interestRateDueType,
-        interestRateType: values.interestRateType,
-        paymentChannelCyleName: values.paymentCycle,
       };
+
+      if (
+        !areValuesEqual(values.interestRate, selectedProduct.interestRate, 4)
+      ) {
+        payload.interestRate = Number(values.interestRate);
+      }
+
+      if (!areValuesEqual(values.termInMonths, selectedProduct.loanTerm, 4)) {
+        payload.loanTerm = Number(values.termInMonths);
+      }
+
+      if (!areValuesEqual(values.creditAmount, selectedProduct.loanAmount, 2)) {
+        payload.loanAmount = Number(values.creditAmount);
+      }
+
+      if (
+        values.rateType &&
+        values.rateType !== selectedProduct.interestRateType
+      ) {
+        payload.interestRateType = values.rateType;
+      }
+
+      if (
+        values.amortizationType &&
+        values.amortizationType !== selectedProduct.repaymentStructure
+      ) {
+        payload.repaymentStructure = values.amortizationType;
+      }
+
+      const initialInstallment =
+        selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
+          ?.installmentAmount || 0;
+      if (!areValuesEqual(values.installmentAmount, initialInstallment, 2)) {
+        payload.installmentAmount = Number(values.installmentAmount);
+      }
+
+      const initialPaymentMethod =
+        selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
+          ?.paymentChannelAbbreviatedName || "";
+      if (values.paymentMethod !== initialPaymentMethod) {
+        payload.paymentChannelAbbreviatedName = values.paymentMethod;
+      }
+
+      const initialCycle = prospectData.selectedRegularPaymentSchedule || "";
+      if (values.paymentCycle !== initialCycle) {
+        payload.paymentChannelCyleName = values.paymentCycle;
+      }
+
+      const hasChanges = Object.keys(payload).length > 2;
+
+      if (!hasChanges) {
+        setModalHistory((prev) => prev.slice(0, -1));
+        setIsProcessingServices(false);
+        return;
+      }
 
       await updateCreditProduct(
         businessUnitPublicCode,
@@ -470,13 +522,13 @@ export const CardCommercialManagement = (
                 Number(selectedProduct.loanTerm) % 1 !== 0
                   ? Number(selectedProduct.loanTerm).toFixed(4)
                   : Number(selectedProduct.loanTerm) || 0,
-              amortizationType: "",
               interestRate:
                 Number(selectedProduct.interestRate).toFixed(4) || 0,
-              rateType: "",
               installmentAmount:
                 selectedProduct.ordinaryInstallmentsForPrincipal[0]
                   .installmentAmount || 1,
+              amortizationType: selectedProduct.repaymentStructure || "",
+              rateType: selectedProduct.interestRateType || "",
             }}
             prospectData={{
               lineOfCredit: selectedProduct.lineOfCreditAbbreviatedName || "",

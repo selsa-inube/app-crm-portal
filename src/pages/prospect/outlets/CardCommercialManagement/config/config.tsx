@@ -439,3 +439,18 @@ export const paymentCycleMap: Record<string, string> = {
 };
 
 export const amountContainerOnSkeletons = 5;
+
+export interface IUpdateCreditProductPayload {
+  prospectId: string;
+  creditProductCode: string;
+  interestRate?: number;
+  loanTerm?: number;
+  loanAmount?: number;
+  paymentChannelAbbreviatedName?: string;
+  installmentAmount?: number;
+  firstPaymentDate?: string;
+  interestRateDueType?: string;
+  interestRateType?: string;
+  paymentChannelCyleName?: string;
+  repaymentStructure?: string;
+}
