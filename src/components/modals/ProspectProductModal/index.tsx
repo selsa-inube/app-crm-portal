@@ -8,7 +8,7 @@ import {
   Select,
   Textfield,
 } from "@inubekit/inubekit";
-import { useState, useContext, useMemo } from "react";
+import { useState, useContext, useMemo, useEffect } from "react";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { postBusinessUnitRules } from "@services/businessUnitRules/EvaluteRuleByBusinessUnit";
@@ -39,6 +39,7 @@ import {
   validationMessages,
   REPAYMENT_STRUCTURES_WITH_INCREMENT,
   simulationFormLabels,
+  IBusinessUnitRuleResponse,
 } from "./config";
 import { TruncatedText } from "../TruncatedTextModal";
 
@@ -92,31 +93,90 @@ function EditProductModal(props: EditProductModalProps) {
   const [incrementError, setIncrementError] = useState<string>("");
   const [isValidatingIncrement, setIsValidatingIncrement] =
     useState<boolean>(false);
-  const [creditAmountModified, setCreditAmountModified] =
-    useState<boolean>(false);
   const [termInMonthsModified, setTermInMonthsModified] =
     useState<boolean>(false);
   const [loanAmountError, setLoanAmountError] = useState<string>("");
-
   const [loanTermError, setLoanTermError] = useState<string>("");
   const [interestRateError, setInterestRateError] = useState<string>("");
+  const [allowedAmortizationCodes, setAllowedAmortizationCodes] = useState<
+    string[]
+  >([]);
+  const [allowedRateCodes, setAllowedRateCodes] = useState<string[]>([]);
+  const [installmentAmountModified, setInstallmentAmountModified] =
+    useState<boolean>(false);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
+
+  useEffect(() => {
+    const fetchAllowedOptions = async () => {
+      try {
+        const commonConditions = [
+          { condition: "LineOfCredit", value: prospectData.lineOfCredit },
+        ];
+
+        const [amortizationDecisions, rateDecisions] = await Promise.all([
+          postBusinessUnitRules(
+            businessUnitPublicCode,
+            businessManagerCode,
+            { ruleName: "erepaymentstructure", conditions: commonConditions },
+            eventData.token,
+          ) as unknown as Promise<IBusinessUnitRuleResponse[]>,
+
+          postBusinessUnitRules(
+            businessUnitPublicCode,
+            businessManagerCode,
+            { ruleName: "einterestratetype", conditions: commonConditions },
+            eventData.token,
+          ) as unknown as Promise<IBusinessUnitRuleResponse[]>,
+        ]);
+
+        if (amortizationDecisions?.[0]?.value) {
+          const value = amortizationDecisions[0].value;
+          setAllowedAmortizationCodes(
+            typeof value === "string" ? value.split(",") : [],
+          );
+        }
+
+        if (rateDecisions?.[0]?.value) {
+          const value = rateDecisions[0].value;
+          setAllowedRateCodes(
+            typeof value === "string" ? value.split(",") : [],
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching filtered rules", error);
+      }
+    };
+
+    fetchAllowedOptions();
+  }, [
+    businessUnitPublicCode,
+    businessManagerCode,
+    prospectData.lineOfCredit,
+    eventData.token,
+  ]);
 
   const amortizationTypesList = useMemo(() => {
     if (!enums?.RepaymentStructure) return [];
 
-    return enums.RepaymentStructure.map((item) => ({
+    return enums.RepaymentStructure.filter(
+      (item) =>
+        allowedAmortizationCodes.length === 0 ||
+        allowedAmortizationCodes.includes(item.code),
+    ).map((item) => ({
       id: item.code,
       value: item.code,
       label: item.i18n[lang] || item.description || item.code,
     }));
-  }, [enums, lang]);
+  }, [enums, lang, allowedAmortizationCodes]);
 
   const rateTypesList = useMemo(() => {
     if (!enums?.InterestRateType) return [];
 
-    return enums.InterestRateType.map((item) => ({
+    return enums.InterestRateType.filter(
+      (item) =>
+        allowedRateCodes.length === 0 || allowedRateCodes.includes(item.code),
+    ).map((item) => ({
       id: item.code,
       value: item.code,
       label: item.i18n[lang] || item.description || item.code,
@@ -125,12 +185,12 @@ function EditProductModal(props: EditProductModalProps) {
 
   const isLoading = !enums;
 
-  const isCreditAmountDisabled = (): boolean => {
-    return termInMonthsModified;
+  const isTermInMonthsDisabled = (): boolean => {
+    return installmentAmountModified;
   };
 
-  const isTermInMonthsDisabled = (): boolean => {
-    return creditAmountModified;
+  const isInstallmentAmountDisabled = (): boolean => {
+    return termInMonthsModified;
   };
 
   const handleSelectChange = (
@@ -338,11 +398,8 @@ function EditProductModal(props: EditProductModalProps) {
     const initialAmount = initialValues.creditAmount;
 
     if (numericValue === initialAmount || rawValue === "") {
-      setCreditAmountModified(false);
       setLoanAmountError("");
     } else {
-      setCreditAmountModified(true);
-
       if (numericValue > 0) {
         validateLoanAmount(numericValue);
       } else {
@@ -356,6 +413,15 @@ function EditProductModal(props: EditProductModalProps) {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     handleChangeWithCurrency(formik, event);
+    const rawValue = event.target.value.replace(VALIDATED_NUMBER_REGEX, "");
+    const numericValue = Number(rawValue);
+    const initialInstallment = Number(initialValues.installmentAmount);
+
+    if (numericValue !== initialInstallment && rawValue !== "") {
+      setInstallmentAmountModified(true);
+    } else {
+      setInstallmentAmountModified(false);
+    }
   };
 
   const handleSelectFocus = (fieldId: string) => {
@@ -604,7 +670,6 @@ function EditProductModal(props: EditProductModalProps) {
                 onBlur={formik.handleBlur}
                 onChange={(event) => handleCurrencyChange(formik, event)}
                 fullwidth
-                disabled={isCreditAmountDisabled()}
               />
               <CardGray
                 label={simulationFormLabels.paymentMethod.i18n[lang]}
@@ -781,6 +846,7 @@ function EditProductModal(props: EditProductModalProps) {
                 onBlur={formik.handleBlur}
                 onChange={(event) => handleInstallmentChange(formik, event)}
                 fullwidth
+                disabled={isInstallmentAmountDisabled()}
               />
             </Stack>
           </ScrollableContainer>
