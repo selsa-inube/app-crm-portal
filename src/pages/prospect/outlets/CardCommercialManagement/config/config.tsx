@@ -452,4 +452,5 @@ export interface IUpdateCreditProductPayload {
   interestRateDueType?: string;
   interestRateType?: string;
   paymentChannelCyleName?: string;
+  repaymentStructure?: string;
 }

@@ -118,14 +118,14 @@ function EditProductModal(props: EditProductModalProps) {
           postBusinessUnitRules(
             businessUnitPublicCode,
             businessManagerCode,
-            { ruleName: "erepaymentstructure", conditions: commonConditions },
+            { ruleName: "RepaymentStructure", conditions: commonConditions },
             eventData.token,
           ) as unknown as Promise<IBusinessUnitRuleResponse[]>,
 
           postBusinessUnitRules(
             businessUnitPublicCode,
             businessManagerCode,
-            { ruleName: "einterestratetype", conditions: commonConditions },
+            { ruleName: "InterestRateType", conditions: commonConditions },
             eventData.token,
           ) as unknown as Promise<IBusinessUnitRuleResponse[]>,
         ]);
@@ -694,7 +694,12 @@ function EditProductModal(props: EditProductModalProps) {
                 }
                 size="compact"
                 type="number"
-                value={formik.values.termInMonths}
+                value={
+                  formik.values.termInMonths !== "" &&
+                  formik.values.termInMonths !== undefined
+                    ? Number(formik.values.termInMonths)
+                    : ""
+                }
                 status={loanTermError ? "invalid" : undefined}
                 message={loanTermError}
                 onBlur={formik.handleBlur}

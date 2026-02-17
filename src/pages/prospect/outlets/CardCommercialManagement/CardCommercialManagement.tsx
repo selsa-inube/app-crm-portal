@@ -216,6 +216,20 @@ export const CardCommercialManagement = (
         payload.loanAmount = Number(values.creditAmount);
       }
 
+      if (
+        values.rateType &&
+        values.rateType !== selectedProduct.interestRateType
+      ) {
+        payload.interestRateType = values.rateType;
+      }
+
+      if (
+        values.amortizationType &&
+        values.amortizationType !== selectedProduct.repaymentStructure
+      ) {
+        payload.repaymentStructure = values.amortizationType;
+      }
+
       const initialInstallment =
         selectedProduct.ordinaryInstallmentsForPrincipal?.[0]
           ?.installmentAmount || 0;
@@ -508,13 +522,13 @@ export const CardCommercialManagement = (
                 Number(selectedProduct.loanTerm) % 1 !== 0
                   ? Number(selectedProduct.loanTerm).toFixed(4)
                   : Number(selectedProduct.loanTerm) || 0,
-              amortizationType: "",
               interestRate:
                 Number(selectedProduct.interestRate).toFixed(4) || 0,
-              rateType: "",
               installmentAmount:
                 selectedProduct.ordinaryInstallmentsForPrincipal[0]
                   .installmentAmount || 1,
+              amortizationType: selectedProduct.repaymentStructure || "",
+              rateType: selectedProduct.interestRateType || "",
             }}
             prospectData={{
               lineOfCredit: selectedProduct.lineOfCreditAbbreviatedName || "",
