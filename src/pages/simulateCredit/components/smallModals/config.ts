@@ -43,6 +43,14 @@ export const textModals = {
       es: "El sistema no cuenta con información financiera del cliente",
     },
   },
+  descriptionQuotasIncome: {
+    code: "Description_quotasIncome",
+    description: "Message when no income info is available",
+    i18n: {
+      en: "The system has no income information of the client",
+      es: "El sistema no cuenta con información de ingresos del cliente",
+    },
+  },
   errorPost: {
     code: "Error_post",
     description: "Error creating credit application",

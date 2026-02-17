@@ -49,7 +49,6 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
     incomeData,
     lang,
   } = props;
-
   const { eventData } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
