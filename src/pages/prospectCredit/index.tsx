@@ -39,6 +39,7 @@ export function ProspectCredit() {
   const { customerData } = useContext(CustomerContext);
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
+  const [hasInitialData, setHasInitialData] = useState(false);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -76,6 +77,10 @@ export function ProspectCredit() {
           eventData.token,
         );
         setCreditRequestData(creditData);
+
+        if (search === "") {
+          setHasInitialData(creditData.length > 0);
+        }
       } catch {
         setCodeError(1022);
         setAddToFix([dataCreditProspects.errorCreditRequest.i18n[lang]]);
@@ -118,6 +123,8 @@ export function ProspectCredit() {
     }
   };
 
+  const showSearchInput = hasInitialData;
+
   return (
     <>
       {codeError ? (
@@ -154,22 +161,37 @@ export function ProspectCredit() {
           </StyledArrowBack>
           <Fieldset>
             <Stack direction="column" gap="20px" padding="8px 16px">
-              <Stack justifyContent="space-between" alignItems="center">
-                <Input
-                  id="keyWord"
-                  placeholder={dataCreditProspects.keyWord.i18n[lang]}
-                  type="search"
-                  onChange={(event) => handleSearch(event)}
-                />
-              </Stack>
+              {showSearchInput && (
+                <Stack justifyContent="space-between" alignItems="center">
+                  <Input
+                    id="keyWord"
+                    placeholder={dataCreditProspects.keyWord.i18n[lang]}
+                    type="search"
+                    onChange={(event) => handleSearch(event)}
+                  />
+                </Stack>
+              )}
               <Stack wrap="wrap" gap="20px">
-                {creditRequestData.length === 0 && !loading && (
-                  <NoResultsMessage search={search} />
-                )}
                 {loading ? (
                   <LoadCard />
                 ) : (
                   <>
+                    {!hasInitialData && search === "" && (
+                      <Stack
+                        width="100%"
+                        justifyContent="center"
+                        padding="30px 0"
+                      >
+                        <Text size="medium" textAlign="center">
+                          {dataError.notCredits.i18n[lang]}
+                        </Text>
+                      </Stack>
+                    )}
+
+                    {hasInitialData &&
+                      creditRequestData.length === 0 &&
+                      search !== "" && <NoResultsMessage search={search} />}
+
                     {creditRequestData.map((creditRequest) => (
                       <SummaryCard
                         key={creditRequest.creditRequestId}
@@ -191,11 +213,6 @@ export function ProspectCredit() {
                       />
                     ))}
                   </>
-                )}
-                {creditRequestData.length === 0 && !loading && (
-                  <Text type="title" size="large" margin="30px 2px">
-                    {dataError.notCredits.i18n[lang]}
-                  </Text>
                 )}
               </Stack>
             </Stack>
