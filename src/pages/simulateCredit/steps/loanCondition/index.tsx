@@ -16,21 +16,46 @@ interface ILoanCondition {
   onFormValid: (isValid: boolean) => void;
   isMobile: boolean;
   lang: EnumType;
+  maxLoanTerm: number;
+  paymentCapacity: number;
 }
 
 export function LoanCondition(props: ILoanCondition) {
-  const { initialValues, handleOnChange, onFormValid, isMobile, lang } = props;
+  const {
+    initialValues,
+    handleOnChange,
+    onFormValid,
+    isMobile,
+    lang,
+    maxLoanTerm,
+    paymentCapacity,
+  } = props;
 
   const validationSchema = Yup.object().shape({
-    quotaCapValue: Yup.string().when(
+    quotaCapValue: Yup.number().when(
       "toggles.quotaCapToggle",
       (quotaCapToggle, schema) =>
-        quotaCapToggle ? schema.required("") : schema,
+        quotaCapToggle
+          ? schema
+              .required("")
+              .max(
+                paymentCapacity,
+                `El valor no puede exceder ${currencyFormat(paymentCapacity)} de capacidad de pago`,
+              )
+          : schema,
     ),
-    maximumTermValue: Yup.string().when(
+    maximumTermValue: Yup.number().when(
       "toggles.maximumTermToggle",
       (maximumTermToggle, schema) =>
-        maximumTermToggle ? schema.required("") : schema,
+        maximumTermToggle
+          ? schema
+              .required("")
+              .positive(loanData.valueGreater.i18n[lang])
+              .max(
+                maxLoanTerm,
+                `El valor no puede exceder ${maxLoanTerm} meses`,
+              )
+          : schema,
     ),
   });
 
@@ -52,7 +77,7 @@ export function LoanCondition(props: ILoanCondition) {
       validateOnMount={true}
       onSubmit={() => {}}
     >
-      {({ values, handleChange, handleBlur, setFieldValue }) => (
+      {({ values, errors, handleChange, handleBlur, setFieldValue }) => (
         <Form>
           <Stack>
             <Fieldset>
@@ -120,6 +145,8 @@ export function LoanCondition(props: ILoanCondition) {
                         placeholder={loanData.quotaCapPlaceholder.i18n[lang]}
                         size="compact"
                         type="text"
+                        status={errors.quotaCapValue ? "invalid" : "pending"}
+                        message={errors.quotaCapValue}
                         disabled={!values.toggles.quotaCapToggle}
                         fullwidth={isMobile}
                         value={
@@ -135,20 +162,15 @@ export function LoanCondition(props: ILoanCondition) {
                             : ""
                         }
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          const formattedValue = currencyFormat(
-                            Number(e.target.value.replace(/[^0-9]/g, "")),
+                          const numericValue = Number(
+                            e.target.value.replace(/[^0-9]/g, ""),
                           );
-                          handleChange({
-                            target: {
-                              name: "quotaCapValue",
-                              value: formattedValue,
-                            },
-                          });
+
+                          setFieldValue("quotaCapValue", numericValue);
+
                           handleOnChange({
                             ...values,
-                            quotaCapValue: Number(
-                              e.target.value.replace(/[^0-9]/g, ""),
-                            ),
+                            quotaCapValue: numericValue,
                           });
                         }}
                         onBlur={handleBlur}
@@ -244,6 +266,10 @@ export function LoanCondition(props: ILoanCondition) {
                             });
                           }}
                           onBlur={handleBlur}
+                          status={
+                            errors.maximumTermValue ? "invalid" : "pending"
+                          }
+                          message={errors.maximumTermValue}
                         />
                       </Stack>
                     </Stack>

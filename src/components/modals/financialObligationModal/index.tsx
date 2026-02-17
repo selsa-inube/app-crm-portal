@@ -41,6 +41,7 @@ export interface FinancialObligationModalProps {
   enums: IAllEnumsResponse;
   iconBefore?: React.JSX.Element;
   iconAfter?: React.JSX.Element;
+  maxTerm?: number;
 }
 
 function FinancialObligationModal({
@@ -51,6 +52,7 @@ function FinancialObligationModal({
   enums,
   iconBefore,
   iconAfter,
+  maxTerm,
 }: FinancialObligationModalProps) {
   const isMobile = useMediaQuery("(max-width: 880px)");
   const { eventData } = useContext(AppContext);
@@ -62,16 +64,24 @@ function FinancialObligationModal({
   const validationSchema = Yup.object({
     type: Yup.string().required(""),
     entity: Yup.string().required(""),
-    fee: Yup.number().required(""),
-    balance: Yup.number().required(""),
+    fee: Yup.number().required("").positive(dataInputs.valueGreater.i18n[lang]),
+    balance: Yup.number()
+      .required("")
+      .positive(dataInputs.valueGreater.i18n[lang]),
     payment: Yup.string().required(""),
     feePaid: Yup.number()
       .required("")
+      .positive(dataInputs.valueGreater.i18n[lang])
       .test(function (value) {
         const { term } = this.parent;
         return value !== undefined && term !== undefined ? value < term : true;
       }),
-    term: Yup.number().required(""),
+    term: maxTerm
+      ? Yup.number()
+          .required("")
+          .positive(dataInputs.valueGreater)
+          .max(maxTerm, `El valor no puede exceder ${maxTerm} meses`)
+      : Yup.number().required("").positive(dataInputs.valueGreater.i18n[lang]),
   });
 
   const formik = useFormik({
@@ -239,6 +249,8 @@ function FinancialObligationModal({
             size="compact"
             onBlur={formik.handleBlur}
             onChange={(e) => handleChangeWithCurrency(formik, e)}
+            message={formik.errors.fee}
+            status={formik.errors.fee ? "invalid" : "pending"}
             fullwidth
           />
 
@@ -258,6 +270,8 @@ function FinancialObligationModal({
             size="compact"
             onBlur={formik.handleBlur}
             onChange={(e) => handleChangeWithCurrency(formik, e)}
+            message={formik.errors.balance}
+            status={formik.errors.balance ? "invalid" : "pending"}
             fullwidth
           />
           {meansPaymentOptions.length === 1 ? (
@@ -315,6 +329,8 @@ function FinancialObligationModal({
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             type="number"
+            message={formik.errors.feePaid}
+            status={formik.errors.feePaid ? "invalid" : "pending"}
             fullwidth
           />
 
@@ -331,6 +347,8 @@ function FinancialObligationModal({
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             type="number"
+            message={formik.errors.term}
+            status={formik.errors.term ? "invalid" : "pending"}
             fullwidth
           />
         </Grid>
