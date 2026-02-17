@@ -109,7 +109,6 @@ export function CreditApplications() {
         );
         setCreditRequestData(creditData);
 
-        // Establecer hasInitialData solo en la primera carga (sin búsqueda)
         if (debouncedSearch === "") {
           setHasInitialData(creditData.length > 0);
         }
