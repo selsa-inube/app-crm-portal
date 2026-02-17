@@ -486,6 +486,11 @@ export const TableFinancialObligationsUI = ({
                 appearance={rowIndex % 2 === 0 ? "light" : "dark"}
                 type={header.action ? "custom" : "text"}
                 align={header.action ? "center" : isNumeric ? "right" : "left"}
+                style={
+                  isNumeric
+                    ? { whiteSpace: "nowrap" }
+                    : { whiteSpace: "normal" }
+                }
               >
                 {header.action ? (
                   <Stack justifyContent="space-around">

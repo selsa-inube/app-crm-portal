@@ -21,7 +21,7 @@ export const headers: {
   { label: "Entidad", key: "entity" },
   { label: "Medio de pago", key: "payment" },
   { label: "Id", key: "idUser" },
-  { label: "Cuotas pagadas", key: "feePaid" },
+  { label: "Cuotas", key: "feePaid" },
   { label: "Acciones", key: "actions", action: true },
 ];
 
