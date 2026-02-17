@@ -313,7 +313,10 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       variant="outlined"
                       cursor="pointer"
                       onClick={() => {
-                        if ((currentStepsNumber?.id ?? 0) >= 4) {
+                        if (
+                          (currentStepsNumber?.id ?? 0) >= 4 &&
+                          totalIncome > 0
+                        ) {
                           setIsCreditLimitModalOpen(true);
                         } else {
                           setIsCreditLimitWarning(true);
@@ -694,6 +697,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                   handleClose={() => setIsCreditLimitWarning(false)}
                   isMobile={isMobile}
                   lang={lang}
+                  incomes={!(totalIncome > 0)}
                 />
               )}
               {isCapacityAnalysisModal && (
