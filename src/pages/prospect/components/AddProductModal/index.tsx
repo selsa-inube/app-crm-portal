@@ -273,6 +273,8 @@ function AddProductModal(props: IAddProductModalProps) {
       errorModal={errorModal}
       isLoading={isLoading}
       lang={lang}
+      dataProspect={dataProspect}
+      eventData={eventData}
     />
   );
 }

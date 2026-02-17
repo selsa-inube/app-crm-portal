@@ -459,6 +459,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       clientIdentificationNumber={customerData.publicCode}
                       setShowErrorModal={setShowErrorModal}
                       setMessageError={setMessageError}
+                      maxLoanTerm={maxLoanTerm}
                     />
                   )}
                 {currentStepsNumber &&
@@ -589,6 +590,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       onFormValid={setIsCurrentFormValid}
                       isMobile={isMobile}
                       lang={lang}
+                      maxLoanTerm={maxLoanTerm}
+                      paymentCapacity={paymentCapacity?.paymentCapacity || 0}
                     />
                   )}
                 {currentStepsNumber &&

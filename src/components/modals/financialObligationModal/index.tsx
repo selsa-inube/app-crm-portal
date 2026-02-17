@@ -80,7 +80,7 @@ function FinancialObligationModal({
       ? Yup.number()
           .required("")
           .positive(dataInputs.valueGreater)
-          .max(maxTerm, `El valor no puede exceder ${maxTerm}`)
+          .max(maxTerm, `El valor no puede exceder ${maxTerm} meses`)
       : Yup.number().required("").positive(dataInputs.valueGreater.i18n[lang]),
   });
 

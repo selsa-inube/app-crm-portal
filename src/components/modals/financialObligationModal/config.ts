@@ -244,8 +244,8 @@ const dataInputs = {
     code: "Obligation_id_placeholder",
     description: "Identifier",
     i18n: {
-      en: "Identifier",
-      es: "Identificador",
+      en: "New obligation",
+      es: "Nueva obligación",
     },
   },
   labelFeePaid: {

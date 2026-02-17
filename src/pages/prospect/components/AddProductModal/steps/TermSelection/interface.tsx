@@ -29,7 +29,7 @@ export function TermSelectionUI(props: ITermSelectionUI) {
       validateOnMount={true}
       onSubmit={() => {}}
     >
-      {({ values, handleBlur, setFieldValue }) => (
+      {({ values, handleBlur, setFieldValue, errors }) => (
         <Form>
           <Stack direction="column" gap="16px" padding="0px 16px">
             <Fieldset>
@@ -87,6 +87,8 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                         placeholder={loanData.quotaCapPlaceholder.i18n[lang]}
                         size="compact"
                         type="text"
+                        status={errors.quotaCapValue ? "invalid" : "pending"}
+                        message={errors.quotaCapValue}
                         disabled={!values.toggles.quotaCapToggle}
                         fullwidth={isMobile}
                         value={values.quotaCapValue}
