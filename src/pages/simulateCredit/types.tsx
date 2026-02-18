@@ -162,6 +162,7 @@ export interface IFormData {
     value: number;
     date: string;
     bureauName: string;
+    bureauNameEnum: string;
   }[];
   requestedValue?: string;
   disbursementGeneral?: IDisbursementGeneral;
