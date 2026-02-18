@@ -52,7 +52,7 @@ import {
   IManageErrors,
 } from "./types";
 import { SimulateCreditUI } from "./interface";
-import { messagesError, modifyJustification } from "./config/config";
+import { messagesError } from "./config/config";
 import {
   createMainBorrowerFromFormData,
   updateFinancialObligationsFormData,
@@ -777,6 +777,7 @@ export function SimulateCredit() {
             value: existingScore ? existingScore.creditRiskScore : null,
             date: existingScore ? existingScore.queryDate : null,
             bureauName: normalizedBureauName,
+            bureauNameEnum: method.bureauName,
           };
         });
 
@@ -816,25 +817,19 @@ export function SimulateCredit() {
       if (originalRecord) {
         payload = {
           ...originalRecord,
+          bureauName: scoreToUpdate.bureauNameEnum,
           creditRiskScore: newRisk.value,
           queryDate: newRisk.date,
-          modifyJustification: modifyJustification.message.i18n[lang],
           registrantIdentificationNumber:
             eventData.user.identificationDocumentNumber || "",
-          portfolioObligations: [],
         };
       } else {
-        const generatedId = new Date().getTime().toString();
         payload = {
           clientName: customerData.fullName,
-          creditRiskBureauQueryId: generatedId,
-          bureauName: scoreToUpdate.bureauName,
+          bureauName: scoreToUpdate.bureauNameEnum,
           creditRiskScore: newRisk.value,
           queryDate: newRisk.date,
-          isActive: "1",
           clientIdentificationNumber: customerData.publicCode,
-          modifyJustification: modifyJustification.message.i18n[lang],
-          portfolioObligations: [],
           clientIdentificationType:
             customerData.generalAttributeClientNaturalPersons?.[0]
               ?.typeIdentification || "",
@@ -842,8 +837,6 @@ export function SimulateCredit() {
             eventData.user.identificationDocumentNumber || "",
         };
       }
-
-      delete (payload as Partial<typeof payload>).creditRiskBureauQueryId;
 
       await updateCreditRiskBureauQuery(
         businessUnitPublicCode,
