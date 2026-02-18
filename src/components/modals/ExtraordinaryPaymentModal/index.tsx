@@ -167,6 +167,7 @@ export const ExtraordinaryPaymentModal = (
             toggleAddSeriesModal={() => {
               closeAddSeriesModal();
             }}
+            maxLoanTerm={prospectData?.creditProducts[0]?.loanTerm || 0}
           />
         )}
         {isModalOpen ? (

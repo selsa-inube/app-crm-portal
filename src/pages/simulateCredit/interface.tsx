@@ -30,14 +30,12 @@ import { IProspect } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
-import userImage from "@assets/images/userImage.jpeg";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 import { Fieldset } from "@components/data/Fieldset";
 import { ICreditRiskBureauUpdateMethod } from "@services/creditRiskBureauQueries/types";
 
 import { riskScoreData } from "./steps/riskScore/config";
-import { GeneralHeader } from "./components/GeneralHeader";
 import { ExtraordinaryInstallments } from "./steps/extraordinaryInstallments";
 import { stepsAddProspect } from "./config/addProspect.config";
 import {
@@ -172,6 +170,7 @@ interface SimulateCreditUIProps {
   lang: EnumType;
   enums: IAllEnumsResponse;
   isLoadingUpdate: boolean;
+  maxLoanTerm: number;
   setCreatedProspectModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleUpdateRiskScore: (
     index: number,
@@ -205,7 +204,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     navigate,
     currentStepsNumber,
     customerData,
-    dataHeader,
     steps,
     isCurrentFormValid,
     isModalOpenRequirements,
@@ -238,6 +236,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     businessUnitPublicCode,
     businessManagerCode,
     isLoadingCreditLimit,
+    maxLoanTerm,
     lang,
     allowToContinue,
     handleModalTryAgain,
@@ -258,6 +257,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
     bureauMethods,
     handleBureauConsultation,
   } = props;
+
   return (
     <>
       {codeError ? (
@@ -278,12 +278,6 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
             margin="20px 0px"
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
-              <GeneralHeader
-                buttonText="Agregar vinculación"
-                descriptionStatus={dataHeader.status}
-                name={dataHeader.name}
-                profileImageUrl={dataHeader.image || userImage}
-              />
               <Breadcrumbs
                 crumbs={addConfig.crumbs.map((crumb) => ({
                   ...crumb,
@@ -464,6 +458,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       clientIdentificationNumber={customerData.publicCode}
                       setShowErrorModal={setShowErrorModal}
                       setMessageError={setMessageError}
+                      maxLoanTerm={maxLoanTerm}
                     />
                   )}
                 {currentStepsNumber &&
@@ -575,6 +570,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       }
                       lang={lang}
                       enums={enums}
+                      maxTerm={maxLoanTerm}
                     />
                   )}
                 {currentStepsNumber &&
@@ -593,6 +589,8 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       onFormValid={setIsCurrentFormValid}
                       isMobile={isMobile}
                       lang={lang}
+                      maxLoanTerm={maxLoanTerm}
+                      paymentCapacity={paymentCapacity?.paymentCapacity || 0}
                     />
                   )}
                 {currentStepsNumber &&

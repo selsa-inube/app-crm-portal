@@ -10,13 +10,12 @@ import { Stack, Icon, Text, useMediaQuery, Button } from "@inubekit/inubekit";
 import { CustomerContext } from "@context/CustomerContext";
 import { initialCustomerData } from "@context/CustomerContext/types";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import userImage from "@assets/images/userImage.jpeg";
 
 import { StyledContainerGeneralHeader, StyledPerfil } from "./styles";
 import { appearanceTag, tittleHeader } from "./config";
 
 interface IGeneralHeaderProps {
-  profileImageUrl: string;
-  name: string;
   descriptionStatus?: string;
   iconSettings?: React.ReactNode;
   iconButton?: React.ReactNode;
@@ -28,124 +27,125 @@ interface IGeneralHeaderProps {
 }
 
 export function GeneralHeader(props: IGeneralHeaderProps) {
-  const {
-    profileImageUrl,
-    name,
-    descriptionStatus,
-    buttonText,
-    showButton,
-    showIcon,
-    onClickIcon,
-    onClickButton,
-  } = props;
+  const { buttonText, showButton, showIcon, onClickIcon, onClickButton } =
+    props;
 
-  const { setCustomerPublicCodeState, setCustomerData } =
+  const { setCustomerPublicCodeState, setCustomerData, customerData } =
     useContext(CustomerContext);
   const isMobile = useMediaQuery("(max-width: 460px)");
+  const isSmallScreen = !useMediaQuery("(min-width: 1024px)");
   const navigate = useNavigate();
   const { lang } = useEnum();
+
+  const name = customerData.fullName;
+  const descriptionStatus =
+    customerData.generalAssociateAttributes[0].partnerStatus.substring(2);
+  const profileImageUrl = userImage;
+
   return (
-    <StyledContainerGeneralHeader>
-      <Stack
-        justifyContent="space-between"
-        alignItems={isMobile ? "flex-start" : "center"}
-        padding="6px "
-        direction={!isMobile ? "row" : "column"}
-      >
-        <Stack
-          gap="12px"
-          alignItems="center"
-          width="100%"
-          justifyContent={isMobile ? "space-between" : "start"}
-        >
-          <Stack justifyContent="space-around" gap="12px">
-            <Stack>
-              <StyledPerfil src={profileImageUrl} alt="imagen perfil" />
-            </Stack>
-            <Stack direction="column" justifyContent="center" gap="2px">
-              <Stack>
-                <Text
-                  type="label"
-                  size="medium"
-                  appearance="dark"
-                  weight="bold"
-                >
-                  {name}
-                </Text>
-              </Stack>
-              <Stack alignItems="center" gap="4px">
-                <Text
-                  type="label"
-                  size="small"
-                  appearance="gray"
-                  weight="normal"
-                >
-                  {tittleHeader.title.i18n[lang]}
-                </Text>
-                <Icon
-                  size="12px"
-                  icon={appearanceTag(descriptionStatus).icon}
-                  appearance={appearanceTag(descriptionStatus).appearance}
-                  spacing="narrow"
-                />
-                <Text
-                  type="label"
-                  size="small"
-                  appearance={appearanceTag(descriptionStatus).appearance}
-                  weight="normal"
-                >
-                  {descriptionStatus}
-                </Text>
-              </Stack>
-            </Stack>
-          </Stack>
-          <Stack height="100%" margin="auto 0">
-            <Icon
-              icon={<MdOutlineCached />}
-              appearance="primary"
-              variant="outlined"
-              size="20px"
-              cursorHover
-              onClick={() => {
-                setCustomerPublicCodeState("");
-                setCustomerData(initialCustomerData);
-                navigate("/clients/select-client/");
-              }}
-            />
-          </Stack>
-        </Stack>
-        {showIcon && (
-          <Icon
-            onClick={onClickIcon}
-            appearance="primary"
-            icon={<MdOutlineManageAccounts />}
-            cursorHover
-            spacing="narrow"
-            variant="outlined"
-            shape="rectangle"
-            size="22px"
-          />
-        )}
-      </Stack>
-      {showButton && (
+    <Stack justifyContent="center">
+      <StyledContainerGeneralHeader isSmallScreen={isSmallScreen}>
         <Stack
           justifyContent="space-between"
-          alignItems="end"
-          padding={isMobile ? "6px 0px 0px 0px" : "0 6px"}
-          width={isMobile ? "100%" : "auto"}
+          alignItems={isMobile ? "flex-start" : "center"}
+          padding="6px "
+          direction={!isMobile ? "row" : "column"}
         >
-          <Button
-            onClick={onClickButton}
-            iconBefore={<MdAdd />}
-            variant="outlined"
-            appearance="primary"
-            spacing="compact"
-            fullwidth={isMobile}
+          <Stack
+            gap="12px"
+            alignItems="center"
+            width="100%"
+            justifyContent={isMobile ? "space-between" : "start"}
           >
-            {buttonText}
-          </Button>
+            <Stack justifyContent="space-around" gap="12px">
+              <Stack>
+                <StyledPerfil src={profileImageUrl} alt="imagen perfil" />
+              </Stack>
+              <Stack direction="column" justifyContent="center" gap="2px">
+                <Stack>
+                  <Text
+                    type="label"
+                    size="medium"
+                    appearance="dark"
+                    weight="bold"
+                  >
+                    {name}
+                  </Text>
+                </Stack>
+                <Stack alignItems="center" gap="4px">
+                  <Text
+                    type="label"
+                    size="small"
+                    appearance="gray"
+                    weight="normal"
+                  >
+                    {tittleHeader.title.i18n[lang]}
+                  </Text>
+                  <Icon
+                    size="12px"
+                    icon={appearanceTag(descriptionStatus).icon}
+                    appearance={appearanceTag(descriptionStatus).appearance}
+                    spacing="narrow"
+                  />
+                  <Text
+                    type="label"
+                    size="small"
+                    appearance={appearanceTag(descriptionStatus).appearance}
+                    weight="normal"
+                  >
+                    {descriptionStatus}
+                  </Text>
+                </Stack>
+              </Stack>
+            </Stack>
+            <Stack height="100%" margin="auto 0">
+              <Icon
+                icon={<MdOutlineCached />}
+                appearance="primary"
+                variant="outlined"
+                size="20px"
+                cursorHover
+                onClick={() => {
+                  setCustomerPublicCodeState("");
+                  setCustomerData(initialCustomerData);
+                  navigate("/clients/select-client/");
+                }}
+              />
+            </Stack>
+          </Stack>
+          {showIcon && (
+            <Icon
+              onClick={onClickIcon}
+              appearance="primary"
+              icon={<MdOutlineManageAccounts />}
+              cursorHover
+              spacing="narrow"
+              variant="outlined"
+              shape="rectangle"
+              size="22px"
+            />
+          )}
         </Stack>
-      )}
-    </StyledContainerGeneralHeader>
+        {showButton && (
+          <Stack
+            justifyContent="space-between"
+            alignItems="end"
+            padding={isMobile ? "6px 0px 0px 0px" : "0 6px"}
+            width={isMobile ? "100%" : "auto"}
+          >
+            <Button
+              onClick={onClickButton}
+              iconBefore={<MdAdd />}
+              variant="outlined"
+              appearance="primary"
+              spacing="compact"
+              fullwidth={isMobile}
+            >
+              {buttonText}
+            </Button>
+          </Stack>
+        )}
+      </StyledContainerGeneralHeader>
+    </Stack>
   );
 }

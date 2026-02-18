@@ -6,7 +6,6 @@ import {
 } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-
 import {
   Breadcrumbs,
   Icon,
@@ -18,7 +17,6 @@ import {
 
 import { CreditCard } from "@components/cards/CreditCard";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
-import userImage from "@assets/images/userImage.jpeg";
 import {
   getIconByName,
   OptionStaffPortal,
@@ -29,6 +27,7 @@ import { Fieldset } from "@components/data/Fieldset";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
+import { ErrorModal } from "@components/modals/ErrorModal";
 
 import {
   addConfig,
@@ -37,8 +36,6 @@ import {
 } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
 import { StyledArrowBack, StyledClickableFieldset } from "./styles";
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
-import { ErrorModal } from "@src/components/modals/ErrorModal";
 import { LoadingAppUI } from "../login/outlets/LoadingApp/interface";
 
 type IEnhancedSubOption = {
@@ -55,7 +52,6 @@ const CreditUI = (props: ICreditUIProps) => {
   const {
     isMobile,
     dataOptions,
-    dataHeader,
     codeError,
     addToFix,
     user,
@@ -194,16 +190,11 @@ const CreditUI = (props: ICreditUIProps) => {
         />
       ) : (
         <Stack
-          margin={`20px auto ${isMobile || isTablet ? "100px" : "50px"} auto`}
+          margin={`20px auto ${isMobile || isTablet ? "100px" : "60px"} auto`}
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
           direction="column"
           gap="24px"
         >
-          <GeneralHeader
-            descriptionStatus={dataHeader.status}
-            name={dataHeader.name}
-            profileImageUrl={dataHeader.image || userImage}
-          />
           <Breadcrumbs
             crumbs={addConfig.crumbs.map((crumb) => ({
               ...crumb,

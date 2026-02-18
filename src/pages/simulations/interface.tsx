@@ -19,7 +19,6 @@ import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { BaseModal } from "@components/modals/baseModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
-import userImage from "@assets/images/userImage.jpeg";
 import {
   IProspect,
   IExtraordinaryInstallments,
@@ -32,7 +31,6 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { RequirementsModal } from "../prospect/components/modals/RequirementsModal";
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CreditProspect } from "../prospect/components/CreditProspect";
 import {
   StyledArrowBack,
@@ -116,7 +114,6 @@ interface SimulationsUIProps {
 
 export function SimulationsUI(props: SimulationsUIProps) {
   const {
-    dataHeader,
     isMobile,
     prospectCode,
     userAccount,
@@ -174,7 +171,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin={`0px auto ${isMobile ? "100px" : "50px"} auto`}
+          margin={`0px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
@@ -183,12 +180,6 @@ export function SimulationsUI(props: SimulationsUIProps) {
           >
             <Stack gap="12px" direction="column" height="100%" width="100%">
               <StyledPrint>
-                <GeneralHeader
-                  buttonText="Agregar vinculación"
-                  descriptionStatus={dataHeader.status}
-                  name={dataHeader.name}
-                  profileImageUrl={dataHeader.image || userImage}
-                />
                 <Stack>
                   <StyledArrowBack onClick={() => navigate(addConfig.route)}>
                     <Stack gap="8px" alignItems="center" width="100%">

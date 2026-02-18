@@ -252,9 +252,11 @@ export interface IAddProductModalUIProps {
   errorModal: boolean;
   setErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   errorMessage: string;
+  eventData: ICRMPortalData;
   loading: boolean;
   isLoading: boolean;
   lang: EnumType;
+  dataProspect: IProspect;
 }
 
 export interface IStep {

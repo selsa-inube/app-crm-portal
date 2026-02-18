@@ -19,12 +19,10 @@ import { CustomerContext } from "@context/CustomerContext";
 import { Fieldset } from "@components/data/Fieldset";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { environment } from "@config/environment";
-import userImage from "@assets/images/userImage.jpeg";
 import { getStaffPortalsByBusinessManager } from "@services/staff-portals-by-business-manager/SearchAllStaffPortalsByBusinessManager/index.tsx";
 import { useEnum } from "@hooks/useEnum/useEnum.ts";
 
 import { SummaryCard } from "../prospect/components/SummaryCard";
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { StyledArrowBack } from "./styles";
 import { addConfig, dataCreditProspects, dataError, redirect } from "./config";
 import { LoadCard } from "../prospect/components/loadCard/index.tsx";
@@ -60,13 +58,6 @@ export function CreditApplications() {
   const businessManagerCode = eventData.businessManager.publicCode;
 
   const isMobile = useMediaQuery("(max-width:880px)");
-
-  const dataHeader = {
-    name: customerData.fullName,
-    status:
-      customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
-    image: customerData.image,
-  };
 
   const navigate = useNavigate();
 
@@ -217,16 +208,11 @@ export function CreditApplications() {
         />
       ) : (
         <Stack
-          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
+          margin={`0px auto ${isMobile ? "100px" : "60px"} auto`}
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
           direction="column"
           gap="24px"
         >
-          <GeneralHeader
-            descriptionStatus={dataHeader.status}
-            name={dataHeader.name}
-            profileImageUrl={dataHeader.image || userImage}
-          />
           <Breadcrumbs
             crumbs={addConfig.crumbs.map((crumb) => ({
               ...crumb,

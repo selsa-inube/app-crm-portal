@@ -20,6 +20,7 @@ export interface ExtraordinaryInstallmentsProps {
   lineOfCreditAbbreviatedName: string;
   moneyDestinationAbbreviatedName: string;
   clientIdentificationNumber: string;
+  maxLoanTerm: number;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
   handleOnChange: (
@@ -38,6 +39,7 @@ export function ExtraordinaryInstallments(
     handleOnChange,
     lineOfCreditAbbreviatedName,
     moneyDestinationAbbreviatedName,
+    maxLoanTerm,
     setMessageError,
     setShowErrorModal,
   } = props;
@@ -201,6 +203,7 @@ export function ExtraordinaryInstallments(
             lang={lang}
             lineOfCreditAbbreviatedName={lineOfCreditAbbreviatedName}
             moneyDestinationAbbreviatedName={moneyDestinationAbbreviatedName}
+            maxLoanTerm={maxLoanTerm}
             setMessageError={setMessageError}
             setShowErrorModal={setShowErrorModal}
             toggleAddSeriesModal={toggleAddSeriesModal}

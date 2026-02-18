@@ -17,7 +17,6 @@ import {
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import userImage from "@assets/images/userImage.jpeg";
 import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
@@ -26,7 +25,6 @@ import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
 
-import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
 
 import {
@@ -117,7 +115,6 @@ export function PayRollUI(props: PayRollUIProps) {
     handleFormChange,
     businessUnitPublicCode,
     businessManagerCode,
-    dataHeader,
     steps,
     isCurrentFormValid,
     isMobile,
@@ -165,7 +162,7 @@ export function PayRollUI(props: PayRollUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
+          margin={`0px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
@@ -173,12 +170,6 @@ export function PayRollUI(props: PayRollUIProps) {
             margin="20px 0px"
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
-              <GeneralHeader
-                buttonText={textAddCongfig.buttonAddLink}
-                descriptionStatus={dataHeader.status}
-                name={dataHeader.name}
-                profileImageUrl={dataHeader.image || userImage}
-              />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
                 <StyledArrowBack onClick={handleBackClick}>

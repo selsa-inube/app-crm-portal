@@ -10,6 +10,7 @@ import {
   IOption,
 } from "@inubekit/inubekit";
 import { useIAuth } from "@inube/iauth-react";
+import * as Yup from "yup";
 
 import { BaseModal } from "@components/modals/baseModal";
 import {
@@ -33,6 +34,8 @@ import { CustomerContext } from "@context/CustomerContext";
 import { CardGray } from "@components/cards/CardGray";
 import { calculateSeriesForExtraordinaryInstallment } from "@services/creditLimit/calculateSeriesForExtraordinaryInstallment";
 import { ICalculatedSeries } from "@services/creditRequest/types";
+import { getPayrollSpecialBenefitAvailableValue } from "@services/creditLimit/getPayrollSpecialBenefitAvailableValue";
+import { IPayrollSpecialBenefitAvailable } from "@services/creditLimit/types";
 
 import { dataAddSeriesModal, defaultFrequency } from "./config";
 import { saveExtraordinaryInstallment } from "../ExtraordinaryPaymentModal/utils";
@@ -80,6 +83,7 @@ export interface AddSeriesModalProps {
   >;
   isEdit?: boolean;
   isSimulateCredit?: boolean;
+  maxLoanTerm: number;
 }
 
 export function AddSeriesModal(props: AddSeriesModalProps) {
@@ -99,6 +103,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     setShowErrorModal,
     toggleAddSeriesModal,
     isSimulateCredit = false,
+    maxLoanTerm,
   } = props;
   const { businessUnitSigla, eventData } = useContext(AppContext);
   const { user } = useIAuth();
@@ -109,13 +114,30 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [dateOptions, setDateOptions] = useState<IOption[]>([]);
   const [cycleOptions, setCycleOptions] = useState<ICycleOption[]>([]);
+  const [payrollSpecial, setPayrollSpecial] = useState<
+    IPayrollSpecialBenefitAvailable[] | null
+  >(null);
 
   const frequencyOptions: IOption[] = [
     { id: defaultFrequency, label: defaultFrequency, value: defaultFrequency },
   ];
 
+  const years = Math.floor(maxLoanTerm / 12);
+  const maxValue = payrollSpecial?.[0]?.availableValue ?? 0;
+
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
+  const businessManagerCode = eventData.businessManager.publicCode;
+
+  const validationSchema = Yup.object({
+    value: Yup.number()
+      .required("")
+      .positive(dataAddSeriesModal.valueGreater.i18n[lang])
+      .max(years, `El valor no puede exceder ${years} Años`),
+    installmentAmount: Yup.number()
+      .required("")
+      .max(maxValue, `El valor no puede exceder ${currencyFormat(maxValue)}`),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -127,6 +149,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
       frequency: "",
       abbreviatedName: "",
     },
+    validationSchema,
     onSubmit: (values) => {
       onSubmit?.({
         installmentDate: values.installmentDate,
@@ -238,6 +261,32 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
     fetchCycles();
   }, [prospectData, service]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!cycleOptions) return;
+      try {
+        const data = await getPayrollSpecialBenefitAvailableValue(
+          businessUnitPublicCode,
+          businessManagerCode,
+          cycleOptions[0].extraordinaryCycleType,
+          customerData.publicCode,
+          years.toString(),
+          lineOfCreditAbbreviatedName,
+          moneyDestinationAbbreviatedName,
+        );
+        setPayrollSpecial(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [
+    cycleOptions,
+    lineOfCreditAbbreviatedName,
+    moneyDestinationAbbreviatedName,
+  ]);
+
   const handleFieldChange = (name: string, value: string) => {
     formik.setFieldValue(name, value);
 
@@ -253,7 +302,7 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
 
   const handleInstallmentAmountChange = (name: string, value: string) => {
     const parsed = parseCurrencyString(value);
-    formik.setFieldValue(name, currencyFormat(parsed, false));
+    formik.setFieldValue(name, parsed);
     if (!isNaN(parsed) && setInstallmentState) {
       setInstallmentState((prev) => ({
         ...prev,
@@ -615,6 +664,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
             type="number"
             onChange={formik.handleChange}
             value={formik.values.value}
+            message={formik.errors.value}
+            status={formik.errors.value ? "invalid" : "pending"}
             fullwidth
             required
           />
@@ -637,6 +688,8 @@ export function AddSeriesModal(props: AddSeriesModalProps) {
               ? currencyFormat(installmentState.installmentAmount, false)
               : ""
           }
+          message={formik.errors.installmentAmount}
+          status={formik.errors.installmentAmount ? "invalid" : "pending"}
           required
           fullwidth
         />
