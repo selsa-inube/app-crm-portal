@@ -1067,6 +1067,8 @@ export function CreditProspect(props: ICreditProspectProps) {
             setMessageError={setMessageError}
             eventData={eventData}
             setShowErrorModal={setShowErrorModal}
+            prospectData={prospectData as IProspect}
+            onProspectRefreshData={onProspectRefreshData}
           />
         )}
 

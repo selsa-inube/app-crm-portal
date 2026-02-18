@@ -233,6 +233,14 @@ export function SimulateCredit() {
           .join(", "),
       })) || [];
 
+    const riskScoreProperties =
+      formData.riskScores
+        ?.filter((score) => score.value !== null && score.date !== null)
+        .map((score) => ({
+          propertyName: "CreditBureauScore",
+          propertyValue: `${score.value},${score.date},${score.bureauName.toUpperCase().replace(/ /g, "_")}`,
+        })) || [];
+
     return {
       borrowerIdentificationType:
         customerData.generalAttributeClientNaturalPersons[0].typeIdentification,
@@ -243,6 +251,7 @@ export function SimulateCredit() {
       borrowerProperties: [
         ...numericIncomeProperties,
         ...financialObligationProperties,
+        ...riskScoreProperties,
       ],
     };
   }, [
