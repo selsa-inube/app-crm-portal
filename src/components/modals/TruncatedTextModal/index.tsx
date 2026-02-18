@@ -7,7 +7,7 @@ import { StyledContainer } from "./styles";
 import { dataTruncatedText } from "./config";
 
 interface TruncatedTextProps {
-  text: string;
+  text: string | undefined | null;
   maxLength?: number | "auto";
   appearance?: TextAppearance;
   type?: TextType;
@@ -17,7 +17,7 @@ interface TruncatedTextProps {
 }
 
 export const TruncatedText = ({
-  text,
+  text = "",
   maxLength = "auto",
   appearance,
   type,
@@ -31,7 +31,8 @@ export const TruncatedText = ({
   const isMobile = useMediaQuery("(max-width: 700px)");
   const { lang } = useEnum();
 
-  const displayText = transformFn ? transformFn(text) : text;
+  const safeText = text ?? "";
+  const displayText = transformFn ? transformFn(safeText) : safeText;
 
   useEffect(() => {
     if (maxLength === "auto" && textRef.current) {
@@ -41,12 +42,14 @@ export const TruncatedText = ({
   }, [displayText, maxLength]);
 
   const isTruncated =
-    maxLength === "auto" ? isOverflowing : text.length > (maxLength as number);
+    maxLength === "auto"
+      ? isOverflowing
+      : safeText.length > (maxLength as number);
 
   const finalContent =
     maxLength === "auto"
       ? displayText
-      : text.length > (maxLength as number)
+      : safeText.length > (maxLength as number)
         ? displayText.slice(0, maxLength as number) + "..."
         : displayText;
 
