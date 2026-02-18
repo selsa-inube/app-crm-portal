@@ -16,7 +16,6 @@ import {
 
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
-import userImage from "@assets/images/userImage.jpeg";
 import { IValidateRequirement } from "@services/requirement/types";
 import { BaseModal } from "@components/modals/baseModal";
 import { ButtonRequirements } from "@pages/prospect/components/buttonRequirements";
@@ -32,7 +31,6 @@ import { stepsToApplyForPayrollAdvanceCredit } from "./config/addBonus.config";
 import { RequirementsNotMet } from "../steps/requirementsNotMet";
 import { RequestedValue } from "../steps/requestedValue";
 import { DisbursementGeneral } from "../steps/disbursementGeneral";
-import { GeneralHeader } from "../../simulateCredit/components/GeneralHeader";
 import { IDataHeader } from "../../simulations/types";
 import { IStep, IStepDetails, IBonusFormData } from "../types";
 import {
@@ -111,7 +109,6 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
     handleFormChange,
     businessUnitPublicCode,
     businessManagerCode,
-    dataHeader,
     steps,
     isCurrentFormValid,
     isMobile,
@@ -156,7 +153,7 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
-          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
+          margin={`0px auto ${isMobile ? "100px" : "60px"} auto`}
         >
           <Stack
             direction="column"
@@ -164,12 +161,6 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
             margin="20px 0px"
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
-              <GeneralHeader
-                buttonText={textAddConfig.buttonAddLink}
-                descriptionStatus={dataHeader.status}
-                name={dataHeader.name}
-                profileImageUrl={dataHeader.image || userImage}
-              />
               <Breadcrumbs crumbs={addConfig.crumbs} />
               <Stack justifyContent="space-between" alignItems="center">
                 <StyledArrowBack onClick={() => navigate(addConfig.route)}>
