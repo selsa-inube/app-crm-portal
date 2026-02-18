@@ -21,6 +21,7 @@ import { mockErrorBoard } from "@mocks/error-board/errorborad.mock";
 import { useNavConfig, actions } from "@config/nav.config";
 import { userMenu } from "@config/menuMainConfiguration";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { GeneralHeader } from "@pages/simulateCredit/components/GeneralHeader";
 
 import {
   StyledAppPage,
@@ -35,7 +36,7 @@ import {
   StyledPrint,
   StyledFooter,
 } from "./styles";
-import { useNavigationConfig } from "./config/apps.config";
+import { useNavigationConfig, generalHeaderConfig } from "./config/apps.config";
 
 const renderLogo = (imgUrl: string, onTheFooter: boolean = false) => {
   if (!imgUrl && !onTheFooter) return undefined;
@@ -177,13 +178,13 @@ function AppPage(props: IAppPage) {
     navigate(`/login/${user.username}/business-units/select-business-unit`);
   }
 
+  const isSelectClientPage = location.pathname.includes(
+    "clients/select-client",
+  );
+
   return (
     <StyledAppPage>
-      <Grid
-        templateRows="auto 1fr"
-        height="100vh"
-        justifyContent="unset"
-      >
+      <Grid templateRows="auto 1fr" height="100vh" justifyContent="unset">
         <StyledPrint>
           <StyledHeaderContainer>
             <Header
@@ -267,6 +268,11 @@ function AppPage(props: IAppPage) {
               </StyledPrint>
             )}
             <StyledMain>
+              {!isSelectClientPage && (
+                <GeneralHeader
+                  buttonText={generalHeaderConfig.addBinding.i18n[lang]}
+                />
+              )}
               <Outlet />
             </StyledMain>
           </Grid>

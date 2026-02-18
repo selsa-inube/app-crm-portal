@@ -76,4 +76,15 @@ const logoutConfig = {
   logoutTitle: "Cerrar sesión",
 };
 
+export const generalHeaderConfig = {
+  addBinding: {
+    code: "GeneralHeader.addBinding",
+    description: "Texto del botón para agregar una nueva vinculación",
+    i18n: {
+      en: "Add linkage",
+      es: "Agregar vinculación",
+    },
+  },
+};
+
 export { appsConfig, logoutConfig, useNavigationConfig };

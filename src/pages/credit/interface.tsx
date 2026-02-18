@@ -18,7 +18,6 @@ import {
 
 import { CreditCard } from "@components/cards/CreditCard";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
-import userImage from "@assets/images/userImage.jpeg";
 import {
   getIconByName,
   OptionStaffPortal,
@@ -37,7 +36,6 @@ import {
 } from "./config/credit.config";
 import { ICreditUIProps } from "./types";
 import { StyledArrowBack, StyledClickableFieldset } from "./styles";
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 
 type IEnhancedSubOption = {
   key: string;
@@ -53,7 +51,6 @@ const CreditUI = (props: ICreditUIProps) => {
   const {
     isMobile,
     dataOptions,
-    dataHeader,
     codeError,
     addToFix,
     user,
@@ -190,16 +187,11 @@ const CreditUI = (props: ICreditUIProps) => {
         />
       ) : (
         <Stack
-          margin={`20px auto ${isMobile || isTablet ? "100px" : "50px"} auto`}
+          margin={`20px auto ${isMobile || isTablet ? "100px" : "60px"} auto`}
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
           direction="column"
           gap="24px"
         >
-          <GeneralHeader
-            descriptionStatus={dataHeader.status}
-            name={dataHeader.name}
-            profileImageUrl={dataHeader.image || userImage}
-          />
           <Breadcrumbs
             crumbs={addConfig.crumbs.map((crumb) => ({
               ...crumb,

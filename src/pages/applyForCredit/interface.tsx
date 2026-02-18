@@ -15,10 +15,8 @@ import {
   Button,
 } from "@inubekit/inubekit";
 
-import userImage from "@assets/images/userImage.jpeg";
 import { BaseModal } from "@components/modals/baseModal";
 import { disbursemenTabs } from "@pages/applyForCredit/steps/disbursementGeneral/config";
-import { GeneralHeader } from "@pages/simulateCredit/components/GeneralHeader";
 import { ICustomerData } from "@context/CustomerContext/types";
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { ErrorModal } from "@components/modals/ErrorModal";
@@ -114,7 +112,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
     isModalOpen,
     setIsModalOpen,
     validDocumentsRequiredByCreditRequest,
-    dataHeader,
     sentModal,
     approvedRequestModal,
     businessManagerCode,
@@ -193,12 +190,6 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
             margin={`0px auto ${isMobile ? "100px" : "50px"} auto`}
           >
             <Stack gap="24px" direction="column" height="100%" width="100%">
-              <GeneralHeader
-                buttonText="Agregar vinculación"
-                descriptionStatus={dataHeader.status}
-                name={dataHeader.name}
-                profileImageUrl={dataHeader.image || userImage}
-              />
               <Breadcrumbs
                 crumbs={submitCreditApplicationConfig.crumbs.map((crumb) => ({
                   ...crumb,

@@ -31,7 +31,6 @@ import { ErrorModal } from "@components/modals/ErrorModal";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { useEnum } from "@hooks/useEnum/useEnum";
-import userImage from "@assets/images/userImage.jpeg";
 import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
 
 import {
@@ -42,7 +41,6 @@ import {
   notFound,
 } from "./config";
 import { StyledArrowBack } from "./styles";
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
 import { CardCreditProspect } from "./components/CardCreditProspect";
 import InfoModal from "../prospect/components/InfoModal";
 import { StyledContainer } from "./components/CardCreditProspect/styles";
@@ -52,12 +50,6 @@ export function CreditProspects() {
   const { addFlag } = useFlag();
 
   const { customerData } = useContext(CustomerContext);
-  const dataHeader = {
-    name: customerData.fullName,
-    status:
-      customerData.generalAssociateAttributes[0].partnerStatus.substring(2),
-    image: customerData.image,
-  };
 
   const { lang } = useEnum();
 
@@ -330,17 +322,11 @@ export function CreditProspects() {
   return (
     <>
       <Stack
-        margin={`20px auto ${isMobile ? "100px" : "50px"} auto`}
+        margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
         width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
         direction="column"
         gap="24px"
       >
-        <GeneralHeader
-          buttonText="Agregar vinculación"
-          descriptionStatus={dataHeader.status}
-          name={dataHeader.name}
-          profileImageUrl={dataHeader.image || userImage}
-        />
         <Breadcrumbs
           crumbs={addConfig.crumbs.map((crumb) => ({
             ...crumb,

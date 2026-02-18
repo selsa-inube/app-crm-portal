@@ -3,7 +3,6 @@ import { Stack, Text } from "@inubekit/inubekit";
 import { Title } from "@components/layout/Title";
 import { InteractiveBox } from "@components/cards/interactiveBox";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
-import userImage from "@assets/images/userImage.jpeg";
 import {
   getIconByName,
   OptionStaffPortal,
@@ -11,12 +10,7 @@ import {
 import { ErrorPage } from "@components/layout/ErrorPage";
 import { ErrorModal } from "@components/modals/ErrorModal";
 
-import { GeneralHeader } from "../simulateCredit/components/GeneralHeader";
-import {
-  StyledContainerCards,
-  StyledGeneralHeader,
-  StyledTitle,
-} from "./styles";
+import { StyledContainerCards, StyledTitle } from "./styles";
 import { IHomeUIProps } from "./types";
 import { errorDataCredit, homeTitleConfig } from "./config/home.config";
 
@@ -34,7 +28,6 @@ const HomeUI = (props: IHomeUIProps) => {
     smallScreen,
     isMobile,
     username,
-    dataHeader,
     loading,
     dataOptions,
     codeError,
@@ -89,20 +82,12 @@ const HomeUI = (props: IHomeUIProps) => {
         <Stack
           direction="column"
           width={isMobile ? "calc(100% - 20px)" : "min(100% - 20px, 1064px)"}
-          margin="0 auto"
+          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
           gap="16px"
           padding="32px 0 0 0"
         >
           <Stack direction="column" alignItems={isMobile ? "normal" : "center"}>
             <Stack gap="24px" direction="column" height="100%" width="100%">
-              <StyledGeneralHeader>
-                <GeneralHeader
-                  buttonText="Agregar vinculación"
-                  descriptionStatus={dataHeader.status}
-                  name={dataHeader.name ?? ""}
-                  profileImageUrl={dataHeader.image || userImage}
-                />
-              </StyledGeneralHeader>
               <StyledTitle $smallScreen={smallScreen}>
                 <Title
                   title={homeTitleConfig(username).title.i18n[lang]}
