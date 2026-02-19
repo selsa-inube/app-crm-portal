@@ -18,8 +18,14 @@ export interface ICreditRiskBureauQuery {
   creditRiskBureauQueryId?: string;
 }
 
-export interface IUpdateCreditRiskBureauQuery extends ICreditRiskBureauQuery {
-  modifyJustification: string;
+export interface IUpdateCreditRiskBureauQuery {
+  clientIdentificationNumber: string;
+  bureauName: string;
+  creditRiskScore: number;
+  queryDate: string;
+  registrantIdentificationNumber: string;
+  clientIdentificationType: string;
+  clientName: string;
 }
 
 export enum EUpdateMethod {

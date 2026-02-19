@@ -7,6 +7,7 @@ import {
   useMediaQuery,
   Select,
   Textfield,
+  SkeletonLine,
 } from "@inubekit/inubekit";
 import { useState, useContext, useMemo, useEffect } from "react";
 
@@ -102,12 +103,14 @@ function EditProductModal(props: EditProductModalProps) {
     useState<boolean>(false);
   const [generalTerms, setGeneralTerms] =
     useState<CreditLineGeneralTerms | null>(null);
+  const [isLoadingRateTypes, setIsLoadingRateTypes] = useState<boolean>(true);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
 
   useEffect(() => {
     const fetchAllowedOptions = async () => {
       try {
+        setIsLoadingRateTypes(true);
         const terms = await getCreditLineGeneralTerms(
           businessUnitPublicCode,
           businessManagerCode,
@@ -138,10 +141,16 @@ function EditProductModal(props: EditProductModalProps) {
           : [];
 
         if (rateList?.[0]?.value && typeof rateList[0].value === "string") {
-          setAllowedRateCodes(rateList[0].value.split(","));
+          const codes = rateList[0].value
+            .split(",")
+            .map((code) => code.trim())
+            .filter((code) => code.length > 0);
+          setAllowedRateCodes(codes);
         }
       } catch (error) {
         console.error("Error fetching filtered rules", error);
+      } finally {
+        setIsLoadingRateTypes(false);
       }
     };
 
@@ -176,7 +185,7 @@ function EditProductModal(props: EditProductModalProps) {
       value: item.code,
       label: item.i18n[lang] || item.description || item.code,
     }));
-  }, [enums, lang]);
+  }, [enums, lang, allowedRateCodes]);
 
   const isLoading = !enums;
 
@@ -711,22 +720,32 @@ function EditProductModal(props: EditProductModalProps) {
                 message={interestRateError}
                 status={interestRateError ? "invalid" : undefined}
               />
-              <Select
-                label={simulationFormLabels.rateTypeLabel.i18n[lang]}
-                name="rateType"
-                id="rateType"
-                size="compact"
-                placeholder={simulationFormLabels.selectPlaceholder.i18n[lang]}
-                options={rateTypesList}
-                onBlur={formik.handleBlur}
-                onChange={(name, value) =>
-                  handleSelectChange(formik, "rateType", name, value)
-                }
-                onFocus={() => handleSelectFocus("rateType")}
-                value={formik.values.rateType}
-                fullwidth
-                disabled={isLoading}
-              />
+
+              {isLoadingRateTypes ? (
+                <Stack direction="column" gap="12px" height="80px">
+                  <SkeletonLine width="40%" height="10px" animated />
+                  <SkeletonLine width="100%" height="50px" animated />
+                </Stack>
+              ) : (
+                <Select
+                  label={simulationFormLabels.rateTypeLabel.i18n[lang]}
+                  name="rateType"
+                  id="rateType"
+                  size="compact"
+                  placeholder={
+                    simulationFormLabels.selectPlaceholder.i18n[lang]
+                  }
+                  options={rateTypesList}
+                  onBlur={formik.handleBlur}
+                  onChange={(name, value) =>
+                    handleSelectChange(formik, "rateType", name, value)
+                  }
+                  onFocus={() => handleSelectFocus("rateType")}
+                  value={formik.values.rateType}
+                  fullwidth
+                  disabled={isLoading}
+                />
+              )}
               <Textfield
                 label={simulationFormLabels.installmentAmountLabel.i18n[lang]}
                 name="installmentAmount"

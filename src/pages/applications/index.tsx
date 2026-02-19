@@ -208,7 +208,7 @@ export function CreditApplications() {
         />
       ) : (
         <Stack
-          margin={`0px auto ${isMobile ? "100px" : "60px"} auto`}
+          margin={`20px auto ${isMobile ? "100px" : "60px"} auto`}
           width={isMobile ? "calc(100% - 40px)" : "min(100% - 40px, 1064px)"}
           direction="column"
           gap="24px"

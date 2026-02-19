@@ -6,29 +6,34 @@ const truncateTextToMaxLength = (
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
 
-function capitalizeFirstLetterEachWord(text: string) {
+function capitalizeFirstLetterEachWord(text: string | undefined | null) {
+  if (!text) return "";
   return text
     .toLowerCase()
     .replace(/(^|[\s\u200B])\w/g, (character) => character.toUpperCase());
 }
 
-function capitalizeFirstLetter(text: string) {
+function capitalizeFirstLetter(text: string | undefined | null) {
+  if (!text) return "";
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
-const capitalizeText = (text: string) => {
+const capitalizeText = (text: string | undefined | null) => {
+  if (!text) return "";
   const textWithoutSpaces = text.trim();
   return (
-    textWithoutSpaces.trim().charAt(0).toUpperCase() +
+    textWithoutSpaces.charAt(0).toUpperCase() +
     textWithoutSpaces.slice(1).toLowerCase()
   );
 };
 
-const capitalizeEachWord = (text: string) =>
-  text
+const capitalizeEachWord = (text: string | undefined | null) => {
+  if (!text) return "";
+  return text
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
+};
 
 export {
   truncateTextToMaxLength,

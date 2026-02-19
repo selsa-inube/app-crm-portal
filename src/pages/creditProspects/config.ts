@@ -295,6 +295,41 @@ export const dataCreditProspects = {
   },
 };
 
+export const prerequisitesConfig = {
+  modalTitle: {
+    code: "Prerequisites_Modal_Title",
+    description: "Title for the prerequisites validation modal",
+    i18n: {
+      en: "Prerequisites not met",
+      es: "Requisitos no cumplidos",
+    },
+  },
+  multipleErrorsSubtitle: {
+    code: "Prerequisites_Multiple_Subtitle",
+    description: "Subtitle when multiple errors are detected",
+    i18n: {
+      en: "Several requirements are pending configuration:",
+      es: "Se han detectado varios requisitos pendientes por configurar:",
+    },
+  },
+  buttonText: {
+    code: "Prerequisites_Button_Text",
+    description: "Text for the modal confirmation button",
+    i18n: {
+      en: "Understood",
+      es: "Entendido",
+    },
+  },
+  whatWentWrongTitle: {
+    code: "Prerequisites_What_Title",
+    i18n: { en: "What went wrong?", es: "¿Qué salió mal?" },
+  },
+  howToFixTitle: {
+    code: "Prerequisites_How_Title",
+    i18n: { en: "How to fix it?", es: "¿Cómo solucionarlo?" },
+  },
+};
+
 export const notFound = "Este cliente no tiene prospectos por gestionar.";
 
 export const amountLineOnSkeletons = 4;

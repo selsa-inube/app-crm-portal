@@ -1,18 +1,14 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useFlag } from "@inubekit/inubekit";
 
 import { EnumType } from "@hooks/useEnum/useEnum";
-import { creditConsultationInBuroByIdentificationNumber } from "@services/creditRiskBureauQueries/creditConsultationInBuroByIdentificationNumber";
-import { updateCreditRiskBureauQuery } from "@services/creditRiskBureauQueries/updateCreditRiskBureauQuery";
-import {
-  ICreditRiskBureauQuery,
-  IUpdateCreditRiskBureauQuery,
-} from "@services/creditRiskBureauQueries/types";
 import { ICRMPortalData } from "@context/AppContext/types";
+import { IProspect } from "@services/prospect/types";
+import { updateProspect } from "@services/prospect/updateProspect";
 
 import { ScoreModalProspectUI } from "./interface";
 import { IScore } from "./types";
-import { riskScoreChanges, creditScoreChanges } from "./config";
+import { creditScoreChanges } from "./config";
 
 interface IScoreModalProspectProps {
   isMobile: boolean;
@@ -25,102 +21,120 @@ interface IScoreModalProspectProps {
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
   eventData: ICRMPortalData;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  prospectData: IProspect;
+  onProspectRefreshData: (() => void) | undefined;
 }
 export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
   const {
     isMobile,
     lang,
     handleClose,
-    customerPublicCode,
     businessUnitPublicCode,
     businessManagerCode,
     setMessageError,
     eventData,
     setShowErrorModal,
+    prospectData,
+    onProspectRefreshData,
   } = props;
 
   const { addFlag } = useFlag();
 
   const [newFirstScore, setNewFirstScore] = useState<IScore | null>(null);
   const [newSecondScore, setNewSecondScore] = useState<IScore | null>(null);
-  const [firstScore, setFirstScore] = useState<ICreditRiskBureauQuery | null>(
-    null,
-  );
-  const [secondScore, setSecondScore] = useState<ICreditRiskBureauQuery | null>(
-    null,
-  );
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
-  const fetchScores = useCallback(async () => {
-    if (!customerPublicCode) return;
+  const getScoresFromProspect = useCallback((): {
+    first: IScore | null;
+    second: IScore | null;
+  } => {
+    const mainBorrower = prospectData?.borrowers?.find(
+      (borower) => borower.borrowerType === "MainBorrower",
+    );
 
-    try {
-      setIsLoadingSubmit(true);
+    if (!mainBorrower) return { first: null, second: null };
 
-      const data = await creditConsultationInBuroByIdentificationNumber(
-        businessUnitPublicCode,
-        businessManagerCode,
-        customerPublicCode,
-        eventData.token,
-      );
+    const scoreProps = mainBorrower.borrowerProperties.filter(
+      (property) => property.propertyName === "CreditBureauScore",
+    );
 
-      if (data && data.length > 0) {
-        if (data[0]) setFirstScore(data[0]);
-        if (data[1]) setSecondScore(data[1]);
-      }
-    } catch (error) {
-      const err = error as {
-        message?: string;
-        status: number;
-        data?: { description?: string; code?: string };
+    const parseScore = (raw: string): IScore => {
+      const [scoreValue, date, bureauName] = raw.split(",");
+      return {
+        score: Number(scoreValue),
+        date: date || "",
+        bureauName: bureauName || "",
+        isActive: true,
       };
-      const code = err?.data?.code ? `[${err.data.code}] ` : "";
-      const description = code + err?.message + (err?.data?.description || "");
-      setShowErrorModal(true);
-      setMessageError(description);
-    } finally {
-      setIsLoadingSubmit(false);
-    }
-  }, [customerPublicCode, businessUnitPublicCode, businessManagerCode]);
+    };
+
+    return {
+      first: scoreProps[0] ? parseScore(scoreProps[0].propertyValue) : null,
+      second: scoreProps[1] ? parseScore(scoreProps[1].propertyValue) : null,
+    };
+  }, [prospectData]);
+
+  const { first: firstScore, second: secondScore } = getScoresFromProspect();
 
   const handleSave = async () => {
     setIsLoadingSubmit(true);
     try {
-      if (newFirstScore && firstScore && newFirstScore.score !== null) {
-        const payload: IUpdateCreditRiskBureauQuery = {
-          ...firstScore,
-          creditRiskScore: newFirstScore.score,
-          queryDate: new Date(newFirstScore.date).toISOString(),
-          modifyJustification: riskScoreChanges.justification.i18n[lang],
-        };
+      const mainBorrowerIndex = prospectData.borrowers.findIndex(
+        (borower) => borower.borrowerType === "MainBorrower",
+      );
 
-        delete payload.creditRiskBureauQueryId;
+      if (mainBorrowerIndex === -1) return;
 
-        await updateCreditRiskBureauQuery(
-          businessUnitPublicCode,
-          businessManagerCode,
-          payload,
-        );
+      const mainBorrower = prospectData.borrowers[mainBorrowerIndex];
+
+      const otherProperties = mainBorrower.borrowerProperties.filter(
+        (property) => property.propertyName !== "CreditBureauScore",
+      );
+
+      const updatedScoreProps = [];
+
+      const buildScoreValue = (score: IScore) =>
+        `${score.score},${score.date},${score.bureauName.toUpperCase().replace(/ /g, "_")}`;
+
+      if (firstScore) {
+        const resolved = newFirstScore ?? firstScore;
+        updatedScoreProps.push({
+          propertyName: "CreditBureauScore",
+          propertyValue: buildScoreValue(resolved as IScore),
+        });
       }
 
-      if (newSecondScore && secondScore && newSecondScore.score !== null) {
-        const payload: IUpdateCreditRiskBureauQuery = {
-          ...secondScore,
-          creditRiskScore: newSecondScore.score,
-          queryDate: new Date(newSecondScore.date).toISOString(),
-          modifyJustification: riskScoreChanges.justification.i18n[lang],
-        };
-
-        delete payload.creditRiskBureauQueryId;
-
-        await updateCreditRiskBureauQuery(
-          businessUnitPublicCode,
-          businessManagerCode,
-          payload,
-        );
+      if (secondScore) {
+        const resolved = newSecondScore ?? secondScore;
+        updatedScoreProps.push({
+          propertyName: "CreditBureauScore",
+          propertyValue: buildScoreValue(resolved as IScore),
+        });
       }
+
+      const updatedBorrower = {
+        ...mainBorrower,
+        borrowerProperties: [...otherProperties, ...updatedScoreProps],
+      };
+
+      const updatedBorrowers = [...prospectData.borrowers];
+      updatedBorrowers[mainBorrowerIndex] = updatedBorrower;
+
+      const updatedProspect: IProspect = {
+        ...prospectData,
+        borrowers: updatedBorrowers,
+      };
+
+      await updateProspect(
+        businessUnitPublicCode,
+        businessManagerCode,
+        updatedProspect,
+        eventData.token,
+      );
 
       handleClose();
+
+      if (onProspectRefreshData) onProspectRefreshData();
 
       addFlag({
         title: creditScoreChanges.title.i18n[lang],
@@ -129,7 +143,6 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
         duration: 5000,
       });
     } catch (error) {
-      console.log(error);
       const err = error as {
         message?: string;
         status: number;
@@ -137,7 +150,6 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
       };
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
-
       setShowErrorModal(true);
       setMessageError(description);
     } finally {
@@ -145,33 +157,11 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
     }
   };
 
-  useEffect(() => {
-    fetchScores();
-  }, [fetchScores]);
-
   return (
     <ScoreModalProspectUI
       isMobile={isMobile}
-      firstScore={
-        firstScore
-          ? {
-              score: firstScore.creditRiskScore,
-              date: firstScore.queryDate,
-              bureauName: firstScore.bureauName,
-              isActive: firstScore.isActive === "Y",
-            }
-          : null
-      }
-      secondScore={
-        secondScore
-          ? {
-              score: secondScore.creditRiskScore,
-              date: secondScore.queryDate,
-              bureauName: secondScore.bureauName,
-              isActive: secondScore.isActive === "Y",
-            }
-          : null
-      }
+      firstScore={firstScore}
+      secondScore={secondScore}
       handleClose={handleClose}
       setNewFirstScore={setNewFirstScore}
       setNewSecondScore={setNewSecondScore}
