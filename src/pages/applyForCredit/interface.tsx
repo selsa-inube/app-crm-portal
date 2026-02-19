@@ -29,6 +29,7 @@ import { currencyFormat } from "@utils/formatData/currency";
 import { TruncatedText } from "@components/modals/TruncatedTextModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { IValidateRequirement } from "@services/creditRequest/types";
 
 import {
   IBorrowerData,
@@ -56,7 +57,6 @@ import { submitCreditApplicationConfig } from "./config/submitCreditApplication.
 import { dataSubmitApplication } from "./config/config";
 import { titlesModal } from "../simulations/config";
 import { tittleOptions } from "./config/config";
-import { IValidateRequirement } from "@src/services/creditRequest/types";
 
 interface ApplyForCreditUIProps {
   currentStep: number;
@@ -301,6 +301,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     businessUnitPublicCode={businessUnitPublicCode}
                     businessManagerCode={businessManagerCode}
                     lang={lang}
+                    enums={enums}
                   />
                 )}
               {currentStepNumber &&

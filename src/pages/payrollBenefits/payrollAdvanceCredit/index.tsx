@@ -12,6 +12,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { useBorrowerData } from "@hooks/useBorrowerData";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { PayRollUI } from "./interface";
 import { IBonusFormData, titleButtonTextAssited } from "../types";
@@ -23,7 +24,7 @@ export function PayrollAdvanceCredit() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1482px)");
 
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   const [currentStep, setCurrentStep] = useState<number>(
     stepsPayrollSpecialBenefitAdvanceCredit.generalInformation.id,
@@ -490,6 +491,7 @@ export function PayrollAdvanceCredit() {
       handleNextClick={handleConfirmNavigation}
       isTablet={isTablet}
       lang={lang}
+      enums={enums as IAllEnumsResponse}
     />
   );
 }
