@@ -10,7 +10,7 @@ import { TraceDetailsModal } from "@components/modals/TraceDetailsModal";
 import { ErrorModal } from "@components/modals/ErrorModal";
 import { requirementStatusData } from "@services/enum/requirements";
 import { IManageErrors } from "@pages/simulateCredit/types";
-import { EnumType } from "@hooks/useEnum/useEnum";
+import { EnumType, useEnum } from "@hooks/useEnum/useEnum";
 import {
   excludedStatus,
   failedStatus,
@@ -41,7 +41,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
     errorsManager,
     lang,
   } = props;
-
+  const { enums } = useEnum();
   const [modalData, setModalData] = useState<{
     evaluation: string;
     description: string;
@@ -50,9 +50,13 @@ export function RequirementsModal(props: IRequirementsModalProps) {
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const entries = validateRequirements.map((item, idx) => {
+    const requirementEnum = (enums?.Requirement ?? []).find(
+      (e) => e.code === item.requirementName,
+    );
+
     return {
       id: `${item.requirementName}-${idx}`,
-      requierement: item.requirementName,
+      requierement: requirementEnum?.i18n[lang] ?? item.requirementName,
       tag: (
         <Tag
           label={
@@ -76,7 +80,7 @@ export function RequirementsModal(props: IRequirementsModalProps) {
           cursorHover
           onClick={() =>
             setModalData({
-              evaluation: item.requirementName,
+              evaluation: requirementEnum?.i18n[lang] ?? item.requirementName,
               description: item.descriptionEvaluationRequirement,
             })
           }

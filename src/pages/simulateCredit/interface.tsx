@@ -378,6 +378,7 @@ export function SimulateCreditUI(props: SimulateCreditUIProps) {
                       businessUnitPublicCode={businessUnitPublicCode}
                       businessManagerCode={businessManagerCode}
                       lang={lang}
+                      enums={enums}
                     />
                   )}
                 {currentStepsNumber &&
