@@ -30,6 +30,7 @@ import { validatePrerequisitesForCreditApplication } from "@services/prospect/va
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
+import { IPrerequisiteError } from "@services/prospect/types";
 
 import { SimulationsUI } from "./interface";
 import {
@@ -61,6 +62,10 @@ export function Simulations() {
     IValidateRequirement[]
   >([]);
   const [isAddProductDisabled, setIsAddProductDisabled] = useState(false);
+  const [showPrerequisiteModal, setShowPrerequisiteModal] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<
+    IPrerequisiteError[]
+  >([]);
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { prospectCode } = useParams();
@@ -232,16 +237,16 @@ export function Simulations() {
       );
 
       if (
-        !validationResult ||
-        validationResult.isCreditSetupCompleteForCreditRequest === "N"
+        validationResult?.isCreditSetupCompleteForCreditRequest === "N" &&
+        validationResult.validationErrors?.length > 0
       ) {
-        setMessageError(prerequisitesConfig.prerequisitesNotMet.i18n[lang]);
-        setShowErrorModal(true);
+        setValidationErrors(validationResult.validationErrors);
+        setShowPrerequisiteModal(true);
         setIsLoading(false);
         return;
       }
-      const result = await fetchValidateCreditRequest();
 
+      const result = await fetchValidateCreditRequest();
       if (result) {
         setShowCreditRequest(true);
         setIsLoading(false);
@@ -490,6 +495,9 @@ export function Simulations() {
       enums={enums as IAllEnumsResponse}
       fetchProspectData={fetchProspectData}
       disableAddProduct={isAddProductDisabled}
+      showPrerequisiteModal={showPrerequisiteModal}
+      setShowPrerequisiteModal={setShowPrerequisiteModal}
+      validationErrors={validationErrors}
     />
   );
 }

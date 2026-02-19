@@ -258,7 +258,16 @@ export interface IGuaranteesRequiredByCreditProspect {
 export interface simulationPrerequisites {
   canSimulate: string;
   creditPlacementChannel: [string];
+  validationErrors: IPrerequisiteError[];
 }
+
+export interface IPrerequisiteError {
+  errorCode: string;
+  howToFix: string;
+  whatWentWrong: string;
+}
+
 export interface IValidatePrerequisitesForCreditApplication {
   isCreditSetupCompleteForCreditRequest: "Y" | "N";
+  validationErrors: IPrerequisiteError[];
 }

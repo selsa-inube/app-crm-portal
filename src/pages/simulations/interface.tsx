@@ -29,7 +29,10 @@ import { IProspectSummaryById } from "@services/prospect/types";
 import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { IPrerequisiteError } from "@services/prospect/types";
 
+import { prerequisitesConfig } from "../creditProspects/config";
+import InfoModal from "../prospect/components/InfoModal";
 import { RequirementsModal } from "../prospect/components/modals/RequirementsModal";
 import { CreditProspect } from "../prospect/components/CreditProspect";
 import {
@@ -101,6 +104,9 @@ interface SimulationsUIProps {
   showRequirements: boolean;
   setShowRequirements: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements: IValidateRequirement[];
+  showPrerequisiteModal: boolean;
+  setShowPrerequisiteModal: (value: boolean) => void;
+  validationErrors: IPrerequisiteError[];
   onProspectUpdated?: () => void;
   handleDeleteProspect: () => void;
   prospectSummaryData?: IProspectSummaryById;
@@ -161,6 +167,9 @@ export function SimulationsUI(props: SimulationsUIProps) {
     isLoadingDelete = false,
     fetchProspectData,
     disableAddProduct = false,
+    showPrerequisiteModal,
+    setShowPrerequisiteModal,
+    validationErrors,
   } = props;
 
   return (
@@ -583,6 +592,35 @@ export function SimulationsUI(props: SimulationsUIProps) {
         >
           <Text>{dataEditProspect.deleteDescription.i18n[lang]}</Text>
         </BaseModal>
+      )}
+      {showPrerequisiteModal && (
+        <InfoModal
+          onClose={() => setShowPrerequisiteModal(false)}
+          title={prerequisitesConfig.modalTitle.i18n[lang]}
+          subtitle={
+            validationErrors.length > 1
+              ? prerequisitesConfig.howToFixTitle.i18n[lang]
+              : validationErrors[0]?.whatWentWrong || ""
+          }
+          description={
+            <Stack direction="column" gap="16px">
+              {validationErrors.map((error) => (
+                <Stack key={error.errorCode} direction="column" gap="4px">
+                  {validationErrors.length > 1 && (
+                    <Text weight="bold" size="small" appearance="dark">
+                      {error.whatWentWrong}
+                    </Text>
+                  )}
+                  <Text size="medium" appearance="gray">
+                    {error.howToFix}
+                  </Text>
+                </Stack>
+              ))}
+            </Stack>
+          }
+          nextButtonText={prerequisitesConfig.buttonText.i18n[lang]}
+          isMobile={isMobile}
+        />
       )}
     </div>
   );

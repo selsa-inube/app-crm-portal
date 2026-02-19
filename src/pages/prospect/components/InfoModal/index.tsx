@@ -1,12 +1,13 @@
 import { BaseModal } from "@components/modals/baseModal";
 import { Stack, Text } from "@inubekit/inubekit";
+import { ReactNode } from "react";
 
 interface InfoModalProps {
   onClose: () => void;
   onNext?: () => void;
   title: string;
   subtitle: string;
-  description: string;
+  description: ReactNode | string;
   nextButtonText?: string;
   width?: string;
   isMobile?: boolean;
@@ -45,7 +46,13 @@ function InfoModal({
           {subtitle}
         </Text>
         <Text weight="normal" size="medium" appearance="gray">
-          {description}
+          {typeof description === "string" ? (
+            <Text weight="normal" size="medium" appearance="gray">
+              {description}
+            </Text>
+          ) : (
+            description
+          )}
         </Text>
       </Stack>
     </BaseModal>
