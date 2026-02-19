@@ -13,6 +13,7 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { StyledContainer } from "./styles";
 import { IdataMaximumCreditLimitService, IPaymentCapacityData } from "./types";
 import { ISourcesOfIncomeState } from "../../types";
+import { quotaLabel } from "./config";
 
 export interface CreditLimitProps {
   businessUnitPublicCode: string;
@@ -80,6 +81,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
             cursorHover
           />
           <Text type="body" size="small" appearance="gray" weight="normal">
+            {quotaLabel.i18n[lang]}
             {creditLineTxt}
           </Text>
         </Stack>
@@ -150,6 +152,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
           loading={loading}
           incomeData={incomeData}
           lang={lang}
+          creditLineTxt={creditLineTxt}
         />
       )}
 
