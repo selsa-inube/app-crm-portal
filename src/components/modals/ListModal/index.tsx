@@ -297,7 +297,14 @@ export const ListModal = (props: IListModalProps) => {
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
 
-      if (file.type === "application/pdf") {
+      const allowedTypes = [
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+      ];
+
+      if (allowedTypes.includes(file.type)) {
         if (file.size <= MAX_FILE_SIZE) {
           const newFile = {
             id: crypto.randomUUID(),
@@ -307,13 +314,12 @@ export const ListModal = (props: IListModalProps) => {
             selectedToDelete: false,
             justUploaded: true,
           };
-
           setPendingFiles((prev) => [...prev, newFile]);
         } else {
-          alert(listModalData.exceedSize);
+          alert(listModalData.exceedSize.i18n[lang]);
         }
       } else {
-        alert(listModalData.onlypdf);
+        alert(listModalData.onlypdf.i18n[lang]);
       }
 
       e.dataTransfer.clearData();
@@ -365,30 +371,19 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const onDeleteOneFile = (id: string) => {
-    if (!setUploadedFiles || !uploadedFiles) return;
+    if (!setUploadedFiles) return;
 
-    const newUploadedFiles = uploadedFiles.map((file: IFile) => {
-      if (file.id === id) {
-        return { ...file, selectedToDelete: true };
-      }
-
-      return file;
-    });
-
-    setUploadedFiles(newUploadedFiles);
-
-    let deletedFiles = pendingFiles.map((file: IFile) => {
-      if (file.id === id && file.wasAlreadyAttached) {
-        return { ...file, selectedToDelete: true };
-      }
-
-      return file;
-    });
-    deletedFiles = deletedFiles.filter(
-      (file: IFile) => file.id !== id || file.wasAlreadyAttached,
+    const updatedPendingFiles = pendingFiles.map((file: IFile) =>
+      file.id === id ? { ...file, selectedToDelete: true } : file,
     );
+    setPendingFiles(updatedPendingFiles);
 
-    setPendingFiles(deletedFiles);
+    if (uploadedFiles) {
+      const updatedUploaded = uploadedFiles.map((file: IFile) =>
+        file.id === id ? { ...file, selectedToDelete: true } : file,
+      );
+      setUploadedFiles(updatedUploaded);
+    }
   };
 
   const keepUploadedFiles = () => {

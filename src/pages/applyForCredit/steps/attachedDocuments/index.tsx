@@ -6,6 +6,7 @@ import { ICustomerData } from "@context/CustomerContext/types";
 import { IFile } from "@components/modals/ListModal";
 import { IValidateRequirement } from "@services/creditRequest/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 export interface IBorrowerDocumentRule {
   borrower: string;
@@ -23,6 +24,7 @@ interface IAttachedDocumentsProps {
   customerData: ICustomerData;
   lang: EnumType;
   loading: boolean;
+  enums: IAllEnumsResponse;
   validDocumentsRequiredByCreditRequest: IValidateRequirement[];
   showErrorModal: boolean;
 }
@@ -37,6 +39,7 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
     loading,
     validDocumentsRequiredByCreditRequest,
     showErrorModal,
+    enums,
   } = props;
 
   const documentsRequiredByBorrower =
@@ -51,7 +54,10 @@ export function AttachedDocuments(props: IAttachedDocumentsProps) {
           .flatMap((item) =>
             item.documentalRequirement.map((doc) => ({
               borrower: item.borrowerName,
-              value: doc,
+              value:
+                (enums?.Requirement ?? []).find((e) => e.code === doc)?.i18n[
+                  lang
+                ] ?? doc,
             })),
           )
       : [];
