@@ -32,12 +32,14 @@ import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
 import { privilegeCrm } from "@config/privilege";
 import { useEnum } from "@hooks/useEnum/useEnum";
 import { validatePrerequisitesForCreditApplication } from "@services/prospect/validatePrerequisitesForCreditApplication";
+import { IPrerequisiteError } from "@services/prospect/types";
 
 import {
   addConfig,
   dataCreditProspects,
   amountLineOnSkeletons,
   amountContainerOnSkeletons,
+  prerequisitesConfig,
   notFound,
 } from "./config";
 import { StyledArrowBack } from "./styles";
@@ -82,6 +84,13 @@ export function CreditProspects() {
   >({});
   const [searchTerm, setSearchTerm] = useState("");
   const [errorModalMessage, setErrorModalMessage] = useState("");
+  const [validationErrors, setValidationErrors] = useState<
+    IPrerequisiteError[]
+  >([]);
+  const [showPrerequisiteModal, setShowPrerequisiteModal] = useState(false);
+  const [simulationErrors, setSimulationErrors] = useState<
+    IPrerequisiteError[]
+  >([]);
 
   const navigate = useNavigate();
 
@@ -172,7 +181,14 @@ export function CreditProspects() {
           eventData.token,
         );
 
-        if (data?.canSimulate === "Y") setCanPerformSimulations(true);
+        if (data?.canSimulate === "Y") {
+          setCanPerformSimulations(true);
+        } else {
+          setCanPerformSimulations(false);
+          if (data?.validationErrors) {
+            setSimulationErrors(data.validationErrors);
+          }
+        }
       } catch (error) {
         const err = error as {
           message?: string;
@@ -287,24 +303,24 @@ export function CreditProspects() {
     try {
       setLoadingConfirm(true);
 
-      const validationResult = await validatePrerequisitesForCreditApplication(
+      const result = await validatePrerequisitesForCreditApplication(
         businessUnitPublicCode,
         selectedProspect.prospectCode,
         eventData.token,
       );
 
-      if (
-        !validationResult ||
-        validationResult.isCreditSetupCompleteForCreditRequest === "N"
-      ) {
-        setShowConfirmModal(false);
-        setErrorModalMessage(
-          dataCreditProspects.prerequisitesNotMet.i18n[lang],
-        );
-        setShowErrorModal(true);
-        setLoadingConfirm(false);
-        return;
+      if (result != null) {
+        if (
+          result.isCreditSetupCompleteForCreditRequest === "N" &&
+          result.validationErrors
+        ) {
+          setValidationErrors(result.validationErrors);
+          setShowPrerequisiteModal(true);
+          setShowConfirmModal(false);
+          return;
+        }
       }
+
       navigate(`/credit/apply-for-credit/${selectedProspect.prospectCode}`);
     } catch (error) {
       setShowConfirmModal(false);
@@ -645,21 +661,70 @@ export function CreditProspects() {
         />
       )}
 
-      {isModalOpen ? (
+      {showPrerequisiteModal && (
+        <InfoModal
+          onClose={() => setShowPrerequisiteModal(false)}
+          title={prerequisitesConfig.modalTitle.i18n[lang]}
+          subtitle={
+            validationErrors.length > 1
+              ? prerequisitesConfig.multipleErrorsSubtitle.i18n[lang]
+              : validationErrors[0]?.whatWentWrong || ""
+          }
+          description={
+            <Stack direction="column" gap="16px">
+              {validationErrors.map((error) => (
+                <Stack key={error.errorCode} direction="column" gap="4px">
+                  {validationErrors.length > 1 && (
+                    <Text weight="bold" size="small" appearance="dark">
+                      {error.whatWentWrong}
+                    </Text>
+                  )}
+                  <Text size="medium" appearance="gray">
+                    {error.howToFix}
+                  </Text>
+                </Stack>
+              ))}
+            </Stack>
+          }
+          nextButtonText={prerequisitesConfig.buttonText.i18n[lang]}
+          isMobile={isMobile}
+        />
+      )}
+
+      {isModalOpen && (
         <InfoModal
           onClose={handleInfoModalClose}
           title={privilegeCrm.title}
-          subtitle={privilegeCrm.subtitle}
+          subtitle={
+            simulationErrors.length > 0
+              ? simulationErrors.length > 1
+                ? prerequisitesConfig.multipleErrorsSubtitle.i18n[lang]
+                : simulationErrors[0].whatWentWrong
+              : privilegeCrm.subtitle
+          }
           description={
-            !canPerformSimulations
-              ? dataCreditProspects.requirementsNotMet.i18n[lang]
-              : privilegeCrm.description
+            simulationErrors.length > 0 ? (
+              <Stack direction="column" gap="16px">
+                {simulationErrors.map((error) => (
+                  <Stack key={error.errorCode} direction="column" gap="4px">
+                    {simulationErrors.length > 1 && (
+                      <Text weight="bold" size="small" appearance="dark">
+                        {error.whatWentWrong}
+                      </Text>
+                    )}
+                    <Text size="medium" appearance="gray">
+                      {error.howToFix}
+                    </Text>
+                  </Stack>
+                ))}
+              </Stack>
+            ) : (
+              privilegeCrm.description
+            )
           }
           nextButtonText={privilegeCrm.nextButtonText}
           isMobile={isMobile}
         />
-      ) : (
-        <></>
       )}
     </>
   );
