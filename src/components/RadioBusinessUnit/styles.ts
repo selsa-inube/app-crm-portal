@@ -33,7 +33,9 @@ export const StyledImage = styled.img<StyledImageProps>`
   font-family: Roboto;
   font-size: 14px;
   max-width: ${({ hasLogo }) => (hasLogo ? "35%" : "100%")};
+  max-height: 75%;
   transition: filter 500ms ease-out;
   filter: grayscale(100%);
   display: ${({ $isMobile }) => ($isMobile ? "none" : "block")};
+  object-fit: contain;
 `;
