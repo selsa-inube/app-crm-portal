@@ -13,6 +13,7 @@ import { patchValidateRequirements } from "@services/requirement/validateRequire
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { useBorrowerData } from "@hooks/useBorrowerData";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { IBonusFormData, titleButtonTextAssited } from "../types";
 import { availableQuotaValue } from "../steps/requestedValue";
@@ -28,7 +29,7 @@ export function PayrolSpecialBenefitAdvanceCredit() {
     stepsToApplyForPayrollAdvanceCredit.generalInformation.id,
   );
 
-  const { lang } = useEnum();
+  const { lang, enums } = useEnum();
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -484,6 +485,7 @@ export function PayrolSpecialBenefitAdvanceCredit() {
       setProspectData={setProspectData}
       handleCancelNavigation={handleCancelNavigation}
       lang={lang}
+      enums={enums as IAllEnumsResponse}
     />
   );
 }

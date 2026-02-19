@@ -37,6 +37,7 @@ export interface IBaseModalProps {
   portalId?: string;
   isLoading?: boolean;
   marginsMobile?: boolean;
+  gap?: string;
 }
 
 export function BaseModal(props: IBaseModalProps) {
@@ -63,6 +64,7 @@ export function BaseModal(props: IBaseModalProps) {
     portalId = "portal",
     isLoading = false,
     marginsMobile = false,
+    gap = "24px",
   } = props;
 
   const { lang } = useEnum();
@@ -87,7 +89,7 @@ export function BaseModal(props: IBaseModalProps) {
         <Stack
           direction="column"
           padding="24px"
-          gap="24px"
+          gap={gap}
           width={width}
           height={height}
         >

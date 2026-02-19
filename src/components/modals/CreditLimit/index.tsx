@@ -20,6 +20,7 @@ import { IMaximumCreditLimitByLineOfCredit } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { AppContext } from "@context/AppContext";
 import { IIncomeSources } from "@services/creditLimit/types";
+import { analysisLabel } from "@pages/simulateCredit/components/CreditLimitCard/config";
 
 import { creditLimitTexts, renderSkeletons } from "./creditLimitConfig";
 import { StyledList } from "./styles";
@@ -132,8 +133,21 @@ export const CreditLimit = (props: ICreditLimitProps) => {
       width={isMobile ? "280px" : "550px"}
       height={isMobile ? "auto" : "477px"}
       handleBack={handleClose}
-      finalDivider={true}
+      initialDivider={false}
+      gap="10px"
     >
+      <Text
+        type="body"
+        size="medium"
+        appearance="gray"
+        cursorHover={false}
+        weight="normal"
+      >
+        {`${analysisLabel.i18n[lang]} ${creditLine}`}
+      </Text>
+      <Stack margin="10px 0 20px 0">
+        <Divider />
+      </Stack>
       {error ? (
         <Stack direction="column" alignItems="center">
           <Icon icon={<MdErrorOutline />} size="32px" appearance="danger" />

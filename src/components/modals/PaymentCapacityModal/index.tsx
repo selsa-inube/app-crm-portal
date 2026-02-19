@@ -30,6 +30,7 @@ import { ISourcesOfIncomeState } from "@pages/simulateCredit/types";
 import { formatPrimaryDate } from "@utils/formatData/date";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { AppContext } from "@context/AppContext";
+import { analysisLabel } from "@pages/simulateCredit/components/CreditLimitCard/config";
 
 import { BaseModal } from "../baseModal";
 import {
@@ -54,6 +55,7 @@ interface IPaymentCapacityModalProps {
   loading: boolean;
   incomeData: ISourcesOfIncomeState;
   lang: EnumType;
+  creditLineTxt: string;
 }
 
 export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
@@ -70,6 +72,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     businessManagerCode,
     userAccount,
     lang,
+    creditLineTxt,
   } = props;
   const { eventData } = useContext(AppContext);
 
@@ -140,13 +143,6 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
     fetchMaximumCreditLimit();
   }, [businessUnitPublicCode, businessManagerCode, userAccount]);
 
-  const totalExtraordinary =
-    (maximumCreditLimitData?.maximumCreditLimitValue || 0) +
-    (maximumCreditLimitData?.extraordinaryInstallments?.reduce(
-      (sum, quote) => sum + (Number(quote.installmentAmount) || 0),
-      0,
-    ) || 0);
-
   const handleOpenDetail = (row: IExtraordinaryInstallments | null) => {
     setSelectedDetail(row);
   };
@@ -165,7 +161,21 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
         handleNext={handleClose}
         width={isMobile ? "335px" : "500px"}
         height={isMobile ? "734px" : "692px"}
+        gap="12px"
+        initialDivider={false}
       >
+        <Text
+          type="body"
+          size="medium"
+          appearance="gray"
+          cursorHover={false}
+          weight="normal"
+        >
+          {`${analysisLabel.i18n[lang]} ${creditLineTxt}`}
+        </Text>
+        <Stack margin="10px 0 12px 0">
+          <Divider />
+        </Stack>
         {error ? (
           <Fieldset>
             <Stack
@@ -217,7 +227,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                         ) : (
                           <Text type="body" size="small">
                             {currencyFormat(
-                              maximumCreditLimitData?.maximumCreditLimitValue ||
+                              maximumCreditLimitData?.totalIncomeReportedSources ||
                                 0,
                               false,
                             )}
@@ -256,7 +266,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                         ) : (
                           <Text type="body" size="small">
                             {currencyFormat(
-                              maximumCreditLimitData?.maxAmount || 0,
+                              maximumCreditLimitData?.paymentCapacity || 0,
                               false,
                             )}
                           </Text>
@@ -275,7 +285,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                           <SkeletonLine width="70px" animated={true} />
                         ) : (
                           <Text type="body" size="small">
-                            {maximumCreditLimitData?.maxTerm}
+                            {maximumCreditLimitData?.maxTerm || 0}
                           </Text>
                         )}
                       </Stack>
@@ -283,7 +293,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                     <Divider dashed />
                     <Text type="body" size="small">
                       {getMaxValueText(
-                        maximumCreditLimitData?.maxAmount || 0,
+                        maximumCreditLimitData?.paymentCapacity || 0,
                         maximumCreditLimitData?.maxTerm || 0,
                       )}
                     </Text>
@@ -307,8 +317,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                             appearance="gray"
                           >
                             {currencyFormat(
-                              maximumCreditLimitData?.maximumCreditLimitValue ||
-                                0,
+                              maximumCreditLimitData?.maxAmount || 0,
                               true,
                             )}
                           </Text>
@@ -434,7 +443,10 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                         weight="bold"
                         appearance="primary"
                       >
-                        {currencyFormat(totalExtraordinary, true)}
+                        {currencyFormat(
+                          maximumCreditLimitData?.maxAmount || 0,
+                          true,
+                        )}
                       </Text>
                       <Text type="body" size="small" appearance="gray">
                         {paymentCapacityData.maxTotal.i18n[lang]}
