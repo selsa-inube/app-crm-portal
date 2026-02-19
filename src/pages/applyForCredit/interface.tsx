@@ -410,6 +410,7 @@ export function ApplyForCreditUI(props: ApplyForCreditUIProps) {
                     }
                     customerData={customerData}
                     lang={lang}
+                    enums={enums}
                     loading={loading}
                     validDocumentsRequiredByCreditRequest={
                       validDocumentsRequiredByCreditRequest
