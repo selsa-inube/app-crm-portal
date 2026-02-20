@@ -151,6 +151,9 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
                               });
                             }}
                             lang={lang}
+                            withCheckbox={
+                              Object.keys(creditLineTerms).length > 1
+                            }
                           />
                         </Stack>
                       ),
