@@ -265,9 +265,19 @@ export const TableExtraordinaryInstallment = (
         {},
       );
 
-      const extraordinaryInstallmentsUpdate = Object.values(
-        installmentsByUniqueKey,
-      ).reverse() as TableExtraordinaryInstallmentProps[];
+      const extraordinaryInstallmentsUpdate = (
+        Object.values(
+          installmentsByUniqueKey,
+        ) as TableExtraordinaryInstallmentProps[]
+      ).sort((first, second) => {
+        const dateA = first.datePayment
+          ? new Date(first.datePayment as string).getTime()
+          : 0;
+        const dateB = second.datePayment
+          ? new Date(second.datePayment as string).getTime()
+          : 0;
+        return dateA - dateB;
+      });
 
       setExtraordinaryInstallments(extraordinaryInstallmentsUpdate);
     }
@@ -276,7 +286,16 @@ export const TableExtraordinaryInstallment = (
 
   useEffect(() => {
     if (extraordinary && Array.isArray(extraordinary)) {
-      setExtraordinaryInstallments(extraordinary);
+      const sortedExtraordinary = extraordinary.sort((first, second) => {
+        const dateA = first.datePayment
+          ? new Date(first.datePayment as string).getTime()
+          : 0;
+        const dateB = second.datePayment
+          ? new Date(second.datePayment as string).getTime()
+          : 0;
+        return dateA - dateB;
+      });
+      setExtraordinaryInstallments(sortedExtraordinary);
       setLoading(false);
     }
   }, [extraordinary]);

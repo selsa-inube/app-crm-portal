@@ -1,4 +1,11 @@
-import { useCallback, useContext, useEffect, useState, useMemo } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 import { useIAuth } from "@inube/iauth-react";
@@ -236,10 +243,22 @@ export function SimulateCredit() {
     const riskScoreProperties =
       formData.riskScores
         ?.filter((score) => score.value !== null && score.date !== null)
-        .map((score) => ({
-          propertyName: "CreditBureauScore",
-          propertyValue: `${score.value},${score.date},${score.bureauName.toUpperCase().replace(/ /g, "_")}`,
-        })) || [];
+        .map((score) => {
+          const dateObj = new Date(score.date as string);
+
+          const day = dateObj.getUTCDate().toString().padStart(2, "0");
+          const month = dateObj.toLocaleString("en-US", {
+            month: "short",
+            timeZone: "UTC",
+          });
+          const year = dateObj.getUTCFullYear();
+          const formattedDate = `${day}/${month}/${year}`;
+
+          return {
+            propertyName: "CreditBureauScore",
+            propertyValue: `${score.value},${formattedDate},${score.bureauName.toUpperCase().replace(/ /g, "_")}`,
+          };
+        }) || [];
 
     return {
       borrowerIdentificationType:
@@ -478,6 +497,8 @@ export function SimulateCredit() {
     }
   };
 
+  const prevGeneralToggleRef = useRef(formData.generalToggleChecked);
+
   const fetchCapacityAnalysis = async () => {
     if (!customerPublicCode) {
       return;
@@ -599,6 +620,8 @@ export function SimulateCredit() {
     (formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0) +
     (formData.sourcesOfIncome?.ProfessionalFees ?? 0);
 
+  const prevStepRef = useRef<number | null>(null);
+
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
       setFormData((prevState) => ({
@@ -607,10 +630,15 @@ export function SimulateCredit() {
       }));
     }
     if (currentStep === stepsAddProspect.destination.id) {
-      setFormData((prevState) => ({
-        ...prevState,
-        selectedProducts: [],
-      }));
+      if (
+        prevStepRef.current &&
+        prevStepRef.current < stepsAddProspect.destination.id
+      ) {
+        setFormData((prevState) => ({
+          ...prevState,
+          selectedProducts: [],
+        }));
+      }
     }
   }, [currentStep]);
 
@@ -1143,11 +1171,17 @@ export function SimulateCredit() {
           ...prev,
           selectedProducts: all,
         }));
+
+        prevGeneralToggleRef.current = true;
       } else {
-        setFormData((prev) => ({
-          ...prev,
-          selectedProducts: [],
-        }));
+        if (prevGeneralToggleRef.current === true) {
+          setFormData((prev) => ({
+            ...prev,
+            selectedProducts: [],
+          }));
+
+          prevGeneralToggleRef.current = false;
+        }
       }
     }
   }, [formData.generalToggleChecked, formData.togglesState, creditLineTerms]);
