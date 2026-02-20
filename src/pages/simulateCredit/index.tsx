@@ -236,10 +236,22 @@ export function SimulateCredit() {
     const riskScoreProperties =
       formData.riskScores
         ?.filter((score) => score.value !== null && score.date !== null)
-        .map((score) => ({
-          propertyName: "CreditBureauScore",
-          propertyValue: `${score.value},${score.date},${score.bureauName.toUpperCase().replace(/ /g, "_")}`,
-        })) || [];
+        .map((score) => {
+          const dateObj = new Date(score.date as string);
+
+          const day = dateObj.getUTCDate().toString().padStart(2, "0");
+          const month = dateObj.toLocaleString("en-US", {
+            month: "short",
+            timeZone: "UTC",
+          });
+          const year = dateObj.getUTCFullYear();
+          const formattedDate = `${day}/${month}/${year}`;
+
+          return {
+            propertyName: "CreditBureauScore",
+            propertyValue: `${score.value},${formattedDate},${score.bureauName.toUpperCase().replace(/ /g, "_")}`,
+          };
+        }) || [];
 
     return {
       borrowerIdentificationType:

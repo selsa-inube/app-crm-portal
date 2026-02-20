@@ -108,7 +108,9 @@ export const ScoreModalProspectUI = (props: IScoreModalProspectUIProps) => {
                 date: newRisk.date,
               })
             }
-            logo={urlMock}
+            logo={
+              "https://storage.googleapis.com/inube-assets/crediboard/datacredito-logo.png"
+            }
             newScore={newFirstScore?.score || null}
             isProspect={true}
             lang={lang}
