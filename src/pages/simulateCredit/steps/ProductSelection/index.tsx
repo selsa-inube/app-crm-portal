@@ -107,7 +107,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     const isValid =
       isSingleProduct || generalToggleChecked || selectedProducts.length > 0;
     onFormValid(isValid);
-  }, [generalToggleChecked, selectedProducts, onFormValid]);
+  }, [generalToggleChecked, selectedProducts, onFormValid, isSingleProduct]);
 
   const allQuestions = Object.entries(electionData.questions).map(
     ([key, question], index) => ({ key, question, index }),
@@ -161,7 +161,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     }
     return false;
   };
-
+  console.log("isSingleProduct: ", isSingleProduct);
   return (
     <Formik
       initialValues={initialValues}
@@ -264,6 +264,7 @@ export function ProductSelection(props: IProductSelectionProps) {
                             }}
                             isMobile={isMobile}
                             lang={lang}
+                            withCheckbox
                           />
                         ))
                     ) : (

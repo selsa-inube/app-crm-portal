@@ -1,4 +1,11 @@
-import { useCallback, useContext, useEffect, useState, useMemo } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery, useFlag } from "@inubekit/inubekit";
 import { useIAuth } from "@inube/iauth-react";
@@ -599,6 +606,8 @@ export function SimulateCredit() {
     (formData.sourcesOfIncome?.PersonalBusinessUtilities ?? 0) +
     (formData.sourcesOfIncome?.ProfessionalFees ?? 0);
 
+  const prevStepRef = useRef<number | null>(null);
+
   useEffect(() => {
     if (currentStep === stepsAddProspect.productSelection.id) {
       setFormData((prevState) => ({
@@ -607,10 +616,15 @@ export function SimulateCredit() {
       }));
     }
     if (currentStep === stepsAddProspect.destination.id) {
-      setFormData((prevState) => ({
-        ...prevState,
-        selectedProducts: [],
-      }));
+      if (
+        prevStepRef.current &&
+        prevStepRef.current < stepsAddProspect.destination.id
+      ) {
+        setFormData((prevState) => ({
+          ...prevState,
+          selectedProducts: [],
+        }));
+      }
     }
   }, [currentStep]);
 
