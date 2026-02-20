@@ -1160,20 +1160,14 @@ export function SimulateCredit() {
           selectedProducts: all,
         }));
 
-        // Registramos que el toggle se activó
         prevGeneralToggleRef.current = true;
       } else {
-        // AQUÍ ESTÁ LA MAGIA:
-        // Solo borramos la lista si acabamos de apagar el switch (es decir, estaba en true).
-        // Si ya venía en false (ej. cuando haces "Paso Anterior"), NO hacemos nada
-        // y se conserva toda la selección manual que ya tenías guardada.
         if (prevGeneralToggleRef.current === true) {
           setFormData((prev) => ({
             ...prev,
             selectedProducts: [],
           }));
 
-          // Registramos que el toggle ya se apagó
           prevGeneralToggleRef.current = false;
         }
       }
