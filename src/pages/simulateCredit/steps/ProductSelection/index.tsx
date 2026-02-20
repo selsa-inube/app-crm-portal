@@ -161,7 +161,7 @@ export function ProductSelection(props: IProductSelectionProps) {
     }
     return false;
   };
-  console.log("isSingleProduct: ", isSingleProduct);
+
   return (
     <Formik
       initialValues={initialValues}
