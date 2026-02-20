@@ -317,7 +317,8 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                             appearance="gray"
                           >
                             {currencyFormat(
-                              maximumCreditLimitData?.maxAmount || 0,
+                              maximumCreditLimitData?.maximumCreditLimitValue ||
+                                0,
                               true,
                             )}
                           </Text>
@@ -444,7 +445,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                         appearance="primary"
                       >
                         {currencyFormat(
-                          maximumCreditLimitData?.maxAmount || 0,
+                          maximumCreditLimitData?.maximumCreditLimitValue || 0,
                           true,
                         )}
                       </Text>
