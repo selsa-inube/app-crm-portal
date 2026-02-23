@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MdOutlineChevronRight,
@@ -144,6 +144,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>({} as IProspectSummaryById);
+  const [loadingTasks, setLoadingTasks] = useState(0);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -159,6 +160,19 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
       setProspectProducts(prospectData.creditProducts as ICreditProduct[]);
     }
   }, [prospectData]);
+
+  const generalLoading = loadingTasks > 0;
+
+  const setGeneralLoading = useCallback(
+    (isLoading: boolean | ((prev: boolean) => boolean)) => {
+      setLoadingTasks((prev) => {
+        const isNowLoading =
+          typeof isLoading === "function" ? isLoading(prev > 0) : isLoading;
+        return isNowLoading ? prev + 1 : Math.max(0, prev - 1);
+      });
+    },
+    [],
+  );
 
   const handleDisbursement = async () => {
     if (creditRequest?.creditRequestId) {
@@ -564,6 +578,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   lang={lang}
                   enums={enums}
                   fetchProspectData={fetchProspectData}
+                  setGeneralLoading={setGeneralLoading}
+                  generalLoading={generalLoading}
                 />
               )}
             </Stack>
