@@ -63,10 +63,15 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
         );
         if (data) {
           setValidateRequirements(
-            data.filter(
-              (requirement) =>
-                !excludedStatus.includes(requirement.requirementStatus),
-            ),
+            data.filter((requirement) => {
+              if (
+                requirement.requirementStatus ===
+                "UNVALIDATED_SYSTEM_VALIDATION"
+              ) {
+                return false;
+              }
+              return !excludedStatus.includes(requirement.requirementStatus);
+            }),
           );
         }
       } catch (error) {
