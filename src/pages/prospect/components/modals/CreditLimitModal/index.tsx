@@ -20,6 +20,7 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { AppContext } from "@context/AppContext";
 
 import { dataCreditLimitModal } from "./config";
+import { StyledCardsContainer } from "./styles";
 
 export interface ICreditLimitModalProps {
   businessUnitPublicCode: string;
@@ -120,36 +121,40 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
               margin="0 auto"
               padding=" 0px 5px"
             >
-              {dataMaximumCreditLimit.map((item, index) => (
-                <CreditLimitCard
-                  key={index}
-                  creditLineTxt={item.lineOfCredit}
-                  creditLine={item.creditLimitValue}
-                  isMobile={isMobile}
-                  businessUnitPublicCode={businessUnitPublicCode}
-                  businessManagerCode={businessManagerCode}
-                  dataMaximumCreditLimitService={dataMaximumCreditLimitService}
-                  userAccount={userAccount}
-                  setError={setError}
-                  error={error}
-                  incomeData={incomeData as IIncomeSources}
-                  lang={lang}
-                />
-              ))}
-              {isLoading &&
-                Array.from({ length: 2 }).map(() => (
-                  <StyledContainer>
-                    <Stack
-                      direction="column"
-                      alignItems="center"
-                      height="60px"
-                      gap="10px"
-                    >
-                      <SkeletonLine width="80%" height="30px" animated />
-                      <SkeletonLine width="40%" height="20px" animated />
-                    </Stack>
-                  </StyledContainer>
-                ))}
+              <StyledCardsContainer isMobile={isMobile}>
+                {isLoading
+                  ? Array.from({ length: 2 }).map((_, index) => (
+                      <StyledContainer key={index}>
+                        <Stack
+                          direction="column"
+                          alignItems="center"
+                          height="60px"
+                          gap="10px"
+                        >
+                          <SkeletonLine width="80%" height="30px" animated />
+                          <SkeletonLine width="40%" height="20px" animated />
+                        </Stack>
+                      </StyledContainer>
+                    ))
+                  : dataMaximumCreditLimit.map((item, index) => (
+                      <CreditLimitCard
+                        key={index}
+                        creditLineTxt={item.lineOfCredit}
+                        creditLine={item.creditLimitValue}
+                        isMobile={isMobile}
+                        businessUnitPublicCode={businessUnitPublicCode}
+                        businessManagerCode={businessManagerCode}
+                        dataMaximumCreditLimitService={
+                          dataMaximumCreditLimitService
+                        }
+                        userAccount={userAccount}
+                        setError={setError}
+                        error={error}
+                        incomeData={incomeData as IIncomeSources}
+                        lang={lang}
+                      />
+                    ))}
+              </StyledCardsContainer>
             </Stack>
             <Text appearance="gray" type="body" size="medium" weight="normal">
               <Text
