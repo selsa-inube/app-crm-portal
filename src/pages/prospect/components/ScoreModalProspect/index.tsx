@@ -93,8 +93,23 @@ export const ScoreModalProspect = (props: IScoreModalProspectProps) => {
 
       const updatedScoreProps = [];
 
-      const buildScoreValue = (score: IScore) =>
-        `${score.score},${score.date},${score.bureauName.toUpperCase().replace(/ /g, "_")}`;
+      const buildScoreValue = (score: IScore) => {
+        let dateStr = score.date;
+        if (score.date && score.date.includes("-")) {
+          const dateObj = new Date(score.date);
+          if (!isNaN(dateObj.getTime())) {
+            const day = dateObj.getUTCDate().toString().padStart(2, "0");
+            const month = dateObj.toLocaleString("en-US", {
+              month: "short",
+              timeZone: "UTC",
+            });
+            const year = dateObj.getUTCFullYear();
+            dateStr = `${day}/${month}/${year}`;
+          }
+        }
+
+        return `${score.score},${dateStr},${score.bureauName.toUpperCase().replace(/ /g, "_")}`;
+      };
 
       if (firstScore) {
         const resolved = newFirstScore ?? firstScore;

@@ -24,6 +24,7 @@ import { IProspect } from "@services/prospect/types";
 import { IFormData, IManageErrors } from "@pages/simulateCredit/types";
 import { RequirementsModal } from "@pages/prospect/components/modals/RequirementsModal";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { IDataHeader } from "../../simulations/types";
 
@@ -100,11 +101,13 @@ interface PayRollUIProps {
   showExceedQuotaModal: boolean;
   lang: EnumType;
   setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
+  enums: IAllEnumsResponse;
 }
 
 export function PayRollUI(props: PayRollUIProps) {
   const {
     handleNextStep,
+    enums,
     handlePreviousStep,
     validateRequirements,
     setCurrentStep,
@@ -241,6 +244,7 @@ export function PayRollUI(props: PayRollUIProps) {
                       onRequirementsValidated={onRequirementsValidated}
                       setShowErrorModal={setShowErrorModal}
                       lang={lang}
+                      enums={enums}
                     />
                   )}
 

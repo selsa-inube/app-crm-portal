@@ -196,7 +196,10 @@ export function TableExtraordinaryInstallmentUI(
                   }
 
                   return (
-                    <Td key={header.key} align="left">
+                    <Td
+                      key={header.key}
+                      align={header.key === "value" ? "right" : "left"}
+                    >
                       {value?.toString() ?? ""}
                     </Td>
                   );

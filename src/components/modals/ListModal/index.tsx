@@ -356,7 +356,6 @@ export const ListModal = (props: IListModalProps) => {
             selectedToDelete: false,
             justUploaded: true,
           };
-
           setPendingFiles((prev) => [...prev, newFile]);
         } else {
           setErrorMessage(
@@ -418,30 +417,19 @@ export const ListModal = (props: IListModalProps) => {
   };
 
   const onDeleteOneFile = (id: string) => {
-    if (!setUploadedFiles || !uploadedFiles) return;
+    if (!setUploadedFiles) return;
 
-    const newUploadedFiles = uploadedFiles.map((file: IFile) => {
-      if (file.id === id) {
-        return { ...file, selectedToDelete: true };
-      }
-
-      return file;
-    });
-
-    setUploadedFiles(newUploadedFiles);
-
-    let deletedFiles = pendingFiles.map((file: IFile) => {
-      if (file.id === id && file.wasAlreadyAttached) {
-        return { ...file, selectedToDelete: true };
-      }
-
-      return file;
-    });
-    deletedFiles = deletedFiles.filter(
-      (file: IFile) => file.id !== id || file.wasAlreadyAttached,
+    const updatedPendingFiles = pendingFiles.map((file: IFile) =>
+      file.id === id ? { ...file, selectedToDelete: true } : file,
     );
+    setPendingFiles(updatedPendingFiles);
 
-    setPendingFiles(deletedFiles);
+    if (uploadedFiles) {
+      const updatedUploaded = uploadedFiles.map((file: IFile) =>
+        file.id === id ? { ...file, selectedToDelete: true } : file,
+      );
+      setUploadedFiles(updatedUploaded);
+    }
   };
 
   const keepUploadedFiles = () => {

@@ -43,6 +43,7 @@ import {
   IMethodOfDisbursement,
   IPersonalInfo,
 } from "../steps/verification/types";
+import { IAllEnumsResponse } from "@src/services/enumerators/types";
 
 interface BonusUIProps {
   handleNextStep: () => void;
@@ -93,6 +94,7 @@ interface BonusUIProps {
   handleCancelNavigation: () => void;
   showExceedQuotaModal: boolean;
   setShowExceedQuotaModal: React.Dispatch<React.SetStateAction<boolean>>;
+  enums: IAllEnumsResponse;
 }
 
 export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
@@ -136,6 +138,7 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
     setIsModalOpenRequirements,
     isModalOpenRequirements,
     lang,
+    enums,
     isLoading,
     errorsManager,
     showExceedQuotaModal,
@@ -232,6 +235,7 @@ export function PayrollSpecialBenefitAdvanceCreditUI(props: BonusUIProps) {
                       onRequirementsValidated={onRequirementsValidated}
                       setShowErrorModal={setShowErrorModal}
                       lang={lang}
+                      enums={enums}
                     />
                   )}
 

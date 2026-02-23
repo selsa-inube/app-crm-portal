@@ -11,6 +11,7 @@ import { IValidateRequirement } from "@services/requirement/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { excludedStatus } from "@pages/simulateCredit/steps/requirementsNotMet/config";
 import { AppContext } from "@context/AppContext";
+import { IAllEnumsResponse } from "@services/enumerators/types";
 
 import { dataError } from "./config";
 
@@ -23,6 +24,7 @@ interface IRequirementsNotMetProps {
   lang: EnumType;
   onRequirementsValidated?: (requirements: IValidateRequirement[]) => void;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  enums: IAllEnumsResponse;
 }
 
 export function RequirementsNotMet(props: IRequirementsNotMetProps) {
@@ -35,6 +37,7 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
     lang,
     onRequirementsValidated,
     setShowErrorModal,
+    enums,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -115,19 +118,29 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
             wrap="wrap"
             height={isMobile ? "auto" : "324px"}
           >
-            {validateRequirements.map((requirementData, index) => (
-              <UnfulfilledRequirements
-                key={index}
-                title={`${dataError.alert.i18n[lang]} ${index + 1}`}
-                isMobile={isMobile}
-                requirement={requirementData.requirementName}
-                causeNonCompliance={
-                  requirementData.descriptionEvaluationRequirement
-                }
-                hasError={hasError}
-                lang={lang}
-              />
-            ))}
+            {validateRequirements.map((requirementData, index) => {
+              const matchedRequirement = enums?.Requirement?.find(
+                (req) => req.code === requirementData.requirementName,
+              );
+              const requirementLabel =
+                matchedRequirement?.i18n?.[lang] ??
+                requirementData.requirementName;
+
+              return (
+                <UnfulfilledRequirements
+                  key={index}
+                  title={`${dataError.alert.i18n[lang]} ${index + 1}`}
+                  isMobile={isMobile}
+                  requirement={requirementLabel}
+                  causeNonCompliance={
+                    requirementData.descriptionEvaluationRequirement
+                  }
+                  hasError={hasError}
+                  isLoading={false}
+                  lang={lang}
+                />
+              );
+            })}
           </Stack>
         ) : (
           <Stack
