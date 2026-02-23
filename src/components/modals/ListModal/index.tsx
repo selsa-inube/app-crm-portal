@@ -359,14 +359,12 @@ export const ListModal = (props: IListModalProps) => {
 
           setPendingFiles((prev) => [...prev, newFile]);
         } else {
-          console.log("Error");
           setErrorMessage(
             `${listModalData.exceedSize.i18n[lang]} ${maxFileSize}MB` || "",
           );
           setOpenErrorModal(true);
         }
       } else {
-        console.log("Error");
         setErrorMessage(`${listModalData.onlypdf.i18n[lang]}` || "");
         setOpenErrorModal(true);
       }
