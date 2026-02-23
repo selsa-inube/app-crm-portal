@@ -18,7 +18,7 @@ export const getMaximumNotificationDocumentSize = async (
       const options: RequestInit = {
         method: "GET",
         headers: {
-          "X-Action": "getMaximumNotificationDocumentSize",
+          "X-Action": "GetMaximumNotificationDocumentSize",
           "X-Business-Unit": businessUnitPublicCode,
           "Content-type": "application/json; charset=UTF-8",
           Authorization: `${authorizationToken}`,

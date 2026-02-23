@@ -68,7 +68,7 @@ export const listModalData = {
     description: "Error when file is too big",
     i18n: {
       en: "The file exceeds the maximum allowed size.",
-      es: "El archivo excede el tamaño máximo permitido.",
+      es: "El archivo excede el tamaño máximo permitido ",
     },
   },
   onlypdf: {
