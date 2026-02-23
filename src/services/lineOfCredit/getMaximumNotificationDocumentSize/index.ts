@@ -9,9 +9,6 @@ export const getMaximumNotificationDocumentSize = async (
   businessUnitPublicCode: string,
   authorizationToken: string,
 ): Promise<IMaximumNotificationDocumentSize | null> => {
-  return {
-    maximumNotificationDocumentSize: 4,
-  };
   const maxRetries = maxRetriesServices;
   const fetchTimeout = fetchTimeoutServices;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
