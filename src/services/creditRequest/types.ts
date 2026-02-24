@@ -23,7 +23,13 @@ export interface IObligations {
     productName: string;
   }[];
 }
-
+export interface ISearchAllCreditRequestStates {
+  creditRequestStateId: string;
+  abbreviatedName: string;
+  descriptionUse: string;
+  stage: string;
+  taskToBeDone: string;
+}
 export interface IObligationsByClient {
   balanceObligationTotal: number;
   duesPaid: number;
@@ -52,6 +58,7 @@ export interface IUsersByCreditRequests {
 
 export interface ICreditRequest {
   creditRequestId?: string;
+  creditRequestStateAbbreviatedName?: string;
   creditRequestCode: string;
   creditRequestDateOfCreation: string;
   loanAmount: number;

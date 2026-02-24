@@ -31,12 +31,14 @@ import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { capitalizeFirstLetter } from "@utils/formatData/text";
 
 import InfoModal from "../../components/InfoModal";
 import {
   SummaryProspectCredit,
   tittleOptions,
   IUpdateCreditProductPayload,
+  paymentCycleMap,
 } from "./config/config";
 import {
   StyledCardsCredit,
@@ -365,7 +367,14 @@ export const CardCommercialManagement = (
                 }
                 schedule={
                   entry.ordinaryInstallmentsForPrincipal?.[0]
-                    ?.paymentChannelCycleName || ""
+                    ?.installmentFrequency ||
+                  capitalizeFirstLetter(
+                    entry.ordinaryInstallmentsForPrincipal?.[0]
+                      ?.installmentFrequency ||
+                      paymentCycleMap[entry.installmentFrequency as string] ||
+                      "",
+                  ) ||
+                  ""
                 }
                 onEdit={() =>
                   canEditCreditRequest

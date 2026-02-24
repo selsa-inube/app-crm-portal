@@ -5,7 +5,6 @@ import {
   MdOutlineAccountBalanceWallet,
   MdOutlineRemoveRedEye,
   MdOutlineMessage,
-  MdOutlineRule,
   MdOutlineEdit,
   MdOutlineSpeed,
 } from "react-icons/md";
@@ -381,15 +380,6 @@ export const menuOptions = (
       handleOpenModal("scores");
     },
     icon: <MdOutlineSpeed />,
-    visible: true,
-  },
-  {
-    id: "requirements",
-    title: "Requsitos",
-    onClick: () => {
-      handleOpenModal("requirements");
-    },
-    icon: <MdOutlineRule />,
     visible: true,
   },
   {

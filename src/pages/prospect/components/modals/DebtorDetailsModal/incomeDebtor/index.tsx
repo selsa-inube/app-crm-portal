@@ -33,7 +33,7 @@ export function IncomeDebtor(props: IIncomeDebtor) {
               key={index}
               label={field.label}
               placeHolder={currencyFormat(0)}
-              appearancePlaceHolder="gray"
+              apparencePlaceHolder="gray"
             />
           ))}
         </Stack>
@@ -57,7 +57,7 @@ export function IncomeDebtor(props: IIncomeDebtor) {
               key={index}
               label={field.label}
               placeHolder={currencyFormat(sum)}
-              appearancePlaceHolder="gray"
+              apparencePlaceHolder="gray"
             />
           );
         })}

@@ -11,7 +11,7 @@ interface IStyledContainerFieldset {
   $height?: string;
   $borderColor?: string;
   $showFieldset?: boolean;
-  $alignContent?: boolean;
+  $alignContent?: string;
   $maxHeight?: string;
 }
 

@@ -81,8 +81,15 @@ interface ICRMPortalData {
   businessUnit: IBusinessUnit;
   user: IUser;
   token: string;
+  creditRequestStates: ISearchAllCreditRequestStates[];
 }
-
+export interface ISearchAllCreditRequestStates {
+  creditRequestStateId: string;
+  abbreviatedName: string;
+  descriptionUse: string;
+  stage: string;
+  taskToBeDone: string;
+}
 interface IAppContext {
   eventData: ICRMPortalData;
   businessUnitSigla: string;
