@@ -52,6 +52,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
     lang,
     dataProspect,
     eventData,
+    generalTerms,
   } = props;
 
   return (
@@ -211,6 +212,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
                 handleFormChange({ creditAmount: amount });
               }}
               onFormValid={setIsCurrentFormValid}
+              generalTerms={generalTerms}
             />
           )}
 
@@ -235,6 +237,7 @@ export const AddProductModalUI = (props: IAddProductModalUIProps) => {
               businessUnitPublicCode={businessUnitPublicCode}
               businessManagerCode={businessManagerCode}
               eventData={eventData}
+              generalTerms={generalTerms}
             />
           )}
         </Stack>
