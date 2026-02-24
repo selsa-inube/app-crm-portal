@@ -71,6 +71,15 @@ export const paymentCapacityData = {
     },
   },
 
+  currentObligations: {
+    code: "Current_obligations_installment",
+    description: "Current obligations installment",
+    i18n: {
+      en: "(-) Current obligations installment",
+      es: "(-) Cuota por obligaciones vigentes",
+    },
+  },
+
   subsistenceReserve: {
     code: "Subsistence_reserve_minimum",
     description: "Minimum subsistence reserve",
@@ -164,11 +173,25 @@ export const paymentCapacityData = {
   },
 };
 
-export const getMaxValueText = (maxAmount: number, maxTerm: number) => (
+export const getMaxValueText = (
+  maxAmount: number,
+  maxTerm: number,
+  isExtraordinary: boolean,
+) => (
   <>
-    Monto máximo calculado para una cuota de{" "}
-    <strong>{maxAmount.toLocaleString("es-CO")}</strong> y plazo de{" "}
-    <strong>{maxTerm}</strong> meses.
+    {!isExtraordinary && (
+      <>
+        Monto máximo calculado para una cuota de{" "}
+        <strong>{maxAmount.toLocaleString("es-CO")}</strong> y plazo de{" "}
+        <strong>{maxTerm}</strong> meses.
+      </>
+    )}
+    {isExtraordinary && (
+      <>
+        Monto máximo calculado para un plazo de <strong>{maxTerm}</strong>{" "}
+        meses.
+      </>
+    )}
   </>
 );
 
