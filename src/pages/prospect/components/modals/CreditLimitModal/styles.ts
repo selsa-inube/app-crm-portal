@@ -1,6 +1,12 @@
 import styled from "styled-components";
 import { inube } from "@inubekit/inubekit";
 
+interface IStyledCardsContainer {
+  isMobile?: boolean;
+  oneProduct?: boolean;
+  moreThanOneLine?: boolean;
+}
+
 export const ScrollableContainer = styled.div`
   display: flex;
   width: 100%;
@@ -25,13 +31,13 @@ export const ScrollableContainer = styled.div`
     border-radius: 8px;
   }
 `;
-export const StyledCardsContainer = styled.div<{ isMobile?: boolean }>`
-  display: grid;
+export const StyledCardsContainer = styled.div<IStyledCardsContainer>`
+  display: ${({ oneProduct }) => (oneProduct ? "" : "grid")};
   grid-template-columns: ${({ isMobile }) =>
     isMobile ? "1fr" : "repeat(2, 1fr)"};
   gap: 16px;
   width: 100%;
-  height: ${({ isMobile }) => (isMobile ? "300px" : "84px")};
+  height: ${({ isMobile }) => (isMobile ? "300px" : "88px")};
   padding: 0 20px;
   overflow-x: hidden;
 `;

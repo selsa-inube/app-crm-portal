@@ -143,6 +143,9 @@ export interface IMaximumCreditLimit {
   maximumCreditLimitValue?: number;
   paymentCapacity?: number;
   totalIncomeReportedSources?: number;
+  totalRegularInstallment?: number;
+  maxCreditLimitValueWithOrdinaryInstallments?: number;
+  maxCreditLimitValueWithExtraordinaryInstallments?: number;
 }
 export interface IModesOfDisbursementCredit {
   accountBankCode: string;

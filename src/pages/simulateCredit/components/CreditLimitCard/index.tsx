@@ -72,7 +72,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
           {currencyFormat(creditLine)}
         </Text>
         <Divider dashed />
-        <Stack direction="row" gap="6px" justifyContent="center">
+        <Stack direction="row" gap="6px" justifyContent="center" width="160px">
           <Icon
             icon={<MdInfoOutline />}
             appearance="primary"
@@ -80,9 +80,14 @@ export function CreditLimitCard(props: CreditLimitProps) {
             onClick={handleOpenModal}
             cursorHover
           />
-          <Text type="body" size="small" appearance="gray" weight="normal">
-            {quotaLabel.i18n[lang]}
-            {creditLineTxt}
+          <Text
+            appearance={"gray"}
+            type={"body"}
+            size={"small"}
+            weight={"normal"}
+            ellipsis
+          >
+            {quotaLabel.i18n[lang]} {creditLineTxt}
           </Text>
         </Stack>
       </Stack>

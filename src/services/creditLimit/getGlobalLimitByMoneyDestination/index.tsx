@@ -87,7 +87,9 @@ export const getGlobalLimitByMoneyDestination = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        return null;
+        throw new Error(
+          "No content: No se encontraron datos para los parámetros proporcionados.",
+        );
       }
 
       const data = await res.json();
