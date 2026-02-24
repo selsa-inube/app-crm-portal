@@ -6,6 +6,8 @@ export const mapCreditRequestToEntity = (
   const creditRequest: ICreditRequest = {
     creditRequestId: data.creditRequestId as string,
     creditRequestCode: data.creditRequestCode as string,
+    creditRequestStateAbbreviatedName:
+      data.creditRequestStateAbbreviatedName as string,
     creditRequestDateOfCreation: data.creditRequestDateOfCreation as string,
     loanAmount: data.loanAmount as number,
     clientId: data.clientId as string,

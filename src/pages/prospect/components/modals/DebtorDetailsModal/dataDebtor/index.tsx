@@ -2,9 +2,9 @@ import { Stack } from "@inubekit/inubekit";
 import { FormikValues } from "formik";
 
 import { CardGray } from "@components/cards/CardGray";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { dataDebtor } from "./config";
-import { EnumType } from "@hooks/useEnum/useEnum";
 
 interface IDataDebtor {
   initialValues: FormikValues;
@@ -35,7 +35,7 @@ export function DataDebtor(props: IDataDebtor) {
       <CardGray
         label={dataDebtor.labelEmail.i18n[lang]}
         data={initialValues.email}
-        appearancePlaceHolder="gray"
+        apparencePlaceHolder="gray"
       />
       <CardGray
         label={dataDebtor.labelNumber.i18n[lang]}

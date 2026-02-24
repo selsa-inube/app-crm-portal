@@ -17,10 +17,12 @@ import { optionFlags } from "@pages/prospect/outlets/financialReporting/config";
 import { saveDocument } from "@services/creditRequest/saveDocument";
 import { validationMessages } from "@validations/validationMessages";
 import { AppContext } from "@context/AppContext";
-import { File } from "@components/inputs/File";
+import { File as FileComponent } from "@components/inputs/File";
 import { formatFileSize } from "@utils/size";
 import { useEnum } from "@hooks/useEnum/useEnum";
+import { getMaximumNotificationDocumentSize } from "@services/lineOfCredit/getMaximumNotificationDocumentSize";
 
+import { ErrorModal } from "../ErrorModal";
 import { DocumentViewer } from "../DocumentViewer";
 import {
   StyledAttachContainer,
@@ -133,6 +135,9 @@ export const ListModal = (props: IListModalProps) => {
     name: string;
     url: string;
   }>({ name: "", url: "" });
+  const [maxFileSize, setMaxFileSize] = useState<number>(2.5 * 1024 * 1024);
+  const [openErrorModal, setOpenErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const activePendingFiles = pendingFiles.filter(
     (file) => !file.selectedToDelete,
@@ -140,6 +145,37 @@ export const ListModal = (props: IListModalProps) => {
 
   const activeUploadedFiles =
     uploadedFiles?.filter((file) => !file.selectedToDelete) || [];
+
+  useEffect(() => {
+    const fetchMaxFileSize = async () => {
+      try {
+        const response = await getMaximumNotificationDocumentSize(
+          businessUnitPublicCode,
+          eventData.token,
+        );
+
+        if (response && response.maximumNotificationDocumentSize) {
+          setMaxFileSize(
+            response.maximumNotificationDocumentSize * 1024 * 1024,
+          );
+        }
+      } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
+        setErrorMessage(description);
+        setOpenErrorModal(true);
+      }
+    };
+
+    fetchMaxFileSize();
+  });
 
   useEffect(() => {
     if (!uploadedFiles) return;
@@ -150,7 +186,6 @@ export const ListModal = (props: IListModalProps) => {
   }, [pendingFiles]);
 
   const dragCounter = useRef(0);
-  const MAX_FILE_SIZE = 2.5 * 1024 * 1024;
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -162,17 +197,31 @@ export const ListModal = (props: IListModalProps) => {
 
     if (!files) return;
 
-    const newFiles = Array.from(files).map((file) => ({
-      id: crypto.randomUUID(),
-      name: file.name,
-      file,
-      wasAlreadyAttached: false,
-      selectedToDelete: false,
-      justUploaded: true,
-    }));
+    const validFiles: IFile[] = [];
+
+    Array.from(files).forEach((file) => {
+      if (file.size <= maxFileSize) {
+        validFiles.push({
+          id: crypto.randomUUID(),
+          name: file.name,
+          file,
+          wasAlreadyAttached: false,
+          selectedToDelete: false,
+          justUploaded: true,
+        });
+      } else {
+        setErrorMessage(
+          `${listModalData.exceedSize.i18n[lang]} ${maxFileSize / 1024 / 1024}MB` ||
+            "",
+        );
+        setOpenErrorModal(true);
+      }
+    });
 
     keepUploadedFiles();
-    setPendingFiles((prev) => [...markFilesJustUploaded(prev), ...newFiles]);
+    setPendingFiles((prev) => [...markFilesJustUploaded(prev), ...validFiles]);
+
+    event.target.value = "";
   };
 
   const Listdata = (props: IListdataProps) => {
@@ -297,15 +346,8 @@ export const ListModal = (props: IListModalProps) => {
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
 
-      const allowedTypes = [
-        "application/pdf",
-        "image/jpeg",
-        "image/png",
-        "image/jpg",
-      ];
-
-      if (allowedTypes.includes(file.type)) {
-        if (file.size <= MAX_FILE_SIZE) {
+      if (file.type === "application/pdf") {
+        if (file.size <= maxFileSize) {
           const newFile = {
             id: crypto.randomUUID(),
             name: file.name,
@@ -316,10 +358,14 @@ export const ListModal = (props: IListModalProps) => {
           };
           setPendingFiles((prev) => [...prev, newFile]);
         } else {
-          alert(listModalData.exceedSize.i18n[lang]);
+          setErrorMessage(
+            `${listModalData.exceedSize.i18n[lang]} ${maxFileSize}MB` || "",
+          );
+          setOpenErrorModal(true);
         }
       } else {
-        alert(listModalData.onlypdf.i18n[lang]);
+        setErrorMessage(`${listModalData.onlypdf.i18n[lang]}` || "");
+        setOpenErrorModal(true);
       }
 
       e.dataTransfer.clearData();
@@ -524,7 +570,9 @@ export const ListModal = (props: IListModalProps) => {
                 />
               </StyledAttachContainer>
               <Text size="medium" appearance="gray">
-                {listModalData.maximum.i18n[lang]}
+                {listModalData.maximum.i18n[lang] +
+                  maxFileSize / 1024 / 1024 +
+                  " MB"}
               </Text>
               {activePendingFiles.length > 0 ? (
                 <>
@@ -548,7 +596,7 @@ export const ListModal = (props: IListModalProps) => {
                       {pendingFiles.map(
                         (file, index) =>
                           !file.selectedToDelete && (
-                            <File
+                            <FileComponent
                               key={file.id}
                               id={file.id}
                               index={index}
@@ -599,7 +647,7 @@ export const ListModal = (props: IListModalProps) => {
                         {uploadedFiles.map(
                           (file, index) =>
                             !file.selectedToDelete && (
-                              <File
+                              <FileComponent
                                 key={file.id}
                                 index={index}
                                 id={file.id}
@@ -676,6 +724,16 @@ export const ListModal = (props: IListModalProps) => {
           )}
         </StyledModal>
       </Grid>
+      {openErrorModal && (
+        <ErrorModal
+          isMobile={isMobile}
+          message={errorMessage}
+          handleClose={() => {
+            setOpenErrorModal(false);
+            setErrorMessage("");
+          }}
+        />
+      )}
     </Blanket>,
     node,
   );

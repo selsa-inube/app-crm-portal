@@ -37,3 +37,7 @@ export interface CreditLineGeneralTerms {
   maxEffectiveInterestRate: number;
   amortizationType: string[];
 }
+
+export interface IMaximumNotificationDocumentSize {
+  maximumNotificationDocumentSize: number;
+}

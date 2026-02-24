@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MdOutlineChevronRight,
@@ -112,7 +112,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
-
+  const [disbursementCurrentTab, setDisbursementCurrentTab] =
+    useState<string>("");
   const [internal, setInternal] = useState<IModeOfDisbursement | null>(null);
   const [external, setExternal] = useState<IModeOfDisbursement | null>(null);
   const [checkEntity, setCheckEntity] = useState<IModeOfDisbursement | null>(
@@ -144,6 +145,7 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [prospectSummaryData, setProspectSummaryData] =
     useState<IProspectSummaryById>({} as IProspectSummaryById);
+  const [loadingTasks, setLoadingTasks] = useState(0);
 
   const businessUnitPublicCode: string =
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
@@ -159,6 +161,19 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
       setProspectProducts(prospectData.creditProducts as ICreditProduct[]);
     }
   }, [prospectData]);
+
+  const generalLoading = loadingTasks > 0;
+
+  const setGeneralLoading = useCallback(
+    (isLoading: boolean | ((prev: boolean) => boolean)) => {
+      setLoadingTasks((prev) => {
+        const isNowLoading =
+          typeof isLoading === "function" ? isLoading(prev > 0) : isLoading;
+        return isNowLoading ? prev + 1 : Math.max(0, prev - 1);
+      });
+    },
+    [],
+  );
 
   const handleDisbursement = async () => {
     if (creditRequest?.creditRequestId) {
@@ -234,6 +249,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     accountType: "",
     accountNumber: "",
     observation: "",
+    paymentOrderReference: "",
+    disbursementReference: "",
   };
 
   const onChangesReportCredit = (name: string, newValue: string) => {
@@ -281,11 +298,24 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
 
   const incomeDataValues = incomeDataProspect(prospectData);
 
+  let normalizedStageTitle: string = "";
+  const matchingState = eventData.creditRequestStates?.find((state) => {
+    return (
+      state.stage === data.stage &&
+      state.abbreviatedName === data.creditRequestStateAbbreviatedName
+    );
+  });
+  if (matchingState) {
+    normalizedStageTitle = matchingState.descriptionUse;
+  } else {
+    normalizedStageTitle = "";
+  }
+
   return (
     <>
       <Fieldset
         title={errorMessages.comercialManagement.titleCard.i18n[lang]}
-        descriptionTitle={data.stage}
+        descriptionTitle={normalizedStageTitle}
         loading={loadingData}
       >
         {!data ? (
@@ -564,6 +594,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   lang={lang}
                   enums={enums}
                   fetchProspectData={fetchProspectData}
+                  setGeneralLoading={setGeneralLoading}
+                  generalLoading={generalLoading}
                 />
               )}
             </Stack>
@@ -614,7 +646,9 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   checkManagementData: checkManagement || dataDefault,
                   cash: cash || dataDefault,
                 }}
-                lang={lang}
+                handleOpenEdit={() => {}}
+                currentTab={disbursementCurrentTab}
+                setCurrentTab={setDisbursementCurrentTab}
               />
             )}
             {infoModal && (

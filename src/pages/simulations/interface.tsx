@@ -79,6 +79,8 @@ interface SimulationsUIProps {
   processedData: ProcessedData;
   lang: EnumType;
   enums: IAllEnumsResponse;
+  setGeneralLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  generalLoading: boolean;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: ReturnType<typeof useNavigate>;
@@ -170,6 +172,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
     showPrerequisiteModal,
     setShowPrerequisiteModal,
     validationErrors,
+    setGeneralLoading,
+    generalLoading,
   } = props;
 
   return (
@@ -414,6 +418,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
                             enums={enums}
                             fetchProspectData={fetchProspectData}
                             disableAddProduct={disableAddProduct}
+                            setGeneralLoading={setGeneralLoading}
+                            generalLoading={generalLoading}
                           />
                         </Fieldset>
                       </StyledScrollPrint>

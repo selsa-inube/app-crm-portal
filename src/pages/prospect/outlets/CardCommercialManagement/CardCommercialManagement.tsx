@@ -31,12 +31,14 @@ import { privilegeCrm } from "@config/privilege";
 import { StyledCreditProductCard } from "@components/cards/CreditProductCard/styles";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
+import { capitalizeFirstLetter } from "@utils/formatData/text";
 
 import InfoModal from "../../components/InfoModal";
 import {
   SummaryProspectCredit,
   tittleOptions,
   IUpdateCreditProductPayload,
+  paymentCycleMap,
 } from "./config/config";
 import {
   StyledCardsCredit,
@@ -57,6 +59,8 @@ interface CardCommercialManagementProps {
   setProspectSummaryData?: React.Dispatch<
     React.SetStateAction<IProspectSummaryById>
   >;
+  setGeneralLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  generalLoading: boolean;
   prospectData?: IProspect;
   showAddProduct?: boolean;
   refreshProducts?: () => void;
@@ -82,6 +86,8 @@ export const CardCommercialManagement = (
     onProspectRefreshData,
     fetchProspectData,
     disableAddProduct = false,
+    setGeneralLoading,
+    generalLoading,
   } = props;
 
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
@@ -107,7 +113,6 @@ export const CardCommercialManagement = (
   const [selectedProductId, setSelectedProductId] = useState("");
 
   const [showConsolidatedModal, setShowConsolidatedModal] = useState(false);
-  const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [consolidatedCredits, setConsolidatedCredits] = useState(
     prospectData?.consolidatedCredits || [],
   );
@@ -116,7 +121,6 @@ export const CardCommercialManagement = (
   const [deductibleExpenses, setDeductibleExpenses] = useState<
     { expenseName: string; expenseValue: number }[]
   >([]);
-  const [isLoading, setIsLoading] = useState(true);
   const { disabledButton: canEditCreditRequest } = useValidateUseCase({
     useCase: getUseCaseValue("canEditCreditRequest"),
   });
@@ -144,7 +148,7 @@ export const CardCommercialManagement = (
   const handleDelete = async () => {
     if (!prospectData || !prospectProducts.length) return;
     try {
-      setIsLoading(true);
+      setGeneralLoading(true);
 
       await RemoveCreditProduct(
         businessUnitPublicCode,
@@ -169,11 +173,11 @@ export const CardCommercialManagement = (
           code + err?.message + (err?.data?.description || "");
 
         setShowErrorModal(true);
-        setIsLoading(false);
+        setGeneralLoading(false);
         setMessageError(description);
       }
 
-      setIsLoading(false);
+      setGeneralLoading(false);
       setShowDeleteModal(false);
       setShowMessageSuccessModal(true);
     } catch (error) {
@@ -186,7 +190,7 @@ export const CardCommercialManagement = (
       const code = err?.data?.code ? `[${err.data.code}] ` : "";
       const description = code + err?.message + (err?.data?.description || "");
       setShowErrorModal(true);
-      setIsLoading(false);
+      setGeneralLoading(false);
       setMessageError(tittleOptions.errorDelete || description);
     }
   };
@@ -293,7 +297,7 @@ export const CardCommercialManagement = (
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoadingSummary(true);
+        setGeneralLoading(true);
 
         const result = await getSearchProspectSummaryById(
           businessUnitPublicCode,
@@ -301,12 +305,12 @@ export const CardCommercialManagement = (
           prospectData?.prospectId || "",
           eventData.token,
         );
-        setIsLoadingSummary(false);
+        setGeneralLoading(false);
         if (result && setProspectSummaryData) {
           setProspectSummaryData(result);
         }
       } catch (error) {
-        setIsLoadingSummary(false);
+        setGeneralLoading(false);
         setShowErrorModal(true);
         setMessageError(tittleOptions.descriptionError);
       }
@@ -332,7 +336,7 @@ export const CardCommercialManagement = (
         setShowErrorModal(true);
         setMessageError(`${error}`);
       } finally {
-        setIsLoading(false);
+        setGeneralLoading(false);
       }
     };
 
@@ -349,58 +353,80 @@ export const CardCommercialManagement = (
             padding="3px 8px 7px 8px"
             direction={isMobile ? "column" : "row"}
           >
-            {prospectProducts.map((entry, index) => (
-              <CreditProductCard
-                key={`${entry.creditProductCode}-${index}`}
-                lineOfCredit={entry.lineOfCreditAbbreviatedName}
-                paymentMethod={
-                  entry.ordinaryInstallmentsForPrincipal?.[0]
-                    ?.paymentChannelAbbreviatedName
-                }
-                loanAmount={entry.loanAmount}
-                interestRate={entry.interestRate || 0}
-                termMonths={entry.loanTerm}
-                periodicFee={
-                  entry.ordinaryInstallmentsForPrincipal?.[0]?.installmentAmount
-                }
-                schedule={
-                  entry.ordinaryInstallmentsForPrincipal?.[0]
-                    ?.paymentChannelCycleName || ""
-                }
-                onEdit={() =>
-                  canEditCreditRequest
-                    ? handleInfo()
-                    : (setSelectedProduct(entry),
-                      setModalHistory((prev) => [...prev, "editProductModal"]))
-                }
-                onDelete={() =>
-                  canEditCreditRequest
-                    ? handleInfo()
-                    : handleDeleteClick(entry.creditProductCode)
-                }
-                showIcons={showAddProduct}
-                lang={lang}
-                canDelete={prospectProducts.length === 1}
-                installmentFrequency={
-                  enums.Peridiocity?.find(
-                    (item) => item.code === entry.installmentFrequency,
-                  )?.i18n?.[lang] || ""
-                }
-              />
-            ))}
-            {!(showAddProduct && !isLoading) ||
+            {!generalLoading && (
+              <>
+                {prospectProducts.map((entry, index) => (
+                  <CreditProductCard
+                    key={`${entry.creditProductCode}-${index}`}
+                    lineOfCredit={entry.lineOfCreditAbbreviatedName}
+                    paymentMethod={
+                      entry.ordinaryInstallmentsForPrincipal?.[0]
+                        ?.paymentChannelAbbreviatedName
+                    }
+                    loanAmount={entry.loanAmount}
+                    interestRate={entry.interestRate || 0}
+                    termMonths={entry.loanTerm}
+                    periodicFee={
+                      entry.ordinaryInstallmentsForPrincipal?.[0]
+                        ?.installmentAmount
+                    }
+                    schedule={
+                      entry.ordinaryInstallmentsForPrincipal?.[0]
+                        ?.installmentFrequency ||
+                      capitalizeFirstLetter(
+                        entry.ordinaryInstallmentsForPrincipal?.[0]
+                          ?.installmentFrequency ||
+                          paymentCycleMap[
+                            entry.installmentFrequency as string
+                          ] ||
+                          "",
+                      ) ||
+                      ""
+                    }
+                    onEdit={() =>
+                      canEditCreditRequest
+                        ? handleInfo()
+                        : (setSelectedProduct(entry),
+                          setModalHistory((prev) => [
+                            ...prev,
+                            "editProductModal",
+                          ]))
+                    }
+                    onDelete={() =>
+                      canEditCreditRequest
+                        ? handleInfo()
+                        : handleDeleteClick(entry.creditProductCode)
+                    }
+                    showIcons={showAddProduct}
+                    lang={lang}
+                    canDelete={prospectProducts.length === 1}
+                    installmentFrequency={
+                      enums.Peridiocity?.find(
+                        (item) => item.code === entry.installmentFrequency,
+                      )?.i18n?.[lang] || ""
+                    }
+                  />
+                ))}
+              </>
+            )}
+
+            {!(showAddProduct && !generalLoading) ||
               (!disableAddProduct && (
                 <StyledPrint>
                   <NewCreditProductCard onClick={onClick} lang={lang} />
                 </StyledPrint>
               ))}
-            {isLoading && prospectProducts.length === 0 && (
+            {generalLoading && (
               <>
                 {Array(3)
                   .fill(0)
                   .map((_, indexContainer) => (
                     <Stack>
-                      <StyledCreditProductCard isLoading key={indexContainer}>
+                      <StyledCreditProductCard
+                        isLoading
+                        key={indexContainer}
+                        $showIcons={true}
+                      >
                         <Stack
                           direction="column"
                           height="100%"
@@ -468,7 +494,7 @@ export const CardCommercialManagement = (
           >
             {SummaryProspectCredit.map((entry, index) => (
               <CardValues
-                isLoading={isLoadingSummary}
+                isLoading={generalLoading}
                 key={index}
                 items={entry.item.map((item) => {
                   let iconToRender = item.icon;
@@ -498,7 +524,7 @@ export const CardCommercialManagement = (
             handleClose={() => setShowDeleteModal(false)}
             handleDelete={handleDelete}
             TextDelete={tittleOptions.deletedExpensesErrorDescription}
-            isLoading={isLoading}
+            isLoading={generalLoading}
             lang={lang}
           />
         )}
@@ -565,7 +591,7 @@ export const CardCommercialManagement = (
           <DeductibleExpensesModal
             handleClose={() => setDeductibleExpensesModal(false)}
             initialValues={deductibleExpenses}
-            loading={isLoading}
+            loading={generalLoading}
             isMobile={isMobile}
             lang={lang}
           />

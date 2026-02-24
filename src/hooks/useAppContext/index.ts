@@ -14,6 +14,7 @@ import { decrypt } from "@utils/encrypt/encrypt";
 import { IOptionStaff } from "@services/staffs/searchOptionForStaff/types";
 import { getSearchOptionForStaff } from "@services/staffs/searchOptionForStaff";
 import { getSearchUseCaseForStaff } from "@services/staffs/SearchUseCaseForStaff";
+import { getSearchAllCreditRequestStates } from "@src/services/creditRequest/getSearchAllCreditRequestStates";
 
 interface IBusinessUnits {
   businessUnitPublicCode: string;
@@ -109,6 +110,7 @@ function useAppContext() {
       },
     },
     token: "",
+    creditRequestStates: [],
   });
 
   useEffect(() => {
@@ -141,7 +143,40 @@ function useAppContext() {
       }
     }
   }, [user, isIAuthLoading]);
+  useEffect(() => {
+    const fetchCreditRequestStates = async () => {
+      try {
+        if (
+          !eventData.businessUnit.businessUnitPublicCode ||
+          !eventData.token ||
+          isIAuthLoading
+        ) {
+          return;
+        }
 
+        const creditStates = await getSearchAllCreditRequestStates(
+          eventData.businessUnit.businessUnitPublicCode,
+          eventData.token,
+        );
+
+        setEventData((prev) => ({
+          ...prev,
+          creditRequestStates: Array.isArray(creditStates) ? creditStates : [],
+        }));
+      } catch (error) {
+        setEventData((prev) => ({
+          ...prev,
+          creditRequestStates: [],
+        }));
+      }
+    };
+
+    fetchCreditRequestStates();
+  }, [
+    eventData.businessUnit.businessUnitPublicCode,
+    eventData.token,
+    isIAuthLoading,
+  ]);
   useEffect(() => {
     const fetchStaffData = async () => {
       setLoadingEventData(true);

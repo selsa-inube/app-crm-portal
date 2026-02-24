@@ -33,7 +33,7 @@ interface IFieldsetProps {
   borderColor?: string;
   showFieldset?: boolean;
   padding?: string;
-  alignContent?: boolean;
+  alignContent?: string | boolean;
   loading?: boolean;
   maxHeight?: string;
   maxLength?: number;
@@ -134,7 +134,7 @@ export const Fieldset = (props: IFieldsetProps) => {
         $isClickable={isClickable}
         $borderColor={borderColor}
         $showFieldset={showFieldset}
-        $alignContent={alignContent}
+        $alignContent={alignContent as string}
         $maxHeight={maxHeight}
       >
         {children}

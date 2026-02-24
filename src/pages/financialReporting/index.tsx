@@ -556,7 +556,10 @@ export const FinancialReporting = () => {
                   <OfferedGuaranteeModal
                     handleClose={() => setShowGuarantee(false)}
                     isMobile={isMobile}
-                    lang={lang}
+                    prospectData={dataProspect!}
+                    businessUnitPublicCode={businessUnitPublicCode}
+                    requestId={data.creditRequestId!}
+                    businessManagerCode={businessManagerCode}
                   />
                 )}
                 {showMenu && isMobile && (

@@ -43,8 +43,8 @@ export const listModalData = {
     code: "Max_file_size",
     description: "Maximum file size",
     i18n: {
-      en: "Maximum file size per file: 2.5MB",
-      es: "Peso máximo por archivo: 2.5MB",
+      en: "Maximum file size per file: ",
+      es: "Peso máximo por archivo: ",
     },
   },
   attachments: {
@@ -55,28 +55,28 @@ export const listModalData = {
       es: "Archivos adjuntos",
     },
   },
-  exceedSize: {
-    code: "File_size_exceeded",
-    description: "File size exceeded",
-    i18n: {
-      en: "The file exceeds the maximum allowed size of 2.5MB.",
-      es: "El archivo supera el tamaño máximo permitido de 2.5MB.",
-    },
-  },
-  onlypdf: {
-    code: "Only_pdf_allowed",
-    description: "Only PDF allowed",
-    i18n: {
-      en: "Only PDF files are allowed.",
-      es: "Solo se permiten archivos PDF.",
-    },
-  },
   buttonCancel: {
     code: "Cancel",
     description: "Cancel",
     i18n: {
       en: "Cancel",
       es: "Cancelar",
+    },
+  },
+  exceedSize: {
+    code: "Exceed_size",
+    description: "Error when file is too big",
+    i18n: {
+      en: "The file exceeds the maximum allowed size.",
+      es: "El archivo excede el tamaño máximo permitido ",
+    },
+  },
+  onlypdf: {
+    code: "Only_pdf",
+    description: "Error when file format is wrong",
+    i18n: {
+      en: "Only PDF files are allowed.",
+      es: "Solo se permiten archivos PDF.",
     },
   },
 };

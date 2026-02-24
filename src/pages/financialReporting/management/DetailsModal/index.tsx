@@ -39,7 +39,7 @@ export function DetailsModal(props: DetailsModalProps) {
         <CardGray
           label={txtLabels.userLabel.i18n[lang]}
           placeHolder={data.userName}
-          appearancePlaceHolder="gray"
+          apparencePlaceHolder="gray"
         />
         <CardGray
           label={txtLabels.justificationLabel.i18n[lang]}
@@ -48,7 +48,7 @@ export function DetailsModal(props: DetailsModalProps) {
               ? data.justification
               : data.traceValue
           }
-          appearancePlaceHolder="gray"
+          apparencePlaceHolder="gray"
         />
       </Stack>
     </BaseModal>
