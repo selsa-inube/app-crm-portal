@@ -171,7 +171,7 @@ export function TermSelection(props: ITermSelection) {
             : schema.nullable().notRequired(),
       ),
     });
-  }, [generalTerms, paymentCapacity, lang]); // <-- IMPORTANT: Added 'lang' to dependencies
+  }, [generalTerms, paymentCapacity, lang]);
 
   const handleValidationsForm = (values: ITermSelectionValuesMain) => {
     const quotaCapNumericValue =
