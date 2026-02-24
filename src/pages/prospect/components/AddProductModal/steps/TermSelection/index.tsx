@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import { currencyFormat } from "@utils/formatData/currency";
 import {
@@ -15,6 +15,7 @@ import {
   ITermSelectionValuesMain,
   VALIDATED_NUMBER_REGEX,
 } from "../config";
+import { validationMessages } from "../../config";
 
 export function TermSelection(props: ITermSelection) {
   const {
@@ -30,10 +31,48 @@ export function TermSelection(props: ITermSelection) {
     eventData,
     onChange,
     onFormValid,
+    generalTerms,
   } = props;
 
   const [paymentCapacityData, setPaymentCapacityData] =
     useState<IPaymentCapacityResponse | null>(null);
+
+  useEffect(() => {
+    let isValid = false;
+
+    const quotaCapNumeric =
+      Number(String(quotaCapValue).replace(VALIDATED_NUMBER_REGEX, "")) || 0;
+    const maximumTermNumeric =
+      Number(String(maximumTermValue).replace(VALIDATED_NUMBER_REGEX, "")) || 0;
+
+    if (quotaCapEnabled) {
+      let isQuotaCapValid = quotaCapNumeric > 0;
+      if (paymentCapacity > 0 && quotaCapNumeric > paymentCapacity) {
+        isQuotaCapValid = false;
+      }
+      isValid = isQuotaCapValid;
+    } else if (maximumTermEnabled) {
+      let isMaximumTermValid = maximumTermNumeric > 0;
+      if (generalTerms) {
+        const min = generalTerms.minTerm || 0;
+        const max = generalTerms.maxTerm || Infinity;
+
+        if (maximumTermNumeric < min || maximumTermNumeric > max) {
+          isMaximumTermValid = false;
+        }
+      }
+      isValid = isMaximumTermValid;
+    }
+
+    onFormValid(isValid);
+  }, [
+    quotaCapValue,
+    maximumTermValue,
+    quotaCapEnabled,
+    maximumTermEnabled,
+    generalTerms,
+    onFormValid,
+  ]);
 
   useEffect(() => {
     if (!quotaCapEnabled && !maximumTermEnabled) {
@@ -67,37 +106,72 @@ export function TermSelection(props: ITermSelection) {
 
   const paymentCapacity = paymentCapacityData?.paymentCapacity || 0;
 
-  const validationSchema = Yup.object().shape({
-    quotaCapValue: Yup.string().when(
-      "toggles.quotaCapToggle",
-      (quotaCapToggle, schema) =>
-        quotaCapToggle
-          ? schema
-              .required("Campo requerido")
-              .test("is-number", "Debe ser un número válido", (value) => {
-                const numericValue = Number(
-                  String(value).replace(VALIDATED_NUMBER_REGEX, ""),
-                );
-                return !isNaN(numericValue);
-              })
-              .test(
-                "max-limit",
-                `El valor no puede exceder ${currencyFormat(paymentCapacity)}`,
-                (value) => {
-                  const numericValue = Number(
-                    String(value).replace(VALIDATED_NUMBER_REGEX, ""),
-                  );
-                  return numericValue <= paymentCapacity;
-                },
-              )
-          : schema,
-    ),
-    maximumTermValue: Yup.string().when(
-      "toggles.maximumTermToggle",
-      (maximumTermToggle, schema) =>
-        maximumTermToggle ? schema.required("") : schema,
-    ),
-  });
+  const validationSchema = useMemo(() => {
+    return Yup.object().shape({
+      quotaCapValue: Yup.string().when(
+        "toggles.quotaCapToggle",
+        (quotaCapToggle, schema) =>
+          quotaCapToggle
+            ? schema
+                .required(validationMessages.requiredField.i18n[lang])
+                .test(
+                  "is-number",
+                  validationMessages.validNumber.i18n[lang],
+                  (value) => {
+                    const numericValue = Number(
+                      String(value).replace(VALIDATED_NUMBER_REGEX, ""),
+                    );
+                    return !isNaN(numericValue);
+                  },
+                )
+                .test(
+                  "max-limit",
+                  `${validationMessages.maxLimit.i18n[lang]} ${currencyFormat(paymentCapacity)}`,
+                  (value) => {
+                    const numericValue = Number(
+                      String(value).replace(VALIDATED_NUMBER_REGEX, ""),
+                    );
+                    return paymentCapacity > 0
+                      ? numericValue <= paymentCapacity
+                      : true;
+                  },
+                )
+            : schema,
+      ),
+      maximumTermValue: Yup.string().when(
+        "toggles.maximumTermToggle",
+        (maximumTermToggle, schema) =>
+          maximumTermToggle
+            ? schema
+                .required(validationMessages.requiredField.i18n[lang])
+                .test(
+                  "is-number",
+                  validationMessages.validNumber.i18n[lang],
+                  (value) => {
+                    if (!value) return false;
+                    return !isNaN(Number(value));
+                  },
+                )
+                .test(
+                  "min",
+                  `${validationMessages.minMonths.i18n[lang]} ${generalTerms?.minTerm || 1} ${validationMessages.months.i18n[lang]}`,
+                  (value) => {
+                    if (!value) return false;
+                    return Number(value) >= (generalTerms?.minTerm || 1);
+                  },
+                )
+                .test(
+                  "max",
+                  `${validationMessages.maxMonths.i18n[lang]} ${generalTerms?.maxTerm || Infinity} ${validationMessages.months.i18n[lang]}`,
+                  (value) => {
+                    if (!value) return false;
+                    return Number(value) <= (generalTerms?.maxTerm || Infinity);
+                  },
+                )
+            : schema.nullable().notRequired(),
+      ),
+    });
+  }, [generalTerms, paymentCapacity, lang]);
 
   const handleValidationsForm = (values: ITermSelectionValuesMain) => {
     const quotaCapNumericValue =
@@ -109,9 +183,26 @@ export function TermSelection(props: ITermSelection) {
         String(values.maximumTermValue).replace(VALIDATED_NUMBER_REGEX, ""),
       ) || 0;
 
+    let isMaximumTermValid = maximumTermNumericValue > 0;
+
+    if (generalTerms && values.toggles.maximumTermToggle) {
+      const min = generalTerms.minTerm || 0;
+      const max = generalTerms.maxTerm || Infinity;
+      if (maximumTermNumericValue < min || maximumTermNumericValue > max) {
+        isMaximumTermValid = false;
+      }
+    }
+
+    let isQuotaCapValid = quotaCapNumericValue > 0;
+    if (values.toggles.quotaCapToggle && paymentCapacity > 0) {
+      if (quotaCapNumericValue > paymentCapacity) {
+        isQuotaCapValid = false;
+      }
+    }
+
     const isValid =
-      (values.toggles.quotaCapToggle && quotaCapNumericValue > 0) ||
-      (values.toggles.maximumTermToggle && maximumTermNumericValue > 0);
+      (values.toggles.quotaCapToggle && isQuotaCapValid) ||
+      (values.toggles.maximumTermToggle && isMaximumTermValid);
 
     onFormValid(isValid);
   };
@@ -165,7 +256,9 @@ export function TermSelection(props: ITermSelection) {
     numericValue: number,
     setFieldValue: (field: string, value: string | number) => void,
   ) => {
-    setFieldValue("maximumTermValue", numericValue);
+    const parsedValue = numericValue === 0 ? "" : numericValue;
+
+    setFieldValue("maximumTermValue", parsedValue);
 
     onChange({
       quotaCapValue: 0,

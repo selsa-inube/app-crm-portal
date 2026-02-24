@@ -12,6 +12,7 @@ import { IProspect } from "@services/prospect/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IStepDetails } from "@pages/payrollBenefits/types";
 import { ICRMPortalData } from "@context/AppContext/types";
+import { CreditLineGeneralTerms } from "@services/lineOfCredit/types";
 
 import { IPaymentConfiguration } from "./steps/config";
 
@@ -180,6 +181,12 @@ export type TCreditLineTerms = Record<
     LoanAmountLimit: number;
     LoanTermLimit: number;
     RiskFreeInterestRate: number;
+    minAmount?: number;
+    maxAmount?: number;
+    minTerm?: number;
+    maxTerm?: number;
+    minEffectiveInterestRate?: number;
+    maxEffectiveInterestRate?: number;
     amortizationType?: string[];
     description?: string;
   }
@@ -257,6 +264,7 @@ export interface IAddProductModalUIProps {
   isLoading: boolean;
   lang: EnumType;
   dataProspect: IProspect;
+  generalTerms: CreditLineGeneralTerms | null;
 }
 
 export interface IStep {
@@ -393,6 +401,57 @@ export const noAvailablePaymentMethods = {
   i18n: {
     en: "No payment channels available",
     es: "No hay medios de pago disponibles",
+  },
+};
+
+export const validationMessages = {
+  requiredField: {
+    code: "Required_field",
+    description: "Field is required message",
+    i18n: {
+      en: "Required field",
+      es: "Campo requerido",
+    },
+  },
+  validNumber: {
+    code: "Valid_number",
+    description: "Must be a valid number message",
+    i18n: {
+      en: "Must be a valid number",
+      es: "Debe ser un número válido",
+    },
+  },
+  maxLimit: {
+    code: "Max_limit",
+    description: "Value cannot exceed limit message",
+    i18n: {
+      en: "The value cannot exceed",
+      es: "El valor no puede exceder",
+    },
+  },
+  minMonths: {
+    code: "Min_months",
+    description: "Minimum months message",
+    i18n: {
+      en: "Minimum",
+      es: "Mínimo",
+    },
+  },
+  maxMonths: {
+    code: "Max_months",
+    description: "Maximum months message",
+    i18n: {
+      en: "Maximum",
+      es: "Máximo",
+    },
+  },
+  months: {
+    code: "Months",
+    description: "Word for months",
+    i18n: {
+      en: "months",
+      es: "meses",
+    },
   },
 };
 
