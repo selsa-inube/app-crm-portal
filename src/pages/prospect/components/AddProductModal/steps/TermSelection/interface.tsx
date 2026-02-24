@@ -29,7 +29,7 @@ export function TermSelectionUI(props: ITermSelectionUI) {
       validateOnMount={true}
       onSubmit={() => {}}
     >
-      {({ values, handleBlur, setFieldValue, errors }) => (
+      {({ values, handleBlur, setFieldValue, errors, touched }) => (
         <Form>
           <Stack direction="column" gap="16px" padding="0px 16px">
             <Fieldset>
@@ -87,8 +87,18 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                         placeholder={loanData.quotaCapPlaceholder.i18n[lang]}
                         size="compact"
                         type="text"
-                        status={errors.quotaCapValue ? "invalid" : "pending"}
-                        message={errors.quotaCapValue}
+                        status={
+                          errors.quotaCapValue &&
+                          (touched.quotaCapValue || values.quotaCapValue)
+                            ? "invalid"
+                            : "pending"
+                        }
+                        message={
+                          errors.quotaCapValue &&
+                          (touched.quotaCapValue || values.quotaCapValue)
+                            ? (errors.quotaCapValue as string)
+                            : ""
+                        }
                         disabled={!values.toggles.quotaCapToggle}
                         fullwidth={isMobile}
                         value={values.quotaCapValue}
@@ -170,6 +180,20 @@ export function TermSelectionUI(props: ITermSelectionUI) {
                           disabled={!values.toggles.maximumTermToggle}
                           fullwidth={isMobile}
                           value={values.maximumTermValue}
+                          status={
+                            errors.maximumTermValue &&
+                            (touched.maximumTermValue ||
+                              values.maximumTermValue)
+                              ? "invalid"
+                              : "pending"
+                          }
+                          message={
+                            errors.maximumTermValue &&
+                            (touched.maximumTermValue ||
+                              values.maximumTermValue)
+                              ? (errors.maximumTermValue as string)
+                              : ""
+                          }
                           onChange={(
                             event: React.ChangeEvent<HTMLInputElement>,
                           ) => {

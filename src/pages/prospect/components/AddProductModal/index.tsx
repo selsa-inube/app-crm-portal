@@ -7,6 +7,8 @@ import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLi
 import { ILinesOfCreditByMoneyDestination } from "@services/lineOfCredit/types";
 import { GetSearchAllPaymentChannels } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber";
 import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchAllPaymentChannelsByIdentificationNumber/types";
+import { getCreditLineGeneralTerms } from "@services/lineOfCredit/generalTerms/getCreditLineGeneralTerms";
+import { CreditLineGeneralTerms } from "@services/lineOfCredit/types";
 
 import {
   IAddProductModalProps,
@@ -43,6 +45,8 @@ function AddProductModal(props: IAddProductModalProps) {
     stepsAddProduct.creditLineSelection.id,
   );
   const [isCurrentFormValid, setIsCurrentFormValid] = useState(false);
+  const [generalTerms, setGeneralTerms] =
+    useState<CreditLineGeneralTerms | null>(null);
   const [formData, setFormData] = useState<IFormValues>({
     creditLine: "",
     creditAmount: 0,
@@ -94,6 +98,10 @@ function AddProductModal(props: IAddProductModalProps) {
 
           if (!isAlreadyPresent) {
             result[line.abbreviateName] = {
+              minAmount: line.minAmount,
+              maxAmount: line.maxAmount,
+              minTerm: line.minTerm,
+              maxTerm: line.maxTerm,
               LoanAmountLimit: line.maxAmount,
               LoanTermLimit: line.maxTerm,
               RiskFreeInterestRate: line.maxEffectiveInterestRate,
@@ -118,6 +126,58 @@ function AddProductModal(props: IAddProductModalProps) {
       }
     })();
   }, [businessUnitPublicCode]);
+
+  useEffect(() => {
+    if (!formData.creditLine || !customerData?.publicCode) return;
+
+    const fetchGeneralTerms = async () => {
+      try {
+        setLoading(true);
+        const terms = await getCreditLineGeneralTerms(
+          businessUnitPublicCode,
+          businessManagerCode,
+          customerData.publicCode,
+          eventData.token,
+          formData.creditLine,
+          moneyDestination,
+        );
+        if (Array.isArray(terms)) {
+          setGeneralTerms(
+            (terms as CreditLineGeneralTerms[]).find(
+              (term) => term.abbreviateName === formData.creditLine,
+            ) || null,
+          );
+        }
+        if (terms) {
+          setGeneralTerms(terms);
+        }
+      } catch (error) {
+        const err = error as {
+          message?: string;
+          status: number;
+          data?: { description?: string; code?: string };
+        };
+        const code = err?.data?.code ? `[${err.data.code}] ` : "";
+        const description =
+          code + err?.message + (err?.data?.description || "");
+
+        setLoading(false);
+        setErrorMessage(description);
+        setErrorModal(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGeneralTerms();
+  }, [
+    formData.creditLine,
+    businessUnitPublicCode,
+    businessManagerCode,
+    customerData?.publicCode,
+    eventData.token,
+    moneyDestination,
+  ]);
 
   useEffect(() => {
     if (currentStep !== stepsAddProduct.paymentConfiguration.id) return;
@@ -170,9 +230,10 @@ function AddProductModal(props: IAddProductModalProps) {
   useEffect(() => {
     const validateCurrentStep = () => {
       if (currentStep === stepsAddProduct.creditLineSelection.id) {
-        const isValid = formData.selectedProducts.length > 0;
-        setIsCurrentFormValid(isValid);
-      } else if (currentStep === stepsAddProduct.paymentConfiguration.id) {
+        setIsCurrentFormValid(formData.selectedProducts.length > 0);
+      }
+
+      if (currentStep === stepsAddProduct.paymentConfiguration.id) {
         const isValid =
           !!formData.paymentConfiguration.paymentMethod &&
           !!formData.paymentConfiguration.paymentCycle &&
@@ -182,7 +243,7 @@ function AddProductModal(props: IAddProductModalProps) {
     };
 
     validateCurrentStep();
-  }, [formData, currentStep]);
+  }, [formData.selectedProducts, formData.paymentConfiguration, currentStep]);
 
   const isMobile = useMediaQuery("(max-width: 550px)");
 
@@ -226,17 +287,29 @@ function AddProductModal(props: IAddProductModalProps) {
 
   const validationSchema = Yup.object({
     creditLine: Yup.string(),
-    creditAmount: Yup.number(),
+    creditAmount: Yup.number()
+      .min(
+        generalTerms?.minAmount || 0,
+        `Mínimo: $${generalTerms?.minAmount?.toLocaleString()}`,
+      )
+      .max(
+        generalTerms?.maxAmount || Infinity,
+        `Máximo: $${generalTerms?.maxAmount?.toLocaleString()}`,
+      )
+      .required("El monto es obligatorio"),
+    maximumTermValue: Yup.string()
+      .min(generalTerms?.minTerm || 0, `Mínimo: ${generalTerms?.minTerm} meses`)
+      .max(
+        generalTerms?.maxTerm || Infinity,
+        `Máximo: ${generalTerms?.maxTerm} meses`,
+      )
+      .required("El plazo es obligatorio"),
     paymentConfiguration: Yup.object({
       paymentMethod: Yup.string(),
       paymentCycle: Yup.string(),
       firstPaymentDate: Yup.string(),
     }),
-    termInMonths: Yup.number(),
-    selectedProducts: Yup.array()
-      .of(Yup.string().required())
-      .default([])
-      .required(),
+    selectedProducts: Yup.array().of(Yup.string().required()).required(),
   });
 
   return (
@@ -275,6 +348,7 @@ function AddProductModal(props: IAddProductModalProps) {
       lang={lang}
       dataProspect={dataProspect}
       eventData={eventData}
+      generalTerms={generalTerms}
     />
   );
 }

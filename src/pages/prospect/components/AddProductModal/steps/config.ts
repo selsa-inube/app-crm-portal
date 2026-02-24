@@ -4,6 +4,7 @@ import { IResponsePaymentDatesChannel } from "@services/payment-channels/SearchA
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IProspect } from "@services/prospect/types";
 import { ICRMPortalData } from "@context/AppContext/types";
+import { CreditLineGeneralTerms } from "@services/lineOfCredit/types";
 
 export interface IFirstPaymentDate {
   id: string;
@@ -47,6 +48,7 @@ export interface ITermSelection {
     maximumTermEnabled: boolean;
   }) => void;
   onFormValid: (isValid: boolean) => void;
+  generalTerms: CreditLineGeneralTerms | null;
 }
 
 export interface ITermSelectionUI {
@@ -135,6 +137,7 @@ export interface IAmountCaptureProps {
   businessManagerCode: string;
   onChange: (amount: number) => void;
   onFormValid: (isValid: boolean) => void;
+  generalTerms: CreditLineGeneralTerms | null;
 }
 
 export interface IAmountCaptureUI {
