@@ -12,7 +12,7 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { AppContext } from "@context/AppContext";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
-import { dataError, excludedStatus } from "./config";
+import { dataError, excludedStatus, warningStatusExcluded } from "./config";
 
 interface IRequirementsNotMetProps {
   isMobile: boolean;
@@ -64,13 +64,10 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
         if (data) {
           setValidateRequirements(
             data.filter((requirement) => {
-              if (
-                requirement.requirementStatus ===
-                "UNVALIDATED_SYSTEM_VALIDATION"
-              ) {
-                return false;
-              }
-              return !excludedStatus.includes(requirement.requirementStatus);
+              return (
+                !excludedStatus.includes(requirement.requirementStatus) &&
+                !warningStatusExcluded.includes(requirement.requirementStatus)
+              );
             }),
           );
         }
