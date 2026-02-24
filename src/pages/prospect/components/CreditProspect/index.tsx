@@ -1045,7 +1045,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   prospectData!.clientManagerObservation ||
                   dataCreditProspects.notHaveComments.i18n[lang]
                 }
-                appearancePlaceHolder="gray"
+                apparencePlaceHolder="gray"
               />
               <CardGray
                 label={configModal.observations.labelTextarea.i18n[lang]}
@@ -1053,7 +1053,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                   prospectData!.clientComments ||
                   dataCreditProspects.notHaveObservations.i18n[lang]
                 }
-                appearancePlaceHolder="gray"
+                apparencePlaceHolder="gray"
               />
             </Stack>
           </BaseModal>

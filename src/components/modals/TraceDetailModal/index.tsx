@@ -118,12 +118,12 @@ export function TraceDetailModal(props: ITraceDetailsModalProps) {
         <CardGray
           label={dataTrace.answer.i18n[lang]}
           placeHolder={data.answer}
-          appearancePlaceHolder="gray"
+          apparencePlaceHolder="gray"
         />
         <CardGray
           label={dataTrace.observations.i18n[lang]}
           placeHolder={data.observations}
-          appearancePlaceHolder="gray"
+          apparencePlaceHolder="gray"
           height="108px"
         />
         {selectedFile && open && (

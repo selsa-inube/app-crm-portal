@@ -1,4 +1,4 @@
-export const dataPledge = {
+export const dataPledgeEnum = {
   title: {
     code: "Pledge_title",
     description: "Vehicle offered as collateral",
@@ -7,40 +7,60 @@ export const dataPledge = {
       es: "Vehículo ofrecido como garantía",
     },
   },
-
   state: {
-    code: "Vehicle_state",
-    description: "New or used vehicle",
+    code: "Pledge_state",
+    description: "New or used",
     i18n: {
       en: "New or used",
       es: "Nuevo o usado",
     },
   },
-
   years: {
-    code: "Vehicle_model_year",
-    description: "Vehicle model year",
+    code: "Pledge_years",
+    description: "Model year",
     i18n: {
-      en: "Model year",
+      en: "Model (year)",
       es: "Modelo (año)",
     },
   },
-
   value: {
-    code: "Estimated_vehicle_value",
-    description: "Estimated vehicle value",
+    code: "Pledge_value",
+    description: "Estimated value",
     i18n: {
       en: "Estimated value",
       es: "Valor estimado",
     },
   },
-
   description: {
-    code: "Vehicle_description",
+    code: "Pledge_description",
     description: "Vehicle description",
     i18n: {
       en: "Vehicle description",
       es: "Descripción del vehículo",
+    },
+  },
+  noBorrowersTitle: {
+    code: "Pledge_noBorrowersTitle",
+    description: "No vehicles found title",
+    i18n: {
+      en: "No vehicles found.",
+      es: "No se encontraron vehículos.",
+    },
+  },
+  noBorrowersDescription: {
+    code: "Pledge_noBorrowersDescription",
+    description: "No vehicles found description",
+    i18n: {
+      en: "No vehicles are available for this request.",
+      es: "No hay vehículos disponibles para esta solicitud.",
+    },
+  },
+  retry: {
+    code: "Pledge_retry",
+    description: "Retry action",
+    i18n: {
+      en: "Retry",
+      es: "Volver a intentar",
     },
   },
 };

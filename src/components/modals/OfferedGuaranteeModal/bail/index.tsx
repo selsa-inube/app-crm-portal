@@ -1,19 +1,20 @@
 import { MdInfoOutline } from "react-icons/md";
 import { Stack, Icon, Text } from "@inubekit/inubekit";
 
+import userNotFound from "@assets/images/ItemNotFound.png";
+import { ItemNotFound } from "@components/layout/ItemNotFound";
 import { Fieldset } from "@components/data/Fieldset";
-import { mockGuaranteeBail } from "@mocks/guarantee/offeredguarantee.mock";
-import { EnumType } from "@hooks/useEnum/useEnum";
+import { currencyFormat } from "@utils/formatData/currency";
 
-import { dataBail } from "./config";
+import { dataBailEnum } from "./config";
 
 interface IBailProps {
-  lang: EnumType;
+  data: number;
+  lang: "es" | "en";
 }
 
-export function Bail(props: IBailProps) {
-  const { lang } = props;
-  const data = mockGuaranteeBail[0];
+export function Bond(props: IBailProps) {
+  const { data, lang } = props;
 
   return (
     <Fieldset>
@@ -23,25 +24,43 @@ export function Bail(props: IBailProps) {
         justifyContent="center"
         padding="12px"
         gap="20px"
-        height="286px"
+        height="266px"
       >
-        <Stack direction="column" gap="8px">
-          <Text type="headline" weight="bold" size="large" appearance="primary">
-            $ {data.value}
-          </Text>
-          <Text type="body" size="small" appearance="gray">
-            {dataBail.bail.i18n[lang]}
-          </Text>
-        </Stack>
-        <Text type="label" size="large">
-          {dataBail.customer.i18n[lang]}
-        </Text>
-        <Stack gap="4px">
-          <Icon icon={<MdInfoOutline />} appearance="dark" size="16px" />
-          <Text type="body" size="medium" appearance="gray">
-            {dataBail.disbursement.i18n[lang]}
-          </Text>
-        </Stack>
+        {data ? (
+          <>
+            <Stack direction="column" gap="8px" alignItems="center">
+              <Text
+                type="headline"
+                weight="bold"
+                size="large"
+                appearance="primary"
+              >
+                {currencyFormat(data)}
+              </Text>
+              <Text type="body" size="small" appearance="gray">
+                {dataBailEnum.bond.i18n[lang]}
+              </Text>
+            </Stack>
+            <Text type="label" size="large">
+              {dataBailEnum.customer.i18n[lang]}
+            </Text>
+            <Stack gap="4px">
+              <Icon icon={<MdInfoOutline />} appearance="dark" size="16px" />
+              <Text type="body" size="medium" appearance="gray">
+                {dataBailEnum.disbursement.i18n[lang]}
+              </Text>
+            </Stack>
+          </>
+        ) : (
+          <Stack margin="auto">
+            <ItemNotFound
+              image={userNotFound}
+              title={dataBailEnum.noBorrowersTitle.i18n[lang]}
+              description={dataBailEnum.noBorrowersDescription.i18n[lang]}
+              buttonDescription={dataBailEnum.retry.i18n[lang]}
+            />
+          </Stack>
+        )}
       </Stack>
     </Fieldset>
   );

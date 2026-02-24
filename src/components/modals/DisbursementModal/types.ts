@@ -6,6 +6,8 @@ export interface dataTabsDisbursement {
   payeeBiologicalSex: string;
   payeeIdentificationType: string;
   payeeIdentificationNumber: string;
+  paymentOrderReference: string;
+  disbursementReference: string;
   payeeBirthday: string;
   payeePhoneNumber: string;
   payeeEmail: string;

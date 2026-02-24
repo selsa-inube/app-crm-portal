@@ -13,8 +13,7 @@ function capitalizeFirstLetterEachWord(text: string | undefined | null) {
     .replace(/(^|[\s\u200B])\w/g, (character) => character.toUpperCase());
 }
 
-function capitalizeFirstLetter(text: string | undefined | null) {
-  if (!text) return "";
+function capitalizeFirstLetter(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 

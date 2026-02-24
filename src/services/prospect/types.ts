@@ -16,6 +16,32 @@ export interface IBorrower {
   borrowerProperties: IBorrowerProperty[];
 }
 
+export interface IMortgages {
+  descriptionUse: string;
+  guaranteeId: string;
+  mortgageId: string;
+  propertyAge: string;
+  propertyPrice: number;
+  propertyType: string;
+  propertyState: string;
+}
+
+export interface IPledges {
+  descriptionUse: string;
+  guaranteeId: string;
+  pledgeId: string;
+  vehiculeAge: string;
+  vehiculePrice: number;
+  vehiculeState: string;
+}
+export interface IGuarantees {
+  creditRequestId: string;
+  guaranteeId: string;
+  guaranteeType: string;
+  mortgages: IMortgages[];
+  pledges: IPledges[];
+}
+
 export interface IConsolidatedCredit {
   creditProductCode: string;
   consolidatedAmount: number;
@@ -27,18 +53,17 @@ export interface IConsolidatedCredit {
 }
 
 export interface IOrdinaryInstallmentsForPrincipal {
-  paymentChannelAbbreviatedName: string;
-  paymentChannelCycleName: string;
+  numberOfInstallments: number;
   installmentAmount: number;
-  numberOfInstallments?: number;
+  paymentChannelAbbreviatedName: string;
+  schedule?: string;
+  installmentAmountForCapital?: number;
   gradientRate?: number;
   gradientValue?: number;
-  gradientFrequency?: string;
+  gradientSchedule?: string;
   firstGradientDate?: Date;
-  installmentAmountForCapital?: number;
-  humanChannelPaymentDay?: number;
+  installmentFrequency?: string;
 }
-
 export interface IInstallmentsForInterest {
   humanChannelPaymentDay: number;
   installmentFrequency: string;

@@ -1,8 +1,8 @@
-export const dataTabs = [
+export const dataTabsEnum = [
   {
     id: "Internal",
     label: {
-      code: "internal_account",
+      code: "Disbursement_tab_internal",
       description: "Internal account",
       i18n: {
         en: "Internal account",
@@ -13,7 +13,7 @@ export const dataTabs = [
   {
     id: "External",
     label: {
-      code: "external_account",
+      code: "Disbursement_tab_external",
       description: "External account",
       i18n: {
         en: "External account",
@@ -24,7 +24,7 @@ export const dataTabs = [
   {
     id: "CheckEntity",
     label: {
-      code: "entity_check",
+      code: "Disbursement_tab_check_entity",
       description: "Entity check",
       i18n: {
         en: "Entity check",
@@ -35,10 +35,10 @@ export const dataTabs = [
   {
     id: "CheckManagement",
     label: {
-      code: "management_check",
-      description: "Cashier’s check",
+      code: "Disbursement_tab_check_management",
+      description: "Management check",
       i18n: {
-        en: "Cashier’s check",
+        en: "Management check",
         es: "Cheque Gerencia",
       },
     },
@@ -46,7 +46,7 @@ export const dataTabs = [
   {
     id: "Cash",
     label: {
-      code: "cash",
+      code: "Disbursement_tab_cash",
       description: "Cash",
       i18n: {
         en: "Cash",
@@ -56,69 +56,94 @@ export const dataTabs = [
   },
 ];
 
-export const dataDisbursement = {
+export const dataDisbursementEnum = {
   title: {
-    code: "Disbursement_method_title",
+    code: "Disbursement_title",
     description: "Disbursement mode",
     i18n: {
       en: "Disbursement mode",
-      es: "Medio de Desembolso",
+      es: "Forma de Desembolso",
     },
   },
   close: {
-    code: "Close",
+    code: "Disbursement_close",
     description: "Close",
     i18n: {
       en: "Close",
       es: "Cerrar",
     },
   },
+  noDataTitle: {
+    code: "Disbursement_no_data_title",
+    description: "No Disbursements modes found",
+    i18n: {
+      en: "No Disbursements modes found",
+      es: "No se encontraron formas de desembolso",
+    },
+  },
+  noDataDescription: {
+    code: "Disbursement_no_data_description",
+    description: "No disbursement modes available",
+    i18n: {
+      en: "No disbursement modes available",
+      es: "No hay medios de desembolso disponibles para esta solicitud.",
+    },
+  },
+  retry: {
+    code: "Disbursement_retry",
+    description: "Try again",
+    i18n: {
+      en: "Try again",
+      es: "Volver a intentar",
+    },
+  },
 };
 
-export const disbursementGeneral = {
+export const disbursementGeneralEnum = {
   label: {
-    code: "Disbursement_amount_label",
-    description: "Disbursement amount",
+    code: "Disbursement_general_label",
+    description: "Amount to be disbursed with this method",
     i18n: {
       en: "Amount to be disbursed with this method",
       es: "Valor a girar con esta forma de desembolso",
     },
   },
   place: {
-    code: "Disbursement_amount_placeholder",
-    description: "Disbursement amount placeholder",
+    code: "Disbursement_general_placeholder",
+    description: "Example: 1,000,000",
     i18n: {
       en: "Ex: 1,000,000",
       es: "Ej: 1.000.000",
     },
   },
   labelCheck: {
-    code: "Disbursement_full_balance_message",
-    description: "Full balance disbursement message",
+    code: "Disbursement_general_label_check",
+    description:
+      "The amount to be disbursed with this method is equal to the pending balance.",
     i18n: {
-      en: "The amount to be disbursed equals the pending balance.",
+      en: "The amount to be disbursed with this method is equal to the pending balance.",
       es: "El valor a girar con esta forma de desembolso es igual al saldo pendiente por desembolsar.",
     },
   },
   labelToggle: {
-    code: "Own_name_disbursement_label",
-    description: "Own name disbursement",
+    code: "Disbursement_general_toggle_label",
+    description: "Disbursement is in the name of the borrower?",
     i18n: {
-      en: "Disbursement is in the name of the borrower?",
+      en: "Disbursement to the client's name?",
       es: "¿Desembolso a nombre del cliente?",
     },
   },
   optionToggleYes: {
-    code: "Toggle_yes",
-    description: "Yes",
+    code: "Disbursement_toggle_yes",
+    description: "YES",
     i18n: {
       en: "YES",
       es: "SI",
     },
   },
   optionToggleNo: {
-    code: "Toggle_no",
-    description: "No",
+    code: "Disbursement_toggle_no",
+    description: "NO",
     i18n: {
       en: "NO",
       es: "NO",
@@ -126,33 +151,33 @@ export const disbursementGeneral = {
   },
 };
 
-export const disbursemenOptionAccount = {
+export const disbursemenOptionAccountEnum = {
   labelAccount: {
-    code: "Account_disbursement_label",
-    description: "Account for disbursement",
+    code: "Disbursement_account_label",
+    description: "Account to disburse the money",
     i18n: {
       en: "Account to disburse the money",
       es: "Cuenta para desembolsar el dinero",
     },
   },
   labelName: {
-    code: "Name_label",
-    description: "Names",
+    code: "Disbursement_name_label",
+    description: "First names",
     i18n: {
-      en: "Names",
+      en: "First names",
       es: "Nombres",
     },
   },
   placeName: {
-    code: "Name_placeholder",
-    description: "Name placeholder",
+    code: "Disbursement_name_placeholder",
+    description: "Ex: Maria Camila",
     i18n: {
       en: "Ex: Maria Camila",
       es: "Ej: Maria Camila",
     },
   },
   labelLastName: {
-    code: "Last_name_label",
+    code: "Disbursement_last_name_label",
     description: "Last names",
     i18n: {
       en: "Last names",
@@ -160,15 +185,15 @@ export const disbursemenOptionAccount = {
     },
   },
   placeLastName: {
-    code: "Last_name_placeholder",
-    description: "Last name placeholder",
+    code: "Disbursement_last_name_placeholder",
+    description: "Ex: Hernández Guerrero",
     i18n: {
       en: "Ex: Hernández Guerrero",
       es: "Ej: Hernández Guerrero",
     },
   },
   labelSex: {
-    code: "Biological_sex_label",
+    code: "Disbursement_sex_label",
     description: "Biological sex",
     i18n: {
       en: "Biological sex",
@@ -176,7 +201,7 @@ export const disbursemenOptionAccount = {
     },
   },
   labelDocumentType: {
-    code: "Document_type_label",
+    code: "Disbursement_document_type_label",
     description: "Document type",
     i18n: {
       en: "Document type",
@@ -184,7 +209,7 @@ export const disbursemenOptionAccount = {
     },
   },
   labelDocumentNumber: {
-    code: "Document_number_label",
+    code: "Disbursement_document_number_label",
     description: "Document number",
     i18n: {
       en: "Document number",
@@ -192,23 +217,23 @@ export const disbursemenOptionAccount = {
     },
   },
   placeDocumentNumber: {
-    code: "Document_number_placeholder",
-    description: "Document number placeholder",
+    code: "Disbursement_document_number_placeholder",
+    description: "Ex: 1015744898",
     i18n: {
       en: "Ex: 1015744898",
       es: "Ej: 1015744898",
     },
   },
   labelBirthdate: {
-    code: "Birthdate_label",
-    description: "Birthdate",
+    code: "Disbursement_birthdate_label",
+    description: "Date of birth",
     i18n: {
-      en: "Birthdate",
+      en: "Date of birth",
       es: "Fecha de nacimiento",
     },
   },
   labelphone: {
-    code: "Phone_label",
+    code: "Disbursement_phone_label",
     description: "Contact phone",
     i18n: {
       en: "Contact phone",
@@ -216,15 +241,15 @@ export const disbursemenOptionAccount = {
     },
   },
   placephone: {
-    code: "Phone_placeholder",
-    description: "Phone placeholder",
+    code: "Disbursement_phone_placeholder",
+    description: "Ex: 3103217765",
     i18n: {
       en: "Ex: 3103217765",
       es: "Ej: 3103217765",
     },
   },
   labelMail: {
-    code: "Email_label",
+    code: "Disbursement_email_label",
     description: "Email",
     i18n: {
       en: "Email",
@@ -232,23 +257,23 @@ export const disbursemenOptionAccount = {
     },
   },
   placeMail: {
-    code: "Email_placeholder",
-    description: "Email placeholder",
+    code: "Disbursement_email_placeholder",
+    description: "Ex: myemail@mail.com",
     i18n: {
       en: "Ex: myemail@mail.com",
       es: "Ej: micorreo@mail.com",
     },
   },
   labelCity: {
-    code: "City_label",
-    description: "City",
+    code: "Disbursement_city_label",
+    description: "City of residence",
     i18n: {
       en: "City of residence",
       es: "Ciudad de residencia",
     },
   },
   labelBank: {
-    code: "Bank_label",
+    code: "Disbursement_bank_label",
     description: "Bank",
     i18n: {
       en: "Bank",
@@ -256,7 +281,7 @@ export const disbursemenOptionAccount = {
     },
   },
   labelAccountType: {
-    code: "Account_type_label",
+    code: "Disbursement_account_type_label",
     description: "Account type",
     i18n: {
       en: "Account type",
@@ -264,7 +289,7 @@ export const disbursemenOptionAccount = {
     },
   },
   labelAccountNumber: {
-    code: "Account_number_label",
+    code: "Disbursement_account_number_label",
     description: "Account number",
     i18n: {
       en: "Account number",
@@ -272,15 +297,15 @@ export const disbursemenOptionAccount = {
     },
   },
   placeAccountNumber: {
-    code: "Account_number_placeholder",
-    description: "Account number placeholder",
+    code: "Disbursement_account_number_placeholder",
+    description: "Ex: 1040 2200 3582",
     i18n: {
       en: "Ex: 1040 2200 3582",
       es: "Ej: 1040 2200 3582",
     },
   },
   observation: {
-    code: "Observation_label",
+    code: "Disbursement_observation_label",
     description: "Observations",
     i18n: {
       en: "Observations",
@@ -288,19 +313,35 @@ export const disbursemenOptionAccount = {
     },
   },
   placeObservation: {
-    code: "Observation_placeholder",
-    description: "Observation placeholder",
+    code: "Disbursement_observation_placeholder",
+    description: "Extra things to consider.",
     i18n: {
-      en: "Extra details to consider.",
-      es: "Detalles adicionales que deben tenerse en cuenta.",
+      en: "Extra things to consider.",
+      es: "Comentarios extra a tener en cuenta.",
     },
   },
   placeOption: {
-    code: "Select_option_placeholder",
-    description: "Select option",
+    code: "Disbursement_option_placeholder",
+    description: "Select an option",
     i18n: {
       en: "Select an option",
       es: "Selecciona una opción",
+    },
+  },
+  paymentOrderReference: {
+    code: "payment_order_reference",
+    description: "payment order reference",
+    i18n: {
+      en: "payment order reference",
+      es: "Orden de pago",
+    },
+  },
+  disbursemerntRefernce: {
+    code: "disbursemernt_refernce",
+    description: "disbursemernt refernce",
+    i18n: {
+      en: "disbursemernt refernce",
+      es: "Referencia de desembolso",
     },
   },
 };

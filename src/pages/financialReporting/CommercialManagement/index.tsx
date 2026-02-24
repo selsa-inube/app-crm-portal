@@ -112,7 +112,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
   const [prospectProducts, setProspectProducts] = useState<ICreditProduct[]>(
     [],
   );
-
+  const [disbursementCurrentTab, setDisbursementCurrentTab] =
+    useState<string>("");
   const [internal, setInternal] = useState<IModeOfDisbursement | null>(null);
   const [external, setExternal] = useState<IModeOfDisbursement | null>(null);
   const [checkEntity, setCheckEntity] = useState<IModeOfDisbursement | null>(
@@ -248,6 +249,8 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
     accountType: "",
     accountNumber: "",
     observation: "",
+    paymentOrderReference: "",
+    disbursementReference: "",
   };
 
   const onChangesReportCredit = (name: string, newValue: string) => {
@@ -295,11 +298,24 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
 
   const incomeDataValues = incomeDataProspect(prospectData);
 
+  let normalizedStageTitle: string = "";
+  const matchingState = eventData.creditRequestStates?.find((state) => {
+    return (
+      state.stage === data.stage &&
+      state.abbreviatedName === data.creditRequestStateAbbreviatedName
+    );
+  });
+  if (matchingState) {
+    normalizedStageTitle = matchingState.descriptionUse;
+  } else {
+    normalizedStageTitle = "";
+  }
+
   return (
     <>
       <Fieldset
         title={errorMessages.comercialManagement.titleCard.i18n[lang]}
-        descriptionTitle={data.stage}
+        descriptionTitle={normalizedStageTitle}
         loading={loadingData}
       >
         {!data ? (
@@ -630,7 +646,9 @@ export const ComercialManagement = (props: ComercialManagementProps) => {
                   checkManagementData: checkManagement || dataDefault,
                   cash: cash || dataDefault,
                 }}
-                lang={lang}
+                handleOpenEdit={() => {}}
+                currentTab={disbursementCurrentTab}
+                setCurrentTab={setDisbursementCurrentTab}
               />
             )}
             {infoModal && (
