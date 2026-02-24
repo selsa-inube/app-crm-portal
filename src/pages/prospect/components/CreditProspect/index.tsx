@@ -81,6 +81,8 @@ interface ICreditProspectProps {
   isMobile: boolean;
   lang: EnumType;
   businessManagerCode: string;
+  setGeneralLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  generalLoading: boolean;
   prospectData?: IProspect;
   sentData: IExtraordinaryInstallments | null;
   enums: IAllEnumsResponse;
@@ -132,6 +134,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     enums,
     fetchProspectData,
     disableAddProduct = false,
+    setGeneralLoading,
+    generalLoading,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -144,10 +148,8 @@ export function CreditProspect(props: ICreditProspectProps) {
     JSON.parse(businessUnitSigla).businessUnitPublicCode;
 
   const [creditLimitData, setCreditLimitData] = useState<IIncomeSources>();
-  const [isLoadingCreditLimit, setIsLoadingCreditLimit] = useState(false);
   const [creditLimitError, setCreditLimitError] = useState<string | null>(null);
   const [modalHistory, setModalHistory] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState<string | null>(null);
   const [dataProspect, setDataProspect] = useState<IProspect[]>([]);
   const [incomeData, setIncomeData] = useState<Record<string, IIncomeSources>>(
@@ -195,7 +197,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     if (!customerPublicCode) return;
 
     try {
-      setIsLoadingCreditLimit(true);
+      setGeneralLoading(true);
       setCreditLimitError(null);
 
       const incomesBorrowersByProspect =
@@ -218,7 +220,7 @@ export function CreditProspect(props: ICreditProspectProps) {
       console.error("Error al obtener las solicitudes de crédito:", error);
       setCreditLimitError("Error al cargar los datos");
     } finally {
-      setIsLoadingCreditLimit(false);
+      setGeneralLoading(false);
     }
   };
   const handleOpenModal = (modalName: string) => {
@@ -283,7 +285,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     }
 
     try {
-      setIsLoading(true);
+      setGeneralLoading(true);
       const payload: IAddProduct = {
         prospectId: prospectData.prospectId,
         paymentChannelAbbreviatedName:
@@ -315,7 +317,6 @@ export function CreditProspect(props: ICreditProspectProps) {
           onProspectUpdate(updatedProspect);
         }
       }
-      setIsLoading(false);
       handleCloseModal();
       setShowMessageSuccessModal(true);
     } catch (error) {
@@ -332,9 +333,10 @@ export function CreditProspect(props: ICreditProspectProps) {
       ) {
         description = "El producto de crédito ya existe en el prospecto";
       }
-      setIsLoading(false);
       setShowErrorModal(true);
       setMessageError(description);
+    } finally {
+      setGeneralLoading(false);
     }
   };
 
@@ -690,7 +692,7 @@ export function CreditProspect(props: ICreditProspectProps) {
               direction={isMobile ? "column" : "row"}
               width={isMobile ? "100%" : "auto"}
             >
-              {showAddProduct && !disableAddProduct && (
+              {showAddProduct && !disableAddProduct && !generalLoading && (
                 <Button
                   type="button"
                   appearance="primary"
@@ -794,6 +796,8 @@ export function CreditProspect(props: ICreditProspectProps) {
             enums={enums}
             fetchProspectData={fetchProspectData}
             disableAddProduct={disableAddProduct}
+            setGeneralLoading={setGeneralLoading}
+            generalLoading={generalLoading}
           />
         </Stack>
         {currentModal === "creditLimit" && (
@@ -860,7 +864,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             customerData={customerData}
             businessManagerCode={businessManagerCode}
             dataProspect={prospectData as IProspect}
-            isLoading={isLoading}
+            isLoading={generalLoading}
             lang={lang}
             eventData={eventData}
           />
@@ -873,7 +877,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             handleClose={handleCloseModal}
             width={isMobile ? "280px" : "448px"}
           >
-            {isLoadingCreditLimit ? (
+            {generalLoading ? (
               <Stack gap="16px" direction="column">
                 <SkeletonLine width="70%" height="30px" animated />
                 <Fieldset>

@@ -45,8 +45,7 @@ export function Simulations() {
   const [managerErrors, setManagerErrors] = useState<string[]>([]);
   const [dataProspect, setDataProspect] = useState<IProspect>();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [loadingTasks, setLoadingTasks] = useState(0);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,6 +65,8 @@ export function Simulations() {
   const [validationErrors, setValidationErrors] = useState<
     IPrerequisiteError[]
   >([]);
+
+  const generalLoading = loadingTasks > 0;
 
   const isMobile = useMediaQuery("(max-width:880px)");
   const { prospectCode } = useParams();
@@ -106,6 +107,18 @@ export function Simulations() {
     },
     [],
   );
+
+  const setGeneralLoading = useCallback(
+    (isLoading: boolean | ((prev: boolean) => boolean)) => {
+      setLoadingTasks((prev) => {
+        const isNowLoading =
+          typeof isLoading === "function" ? isLoading(prev > 0) : isLoading;
+        return isNowLoading ? prev + 1 : Math.max(0, prev - 1);
+      });
+    },
+    [],
+  );
+
   const getDestinationName = useCallback((code?: string) => {
     if (!code) return "";
     const found = MoneyDestinationTranslations.find(
@@ -197,6 +210,7 @@ export function Simulations() {
     if (!dataProspect) return;
 
     try {
+      setGeneralLoading(true);
       const lineOfCreditValues = await getLinesOfCreditByMoneyDestination(
         businessUnitPublicCode,
         businessManagerCode,
@@ -213,6 +227,8 @@ export function Simulations() {
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(`${dataEditProspect.errorCredit}:, ${error}`);
+    } finally {
+      setGeneralLoading(false);
     }
   }, [businessUnitPublicCode, prospectCode, dataProspect]);
 
@@ -222,12 +238,12 @@ export function Simulations() {
 
   const handleSubmitClick = async () => {
     try {
-      setIsLoading(true);
+      setGeneralLoading(true);
 
       if (!dataProspect) {
         setMessageError(dataEditProspect.errorProspect.i18n[lang]);
         setShowErrorModal(true);
-        setIsLoading(false);
+        setGeneralLoading(false);
         return;
       }
       const validationResult = await validatePrerequisitesForCreditApplication(
@@ -242,14 +258,14 @@ export function Simulations() {
       ) {
         setValidationErrors(validationResult.validationErrors);
         setShowPrerequisiteModal(true);
-        setIsLoading(false);
+        setGeneralLoading(false);
         return;
       }
 
       const result = await fetchValidateCreditRequest();
       if (result) {
         setShowCreditRequest(true);
-        setIsLoading(false);
+        setGeneralLoading(false);
         return;
       }
 
@@ -260,13 +276,13 @@ export function Simulations() {
       );
       setShowErrorModal(true);
     } finally {
-      setIsLoading(false);
+      setGeneralLoading(false);
     }
   };
 
   const fetchProspectData = async () => {
     try {
-      setIsLoading(true);
+      setGeneralLoading(true);
       const result = await getSearchProspectByCode(
         businessUnitPublicCode,
         businessManagerCode,
@@ -274,9 +290,9 @@ export function Simulations() {
         eventData.token,
       );
       setDataProspect(Array.isArray(result) ? result[0] : result);
-      setIsLoading(false);
+      setGeneralLoading(false);
     } catch (error) {
-      setIsLoading(false);
+      setGeneralLoading(false);
       setShowErrorModal(true);
       setMessageError(`${dataEditProspect.errorProspect}:, ${error}`);
       setTimeout(() => {
@@ -386,7 +402,7 @@ export function Simulations() {
     if (!dataProspect) return;
 
     try {
-      setIsLoadingDelete(true);
+      setGeneralLoading(true);
 
       await cancelProspect(
         businessUnitPublicCode,
@@ -404,17 +420,18 @@ export function Simulations() {
       );
 
       navigate("/credit/prospects");
-      setIsLoadingDelete(false);
+      setGeneralLoading(false);
     } catch (error) {
-      setIsLoadingDelete(false);
       setCodeError(1022);
       setAddToFix([dataEditProspect.errorRemoveProspect.i18n[lang]]);
+    } finally {
+      setGeneralLoading(false);
     }
   };
 
   const handleRecalculateSimulation = async () => {
     try {
-      setIsLoading(true);
+      setGeneralLoading(true);
 
       const newDataProspect = await recalculateProspect(
         businessUnitPublicCode,
@@ -440,7 +457,7 @@ export function Simulations() {
       setMessageError(description || requirementsMessageError.description);
       setShowErrorModal(true);
     } finally {
-      setIsLoading(false);
+      setGeneralLoading(false);
     }
   };
 
@@ -489,15 +506,17 @@ export function Simulations() {
       showRequirements={showRequirements}
       setShowRequirements={setShowRequirements}
       validateRequirements={validateRequirements}
-      isLoading={isLoading}
+      isLoading={generalLoading}
       lang={lang}
-      isLoadingDelete={isLoadingDelete}
+      isLoadingDelete={generalLoading}
       enums={enums as IAllEnumsResponse}
       fetchProspectData={fetchProspectData}
       disableAddProduct={isAddProductDisabled}
       showPrerequisiteModal={showPrerequisiteModal}
       setShowPrerequisiteModal={setShowPrerequisiteModal}
       validationErrors={validationErrors}
+      setGeneralLoading={setGeneralLoading}
+      generalLoading={generalLoading}
     />
   );
 }
