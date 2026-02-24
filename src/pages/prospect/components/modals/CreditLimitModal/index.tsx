@@ -73,13 +73,15 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
           eventData.token,
           incomeData as IIncomeSources,
         );
-        setIsLoading(false);
+
         if (data) {
           setDataMaximumCreditLimit(data);
         }
       } catch (err) {
         setIsLoading(false);
         setError(true);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -121,14 +123,18 @@ export function CreditLimitModal(props: ICreditLimitModalProps) {
               margin="0 auto"
               padding=" 0px 5px"
             >
-              <StyledCardsContainer isMobile={isMobile}>
+              <StyledCardsContainer
+                isMobile={isMobile}
+                oneProduct={dataMaximumCreditLimit.length === 1}
+                moreThanOneLine={dataMaximumCreditLimit.length > 2}
+              >
                 {isLoading
                   ? Array.from({ length: 2 }).map((_, index) => (
                       <StyledContainer key={index}>
                         <Stack
                           direction="column"
                           alignItems="center"
-                          height="60px"
+                          height="50px"
                           gap="10px"
                         >
                           <SkeletonLine width="80%" height="30px" animated />

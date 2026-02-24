@@ -17,3 +17,9 @@ export const StyledContainer = styled.div`
   border: 1px solid
     ${({ theme }) => theme?.palette?.neutral?.N30 || inube.palette.neutral.N30};
 `;
+
+export const StyledContainerTruncated = styled.div<{ $isTruncated: boolean }>`
+  min-width: 10px;
+  flex: 1;
+  overflow: hidden;
+`;

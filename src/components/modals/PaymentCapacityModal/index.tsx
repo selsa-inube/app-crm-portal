@@ -160,8 +160,8 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
         handleClose={handleClose}
         handleNext={handleClose}
         width={isMobile ? "335px" : "500px"}
-        height={isMobile ? "734px" : "692px"}
-        gap="12px"
+        height={isMobile ? "734px" : "702px"}
+        gap="22px"
         initialDivider={false}
       >
         <Text
@@ -199,7 +199,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
             height={isMobile ? "566px" : "530px"}
             width="auto"
           >
-            <Fieldset>
+            <Fieldset heightFieldset="400px">
               <Stack
                 direction="column"
                 gap="16px"
@@ -215,7 +215,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                   />
                 </Stack>
                 {currentTab === "ordinary" && (
-                  <Stack direction="column" gap="16px">
+                  <Stack direction="column" gap="16px" height="100%">
                     <Stack justifyContent="space-between">
                       <Text type="body" size="medium" weight="bold">
                         {paymentCapacityData.incomeSources.i18n[lang]}
@@ -249,6 +249,25 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                               maximumCreditLimitData?.basicLivingExpenseReserve ||
                                 0,
                               false,
+                            )}
+                          </Text>
+                        )}
+                      </Stack>
+                    </Stack>
+                    <Stack justifyContent="space-between">
+                      <Text type="body" size="medium" appearance="gray">
+                        {paymentCapacityData.currentObligations.i18n[lang]}
+                      </Text>
+                      <Stack alignItems="center" gap="4px">
+                        <Text appearance="success">$</Text>
+                        {loading ? (
+                          <SkeletonLine width="70px" animated={true} />
+                        ) : (
+                          <Text type="body" size="small">
+                            {currencyFormat(
+                              maximumCreditLimitData?.totalRegularInstallment ||
+                                0,
+                              true,
                             )}
                           </Text>
                         )}
@@ -295,6 +314,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                       {getMaxValueText(
                         maximumCreditLimitData?.paymentCapacity || 0,
                         maximumCreditLimitData?.maxTerm || 0,
+                        false,
                       )}
                     </Text>
                     <Stack
@@ -317,7 +337,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                             appearance="gray"
                           >
                             {currencyFormat(
-                              maximumCreditLimitData?.maximumCreditLimitValue ||
+                              maximumCreditLimitData?.maxCreditLimitValueWithOrdinaryInstallments ||
                                 0,
                               true,
                             )}
@@ -333,90 +353,134 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                 {currentTab === "extraordinary" &&
                   maximumCreditLimitData?.extraordinaryInstallments !==
                     undefined && (
-                    <StyledTable>
-                      <Table tableLayout="auto">
-                        <Thead>
-                          <Tr>
-                            {headers
-                              .filter((header) =>
-                                isMobile
-                                  ? header.mobile
-                                  : header.key !== "details",
-                              )
-                              .map((header) => (
-                                <Th key={header.key} align="center">
-                                  {header.label.i18n[lang]}
-                                </Th>
-                              ))}
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {loading && (
+                    <>
+                      <StyledTable>
+                        <Table tableLayout="auto">
+                          <Thead>
                             <Tr>
-                              <Td colSpan={isMobile ? 2 : 3} align="center">
-                                <SkeletonLine width="100%" animated={true} />
-                              </Td>
+                              {headers
+                                .filter((header) =>
+                                  isMobile
+                                    ? header.mobile
+                                    : header.key !== "details",
+                                )
+                                .map((header) => (
+                                  <Th key={header.key} align="center">
+                                    {header.label.i18n[lang]}
+                                  </Th>
+                                ))}
                             </Tr>
-                          )}
-                          {!loading &&
-                          maximumCreditLimitData?.extraordinaryInstallments &&
-                          maximumCreditLimitData.extraordinaryInstallments
-                            .length > 0 ? (
-                            maximumCreditLimitData.extraordinaryInstallments.map(
-                              (row, rowIndex) => (
-                                <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
-                                  <Td align="center">
-                                    {row.paymentChannelAbbreviatedName}
-                                  </Td>
-                                  {!isMobile && (
-                                    <>
-                                      <Td align="center">
-                                        {currencyFormat(
-                                          Number(row.installmentAmount) || 0,
-                                          true,
-                                        )}
-                                      </Td>
-                                      <Td align="center">
-                                        {formatPrimaryDate(
-                                          new Date(row.installmentDate),
-                                        )}
-                                      </Td>
-                                    </>
-                                  )}
-                                  {isMobile && (
+                          </Thead>
+                          <Tbody>
+                            {loading && (
+                              <Tr>
+                                <Td colSpan={isMobile ? 2 : 3} align="center">
+                                  <SkeletonLine width="100%" animated={true} />
+                                </Td>
+                              </Tr>
+                            )}
+                            {!loading &&
+                            maximumCreditLimitData?.extraordinaryInstallments &&
+                            maximumCreditLimitData.extraordinaryInstallments
+                              .length > 0 ? (
+                              maximumCreditLimitData.extraordinaryInstallments.map(
+                                (row, rowIndex) => (
+                                  <Tr key={rowIndex} zebra={rowIndex % 2 !== 0}>
                                     <Td align="center">
-                                      <Icon
-                                        appearance="primary"
-                                        icon={<MdOutlineRemoveRedEye />}
-                                        size="24px"
-                                        cursorHover
-                                        onClick={() => handleOpenDetail(row)}
-                                      />
+                                      {row.paymentChannelAbbreviatedName}
                                     </Td>
-                                  )}
-                                </Tr>
-                              ),
-                            )
-                          ) : (
-                            <Tr>
-                              <Td colSpan={isMobile ? 2 : 3} align="center">
-                                <Text
-                                  type="body"
-                                  size="small"
-                                  appearance="gray"
-                                >
-                                  {
-                                    paymentCapacityData.noExtraordinary.i18n[
-                                      lang
-                                    ]
-                                  }
-                                </Text>
-                              </Td>
-                            </Tr>
-                          )}
-                        </Tbody>
-                      </Table>
-                    </StyledTable>
+                                    {!isMobile && (
+                                      <>
+                                        <Td align="center">
+                                          {currencyFormat(
+                                            Number(row.installmentAmount) || 0,
+                                            true,
+                                          )}
+                                        </Td>
+                                        <Td align="center">
+                                          {formatPrimaryDate(
+                                            new Date(row.installmentDate),
+                                          )}
+                                        </Td>
+                                      </>
+                                    )}
+                                    {isMobile && (
+                                      <Td align="center">
+                                        <Icon
+                                          appearance="primary"
+                                          icon={<MdOutlineRemoveRedEye />}
+                                          size="24px"
+                                          cursorHover
+                                          onClick={() => handleOpenDetail(row)}
+                                        />
+                                      </Td>
+                                    )}
+                                  </Tr>
+                                ),
+                              )
+                            ) : (
+                              <Tr>
+                                <Td colSpan={isMobile ? 2 : 3} align="center">
+                                  <Text
+                                    type="body"
+                                    size="small"
+                                    appearance="gray"
+                                  >
+                                    {
+                                      paymentCapacityData.noExtraordinary.i18n[
+                                        lang
+                                      ]
+                                    }
+                                  </Text>
+                                </Td>
+                              </Tr>
+                            )}
+                          </Tbody>
+                        </Table>
+                      </StyledTable>
+                      <Text type="body" size="small">
+                        {getMaxValueText(
+                          maximumCreditLimitData?.paymentCapacity || 0,
+                          maximumCreditLimitData?.maxTerm || 0,
+                          true,
+                        )}
+                      </Text>
+                      <Stack
+                        direction="column"
+                        alignItems="center"
+                        margin="0 0 8px 0"
+                      >
+                        {loading ? (
+                          <SkeletonLine
+                            width="250px"
+                            height="50px"
+                            animated={true}
+                          />
+                        ) : (
+                          <>
+                            <Text
+                              type="headline"
+                              size="small"
+                              weight="bold"
+                              appearance="gray"
+                            >
+                              {currencyFormat(
+                                maximumCreditLimitData?.maxCreditLimitValueWithExtraordinaryInstallments ||
+                                  0,
+                                true,
+                              )}
+                            </Text>
+                            <Text type="body" size="small" appearance="gray">
+                              {
+                                paymentCapacityData.maxValueDescription.i18n[
+                                  lang
+                                ]
+                              }
+                            </Text>
+                          </>
+                        )}
+                      </Stack>
+                    </>
                   )}
               </Stack>
             </Fieldset>
