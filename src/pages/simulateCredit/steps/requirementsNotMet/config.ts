@@ -49,6 +49,8 @@ export const excludedStatus = [
   "DOCUMENT_IGNORED_BY_THE_USER",
 ];
 
+export const warningStatusExcluded = ["UNVALIDATED_SYSTEM_VALIDATION"];
+
 export const failedStatus = [
   "FAILED_SYSTEM_VALIDATION",
   "FAILED_DOCUMENT_VALIDATION",

@@ -12,7 +12,7 @@ import { EnumType } from "@hooks/useEnum/useEnum";
 import { AppContext } from "@context/AppContext";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
-import { dataError, excludedStatus } from "./config";
+import { dataError, excludedStatus, warningStatusExcluded } from "./config";
 
 interface IRequirementsNotMetProps {
   isMobile: boolean;
@@ -63,10 +63,12 @@ export function RequirementsNotMet(props: IRequirementsNotMetProps) {
         );
         if (data) {
           setValidateRequirements(
-            data.filter(
-              (requirement) =>
-                !excludedStatus.includes(requirement.requirementStatus),
-            ),
+            data.filter((requirement) => {
+              return (
+                !excludedStatus.includes(requirement.requirementStatus) &&
+                !warningStatusExcluded.includes(requirement.requirementStatus)
+              );
+            }),
           );
         }
       } catch (error) {

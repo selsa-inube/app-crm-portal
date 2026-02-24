@@ -14,6 +14,7 @@ import { EnumType, useEnum } from "@hooks/useEnum/useEnum";
 import {
   excludedStatus,
   failedStatus,
+  warningStatusExcluded,
 } from "@pages/simulateCredit/steps/requirementsNotMet/config";
 
 import {
@@ -67,7 +68,8 @@ export function RequirementsModal(props: IRequirementsModalProps) {
           appearance={
             excludedStatus.includes(item.requirementStatus)
               ? "success"
-              : failedStatus.includes(item.requirementStatus)
+              : failedStatus.includes(item.requirementStatus) ||
+                  !warningStatusExcluded.includes(item.requirementStatus)
                 ? "danger"
                 : "warning"
           }
