@@ -84,6 +84,9 @@ export const MaxLimitModal = (props: PaymentCapacityProps) => {
       isMobile={isMobile}
       dataMaximumCreditLimitService={dataMaximumCreditLimit}
       lang={lang}
+      creditLineTxt={
+        dataMaximumCreditLimitService.lineOfCreditAbbreviatedName || ""
+      }
     />
   );
 };

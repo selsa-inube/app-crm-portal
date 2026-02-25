@@ -107,6 +107,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
       maxCreditLimit: map["MaxCreditLimit"],
       reciprocity: map["ReciprocityBasedCreditLimit"],
       paymentCapacity: map["PaymentCapacityBasedCreditLimit"],
+      regulatoryLimit: map["LineOfCreditRegulationBasedCreditLimit"],
       riskAnalysis: map["RiskAnalysisBasedCreditLimit"],
       personalized: map["Personalized"],
     };
@@ -116,6 +117,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
     const validValues = [
       limits.maxCreditLimit,
       limits.reciprocity,
+      limits.regulatoryLimit,
       limits.paymentCapacity,
       limits.riskAnalysis,
       limits.personalized,
@@ -165,7 +167,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
           ) : (
             <StyledList>
               <Stack direction="column" gap="12px" height="160px">
-                {limits.maxCreditLimit !== undefined && (
+                {limits.regulatoryLimit !== undefined && (
                   <li>
                     <Stack justifyContent="space-between">
                       <Text
@@ -180,7 +182,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                       <Stack alignItems="center">
                         <Text appearance="success">$</Text>
                         <Text type="body" size="medium" appearance="dark">
-                          {currencyFormat(limits.maxCreditLimit || 0, false)}
+                          {currencyFormat(limits.regulatoryLimit || 0, false)}
                         </Text>
                         <Stack margin="0px 0px 0px 5px">
                           <Icon
