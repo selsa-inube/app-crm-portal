@@ -14,7 +14,7 @@ import check from "@assets/images/check.svg";
 import close from "@assets/images/close.svg";
 import remove from "@assets/images/remove.svg";
 import { IEntries } from "@components/data/TableBoard/types";
-import { requirementStatus } from "@components/modals/RequirementsModals/DocumentValidationApprovalModal/config";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
 import { MappedRequirements } from "./types";
 
@@ -239,65 +239,84 @@ const actionsMobile = [
   },
 ];
 
-const getRequirementCode = (codeKey: string) => {
-  return requirementStatus.find((item) => item.code === codeKey)?.code || "";
+export const requirementLabelsEnum = {
+  compliant: {
+    id: "compliant",
+    i18n: { en: "Compliant", es: "Cumple" },
+  },
+  notCompliant: {
+    id: "notCompliant",
+    i18n: { en: "Not Compliant", es: "No Cumple" },
+  },
+  notEvaluated: {
+    id: "notEvaluated",
+    i18n: { en: "Not Evaluated", es: "Sin Evaluar" },
+  },
 };
 
-const generateTag = (value: string): JSX.Element => {
-  if (
-    value === getRequirementCode("PASSED_WITH_SYSTEM_VALIDATION") ||
-    value === getRequirementCode("DOCUMENT_STORED_WITHOUT_VALIDATION") ||
-    value === getRequirementCode("PASSED_WITH_HUMAN_VALIDATION") ||
-    value === getRequirementCode("DOCUMENT_VALIDATED_BY_THE_USER") ||
-    value === getRequirementCode("IGNORED_BY_THE_USER") ||
-    value === getRequirementCode("PASSED_HUMAN_VALIDATION") ||
-    value === getRequirementCode("DOCUMENT_STORED_AND_VALIDATED") ||
-    value === getRequirementCode("IGNORED_BY_THE_USER_HUMAN_VALIDATION") ||
-    value === getRequirementCode("DOCUMENT_IGNORED_BY_THE_USER")
-  ) {
-    return <Tag label="Cumple" appearance="success" />;
-  } else if (
-    value === getRequirementCode("FAILED_SYSTEM_VALIDATION") ||
-    value === getRequirementCode("IGNORED_BY_THE_USER_SYSTEM_VALIDATION") ||
-    value === getRequirementCode("FAILED_DOCUMENT_VALIDATION") ||
-    value === getRequirementCode("FAILED_HUMAN_VALIDATION")
-  ) {
-    return <Tag label="No Cumple" appearance="danger" />;
-  } else {
-    return <Tag label="Sin Evaluar" appearance="warning" />;
-  }
+const generateTag = (value: string, lang: EnumType): JSX.Element => {
+  const isPassed = [
+    "PASSED_WITH_SYSTEM_VALIDATION",
+    "DOCUMENT_STORED_WITHOUT_VALIDATION",
+    "PASSED_WITH_HUMAN_VALIDATION",
+    "DOCUMENT_VALIDATED_BY_THE_USER",
+    "IGNORED_BY_THE_USER",
+    "PASSED_HUMAN_VALIDATION",
+    "DOCUMENT_STORED_AND_VALIDATED",
+    "IGNORED_BY_THE_USER_HUMAN_VALIDATION",
+    "DOCUMENT_IGNORED_BY_THE_USER",
+    "IGNORED_BY_THE_USER_SYSTEM_VALIDATION",
+  ].includes(value);
+
+  const isFailed = [
+    "FAILED_SYSTEM_VALIDATION",
+    "FAILED_DOCUMENT_VALIDATION",
+    "FAILED_HUMAN_VALIDATION",
+  ].includes(value);
+
+  if (isPassed)
+    return (
+      <Tag
+        label={requirementLabelsEnum.compliant.i18n[lang]}
+        appearance="success"
+      />
+    );
+  if (isFailed)
+    return (
+      <Tag
+        label={requirementLabelsEnum.notCompliant.i18n[lang]}
+        appearance="danger"
+      />
+    );
+  return (
+    <Tag
+      label={requirementLabelsEnum.notEvaluated.i18n[lang]}
+      appearance="warning"
+    />
+  );
 };
 
-export const maperEntries = (data: MappedRequirements): IEntries[][] => {
-  const result: IEntries[][] = [];
-
-  const systemValidations: IEntries[] = Object.entries(
-    data.SYSTEM_VALIDATION,
-  ).map(([key, value], index) => ({
-    id: `sistema-${index + 1}`,
-    "Validaciones del sistema": key,
-    tag: generateTag(value),
-  }));
-
-  const documentaryRequirements: IEntries[] = Object.entries(data.DOCUMENT).map(
-    ([key, value], index) => ({
+export const maperEntries = (
+  data: MappedRequirements,
+  lang: EnumType,
+): IEntries[][] => {
+  return [
+    Object.entries(data.SYSTEM_VALIDATION).map(([key, value], index) => ({
+      id: `sistema-${index + 1}`,
+      "Validaciones del sistema": key,
+      tag: generateTag(value, lang),
+    })),
+    Object.entries(data.DOCUMENT).map(([key, value], index) => ({
       id: `documento-${index + 1}`,
       "Requisitos documentales": key,
-      tag: generateTag(value),
-    }),
-  );
-
-  const humanValidations: IEntries[] = Object.entries(
-    data.HUMAN_VALIDATION,
-  ).map(([key, value], index) => ({
-    id: `humano-${index + 1}`,
-    "Validaciones humanas": key,
-    tag: generateTag(value),
-  }));
-
-  result.push(systemValidations, documentaryRequirements, humanValidations);
-
-  return result;
+      tag: generateTag(value, lang),
+    })),
+    Object.entries(data.HUMAN_VALIDATION).map(([key, value], index) => ({
+      id: `humano-${index + 1}`,
+      "Validaciones humanas": key,
+      tag: generateTag(value, lang),
+    })),
+  ];
 };
 
 export const maperDataRequirements = (processedEntries: IEntries[][]) => {
@@ -328,8 +347,8 @@ const getIconByTagStatus = (tagElement: React.ReactElement) => {
 
   if (label === "Cumple") {
     return <img src={check} alt="Cumple" width={14} height={14} />;
-  } else if (label === "Sin Evaluar") {
-    return <img src={remove} alt="Sin Evaluar" width={14} height={14} />;
+  } else if (label === "Sin Evalaaaaauar") {
+    return <img src={remove} alt="Sin Evalaaaaauar" width={14} height={14} />;
   } else if (label === "No Cumple") {
     return <img src={close} alt="No Cumple" width={14} height={14} />;
   } else {
