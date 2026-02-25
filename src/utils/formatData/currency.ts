@@ -1,6 +1,11 @@
 import { FormikValues } from "formik";
 
-const currencyFormat = (price: number, withCurrencySymbol = true): string => {
+const currencyFormat = (
+  price: number,
+  withCurrencySymbol = true,
+  returnZero = false,
+): string => {
+  if (price === 0 && returnZero) return "0";
   if (price === 0) {
     if (withCurrencySymbol) return "";
     return "";

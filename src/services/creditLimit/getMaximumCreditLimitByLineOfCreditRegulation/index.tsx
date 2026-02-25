@@ -39,7 +39,7 @@ export const getMaximumCreditLimitByLineOfCreditRegulation = async (
       };
 
       const res = await fetch(
-        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/${lineOfCreditAbbreviatedName}/${identificationDocumentType}/${identificationDocumentNumber}/?${queryParams.toString()}`,
+        `${environment.ICOREBANKING_API_URL_QUERY}/credit-limits/by-line-of-credit-regulation/${lineOfCreditAbbreviatedName}/${identificationDocumentType}/${identificationDocumentNumber}/?${queryParams.toString()}`,
         options,
       );
 

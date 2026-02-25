@@ -63,7 +63,7 @@ export function CreditLimitCard(props: CreditLimitProps) {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 4000);
   };
   return (
     <StyledContainer>

@@ -3,8 +3,8 @@ export const incomeModalConfig = {
     code: "Income_modal_title",
     description: "Maximum limit for vacation credit",
     i18n: {
-      en: "Maximum limit for vacation credit",
-      es: "Tope máx. para Crédito vacacional",
+      en: "Maximum limit per credit line",
+      es: "Tope máx. por línea de crédito",
     },
   },
 

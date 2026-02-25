@@ -268,6 +268,7 @@ export function PaymentCapacityModal(props: IPaymentCapacityModalProps) {
                               maximumCreditLimitData?.totalRegularInstallment ||
                                 0,
                               true,
+                              true,
                             )}
                           </Text>
                         )}

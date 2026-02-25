@@ -15,8 +15,8 @@ export const creditLimitTexts = {
     code: "Max_payment_capacity_vacation_credit",
     description: "Max payment capacity for vacation credit",
     i18n: {
-      en: "Max cap for vacation credit",
-      es: "Tope máx. para Crédito vacacional",
+      en: "Maximum limit per credit line",
+      es: "Tope máx. por línea de crédito",
     },
   },
   maxReciprocity: {

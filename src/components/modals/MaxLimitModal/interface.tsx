@@ -1,11 +1,12 @@
 import { MdErrorOutline } from "react-icons/md";
-import { Stack, Icon, Text, SkeletonLine } from "@inubekit/inubekit";
+import { Stack, Icon, Text, SkeletonLine, Divider } from "@inubekit/inubekit";
 
 import { BaseModal } from "@components/modals/baseModal";
 import { currencyFormat } from "@utils/formatData/currency";
 import { Fieldset } from "@components/data/Fieldset";
 import { IMaximumCreditLimit } from "@services/creditLimit/types";
 import { EnumType } from "@hooks/useEnum/useEnum";
+import { analysisLabel } from "@pages/simulateCredit/components/CreditLimitCard/config";
 
 import { incomeModalConfig } from "./IcomeModalConfig";
 
@@ -16,6 +17,7 @@ interface IMaxLimitModalUIProps {
   dataMaximumCreditLimitService: IMaximumCreditLimit;
   lang: EnumType;
   handleClose: () => void;
+  creditLineTxt: string;
 }
 
 export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
@@ -26,6 +28,7 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
     isMobile,
     lang,
     handleClose,
+    creditLineTxt,
   } = props;
 
   return (
@@ -36,7 +39,21 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
       handleClose={handleClose}
       variantNext="outlined"
       width={isMobile ? "287px" : "450px"}
+      initialDivider={false}
+      gap="14px"
     >
+      <Text
+        type="body"
+        size="medium"
+        appearance="gray"
+        cursorHover={false}
+        weight="normal"
+      >
+        {`${analysisLabel.i18n[lang]} ${creditLineTxt}`}
+      </Text>
+      <Stack margin="10px 0 12px 0">
+        <Divider />
+      </Stack>
       {error ? (
         <Stack direction="column" alignItems="center">
           <Icon icon={<MdErrorOutline />} size="32px" appearance="danger" />
@@ -61,9 +78,9 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                 ) : (
                   <Text type="body" size="medium">
                     {currencyFormat(
-                      dataMaximumCreditLimitService.customerCreditLimitInLineOfCredit ||
-                        0,
+                      dataMaximumCreditLimitService.lineOfCreditLoanAmountLimitRegulation,
                       false,
+                      true,
                     )}
                   </Text>
                 )}
@@ -83,6 +100,7 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
                       dataMaximumCreditLimitService.customerTotalObligationsInLineOfCredit ||
                         0,
                       false,
+                      true,
                     )}
                   </Text>
                 )}
@@ -97,21 +115,23 @@ export const MaxLimitModalUI = (props: IMaxLimitModalUIProps) => {
               direction="column"
               gap="8px"
             >
-              <Text
-                appearance="primary"
-                weight="bold"
-                type="headline"
-                size="large"
-              >
-                $
-                {loading
-                  ? incomeModalConfig.loading.i18n[lang]
-                  : currencyFormat(
-                      dataMaximumCreditLimitService.lineOfCreditLoanAmountLimitRegulation ||
-                        0,
-                      false,
-                    )}
-              </Text>
+              {loading ? (
+                <SkeletonLine width="220px" height="64px" animated={true} />
+              ) : (
+                <Text
+                  appearance="primary"
+                  weight="bold"
+                  type="headline"
+                  size="large"
+                >
+                  {currencyFormat(
+                    dataMaximumCreditLimitService.customerCreditLimitInLineOfCredit ||
+                      0,
+                    true,
+                    true,
+                  ) || 0}
+                </Text>
+              )}
               <Text appearance="gray" size="small">
                 {incomeModalConfig.maxAmount.i18n[lang]}
               </Text>
