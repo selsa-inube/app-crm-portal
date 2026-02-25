@@ -113,7 +113,7 @@ export const infoItems = [
   },
 ];
 export const questionToBeAskedInModalText = {
-  notEvaluated: "aaaaaaa",
+  notEvaluated: "Sin Evaluar",
   notCompliant: "No Cumple",
   questionForUnvalidated: "Pudo evaluar?",
   questionForNotCompliant: "Cumple?",
@@ -160,7 +160,7 @@ export const actionsRequirements = [
 const iconActionsMobile = (tag: string) => {
   if (tag === "Cumple") {
     return <MdCheck />;
-  } else if (tag === "Sin Eaaaaaaaaavaluar") {
+  } else if (tag === "Sin Evaluar") {
     return <MdRemove />;
   } else {
     return <MdClose />;
