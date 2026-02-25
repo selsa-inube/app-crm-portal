@@ -18,7 +18,7 @@ import {
   maperEntries,
   getActionsMobileIcon,
 } from "./config";
-import { MappedRequirements, RequirementType } from "./types";
+import { DocumentItem, MappedRequirements, RequirementType } from "./types";
 import { errorMessages } from "../config";
 
 interface IRequirementsData {
@@ -57,6 +57,37 @@ export const Requirements = (props: IRequirementsProps) => {
   const [dataRequirements, setDataRequirements] = useState<IRequirementsData[]>(
     [],
   );
+  const [approvalSystemValues, setApprovalSystemValues] = useState<
+    Record<
+      string,
+      {
+        observations: string;
+        toggleChecked: boolean;
+        labelText: string;
+      }
+    >
+  >({});
+
+  const [approvalDocumentValues, setApprovalDocumentValues] = useState<
+    Record<
+      string,
+      {
+        answer: string;
+        observations: string;
+        selectedDocuments?: DocumentItem[];
+      }
+    >
+  >({});
+  const [approvalHumanValues, setApprovalHumanValues] = useState<
+    Record<
+      string,
+      {
+        answer: string;
+        observations: string;
+      }
+    >
+  >({});
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -87,11 +118,58 @@ export const Requirements = (props: IRequirementsProps) => {
         HUMAN_VALIDATION: {},
       };
 
+      const systemVals: Record<
+        string,
+        { observations: string; toggleChecked: boolean; labelText: string }
+      > = {};
+      const documentVals: Record<
+        string,
+        { answer: string; observations: string }
+      > = {};
+      const humanVals: Record<
+        string,
+        { answer: string; observations: string }
+      > = {};
+
+      const getAnswerFromStatus = (status: string): string => {
+        const passedStatuses = [
+          "PASSED_WITH_SYSTEM_VALIDATION",
+          "DOCUMENT_STORED_WITHOUT_VALIDATION",
+          "PASSED_WITH_HUMAN_VALIDATION",
+          "DOCUMENT_VALIDATED_BY_THE_USER",
+          "IGNORED_BY_THE_USER",
+          "PASSED_HUMAN_VALIDATION",
+          "DOCUMENT_STORED_AND_VALIDATED",
+          "IGNORED_BY_THE_USER_HUMAN_VALIDATION",
+          "DOCUMENT_IGNORED_BY_THE_USER",
+        ];
+        const failedStatuses = [
+          "FAILED_SYSTEM_VALIDATION",
+          "IGNORED_BY_THE_USER_SYSTEM_VALIDATION",
+          "FAILED_DOCUMENT_VALIDATION",
+          "FAILED_HUMAN_VALIDATION",
+        ];
+        if (passedStatuses.includes(status)) return "Cumple";
+        if (failedStatuses.includes(status)) return "No Cumple";
+        return "";
+      };
+
+      const typeCounters = {
+        SYSTEM_VALIDATION: 0,
+        DOCUMENT: 0,
+        HUMAN_VALIDATION: 0,
+      };
+
       data.forEach((item) => {
         item.requirementsByPackage.forEach((req) => {
           const type = req.typeOfRequirementToEvaluate;
           const key = req.descriptionUse;
           const value = req.requirementStatus;
+          const answer = getAnswerFromStatus(req.requirementStatus || "");
+          const observations =
+            req.statusChangeJustification ||
+            req.descriptionEvaluationRequirement ||
+            "";
 
           if (
             type &&
@@ -101,10 +179,32 @@ export const Requirements = (props: IRequirementsProps) => {
             (mapped as MappedRequirements)[type as RequirementType][key] =
               value;
           }
+
+          if (type === "SYSTEM_VALIDATION") {
+            typeCounters.SYSTEM_VALIDATION += 1;
+            const entryId = `sistema-${typeCounters.SYSTEM_VALIDATION}`;
+            systemVals[entryId] = {
+              observations,
+              toggleChecked: answer === "Cumple",
+              labelText: answer,
+            };
+          } else if (type === "DOCUMENT") {
+            typeCounters.DOCUMENT += 1;
+            const entryId = `documento-${typeCounters.DOCUMENT}`;
+            documentVals[entryId] = { answer, observations };
+          } else if (type === "HUMAN_VALIDATION") {
+            typeCounters.HUMAN_VALIDATION += 1;
+            const entryId = `humano-${typeCounters.HUMAN_VALIDATION}`;
+            humanVals[entryId] = { answer, observations };
+          }
         });
       });
 
-      const processedEntries = maperEntries(mapped);
+      setApprovalSystemValues(systemVals);
+      setApprovalDocumentValues(documentVals);
+      setApprovalHumanValues(humanVals);
+
+      const processedEntries = maperEntries(mapped, lang);
       const processedRequirements = maperDataRequirements(processedEntries);
       setDataRequirements(processedRequirements);
     } catch (error) {
@@ -118,7 +218,6 @@ export const Requirements = (props: IRequirementsProps) => {
   useEffect(() => {
     fetchRequirements();
   }, [creditRequestCode]);
-
   const handleToggleSeeDetailsModal = (tableId?: string, entryId?: string) => {
     if (tableId && entryId) {
       setSelectedTableId(tableId);
@@ -146,7 +245,7 @@ export const Requirements = (props: IRequirementsProps) => {
           variant="empty"
           size="32px"
           cursorHover
-          disabled={!isDisabled}
+          disabled={isDisabled}
         />
       </Stack>
     );
@@ -208,8 +307,9 @@ export const Requirements = (props: IRequirementsProps) => {
             isMobile={isMobile}
             handleClose={() => setShowSeeDetailsModal(false)}
             data={{
-              answer: "",
-              observations: "",
+              answer: approvalSystemValues[selectedEntryId]?.labelText || "",
+              observations:
+                approvalSystemValues[selectedEntryId]?.observations || "",
             }}
             businessManagerCode={businessManagerCode}
             lang={lang}
@@ -223,8 +323,11 @@ export const Requirements = (props: IRequirementsProps) => {
             handleClose={() => setShowSeeDetailsModal(false)}
             user={user}
             data={{
-              answer: "",
-              observations: "",
+              documents:
+                approvalDocumentValues[selectedEntryId]?.selectedDocuments,
+              answer: approvalDocumentValues[selectedEntryId]?.answer || "",
+              observations:
+                approvalDocumentValues[selectedEntryId]?.observations || "",
             }}
             businessUnitPublicCode={businessUnitPublicCode}
             businessManagerCode={businessManagerCode}
@@ -238,8 +341,9 @@ export const Requirements = (props: IRequirementsProps) => {
             isMobile={isMobile}
             handleClose={() => setShowSeeDetailsModal(false)}
             data={{
-              answer: "",
-              observations: "",
+              answer: approvalHumanValues[selectedEntryId]?.answer || "",
+              observations:
+                approvalHumanValues[selectedEntryId]?.observations || "",
             }}
             businessManagerCode={businessManagerCode}
             lang={lang}

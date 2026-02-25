@@ -40,6 +40,7 @@ import {
   configHandleactions,
   labelsAndValuesShare,
   errorMessages,
+  financialReportingLabelsEnum,
 } from "./config";
 import {
   StyledMarginPrint,
@@ -116,6 +117,8 @@ export const FinancialReporting = () => {
   const { customerData, loadingCustomerData } = useContext(CustomerContext);
   const [codeError, setCodeError] = useState<number | null>(null);
   const [addToFix, setAddToFix] = useState<string[]>([]);
+  const [showNoDocumentsModal, setShowNoDocumentsModal] = useState(false);
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
 
   const businessManagerCode = eventData.businessManager.publicCode;
 
@@ -156,28 +159,42 @@ export const FinancialReporting = () => {
 
   const fetchAndShowDocuments = async () => {
     if (!data?.creditRequestId || !user?.id || !businessUnitPublicCode) return;
-
+    setIsLoadingDocuments(true);
     try {
       const documents = await getSearchAllDocumentsById(
         data.creditRequestId,
-        eventData?.user?.identificationDocumentNumber || "",
+        user.id,
         businessUnitPublicCode,
         businessManagerCode,
-        eventData.token,
+        eventData.token || "",
       );
 
+      if (!documents) {
+        setShowNoDocumentsModal(true);
+        return;
+      }
+
       const dataToMap = Array.isArray(documents) ? documents : documents.value;
+
+      if (!dataToMap || dataToMap.length === 0) {
+        setShowNoDocumentsModal(true);
+        return;
+      }
+
       const documentsUser = dataToMap.map(
         (dataListDocument: IDocumentData) => ({
           id: dataListDocument.documentId,
           name: dataListDocument.fileName,
         }),
       );
+
       setDocument(documentsUser);
       setAttachDocuments(true);
     } catch (error) {
-      setMessageError(errorMessages.documents.i18n[lang]);
-      setShowErrorModal(true);
+      console.error(error);
+      setShowNoDocumentsModal(true);
+    } finally {
+      setIsLoadingDocuments(false);
     }
   };
 
@@ -587,6 +604,34 @@ export const FinancialReporting = () => {
                   </Text>
                 </StyledContainerSpinner>
               </Blanket>
+            )}
+            {showNoDocumentsModal && (
+              <BaseModal
+                handleClose={() => setShowNoDocumentsModal(false)}
+                title={
+                  financialReportingLabelsEnum.attachments.titleList.i18n[lang]
+                }
+              >
+                <Text>
+                  {
+                    financialReportingLabelsEnum.attachments.errorModal.i18n[
+                      lang
+                    ]
+                  }
+                </Text>
+              </BaseModal>
+            )}
+            {isLoadingDocuments && (
+              <BaseModal
+                title={
+                  financialReportingLabelsEnum.attachments.titleList.i18n[lang]
+                }
+                width={isMobile ? "300px" : "450px"}
+              >
+                <StyledContainerSpinner>
+                  <Spinner size="large" appearance="primary" />
+                </StyledContainerSpinner>
+              </BaseModal>
             )}
             {pdfState.showShareModal && pdfState.blob && (
               <ShareModal
