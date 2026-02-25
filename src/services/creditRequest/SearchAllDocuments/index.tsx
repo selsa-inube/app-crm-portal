@@ -39,7 +39,7 @@ export const getSearchAllDocumentsById = async (
       clearTimeout(timeoutId);
 
       if (res.status === 204) {
-        throw new Error("No hay documentos disponibles.");
+        return [];
       }
 
       const data = await res.json();

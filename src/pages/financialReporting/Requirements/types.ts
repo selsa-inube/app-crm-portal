@@ -17,6 +17,14 @@ interface IRequirementByPackage {
   requirementTypeToEvaluate: string;
   statusChangeJustification?: string;
 }
+export interface IRequirementsByBusinessUnit {
+  requirementByBusinessUnitId: string;
+  requirementName: string;
+  validationCode: string;
+  requirementType: string;
+  humanValidationCode: string;
+  documentCode: string;
+}
 
 export interface IRequirement {
   packageId: string;
