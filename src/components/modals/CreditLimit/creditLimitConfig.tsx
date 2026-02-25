@@ -59,6 +59,14 @@ export const creditLimitTexts = {
       es: "Cupo máximo utilizable",
     },
   },
+  regulatoryMaxTop: {
+    code: "Regulatory_max_top",
+    description: "Top max according to regulation",
+    i18n: {
+      en: "Top max. according to regulation",
+      es: "Tope máx. según reglamento",
+    },
+  },
   maxMount: {
     code: "Maximum_amount",
     description: "Maximum amount",

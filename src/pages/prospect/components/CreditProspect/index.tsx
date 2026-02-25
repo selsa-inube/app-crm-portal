@@ -63,6 +63,7 @@ import { dataCreditProspects } from "@pages/creditProspects/config";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
+import { PdfComponent } from "../../pdf";
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
   dataCreditProspect,
@@ -686,6 +687,7 @@ export function CreditProspect(props: ICreditProspectProps) {
             alignItems={isMobile ? "center" : "normal"}
             direction={isMobile ? "column" : "row"}
           >
+            <PdfComponent />
             <Stack
               alignItems={isMobile ? "center" : "normal"}
               gap="4px"
