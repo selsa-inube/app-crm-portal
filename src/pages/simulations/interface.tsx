@@ -98,7 +98,9 @@ interface SimulationsUIProps {
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
-  generateAndSharePdf: () => void;
+  generateAndSharePdf: (shouldShare?: boolean) => Promise<void>;
+  downloadingPdf: boolean;
+  generatingPdf: boolean;
   userAccount?: string;
   showRecalculateSimulation: boolean;
   setShowRecalculateSimulation: React.Dispatch<React.SetStateAction<boolean>>;
@@ -174,6 +176,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
     validationErrors,
     setGeneralLoading,
     generalLoading,
+    generatingPdf,
+    downloadingPdf,
   } = props;
 
   return (
@@ -381,13 +385,21 @@ export function SimulationsUI(props: SimulationsUIProps) {
                                 </Text>
                               </Stack>
                               <StyledPrint>
-                                <Icon
-                                  icon={<MdOutlineShare />}
-                                  appearance="primary"
-                                  size="20px"
-                                  cursorHover
-                                  onClick={generateAndSharePdf}
-                                />
+                                {generatingPdf ? (
+                                  <SkeletonLine
+                                    animated
+                                    height="30px"
+                                    width="30px"
+                                  />
+                                ) : (
+                                  <Icon
+                                    icon={<MdOutlineShare />}
+                                    appearance="primary"
+                                    size="20px"
+                                    cursorHover
+                                    onClick={() => generateAndSharePdf(true)}
+                                  />
+                                )}
                               </StyledPrint>
                             </Stack>
                           </StyledPrintContainerHeader>
@@ -420,6 +432,8 @@ export function SimulationsUI(props: SimulationsUIProps) {
                             disableAddProduct={disableAddProduct}
                             setGeneralLoading={setGeneralLoading}
                             generalLoading={generalLoading}
+                            generateAndSharePdf={generateAndSharePdf}
+                            downloadingPdf={downloadingPdf}
                           />
                         </Fieldset>
                       </StyledScrollPrint>

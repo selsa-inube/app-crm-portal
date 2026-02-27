@@ -18,7 +18,6 @@ import {
 import { AppContext } from "@context/AppContext";
 import { getCreditRequestByCode } from "@services/creditRequest/getCreditRequestByCode";
 import { ICreditRequest, IPaymentChannel } from "@services/creditRequest/types";
-import { generatePDF } from "@utils/pdf/generetePDF";
 import { cancelProspect } from "@services/prospect/cancelProspect";
 import { MoneyDestinationTranslations } from "@services/enum/icorebanking-vi-crediboard/moneyDestination";
 import { getUseCaseValue, useValidateUseCase } from "@hooks/useValidateUseCase";
@@ -31,7 +30,12 @@ import { useEnum } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 import { getLinesOfCreditByMoneyDestination } from "@services/lineOfCredit/getLinesOfCreditByMoneyDestination";
 import { IPrerequisiteError } from "@services/prospect/types";
+import { capitalizeFirstLetter } from "@utils/formatData/text";
+import { currencyFormat } from "@utils/formatData/currency";
 
+import { ICreditData, ICardData } from "../prospect/pdf/types";
+import { generateSolidPDF } from "../prospect/pdf";
+import { paymentCycleMap } from "../prospect/outlets/CardCommercialManagement/config/config";
 import { SimulationsUI } from "./interface";
 import {
   dataEditProspect,
@@ -65,6 +69,8 @@ export function Simulations() {
   const [validationErrors, setValidationErrors] = useState<
     IPrerequisiteError[]
   >([]);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const generalLoading = loadingTasks > 0;
 
@@ -314,34 +320,99 @@ export function Simulations() {
     }
   }, [dataProspect, validateProspectOwnership, codeError, customerData]);
 
-  const generateAndSharePdf = async () => {
+  const generateAndSharePdf = async (shouldShare: boolean = false) => {
     try {
-      const pdfBlob = await generatePDF(
-        dataPrint,
-        labelsAndValuesShare.titleOnPdf.i18n[lang],
-        labelsAndValuesShare.titleOnPdf.i18n[lang],
-        { top: 10, bottom: 10, left: 10, right: 10 },
-        true,
+      setGeneratingPdf(shouldShare);
+      setDownloadingPdf(!shouldShare);
+      const dataPdf: ICreditData = {
+        header: {
+          destinationName: dataProspect?.moneyDestinationAbbreviatedName || "",
+          mainBorrowerName: getMainBorrowerName(dataProspect),
+          totalLoanAmount: Number(dataProspect?.requestedAmount),
+        },
+        cards:
+          dataProspect?.creditProducts.map(
+            (product) =>
+              ({
+                title: product.lineOfCreditAbbreviatedName,
+                paymentMethod: capitalizeFirstLetter(
+                  product.ordinaryInstallmentsForPrincipal?.[0]
+                    ?.paymentChannelAbbreviatedName,
+                ),
+                loanAmount: product.loanAmount || 0,
+                interestRate: `${parseFloat(Number(product.interestRate || 0).toFixed(4))}% ${
+                  enums?.Peridiocity?.find(
+                    (item) => item.code === product.installmentFrequency,
+                  )?.i18n?.[lang] ||
+                  "" ||
+                  ""
+                }`,
+                termMonths: `${Number(Number(product.loanTerm).toFixed(4))}`,
+                periodicPayment:
+                  product.ordinaryInstallmentsForPrincipal?.[0]
+                    ?.installmentAmount || 0,
+                paymentCycle:
+                  product.ordinaryInstallmentsForPrincipal?.[0]
+                    ?.installmentFrequency ||
+                  capitalizeFirstLetter(
+                    product.ordinaryInstallmentsForPrincipal?.[0]
+                      ?.installmentFrequency ||
+                      paymentCycleMap[product.installmentFrequency as string] ||
+                      "",
+                  ) ||
+                  "",
+              }) as ICardData,
+          ) || [],
+        footer: {
+          productsAmount: currencyFormat(
+            Math.trunc(prospectSummaryData.requestedAmount || 0),
+          ),
+          obligations: currencyFormat(
+            Math.trunc(prospectSummaryData.totalConsolidatedAmount || 0),
+          ),
+          expenses: currencyFormat(
+            Math.trunc(prospectSummaryData.deductibleExpenses || 0),
+          ),
+          netToDisburse: currencyFormat(
+            Math.trunc(prospectSummaryData.netAmountToDisburse || 0),
+          ),
+          ordinaryInstallment: currencyFormat(
+            Math.trunc(prospectSummaryData.totalRegularInstallment || 0),
+          ),
+        },
+      };
+
+      const pdfBlob = await generateSolidPDF(
+        dataPdf,
+        lang,
+        !shouldShare,
+        prospectCode,
       );
 
-      if (pdfBlob) {
+      if (shouldShare && pdfBlob) {
         const pdfFile = new File(
           [pdfBlob],
           labelsAndValuesShare.fileName.i18n[lang],
-          {
-            type: "application/pdf",
-          },
+          { type: "application/pdf" },
         );
 
-        await navigator.share({
-          files: [pdfFile],
-          title: labelsAndValuesShare.titleOnPdf.i18n[lang],
-          text: labelsAndValuesShare.text.i18n[lang],
-        });
+        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          await navigator.share({
+            files: [pdfFile],
+            title: labelsAndValuesShare.titleOnPdf.i18n[lang],
+            text: labelsAndValuesShare.text.i18n[lang],
+          });
+        } else {
+          setShowErrorModal(true);
+          setMessageError(labelsAndValuesShare.error.i18n[lang]);
+        }
       }
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(labelsAndValuesShare.error.i18n[lang]);
+    } finally {
+      setGeneratingPdf(false);
+      setDownloadingPdf(false);
     }
   };
 
@@ -494,6 +565,8 @@ export function Simulations() {
       handleDeleteProspect={handleDeleteProspect}
       showDeleteModal={showDeleteModal}
       generateAndSharePdf={generateAndSharePdf}
+      downloadingPdf={downloadingPdf}
+      generatingPdf={generatingPdf}
       canRequestCredit={canRequestCredit}
       canDeleteCreditRequest={canDeleteCreditRequest}
       canEditCreditRequest={canEditCreditRequest}
