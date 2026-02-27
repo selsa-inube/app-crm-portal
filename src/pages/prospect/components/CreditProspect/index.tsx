@@ -63,7 +63,6 @@ import { dataCreditProspects } from "@pages/creditProspects/config";
 import { EnumType } from "@hooks/useEnum/useEnum";
 import { IAllEnumsResponse } from "@services/enumerators/types";
 
-import { PdfComponent } from "../../pdf";
 import { IncomeDebtor } from "../modals/DebtorDetailsModal/incomeDebtor";
 import {
   dataCreditProspect,
@@ -104,6 +103,7 @@ interface ICreditProspectProps {
     React.SetStateAction<IProspectSummaryById>
   >;
   userAccount: string;
+  generateAndSharePdf: () => Promise<void>;
   onProspectRefreshData?: () => void;
   setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements?: IValidateRequirement[];
@@ -137,6 +137,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     disableAddProduct = false,
     setGeneralLoading,
     generalLoading,
+    generateAndSharePdf,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -687,7 +688,6 @@ export function CreditProspect(props: ICreditProspectProps) {
             alignItems={isMobile ? "center" : "normal"}
             direction={isMobile ? "column" : "row"}
           >
-            <PdfComponent />
             <Stack
               alignItems={isMobile ? "center" : "normal"}
               gap="4px"
@@ -757,7 +757,7 @@ export function CreditProspect(props: ICreditProspectProps) {
                         size="24px"
                         disabled={!isPrint}
                         cursorHover
-                        onClick={print}
+                        onClick={generateAndSharePdf}
                       />
                       <StyledVerticalDivider />
                     </>

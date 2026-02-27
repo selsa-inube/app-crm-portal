@@ -1,65 +1,62 @@
-import React from "react";
-import { useTheme } from "styled-components"; // <--- 1. Import this
-import { generateSolidPDF } from "./interface"; // Adjust path if needed
-import { ICardData } from "@src/pages/home/types"; // Use the Interface
-
 import { MdOutlineBeachAccess } from "react-icons/md";
+import { inube } from "@inubekit/inubekit";
 
-export const PdfComponent = () => {
-  // 2. Get the theme from your App
+import { ICreditData, ILayoutConfig } from "./types";
+import { convertIconToBase64, convertUrlToBase64 } from "./utils";
+import { drawHeader } from "./drawHeader";
+import { drawBodyCards } from "./drawBodyCards";
+import { drawSummaryFooter } from "./drawSummaryFooter";
+import { drawBrandLogo } from "./drawBrandLogo";
+import logo from "@src/assets/images/credicar-logo.svg";
+import { EnumType } from "@hooks/useEnum/useEnum";
 
-  // This is your data matching the Interface
-  const reportData: ICardData = {
-    header: {
-      destinationName: "Compra vivienda nueva",
-      mainBorrowerName: "LENIS POVEDA ANDRES MAURICIO",
-      totalLoanAmount: 20000000,
-    },
-    cards: [
-      {
-        title: "Vivienda",
-        medioPago: "Manitoba",
-        montoPrestamo: 20000000,
-        tasaInteres: "0.9489 % Mensual",
-        plazoMeses: "22.2833",
-        cuotaPeriodica: 1000000,
-        cicloPagos: "Mensual",
-      },
-      {
-        title: "Libre destino",
-        medioPago: "Manitoba",
-        montoPrestamo: 20000000,
-        tasaInteres: "1.1715 % Mensual",
-        plazoMeses: "22.9215",
-        cuotaPeriodica: 1000000,
-        cicloPagos: "Mensual",
-      },
-    ],
-    footer: {
-      montoProductos: 40000000,
-      obligaciones: 0,
-      gastos: 0,
-      netoGirar: 40000000,
-      cuotaOrdinaria: 2000000,
-    },
+import jsPDF from "jspdf";
+
+export const generateSolidPDF = async (
+  data: ICreditData,
+  lang: EnumType = "es",
+  prospectCode?: string,
+  iconElement?: React.ReactElement,
+): Promise<void> => {
+  const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+  const layoutConfig: ILayoutConfig = {
+    PageWidth: doc.internal.pageSize.getWidth(),
+    PageHeight: doc.internal.pageSize.getHeight(),
+    MarginX: 40,
+    StartY: 40,
+    ContentWidth: doc.internal.pageSize.getWidth() - 40 * 2,
   };
 
-  const iconToPrint = (
+  iconElement = (
     <MdOutlineBeachAccess
       size={64}
-      color="#091E42" // Use the N900 Hex code here
-      style={{ width: "100%", height: "100%" }} // Ensure SVG fills space
+      color={inube.palette.neutral.N900}
+      style={{ width: "100%", height: "100%" }}
     />
   );
 
-  const handleDownload = () => {
-    // 3. Pass Data AND Theme to the generator
-    generateSolidPDF(reportData, iconToPrint);
-  };
+  const [headerIcon, logoBase64] = await Promise.all([
+    iconElement ? convertIconToBase64(iconElement) : Promise.resolve(""),
+    convertUrlToBase64(logo),
+  ]);
 
-  return (
-    <div>
-      <button onClick={handleDownload}>Descargar PDF</button>
-    </div>
+  const bodyStartY = drawHeader(
+    doc,
+    data.header,
+    headerIcon || "",
+    layoutConfig,
+    lang,
   );
+  const footerStartY = drawBodyCards(
+    doc,
+    data.cards,
+    bodyStartY,
+    layoutConfig,
+    lang,
+  );
+  drawSummaryFooter(doc, data.footer, footerStartY, layoutConfig, lang);
+  drawBrandLogo(doc, logoBase64, layoutConfig);
+
+  doc.save(`${prospectCode}.pdf`);
 };

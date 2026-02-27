@@ -98,7 +98,7 @@ interface SimulationsUIProps {
   setSentData: React.Dispatch<
     React.SetStateAction<IExtraordinaryInstallments | null>
   >;
-  generateAndSharePdf: () => void;
+  generateAndSharePdf: () => Promise<void>;
   userAccount?: string;
   showRecalculateSimulation: boolean;
   setShowRecalculateSimulation: React.Dispatch<React.SetStateAction<boolean>>;
@@ -420,6 +420,7 @@ export function SimulationsUI(props: SimulationsUIProps) {
                             disableAddProduct={disableAddProduct}
                             setGeneralLoading={setGeneralLoading}
                             generalLoading={generalLoading}
+                            generateAndSharePdf={generateAndSharePdf}
                           />
                         </Fieldset>
                       </StyledScrollPrint>
