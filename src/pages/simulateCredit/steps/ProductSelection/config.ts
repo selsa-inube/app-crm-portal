@@ -4,7 +4,7 @@ export const electionData = {
     description: "System product suggestion preference",
     i18n: {
       en: "Do you prefer the system to suggest the product?",
-      es: "¿Prefieres que el sistema sugiera el producto?",
+      es: "¿Prefieres que el sistema sugiera la línea de crédito?",
     },
   },
   information: {
