@@ -15,9 +15,10 @@ import jsPDF from "jspdf";
 export const generateSolidPDF = async (
   data: ICreditData,
   lang: EnumType = "es",
+  shouldDownload: boolean = true,
   prospectCode?: string,
   iconElement?: React.ReactElement,
-): Promise<void> => {
+): Promise<Blob> => {
   const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
 
   const layoutConfig: ILayoutConfig = {
@@ -58,5 +59,9 @@ export const generateSolidPDF = async (
   drawSummaryFooter(doc, data.footer, footerStartY, layoutConfig, lang);
   drawBrandLogo(doc, logoBase64, layoutConfig);
 
-  doc.save(`${prospectCode}.pdf`);
+  if (shouldDownload) {
+    doc.save(`${prospectCode}.pdf`);
+  }
+
+  return doc.output("blob");
 };

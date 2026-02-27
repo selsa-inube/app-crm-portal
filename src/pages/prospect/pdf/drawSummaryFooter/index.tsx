@@ -43,7 +43,7 @@ export const drawSummaryFooter = (
     });
     drawText({
       doc,
-      text: typeof val === "number" ? formatCurrency(val) : String(val),
+      text: typeof val === "number" ? formatCurrency(val || 0) : String(val),
       x,
       y: F_ROW_2,
       align: "center",
@@ -67,25 +67,25 @@ export const drawSummaryFooter = (
 
   drawFooterCol(
     SummaryProspectCredit[0].item[0].title.i18n[lang],
-    footerData.productsAmount,
+    footerData.productsAmount || 0,
     startFooterX + 60,
   );
   drawSymbol("-", startFooterX + 140);
   drawFooterCol(
     SummaryProspectCredit[0].item[1].title.i18n[lang],
-    footerData.obligations,
+    footerData.obligations || 0,
     startFooterX + 220,
   );
   drawSymbol("-", startFooterX + 300);
   drawFooterCol(
     SummaryProspectCredit[0].item[2].title.i18n[lang],
-    footerData.expenses,
+    footerData.expenses || 0,
     startFooterX + 360,
   );
   drawSymbol("=", startFooterX + 420);
   drawFooterCol(
     SummaryProspectCredit[0].item[3].title.i18n[lang],
-    footerData.netToDisburse,
+    footerData.netToDisburse || 0,
     startFooterX + 490,
   );
 
@@ -96,7 +96,7 @@ export const drawSummaryFooter = (
 
   drawFooterCol(
     SummaryProspectCredit[0].item[4].title.i18n[lang],
-    footerData.ordinaryInstallment,
+    footerData.ordinaryInstallment || 0,
     startFooterX + 655,
   );
 };

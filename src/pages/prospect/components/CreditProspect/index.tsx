@@ -103,7 +103,8 @@ interface ICreditProspectProps {
     React.SetStateAction<IProspectSummaryById>
   >;
   userAccount: string;
-  generateAndSharePdf: () => Promise<void>;
+  downloadingPdf?: boolean;
+  generateAndSharePdf?: (shouldShare?: boolean) => Promise<void>;
   onProspectRefreshData?: () => void;
   setShowRequirements?: React.Dispatch<React.SetStateAction<boolean>>;
   validateRequirements?: IValidateRequirement[];
@@ -138,6 +139,7 @@ export function CreditProspect(props: ICreditProspectProps) {
     setGeneralLoading,
     generalLoading,
     generateAndSharePdf,
+    downloadingPdf,
   } = props;
 
   const { eventData } = useContext(AppContext);
@@ -751,14 +753,22 @@ export function CreditProspect(props: ICreditProspectProps) {
                 <Stack gap="8px">
                   {!isMobile && (
                     <>
-                      <Icon
-                        icon={<MdOutlinePictureAsPdf />}
-                        appearance="primary"
-                        size="24px"
-                        disabled={!isPrint}
-                        cursorHover
-                        onClick={generateAndSharePdf}
-                      />
+                      {downloadingPdf ? (
+                        <SkeletonLine animated width="24px" height="24px" />
+                      ) : (
+                        <Icon
+                          icon={<MdOutlinePictureAsPdf />}
+                          appearance="primary"
+                          size="24px"
+                          disabled={!isPrint}
+                          cursorHover
+                          onClick={() => {
+                            if (generateAndSharePdf) {
+                              generateAndSharePdf(false);
+                            }
+                          }}
+                        />
+                      )}
                       <StyledVerticalDivider />
                     </>
                   )}

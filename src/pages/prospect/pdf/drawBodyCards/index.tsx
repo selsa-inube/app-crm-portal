@@ -25,7 +25,7 @@ export const drawBodyCards = (
     height: ContainerHeight,
   });
 
-  let currentY = startY + 20;
+  const currentY = startY + 20;
   const CardWidth = 160;
   const CardHeight = 287;
   const CardGap = 20;
@@ -78,11 +78,11 @@ export const drawBodyCards = (
       });
       insideY += 38;
     };
-    console.log("card.loanAmount: ", card.loanAmount);
+
     drawRow(CREDIT_PRODUCT_TEXTS.paymentMethod.i18n[lang], card.paymentMethod);
     drawRow(
       CREDIT_PRODUCT_TEXTS.loanAmount.i18n[lang],
-      formatCurrency(Number(card.loanAmount)),
+      formatCurrency(Math.trunc(card.loanAmount)),
     );
     drawRow(CREDIT_PRODUCT_TEXTS.interestRate.i18n[lang], card.interestRate);
     drawRow(CREDIT_PRODUCT_TEXTS.termMonths.i18n[lang], card.termMonths);

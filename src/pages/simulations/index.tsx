@@ -69,6 +69,8 @@ export function Simulations() {
   const [validationErrors, setValidationErrors] = useState<
     IPrerequisiteError[]
   >([]);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const generalLoading = loadingTasks > 0;
 
@@ -318,8 +320,10 @@ export function Simulations() {
     }
   }, [dataProspect, validateProspectOwnership, codeError, customerData]);
 
-  const generateAndSharePdf = async () => {
+  const generateAndSharePdf = async (shouldShare: boolean = false) => {
     try {
+      setGeneratingPdf(shouldShare);
+      setDownloadingPdf(!shouldShare);
       const dataPdf: ICreditData = {
         header: {
           destinationName: dataProspect?.moneyDestinationAbbreviatedName || "",
@@ -366,41 +370,55 @@ export function Simulations() {
               }) as ICardData,
           ) || [],
         footer: {
-          productsAmount:
-            Number(
-              currencyFormat(Math.trunc(prospectSummaryData.requestedAmount)),
-            ) || 0,
-          obligations:
-            Number(
-              currencyFormat(
-                Math.trunc(prospectSummaryData.totalConsolidatedAmount),
-              ),
-            ) || 0,
-          expenses:
-            Number(
-              currencyFormat(
-                Math.trunc(prospectSummaryData.deductibleExpenses),
-              ),
-            ) || 0,
-          netToDisburse:
-            Number(
-              currencyFormat(
-                Math.trunc(prospectSummaryData.netAmountToDisburse),
-              ),
-            ) || 0,
-          ordinaryInstallment:
-            Number(
-              currencyFormat(
-                Math.trunc(prospectSummaryData.totalRegularInstallment),
-              ),
-            ) || 0,
+          productsAmount: currencyFormat(
+            Math.trunc(prospectSummaryData.requestedAmount || 0),
+          ),
+          obligations: currencyFormat(
+            Math.trunc(prospectSummaryData.totalConsolidatedAmount || 0),
+          ),
+          expenses: currencyFormat(
+            Math.trunc(prospectSummaryData.deductibleExpenses || 0),
+          ),
+          netToDisburse: currencyFormat(
+            Math.trunc(prospectSummaryData.netAmountToDisburse || 0),
+          ),
+          ordinaryInstallment: currencyFormat(
+            Math.trunc(prospectSummaryData.totalRegularInstallment || 0),
+          ),
         },
       };
 
-      generateSolidPDF(dataPdf, lang, prospectCode);
+      const pdfBlob = await generateSolidPDF(
+        dataPdf,
+        lang,
+        !shouldShare,
+        prospectCode,
+      );
+
+      if (shouldShare && pdfBlob) {
+        const pdfFile = new File(
+          [pdfBlob],
+          labelsAndValuesShare.fileName.i18n[lang],
+          { type: "application/pdf" },
+        );
+
+        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          await navigator.share({
+            files: [pdfFile],
+            title: labelsAndValuesShare.titleOnPdf.i18n[lang],
+            text: labelsAndValuesShare.text.i18n[lang],
+          });
+        } else {
+          setShowErrorModal(true);
+          setMessageError(labelsAndValuesShare.error.i18n[lang]);
+        }
+      }
     } catch (error) {
       setShowErrorModal(true);
       setMessageError(labelsAndValuesShare.error.i18n[lang]);
+    } finally {
+      setGeneratingPdf(false);
+      setDownloadingPdf(false);
     }
   };
 
@@ -553,6 +571,8 @@ export function Simulations() {
       handleDeleteProspect={handleDeleteProspect}
       showDeleteModal={showDeleteModal}
       generateAndSharePdf={generateAndSharePdf}
+      downloadingPdf={downloadingPdf}
+      generatingPdf={generatingPdf}
       canRequestCredit={canRequestCredit}
       canDeleteCreditRequest={canDeleteCreditRequest}
       canEditCreditRequest={canEditCreditRequest}

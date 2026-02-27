@@ -97,11 +97,11 @@ export interface ICardData {
 }
 
 export interface IFooterData {
-  productsAmount: number;
-  obligations: number;
-  expenses: number;
-  netToDisburse: number;
-  ordinaryInstallment: number;
+  productsAmount: string;
+  obligations: string;
+  expenses: string;
+  netToDisburse: string;
+  ordinaryInstallment: string;
 }
 
 export interface ICreditData {
