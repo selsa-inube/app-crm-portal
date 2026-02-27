@@ -108,7 +108,6 @@ export const CreditLimit = (props: ICreditLimitProps) => {
       reciprocity: map["ReciprocityBasedCreditLimit"],
       regulatoryLimit: map["LineOfCreditRegulationBasedCreditLimit"],
       paymentCapacity: map["PaymentCapacityBasedCreditLimit"],
-      regulatoryLimit: map["LineOfCreditRegulationBasedCreditLimit"],
       riskAnalysis: map["RiskAnalysisBasedCreditLimit"],
       personalized: map["Personalized"],
     };
