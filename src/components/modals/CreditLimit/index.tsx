@@ -106,6 +106,7 @@ export const CreditLimit = (props: ICreditLimitProps) => {
     return {
       maxCreditLimit: map["MaxCreditLimit"],
       reciprocity: map["ReciprocityBasedCreditLimit"],
+      regulatoryLimit: map["LineOfCreditRegulationBasedCreditLimit"],
       paymentCapacity: map["PaymentCapacityBasedCreditLimit"],
       regulatoryLimit: map["LineOfCreditRegulationBasedCreditLimit"],
       riskAnalysis: map["RiskAnalysisBasedCreditLimit"],
@@ -226,6 +227,39 @@ export const CreditLimit = (props: ICreditLimitProps) => {
                             variant="filled"
                             shape="circle"
                             onClick={onOpenReciprocityModal}
+                          />
+                        </Stack>
+                      </Stack>
+                    </Stack>
+                  </li>
+                )}
+
+                {limits.regulatoryLimit !== undefined && (
+                  <li>
+                    <Stack justifyContent="space-between">
+                      <Text
+                        appearance="dark"
+                        size="large"
+                        weight="bold"
+                        type="label"
+                      >
+                        {creditLimitTexts.regulatoryMaxTop.i18n[lang]}
+                      </Text>
+                      <Stack alignItems="center">
+                        <Text appearance="success">$</Text>
+                        <Text type="body" size="medium" appearance="dark">
+                          {currencyFormat(limits.regulatoryLimit || 0, false)}
+                        </Text>
+                        <Stack margin="0px 0px 0px 5px">
+                          <Icon
+                            appearance="primary"
+                            icon={<MdOutlineVisibility />}
+                            size="16px"
+                            spacing="narrow"
+                            cursorHover
+                            variant="filled"
+                            shape="circle"
+                            onClick={onOpenMaxLimitModal}
                           />
                         </Stack>
                       </Stack>

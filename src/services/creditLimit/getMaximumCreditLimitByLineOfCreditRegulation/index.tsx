@@ -25,7 +25,7 @@ export const getMaximumCreditLimitByLineOfCreditRegulation = async (
         moneyDestination: moneyDestination,
         primaryIncomeType: primaryIncomeType,
       });
-
+      console.log("Query Params:", moneyDestination);
       const options: RequestInit = {
         method: "GET",
         headers: {
