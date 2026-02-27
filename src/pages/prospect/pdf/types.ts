@@ -85,6 +85,7 @@ export interface IDrawTextProps {
   weight?: "normal" | "bold";
   align?: "left" | "center" | "right";
   boldThickness?: number;
+  maxWidth?: number;
 }
 export interface ICardData {
   title: string;

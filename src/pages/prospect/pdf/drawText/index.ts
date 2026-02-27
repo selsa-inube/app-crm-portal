@@ -13,6 +13,7 @@ export const drawText = ({
   weight = "normal",
   align = "left",
   boldThickness = 0,
+  maxWidth,
 }: IDrawTextProps): number => {
   const colorHex = getTextColor(appearance, theme);
   const fontSize = getFontSize(type, size);
@@ -21,23 +22,32 @@ export const drawText = ({
 
   doc.setTextColor(colorHex);
   doc.setFontSize(fontSize);
+
   if (weight === "bold") {
     doc.setFont("helvetica", "bold");
+  } else {
+    doc.setFont("helvetica", "normal");
+  }
 
+  let textToDraw: string | string[] = safeText;
+  if (maxWidth) {
+    textToDraw = doc.splitTextToSize(safeText, maxWidth);
+  }
+
+  if (weight === "bold") {
     if (boldThickness > 0) {
       doc.setDrawColor(colorHex);
       doc.setLineWidth(boldThickness);
-      doc.text(safeText, x, y, {
+      doc.text(textToDraw, x, y, {
         align,
         baseline: "top",
         renderingMode: "fillThenStroke",
       });
     } else {
-      doc.text(safeText, x, y, { align, baseline: "top" });
+      doc.text(textToDraw, x, y, { align, baseline: "top" });
     }
   } else {
-    doc.setFont("helvetica", "normal");
-    doc.text(safeText, x, y, { align, baseline: "top" });
+    doc.text(textToDraw, x, y, { align, baseline: "top" });
   }
 
   return fontSize;

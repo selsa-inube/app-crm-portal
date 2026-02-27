@@ -3,7 +3,7 @@ import jsPDF from "jspdf";
 import { dataEditProspect } from "@pages/simulations/config";
 import { EnumType } from "@hooks/useEnum/useEnum";
 
-import { formatCurrency } from "../utils";
+import { formatCurrency, getFontSize } from "../utils";
 import { drawFieldset } from "../drawFieldset";
 import { ICreditData, ILayoutConfig } from "../types";
 import { drawIcon } from "../drawIcon";
@@ -16,7 +16,27 @@ export const drawHeader = (
   config: ILayoutConfig,
   lang: EnumType,
 ): number => {
-  const HeaderHeight = 70;
+  const titleFontSize = Number(getFontSize("title", "medium"));
+  doc.setFontSize(titleFontSize);
+
+  const destText = String(headerData.destinationName || "");
+  const clientText = String(headerData.mainBorrowerName || "");
+
+  const destLines = doc.splitTextToSize(destText, 180);
+  const clientLines = doc.splitTextToSize(clientText, 240);
+
+  const maxLines = Math.max(destLines.length, clientLines.length, 1);
+
+  const lineHeight = titleFontSize + 4;
+  const extraBoxHeight = (maxLines - 1) * lineHeight;
+  const HeaderHeight = 70 + extraBoxHeight;
+
+  const HRow1 = config.StartY + 18;
+  const BaseLabelY = config.StartY + 40;
+
+  const destLabelY = BaseLabelY + (destLines.length - 1) * lineHeight;
+  const clientLabelY = BaseLabelY + (clientLines.length - 1) * lineHeight;
+  const amountLabelY = BaseLabelY;
 
   drawFieldset({
     doc,
@@ -26,11 +46,9 @@ export const drawHeader = (
     height: HeaderHeight,
   });
 
-  const HRow1 = config.StartY + 18;
-  const HRow2 = config.StartY + 38;
-
   if (headerIcon) {
-    drawIcon(doc, headerIcon, config.MarginX + 20, HRow1 - 5, 24);
+    const iconY = config.StartY + HeaderHeight / 2 - 12;
+    drawIcon(doc, headerIcon, config.MarginX + 20, iconY, 24);
   }
 
   drawText({
@@ -40,13 +58,14 @@ export const drawHeader = (
     y: HRow1,
     type: "title",
     size: "medium",
+    maxWidth: 180,
   });
 
   drawText({
     doc,
     text: dataEditProspect.destination.i18n[lang],
     x: config.MarginX + 110,
-    y: HRow2 + 2,
+    y: destLabelY,
     align: "center",
     type: "body",
     size: "small",
@@ -62,13 +81,14 @@ export const drawHeader = (
     align: "center",
     type: "title",
     size: "medium",
+    maxWidth: 240,
   });
 
   drawText({
     doc,
     text: dataEditProspect.customer.i18n[lang],
     x: CenterX,
-    y: HRow2 + 2,
+    y: clientLabelY,
     align: "center",
     type: "body",
     size: "small",
@@ -92,7 +112,7 @@ export const drawHeader = (
     doc,
     text: dataEditProspect.value.i18n[lang],
     x: RightX - 50,
-    y: HRow2 + 2,
+    y: amountLabelY,
     align: "center",
     type: "body",
     size: "small",

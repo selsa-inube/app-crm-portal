@@ -348,15 +348,9 @@ export function Simulations() {
                   ""
                 }`,
                 termMonths: `${Number(Number(product.loanTerm).toFixed(4))}`,
-                periodicPayment: Number(
-                  currencyFormat(
-                    Math.trunc(
-                      product.ordinaryInstallmentsForPrincipal?.[0]
-                        ?.installmentAmount,
-                    ),
-                    false,
-                  ),
-                ),
+                periodicPayment:
+                  product.ordinaryInstallmentsForPrincipal?.[0]
+                    ?.installmentAmount || 0,
                 paymentCycle:
                   product.ordinaryInstallmentsForPrincipal?.[0]
                     ?.installmentFrequency ||

@@ -88,7 +88,7 @@ export const drawBodyCards = (
     drawRow(CREDIT_PRODUCT_TEXTS.termMonths.i18n[lang], card.termMonths);
     drawRow(
       CREDIT_PRODUCT_TEXTS.periodicFee.i18n[lang],
-      formatCurrency(card.periodicPayment),
+      formatCurrency(Math.trunc(card.periodicPayment)),
     );
     drawRow(CREDIT_PRODUCT_TEXTS.paymentCycle.i18n[lang], card.paymentCycle);
   });
