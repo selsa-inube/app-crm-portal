@@ -167,39 +167,6 @@ export const CreditLimit = (props: ICreditLimitProps) => {
           ) : (
             <StyledList>
               <Stack direction="column" gap="12px" height="160px">
-                {limits.regulatoryLimit !== undefined && (
-                  <li>
-                    <Stack justifyContent="space-between">
-                      <Text
-                        appearance="dark"
-                        size="large"
-                        weight="bold"
-                        type="label"
-                      >
-                        {creditLimitTexts.maxPaymentCapacity.i18n[lang]}
-                      </Text>
-
-                      <Stack alignItems="center">
-                        <Text appearance="success">$</Text>
-                        <Text type="body" size="medium" appearance="dark">
-                          {currencyFormat(limits.regulatoryLimit || 0, false)}
-                        </Text>
-                        <Stack margin="0px 0px 0px 5px">
-                          <Icon
-                            appearance="primary"
-                            icon={<MdOutlineVisibility />}
-                            size="16px"
-                            spacing="narrow"
-                            cursorHover={true}
-                            variant="filled"
-                            shape="circle"
-                            onClick={onOpenMaxLimitModal}
-                          />
-                        </Stack>
-                      </Stack>
-                    </Stack>
-                  </li>
-                )}
                 {limits.reciprocity !== undefined && (
                   <li>
                     <Stack justifyContent="space-between">
